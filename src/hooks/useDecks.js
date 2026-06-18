@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react'
-import { supabase } from '../supabase'
+
+import { supabase } from '../utils/supabase'
+
 
 export function useDecks() {
   const [loading, setLoading] = useState(false)

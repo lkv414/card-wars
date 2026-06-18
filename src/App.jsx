@@ -19,19 +19,6 @@ const LAND_TYPES = {
   any: { label: 'Любой', icon: '🌈' },
 }
 
-const SAMPLE_CARDS = [
-  { id: 'c1', card_number: 1, name: 'Ловкая кукузебра', description: '+1 к атаке за каждый уникальный тип земель под твоим контролем', card_type: 'creature', cost: 1, attack: 0, health: 6, land_type: 'corn', is_rainbow: false, has_flip: false, mechanics: [], image_url: '' },
-  { id: 'c2', card_number: 2, name: 'Ледяная башня', description: 'Замораживает атакующее существо до конца хода.', card_type: 'building', cost: 3, land_type: 'ice', is_rainbow: false, has_flip: true, flip_description: 'Верни башню в руку и добери карту.', mechanics: [], image_url: '' },
-  { id: 'c3', card_number: 3, name: 'Радужный всплеск', description: 'Считается картой любого типа земли и усиливает следующую карту.', card_type: 'spell', cost: 0, land_type: 'any', is_rainbow: true, has_flip: false, mechanics: [], image_url: '' },
-]
-
-const SAMPLE_LANDS = [
-  { id: 'l1', name: 'Кукурузное поле', land_type: 'corn', image_url: '' },
-  { id: 'l2', name: 'Ледяная пустошь', land_type: 'ice', image_url: '' },
-  { id: 'l3', name: 'Добрый сад', land_type: 'good', image_url: '' },
-  { id: 'l4', name: 'Синяя равнина', land_type: 'blue', image_url: '' },
-]
-
 const emptyCard = {
   card_number: '', name: '', card_type: 'creature', cost: 1, attack: 0, health: 1,
   land_type: 'corn', is_rainbow: false, has_flip: false, flip_description: '', description: '', image_url: '', mechanics: '[]',
@@ -116,10 +103,36 @@ function AdminPanel({ cards, setCards, toast, goBack }) {
 }
 
 function App() {
-  const [screen, setScreen] = useState('deck'), [cards, setCards] = useState(SAMPLE_CARDS), [lands, setLands] = useState(SAMPLE_LANDS), [selectedCards, setSelectedCards] = useState({}), [selectedLands, setSelectedLands] = useState({}), [deckName, setDeckName] = useState('Моя первая колода'), [deckCode, setDeckCode] = useState(''), [panelOpen, setPanelOpen] = useState(false), [mode, setMode] = useState('cards'), [toasts, setToasts] = useState([])
+  const [screen, setScreen] = useState('deck'), [cards, setCards] = useState([]), [lands, setLands] = useState([]), [selectedCards, setSelectedCards] = useState({}), [selectedLands, setSelectedLands] = useState({}), [deckName, setDeckName] = useState('Моя первая колода'), [deckCode, setDeckCode] = useState(''), [panelOpen, setPanelOpen] = useState(false), [mode, setMode] = useState('cards'), [toasts, setToasts] = useState([]), [loadingLibrary, setLoadingLibrary] = useState(true), [libraryError, setLibraryError] = useState('')
   const [filters, setFilters] = useState({ search: '', cardTypes: [], landTypes: [], rainbow: false, costMin: 0, costMax: 10, flipOnly: false })
   const toast = (type, text) => { const id = crypto.randomUUID(); setToasts((p) => [...p, { id, type, text }]); setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 3000) }
-  useEffect(() => { supabase.from('cards').select('*').order('card_number').then(({ data }) => data?.length && setCards(data)); supabase.from('lands').select('*').order('name').then(({ data }) => data?.length && setLands(data)) }, [])
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadLibrary() {
+      setLoadingLibrary(true)
+      setLibraryError('')
+      const [cardsResult, landsResult] = await Promise.all([
+        supabase.from('cards').select('*').order('card_number'),
+        supabase.from('lands').select('*').order('name'),
+      ])
+
+      if (cancelled) return
+
+      if (cardsResult.error || landsResult.error) {
+        setCards([])
+        setLands([])
+        setLibraryError(cardsResult.error?.message || landsResult.error?.message || 'Не удалось загрузить данные из Supabase')
+      } else {
+        setCards(cardsResult.data || [])
+        setLands(landsResult.data || [])
+      }
+      setLoadingLibrary(false)
+    }
+
+    loadLibrary()
+    return () => { cancelled = true }
+  }, [])
   const cardTotal = Object.values(selectedCards).reduce((a, b) => a + b, 0), landTotal = Object.values(selectedLands).reduce((a, b) => a + b, 0)
   const filteredCards = useMemo(() => cards.filter((card) => (!filters.search || `${card.name} ${card.description}`.toLowerCase().includes(filters.search.toLowerCase())) && (!filters.cardTypes.length || filters.cardTypes.includes(card.card_type)) && (!filters.landTypes.length || filters.landTypes.includes(card.land_type)) && (!filters.rainbow || card.is_rainbow) && Number(card.cost) >= Number(filters.costMin || 0) && Number(card.cost) <= Number(filters.costMax || 99) && (!filters.flipOnly || card.has_flip)).sort((a, b) => a.card_number - b.card_number), [cards, filters])
   const addCard = (id) => setSelectedCards((p) => ({ ...p, [id]: Math.min((p[id] || 0) + 1, 3) })), removeCard = (id) => setSelectedCards((p) => { const next = { ...p, [id]: (p[id] || 0) - 1 }; if (next[id] <= 0) delete next[id]; return next })
@@ -128,7 +141,7 @@ function App() {
   const saveDeck = async () => { const code = deckCode || `DK-${Math.random().toString(36).slice(2, 8).toUpperCase()}`; const { error } = await supabase.from('decks').upsert({ name: deckName, code, cards: Object.entries(selectedCards).map(([card_id, quantity]) => ({ card_id, quantity })), lands: Object.entries(selectedLands).map(([land_id, quantity]) => ({ land_id, quantity })) }); if (error) toast('error', error.message); else { setDeckCode(code); toast('success', '✅ Колода сохранена') } }
   const importDeck = async (code) => { const { data, error } = await supabase.from('decks').select('*').eq('code', code).single(); if (error || !data) toast('error', 'Колода не найдена'); else { setDeckName(data.name); setDeckCode(data.code); setSelectedCards(Object.fromEntries(data.cards.map((x) => [x.card_id, x.quantity]))); setSelectedLands(Object.fromEntries(data.lands.map((x) => [x.land_id, x.quantity]))); toast('success', '✅ Колода импортирована') } }
   if (screen === 'admin') return <><AdminPanel cards={cards} setCards={setCards} toast={toast} goBack={() => setScreen('deck')} /><Toasts toasts={toasts} /></>
-  return <main className="app"><DeckTopBar name={deckName} setName={setDeckName} cardTotal={cardTotal} landTotal={landTotal} errors={errors} warnings={warnings} save={saveDeck} clear={() => window.confirm('Очистить колоду?') && (setSelectedCards({}) || setSelectedLands({}))} importDeck={importDeck} code={deckCode} /><button className="admin-link" onClick={() => setScreen('admin')}>🔧 Админ-панель</button><div className="layout"><DeckFilters filters={filters} setFilters={setFilters} mode={mode} setMode={setMode} /><section className="list">{mode === 'cards' ? filteredCards.map((card) => <CardRow key={card.id} card={card} count={selectedCards[card.id] || 0} total={cardTotal} add={addCard} remove={removeCard} />) : lands.map((land) => <article className="card-row" key={land.id}><ImageThumb src={land.image_url} alt={land.name} /><div className="card-info"><h3>{LAND_TYPES[land.land_type]?.icon} {land.name}</h3><small>{LAND_TYPES[land.land_type]?.label}</small></div><div className="row-actions"><strong>×{selectedLands[land.id] || 0}</strong><button disabled={landTotal >= 4} title="Добавить землю" onClick={() => addLand(land.id)}>＋</button>{selectedLands[land.id] > 0 && <button onClick={() => removeLand(land.id)}>−</button>}</div></article>)}</section></div><button className="panel-button" onClick={() => setPanelOpen(true)}>🎒 Колода ({cardTotal})</button><DeckPanel open={panelOpen} onClose={() => setPanelOpen(false)} selectedCards={selectedCards} selectedLands={selectedLands} cards={cards} lands={lands} removeCard={removeCard} removeLand={removeLand} /><Toasts toasts={toasts} /></main>
+  return <main className="app"><DeckTopBar name={deckName} setName={setDeckName} cardTotal={cardTotal} landTotal={landTotal} errors={errors} warnings={warnings} save={saveDeck} clear={() => window.confirm('Очистить колоду?') && (setSelectedCards({}) || setSelectedLands({}))} importDeck={importDeck} code={deckCode} /><button className="admin-link" onClick={() => setScreen('admin')}>🔧 Админ-панель</button><div className="layout"><DeckFilters filters={filters} setFilters={setFilters} mode={mode} setMode={setMode} /><section className="list">{loadingLibrary && <div className="empty-state">⏳ Загружаем карты и земли из Supabase...</div>}{libraryError && <div className="empty-state empty-state-error">❌ Ошибка Supabase: {libraryError}</div>}{!loadingLibrary && !libraryError && mode === 'cards' && filteredCards.length === 0 && <div className="empty-state">В таблице cards пока нет карт для выбранных фильтров.</div>}{!loadingLibrary && !libraryError && mode === 'lands' && lands.length === 0 && <div className="empty-state">В таблице lands пока нет земель.</div>}{!loadingLibrary && !libraryError && (mode === 'cards' ? filteredCards.map((card) => <CardRow key={card.id} card={card} count={selectedCards[card.id] || 0} total={cardTotal} add={addCard} remove={removeCard} />) : lands.map((land) => <article className="card-row" key={land.id}><ImageThumb src={land.image_url} alt={land.name} /><div className="card-info"><h3>{LAND_TYPES[land.land_type]?.icon} {land.name}</h3><small>{LAND_TYPES[land.land_type]?.label}</small></div><div className="row-actions"><strong>×{selectedLands[land.id] || 0}</strong><button disabled={landTotal >= 4} title="Добавить землю" onClick={() => addLand(land.id)}>＋</button>{selectedLands[land.id] > 0 && <button onClick={() => removeLand(land.id)}>−</button>}</div></article>))}</section></div><button className="panel-button" onClick={() => setPanelOpen(true)}>🎒 Колода ({cardTotal})</button><DeckPanel open={panelOpen} onClose={() => setPanelOpen(false)} selectedCards={selectedCards} selectedLands={selectedLands} cards={cards} lands={lands} removeCard={removeCard} removeLand={removeLand} /><Toasts toasts={toasts} /></main>
 }
 
 export default App

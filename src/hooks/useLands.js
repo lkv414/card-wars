@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
 
+
 export function useLands() {
   const [lands, setLands] = useState([])
   const [loading, setLoading] = useState(true)

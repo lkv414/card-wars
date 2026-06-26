@@ -1,7 +1,4 @@
 import { ImageThumb } from './Shared/ImageThumb'
-import { Badge } from './Shared/Badge'
-import { CARD_TYPES, LAND_TYPES } from './DeckFilters'
-
 export function CardGrid({
   cards,
   selectedCards,

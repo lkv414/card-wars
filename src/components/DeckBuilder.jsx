@@ -13,6 +13,7 @@ export function DeckBuilder({
   loadingLibrary,
   libraryError,
   onAdminClick,
+  onBackToMenu,
 }) {
   const [selectedCards, setSelectedCards] = useState({})
   const [selectedLands, setSelectedLands] = useState({})
@@ -110,7 +111,14 @@ export function DeckBuilder({
   }
 
   const importDeck = async (code) => {
-    const { data, error } = await supabase.from('decks').select('*').eq('code', code).single()
+    const normalizedCode = code.trim().toUpperCase()
+
+    if (!normalizedCode) {
+      toast('error', 'Введите код колоды')
+      return
+    }
+
+    const { data, error } = await supabase.from('decks').select('*').eq('code', normalizedCode).single()
 
     if (error || !data) {
       toast('error', 'Колода не найдена')
@@ -144,6 +152,7 @@ export function DeckBuilder({
         clear={clearDeck}
         importDeck={importDeck}
         onAdminClick={onAdminClick}
+        onBackToMenu={onBackToMenu}
       />
 
       <button className="panel-button" onClick={() => setDeckModalOpen(true)}>

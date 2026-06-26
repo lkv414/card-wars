@@ -12,11 +12,31 @@ export function TopBar({
   clear,
   importDeck,
   onAdminClick,
+  onBackToMenu,
 }) {
-  const [importCode, setImportCode] = useState('')
+  const [codeDraft, setCodeDraft] = useState('')
+  const [isEditingCode, setIsEditingCode] = useState(false)
+  const codeInputValue = isEditingCode ? codeDraft : deckCode
+
+  const handleCodeKeyDown = (event) => {
+    if (event.key !== 'Enter') return
+
+    event.preventDefault()
+    const normalizedCode = codeInputValue.trim().toUpperCase()
+    setCodeDraft(normalizedCode)
+    setIsEditingCode(false)
+
+    if (normalizedCode) {
+      importDeck(normalizedCode)
+    }
+  }
 
   return (
     <header className="topbar">
+      <button className="back-btn" onClick={onBackToMenu}>
+        ← Назад
+      </button>
+
       <input
         aria-label="Название колоды"
         placeholder="Название колоды"
@@ -37,22 +57,24 @@ export function TopBar({
       </button>
 
       <input
+        aria-label="Live-код колоды или код для загрузки"
         className="code-input"
         placeholder="Код DK-XXXXXX"
-        value={importCode}
-        onChange={(e) => setImportCode(e.target.value.toUpperCase())}
+        title="Live-код текущей колоды. Вставьте другой код и нажмите Enter, чтобы загрузить колоду."
+        value={codeInputValue}
+        onFocus={(event) => {
+          const input = event.currentTarget
+          setCodeDraft(deckCode)
+          setIsEditingCode(true)
+          requestAnimationFrame(() => input.select())
+        }}
+        onBlur={() => setIsEditingCode(false)}
+        onChange={(e) => setCodeDraft(e.target.value.toUpperCase())}
+        onKeyDown={handleCodeKeyDown}
       />
-
-      <button onClick={() => importDeck(importCode)}>
-        📥 Импортировать
-      </button>
 
       <button onClick={clear}>
         🗑️ Очистить
-      </button>
-
-      <button onClick={() => navigator.clipboard?.writeText(deckCode)} title="Скопировать live-код">
-        Код: {deckCode}
       </button>
 
       <button className="admin-btn" onClick={onAdminClick}>

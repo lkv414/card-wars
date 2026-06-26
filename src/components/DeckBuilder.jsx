@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import { TopBar } from './TopBar'
 import { DeckFilters } from './DeckFilters'
 import { CardGrid } from './CardGrid'
 import { DeckModal } from './DeckModal'
+import { Toasts } from './Shared/Toasts'
+import { generateDeckCode } from '../utils/deckCode'
 
 export function DeckBuilder({
   cards,
@@ -16,7 +18,6 @@ export function DeckBuilder({
   const [selectedCards, setSelectedCards] = useState({})
   const [selectedLands, setSelectedLands] = useState({})
   const [deckName, setDeckName] = useState('')
-  const [deckCode, setDeckCode] = useState('')
   const [mode, setMode] = useState('cards')
   const [filters, setFilters] = useState({
     search: '',
@@ -29,6 +30,11 @@ export function DeckBuilder({
   })
   const [toasts, setToasts] = useState([])
   const [deckModalOpen, setDeckModalOpen] = useState(false)
+
+  const deckCode = useMemo(
+    () => generateDeckCode(selectedCards, selectedLands),
+    [selectedCards, selectedLands]
+  )
 
   const toast = (type, text) => {
     const id = crypto.randomUUID()
@@ -83,7 +89,7 @@ export function DeckBuilder({
   const warnings = cardTotal < 40 ? ['В колоде меньше 40 карт'] : []
 
   const saveDeck = async () => {
-    const code = deckCode || `DK-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
+    const code = deckCode
     const { error } = await supabase.from('decks').upsert({
       name: deckName,
       code,
@@ -100,19 +106,24 @@ export function DeckBuilder({
     if (error) {
       toast('error', error.message)
     } else {
-      setDeckCode(code)
-      toast('success', '✅ Колода сохранена')
+      toast('success', `✅ Колода сохранена: ${code}`)
     }
   }
 
   const importDeck = async (code) => {
-    const { data, error } = await supabase.from('decks').select('*').eq('code', code).single()
+    const normalizedCode = code.trim().toUpperCase()
+
+    if (!normalizedCode) {
+      toast('error', 'Введите код колоды')
+      return
+    }
+
+    const { data, error } = await supabase.from('decks').select('*').eq('code', normalizedCode).single()
 
     if (error || !data) {
       toast('error', 'Колода не найдена')
     } else {
       setDeckName(data.name)
-      setDeckCode(data.code)
       setSelectedCards(Object.fromEntries(data.cards.map((x) => [x.card_id, x.quantity])))
       setSelectedLands(Object.fromEntries(data.lands.map((x) => [x.land_id, x.quantity])))
       toast('success', '✅ Колода импортирована')
@@ -124,7 +135,6 @@ export function DeckBuilder({
       setSelectedCards({})
       setSelectedLands({})
       setDeckName('')
-      setDeckCode('')
     }
   }
 
@@ -133,6 +143,7 @@ export function DeckBuilder({
       <TopBar
         name={deckName}
         setName={setDeckName}
+        deckCode={deckCode}
         cardTotal={cardTotal}
         landTotal={landTotal}
         errors={errors}
@@ -140,9 +151,8 @@ export function DeckBuilder({
         save={saveDeck}
         clear={clearDeck}
         importDeck={importDeck}
-        selectedCards={selectedCards}
-        selectedLands={selectedLands}
         onAdminClick={onAdminClick}
+        onBackToMenu={onBackToMenu}
       />
 
       <button className="panel-button" onClick={() => setDeckModalOpen(true)}>
@@ -156,7 +166,9 @@ export function DeckBuilder({
         selectedLands={selectedLands}
         cards={cards}
         lands={lands}
+        addCard={addCard}
         removeCard={removeCard}
+        addLand={addLand}
         removeLand={removeLand}
       />
 
@@ -197,6 +209,7 @@ export function DeckBuilder({
           )}
         </section>
       </div>
+      <Toasts toasts={toasts} />
     </main>
   )
 }

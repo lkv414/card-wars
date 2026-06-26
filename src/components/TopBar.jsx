@@ -1,33 +1,9 @@
-import { useEffect, useState, useMemo } from 'react'
-
-// Функция для генерирования кода колоды на основе состояния
-function generateDeckCode(selectedCards, selectedLands) {
-  if (Object.keys(selectedCards).length === 0 && Object.keys(selectedLands).length === 0) {
-    return ''
-  }
-  
-  // Сортируем карты и земли по ID и количеству для консистентного кода
-  const cardIds = Object.keys(selectedCards).sort()
-  const landIds = Object.keys(selectedLands).sort()
-  
-  // Создаём хеш из данных
-  const data = `${cardIds.map(id => `${id}:${selectedCards[id]}`).join(',')}|${landIds.map(id => `${id}:${selectedLands[id]}`).join(',')}`
-  
-  // Простой хеш для DK-XXXXXX
-  let hash = 0
-  for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32bit integer
-  }
-  
-  const code = Math.abs(hash).toString(36).toUpperCase().substring(0, 6).padEnd(6, '0')
-  return `DK-${code}`
-}
+import { useState } from 'react'
 
 export function TopBar({
   name,
   setName,
+  deckCode,
   cardTotal,
   landTotal,
   errors,
@@ -35,57 +11,72 @@ export function TopBar({
   save,
   clear,
   importDeck,
-  selectedCards,
-  selectedLands,
   onAdminClick,
+  onBackToMenu,
 }) {
-  const [importCode, setImportCode] = useState('')
-  
-  // Live обновление кода колоды
-  const liveCode = useMemo(() => generateDeckCode(selectedCards, selectedLands), [selectedCards, selectedLands])
+  const [codeDraft, setCodeDraft] = useState('')
+  const [isEditingCode, setIsEditingCode] = useState(false)
+  const codeInputValue = isEditingCode ? codeDraft : deckCode
+
+  const handleCodeKeyDown = (event) => {
+    if (event.key !== 'Enter') return
+
+    event.preventDefault()
+    const normalizedCode = codeInputValue.trim().toUpperCase()
+    setCodeDraft(normalizedCode)
+    setIsEditingCode(false)
+
+    if (normalizedCode) {
+      importDeck(normalizedCode)
+    }
+  }
 
   return (
     <header className="topbar">
+      <button className="back-btn" onClick={onBackToMenu}>
+        ← Назад
+      </button>
+
       <input
         aria-label="Название колоды"
         placeholder="Название колоды"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      
+
       <span className={`counter ${cardTotal === 40 ? 'full' : errors.length ? 'invalid' : 'ok'}`}>
         Карт: {cardTotal} / 40
       </span>
-      
+
       <span className={landTotal === 4 ? 'counter ok' : 'counter invalid'}>
         Земель: {landTotal} / 4
       </span>
-      
+
       <button onClick={save} disabled={errors.some((e) => e.includes('больше')) || landTotal !== 4}>
         💾 Сохранить колоду
       </button>
-      
+
       <input
+        aria-label="Live-код колоды или код для загрузки"
         className="code-input"
         placeholder="Код DK-XXXXXX"
-        value={importCode}
-        onChange={(e) => setImportCode(e.target.value)}
+        title="Live-код текущей колоды. Вставьте другой код и нажмите Enter, чтобы загрузить колоду."
+        value={codeInputValue}
+        onFocus={(event) => {
+          const input = event.currentTarget
+          setCodeDraft(deckCode)
+          setIsEditingCode(true)
+          requestAnimationFrame(() => input.select())
+        }}
+        onBlur={() => setIsEditingCode(false)}
+        onChange={(e) => setCodeDraft(e.target.value.toUpperCase())}
+        onKeyDown={handleCodeKeyDown}
       />
-      
-      <button onClick={() => importDeck(importCode)}>
-        📥 Импортировать
-      </button>
-      
+
       <button onClick={clear}>
         🗑️ Очистить
       </button>
-      
-      {liveCode && (
-        <button onClick={() => navigator.clipboard?.writeText(liveCode)} title="Скопировать код">
-          Код: {liveCode}
-        </button>
-      )}
-      
+
       <button className="admin-btn" onClick={onAdminClick}>
         🔧 Админ-панель
       </button>

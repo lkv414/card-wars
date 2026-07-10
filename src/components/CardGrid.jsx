@@ -1,4 +1,5 @@
 import { ImageThumb } from './Shared/ImageThumb'
+import { normalizeDeckEntryId } from '../utils/deckState'
 export function CardGrid({
   cards,
   selectedCards,
@@ -10,7 +11,16 @@ export function CardGrid({
   return (
     <div className="cards-grid">
       {cards.map((item) => {
-        const quantity = isLands ? selectedCards[item.id] || 0 : selectedCards[item.id] || 0
+        const normalizedId = normalizeDeckEntryId(item.id)
+        const quantity = selectedCards[item.id] || selectedCards[normalizedId] || 0
+        if (quantity > 0 && selectedCards[item.id] == null && selectedCards[normalizedId] != null) {
+          console.debug('[CardGrid] normalized quantity lookup', {
+            itemId: item.id,
+            normalizedId,
+            quantity,
+            selectedCards,
+          })
+        }
         const disabled = isLands
           ? false
           : quantity >= 3 || cardTotal >= 40

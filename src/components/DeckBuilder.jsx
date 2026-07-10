@@ -5,7 +5,8 @@ import { DeckFilters } from './DeckFilters'
 import { CardGrid } from './CardGrid'
 import { DeckModal } from './DeckModal'
 import { Toasts } from './Shared/Toasts'
-import { generateDeckCode } from '../utils/deckCode'
+import { generateDeckCode, decodeDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
+import { applyDeckEntries } from '../utils/deckState'
 
 export function DeckBuilder({
   cards,
@@ -62,7 +63,7 @@ export function DeckBuilder({
   )
 
   const addCard = (id) =>
-    setSelectedCards((p) => ({ ...p, [id]: Math.min((p[id] || 0) + 1, 3) }))
+    setSelectedCards((p) => applyDeckEntries(p, { [id]: 1 }, { maxPerEntry: 3, maxTotal: 40 }))
 
   const removeCard = (id) =>
     setSelectedCards((p) => {
@@ -72,7 +73,8 @@ export function DeckBuilder({
     })
 
   const addLand = (id) =>
-    landTotal < 4 && setSelectedLands((p) => ({ ...p, [id]: (p[id] || 0) + 1 }))
+    landTotal < 4 &&
+    setSelectedLands((p) => applyDeckEntries(p, { [id]: 1 }, { maxPerEntry: 4, maxTotal: 4 }))
 
   const removeLand = (id) =>
     setSelectedLands((p) => {
@@ -111,22 +113,29 @@ export function DeckBuilder({
   }
 
   const importDeck = async (code) => {
-    const normalizedCode = code.trim().toUpperCase()
-
-    if (!normalizedCode) {
+    const trimmedCode = code.trim()
+    if (!trimmedCode) {
       toast('error', 'Введите код колоды')
       return
     }
 
-    const { data, error } = await supabase.from('decks').select('*').eq('code', normalizedCode).single()
-
-    if (error || !data) {
-      toast('error', 'Колода не найдена')
-    } else {
-      setDeckName(data.name)
-      setSelectedCards(Object.fromEntries(data.cards.map((x) => [x.card_id, x.quantity])))
-      setSelectedLands(Object.fromEntries(data.lands.map((x) => [x.land_id, x.quantity])))
-      toast('success', '✅ Колода импортирована')
+    try {
+      toast('success', '⏳ Расширяем код колоды из БД...')
+      console.log('📥 Импорт кода:', trimmedCode)
+      
+      const { selectedCards: importedCards, selectedLands: importedLands, cards: fullCards, lands: fullLands } = await expandDeckCodeWithCardData(trimmedCode, supabase)
+      
+      console.log('✅ Импортированные карты:', importedCards)
+      console.log('✅ Импортированные земли:', importedLands)
+      console.log('✅ Полные данные карт:', fullCards)
+      console.log('✅ Полные данные земель:', fullLands)
+      
+      setSelectedCards(importedCards)
+      setSelectedLands(importedLands)
+      toast('success', `✅ Колода успешно импортирована: ${Object.keys(importedCards).length} карт, ${Object.keys(importedLands).length} земель`)
+    } catch (error) {
+      console.error('❌ Import error:', error)
+      toast('error', `❌ Ошибка импорта: ${error.message}`)
     }
   }
 

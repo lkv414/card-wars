@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { generateDeckCode, decodeDeckCode } from './utils/deckCode'
 import { supabase } from './utils/supabase'
 import './App.css'
 
@@ -56,6 +57,36 @@ function App() {
         console.log('✅ Загружено карт:', cardsResult.data?.length, 'Земель:', landsResult.data?.length)
         setCards(cardsResult.data || [])
         setLands(landsResult.data || [])
+        // Temporary globals for debugging in DevTools console
+        try {
+          window.__debug_cards = cardsResult.data || []
+          window.__debug_lands = landsResult.data || []
+          console.debug('[App] exported debug globals', {
+            __debug_cards_count: window.__debug_cards.length,
+            __debug_lands_count: window.__debug_lands.length,
+          })
+        } catch (e) {
+          // ignore if window is not available
+        }
+        // Round-trip test: take first card, generate code, decode and compare
+        try {
+          const first = (cardsResult.data && cardsResult.data[0]) || null
+          if (first && first.id) {
+            const roundCode = generateDeckCode({ [first.id]: 1 }, {})
+            const roundDecoded = decodeDeckCode(roundCode)
+            console.debug('[App] roundtrip deckCode test', {
+              firstCardId: first.id,
+              generatedCode: roundCode,
+              decodedJson: JSON.stringify(roundDecoded || {}),
+              decodedCards: roundDecoded?.selectedCards || null,
+              match: !!(roundDecoded && roundDecoded.selectedCards && roundDecoded.selectedCards[first.id] === 1),
+            })
+          } else {
+            console.debug('[App] roundtrip deckCode test skipped: no first card')
+          }
+        } catch (e) {
+          console.error('[App] roundtrip deckCode test error', e)
+        }
       }
       setLoadingLibrary(false)
     }

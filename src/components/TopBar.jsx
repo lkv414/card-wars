@@ -22,7 +22,7 @@ export function TopBar({
     if (event.key !== 'Enter') return
 
     event.preventDefault()
-    const normalizedCode = codeInputValue.trim().toUpperCase()
+    const normalizedCode = codeInputValue.trim()
     setCodeDraft(normalizedCode)
     setIsEditingCode(false)
 
@@ -69,7 +69,7 @@ export function TopBar({
           requestAnimationFrame(() => input.select())
         }}
         onBlur={() => setIsEditingCode(false)}
-        onChange={(e) => setCodeDraft(e.target.value.toUpperCase())}
+        onChange={(e) => setCodeDraft(e.target.value)}
         onKeyDown={handleCodeKeyDown}
       />
 

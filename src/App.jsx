@@ -30,7 +30,7 @@ function App() {
   const { toasts, toast } = useToasts()
 
   // Обработчики переключения экранов
-  const handleJoinGame = (data) => {
+  const handleJoinGame = () => {
     // TODO: Реализовать присоединение к игре
   }
 

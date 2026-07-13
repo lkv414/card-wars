@@ -55,7 +55,7 @@ export function applyDeckEntries(existingEntries = {}, incomingEntries = {}, opt
         resultJson: JSON.stringify(result),
         totalQuantity,
       })
-    } catch (e) {
+    } catch {
       console.debug('[deckState] applyDeckEntries result (non-serializable)', { totalQuantity })
     }
   }

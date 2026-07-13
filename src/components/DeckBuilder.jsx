@@ -4,9 +4,9 @@ import { TopBar } from './TopBar'
 import { DeckFilters } from './DeckFilters'
 import { CardGrid } from './CardGrid'
 import { DeckModal } from './DeckModal'
-import { Toasts } from './Shared/Toasts'
-import { generateDeckCode, decodeDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
-import { applyDeckEntries } from '../utils/deckState'
+import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
+import { normalizeDeckEntryId } from '../utils/deckState'
+import { useDeckSelection } from '../hooks/useDeckSelection'
 
 export function DeckBuilder({
   cards,
@@ -15,9 +15,24 @@ export function DeckBuilder({
   libraryError,
   onAdminClick,
   onBackToMenu,
+  toast,
 }) {
-  const [selectedCards, setSelectedCards] = useState({})
-  const [selectedLands, setSelectedLands] = useState({})
+  const {
+    selectedCards,
+    selectedLands,
+    setSelectedCards,
+    setSelectedLands,
+    addCard,
+    removeCard,
+    addLand,
+    removeLand,
+    clearDeck,
+    cardTotal,
+    landTotal,
+    errors,
+    warnings,
+  } = useDeckSelection()
+
   const [deckName, setDeckName] = useState('')
   const [mode, setMode] = useState('cards')
   const [filters, setFilters] = useState({
@@ -29,22 +44,12 @@ export function DeckBuilder({
     costMax: 10,
     flipOnly: false,
   })
-  const [toasts, setToasts] = useState([])
   const [deckModalOpen, setDeckModalOpen] = useState(false)
 
   const deckCode = useMemo(
     () => generateDeckCode(selectedCards, selectedLands),
     [selectedCards, selectedLands]
   )
-
-  const toast = (type, text) => {
-    const id = crypto.randomUUID()
-    setToasts((p) => [...p, { id, type, text }])
-    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 3000)
-  }
-
-  const cardTotal = Object.values(selectedCards).reduce((a, b) => a + b, 0)
-  const landTotal = Object.values(selectedLands).reduce((a, b) => a + b, 0)
 
   const filteredCards = useMemo(
     () =>
@@ -61,34 +66,6 @@ export function DeckBuilder({
       ).sort((a, b) => a.card_number - b.card_number),
     [cards, filters]
   )
-
-  const addCard = (id) =>
-    setSelectedCards((p) => applyDeckEntries(p, { [id]: 1 }, { maxPerEntry: 3, maxTotal: 40 }))
-
-  const removeCard = (id) =>
-    setSelectedCards((p) => {
-      const next = { ...p, [id]: (p[id] || 0) - 1 }
-      if (next[id] <= 0) delete next[id]
-      return next
-    })
-
-  const addLand = (id) =>
-    landTotal < 4 &&
-    setSelectedLands((p) => applyDeckEntries(p, { [id]: 1 }, { maxPerEntry: 4, maxTotal: 4 }))
-
-  const removeLand = (id) =>
-    setSelectedLands((p) => {
-      const next = { ...p, [id]: (p[id] || 0) - 1 }
-      if (next[id] <= 0) delete next[id]
-      return next
-    })
-
-  const errors = [
-    ...(cardTotal > 40 ? ['В колоде больше 40 карт'] : []),
-    ...(landTotal !== 4 ? ['Выбрано не 4 земли'] : []),
-  ]
-
-  const warnings = cardTotal < 40 ? ['В колоде меньше 40 карт'] : []
 
   const saveDeck = async () => {
     const code = deckCode
@@ -121,28 +98,32 @@ export function DeckBuilder({
 
     try {
       toast('success', '⏳ Расширяем код колоды из БД...')
-      console.log('📥 Импорт кода:', trimmedCode)
-      
-      const { selectedCards: importedCards, selectedLands: importedLands, cards: fullCards, lands: fullLands } = await expandDeckCodeWithCardData(trimmedCode, supabase)
-      
-      console.log('✅ Импортированные карты:', importedCards)
-      console.log('✅ Импортированные земли:', importedLands)
-      console.log('✅ Полные данные карт:', fullCards)
-      console.log('✅ Полные данные земель:', fullLands)
-      
-      setSelectedCards(importedCards)
-      setSelectedLands(importedLands)
-      toast('success', `✅ Колода успешно импортирована: ${Object.keys(importedCards).length} карт, ${Object.keys(importedLands).length} земель`)
+      const { selectedCards: importedCards, selectedLands: importedLands } =
+        await expandDeckCodeWithCardData(trimmedCode, supabase)
+
+      const normalizeToLowerMap = (obj) =>
+        Object.fromEntries(
+          Object.entries(obj || {})
+            .map(([id, qty]) => [normalizeDeckEntryId(id), Number(qty) || 0])
+            .filter(([, q]) => q > 0)
+        )
+
+      setSelectedCards(normalizeToLowerMap(importedCards))
+      setSelectedLands(normalizeToLowerMap(importedLands))
+      toast(
+        'success',
+        `✅ Колода успешно импортирована: ${Object.keys(importedCards || {}).length} карт, ${
+          Object.keys(importedLands || {}).length
+        } земель`
+      )
     } catch (error) {
-      console.error('❌ Import error:', error)
       toast('error', `❌ Ошибка импорта: ${error.message}`)
     }
   }
 
-  const clearDeck = () => {
+  const clearDeckConfirm = () => {
     if (window.confirm('Очистить колоду?')) {
-      setSelectedCards({})
-      setSelectedLands({})
+      clearDeck()
       setDeckName('')
     }
   }
@@ -158,7 +139,7 @@ export function DeckBuilder({
         errors={errors}
         warnings={warnings}
         save={saveDeck}
-        clear={clearDeck}
+        clear={clearDeckConfirm}
         importDeck={importDeck}
         onAdminClick={onAdminClick}
         onBackToMenu={onBackToMenu}
@@ -218,7 +199,6 @@ export function DeckBuilder({
           )}
         </section>
       </div>
-      <Toasts toasts={toasts} />
     </main>
   )
 }

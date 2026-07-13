@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../utils/supabase'
 import { Modal } from './Shared/Modal'
 import { ImageThumb } from './Shared/ImageThumb'
-import { CARD_TYPES, LAND_TYPES } from './DeckFilters'
+import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 
 const emptyCard = {
   card_number: '',
@@ -20,7 +19,16 @@ const emptyCard = {
   mechanics: '[]',
 }
 
-export function CardForm({ card, onClose, onSave, isNew, similarCards, setSimilarCards, onDelete }) {
+export function CardForm({
+  card,
+  onClose,
+  onSave,
+  isNew,
+  similarCards,
+  setSimilarCards,
+  onDelete,
+  onFindSimilarCards,
+}) {
   const [form, setForm] = useState(
     card ? { ...card, mechanics: JSON.stringify(card.mechanics ?? [], null, 2) } : emptyCard
   )
@@ -48,10 +56,7 @@ export function CardForm({ card, onClose, onSave, isNew, similarCards, setSimila
     if (!form.card_number || !form.name.trim() || form.cost === '') return
 
     if (isNew && !force) {
-      const { data } = await supabase.rpc('find_similar_cards', {
-        p_name: form.name,
-        p_description: form.description,
-      })
+      const data = await onFindSimilarCards?.(form.name, form.description)
       if (data?.length) {
         setSimilarCards(data)
         return

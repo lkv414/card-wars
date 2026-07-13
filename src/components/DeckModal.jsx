@@ -34,34 +34,15 @@ export function DeckModal({
     return list.find((item) => normalizeId(item.id) === normalized)
   }
 
-  console.debug('[DeckModal] open', {
-    selectedCards,
-    selectedLands,
-    cardIds: cards.map((card) => normalizeId(card.id)),
-    landIds: lands.map((land) => normalizeId(land.id)),
-  })
-
   const deckCards = Object.keys(selectedCards)
     .map((id) => {
       const found = findById(cards, id)
-      console.debug('[DeckModal] card lookup', {
-        id,
-        normalizedId: normalizeId(id),
-        foundId: found?.id,
-        foundName: found?.name,
-      })
       return { id, found }
     })
 
   const deckLands = Object.keys(selectedLands)
     .map((id) => {
       const found = findById(lands, id)
-      console.debug('[DeckModal] land lookup', {
-        id,
-        normalizedId: normalizeId(id),
-        foundId: found?.id,
-        foundName: found?.name,
-      })
       return { id, found }
     })
 

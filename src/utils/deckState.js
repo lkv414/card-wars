@@ -22,14 +22,16 @@ export function applyDeckEntries(existingEntries = {}, incomingEntries = {}, opt
 
   const nextEntries = { ...normalizedExisting }
   let totalQuantity = Object.values(nextEntries).reduce((sum, quantity) => sum + Number(quantity || 0), 0)
-  console.debug('[deckState] applyDeckEntries', {
-    existingEntriesJson: JSON.stringify(existingEntries),
-    normalizedExisting,
-    incomingEntriesJson: JSON.stringify(incomingEntries),
-    normalizedIncoming,
-    maxPerEntry,
-    maxTotal,
-  })
+  if (import.meta.env.DEV) {
+    console.debug('[deckState] applyDeckEntries', {
+      existingEntriesJson: JSON.stringify(existingEntries),
+      normalizedExisting,
+      incomingEntriesJson: JSON.stringify(incomingEntries),
+      normalizedIncoming,
+      maxPerEntry,
+      maxTotal,
+    })
+  }
 
   for (const [entryId, quantity] of Object.entries(normalizedIncoming)) {
     const safeQuantity = Number(quantity) || 0
@@ -47,13 +49,15 @@ export function applyDeckEntries(existingEntries = {}, incomingEntries = {}, opt
   }
 
   const result = Object.fromEntries(Object.entries(nextEntries).filter(([, quantity]) => Number(quantity) > 0))
-  try {
-    console.debug('[deckState] applyDeckEntries result', {
-      resultJson: JSON.stringify(result),
-      totalQuantity,
-    })
-  } catch (e) {
-    console.debug('[deckState] applyDeckEntries result (non-serializable)', { totalQuantity })
+  if (import.meta.env.DEV) {
+    try {
+      console.debug('[deckState] applyDeckEntries result', {
+        resultJson: JSON.stringify(result),
+        totalQuantity,
+      })
+    } catch (e) {
+      console.debug('[deckState] applyDeckEntries result (non-serializable)', { totalQuantity })
+    }
   }
 
   return result

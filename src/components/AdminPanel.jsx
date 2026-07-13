@@ -1,10 +1,17 @@
 import { useState } from 'react'
-import { supabase } from '../utils/supabase'
 import { ImageThumb } from './Shared/ImageThumb'
 import { CardForm } from './CardForm'
-import { CARD_TYPES, LAND_TYPES } from './DeckFilters'
+import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 
-export function AdminPanel({ cards, setCards, toast, goBack }) {
+export function AdminPanel({
+  cards,
+  toast,
+  goBack,
+  createCard,
+  updateCard,
+  deleteCard,
+  findSimilarCards,
+}) {
   const [type, setType] = useState('all')
   const [land, setLand] = useState('all')
   const [editing, setEditing] = useState(null)
@@ -15,26 +22,32 @@ export function AdminPanel({ cards, setCards, toast, goBack }) {
   )
 
   const saveCard = async (card) => {
-    const { data, error } = await supabase.from('cards').upsert(card).select().single()
+    if (!card) return
 
-    if (error) {
-      toast('error', error.message)
-    } else {
-      const saved = data || { ...card, id: card.id || crypto.randomUUID() }
-      setCards((prev) =>
-        [...prev.filter((item) => item.id !== saved.id), saved].sort((a, b) => a.card_number - b.card_number)
-      )
-      setEditing(null)
-      setSimilar([])
-      toast('success', card.id ? '✅ Карта обновлена' : '✅ Карта создана')
+    const { id, ...rest } = card
+    const result = id ? await updateCard(id, rest) : await createCard(rest)
+
+    if (!result?.success) {
+      toast('error', result?.error || 'Не удалось сохранить карту')
+      return
     }
+
+    setEditing(null)
+    setSimilar([])
+    toast('success', id ? '✅ Карта обновлена' : '✅ Карта создана')
   }
 
   const remove = async (card) => {
     if (!window.confirm(`Удалить карту ${card.name}?`)) return
 
-    await supabase.from('cards').delete().eq('id', card.id)
-    setCards((prev) => prev.filter((item) => item.id !== card.id))
+    const result = await deleteCard(card.id)
+    if (!result?.success) {
+      toast('error', result?.error || 'Не удалось удалить карту')
+      return
+    }
+
+    setEditing(null)
+    setSimilar([])
     toast('success', '🗑️ Карта удалена')
   }
 
@@ -92,6 +105,7 @@ export function AdminPanel({ cards, setCards, toast, goBack }) {
           similarCards={similar}
           setSimilarCards={setSimilar}
           onDelete={remove}
+          onFindSimilarCards={findSimilarCards}
         />
       )}
     </main>

@@ -1,19 +1,4 @@
-const CARD_TYPES = {
-  creature: 'Существо',
-  building: 'Строение',
-  spell: 'Заклинание',
-}
-
-const LAND_TYPES = {
-  corn: { label: 'Кукурузное поле', icon: '🌽' },
-  ice: { label: 'Ледяная', icon: '❄️' },
-  desert: { label: 'Пустынная', icon: '🏜️' },
-  good: { label: 'Добрая', icon: '🌸' },
-  swamp: { label: 'Бесполезное болото', icon: '🌿' },
-  sand: { label: 'Песчаная', icon: '🏖️' },
-  blue: { label: 'Синяя равнина', icon: '🔵' },
-  any: { label: 'Любой', icon: '🌈' },
-}
+import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 
 export function DeckFilters({ filters, setFilters, mode, setMode }) {
   const toggle = (key, value) =>
@@ -109,4 +94,3 @@ export function DeckFilters({ filters, setFilters, mode, setMode }) {
   )
 }
 
-export { CARD_TYPES, LAND_TYPES }

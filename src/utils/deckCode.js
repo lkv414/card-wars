@@ -192,26 +192,30 @@ export async function expandDeckCodeWithCardData(deckCode, supabaseClient) {
 
   const { selectedCards = {}, selectedLands = {} } = decoded
 
-  // Получаем UUIDs всех карт
-  const allUuids = [...Object.keys(selectedCards), ...Object.keys(selectedLands)]
+  const cardUuids = Object.keys(selectedCards)
+  const landUuids = Object.keys(selectedLands)
 
-  if (allUuids.length === 0) {
+  if (cardUuids.length === 0 && landUuids.length === 0) {
     // Пустая колода
     return { selectedCards: {}, selectedLands: {}, cards: [], lands: [] }
   }
 
-  // Запрашиваем карты из Supabase по UUID
-  const { data: dbCards, error } = await supabaseClient
-    .from('cards')
-    .select('*')
-    .in('id', allUuids)
+  // Загружаем карточки и земли раздельно, т.к. они лежат в разных таблицах
+  const [{ data: dbCards, error: cardsError }, { data: dbLands, error: landsError }] = await Promise.all([
+    cardUuids.length
+      ? supabaseClient.from('cards').select('*').in('id', cardUuids)
+      : Promise.resolve({ data: [], error: null }),
+    landUuids.length
+      ? supabaseClient.from('lands').select('*').in('id', landUuids)
+      : Promise.resolve({ data: [], error: null }),
+  ])
 
-  if (error) {
-    throw new Error(`Database error: ${error.message}`)
-  }
+  if (cardsError) throw new Error(`Database error: ${cardsError.message}`)
+  if (landsError) throw new Error(`Database error: ${landsError.message}`)
 
   // Создаём map с нормализацией UUID (нижний регистр для поиска)
-  const cardsMap = new Map((dbCards || []).map(c => [c.id.toLowerCase(), c]))
+  const cardsMap = new Map((dbCards || []).map((c) => [c.id.toLowerCase(), c]))
+  const landsMap = new Map((dbLands || []).map((l) => [l.id.toLowerCase(), l]))
 
   // Нормализуем UUID в selectedCards/Lands для правильного поиска
   const normalizedSelectedCards = {}
@@ -230,9 +234,9 @@ export async function expandDeckCodeWithCardData(deckCode, supabaseClient) {
 
   for (const [uuid, qty] of Object.entries(selectedLands)) {
     const lowerUuid = uuid.toLowerCase()
-    const card = cardsMap.get(lowerUuid)
-    if (card) {
-      normalizedSelectedLands[card.id] = Number(qty)
+    const land = landsMap.get(lowerUuid)
+    if (land) {
+      normalizedSelectedLands[land.id] = Number(qty)
     } else {
       // Если карта не найдена, сохраняем оригинальный UUID
       normalizedSelectedLands[uuid] = Number(qty)
@@ -247,9 +251,9 @@ export async function expandDeckCodeWithCardData(deckCode, supabaseClient) {
   })
 
   const fullLands = Object.entries(normalizedSelectedLands).map(([uuid, qty]) => {
-    const card = cardsMap.get(uuid.toLowerCase())
-    if (!card) return { id: uuid, quantity: Number(qty) }
-    return { ...card, quantity: Number(qty) }
+    const land = landsMap.get(uuid.toLowerCase())
+    if (!land) return { id: uuid, quantity: Number(qty) }
+    return { ...land, quantity: Number(qty) }
   })
 
   return {

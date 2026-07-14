@@ -66,7 +66,7 @@ function App() {
         <AdminPanel
           cards={cards}
           toast={toast}
-          goBack={handleBackToMenu}
+          goBack={handleGoToDeckBuilder}
           createCard={createCard}
           updateCard={updateCard}
           deleteCard={deleteCard}

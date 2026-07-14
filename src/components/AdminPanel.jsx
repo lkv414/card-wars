@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { ImageThumb } from './Shared/ImageThumb'
 import { CardForm } from './CardForm'
+import { CardTile } from './Shared/CardTile'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 
 export function AdminPanel({
@@ -54,7 +54,7 @@ export function AdminPanel({
   return (
     <main className="admin">
       <div className="admin-top">
-        <button onClick={goBack}>← Назад в меню</button>
+        <button onClick={goBack}>← К редактору колод</button>
         <h1>🔧 Панель админа: Управление картами</h1>
         <button className="primary" onClick={() => setEditing({ isNew: true })}>
           ➕ Добавить новую карту
@@ -83,13 +83,12 @@ export function AdminPanel({
 
       <div className="cards-grid">
         {filtered.map((card) => (
-          <div key={card.id} className="card-item" onClick={() => setEditing(card)}>
-            <ImageThumb src={card.image_url} size="medium" alt={card.name} />
-            <div className="card-item-info">
-              <h4>{card.name}</h4>
-              <small>#{card.card_number}</small>
-            </div>
-          </div>
+          <CardTile
+            key={card.id}
+            item={card}
+            showControls={false}
+            onClick={() => setEditing(card)}
+          />
         ))}
       </div>
 

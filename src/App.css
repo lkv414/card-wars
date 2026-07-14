@@ -115,7 +115,11 @@ body { background: #f5efe4; color: #3c3026; }
 .panel-button:hover { background: #e59200; }
 
 /* position helpers */
-.panel-button.bottom-left { left: 26px; right: auto; }
+/* Desktop: sit to the right of the sticky filters column (padding + 260px + gap) */
+.panel-button.bottom-left {
+  left: calc(18px + 260px + 18px);
+  right: auto;
+}
 .panel-button.bottom-right { right: 26px; left: auto; }
 
 /* trash variant */
@@ -143,6 +147,24 @@ body { background: #f5efe4; color: #3c3026; }
   border-radius: 22px;
   background: #fffaf1;
   box-shadow: 0 10px 30px #805d2a17;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #e0c9a0 transparent;
+}
+/* WebKit (Chrome, Edge, Safari) — тонкий скролл в тон панели */
+.filters::-webkit-scrollbar {
+  width: 6px;
+}
+.filters::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 10px 0;
+}
+.filters::-webkit-scrollbar-thumb {
+  background: #e0c9a0;
+  border-radius: 999px;
+}
+.filters::-webkit-scrollbar-thumb:hover {
+  background: #d4b078;
 }
 .filters h2 {
   font-size: 18px;
@@ -454,6 +476,8 @@ body { background: #f5efe4; color: #3c3026; }
   .admin-top { grid-template-columns: 1fr 1fr; }
   .admin-top h1 { grid-column: 1 / -1; font-size: 22px; }
   .panel-button { right: 16px; bottom: 16px; padding: 14px 18px; }
+  /* Filters become a drawer — trash can sit at the screen edge again */
+  .panel-button.bottom-left { left: 16px; }
 }
 
 @media (max-width: 640px) {
@@ -462,6 +486,8 @@ body { background: #f5efe4; color: #3c3026; }
   .admin-top select, .admin-top button { width: 100%; }
   .topbar .code-input { flex-basis: 100%; max-width: none; }
   .cards-grid { gap: 12px; justify-content: center; }
+  .panel-button.bottom-left { left: 12px; }
+  .panel-button.bottom-right { right: 12px; }
 }
 
 @media (max-width: 1024px) { .card-row { grid-template-columns: 64px minmax(0, 1fr); } .row-actions { grid-column: 2; } }

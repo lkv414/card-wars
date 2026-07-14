@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { navigate, ROUTES } from '../router'
 import './MainMenu.css'
 
-export function MainMenu({ onJoin, onDeckBuilder }) {
+export function MainMenu({ onJoin }) {
   const [nickname, setNickname] = useState('')
   const [roomCode, setRoomCode] = useState('')
 
@@ -47,7 +48,7 @@ export function MainMenu({ onJoin, onDeckBuilder }) {
             ✅ Присоединиться
           </button>
 
-          <button className="btn-editor" onClick={onDeckBuilder}>
+          <button className="btn-editor" onClick={() => navigate(ROUTES.deck)}>
             🔨 Редактор колод
           </button>
         </div>

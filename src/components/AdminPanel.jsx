@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { CardForm } from './CardForm'
 import { CardTile } from './Shared/CardTile'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
+import { navigate, ROUTES } from '../router'
 
 export function AdminPanel({
   cards,
   toast,
-  goBack,
   createCard,
   updateCard,
   deleteCard,
@@ -54,7 +54,7 @@ export function AdminPanel({
   return (
     <main className="admin">
       <div className="admin-top">
-        <button onClick={goBack}>← К редактору колод</button>
+        <button onClick={() => navigate(ROUTES.deck)}>← К редактору колод</button>
         <h1>🔧 Панель админа: Управление картами</h1>
         <button className="primary" onClick={() => setEditing({ isNew: true })}>
           ➕ Добавить новую карту

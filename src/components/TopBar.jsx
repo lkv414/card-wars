@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { navigate, ROUTES } from '../router'
 
 export function TopBar({
   name,
@@ -11,8 +12,6 @@ export function TopBar({
   save,
   clear,
   importDeck,
-  onAdminClick,
-  onBackToMenu,
 }) {
   const [codeDraft, setCodeDraft] = useState('')
   const [isEditingCode, setIsEditingCode] = useState(false)
@@ -33,7 +32,7 @@ export function TopBar({
 
   return (
     <header className="topbar">
-      <button className="back-btn" onClick={onBackToMenu}>
+      <button className="back-btn" onClick={() => navigate(ROUTES.menu)}>
         ← Назад
       </button>
 
@@ -77,7 +76,7 @@ export function TopBar({
         🗑️ Очистить
       </button>
 
-      <button className="admin-btn" onClick={onAdminClick}>
+      <button className="admin-btn" onClick={() => navigate(ROUTES.admin)}>
         🔧 Админ-панель
       </button>
 

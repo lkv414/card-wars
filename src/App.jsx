@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { useCards } from './hooks/useCards'
 import { useLands } from './hooks/useLands'
 import { useToasts } from './hooks/useToasts'
+import { usePathname, navigate, ROUTES } from './router'
 import './App.css'
 
 import { MainMenu } from './components/MainMenu'
@@ -9,9 +10,10 @@ import { DeckBuilder } from './components/DeckBuilder'
 import { AdminPanel } from './components/AdminPanel'
 import { Toasts } from './components/Shared/Toasts'
 
+const KNOWN_ROUTES = new Set([ROUTES.menu, ROUTES.deck, ROUTES.admin])
+
 function App() {
-  // Состояние для переключения экранов
-  const [screen, setScreen] = useState('main-menu') // 'main-menu', 'deck', 'admin'
+  const pathname = usePathname()
 
   const {
     cards,
@@ -29,44 +31,34 @@ function App() {
 
   const { toasts, toast } = useToasts()
 
-  // Обработчики переключения экранов
+  useEffect(() => {
+    if (!KNOWN_ROUTES.has(pathname)) {
+      navigate(ROUTES.menu, { replace: true })
+    }
+  }, [pathname])
+
   const handleJoinGame = () => {
     // TODO: Реализовать присоединение к игре
   }
 
-  const handleGoToDeckBuilder = () => {
-    setScreen('deck')
-  }
-
-  const handleGoToAdmin = () => {
-    setScreen('admin')
-  }
-
-  const handleBackToMenu = () => {
-    setScreen('main-menu')
-  }
-
   return (
     <>
-      {screen === 'main-menu' && <MainMenu onJoin={handleJoinGame} onDeckBuilder={handleGoToDeckBuilder} />}
+      {pathname === ROUTES.menu && <MainMenu onJoin={handleJoinGame} />}
 
-      {screen === 'deck' && (
+      {pathname === ROUTES.deck && (
         <DeckBuilder
           cards={cards}
           lands={lands}
           loadingLibrary={loadingLibrary}
           libraryError={libraryError}
-          onAdminClick={handleGoToAdmin}
-          onBackToMenu={handleBackToMenu}
           toast={toast}
         />
       )}
 
-      {screen === 'admin' && (
+      {pathname === ROUTES.admin && (
         <AdminPanel
           cards={cards}
           toast={toast}
-          goBack={handleGoToDeckBuilder}
           createCard={createCard}
           updateCard={updateCard}
           deleteCard={deleteCard}

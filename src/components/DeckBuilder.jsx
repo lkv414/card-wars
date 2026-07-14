@@ -13,8 +13,6 @@ export function DeckBuilder({
   lands,
   loadingLibrary,
   libraryError,
-  onAdminClick,
-  onBackToMenu,
   toast,
 }) {
   const {
@@ -141,8 +139,6 @@ export function DeckBuilder({
         save={saveDeck}
         clear={clearDeckConfirm}
         importDeck={importDeck}
-        onAdminClick={onAdminClick}
-        onBackToMenu={onBackToMenu}
       />
 
       <button className="panel-button" onClick={() => setDeckModalOpen(true)}>

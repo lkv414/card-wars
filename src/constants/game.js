@@ -15,3 +15,8 @@ export const LAND_TYPES = {
   any: { label: 'Любой', icon: '🌈' },
 }
 
+export const DECK_LIMITS = {
+  cards: { maxPerEntry: 3, maxTotal: 40 },
+  lands: { maxPerEntry: 4, maxTotal: 4 },
+}
+

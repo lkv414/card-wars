@@ -33,3 +33,39 @@ code {
   padding: 4px 8px;
   border-radius: 4px;
 }
+
+.error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+.error-boundary h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.error-boundary p {
+  max-width: 480px;
+  color: #666;
+}
+
+.error-boundary button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.error-boundary-details {
+  max-width: 640px;
+  overflow: auto;
+  text-align: left;
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+}

@@ -1,6 +1,7 @@
+import { memo } from 'react'
 import { CardTile } from './Shared/CardTile'
 
-export function CardGrid({
+export const CardGrid = memo(function CardGrid({
   cards,
   selectedCards,
   addCard,
@@ -30,4 +31,4 @@ export function CardGrid({
       ))}
     </div>
   )
-}
+})

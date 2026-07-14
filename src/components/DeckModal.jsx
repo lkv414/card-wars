@@ -1,7 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { DECK_LIMITS } from '../constants/game'
 import { CardGrid } from './CardGrid'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { groupCardsByCost, groupCardsByType } from '../utils/cardSort'
+
+const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
+
+const normalizeId = (value) => String(value).trim().toLowerCase()
+
+const findById = (list, id) => {
+  const normalized = normalizeId(id)
+  return list.find((item) => normalizeId(item.id) === normalized)
+}
 
 export function DeckModal({
   open,
@@ -33,37 +43,46 @@ export function DeckModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  if (!open) return null
-
   const cardTotal = Object.values(selectedCards).reduce((a, b) => a + b, 0)
   const landTotal = Object.values(selectedLands).reduce((a, b) => a + b, 0)
-  const cardsOk = cardTotal === 40
-  const landsOk = landTotal === 4
+  const cardsOk = cardTotal === CARD_LIMITS.maxTotal
+  const landsOk = landTotal === LAND_LIMITS.maxTotal
 
-  const normalizeId = (value) => String(value).trim().toLowerCase()
+  const deckCards = useMemo(
+    () =>
+      Object.keys(selectedCards).map((id) => ({
+        id,
+        found: findById(cards, id),
+      })),
+    [selectedCards, cards]
+  )
 
-  const findById = (list, id) => {
-    const normalized = normalizeId(id)
-    return list.find((item) => normalizeId(item.id) === normalized)
-  }
+  const deckLands = useMemo(
+    () =>
+      Object.keys(selectedLands).map((id) => ({
+        id,
+        found: findById(lands, id),
+      })),
+    [selectedLands, lands]
+  )
 
-  const deckCards = Object.keys(selectedCards).map((id) => ({
-    id,
-    found: findById(cards, id),
-  }))
+  const foundDeckCards = useMemo(
+    () => deckCards.filter((entry) => entry.found).map((entry) => entry.found),
+    [deckCards]
+  )
+  const missingDeckCards = useMemo(() => deckCards.filter((entry) => !entry.found), [deckCards])
+  const foundDeckLands = useMemo(
+    () => deckLands.filter((entry) => entry.found).map((entry) => entry.found),
+    [deckLands]
+  )
+  const missingDeckLands = useMemo(() => deckLands.filter((entry) => !entry.found), [deckLands])
 
-  const deckLands = Object.keys(selectedLands).map((id) => ({
-    id,
-    found: findById(lands, id),
-  }))
+  const cardGroups = useMemo(
+    () => (groupMode === 'cost' ? groupCardsByCost(foundDeckCards) : groupCardsByType(foundDeckCards)),
+    [groupMode, foundDeckCards]
+  )
 
-  const foundDeckCards = deckCards.filter((entry) => entry.found).map((entry) => entry.found)
-  const missingDeckCards = deckCards.filter((entry) => !entry.found)
-  const foundDeckLands = deckLands.filter((entry) => entry.found).map((entry) => entry.found)
-  const missingDeckLands = deckLands.filter((entry) => !entry.found)
-
-  const cardGroups =
-    groupMode === 'cost' ? groupCardsByCost(foundDeckCards) : groupCardsByType(foundDeckCards)
+  if (!open) return null
 
   return (
     <div className="deck-modal-overlay" onClick={onClose}>
@@ -79,23 +98,27 @@ export function DeckModal({
           <div className="deck-modal-header-main">
             <h2 id="deck-modal-title">Твоя колода</h2>
             <div className="deck-modal-tally">
-              <span className={cardsOk ? 'tally-ok' : 'tally-bad'}>{cardTotal} / 40 карт</span>
+              <span className={cardsOk ? 'tally-ok' : 'tally-bad'}>
+                {cardTotal} / {CARD_LIMITS.maxTotal} карт
+              </span>
               <span className="tally-sep" aria-hidden="true">
                 ·
               </span>
-              <span className={landsOk ? 'tally-ok' : 'tally-bad'}>{landTotal} / 4 земли</span>
+              <span className={landsOk ? 'tally-ok' : 'tally-bad'}>
+                {landTotal} / {LAND_LIMITS.maxTotal} земли
+              </span>
             </div>
             <div className="deck-progress deck-progress-modal" aria-hidden="true">
               <div className="deck-progress-track">
                 <div
                   className={`deck-progress-fill cards ${cardsOk ? 'ok' : ''}`}
-                  style={{ width: `${Math.min(100, (cardTotal / 40) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (cardTotal / CARD_LIMITS.maxTotal) * 100)}%` }}
                 />
               </div>
               <div className="deck-progress-track land">
                 <div
                   className={`deck-progress-fill lands ${landsOk ? 'ok' : ''}`}
-                  style={{ width: `${Math.min(100, (landTotal / 4) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (landTotal / LAND_LIMITS.maxTotal) * 100)}%` }}
                 />
               </div>
             </div>
@@ -127,7 +150,9 @@ export function DeckModal({
 
         <div className="deck-modal-content">
           <section className="deck-modal-section">
-            <h3>Карты ({cardTotal} / 40)</h3>
+            <h3>
+              Карты ({cardTotal} / {CARD_LIMITS.maxTotal})
+            </h3>
             {foundDeckCards.length === 0 ? (
               <div className="empty-state empty-state-inline">
                 <p className="empty-message">Пока пусто</p>
@@ -180,7 +205,9 @@ export function DeckModal({
           </section>
 
           <section className="deck-modal-section">
-            <h3>Земли ({landTotal} / 4)</h3>
+            <h3>
+              Земли ({landTotal} / {LAND_LIMITS.maxTotal})
+            </h3>
             {foundDeckLands.length === 0 ? (
               <div className="empty-state empty-state-inline">
                 <p className="empty-message">Пока пусто</p>

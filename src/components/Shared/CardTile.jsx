@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
+import { DECK_LIMITS } from '../../constants/game'
 import { normalizeDeckEntryId } from '../../utils/deckState'
 
-export function CardTile({
+const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
+
+export const CardTile = memo(function CardTile({
   item,
   isLand = false,
   onClick,
@@ -25,11 +28,11 @@ export function CardTile({
 
   const blockReason = (() => {
     if (isLandCard) {
-      if (cardTotal >= 4) return 'В колоде уже 4 земли'
+      if (cardTotal >= LAND_LIMITS.maxTotal) return `В колоде уже ${LAND_LIMITS.maxTotal} земли`
       return null
     }
-    if (quantity >= 3) return 'Максимум 3 копии этой карты'
-    if (cardTotal >= 40) return 'Колода полна (40 карт)'
+    if (quantity >= CARD_LIMITS.maxPerEntry) return `Максимум ${CARD_LIMITS.maxPerEntry} копии этой карты`
+    if (cardTotal >= CARD_LIMITS.maxTotal) return `Колода полна (${CARD_LIMITS.maxTotal} карт)`
     return null
   })()
 
@@ -177,4 +180,4 @@ export function CardTile({
       </div>
     </article>
   )
-}
+})

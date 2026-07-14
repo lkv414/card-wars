@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react'
+import { DECK_LIMITS } from '../constants/game'
 import { applyDeckEntries, normalizeDeckEntryId } from '../utils/deckState'
 import { validateDeck } from '../utils/deckValidation'
-
-const DECK_LIMITS = {
-  cards: { maxPerEntry: 3, maxTotal: 40 },
-  lands: { maxPerEntry: 4, maxTotal: 4 },
-}
 
 export function useDeckSelection() {
   const [selectedCards, setSelectedCards] = useState({})

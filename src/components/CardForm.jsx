@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Modal } from './Shared/Modal'
 import { ImageThumb } from './Shared/ImageThumb'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
@@ -35,6 +35,7 @@ export function CardForm({
   const [jsonError, setJsonError] = useState('')
   const [imageWarning, setImageWarning] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const submitRef = useRef(() => {})
 
   const set = (key, value) =>
     setForm((prev) => ({
@@ -81,15 +82,19 @@ export function CardForm({
   }
 
   useEffect(() => {
+    submitRef.current = submit
+  })
+
+  useEffect(() => {
     const onKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
-        submit()
+        submitRef.current()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  })
+  }, [])
 
   if (similarCards.length > 0 && !showDeleteConfirm) {
     return (

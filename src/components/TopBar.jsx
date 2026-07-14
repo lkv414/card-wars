@@ -1,5 +1,8 @@
 import { useState } from 'react'
+import { DECK_LIMITS } from '../constants/game'
 import { navigate, ROUTES } from '../router'
+
+const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
 
 export function TopBar({
   deckCode,
@@ -16,10 +19,10 @@ export function TopBar({
   const [isEditingCode, setIsEditingCode] = useState(false)
   const codeInputValue = isEditingCode ? codeDraft : deckCode
 
-  const cardsOk = cardTotal === 40
-  const landsOk = landTotal === 4
-  const cardProgress = Math.min(100, (cardTotal / 40) * 100)
-  const landProgress = Math.min(100, (landTotal / 4) * 100)
+  const cardsOk = cardTotal === CARD_LIMITS.maxTotal
+  const landsOk = landTotal === LAND_LIMITS.maxTotal
+  const cardProgress = Math.min(100, (cardTotal / CARD_LIMITS.maxTotal) * 100)
+  const landProgress = Math.min(100, (landTotal / LAND_LIMITS.maxTotal) * 100)
 
   const tallyClass = [
     'deck-tally',
@@ -60,13 +63,13 @@ export function TopBar({
       <div className="deck-progress-wrap" title="Прогресс колоды">
         <span className={tallyClass}>
           <span className={cardsOk ? 'tally-ok' : errors.some((e) => e.includes('карт')) ? 'tally-bad' : ''}>
-            {cardTotal} / 40
+            {cardTotal} / {CARD_LIMITS.maxTotal}
           </span>
           <span className="tally-sep" aria-hidden="true">
             |
           </span>
           <span className={landsOk ? 'tally-ok' : landTotal > 0 || errors.length ? 'tally-bad' : ''}>
-            {landTotal} / 4
+            {landTotal} / {LAND_LIMITS.maxTotal}
           </span>
         </span>
         <div className="deck-progress" aria-hidden="true">

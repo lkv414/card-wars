@@ -1,3 +1,5 @@
+import { DECK_LIMITS } from '../constants/game'
+
 export function validateDeck(cards, lands) {
   const toEntries = (value) => {
     if (!value) return []
@@ -17,10 +19,14 @@ export function validateDeck(cards, lands) {
   const totalCards = cardEntries.reduce((sum, c) => sum + (c.quantity || 0), 0)
   const totalLands = landEntries.reduce((sum, l) => sum + (l.quantity || 0), 0)
 
-  if (totalCards > 40) errors.push('В колоде больше 40 карт')
+  if (totalCards > DECK_LIMITS.cards.maxTotal) {
+    errors.push(`В колоде больше ${DECK_LIMITS.cards.maxTotal} карт`)
+  }
 
   for (const c of cardEntries) {
-    if (c.quantity > 3) errors.push(`Карта ${c.id} встречается более 3 раз`)
+    if (c.quantity > DECK_LIMITS.cards.maxPerEntry) {
+      errors.push(`Карта ${c.id} встречается более ${DECK_LIMITS.cards.maxPerEntry} раз`)
+    }
   }
 
   return { isValid: errors.length === 0, errors, warnings, cardTotal: totalCards, landTotal: totalLands }

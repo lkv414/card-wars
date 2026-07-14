@@ -67,6 +67,13 @@
 }
 
 * { box-sizing: border-box; }
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
 button, input, select, textarea { font: inherit; }
 button {
   cursor: pointer;
@@ -112,7 +119,7 @@ body { background: var(--bg); color: var(--text); }
   align-items: center;
   padding: 8px 16px;
   border: 1px solid var(--border);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-radius: var(--radius-lg);
   background: var(--bg-surface);
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow);

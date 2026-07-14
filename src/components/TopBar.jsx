@@ -86,32 +86,34 @@ export function TopBar({
       </div>
 
       <div className="code-field">
-        <input
-          aria-label="Live-код колоды или код для загрузки"
-          className="code-input"
-          placeholder="Код DK-XXXXXX"
-          title="Live-код текущей колоды. Вставьте другой код и нажмите Enter, чтобы загрузить колоду."
-          value={codeInputValue}
-          onFocus={(event) => {
-            const input = event.currentTarget
-            setCodeDraft(deckCode)
-            setIsEditingCode(true)
-            requestAnimationFrame(() => input.select())
-          }}
-          onBlur={() => setIsEditingCode(false)}
-          onChange={(e) => setCodeDraft(e.target.value)}
-          onKeyDown={handleCodeKeyDown}
-        />
-        <button
-          type="button"
-          className="copy-code-btn"
-          title="Скопировать код колоды"
-          aria-label="Скопировать код колоды"
-          disabled={!deckCode}
-          onClick={() => onCopyCode?.(deckCode)}
-        >
-          📋
-        </button>
+        <div className="code-input-wrapper">
+          <input
+            aria-label="Live-код колоды или код для загрузки"
+            className="code-input"
+            placeholder="Код DK-XXXXXX"
+            title="Live-код текущей колоды. Вставьте другой код и нажмите Enter, чтобы загрузить колоду."
+            value={codeInputValue}
+            onFocus={(event) => {
+              const input = event.currentTarget
+              setCodeDraft(deckCode)
+              setIsEditingCode(true)
+              requestAnimationFrame(() => input.select())
+            }}
+            onBlur={() => setIsEditingCode(false)}
+            onChange={(e) => setCodeDraft(e.target.value)}
+            onKeyDown={handleCodeKeyDown}
+          />
+          <button
+            type="button"
+            className="copy-code-btn"
+            title="Скопировать код колоды"
+            aria-label="Скопировать код колоды"
+            disabled={!deckCode}
+            onClick={() => onCopyCode?.(deckCode)}
+          >
+            📋
+          </button>
+        </div>
       </div>
 
       {(warnings.length > 0 || errors.length > 0) && (

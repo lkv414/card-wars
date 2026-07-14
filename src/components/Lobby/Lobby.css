@@ -1,0 +1,332 @@
+.lobby-screen,
+.lobby-room {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg, #f5efe4);
+  color: var(--text, #3c3026);
+}
+
+.lobby-screen__content,
+.lobby-room__content {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lobby-screen__content h1,
+.lobby-room__content h1 {
+  font-size: 40px;
+  margin: 0;
+  color: var(--text-heading, #2b1c12);
+  text-align: center;
+}
+
+/* Back button */
+.lobby-back-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  font-size: 15px;
+  color: var(--text, #3c3026);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.lobby-back-btn:hover { opacity: 1; }
+
+/* Form */
+.lobby-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lobby-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-form__group label {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-heading, #2b1c12);
+}
+
+.lobby-form__group input {
+  padding: 14px 16px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.lobby-form__group input:focus {
+  border-color: var(--accent, #f5a623);
+}
+
+/* Two-column divider */
+.lobby-divider {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lobby-or {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.5;
+  font-weight: 600;
+}
+
+.lobby-option {
+  background: #bfb09c;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.07);
+}
+
+.lobby-option h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-heading, #2b1c12);
+}
+
+.lobby-option p {
+  font-size: 14px;
+  color: #6b5c4e;
+  margin: 0;
+}
+
+/* Buttons */
+.lobby-btn {
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.lobby-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+.lobby-btn--create {
+  background: #35b86b;
+  color: white;
+}
+.lobby-btn--create:hover:not(:disabled) {
+  background: #2d9b5a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(53, 184, 107, 0.3);
+}
+
+.lobby-btn--join {
+  background: var(--accent, #f5a623);
+  color: white;
+}
+.lobby-btn--join:hover:not(:disabled) {
+  background: var(--accent-hover, #e59200);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 166, 35, 0.3);
+}
+
+.lobby-btn--ready {
+  background: #4a90d9;
+  color: white;
+  font-size: 18px;
+  padding: 16px;
+}
+.lobby-btn--ready:hover:not(:disabled) {
+  background: #3478c0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(74, 144, 217, 0.3);
+}
+
+.lobby-btn--ready-done {
+  background: #35b86b;
+  color: white;
+  font-size: 18px;
+  padding: 16px;
+}
+
+/* Code input */
+.lobby-code-input {
+  padding: 14px 16px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  text-align: center;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  outline: none;
+  text-transform: uppercase;
+  font-family: var(--mono, monospace);
+  transition: border-color 0.15s;
+}
+.lobby-code-input:focus { border-color: var(--accent, #f5a623); }
+
+/* Error */
+.lobby-error {
+  color: #c0392b;
+  font-size: 14px;
+  text-align: center;
+  background: #fdecea;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+/* Room */
+.lobby-code-display {
+  background: #bfb09c;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-code-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #8a7060;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lobby-code-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.lobby-code-value span {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  font-family: var(--mono, monospace);
+  color: var(--text-heading, #2b1c12);
+}
+
+.lobby-copy-btn {
+  background: var(--accent, #f5a623);
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.lobby-copy-btn:hover { background: var(--accent-hover, #e59200); }
+
+.lobby-code-hint {
+  font-size: 13px;
+  color: #8a7060;
+}
+
+/* Players list */
+.lobby-players {
+  background: #bfb09c;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.07);
+}
+
+.lobby-players h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--text-heading, #2b1c12);
+}
+
+.lobby-players__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #afa088;
+}
+
+.lobby-player--empty {
+  opacity: 0.45;
+  border: 2px dashed #c9bfb3;
+  background: transparent;
+}
+
+.lobby-player__name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #2b1c12;
+}
+
+.lobby-player__you {
+  font-weight: 400;
+  color: #6b5c4e;
+  font-size: 13px;
+}
+
+.lobby-player__host {
+  color: #b8860b;
+  font-size: 14px;
+}
+
+.lobby-player__status {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.lobby-player__status.ready { background: #c6f0d8; color: #155a30; }
+.lobby-player__status.waiting { background: #e2d9cf; color: #5a4a3a; }
+
+.lobby-players__hint {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #8a7060;
+  text-align: center;
+}
+
+/* Game start */
+.lobby-game-start {
+  text-align: center;
+  padding: 20px;
+  background: #d4f5e2;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a7a40;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-btn { transition: none; }
+  .lobby-btn:hover:not(:disabled) { transform: none; }
+}

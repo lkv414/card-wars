@@ -4,6 +4,7 @@ export const ROUTES = {
   menu: '/',
   deck: '/deck',
   admin: '/admin',
+  lobby: '/lobby',
 }
 
 function subscribe(onStoreChange) {

@@ -8,9 +8,10 @@ import './App.css'
 import { MainMenu } from './components/MainMenu'
 import { DeckBuilder } from './components/DeckBuilder'
 import { AdminPanel } from './components/AdminPanel'
+import { LobbyScreen } from './components/Lobby/LobbyScreen'
 import { Toasts } from './components/Shared/Toasts'
 
-const KNOWN_ROUTES = new Set([ROUTES.menu, ROUTES.deck, ROUTES.admin])
+const KNOWN_ROUTES = new Set([ROUTES.menu, ROUTES.deck, ROUTES.admin, ROUTES.lobby])
 
 function App() {
   const pathname = usePathname()
@@ -38,12 +39,14 @@ function App() {
   }, [pathname])
 
   const handleJoinGame = () => {
-    toast('success', 'Присоединение к игре пока в разработке')
+    navigate(ROUTES.lobby)
   }
 
   return (
     <>
       {pathname === ROUTES.menu && <MainMenu onJoin={handleJoinGame} toast={toast} />}
+
+      {pathname === ROUTES.lobby && <LobbyScreen toast={toast} />}
 
       {pathname === ROUTES.deck && (
         <DeckBuilder

@@ -10,6 +10,9 @@ export function CardTile({
   removeCard,
   cardTotal,
   showControls = true,
+  onPreview,
+  onBlockedAdd,
+  compact = false,
 }) {
   const [imageFailed, setImageFailed] = useState(false)
   const normalizedId = normalizeDeckEntryId(item.id)
@@ -19,16 +22,61 @@ export function CardTile({
 
   const isLandCard = isLand || (!!item.name && !item.card_type)
   const hasImage = item.image_url && !imageFailed
-  const disabled = isLandCard ? false : quantity >= 3 || cardTotal >= 40
 
-  const handleClick = (event) => {
+  const blockReason = (() => {
+    if (isLandCard) {
+      if (cardTotal >= 4) return 'В колоде уже 4 земли'
+      return null
+    }
+    if (quantity >= 3) return 'Максимум 3 копии этой карты'
+    if (cardTotal >= 40) return 'Колода полна (40 карт)'
+    return null
+  })()
+
+  const disabled = Boolean(blockReason)
+
+  const tryAdd = () => {
+    if (disabled) {
+      onBlockedAdd?.(blockReason)
+      return
+    }
+    addCard?.(item.id)
+  }
+
+  const handleTileActivate = (event) => {
     if (event.target.closest('button')) return
-    onClick?.(item)
+    if (onClick) {
+      onClick(item)
+      return
+    }
+    if (addCard) tryAdd()
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.target.closest('button')) return
+
+    if (event.key === 'Enter' || event.key === '+') {
+      event.preventDefault()
+      if (onClick) onClick(item)
+      else if (addCard) tryAdd()
+      return
+    }
+
+    if ((event.key === '-' || event.key === '_') && quantity > 0) {
+      event.preventDefault()
+      removeCard?.(item.id)
+      return
+    }
+
+    if (event.key === 'i' || event.key === 'I' || event.key === ' ') {
+      if (event.key === ' ') event.preventDefault()
+      onPreview?.(item, isLandCard)
+    }
   }
 
   const handleAdd = (event) => {
     event.stopPropagation()
-    addCard?.(item.id)
+    tryAdd()
   }
 
   const handleRemove = (event) => {
@@ -36,11 +84,27 @@ export function CardTile({
     removeCard?.(item.id)
   }
 
+  const handlePreview = (event) => {
+    event.stopPropagation()
+    onPreview?.(item, isLandCard)
+  }
+
   return (
     <article
-      className={`card-tile${onClick ? ' card-tile-clickable' : ''}${quantity > 0 ? ' card-tile-selected' : ''}`}
+      className={[
+        'card-tile',
+        addCard || onClick ? 'card-tile-clickable' : '',
+        quantity > 0 ? 'card-tile-selected' : '',
+        compact ? 'card-tile-compact' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={hasImage ? { backgroundImage: `url("${item.image_url}")` } : undefined}
-      onClick={handleClick}
+      onClick={handleTileActivate}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`${item.name}${quantity ? `, в колоде ×${quantity}` : ''}. Enter — добавить, − — убрать, I — превью`}
     >
       {hasImage && (
         <img
@@ -51,15 +115,25 @@ export function CardTile({
         />
       )}
 
+      {onPreview && (
+        <button
+          type="button"
+          className="card-preview-btn"
+          title="Превью"
+          aria-label={`Превью: ${item.name}`}
+          onClick={handlePreview}
+        >
+          ℹ
+        </button>
+      )}
+
       <div className="card-tile-overlay">
         <div className="card-tile-top">
           <h4 className="card-tile-name">{item.name}</h4>
-          {!isLandCard && <span className="card-tile-number">#{item.card_number}</span>}
+          {!isLandCard && !compact && (
+            <span className="card-tile-number">#{item.card_number}</span>
+          )}
         </div>
-
-        {!isLandCard && item.description && (
-          <p className="card-tile-description">{item.description}</p>
-        )}
 
         {!isLandCard && (
           <div className="card-tile-stats">
@@ -80,6 +154,7 @@ export function CardTile({
                   type="button"
                   className="card-remove-btn"
                   title="Убрать карту"
+                  aria-label="Убрать карту"
                   onClick={handleRemove}
                 >
                   −
@@ -90,8 +165,9 @@ export function CardTile({
             <button
               type="button"
               className="card-add-btn"
-              title={disabled ? 'Максимум карт' : 'Добавить'}
-              disabled={disabled}
+              title={disabled ? blockReason : 'Добавить'}
+              aria-label={disabled ? blockReason : 'Добавить карту'}
+              aria-disabled={disabled}
               onClick={handleAdd}
             >
               ＋

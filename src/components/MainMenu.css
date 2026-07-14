@@ -4,7 +4,8 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: #f5efe4;
+  background: var(--bg, #f5efe4);
+  color: var(--text, #3c3026);
 }
 
 .main-menu-content {
@@ -16,7 +17,7 @@
 .main-menu-content h1 {
   font-size: 48px;
   margin-bottom: 40px;
-  color: #2b1c12;
+  color: var(--text-heading, #2b1c12);
 }
 
 .main-menu-form {
@@ -34,7 +35,7 @@
 
 .form-group label {
   font-weight: 700;
-  color: #2b1c12;
+  color: var(--text-heading, #2b1c12);
   font-size: 14px;
 }
 
@@ -65,12 +66,12 @@
 }
 
 .btn-editor {
-  background: #f5a623;
+  background: var(--accent, #f5a623);
   color: white;
 }
 
 .btn-editor:hover:not(:disabled) {
-  background: #e59200;
+  background: var(--accent-hover, #e59200);
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(245, 166, 35, 0.3);
 }
@@ -85,5 +86,16 @@
   .btn-editor {
     padding: 14px 20px;
     font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-join,
+  .btn-editor {
+    transition: none;
+  }
+  .btn-join:hover:not(:disabled),
+  .btn-editor:hover:not(:disabled) {
+    transform: none;
   }
 }

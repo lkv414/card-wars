@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CardForm } from './CardForm'
 import { CardTile } from './Shared/CardTile'
+import { ConfirmDialog } from './Shared/ConfirmDialog'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 import { navigate, ROUTES } from '../router'
 
@@ -16,6 +17,8 @@ export function AdminPanel({
   const [land, setLand] = useState('all')
   const [editing, setEditing] = useState(null)
   const [similar, setSimilar] = useState([])
+  const [pendingDelete, setPendingDelete] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   const filtered = cards.filter(
     (card) => (type === 'all' || card.card_type === type) && (land === 'all' || card.land_type === land)
@@ -34,33 +37,47 @@ export function AdminPanel({
 
     setEditing(null)
     setSimilar([])
-    toast('success', id ? '✅ Карта обновлена' : '✅ Карта создана')
+    toast('success', id ? 'Карта обновлена' : 'Карта создана')
   }
 
-  const remove = async (card) => {
-    if (!window.confirm(`Удалить карту ${card.name}?`)) return
+  const requestDelete = (card) => {
+    if (!card) return
+    setPendingDelete(card)
+  }
 
-    const result = await deleteCard(card.id)
-    if (!result?.success) {
-      toast('error', result?.error || 'Не удалось удалить карту')
-      return
+  const confirmDelete = async () => {
+    const card = pendingDelete
+    if (!card || deleting) return
+
+    setDeleting(true)
+    try {
+      const result = await deleteCard(card.id)
+      if (!result?.success) {
+        toast('error', result?.error || 'Не удалось удалить карту')
+        return
+      }
+
+      setPendingDelete(null)
+      setEditing(null)
+      setSimilar([])
+      toast('success', 'Карта удалена')
+    } finally {
+      setDeleting(false)
     }
-
-    setEditing(null)
-    setSimilar([])
-    toast('success', '🗑️ Карта удалена')
   }
 
   return (
     <main className="admin">
       <div className="admin-top">
-        <button onClick={() => navigate(ROUTES.deck)}>← К редактору колод</button>
-        <h1>🔧 Панель админа: Управление картами</h1>
-        <button className="primary" onClick={() => setEditing({ isNew: true })}>
-          ➕ Добавить новую карту
+        <button type="button" onClick={() => navigate(ROUTES.deck)}>
+          ← К редактору колод
+        </button>
+        <h1>Панель админа: Управление картами</h1>
+        <button type="button" className="primary" onClick={() => setEditing({ isNew: true })}>
+          Добавить карту
         </button>
 
-        <select value={type} onChange={(e) => setType(e.target.value)}>
+        <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Фильтр по типу">
           <option value="all">Все</option>
           {Object.entries(CARD_TYPES).map(([v, l]) => (
             <option value={v} key={v}>
@@ -69,7 +86,7 @@ export function AdminPanel({
           ))}
         </select>
 
-        <select value={land} onChange={(e) => setLand(e.target.value)}>
+        <select value={land} onChange={(e) => setLand(e.target.value)} aria-label="Фильтр по земле">
           <option value="all">Все земли</option>
           {Object.entries(LAND_TYPES).map(([v, l]) => (
             <option value={v} key={v}>
@@ -103,10 +120,27 @@ export function AdminPanel({
           onSave={saveCard}
           similarCards={similar}
           setSimilarCards={setSimilar}
-          onDelete={remove}
+          onDelete={requestDelete}
           onFindSimilarCards={findSimilarCards}
         />
       )}
+
+      <ConfirmDialog
+        open={Boolean(pendingDelete)}
+        title="Удалить карту?"
+        message={
+          pendingDelete
+            ? `«${pendingDelete.name}» будет удалена без возможности восстановления.`
+            : ''
+        }
+        confirmLabel={deleting ? 'Удаление…' : 'Удалить'}
+        cancelLabel="Отмена"
+        danger
+        onCancel={() => {
+          if (!deleting) setPendingDelete(null)
+        }}
+        onConfirm={confirmDelete}
+      />
     </main>
   )
 }

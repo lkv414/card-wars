@@ -7,19 +7,26 @@ export function CardGrid({
   removeCard,
   cardTotal,
   isLands = false,
+  onPreview,
+  onBlockedAdd,
+  compact = false,
 }) {
   return (
-    <div className="cards-grid">
+    <div className="cards-grid" role="list">
       {cards.map((item) => (
-        <CardTile
-          key={item.id}
-          item={item}
-          isLand={isLands}
-          selectedCards={selectedCards}
-          addCard={addCard}
-          removeCard={removeCard}
-          cardTotal={cardTotal}
-        />
+        <div key={item.id} role="listitem">
+          <CardTile
+            item={item}
+            isLand={isLands}
+            selectedCards={selectedCards}
+            addCard={addCard}
+            removeCard={removeCard}
+            cardTotal={cardTotal}
+            onPreview={onPreview}
+            onBlockedAdd={onBlockedAdd}
+            compact={compact}
+          />
+        </div>
       ))}
     </div>
   )

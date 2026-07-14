@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CardGrid } from './CardGrid'
+import { useFocusTrap } from '../hooks/useFocusTrap'
+import { groupCardsByCost, groupCardsByType } from '../utils/cardSort'
 
 export function DeckModal({
   open,
@@ -12,12 +14,21 @@ export function DeckModal({
   removeCard,
   addLand,
   removeLand,
+  onPreview,
+  onBlockedAdd,
 }) {
+  const dialogRef = useRef(null)
+  const [groupMode, setGroupMode] = useState('type')
+  useFocusTrap(open, dialogRef)
+
   useEffect(() => {
-    const onKey = (event) => event.key === 'Escape' && onClose()
-
     if (!open) return undefined
-
+    const onKey = (event) => {
+      if (event.key !== 'Escape') return
+      // Nested overlays (preview) stop this in capture; only close deck if still open.
+      event.stopPropagation()
+      onClose()
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
@@ -26,6 +37,8 @@ export function DeckModal({
 
   const cardTotal = Object.values(selectedCards).reduce((a, b) => a + b, 0)
   const landTotal = Object.values(selectedLands).reduce((a, b) => a + b, 0)
+  const cardsOk = cardTotal === 40
+  const landsOk = landTotal === 4
 
   const normalizeId = (value) => String(value).trim().toLowerCase()
 
@@ -34,110 +47,170 @@ export function DeckModal({
     return list.find((item) => normalizeId(item.id) === normalized)
   }
 
-  const deckCards = Object.keys(selectedCards)
-    .map((id) => {
-      const found = findById(cards, id)
-      return { id, found }
-    })
+  const deckCards = Object.keys(selectedCards).map((id) => ({
+    id,
+    found: findById(cards, id),
+  }))
 
-  const deckLands = Object.keys(selectedLands)
-    .map((id) => {
-      const found = findById(lands, id)
-      return { id, found }
-    })
+  const deckLands = Object.keys(selectedLands).map((id) => ({
+    id,
+    found: findById(lands, id),
+  }))
 
   const foundDeckCards = deckCards.filter((entry) => entry.found).map((entry) => entry.found)
   const missingDeckCards = deckCards.filter((entry) => !entry.found)
   const foundDeckLands = deckLands.filter((entry) => entry.found).map((entry) => entry.found)
   const missingDeckLands = deckLands.filter((entry) => !entry.found)
 
+  const cardGroups =
+    groupMode === 'cost' ? groupCardsByCost(foundDeckCards) : groupCardsByType(foundDeckCards)
+
   return (
     <div className="deck-modal-overlay" onClick={onClose}>
-      <div className="deck-modal" onClick={(event) => event.stopPropagation()}>
+      <div
+        ref={dialogRef}
+        className="deck-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="deck-modal-title"
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="deck-modal-header">
-          <h2>🎒 Твоя колода</h2>
-          <button className="deck-modal-close" onClick={onClose}>
-            Закрыть
+          <div className="deck-modal-header-main">
+            <h2 id="deck-modal-title">Твоя колода</h2>
+            <div className="deck-modal-tally">
+              <span className={cardsOk ? 'tally-ok' : 'tally-bad'}>{cardTotal} / 40 карт</span>
+              <span className="tally-sep" aria-hidden="true">
+                ·
+              </span>
+              <span className={landsOk ? 'tally-ok' : 'tally-bad'}>{landTotal} / 4 земли</span>
+            </div>
+            <div className="deck-progress deck-progress-modal" aria-hidden="true">
+              <div className="deck-progress-track">
+                <div
+                  className={`deck-progress-fill cards ${cardsOk ? 'ok' : ''}`}
+                  style={{ width: `${Math.min(100, (cardTotal / 40) * 100)}%` }}
+                />
+              </div>
+              <div className="deck-progress-track land">
+                <div
+                  className={`deck-progress-fill lands ${landsOk ? 'ok' : ''}`}
+                  style={{ width: `${Math.min(100, (landTotal / 4) * 100)}%` }}
+                />
+              </div>
+            </div>
+          </div>
+          <button type="button" className="deck-modal-close" onClick={onClose}>
+            Готово
           </button>
+        </div>
+
+        <div className="deck-modal-toolbar">
+          <span className="deck-modal-toolbar-label">Группировка карт</span>
+          <div className="mode-tabs deck-group-tabs">
+            <button
+              type="button"
+              className={groupMode === 'type' ? 'active' : ''}
+              onClick={() => setGroupMode('type')}
+            >
+              По типу
+            </button>
+            <button
+              type="button"
+              className={groupMode === 'cost' ? 'active' : ''}
+              onClick={() => setGroupMode('cost')}
+            >
+              По стоимости
+            </button>
+          </div>
         </div>
 
         <div className="deck-modal-content">
           <section className="deck-modal-section">
-            <h3>🃏 Карты ({cardTotal} / 40)</h3>
+            <h3>Карты ({cardTotal} / 40)</h3>
             {foundDeckCards.length === 0 ? (
-              <>
+              <div className="empty-state empty-state-inline">
                 <p className="empty-message">Пока пусто</p>
-                {missingDeckCards.length > 0 && (
-                  <div className="missing-list">
-                    <strong>Не найдены карты в библиотеке:</strong>
-                    <ul>
-                      {missingDeckCards.map((entry) => (
-                        <li key={entry.id}>{entry.id}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
+                <p className="empty-hint">Добавьте карты из библиотеки — клик по карте = +1</p>
+                <button type="button" className="empty-cta" onClick={onClose}>
+                  К библиотеке
+                </button>
+              </div>
             ) : (
-              <>
-                <CardGrid
-                  cards={foundDeckCards}
-                  selectedCards={selectedCards}
-                  addCard={addCard}
-                  removeCard={removeCard}
-                  cardTotal={cardTotal}
-                />
-                {missingDeckCards.length > 0 && (
-                  <div className="missing-list">
-                    <strong>Не найдены карты в библиотеке:</strong>
-                    <ul>
-                      {missingDeckCards.map((entry) => (
-                        <li key={entry.id}>{entry.id}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
+              cardGroups.map((group) => (
+                <div key={group.key} className="deck-group">
+                  <h4 className="deck-group-title">
+                    {group.label}{' '}
+                    <span className="deck-group-count">
+                      (
+                      {group.items.reduce(
+                        (sum, card) =>
+                          sum +
+                          (selectedCards[card.id] ||
+                            selectedCards[String(card.id).trim().toLowerCase()] ||
+                            0),
+                        0
+                      )}
+                      )
+                    </span>
+                  </h4>
+                  <CardGrid
+                    cards={group.items}
+                    selectedCards={selectedCards}
+                    addCard={addCard}
+                    removeCard={removeCard}
+                    cardTotal={cardTotal}
+                    onPreview={onPreview}
+                    onBlockedAdd={onBlockedAdd}
+                    compact
+                  />
+                </div>
+              ))
+            )}
+            {missingDeckCards.length > 0 && (
+              <div className="missing-list">
+                <strong>Не найдены карты в библиотеке:</strong>
+                <ul>
+                  {missingDeckCards.map((entry) => (
+                    <li key={entry.id}>{entry.id}</li>
+                  ))}
+                </ul>
+              </div>
             )}
           </section>
 
           <section className="deck-modal-section">
-            <h3>🏞 Земли ({landTotal} / 4)</h3>
+            <h3>Земли ({landTotal} / 4)</h3>
             {foundDeckLands.length === 0 ? (
-              <>
+              <div className="empty-state empty-state-inline">
                 <p className="empty-message">Пока пусто</p>
-                {missingDeckLands.length > 0 && (
-                  <div className="missing-list">
-                    <strong>Не найдены земли в библиотеке:</strong>
-                    <ul>
-                      {missingDeckLands.map((entry) => (
-                        <li key={entry.id}>{entry.id}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
+                <p className="empty-hint">Переключитесь на вкладку «Земли» в фильтрах</p>
+                <button type="button" className="empty-cta" onClick={onClose}>
+                  К библиотеке
+                </button>
+              </div>
             ) : (
-              <>
-                <CardGrid
-                  cards={foundDeckLands}
-                  selectedCards={selectedLands}
-                  addCard={addLand}
-                  removeCard={removeLand}
-                  cardTotal={landTotal}
-                  isLands={true}
-                />
-                {missingDeckLands.length > 0 && (
-                  <div className="missing-list">
-                    <strong>Не найдены земли в библиотеке:</strong>
-                    <ul>
-                      {missingDeckLands.map((entry) => (
-                        <li key={entry.id}>{entry.id}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
+              <CardGrid
+                cards={foundDeckLands}
+                selectedCards={selectedLands}
+                addCard={addLand}
+                removeCard={removeLand}
+                cardTotal={landTotal}
+                isLands
+                onPreview={onPreview}
+                onBlockedAdd={onBlockedAdd}
+                compact
+              />
+            )}
+            {missingDeckLands.length > 0 && (
+              <div className="missing-list">
+                <strong>Не найдены земли в библиотеке:</strong>
+                <ul>
+                  {missingDeckLands.map((entry) => (
+                    <li key={entry.id}>{entry.id}</li>
+                  ))}
+                </ul>
+              </div>
             )}
           </section>
         </div>

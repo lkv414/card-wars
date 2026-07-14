@@ -3,12 +3,17 @@ import { useCallback, useState } from 'react'
 export function useToasts() {
   const [toasts, setToasts] = useState([])
 
-  const toast = useCallback((type, text) => {
-    const id = crypto.randomUUID()
-    setToasts((p) => [...p, { id, type, text }])
-    setTimeout(() => setToasts((p) => p.filter((t) => t.id !== id)), 3000)
+  const dismissToast = useCallback((id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
   }, [])
 
-  return { toasts, toast }
-}
+  const toast = useCallback((type, text) => {
+    const id = crypto.randomUUID()
+    setToasts((prev) => [...prev, { id, type, text }])
+    window.setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, 4000)
+  }, [])
 
+  return { toasts, toast, dismissToast }
+}

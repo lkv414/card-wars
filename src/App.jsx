@@ -29,7 +29,7 @@ function App() {
   const loadingLibrary = loadingCards || loadingLands
   const libraryError = cardsError || landsError || ''
 
-  const { toasts, toast } = useToasts()
+  const { toasts, toast, dismissToast } = useToasts()
 
   useEffect(() => {
     if (!KNOWN_ROUTES.has(pathname)) {
@@ -38,12 +38,12 @@ function App() {
   }, [pathname])
 
   const handleJoinGame = () => {
-    // TODO: Реализовать присоединение к игре
+    toast('success', 'Присоединение к игре пока в разработке')
   }
 
   return (
     <>
-      {pathname === ROUTES.menu && <MainMenu onJoin={handleJoinGame} />}
+      {pathname === ROUTES.menu && <MainMenu onJoin={handleJoinGame} toast={toast} />}
 
       {pathname === ROUTES.deck && (
         <DeckBuilder
@@ -66,7 +66,7 @@ function App() {
         />
       )}
 
-      <Toasts toasts={toasts} />
+      <Toasts toasts={toasts} onDismiss={dismissToast} />
     </>
   )
 }

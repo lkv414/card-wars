@@ -31,7 +31,6 @@ export function DeckBuilder({
     warnings,
   } = useDeckSelection()
 
-  const [deckName, setDeckName] = useState('')
   const [mode, setMode] = useState('cards')
   const [filters, setFilters] = useState({
     search: '',
@@ -42,6 +41,7 @@ export function DeckBuilder({
     costMax: 10,
     flipOnly: false,
   })
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [deckModalOpen, setDeckModalOpen] = useState(false)
 
   const deckCode = useMemo(
@@ -68,7 +68,7 @@ export function DeckBuilder({
   const saveDeck = async () => {
     const code = deckCode
     const { error } = await supabase.from('decks').upsert({
-      name: deckName,
+      name: code,
       code,
       cards: Object.entries(selectedCards).map(([card_id, quantity]) => ({
         card_id,
@@ -122,28 +122,43 @@ export function DeckBuilder({
   const clearDeckConfirm = () => {
     if (window.confirm('Очистить колоду?')) {
       clearDeck()
-      setDeckName('')
     }
   }
 
   return (
     <main className="app">
       <TopBar
-        name={deckName}
-        setName={setDeckName}
         deckCode={deckCode}
         cardTotal={cardTotal}
         landTotal={landTotal}
         errors={errors}
         warnings={warnings}
-        save={saveDeck}
-        clear={clearDeckConfirm}
         importDeck={importDeck}
+        filtersOpen={filtersOpen}
+        onToggleFilters={() => setFiltersOpen((open) => !open)}
       />
 
-      <button className="panel-button" onClick={() => setDeckModalOpen(true)}>
-        🎒 Твоя колода
-      </button>
+      {(cardTotal + landTotal) > 0 && (
+        <>
+          <button
+            type="button"
+            className="panel-button bottom-left trash-btn"
+            title="Очистить колоду"
+            aria-label="Очистить колоду"
+            onClick={clearDeckConfirm}
+          >
+            🗑️
+          </button>
+
+          <button
+            type="button"
+            className="panel-button bottom-right"
+            onClick={() => setDeckModalOpen(true)}
+          >
+            🎒 Твоя колода
+          </button>
+        </>
+      )}
 
       <DeckModal
         open={deckModalOpen}
@@ -159,7 +174,14 @@ export function DeckBuilder({
       />
 
       <div className="layout">
-        <DeckFilters filters={filters} setFilters={setFilters} mode={mode} setMode={setMode} />
+        <DeckFilters
+          filters={filters}
+          setFilters={setFilters}
+          mode={mode}
+          setMode={setMode}
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+        />
 
         <section className="list">
           {loadingLibrary && <div className="empty-state">⏳ Загружаем карты и земли из Supabase...</div>}

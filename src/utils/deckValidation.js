@@ -17,9 +17,7 @@ export function validateDeck(cards, lands) {
   const totalCards = cardEntries.reduce((sum, c) => sum + (c.quantity || 0), 0)
   const totalLands = landEntries.reduce((sum, l) => sum + (l.quantity || 0), 0)
 
-  if (totalCards < 40) warnings.push('В колоде меньше 40 карт')
   if (totalCards > 40) errors.push('В колоде больше 40 карт')
-  if (totalLands !== 4) errors.push('Выбрано не 4 земли')
 
   for (const c of cardEntries) {
     if (c.quantity > 3) errors.push(`Карта ${c.id} встречается более 3 раз`)

@@ -1,0 +1,255 @@
+/* Card3D.css - 3D card styling with flip animation */
+
+.card-3d {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  transform-origin: center;
+}
+
+.card-3d:hover:not(.opponent) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card-3d.tapped {
+  transform: rotate(90deg) !important;
+}
+
+.card-3d.opponent {
+  opacity: 0.8;
+}
+
+.card-3d.empty {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+/* Card front */
+.card-front,
+.card-back {
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  backface-visibility: hidden;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-name {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+  flex: 1;
+}
+
+.card-cost {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.card-image {
+  width: 100%;
+  height: 60px;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-placeholder {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.card-stats {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.stat.attack {
+  background: rgba(255, 0, 0, 0.3);
+}
+
+.stat.health {
+  background: rgba(0, 255, 0, 0.3);
+}
+
+.stat .label {
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+.stat .value {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.card-description {
+  flex: 1;
+  font-size: 0.7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  opacity: 0.9;
+}
+
+.card-description p {
+  margin: 0;
+}
+
+.flip-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.flip-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(180deg);
+}
+
+.tapped-indicator {
+  position: absolute;
+  bottom: 0.25rem;
+  right: 0.25rem;
+  background: rgba(76, 175, 80, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.attack-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.attack-btn:hover {
+  background: rgba(244, 67, 54, 1);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.card-flip-content {
+  text-align: center;
+}
+
+.card-flip-content h4 {
+  margin: 0 0 0.5rem 0;
+}
+
+.card-flip-content p {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+/* Animations */
+@keyframes cardFlip {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-3d {
+  animation: cardEnter 0.3s ease;
+}

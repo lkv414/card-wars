@@ -1,0 +1,116 @@
+/* GameLog.css */
+
+.game-log {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.game-log h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.log-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.log-entries::-webkit-scrollbar {
+  width: 6px;
+}
+
+.log-entries::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.log-entries::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.log-entries::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.log-entry {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border-left: 3px solid rgba(102, 126, 234, 0.5);
+  animation: logEntrySlide 0.3s ease;
+}
+
+@keyframes logEntrySlide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.log-time {
+  font-weight: bold;
+  opacity: 0.7;
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.log-message {
+  flex: 1;
+  opacity: 0.9;
+  word-break: break-word;
+}
+
+.empty-log {
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .game-log {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .game-log h4 {
+    font-size: 0.9rem;
+  }
+
+  .log-entries {
+    max-height: 150px;
+  }
+
+  .log-entry {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .log-time {
+    flex: 0 0 50px;
+  }
+}

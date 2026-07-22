@@ -1,17 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { LobbyRoom } from './LobbyRoom'
 import { navigate } from '../../router'
 import './Lobby.css'
 
-export function LobbyScreen({ toast }) {
+export function LobbyScreen({ initialCode, toast }) {
   const [nickname, setNickname] = useState(getGuestNickname)
-  const [joinCode, setJoinCode] = useState('')
-  const [mode, setMode] = useState(null) // null | 'host' | 'join'
-  const [lobbyCode, setLobbyCode] = useState(null)
+  const [joinCode, setJoinCode] = useState(initialCode ?? '')
 
-  const { status, players, error, isHost, hostId, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+  const { status, players, error, isHost, hostId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+
+  // Обновить URL когда код лобби становится известен
+  useEffect(() => {
+    if (lobbyCode) {
+      navigate(`/lobby/${lobbyCode}`, { replace: true })
+    }
+  }, [lobbyCode])
+
+  // Если открыли прямую ссылку /lobby/:code — сразу показать форму со вписанным кодом
+  // Автовход не делаем — нужен никнейм
 
   const handleCreate = async () => {
     if (!nickname.trim()) {
@@ -19,11 +27,7 @@ export function LobbyScreen({ toast }) {
       return
     }
     setGuestNickname(nickname)
-    const code = await createLobby(nickname)
-    if (code) {
-      setLobbyCode(code)
-      setMode('host')
-    }
+    await createLobby(nickname)
   }
 
   const handleJoin = async () => {
@@ -37,20 +41,29 @@ export function LobbyScreen({ toast }) {
     }
     setGuestNickname(nickname)
     await joinLobby(joinCode, nickname)
-    setMode('join')
   }
 
   const handleLeave = async () => {
     await leaveLobby()
-    setMode(null)
-    setLobbyCode(null)
+    navigate('/lobby', { replace: true })
   }
 
-  // Показать комнату, если вошли / создали
-  if (mode && (status === 'waiting' || status === 'in_game' || status === 'loading')) {
+  // Пока восстанавливаем сессию из localStorage — показываем заглушку
+  if (status === 'restoring') {
+    return (
+      <main className="lobby-screen">
+        <div className="lobby-screen__content">
+          <p className="lobby-restoring">Загрузка...</p>
+        </div>
+      </main>
+    )
+  }
+
+  // Показать комнату если есть активное лобби (в т.ч. восстановленное из localStorage)
+  if (status === 'waiting' || status === 'in_game') {
     return (
       <LobbyRoom
-        code={lobbyCode ?? joinCode.trim().toUpperCase()}
+        code={lobbyCode ?? ''}
         players={players}
         status={status}
         isHost={isHost}
@@ -93,7 +106,7 @@ export function LobbyScreen({ toast }) {
                 onClick={handleCreate}
                 disabled={status === 'loading'}
               >
-                {status === 'loading' && mode !== 'join' ? 'Создаём...' : 'Создать комнату'}
+                {status === 'loading' && !joinCode ? 'Создаём...' : 'Создать комнату'}
               </button>
             </div>
 
@@ -117,11 +130,12 @@ export function LobbyScreen({ toast }) {
                 onClick={handleJoin}
                 disabled={status === 'loading'}
               >
-                {status === 'loading' && mode === 'join' ? 'Входим...' : 'Войти'}
+                {status === 'loading' && joinCode ? 'Входим...' : 'Войти'}
               </button>
             </div>
           </div>
 
+          {dismissedMessage && <p className="lobby-error">{dismissedMessage}</p>}
           {error && <p className="lobby-error">{error}</p>}
         </div>
       </div>

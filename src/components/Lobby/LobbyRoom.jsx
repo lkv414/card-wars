@@ -10,7 +10,8 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
   const amReady = myPlayer?.ready ?? false
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(code).then(() => {
+    const url = `${window.location.origin}/lobby/${code}`
+    navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
@@ -43,7 +44,7 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
               <li key={p.player_id} className="lobby-player">
                 <span className="lobby-player__name">
                   {p.player_id === hostId && <span className="lobby-player__host" title="Хост">♛ </span>}
-                  {`Игрок ${p.player_id.slice(0, 6).toUpperCase()}`}
+                  {p.nickname || `Игрок ${p.player_id.slice(0, 6).toUpperCase()}`}
                   {p.player_id === guestId && <span className="lobby-player__you"> (вы)</span>}
                 </span>
                 <span className={`lobby-player__status ${p.ready ? 'ready' : 'waiting'}`}>

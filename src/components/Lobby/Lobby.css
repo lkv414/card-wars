@@ -186,6 +186,12 @@
   border-radius: 10px;
 }
 
+.lobby-restoring {
+  text-align: center;
+  color: #8a7060;
+  font-size: 16px;
+}
+
 /* Room */
 .lobby-code-display {
   background: #bfb09c;

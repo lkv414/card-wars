@@ -5,6 +5,7 @@ export const ROUTES = {
   deck: '/deck',
   admin: '/admin',
   lobby: '/lobby',
+  lobbyRoom: '/lobby/:code',
 }
 
 function subscribe(onStoreChange) {
@@ -26,4 +27,24 @@ export function navigate(to, { replace = false } = {}) {
   if (window.location.pathname === to) return
   window.history[method](null, '', to)
   window.dispatchEvent(new PopStateEvent('popstate'))
+}
+
+/**
+ * Сопоставляет pathname с паттерном (например '/lobby/:code').
+ * Возвращает объект параметров или null если не совпало.
+ */
+export function matchPath(pattern, pathname) {
+  const patternParts = pattern.split('/')
+  const pathParts = pathname.split('/')
+  if (patternParts.length !== pathParts.length) return null
+
+  const params = {}
+  for (let i = 0; i < patternParts.length; i++) {
+    if (patternParts[i].startsWith(':')) {
+      params[patternParts[i].slice(1)] = decodeURIComponent(pathParts[i])
+    } else if (patternParts[i] !== pathParts[i]) {
+      return null
+    }
+  }
+  return params
 }

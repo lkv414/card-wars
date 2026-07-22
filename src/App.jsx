@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useCards } from './hooks/useCards'
 import { useLands } from './hooks/useLands'
 import { useToasts } from './hooks/useToasts'
-import { usePathname, navigate, ROUTES } from './router'
+import { usePathname, navigate, matchPath, ROUTES } from './router'
 import './App.css'
 
 import { MainMenu } from './components/MainMenu'
@@ -11,7 +11,14 @@ import { AdminPanel } from './components/AdminPanel'
 import { LobbyScreen } from './components/Lobby/LobbyScreen'
 import { Toasts } from './components/Shared/Toasts'
 
-const KNOWN_ROUTES = new Set([ROUTES.menu, ROUTES.deck, ROUTES.admin, ROUTES.lobby])
+function isKnownRoute(pathname) {
+  if (pathname === ROUTES.menu) return true
+  if (pathname === ROUTES.deck) return true
+  if (pathname === ROUTES.admin) return true
+  if (pathname === ROUTES.lobby) return true
+  if (matchPath(ROUTES.lobbyRoom, pathname)) return true
+  return false
+}
 
 function App() {
   const pathname = usePathname()
@@ -33,20 +40,24 @@ function App() {
   const { toasts, toast, dismissToast } = useToasts()
 
   useEffect(() => {
-    if (!KNOWN_ROUTES.has(pathname)) {
+    if (!isKnownRoute(pathname)) {
       navigate(ROUTES.menu, { replace: true })
     }
   }, [pathname])
 
-  const handleJoinGame = () => {
-    navigate(ROUTES.lobby)
-  }
+  const lobbyRoomParams = matchPath(ROUTES.lobbyRoom, pathname)
+  const isLobbyRoute = pathname === ROUTES.lobby || lobbyRoomParams !== null
 
   return (
     <>
-      {pathname === ROUTES.menu && <MainMenu onJoin={handleJoinGame} toast={toast} />}
+      {pathname === ROUTES.menu && <MainMenu onJoin={() => navigate(ROUTES.lobby)} toast={toast} />}
 
-      {pathname === ROUTES.lobby && <LobbyScreen toast={toast} />}
+      {isLobbyRoute && (
+        <LobbyScreen
+          initialCode={lobbyRoomParams?.code ?? null}
+          toast={toast}
+        />
+      )}
 
       {pathname === ROUTES.deck && (
         <DeckBuilder

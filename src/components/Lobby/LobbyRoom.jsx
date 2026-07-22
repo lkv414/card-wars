@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { getGuestId } from '../../utils/guestId'
 import './Lobby.css'
+import { GameBoard } from '../Game/GameBoard'
+import { createGameFromLobbyPlayers } from '../Game/createDemoGame'
 
-export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLeave, toast }) {
+export function LobbyRoom({ code, players, status, hostId, onReady, onLeave }) {
   const [copied, setCopied] = useState(false)
   const guestId = getGuestId()
 
   const myPlayer = players.find(p => p.player_id === guestId)
   const amReady = myPlayer?.ready ?? false
+  const playableGame = status === 'in_game' ? createGameFromLobbyPlayers(players) : null
 
   const handleCopy = () => {
     const url = `${window.location.origin}/lobby/${code}`
@@ -15,6 +18,16 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
+  }
+
+  if (status === 'in_game' && playableGame) {
+    return (
+      <GameBoard
+        game={playableGame}
+        playerId={guestId}
+        onGameEnd={onLeave}
+      />
+    )
   }
 
   return (

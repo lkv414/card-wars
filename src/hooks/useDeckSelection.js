@@ -20,7 +20,7 @@ function saveToStorage(selectedCards, selectedLands) {
 }
 
 export function useDeckSelection() {
-  const initial = useMemo(loadFromStorage, [])
+  const initial = useMemo(() => loadFromStorage(), [])
   const [selectedCards, setSelectedCards] = useState(initial.selectedCards)
   const [selectedLands, setSelectedLands] = useState(initial.selectedLands)
 

@@ -12,7 +12,7 @@ export function PlayerHand({
   selectedCardIndex,
   onSelectCard,
 }) {
-  const handleCardSelect = (index, card) => {
+  const handleCardSelect = (index) => {
     if (isYourTurn && actionsRemaining > 0) {
       onSelectCard(selectedCardIndex === index ? null : index)
     }
@@ -37,7 +37,7 @@ export function PlayerHand({
             <div
               key={idx}
               className={`hand-card-wrapper ${selectedCardIndex === idx ? 'selected' : ''} ${!isYourTurn ? 'disabled' : ''}`}
-              onClick={() => handleCardSelect(idx, card)}
+              onClick={() => handleCardSelect(idx)}
             >
               <Card3D card={card} isOpponent={false} />
               <div className="card-info">

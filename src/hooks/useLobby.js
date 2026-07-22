@@ -37,7 +37,7 @@ async function cleanupOldLobbies() {
 
 export function useLobby() {
   // 'idle' | 'restoring' | 'loading' | 'waiting' | 'in_game' | 'error' | 'dismissed'
-  const [status, setStatus] = useState('restoring')
+  const [status, setStatus] = useState(() => (loadLobbySession() ? 'restoring' : 'idle'))
   const [lobbyId, setLobbyId] = useState(null)
   const [lobbyCode, setLobbyCode] = useState(null)
   const [players, setPlayers] = useState([])
@@ -97,10 +97,7 @@ export function useLobby() {
   // Восстановить лобби из localStorage при монтировании
   useEffect(() => {
     const session = loadLobbySession()
-    if (!session) {
-      setStatus('idle')
-      return
-    }
+    if (!session) return
 
     const guestId = getGuestId()
 

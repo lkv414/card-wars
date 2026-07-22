@@ -2,8 +2,8 @@
  * GameBoard - Main game board component
  * UNO-like layout: 4 zones (2x2 grid)
  */
-import { useState, useEffect } from 'react'
-import GameEngine from '../game/gameEngine'
+import { useMemo, useState } from 'react'
+import GameEngine from '../../game/gameEngine'
 import './GameBoard.css'
 import GameZone from './GameZone'
 import PlayerHand from './PlayerHand'
@@ -11,16 +11,9 @@ import GameLog from './GameLog'
 import GameStatus from './GameStatus'
 
 export function GameBoard({ game, playerId, onGameEnd }) {
-  const [engine, setEngine] = useState(null)
-  const [gameState, setGameState] = useState(null)
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
-  const [targetZone, setTargetZone] = useState(null)
-  const [log, setLog] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
-  // Initialize game engine
-  useEffect(() => {
+  const initialGame = useMemo(() => {
     try {
       const player1Id = game.players[0].id
       const player2Id = game.players[1].id
@@ -32,15 +25,17 @@ export function GameBoard({ game, playerId, onGameEnd }) {
       const newEngine = new GameEngine(player1Id, player2Id, deck1, deck2, lands1, lands2)
       const initialState = newEngine.initialize()
 
-      setEngine(newEngine)
-      setGameState(initialState)
-      setLog(newEngine.gameState.log)
-      setLoading(false)
+      return { engine: newEngine, state: initialState, log: newEngine.gameState.log, error: null }
     } catch (err) {
-      setError(err.message)
-      setLoading(false)
+      return { engine: null, state: null, log: [], error: err.message }
     }
   }, [game])
+
+  const [engine] = useState(initialGame.engine)
+  const [gameState, setGameState] = useState(initialGame.state)
+  const [log, setLog] = useState(initialGame.log)
+  const loading = false
+  const [error, setError] = useState(initialGame.error)
 
   if (loading) return <div className="game-board loading">Loading game...</div>
   if (error) return <div className="game-board error">Error: {error}</div>
@@ -55,7 +50,7 @@ export function GameBoard({ game, playerId, onGameEnd }) {
   // Handle card play
   const handlePlayCard = (cardIndex, zoneIndex) => {
     try {
-      const result = engine.playCard(playerId, cardIndex, zoneIndex, 1)
+      engine.playCard(playerId, cardIndex, zoneIndex, 1)
       setGameState({ ...engine.getGameState() })
       setSelectedCardIndex(null)
       setLog([...engine.gameState.log])
@@ -68,7 +63,7 @@ export function GameBoard({ game, playerId, onGameEnd }) {
   // Handle attack
   const handleAttack = (fromZone, cardId, toOpponentZone) => {
     try {
-      const result = engine.attack(playerId, fromZone, cardId, toOpponentZone)
+      engine.attack(playerId, fromZone, cardId, toOpponentZone)
       setGameState({ ...engine.getGameState() })
       setLog([...engine.gameState.log])
     } catch (err) {

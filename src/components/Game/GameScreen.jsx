@@ -16,6 +16,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
 import { GameBoard } from './GameBoard'
+import { GameBoard3D } from './GameBoard3D'
+import { useGameAction } from '../../hooks/useGameAction'
 
 export function GameScreen() {
   const { gameId } = useParams()
@@ -91,6 +93,8 @@ export function GameScreen() {
     }
   }, [gameId])
 
+  const { playCard, attack, endTurn } = useGameAction(game, loadGame)
+
   // initial load + Realtime subscription
   useEffect(() => {
     loadGame()
@@ -138,10 +142,13 @@ export function GameScreen() {
   }
 
   return (
-    <GameBoard
+    <GameBoard3D
       game={game}
       playerId={guestId}
       onGameEnd={() => navigate('/lobby')}
+      onPlayCard={playCard}
+      onAttack={attack}
+      onEndTurn={endTurn}
     />
   )
 }

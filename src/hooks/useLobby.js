@@ -299,17 +299,14 @@ export function useLobby() {
     const id = lobbyIdRef.current
     if (!id) return
 
+    // Только отмечаем готовность игрока. Перевод лобби в 'in_game' делает
+    // ТОЛЬКО useStartGame (хост жмёт «Старт»), иначе LobbyScreen
+    // пытается перейти на /game/:id до того, как игра создана.
     await supabase
       .from('lobby_players')
       .update({ ready: true })
       .eq('lobby_id', id)
       .eq('player_id', guestId)
-
-    const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', id)
-    const allReady = playersList?.length >= 2 && playersList.every(p => p.ready)
-    if (allReady) {
-      await supabase.from('lobbies').update({ status: 'in_game' }).eq('id', id)
-    }
   }, [])
 
   const leaveLobby = useCallback(async () => {

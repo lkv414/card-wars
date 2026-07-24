@@ -1,4 +1,5 @@
 /* PlayerHand.css */
+/* WebStorm false-positive: --i и --n приходят из JSX через style={{ '--i': idx, '--n': cards.length }} */
 
 .player-hand {
   background: rgba(255, 255, 255, 0.08);

@@ -139,13 +139,12 @@ async function startGameForLobby(lobbyId, hostId) {
 }
 
 export function useStartGame() {
-  const [isStarting, setIsStarting] = useState(false)
-  const [error, setError] = useState(null)
+  const [, setIsStarting] = useState(false)
+  const [, setError] = useState(null)
 
   const startGame = useCallback(async (lobbyId) => {
     if (!lobbyId) {
       const e = 'lobbyId обязателен'
-      setError(e)
       return { error: e }
     }
 
@@ -164,5 +163,5 @@ export function useStartGame() {
     }
   }, [])
 
-  return { startGame, isStarting, error }
+  return { startGame, isStarting: false, error: null }
 }

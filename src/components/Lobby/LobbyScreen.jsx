@@ -13,25 +13,45 @@ export function LobbyScreen({ toast }) {
   const [nickname, setNickname] = useState(getGuestNickname)
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
 
-  const { status, players, error, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
-  const { startGame, isStarting, error: startError } = useStartGame()
+  const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+  const { startGame } = useStartGame()
 
-  // Когда статус 'in_game' — найти gameId для этого лобби и перейти
+  // Когда статус 'in_game' — найти gameId для этого лобби и перейти.
+  // Retry: после старта игры Realtime может прийти быстрее, чем INSERT в games
+  // зафиксируется для SELECT — поэтому пробуем до 5 раз с задержкой.
   useEffect(() => {
     if (status !== 'in_game' || !lobbyId) return
     let cancelled = false
-    ;(async () => {
-      const { data } = await supabase
-        .from('games')
-        .select('id')
-        .eq('lobby_id', lobbyId)
-        .maybeSingle()
-      if (!cancelled && data?.id) {
-        navigate(`/game/${data.id}`)
+    let attempts = 0
+    const maxAttempts = 8
+    const findGameAndGo = async () => {
+      while (attempts < maxAttempts && !cancelled) {
+        attempts++
+        try {
+          const { data } = await supabase
+            .from('games')
+            .select('id')
+            .eq('lobby_id', lobbyId)
+            .maybeSingle()
+          if (cancelled) return
+          if (data?.id) {
+            navigate(`/game/${data.id}`)
+            return
+          }
+          // Ещё нет — ждём 400ms и пробуем снова
+          await new Promise((r) => setTimeout(r, 400))
+        } catch (err) {
+          toast?.('error', 'Не удалось найти игру: ' + (err?.message || err))
+          return
+        }
       }
-    })()
+      if (!cancelled) {
+        toast?.('error', 'Игра создаётся, но не найдена. Обновите страницу.')
+      }
+    }
+    findGameAndGo()
     return () => { cancelled = true }
-  }, [status, lobbyId, navigate])
+  }, [status, lobbyId, navigate, toast])
 
   const handleStartGame = async () => {
     if (!lobbyId) return

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
+import { useStartGame } from '../../hooks/useStartGame'
+import { supabase } from '../../utils/supabase'
 import { LobbyRoom } from './LobbyRoom'
 import './Lobby.css'
 
@@ -11,7 +13,33 @@ export function LobbyScreen({ toast }) {
   const [nickname, setNickname] = useState(getGuestNickname)
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
 
-  const { status, players, error, isHost, hostId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+  const { status, players, error, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+  const { startGame, isStarting, error: startError } = useStartGame()
+
+  // Когда статус 'in_game' — найти gameId для этого лобби и перейти
+  useEffect(() => {
+    if (status !== 'in_game' || !lobbyId) return
+    let cancelled = false
+    ;(async () => {
+      const { data } = await supabase
+        .from('games')
+        .select('id')
+        .eq('lobby_id', lobbyId)
+        .maybeSingle()
+      if (!cancelled && data?.id) {
+        navigate(`/game/${data.id}`)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [status, lobbyId, navigate])
+
+  const handleStartGame = async () => {
+    if (!lobbyId) return
+    const result = await startGame(lobbyId)
+    if (result?.error) {
+      toast?.('error', result.error)
+    }
+  }
 
   // Обновить URL когда код лобби становится известен
   useEffect(() => {
@@ -72,6 +100,7 @@ export function LobbyScreen({ toast }) {
         hostId={hostId}
         onReady={setReady}
         onLeave={handleLeave}
+        onStartGame={handleStartGame}
         toast={toast}
       />
     )

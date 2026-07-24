@@ -8,6 +8,7 @@ import { MainMenu } from './components/MainMenu'
 import { DeckBuilder } from './components/DeckBuilder'
 import { AdminPanel } from './components/AdminPanel'
 import { LobbyScreen } from './components/Lobby/LobbyScreen'
+import { GameScreen } from './components/Game/GameScreen'
 import { Toasts } from './components/Shared/Toasts'
 
 function App() {
@@ -67,6 +68,11 @@ function App() {
         <Route
           path="/lobby/:code"
           element={<LobbyScreen toast={toast} />}
+        />
+
+        <Route
+          path="/game/:gameId"
+          element={<GameScreen />}
         />
 
         {/* Неизвестный маршрут — на главную */}

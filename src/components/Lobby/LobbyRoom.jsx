@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { getGuestId } from '../../utils/guestId'
 import './Lobby.css'
 
-export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLeave, toast }) {
+export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLeave, onStartGame, toast }) {
   const [copied, setCopied] = useState(false)
   const guestId = getGuestId()
 
@@ -67,17 +67,29 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
 
         {status === 'in_game' ? (
           <div className="lobby-game-start">
-            <p>Игра началась!</p>
+            <p>Игра началась! Подключаем...</p>
           </div>
         ) : (
-          <button
-            className={`lobby-btn ${amReady ? 'lobby-btn--ready-done' : 'lobby-btn--ready'}`}
-            onClick={onReady}
-            disabled={amReady || players.length < 2}
-            title={players.length < 2 ? 'Нужно минимум 2 игрока' : undefined}
-          >
-            {amReady ? '✓ Вы готовы' : 'Готов'}
-          </button>
+          <>
+            <button
+              className={`lobby-btn ${amReady ? 'lobby-btn--ready-done' : 'lobby-btn--ready'}`}
+              onClick={onReady}
+              disabled={amReady || players.length < 2}
+              title={players.length < 2 ? 'Нужно минимум 2 игрока' : undefined}
+            >
+              {amReady ? '✓ Вы готовы' : 'Готов'}
+            </button>
+
+            {isHost && players.length >= 2 && (
+              <button
+                className="lobby-btn lobby-btn--start"
+                onClick={onStartGame}
+                style={{ marginTop: '0.5rem', background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)' }}
+              >
+                ▶ Начать игру
+              </button>
+            )}
+          </>
         )}
       </div>
     </main>

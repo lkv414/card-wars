@@ -3,7 +3,7 @@
  * UNO-like layout: 4 zones (2x2 grid)
  */
 import { useState, useEffect } from 'react'
-import GameEngine from '../game/gameEngine'
+import GameEngine from '../../game/gameEngine'
 import './GameBoard.css'
 import GameZone from './GameZone'
 import PlayerHand from './PlayerHand'

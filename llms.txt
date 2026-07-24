@@ -1,0 +1,72 @@
+# Card Wars Online — Card Game
+
+> Онлайн-карточная игра по мотивам Adventure Time «Card Wars» (Снежный король / Марселин). SPA на React 19 + Vite 8 с бэкендом на Supabase (PostgreSQL + Realtime). ВНИМАНИЕ: это живой проект, находящийся на стыке Фазы 2 → Фазы 3. Перед любыми изменениями прочитай раздел «Критические соглашения» и «Статус разработки» ниже.
+
+## Быстрый старт
+
+- [package.json](package.json): скрипты `npm run dev` (Vite, :5173), `build`, `lint`, `preview`. Зависимости — react 19, react-dom 19, react-router-dom 7, @supabase/supabase-js 2. **Стек:** React 19 + Vite 8 (фронтенд, хостинг Cloudflare Pages) + Supabase (PostgreSQL + Realtime, БД и бэкенд).
+- [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md): план по фазам, что сделано, что в ожидании, как запустить/протестировать на 2 вкладках.
+- [README.md](README.md): базовая заметка (шаблон Vite + план включить Supabase RLS).
+- [.env](.env): переменные окружения (НЕ КОММИТИТЬ; уже в .gitignore). Содержит Supabase URL/ключи.
+
+## Критические соглашения (читать обязательно!)
+
+- **Роутинг — react-router-dom v7** (BrowserRouter). Определён в [src/App.jsx](src/App.jsx) через `<Routes>`/`<Route>`, обёрнут в `<BrowserRouter>` в [src/main.jsx](src/main.jsx). Маршруты: `/` (MainMenu), `/deck` (DeckBuilder), `/admin` (AdminPanel), `/lobby` (LobbyScreen), `/lobby/:code` (комната лобби, код берётся через `useParams().code`). НЕ создавай свой роутер — используй `useNavigate()`, `useParams()`, `Navigate` из `react-router-dom`. (Старый кастомный `src/router.jsx` УДАЛЁН — не импортируй его.)
+- **Имя env-ключа Supabase — `VITE_SUPABASE_PUBLISHABLE_KEY`, а НЕ `VITE_SUPABASE_ANON_KEY`.** См. [src/utils/supabase.js](src/utils/supabase.js): читает `import.meta.env.VITE_SUPABASE_URL` и `VITE_SUPABASE_PUBLISHABLE_KEY`. Документация БД (DATABASE_REFERENCE.md) ошибочно называет его anon_key — ориентируйся на код.
+- **Лимиты колоды** (см. [src/constants/game.js](src/constants/game.js)): карт макс. 40 всего, до 3 экз. одной карты; земель макс. 4 всего, до 4 экз. одной земли. Типы карт: `creature`/`building`/`spell`. Типы земель: `corn, ice, desert, good, swamp, sand, blue, any`.
+- **Игровой движок** ([src/game/gameEngine.js](src/game/gameEngine.js)): 25 HP у героя, 2 действия/ход, 4 зоны (2×2 grid) на игрока, фазы хода `draw → main → attack → end`. Реализован как класс `GameEngine`. В [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx) движок создаётся лениво через `useState(() => new GameEngine(...))` — НЕ переноси это обратно в `useEffect`+`setState` (вызывает каскадные ре-рендеры, на что ругается ESLint).
+- **Стиль UI**: чистый CSS3 (3D transform, glass-morphism), фиолетово-розовый градиент в стиле UNO. Без Tailwind/UI-китов.
+- **Линтер**: `npm run lint` должен проходить с 0 ошибок. Запрещено синхронное `setState` внутри `useEffect` (react-hooks/set-state-in-effect) и `useMemo(fn, [])` без инлайн-стрелочной функции (react-hooks/use-memo).
+
+## Архитектура исходников (src/)
+
+- [src/main.jsx](src/main.jsx): точка входа, `createRoot` + `StrictMode` + `ErrorBoundary` + `<BrowserRouter>`.
+- [src/App.jsx](src/App.jsx): корневой компонент с `<Routes>`, подгружает хуки `useCards`/`useLands`/`useToasts`, рендерит `Toasts`.
+- [src/constants/game.js](src/constants/game.js): константы карт/земель/лимитов колоды.
+- [src/game/gameEngine.js](src/game/gameEngine.js): ядро логики игры (ходы, зоны, бой, победа).
+- [src/hooks/](src/hooks): `useCards`, `useLands`, `useLobby`, `useDeckSelection`, `useGameRealtimeSync` (Supabase Realtime), `useToasts`, `useFocusTrap`.
+- [src/utils/](src/utils): `supabase.js` (клиент), `deckCode.js`, `deckState.js`, `deckValidation.js`, `cardSort.js`, `guestId.js`, `lobbyCode.js`, `uuidMatch.js`.
+- [src/components/Game/](src/components/Game): `GameBoard`, `GameZone`, `Card3D`, `PlayerHand`, `GameStatus`, `GameLog` (+ .css).
+- [src/components/Lobby/](src/components/Lobby): `LobbyScreen`, `LobbyRoom` (+ .css).
+- [src/components/Shared/](src/components/Shared): переиспользуемые `Modal`, `Toasts`, `ConfirmDialog`, `CardTile`, `CardPreview`, `CardSkeleton`, `Badge`, `ImageThumb`, `ErrorBoundary`.
+- [src/components/](src/components): `MainMenu`, `TopBar`, `AdminPanel`, `CardForm`, `CardGrid`, `DeckBuilder`, `DeckFilters`, `DeckModal`.
+
+## База данных (Supabase PostgreSQL)
+
+- [DB_SCHEMA.sql](DB_SCHEMA.sql): полный DDL. Таблицы: `cards`, `lands`, `decks`, `lobbies`, `lobby_players`, `games`, `game_players`, `game_zones`, `game_chat`.
+- [DATABASE_REFERENCE.md](DATABASE_REFERENCE.md): краткий справочник полей, связи, полезные SQL-запросы, структуры JSONB (`decks.cards`, `games.game_state`, карты в зоне), индексы, примеры RLS-политик (пока НЕ включены).
+- **Визуальная ER-схема (dbdiagram.io / DBML):** Скриншот визуальной схемы БД находится в проекте — она охватывает 5 базовых таблиц: `cards`, `lands`, `decks`, `lobbies`, `lobby_players`. Явная связь на схеме: `lobby_players.lobby_id → lobbies.id` (многие-к-одному). Типы PostgreSQL: `uuid` (PK), `int4`, `text`, `bool`, `jsonb`, `timestamptz`. Примечание: игровые таблицы (`games`, `game_players`, `game_zones`, `game_chat`) на этом скриншоте НЕ показаны — они добавлены позже и есть только в `DB_SCHEMA.sql`. Таблицы на схеме:
+  - `cards`: `id`(uuid PK), `card_number`(int4, уникальный), `name`, `description`, `card_type`, `cost`, `attack`, `health`, `has_flip`(bool), `flip_description`, `mechanics`(jsonb), `image_url`, `created_at`/`updated_at`(timestamptz), `land_type`, `is_rainbow`(bool).
+  - `lands`: `id`(uuid PK), `name`, `land_type`, `description`, `image_url`, `created_at`(timestamptz).
+  - `decks`: `id`(uuid PK), `user_id`(uuid), `name`, `code`(текст, шар-код), `cards`(jsonb), `lands`(jsonb), `created_at`/`updated_at`(timestamptz).
+  - `lobbies`: `id`(uuid PK), `code`, `host_id`(text), `status`, `deck_host`(jsonb), `deck_guest`(jsonb), `created_at`(timestamptz).
+  - `lobby_players`: `lobby_id`(uuid PK/FK → lobbies.id), `player_id`(text PK), `deck`(jsonb), `ready`(bool), `joined_at`(timestamptz), `nickname`(text).
+
+## Деплой и инфраструктура
+
+- **Фронтенд-хостинг: Cloudflare Pages.** Сборка проекта — статический SPA (Vite). Команда сборки: `npm run build`, выходная папка: `dist/`. Cloudflare Pages отдаёт SPA — при обновлении страницы на подмаршруте (напр. `/deck`, `/lobby/ABC123`) возвращает `index.html` (SPA fallback настраивается правилом rewrite на `/* → /index.html`).
+- **Бэкенд/БД: Supabase** (PostgreSQL + Realtime + Storage). Клиент инициализируется в [src/utils/supabase.js](src/utils/supabase.js) через env-ключи `VITE_SUPABASE_URL` и `VITE_SUPABASE_PUBLISHABLE_KEY`. SQL-схема в [DB_SCHEMA.sql](DB_SCHEMA.sql) выполняется в Supabase SQL Editor. Realtime-подписки на таблицы лобби — см. `useLobby`/`useGameRealtimeSync`.
+- **Важно:** Cloudflare Pages — только статический фронтенд. Любая серверная логика (Edge Functions для валидации ходов, proxy к Supabase) пока в планах (Фаза 3-4) и НЕ реализована; вся работа с БД идёт напрямую из браузера через Supabase JS-клиент.
+
+## Правила игры (исходник для механик)
+
+- [_rules_full.txt](_rules_full.txt) / [_rules_utf8.txt](_rules_utf8.txt) / [_rules_extract.txt](_rules_extract.txt): текст правил настольной игры (один и тот же контент, разные кодировки/выжимки). Опирайся на них при реализации механик карт/земель.
+
+## Статус разработки
+
+- **ЗАВЕРШЕНО (Фаза 1-2):** схема БД, игровой движок, UNO-подобный UI, React-компоненты, CSS, Realtime-хук (`useGameRealtimeSync`). Роутинг переведён на react-router-dom v7. Линтер чист (0 ошибок).
+- **В ОЖИДАНИИ (Фаза 3-4):** Supabase Edge Functions (валидация ходов), аутентификация (JWT), полноценная WebSocket-синхронизация между вкладками, тестовые страницы (connection debug + игра), Cloudflare Workers (proxy к Supabase), RLS-безопасность (защита от читинга).
+- **Важно для нового агента:** проект ещё НЕ имеет серверной валидации ходов — вся логика пока на клиенте (`gameEngine.js` + Realtime). При продолжении разработки приоритет: довести Realtime-синхронизацию между двумя игроками и добавить RLS.
+
+## Для агента, продолжающего работу
+
+1. Запусти `npm install` (если нет `node_modules`), затем `npm run dev`.
+2. Заполни `.env` по образцу из `.env` (Supabase URL + publishable key). Выполни `DB_SCHEMA.sql` в Supabase SQL-редакторе.
+3. Тестируй на 2 вкладках `localhost:5173` (лобби → игра). При обновлении страницы на подмаршруте (напр. `/deck`) Vite dev/preview сами отдают SPA — 404 не будет.
+4. Соблюдай react-router и имена env-переменных (см. «Критические соглашения»).
+5. После правок обнови этот файл и DEVELOPMENT_PLAN.md, чтобы следующий агент не тратил токены на повторное изучение.
+
+## Optional (инструменты упаковки контекста)
+
+- [repomix.config.json](repomix.config.json): конфиг Repomix — упаковывает репозиторий в один AI-friendly файл с подсчётом токенов. Запуск: `npx repomix` (генерит `repomix-output.txt`). Полезно, когда нужно передать всю кодовую базу другому ИИ-агенту без лимитов.
+- Стандарт `llms.txt`: https://llmstxt.org — формат этого файла.

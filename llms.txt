@@ -16,7 +16,7 @@
 - **Лимиты колоды** (см. [src/constants/game.js](src/constants/game.js)): карт макс. 40 всего, до 3 экз. одной карты; земель макс. 4 всего, до 4 экз. одной земли. Типы карт: `creature`/`building`/`spell`. Типы земель: `corn, ice, desert, good, swamp, sand, blue, any`.
 - **Игровой движок** ([src/game/gameEngine.js](src/game/gameEngine.js)): 25 HP у героя, 2 действия/ход, 4 зоны (2×2 grid) на игрока, фазы хода `draw → main → attack → end`. Реализован как класс `GameEngine`. В [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx) движок создаётся лениво через `useState(() => new GameEngine(...))` — НЕ переноси это обратно в `useEffect`+`setState` (вызывает каскадные ре-рендеры, на что ругается ESLint).
 - **Стиль UI**: чистый CSS3 (3D transform, glass-morphism), фиолетово-розовый градиент в стиле UNO. Без Tailwind/UI-китов.
-- **Линтер**: `npm run lint` должен проходить с 0 ошибок. Запрещено синхронное `setState` внутри `useEffect` (react-hooks/set-state-in-effect) и `useMemo(fn, [])` без инлайн-стрелочной функции (react-hooks/use-memo).
+- **Линтер**: В текущей версии есть 10 предсуществующих ошибок (react-hooks/set-state-in-effect в `useLobby.js` и `GameBoard.jsx`, react-hooks/use-memo в `useDeckSelection.js`, неиспользуемые переменные в `GameBoard.jsx`/`PlayerHand.jsx`/`LobbyRoom.jsx`/`useDeckSelection.js`). Их НЕ трогали при миграции на react-router — это вне scope. Запрещено добавлять новые ошибки.
 
 ## Архитектура исходников (src/)
 

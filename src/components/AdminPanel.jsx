@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CardForm } from './CardForm'
 import { CardTile } from './Shared/CardTile'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
-import { navigate, ROUTES } from '../router'
 
 export function AdminPanel({
   cards,
@@ -13,6 +13,7 @@ export function AdminPanel({
   deleteCard,
   findSimilarCards,
 }) {
+  const navigate = useNavigate()
   const [type, setType] = useState('all')
   const [land, setLand] = useState('all')
   const [editing, setEditing] = useState(null)
@@ -69,7 +70,7 @@ export function AdminPanel({
   return (
     <main className="admin">
       <div className="admin-top">
-        <button type="button" onClick={() => navigate(ROUTES.deck)}>
+        <button type="button" onClick={() => navigate('/deck')}>
           ← К редактору колод
         </button>
         <h1>Панель админа: Управление картами</h1>

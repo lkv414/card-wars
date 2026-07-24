@@ -1,8 +1,7 @@
-import { useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useCards } from './hooks/useCards'
 import { useLands } from './hooks/useLands'
 import { useToasts } from './hooks/useToasts'
-import { usePathname, navigate, matchPath, ROUTES } from './router'
 import './App.css'
 
 import { MainMenu } from './components/MainMenu'
@@ -11,18 +10,7 @@ import { AdminPanel } from './components/AdminPanel'
 import { LobbyScreen } from './components/Lobby/LobbyScreen'
 import { Toasts } from './components/Shared/Toasts'
 
-function isKnownRoute(pathname) {
-  if (pathname === ROUTES.menu) return true
-  if (pathname === ROUTES.deck) return true
-  if (pathname === ROUTES.admin) return true
-  if (pathname === ROUTES.lobby) return true
-  if (matchPath(ROUTES.lobbyRoom, pathname)) return true
-  return false
-}
-
 function App() {
-  const pathname = usePathname()
-
   const {
     cards,
     loading: loadingCards,
@@ -39,46 +27,51 @@ function App() {
 
   const { toasts, toast, dismissToast } = useToasts()
 
-  useEffect(() => {
-    if (!isKnownRoute(pathname)) {
-      navigate(ROUTES.menu, { replace: true })
-    }
-  }, [pathname])
-
-  const lobbyRoomParams = matchPath(ROUTES.lobbyRoom, pathname)
-  const isLobbyRoute = pathname === ROUTES.lobby || lobbyRoomParams !== null
-
   return (
     <>
-      {pathname === ROUTES.menu && <MainMenu onJoin={() => navigate(ROUTES.lobby)} toast={toast} />}
+      <Routes>
+        <Route path="/" element={<MainMenu toast={toast} />} />
 
-      {isLobbyRoute && (
-        <LobbyScreen
-          initialCode={lobbyRoomParams?.code ?? null}
-          toast={toast}
+        <Route
+          path="/deck"
+          element={
+            <DeckBuilder
+              cards={cards}
+              lands={lands}
+              loadingLibrary={loadingLibrary}
+              libraryError={libraryError}
+              toast={toast}
+            />
+          }
         />
-      )}
 
-      {pathname === ROUTES.deck && (
-        <DeckBuilder
-          cards={cards}
-          lands={lands}
-          loadingLibrary={loadingLibrary}
-          libraryError={libraryError}
-          toast={toast}
+        <Route
+          path="/admin"
+          element={
+            <AdminPanel
+              cards={cards}
+              toast={toast}
+              createCard={createCard}
+              updateCard={updateCard}
+              deleteCard={deleteCard}
+              findSimilarCards={findSimilarCards}
+            />
+          }
         />
-      )}
 
-      {pathname === ROUTES.admin && (
-        <AdminPanel
-          cards={cards}
-          toast={toast}
-          createCard={createCard}
-          updateCard={updateCard}
-          deleteCard={deleteCard}
-          findSimilarCards={findSimilarCards}
+        <Route
+          path="/lobby"
+          element={<LobbyScreen toast={toast} />}
         />
-      )}
+
+        <Route
+          path="/lobby/:code"
+          element={<LobbyScreen toast={toast} />}
+        />
+
+        {/* Неизвестный маршрут — на главную */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
 
       <Toasts toasts={toasts} onDismiss={dismissToast} />
     </>

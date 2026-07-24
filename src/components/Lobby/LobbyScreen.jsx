@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { LobbyRoom } from './LobbyRoom'
-import { navigate } from '../../router'
 import './Lobby.css'
 
-export function LobbyScreen({ initialCode, toast }) {
+export function LobbyScreen({ toast }) {
+  const navigate = useNavigate()
+  const { code: codeFromUrl } = useParams()
   const [nickname, setNickname] = useState(getGuestNickname)
-  const [joinCode, setJoinCode] = useState(initialCode ?? '')
+  const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
 
   const { status, players, error, isHost, hostId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
 
@@ -16,7 +18,7 @@ export function LobbyScreen({ initialCode, toast }) {
     if (lobbyCode) {
       navigate(`/lobby/${lobbyCode}`, { replace: true })
     }
-  }, [lobbyCode])
+  }, [lobbyCode, navigate])
 
   // Если открыли прямую ссылку /lobby/:code — сразу показать форму со вписанным кодом
   // Автовход не делаем — нужен никнейм

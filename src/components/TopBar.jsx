@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { DECK_LIMITS } from '../constants/game'
-import { navigate, ROUTES } from '../router'
 
 const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
 
@@ -15,6 +15,7 @@ export function TopBar({
   onToggleFilters,
   onCopyCode,
 }) {
+  const navigate = useNavigate()
   const [codeDraft, setCodeDraft] = useState('')
   const [isEditingCode, setIsEditingCode] = useState(false)
   const codeInputValue = isEditingCode ? codeDraft : deckCode
@@ -46,7 +47,7 @@ export function TopBar({
 
   return (
     <header className="topbar">
-      <button type="button" className="back-btn" onClick={() => navigate(ROUTES.menu)}>
+      <button type="button" className="back-btn" onClick={() => navigate('/')}>
         ← Назад
       </button>
 

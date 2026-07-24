@@ -14,8 +14,8 @@ export function MainMenu() {
             Играть онлайн
           </button>
 
-          <button type="button" className="btn-editor" onClick={() => navigate('/deck')}>
-            Редактор колод
+          <button type="button" className="btn-editor" onClick={() => navigate('/decks')}>
+            Мои колоды
           </button>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { useToasts } from './hooks/useToasts'
 import './App.css'
 
 import { MainMenu } from './components/MainMenu'
+import { DeckList } from './components/DeckList'
 import { DeckBuilder } from './components/DeckBuilder'
 import { AdminPanel } from './components/AdminPanel'
 import { LobbyScreen } from './components/Lobby/LobbyScreen'
@@ -32,6 +33,8 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<MainMenu toast={toast} />} />
+
+        <Route path="/decks" element={<DeckList />} />
 
         <Route
           path="/deck"

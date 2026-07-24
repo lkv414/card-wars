@@ -161,7 +161,11 @@ export function useLobby() {
     return () => window.removeEventListener('beforeunload', handleUnload)
   }, [])
 
-  const createLobby = useCallback(async (nickname) => {
+  /**
+   * @param {string} nickname
+   * @param {object|null} deckPayload  payload из buildLobbyDeckPayload (локальная колода)
+   */
+  const createLobby = useCallback(async (nickname, deckPayload = null) => {
     setStatus('loading')
     setError(null)
     setDismissedMessage(null)
@@ -194,6 +198,7 @@ export function useLobby() {
       player_id: guestId,
       nickname: nickname.trim() || 'Игрок',
       ready: false,
+      deck: deckPayload,
     })
 
     if (playerErr) {
@@ -217,7 +222,12 @@ export function useLobby() {
     return code
   }, [subscribeToLobby])
 
-  const joinLobby = useCallback(async (code, nickname) => {
+  /**
+   * @param {string} code
+   * @param {string} nickname
+   * @param {object|null} deckPayload  payload из buildLobbyDeckPayload
+   */
+  const joinLobby = useCallback(async (code, nickname, deckPayload = null) => {
     setStatus('loading')
     setError(null)
     setDismissedMessage(null)
@@ -249,10 +259,14 @@ export function useLobby() {
       .maybeSingle()
 
     if (existing) {
-      // Уже в лобби — сбросить ready на случай повторного входа
+      // Уже в лобби — обновить ник, колоду и сбросить ready
       await supabase
         .from('lobby_players')
-        .update({ ready: false, nickname: nickname.trim() || 'Игрок' })
+        .update({
+          ready: false,
+          nickname: nickname.trim() || 'Игрок',
+          deck: deckPayload,
+        })
         .eq('lobby_id', lobby.id)
         .eq('player_id', guestId)
     } else {
@@ -272,6 +286,7 @@ export function useLobby() {
         player_id: guestId,
         nickname: nickname.trim() || 'Игрок',
         ready: false,
+        deck: deckPayload,
       })
 
       if (joinErr) {

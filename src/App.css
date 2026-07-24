@@ -1047,3 +1047,146 @@ body { background: var(--bg); color: var(--text); }
     scroll-behavior: auto !important;
   }
 }
+
+/* Диалог сохранения колоды */
+.save-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.save-dialog {
+  background: linear-gradient(135deg, #2a3a5e 0%, #1a2a4e 100%);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 1.75rem;
+  width: min(420px, 90vw);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  color: white;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.save-dialog h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.save-dialog-hint {
+  margin: 0 0 1rem 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.save-dialog label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.save-dialog input {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.save-dialog input:focus {
+  border-color: #4caf50;
+}
+
+.save-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.save-dialog-actions button {
+  padding: 0.65rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.save-dialog .cancel-btn {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.save-dialog .cancel-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.save-dialog .confirm-btn {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+}
+
+.save-dialog .confirm-btn:hover {
+  filter: brightness(1.1);
+}
+
+.save-dialog-code-block {
+  margin-bottom: 1.25rem;
+}
+
+.save-dialog-code-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.save-dialog-code-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.save-dialog-code {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.8rem;
+  opacity: 0.95;
+}
+
+.save-dialog-copy-btn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.save-dialog-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}

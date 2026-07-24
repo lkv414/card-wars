@@ -20,3 +20,6 @@ export const DECK_LIMITS = {
   lands: { maxPerEntry: 4, maxTotal: 4 },
 }
 
+/** Сколько карт в руке при старте игры */
+export const STARTING_HAND_SIZE = 5
+

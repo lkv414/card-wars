@@ -1,0 +1,311 @@
+/* DeckList.css — экран списка колод */
+
+.decks-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  color: white;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.decks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto 1rem auto;
+  gap: 1rem;
+}
+
+.decks-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.decks-subtitle {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem auto;
+  opacity: 0.85;
+  font-size: 0.95rem;
+}
+
+.decks-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.decks-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.big-create-btn {
+  padding: 1rem 2rem;
+  background: rgba(255,255,255,0.15);
+  border: 2px dashed rgba(255,255,255,0.4);
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.big-create-btn:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.7);
+}
+
+.deck-card {
+  position: relative;
+  min-width: 0; /* grid item: не раздувать колонку длинным кодом */
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 12px;
+  padding: 1.25rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow: hidden;
+}
+
+.deck-card.active {
+  border-color: #4caf50;
+  box-shadow: 0 0 24px rgba(76,175,80,0.35);
+}
+
+.active-badge {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: #4caf50;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.4);
+}
+
+.deck-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deck-name {
+  margin: 0;
+  flex: 1;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.deck-name-input {
+  flex: 1;
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.3);
+  color: white;
+  outline: none;
+}
+
+.rename-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 6px;
+}
+
+.rename-btn:hover {
+  color: white;
+}
+
+.deck-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.deck-code-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.3);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.deck-code {
+  flex: 1 1 0; /* занимает оставшуюся ширину ряда, не раздувает карточку */
+  min-width: 0;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 4px 10px;
+  font-size: 0.95rem;
+}
+
+.copy-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.25);
+}
+
+.copy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.deck-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.deck-actions button {
+  flex: 1;
+  min-width: 80px;
+  padding: 0.55rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+
+.select-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.select-btn:hover {
+  background: #45a049;
+}
+
+.edit-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.edit-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.delete-btn {
+  background: rgba(244,67,54,0.2);
+  color: white;
+  border: 1px solid rgba(244,67,54,0.4);
+}
+
+.delete-btn:hover {
+  background: rgba(244,67,54,0.4);
+}
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.confirm-box {
+  background: #2a3a5e;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 360px;
+  text-align: center;
+}
+
+.confirm-box p {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.confirm-actions button {
+  padding: 0.55rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-cancel {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.confirm-delete {
+  background: #f44336;
+  color: white;
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.create-btn {
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.create-btn:hover {
+  filter: brightness(1.1);
+}

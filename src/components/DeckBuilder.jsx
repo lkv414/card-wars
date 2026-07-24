@@ -10,6 +10,8 @@ import { CardSkeletonGrid } from './Shared/CardSkeleton'
 import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
 import { normalizeDeckEntryId } from '../utils/deckState'
 import { useDeckSelection } from '../hooks/useDeckSelection'
+import { useDecks } from '../hooks/useDecks'
+import { useNavigate } from 'react-router-dom'
 import {
   DEFAULT_FILTERS,
   hasActiveFilters,
@@ -39,6 +41,13 @@ export function DeckBuilder({
     errors,
     warnings,
   } = useDeckSelection()
+  const { addDeck, getSelectedDeck } = useDecks()
+  const navigate = useNavigate()
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  const [saveStep, setSaveStep] = useState('form') // 'form' | 'success'
+  const [saveName, setSaveName] = useState('')
+  const [savedDeck, setSavedDeck] = useState(null) // { name, code }
+  const [codeCopied, setCodeCopied] = useState(false)
 
   const [mode, setMode] = useState('cards')
   const [filters, setFilters] = useState({ ...DEFAULT_FILTERS })
@@ -51,6 +60,48 @@ export function DeckBuilder({
     () => generateDeckCode(selectedCards, selectedLands),
     [selectedCards, selectedLands]
   )
+
+  const closeSaveDialog = () => {
+    setSaveDialogOpen(false)
+    setSaveStep('form')
+    setSaveName('')
+    setSavedDeck(null)
+    setCodeCopied(false)
+  }
+
+  const handleSaveDeck = () => {
+    if (cardTotal === 0 && landTotal === 0) {
+      toast?.('error', 'Колода пустая — добавьте хотя бы одну карту')
+      return
+    }
+    if (errors.length > 0) {
+      toast?.('error', 'Исправьте ошибки в колоде перед сохранением')
+      return
+    }
+    setSaveName(getSelectedDeck()?.name || '')
+    setSaveStep('form')
+    setSavedDeck(null)
+    setCodeCopied(false)
+    setSaveDialogOpen(true)
+  }
+
+  const handleConfirmSave = () => {
+    const name = saveName.trim() || `Колода ${new Date().toLocaleDateString('ru-RU')}`
+    const newDeck = addDeck({ name, selectedCards, selectedLands })
+    setSavedDeck({ name: newDeck.name, code: newDeck.code })
+    setSaveStep('success')
+  }
+
+  const handleCopySavedCode = async () => {
+    if (!savedDeck?.code) return
+    try {
+      await navigator.clipboard.writeText(savedDeck.code)
+      setCodeCopied(true)
+      setTimeout(() => setCodeCopied(false), 1500)
+    } catch {
+      window.prompt('Скопируй код колоды:', savedDeck.code)
+    }
+  }
 
   const filteredCards = useMemo(() => {
     const next = cards.filter(
@@ -162,6 +213,30 @@ export function DeckBuilder({
           >
             Твоя колода
           </button>
+
+          <button
+            type="button"
+            className="panel-button save-btn"
+            onClick={handleSaveDeck}
+            style={{
+              position: 'fixed',
+              bottom: '5rem',
+              right: '1.5rem',
+              background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.25rem',
+              borderRadius: '12px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontSize: '1rem',
+              boxShadow: '0 4px 16px rgba(76, 175, 80, 0.4)',
+              zIndex: 10,
+            }}
+            title="Сохранить колоду"
+          >
+            💾 Сохранить
+          </button>
         </>
       )}
 
@@ -179,6 +254,100 @@ export function DeckBuilder({
           toast('success', 'Колода очищена')
         }}
       />
+
+      {/* Диалог сохранения колоды */}
+      {saveDialogOpen && (
+        <div className="save-dialog-overlay" onClick={closeSaveDialog} role="presentation">
+          <div
+            className="save-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="save-dialog-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {saveStep === 'form' ? (
+              <>
+                <h2 id="save-dialog-title">Сохранить колоду</h2>
+                <p className="save-dialog-hint">
+                  Будет сохранено: {cardTotal} карт, {landTotal} земель
+                </p>
+                <label>
+                  Название:
+                  <input
+                    type="text"
+                    value={saveName}
+                    onChange={(e) => setSaveName(e.target.value)}
+                    placeholder="Например: Основная колода"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleConfirmSave()
+                      if (e.key === 'Escape') closeSaveDialog()
+                    }}
+                  />
+                </label>
+                <div className="save-dialog-actions">
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={closeSaveDialog}
+                  >
+                    Отмена
+                  </button>
+                  <button
+                    type="button"
+                    className="confirm-btn"
+                    onClick={handleConfirmSave}
+                  >
+                    Сохранить
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 id="save-dialog-title">Колода сохранена</h2>
+                <p className="save-dialog-hint">
+                  «{savedDeck?.name}» · {cardTotal} карт, {landTotal} земель
+                </p>
+                <div className="save-dialog-code-block">
+                  <span className="save-dialog-code-label">Код колоды</span>
+                  <div className="save-dialog-code-row">
+                    <code className="save-dialog-code" title={savedDeck?.code}>
+                      {savedDeck?.code}
+                    </code>
+                    <button
+                      type="button"
+                      className="save-dialog-copy-btn"
+                      onClick={handleCopySavedCode}
+                      title="Скопировать код"
+                    >
+                      {codeCopied ? '✓' : '📋'}
+                    </button>
+                  </div>
+                </div>
+                <div className="save-dialog-actions">
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={closeSaveDialog}
+                  >
+                    Продолжить
+                  </button>
+                  <button
+                    type="button"
+                    className="confirm-btn"
+                    onClick={() => {
+                      closeSaveDialog()
+                      navigate('/decks')
+                    }}
+                  >
+                    К списку колод
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <CardPreview
         open={preview.open}

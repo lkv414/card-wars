@@ -2,16 +2,23 @@
  * useStartGame
  * Хост жмёт «Старт» → хук создаёт в Supabase:
  *   1. games (1 запись, status='active', version=1)
- *   2. game_players (по одной на каждого lobby_players, player_order=1..N)
- *   3. game_zones (по 4 на каждого игрока, cards=[], land_id=null)
+ *   2. game_players (по одной на каждого lobby_players:
+ *        hand = стартовая раздача из lobby_players.deck.cards,
+ *        deck_remaining = оставшиеся в колоде)
+ *   3. game_zones (по 4 на каждого; land_id из deck.lands если есть)
+ *
+ * Колода приходит локально → расшифровывается при входе в лобби
+ * (buildLobbyDeckPayload) → лежит в lobby_players.deck → здесь раздаётся.
  *
  * Возвращает { startGame, isStarting, error }.
- * Рейс-условие: только host вызывает startGame. Если игры уже создана
+ * Рейс-условие: только host вызывает startGame. Если игра уже создана
  * (race между двумя вкладками) — возвращаем существующую.
  */
 import { useCallback, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import { getGuestId } from '../utils/guestId'
+import { STARTING_HAND_SIZE } from '../constants/game'
+import { dealStartingHand, isLobbyDeckPlayable } from '../utils/lobbyDeck'
 
 const POSITIONS = ['player1', 'player2', 'player3', 'player4']
 
@@ -21,7 +28,7 @@ const POSITIONS = ['player1', 'player2', 'player3', 'player4']
  * @returns {Promise<{gameId: string}|null>}
  */
 async function startGameForLobby(lobbyId, hostId) {
-  // 1. Загрузить игроков лобби
+  // 1. Загрузить игроков лобби (с колодами)
   const { data: players, error: playersErr } = await supabase
     .from('lobby_players')
     .select('player_id, nickname, deck, ready')
@@ -31,6 +38,15 @@ async function startGameForLobby(lobbyId, hostId) {
   if (playersErr) throw new Error(`Не удалось загрузить игроков: ${playersErr.message}`)
   if (!players || players.length < 2) {
     throw new Error('Нужно минимум 2 готовых игрока')
+  }
+
+  // 1b. У каждого должна быть прикреплённая колода с картами
+  const withoutDeck = players.filter((p) => !isLobbyDeckPlayable(p.deck))
+  if (withoutDeck.length > 0) {
+    const names = withoutDeck
+      .map((p) => p.nickname || p.player_id.slice(0, 6))
+      .join(', ')
+    throw new Error(`Нет колоды у: ${names}. Выберите колоду в «Мои колоды» и перезайдите в лобби.`)
   }
 
   // 2. Проверить, не создана ли уже игра для этого лобби (race-condition)
@@ -45,7 +61,7 @@ async function startGameForLobby(lobbyId, hostId) {
   }
 
   // 3. Найти хоста (player_id === host_id) — он первый ходит
-  const hostIndex = players.findIndex(p => p.player_id === hostId)
+  const hostIndex = players.findIndex((p) => p.player_id === hostId)
   if (hostIndex === -1) {
     throw new Error('Только хост может начать игру')
   }
@@ -64,7 +80,10 @@ async function startGameForLobby(lobbyId, hostId) {
     currentTurn: 0,
     currentPlayerId: firstPlayerId,
     turnPhase: 'draw',
-    log: [],
+    log: ordered.map((p) => ({
+      timestamp: Date.now(),
+      message: `${p.nickname || 'Игрок'} · колода «${p.deck?.name || '—'}» (${p.deck?.cardCount ?? p.deck?.cards?.length ?? 0} карт)`,
+    })),
   }
 
   const { data: game, error: gameErr } = await supabase
@@ -87,14 +106,19 @@ async function startGameForLobby(lobbyId, hostId) {
 
   const gameId = game.id
 
-  // 5. Создать game_players для каждого
-  const gamePlayersRows = ordered.map((p, idx) => ({
+  // 5. Раздать стартовые руки из колоды каждого игрока
+  const dealtByPlayer = ordered.map((p) => {
+    const dealt = dealStartingHand(p.deck, STARTING_HAND_SIZE)
+    return { player: p, ...dealt }
+  })
+
+  const gamePlayersRows = dealtByPlayer.map(({ player: p, hand, deckRemaining }, idx) => ({
     game_id: gameId,
     player_id: p.player_id,
     nickname: p.nickname || `Игрок ${idx + 1}`,
     health: 25,
-    hand: [],
-    deck_remaining: Array.isArray(p.deck?.cards) ? p.deck.cards.length : 0,
+    hand,
+    deck_remaining: deckRemaining,
     position: POSITIONS[idx] || `player${idx + 1}`,
     player_order: idx + 1,
   }))
@@ -107,16 +131,17 @@ async function startGameForLobby(lobbyId, hostId) {
     throw new Error(`Не удалось создать игроков: ${gpErr.message}`)
   }
 
-  // 6. Создать game_zones для каждого (4 зоны)
+  // 6. Создать game_zones для каждого (4 зоны + земли из колоды, если есть)
   const zonesRows = []
-  for (const p of ordered) {
-    for (let z = 1; z <= 4; z++) {
+  for (const { player: p, lands } of dealtByPlayer) {
+    for (let z = 1; z <= 4; z += 1) {
+      const land = lands[z - 1]
       zonesRows.push({
         game_id: gameId,
         player_id: p.player_id,
         zone_position: z,
         cards: [],
-        land_id: null,
+        land_id: land?.id || null,
       })
     }
   }

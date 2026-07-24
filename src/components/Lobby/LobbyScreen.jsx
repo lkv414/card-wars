@@ -3,7 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useStartGame } from '../../hooks/useStartGame'
+import { useDecks } from '../../hooks/useDecks'
 import { supabase } from '../../utils/supabase'
+import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
 import { LobbyRoom } from './LobbyRoom'
 import './Lobby.css'
 
@@ -12,9 +14,12 @@ export function LobbyScreen({ toast }) {
   const { code: codeFromUrl } = useParams()
   const [nickname, setNickname] = useState(getGuestNickname)
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
+  const [submitting, setSubmitting] = useState(false)
 
   const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
   const { startGame } = useStartGame()
+  const { getSelectedDeck, selectedDeckId } = useDecks()
+  const selectedDeck = getSelectedDeck()
 
   // Когда статус 'in_game' — найти gameId для этого лобби и перейти.
   // Retry: после старта игры Realtime может прийти быстрее, чем INSERT в games
@@ -68,16 +73,44 @@ export function LobbyScreen({ toast }) {
     }
   }, [lobbyCode, navigate])
 
-  // Если открыли прямую ссылку /lobby/:code — сразу показать форму со вписанным кодом
-  // Автовход не делаем — нужен никнейм
+  /** Собрать deck payload из выбранной локальной колоды */
+  const resolveDeckPayload = async () => {
+    const deck = getSelectedDeck()
+    if (!deck) {
+      toast?.('error', 'Сначала выберите колоду в «Мои колоды»')
+      return null
+    }
+    const cardTotal = Object.values(deck.selectedCards || {}).reduce(
+      (s, q) => s + Number(q || 0),
+      0
+    )
+    if (cardTotal === 0) {
+      toast?.('error', 'Выбранная колода пустая — добавьте карты в редакторе')
+      return null
+    }
+    try {
+      return await buildLobbyDeckPayload(deck, supabase)
+    } catch (err) {
+      toast?.('error', err?.message || 'Не удалось подготовить колоду')
+      return null
+    }
+  }
 
   const handleCreate = async () => {
     if (!nickname.trim()) {
       toast?.('error', 'Введите никнейм')
       return
     }
-    setGuestNickname(nickname)
-    await createLobby(nickname)
+    setSubmitting(true)
+    try {
+      const deckPayload = await resolveDeckPayload()
+      if (!deckPayload) return
+      setGuestNickname(nickname)
+      await createLobby(nickname, deckPayload)
+      toast?.('success', `Колода «${deckPayload.name}» прикреплена (${deckPayload.cardCount} карт)`)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handleJoin = async () => {
@@ -89,8 +122,16 @@ export function LobbyScreen({ toast }) {
       toast?.('error', 'Введите код лобби')
       return
     }
-    setGuestNickname(nickname)
-    await joinLobby(joinCode, nickname)
+    setSubmitting(true)
+    try {
+      const deckPayload = await resolveDeckPayload()
+      if (!deckPayload) return
+      setGuestNickname(nickname)
+      await joinLobby(joinCode, nickname, deckPayload)
+      toast?.('success', `Колода «${deckPayload.name}» прикреплена (${deckPayload.cardCount} карт)`)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handleLeave = async () => {
@@ -126,6 +167,11 @@ export function LobbyScreen({ toast }) {
     )
   }
 
+  const deckCardCount = selectedDeck
+    ? Object.values(selectedDeck.selectedCards || {}).reduce((s, q) => s + Number(q || 0), 0)
+    : 0
+  const busy = status === 'loading' || submitting
+
   return (
     <main className="lobby-screen">
       <div className="lobby-screen__content">
@@ -148,6 +194,34 @@ export function LobbyScreen({ toast }) {
             />
           </div>
 
+          <div className="lobby-deck-picker">
+            <div className="lobby-deck-picker__label">Ваша колода</div>
+            {selectedDeck && deckCardCount > 0 ? (
+              <div className="lobby-deck-picker__active">
+                <strong>{selectedDeck.name}</strong>
+                <span>
+                  {deckCardCount} карт
+                  {selectedDeck.code
+                    ? ` · ${String(selectedDeck.code).slice(0, 12)}…`
+                    : ''}
+                </span>
+              </div>
+            ) : (
+              <div className="lobby-deck-picker__empty">
+                {selectedDeckId
+                  ? 'Выбранная колода пустая'
+                  : 'Колода не выбрана'}
+              </div>
+            )}
+            <button
+              type="button"
+              className="lobby-btn lobby-btn--deck"
+              onClick={() => navigate('/decks')}
+            >
+              {selectedDeck ? 'Сменить колоду' : 'Выбрать колоду'}
+            </button>
+          </div>
+
           <div className="lobby-divider">
             <div className="lobby-option">
               <h2>Создать лобби</h2>
@@ -155,9 +229,9 @@ export function LobbyScreen({ toast }) {
               <button
                 className="lobby-btn lobby-btn--create"
                 onClick={handleCreate}
-                disabled={status === 'loading'}
+                disabled={busy || !selectedDeck || deckCardCount === 0}
               >
-                {status === 'loading' && !joinCode ? 'Создаём...' : 'Создать комнату'}
+                {busy && !joinCode ? 'Создаём...' : 'Создать комнату'}
               </button>
             </div>
 
@@ -179,9 +253,9 @@ export function LobbyScreen({ toast }) {
               <button
                 className="lobby-btn lobby-btn--join"
                 onClick={handleJoin}
-                disabled={status === 'loading'}
+                disabled={busy || !selectedDeck || deckCardCount === 0}
               >
-                {status === 'loading' && joinCode ? 'Входим...' : 'Войти'}
+                {busy && joinCode ? 'Входим...' : 'Войти'}
               </button>
             </div>
           </div>

@@ -1,43 +1,49 @@
 # Card Wars Online — Card Game
 
-> Онлайн-карточная игра по мотивам Adventure Time «Card Wars» (Снежный король / Марселин). SPA на React 19 + Vite 8 с бэкендом на Supabase (PostgreSQL + Realtime). **Фаза 3 (синхронизация) завершена** — ходы в игре теперь читаются и пишутся в Supabase через хук `useGameAction`, второй клиент видит обновления через Realtime. Перед любыми изменениями прочитай раздел «Критические соглашения» и «Статус разработки» ниже.
+> Онлайн-карточная игра по мотивам Adventure Time «Card Wars» (Снежный король / Марселин). SPA на React 19 + Vite 8 с бэкендом на Supabase (PostgreSQL + Realtime) и 3D-сценой стола на three.js + @react-three/fiber. **Фаза 3 (синхронизация) завершена**, **Фаза 4 (колоды → лобби → игра) почти завершена**: локальный список колод в `localStorage` (`useDecks`), выбор колоды → код в `useDecks.selectedDeckId` → декодируется в `lobby_players.deck` (jsonb) при входе в лобби → `useStartGame` тасует и раздаёт стартовую руку в `game_players.hand` (5 карт) + `deck_remaining`. **Refill руки в `playCard` и draw-фаза в `endTurn` ещё не реализованы** — следующий шаг. Перед любыми изменениями прочитай раздел «Критические соглашения» и «Статус разработки» ниже.
 
 ## Быстрый старт
 
-- [package.json](package.json): `npm run dev` (Vite, :5173/:5174), `build`, `lint`, `preview`. Зависимости — react 19, react-dom 19, react-router-dom 7, @supabase/supabase-js 2.
-- [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md): история фаз 1–2 + план фаз 3–4.
+- [package.json](package.json): `npm run dev` (Vite, :5173/:5174), `build`, `lint`, `preview`. Зависимости — react 19, react-dom 19, react-router-dom 7, @supabase/supabase-js 2, three, @react-three/fiber, @react-three/drei.
 - [README.md](README.md): базовый README, пометка про включение Supabase RLS.
 - [.env](.env): переменные окружения (Supabase URL + publishable key; в `.gitignore`).
 - **Фронтенд-хостинг:** Cloudflare Pages (статика, SPA fallback через `_redirects`).
 - **БД:** Supabase (PostgreSQL + Realtime через `supabase_realtime` publication).
+- **3D-стек:** three.js + @react-three/fiber + @react-three/drei — игровой стол рендерится в `<Canvas>` через `GameBoard3D.jsx` + `Card3DModel.jsx`. `GameBoard.jsx` остался как DOM-fallback/legacy.
 
 ## Критические соглашения (читать обязательно!)
 
-- **Роутинг — react-router-dom v7** (BrowserRouter). Маршруты в [src/App.jsx](src/App.jsx): `/`, `/deck`, `/admin`, `/lobby`, `/lobby/:code`, `/game/:gameId`. Используй `useNavigate()`, `useParams()`, `Navigate` из `react-router-dom`. Старый кастомный `src/router.jsx` УДАЛЁН.
+- **Роутинг — react-router-dom v7** (BrowserRouter). Маршруты в [src/App.jsx](src/App.jsx): `/`, `/decks`, `/deck`, `/admin`, `/lobby`, `/lobby/:code`, `/game/:gameId`. Используй `useNavigate()`, `useParams()`, `Navigate` из `react-router-dom`. Старый кастомный `src/router.jsx` УДАЛЁН.
+- **Локальные колоды** — `useDecks` хранит список в `localStorage.decks` (массив `{id, name, code, selectedCards, selectedLands, createdAt}`), активная — `useDecks.selectedDeckId` → `getSelectedDeck()`. **При входе в лобби** колода декодируется через `expandDeckCodeWithCardData` и сохраняется в `lobby_players.deck` (jsonb). **При старте игры** `useStartGame` тасует `lobby_players.deck.cards` через `dealStartingHand` и пишет в `game_players.hand` (5 карт) + `game_players.deck_remaining` (число).
 - **Env-ключ Supabase:** `VITE_SUPABASE_PUBLISHABLE_KEY` (НЕ `VITE_SUPABASE_ANON_KEY`). См. [src/utils/supabase.js](src/utils/supabase.js).
-- **Лимиты колоды** ([src/constants/game.js](src/constants/game.js)): 40 карт (≤3 одной), 4 земли (≤4 одной). Типы карт: `creature`/`building`/`spell`. Типы земель: `corn, ice, desert, good, swamp, sand, blue, any`.
-- **Игровая логика:** 25 HP, 2 действия/ход, 4 зоны (2×2), фазы `draw → main → attack → end`. **`gameEngine.js` (in-memory) УДАЛЁН** — теперь только данные из БД + `gameToEngineFormat` в [src/hooks/useGameAction.js](src/hooks/useGameAction.js).
+- **Лимиты колоды** ([src/constants/game.js](src/constants/game.js)): 40 карт (≤3 одной), 4 земли (≤4 одной). Типы карт: `creature`/`building`/`spell`. Типы земель: `corn, ice, desert, good, swamp, sand, blue, any`. `STARTING_HAND_SIZE = 5`.
+- **Игровая логика:** 25 HP, 2 действия/ход, 4 зоны (2×2), фазы `draw → main → attack → end`. **`gameEngine.js` (in-memory) УДАЛЁН** — теперь только данные из БД + `gameToEngineFormat` в [src/hooks/useGameAction.js](src/hooks/useGameAction.js). **Draw-фаза и refill руки в `playCard` ещё НЕ реализованы** — следующий шаг.
 - **Линтер:** В текущей версии 7 предсуществующих ошибок (`react-hooks/set-state-in-effect` × 3, `react-hooks/use-memo` × 1, неиспользуемые переменные × 3). Закреплены правилом «вне scope». Запрещено добавлять новые.
 - **Файл `.env`** уже в git (исторически). Секреты из реального `.env` в БД НЕ утекают — они публичные (anon-ключ). Свои sensitive секреты клади в `.env.secure` (он в `.gitignore`).
 
-## Архитектура исходников (src/, 58 файлов)
+## Архитектура исходников (src/)
 
 - [src/main.jsx](src/main.jsx): entry, `createRoot` + `StrictMode` + `ErrorBoundary` + `<BrowserRouter>`.
-- [src/App.jsx](src/App.jsx): `<Routes>` + `useCards`/`useLands`/`useToasts` + `<Toasts>`.
-- [src/constants/game.js](src/constants/game.js): константы.
-- [src/hooks/useLobby.js](src/hooks/useLobby.js): лобби (status='idle'|'restoring'|'loading'|'waiting'|'in_game'|...).
-- [src/hooks/useStartGame.js](src/hooks/useStartGame.js): **старт игры** — хост жмёт «Старт», создаёт `games`+`game_players`+`game_zones`.
+- [src/App.jsx](src/App.jsx): `<Routes>` + `useCards`/`useLands`/`useToasts` + `<Toasts>`. Маршруты: `/`, `/decks`, `/deck`, `/admin`, `/lobby`, `/lobby/:code`, `/game/:gameId`.
+- [src/constants/game.js](src/constants/game.js): константы (`DECK_LIMITS`, `STARTING_HAND_SIZE = 5`, `CARD_TYPES`, `LAND_TYPES`).
+- [src/hooks/useLobby.js](src/hooks/useLobby.js): лобби (status='idle'|'restoring'|'loading'|'waiting'|'in_game'|...). `createLobby`/`joinLobby` декодируют `getSelectedDeck()` через `buildLobbyDeckPayload` и пишут в `lobby_players.deck` (jsonb).
+- [src/hooks/useDecks.js](src/hooks/useDecks.js): **список локальных колод** в `localStorage.decks`. API: `listDecks`, `addDeck`, `removeDeck`, `selectDeck(id)`, `getSelectedDeck()`. Используется в `DeckList.jsx` и `DeckBuilder.jsx`.
+- [src/hooks/useStartGame.js](src/hooks/useStartGame.js): **старт игры** — хост жмёт «Старт». Создаёт `games` + `game_players` (с `hand` и `deck_remaining` из `dealStartingHand`) + `game_zones` (с `land_id` из `lobby_players.deck.lands`). Проверяет `isLobbyDeckPlayable` — без колоды старт невозможен.
 - [src/hooks/useGameAction.js](src/hooks/useGameAction.js): **действия в игре** — `playCard`, `attack`, `endTurn`. Optimistic lock через `version`. Экспортирует `gameToEngineFormat(game, playerId)` — единый источник формата для `GameBoard`.
 - [src/hooks/useGameRealtimeSync.js](src/hooks/useGameRealtimeSync.js): legacy, используется в `GameScreen` (новая подписка встроена туда).
-- [src/hooks/useCards.js](src/hooks/useCards.js), [src/hooks/useLands.js](src/hooks/useLands.js), [src/hooks/useDeckSelection.js](src/hooks/useDeckSelection.js), [src/hooks/useToasts.js](src/hooks/useToasts.js), [src/hooks/useFocusTrap.js](src/hooks/useFocusTrap.js).
-- [src/utils/supabase.js](src/utils/supabase.js), [src/utils/deckCode.js](src/utils/deckCode.js), [src/utils/deckState.js](src/utils/deckState.js), [src/utils/deckValidation.js](src/utils/deckValidation.js), [src/utils/cardSort.js](src/utils/cardSort.js), [src/utils/guestId.js](src/utils/guestId.js), [src/utils/lobbyCode.js](src/utils/lobbyCode.js), [src/utils/uuidMatch.js](src/utils/uuidMatch.js) (для будущего `findSimilarCards`).
-- [src/components/Game/GameScreen.jsx](src/components/Game/GameScreen.jsx): **точка входа в игру.** Подписывается на `games`/`game_players`/`game_zones` через Realtime, формирует `game` для GameBoard, подключает `useGameAction`.
-- [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx): рендер доски. Больше НЕ создаёт `new GameEngine(...)` — использует `gameToEngineFormat` через пропс `game`.
-- [src/components/Game/GameZone.jsx](src/components/Game/GameZone.jsx), [src/components/Game/Card3D.jsx](src/components/Game/Card3D.jsx), [src/components/Game/PlayerHand.jsx](src/components/Game/PlayerHand.jsx), [src/components/Game/GameStatus.jsx](src/components/Game/GameStatus.jsx), [src/components/Game/GameLog.jsx](src/components/Game/GameLog.jsx) (+ .css).
+- [src/hooks/useCards.js](src/hooks/useCards.js), [src/hooks/useLands.js](src/hooks/useLands.js), [src/hooks/useDeckSelection.js](src/hooks/useDeckSelection.js) (текущая редактируемая колода в `localStorage.deckSelection`), [src/hooks/useToasts.js](src/hooks/useToasts.js), [src/hooks/useFocusTrap.js](src/hooks/useFocusTrap.js).
+- [src/utils/supabase.js](src/utils/supabase.js), [src/utils/deckCode.js](src/utils/deckCode.js) (`generateDeckCode`, `expandDeckCodeWithCardData`), [src/utils/deckState.js](src/utils/deckState.js), [src/utils/deckValidation.js](src/utils/deckValidation.js), [src/utils/cardSort.js](src/utils/cardSort.js), [src/utils/guestId.js](src/utils/guestId.js), [src/utils/lobbyCode.js](src/utils/lobbyCode.js), [src/utils/uuidMatch.js](src/utils/uuidMatch.js), [src/utils/lobbyDeck.js](src/utils/lobbyDeck.js) (**`buildLobbyDeckPayload`, `expandSelectionToInstances`, `shuffleDeck`, `dealStartingHand`, `isLobbyDeckPlayable`** — сборка колоды для лобби и раздача при старте).
+- [src/components/Game/GameScreen.jsx](src/components/Game/GameScreen.jsx): **точка входа в игру.** Подписывается на `games`/`game_players`/`game_zones` через Realtime, формирует `game` для GameBoard, подключает `useGameAction`. Рендерит `<GameBoard3D>` (основной).
+- [src/components/Game/GameBoard3D.jsx](src/components/Game/GameBoard3D.jsx): **3D-сцена стола** — Three.js + react-three-fiber. Рендерит обе стороны, 4 строения + 4 земли, летающие карты руки, HUD-оверлей (HP, рука, колода, «Закончить ход»).
+- [src/components/Game/Card3DModel.jsx](src/components/Game/Card3DModel.jsx): 3D-модель карты (плоскость с артом, hover/select через raycast).
+- [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx): **legacy DOM-рендер** — НЕ создаёт `new GameEngine(...)`, использует `gameToEngineFormat` через пропс `game`. Сохранён как fallback.
+- [src/components/Game/GameZone.jsx](src/components/Game/GameZone.jsx), [src/components/Game/Card3D.jsx](src/components/Game/Card3D.jsx) (CSS-3D fallback), [src/components/Game/PlayerHand.jsx](src/components/Game/PlayerHand.jsx), [src/components/Game/GameStatus.jsx](src/components/Game/GameStatus.jsx), [src/components/Game/GameLog.jsx](src/components/Game/GameLog.jsx) (+ .css).
 - [src/components/Lobby/LobbyScreen.jsx](src/components/Lobby/LobbyScreen.jsx): экран лобби. При `status='in_game'` ищет `game.id` и переходит на `/game/:gameId`.
-- [src/components/Lobby/LobbyRoom.jsx](src/components/Lobby/LobbyRoom.jsx): UI лобби. Кнопка «Старт» только для хоста (вызывает `onStartGame`).
+- [src/components/Lobby/LobbyRoom.jsx](src/components/Lobby/LobbyRoom.jsx): UI лобби. Показывает «Твоя колода: [название]» из `lobby_players.deck`. Кнопка «Старт» только для хоста (вызывает `onStartGame`).
+- [src/components/DeckList.jsx](src/components/DeckList.jsx) (+ .css): **экран «Мои колоды»** на роуте `/decks`. Карточки сохранённых колод: превью, код, кнопки «Выбрать», «Редактировать», «Удалить», «Копировать код». Кнопка «Создать новую» → `/deck`.
+- [src/components/DeckBuilder.jsx](src/components/DeckBuilder.jsx): редактор колоды. Модалка сохранения в 2 шага (форма → успех с кодом + копирование). Кнопка «Сохранить» пишет в `useDecks`.
 - [src/components/Shared/](src/components/Shared/): `Modal`, `Toasts`, `ConfirmDialog`, `CardTile`, `CardPreview`, `CardSkeleton`, `ImageThumb`, `ErrorBoundary`.
-- [src/components/](src/components/): `MainMenu`, `TopBar`, `AdminPanel`, `CardForm`, `CardGrid`, `DeckBuilder`, `DeckFilters`, `DeckModal`.
+- [src/components/](src/components/): `MainMenu`, `TopBar`, `AdminPanel`, `CardForm`, `CardGrid`, `DeckFilters`, `DeckModal`. **В топбаре убраны**: кнопки «Сохранить» и «Админ» (вход в админку — через URL `/admin` или пункт меню). Кнопка «Очистить» перенесена вниз слева, показывается только когда в колоде есть карты.
 
 ## База данных (Supabase PostgreSQL)
 
@@ -60,18 +66,31 @@
 
 ## Статус разработки
 
-- **ЗАВЕРШЕНО (Фаза 1-3):** схема БД + миграция, игровая логика, UI, react-router, lazy-3D (CSS-only), кнопка «Старт» в лобби, переход в `/game/:gameId`, синхронизация ходов через `useGameAction` + Realtime.
-- **В ОЖИДАНИИ (Фаза 4+):** доставка колод в `game_players.hand` (сейчас hand=[] при старте), RLS-политики для прода, server-side валидация ходов (Edge Function или Postgres trigger), 3D polish (parallax, частицы), error-recovery при разрыве Realtime.
+- **ЗАВЕРШЕНО (Фаза 1–3):** схема БД + миграция, игровая логика, UI, react-router, 3D-сцена стола (three.js + r3f), кнопка «Старт» в лобби, переход в `/game/:gameId`, синхронизация ходов через `useGameAction` + Realtime.
+- **ЗАВЕРШЕНО (Фаза 4, ~90%):**
+  - ✅ `useDecks` (локальный список колод) + экран `/decks` (`DeckList.jsx`)
+  - ✅ `useLobby` записывает выбранную колоду в `lobby_players.deck` (jsonb)
+  - ✅ `useStartGame` тасует колоду и раздаёт 5 карт в `game_players.hand` + `deck_remaining`
+  - ✅ `useGameAction.playCard` — базовая логика (карта из руки → зона)
+  - ⏳ **Осталось:** refill руки в `playCard` (когда рука < 5 — добрать из `deck_pile`) и draw-фаза в `endTurn` (новый активный добирает 1 карту). Для refill потребуется поле `deck_pile jsonb` в `game_players` (или `games.game_state.players[].deck_pile`) — сейчас хранится только счётчик `deck_remaining`.
+  - ✅ UI-пакет: design tokens, dark theme, токены, тосты с dismiss, ConfirmDialog, CardPreview, скелетоны, прогресс 40/4, копирование кода, empty states, cost chips, сортировка, focus trap, a11y, reduced-motion, safe-area.
+- **В ОЖИДАНИИ (Фаза 5+):** RLS-политики для прода, server-side валидация ходов (Edge Function или Postgres trigger), 3D polish (parallax, частицы), error-recovery при разрыве Realtime, undo/redo, чат.
 - **Известные баги:** `game-players→game_id` foreign key сейчас не используется (нет обратной навигации). Сейчас RLS=false — для прода критично включить.
 
 ## Для агента, продолжающего работу
 
 1. `npm install` (если нет `node_modules`), `npm run dev`.
 2. Заполни `.env` или используй Cloudflare Dashboard env vars.
-3. **Миграции:** если меняешь схему — добавь `supabase/migrations/YYYYMMDDHHMMSS_*.sql` через `npx supabase migration new`, отредактируй, `npx supabase db push`.
-4. **Тестирование:** 2 вкладки → `/lobby` → создать лобби → 2-я вкладка вставить код → оба жмут «Готов» → хост жмёт «Старт» → автопереход в `/game/:gameId`. Проверить Realtime: ход одного виден другому.
-5. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm run build` + `npm run lint`. Линт 7 errors — это **потолок**, не больше.
-6. После правок **обнови этот файл + DEVELOPMENT_PLAN.md**, чтобы следующий агент не тратил токены на повторное изучение.
+3. **Следующая задача (продолжение Фазы 4):**
+   - Добавить колонку `deck_pile jsonb` в `game_players` (миграция: `npx supabase migration new add_deck_pile`, `npx supabase db push`).
+   - В `useStartGame` писать `deck_pile = pool.slice(STARTING_HAND_SIZE)` (оставшиеся после раздачи карты как массив instance'ов).
+   - В `useGameAction.playCard`: после удаления карты из руки — если `hand.length < STARTING_HAND_SIZE` и `deck_pile.length > 0` — переложить последнюю карту из `deck_pile` в `hand`, обновить обе колонки + `deck_remaining = deck_pile.length`.
+   - В `useGameAction.endTurn`: при смене активного игрока — добрать 1 карту из его `deck_pile` в `hand`.
+   - Альтернатива без миграции: хранить `deck_pile` как массив в `games.game_state.players[].deck_pile` (избегаем миграции, но усложняем `writeGameState`).
+4. **Миграции:** если меняешь схему — добавь `supabase/migrations/YYYYMMDDHHMMSS_*.sql` через `npx supabase migration new`, отредактируй, `npx supabase db push`.
+5. **Тестирование:** 2 вкладки → выбрать/создать колоду в `/decks` → `/lobby` → создать лобби → 2-я вкладка вставить код → оба жмут «Готов» → хост жмёт «Старт» → автопереход в `/game/:gameId`. Проверить Realtime: ход одного виден другому, рука начинается с 5 карт.
+6. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm run build` + `npm run lint`. Линт 7 errors — это **потолок**, не больше.
+7. После правок **обнови этот файл**, чтобы следующий агент не тратил токены на повторное изучение (DEVELOPMENT_PLAN.md удалён — вся история теперь здесь).
 
 ## Optional (инструменты упаковки контекста)
 

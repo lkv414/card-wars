@@ -37,6 +37,7 @@ export function PlayerHand({
             <div
               key={idx}
               className={`hand-card-wrapper ${selectedCardIndex === idx ? 'selected' : ''} ${!isYourTurn ? 'disabled' : ''}`}
+              style={{ '--i': idx, '--n': cards.length }}
               onClick={() => handleCardSelect(idx, card)}
             >
               <Card3D card={card} isOpponent={false} />

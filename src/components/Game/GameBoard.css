@@ -1,4 +1,4 @@
-/* GameBoard.css - UNO-like game board styling */
+/* GameBoard.css - UNO-like game board styling with 3D scene */
 
 .game-board {
   display: grid;
@@ -10,6 +10,8 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow: hidden;
   font-family: 'Arial', sans-serif;
+  perspective: 2000px; /* 3D-сцена: отсюда считается наклон доски */
+  perspective-origin: 50% 30%; /* смотрим сверху, чуть спереди */
 }
 
 .game-board.loading,
@@ -26,11 +28,14 @@
   background-color: rgba(255, 0, 0, 0.3);
 }
 
-/* Sections */
+/* Sections: лёгкий наклон стола от игрока */
 .game-section {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transform-style: preserve-3d;
+  transform: rotateX(8deg); /* стол слегка отклонён от игрока */
+  transform-origin: center bottom;
 }
 
 .opponent-section {
@@ -53,13 +58,14 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   flex: 1;
+  transform-style: preserve-3d;
 }
 
 .opponent-zones {
   transform: scaleY(-1);
 }
 
-/* Center */
+/* Center: без 3D, чтобы текст читался прямо */
 .game-center {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -171,6 +177,11 @@
   .game-board {
     gap: 0.5rem;
     padding: 0.5rem;
+    perspective: none; /* отключаем 3D на средних экранах */
+  }
+
+  .game-section {
+    transform: none;
   }
 
   .zones-grid {

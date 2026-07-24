@@ -35,9 +35,13 @@
   display: flex;
   gap: 0.75rem;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding: 3rem 1rem 0.5rem; /* верхний отступ для приподнятых карт */
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center; /* веер красивее с центрированием */
+  perspective: 1500px; /* 3D-сцена для веера */
+  perspective-origin: 50% 0%;
+  transform-style: preserve-3d;
+  min-height: 180px;
 }
 
 .hand-cards::-webkit-scrollbar {
@@ -63,24 +67,42 @@
   height: 140px;
   position: relative;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.35s ease, z-index 0s linear 0.18s;
   transform-origin: center bottom;
+  transform-style: preserve-3d;
+  /* 3D-веер: угол и подъём считаются из --i (индекс) и --n (количество) */
+  --spread: 8deg; /* макс. угол между крайними картами */
+  --lift: 18px;   /* макс. подъём по дуге */
+  transform:
+    rotateZ(calc((var(--i) - (var(--n) - 1) / 2) * (var(--spread) / max(1, var(--n) - 1))))
+    translateY(calc(
+      var(--lift) *
+      (1 - abs(var(--i) - (var(--n) - 1) / 2) / max(0.5, (var(--n) - 1) / 2)) *
+      (1 - abs(var(--i) - (var(--n) - 1) / 2) / max(0.5, (var(--n) - 1) / 2))
+    ))
+    translateZ(calc(var(--lift) * 0.4));
 }
 
 .hand-card-wrapper:hover:not(.disabled) {
-  transform: translateY(-8px) scale(1.05);
+  /* Выбранная/наведенная карта выпрямляется и всплывает */
+  transform: translateY(-12px) translateZ(80px) rotateZ(0deg) scale(1.08);
   z-index: 100;
+  transition-delay: 0s;
 }
 
 .hand-card-wrapper.selected {
   outline: 3px solid #4caf50;
   outline-offset: -3px;
   border-radius: 8px;
+  transform: translateY(-12px) translateZ(60px) rotateZ(0deg) scale(1.05);
+  z-index: 50;
 }
 
 .hand-card-wrapper.disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  filter: saturate(0.6);
 }
 
 .card-info {
@@ -111,7 +133,7 @@
 
 .zone-selector {
   background: rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(76, 175, 80, 0.5);
+  border: 2px solid rgba(76, 175, 50, 0.5);
   border-radius: 8px;
   padding: 1rem;
   color: white;
@@ -151,15 +173,46 @@
   transform: translateY(0);
 }
 
-/* Responsive */
+/* Анимация «прилёт из колоды» при появлении новой карты */
+@keyframes cardFlyIn {
+  0% {
+    transform: translateY(120px) translateZ(-300px) rotateZ(0deg) rotateY(-180deg);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    /* финальный вид считается из --i/--n, оставляем его текущим */
+    opacity: 1;
+  }
+}
+
+.hand-card-wrapper {
+  animation: cardFlyIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+/* Плоский режим для маленьких экранов — отключаем 3D-веер */
 @media (max-width: 768px) {
+  .hand-cards {
+    perspective: none;
+    padding-top: 0.5rem;
+    min-height: auto;
+  }
+
   .hand-card-wrapper {
     flex: 0 0 80px;
     height: 110px;
+    transform: none;
+    animation: cardFlyIn 0.4s ease backwards;
   }
 
   .hand-card-wrapper:hover:not(.disabled) {
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-4px) translateZ(0) scale(1.02);
+  }
+
+  .hand-card-wrapper.selected {
+    transform: translateY(-4px) translateZ(0) scale(1.02);
   }
 
   .zone-selector {

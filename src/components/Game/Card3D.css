@@ -19,7 +19,7 @@
 }
 
 .card-3d:hover:not(.opponent) {
-  transform: translateY(-4px);
+  transform: translateY(-4px) translateZ(20px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 

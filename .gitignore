@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Supabase CLI secrets (local-only, never commit)
+.env.secure
+supabase/.temp
+

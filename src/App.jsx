@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { useCards } from './hooks/useCards'
 import { useLands } from './hooks/useLands'
 import { useToasts } from './hooks/useToasts'
+import { ensureGuestId } from './utils/guestSession'
 import './App.css'
 
 import { MainMenu } from './components/MainMenu'
@@ -28,6 +30,11 @@ function App() {
   const libraryError = cardsError || landsError || ''
 
   const { toasts, toast, dismissToast } = useToasts()
+
+  // Фаза 6: RLS — установить guest_id в Postgres-сеанс при старте.
+  useEffect(() => {
+    ensureGuestId()
+  }, [])
 
   return (
     <>

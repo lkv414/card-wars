@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
 import { getGuestId } from '../utils/guestId'
+import { ensureGuestId } from '../utils/guestSession'
 import { generateLobbyCode } from '../utils/lobbyCode'
 
 const LOBBY_STORAGE_KEY = 'activeLobby'
@@ -38,6 +39,12 @@ async function cleanupOldLobbies() {
 export function useLobby() {
   // 'idle' | 'restoring' | 'loading' | 'waiting' | 'in_game' | 'error' | 'dismissed'
   const [status, setStatus] = useState('restoring')
+
+  // Фаза 6: RLS — установить guest_id в Postgres-сеанс при старте.
+  useEffect(() => {
+    ensureGuestId()
+  }, [])
+
   const [lobbyId, setLobbyId] = useState(null)
   const [lobbyCode, setLobbyCode] = useState(null)
   const [players, setPlayers] = useState([])

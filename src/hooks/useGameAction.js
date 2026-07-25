@@ -24,6 +24,7 @@
  */
 import { useState, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { ensureGuestId } from '../utils/guestSession'
 import { STARTING_HAND_SIZE } from '../constants/game'
 
 function shuffleArray(arr) {
@@ -97,12 +98,13 @@ export function useGameAction(game, reload) {
   const [error, setError] = useState(null)
 
   const writeGameState = useCallback(async (patch) => {
-    if (!game?.id) {
-      const e = 'Игра не загружена'
-      setError(e)
-      return { error: e }
-    }
-    setIsApplying(true)
+      if (!game?.id) {
+        const e = 'Игра не загружена'
+        setError(e)
+        return { error: e }
+      }
+      await ensureGuestId()
+      setIsApplying(true)
     setError(null)
     try {
       // optimistic lock: only update if version matches
@@ -155,8 +157,9 @@ export function useGameAction(game, reload) {
    * Local simulation: pull card out of hand, place in zone, decrement actions.
    */
   const playCard = useCallback(async (cardIndex, zoneIndex, actionCost = 1) => {
-    if (!game?.players) return { error: 'Игра не загружена' }
-    const me = game.players.find((p) => p.player_id === game.current_player_id)
+      if (!game?.players) return { error: 'Игра не загружена' }
+      await ensureGuestId()
+      const me = game.players.find((p) => p.player_id === game.current_player_id)
     if (!me) return { error: 'Сейчас не ваш ход' }
 
     const hand = [...(me.hand || [])]
@@ -205,8 +208,9 @@ export function useGameAction(game, reload) {
    * Attack from a card in one zone to opponent's zone.
    */
   const attack = useCallback(async (fromZone, cardId, toOpponentZone) => {
-    if (!game?.players) return { error: 'Игра не загружена' }
-    const me = game.players.find((p) => p.player_id === game.current_player_id)
+      if (!game?.players) return { error: 'Игра не загружена' }
+      await ensureGuestId()
+      const me = game.players.find((p) => p.player_id === game.current_player_id)
     if (!me) return { error: 'Сейчас не ваш ход' }
     const opponent = game.players.find((p) => p.player_id !== me.player_id)
     if (!opponent) return { error: 'Противник не найден' }
@@ -283,8 +287,9 @@ export function useGameAction(game, reload) {
    * Draw-фаза: новый активный добирает 1 карту из своего deck_pile в hand.
    */
   const endTurn = useCallback(async () => {
-    if (!game?.players) return { error: 'Игра не загружена' }
-    const players = game.players
+      if (!game?.players) return { error: 'Игра не загружена' }
+      await ensureGuestId()
+      const players = game.players
     const currentIdx = players.findIndex((p) => p.player_id === game.current_player_id)
     if (currentIdx === -1) return { error: 'Активный игрок не найден' }
     const nextPlayer = players[(currentIdx + 1) % players.length]

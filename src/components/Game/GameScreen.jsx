@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
+import { ensureGuestId } from '../../utils/guestSession'
 import { GameBoard } from './GameBoard'
 import { GameBoard3D } from './GameBoard3D'
 import { useGameAction } from '../../hooks/useGameAction'
@@ -29,70 +30,48 @@ export function GameScreen() {
   const [loading, setLoading] = useState(true)
 
   const loadGame = useCallback(async () => {
-    if (!gameId) return
-    setLoading(true)
-    setError(null)
-    try {
-      // 1. game core
-      const { data: g, error: gErr } = await supabase
-        .from('games')
-        .select('id, lobby_id, status, current_turn, current_player_id, game_state, version, winner_id, started_at')
-        .eq('id', gameId)
-        .maybeSingle()
+      if (!gameId) return
+      await ensureGuestId()
+      setLoading(true)
+      setError(null)
+      try {
+        // Фаза 6: читаем через get_player_game_state — функция сама
+        // скрывает hand/deck_pile оппонента и возвращает счётчики.
+        const { data: state, error: rpcErr } = await supabase
+          .rpc('get_player_game_state', {
+            p_game_id: gameId,
+            p_player_id: guestId,
+          })
 
-      if (gErr) throw new Error(gErr.message)
-      if (!g) throw new Error('Игра не найдена')
+        if (rpcErr) throw new Error(rpcErr.message)
+        if (!state) throw new Error('Игра не найдена или доступ запрещён')
 
-      // 2. players
-      const { data: players, error: pErr } = await supabase
-        .from('game_players')
-        .select('game_id, player_id, nickname, position, health, hand, deck_pile, deck_remaining, player_order, last_seen')
-        .eq('game_id', gameId)
-        .order('player_order', { ascending: true })
-
-      if (pErr) throw new Error(pErr.message)
-
-      // 3. zones
-      const { data: zones, error: zErr } = await supabase
-        .from('game_zones')
-        .select('id, game_id, player_id, zone_position, cards, land_id')
-        .eq('game_id', gameId)
-        .order('player_id')
-        .order('zone_position')
-
-      if (zErr) throw new Error(zErr.message)
-
-      // 4. Собрать структуру players с zones
-      const playersWithZones = (players || []).map((p) => {
-        const ownZones = (zones || []).filter((z) => z.player_id === p.player_id)
-        // Упорядочить по zone_position, Map {1: [...], 2: [...], 3: [...], 4: [...]}
-        const zonesMap = { 1: [], 2: [], 3: [], 4: [] }
-        for (const z of ownZones) {
-          if (z.zone_position >= 1 && z.zone_position <= 4) {
-            zonesMap[z.zone_position] = z.cards || []
-          }
-        }
-        return {
-          id: p.player_id,
-          player_id: p.player_id,
-          nickname: p.nickname,
-          position: p.position,
-          health: p.health,
-          hand: p.hand || [],
-          deck_pile: p.deck_pile || [],
-          zones: [zonesMap[1], zonesMap[2], zonesMap[3], zonesMap[4]],
-          deck_remaining: p.deck_remaining,
-          player_order: p.player_order,
-        }
-      })
-
-      setGame({ ...g, players: playersWithZones })
-    } catch (err) {
-      setError(err.message || 'Не удалось загрузить игру')
-    } finally {
-      setLoading(false)
-    }
-  }, [gameId])
+        setGame({
+          id: state.id,
+          lobby_id: state.lobby_id,
+          status: state.status,
+          current_turn: state.current_turn,
+          current_player_id: state.current_player_id,
+          winner_id: state.winner_id,
+          game_state: state.game_state,
+          version: state.version,
+          started_at: state.started_at,
+          ended_at: state.ended_at,
+          players: (state.players || []).map((p) => ({
+            ...p,
+            zones: Array.isArray(p.zones)
+              ? p.zones
+                  .sort((a, b) => a.zone_position - b.zone_position)
+                  .map((z) => z.cards || [])
+              : [[], [], [], []],
+          })),
+        })
+      } catch (err) {
+        setError(err.message || 'Не удалось загрузить игру')
+      } finally {
+        setLoading(false)
+      }
+    }, [gameId, guestId])
 
   const { playCard, attack, endTurn } = useGameAction(game, loadGame)
 

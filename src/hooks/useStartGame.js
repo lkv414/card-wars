@@ -17,6 +17,7 @@
 import { useCallback, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import { getGuestId } from '../utils/guestId'
+import { ensureGuestId } from '../utils/guestSession'
 import { STARTING_HAND_SIZE } from '../constants/game'
 import { dealStartingHand, isLobbyDeckPlayable } from '../utils/lobbyDeck'
 
@@ -28,6 +29,9 @@ const POSITIONS = ['player1', 'player2', 'player3', 'player4']
  * @returns {Promise<{gameId: string}|null>}
  */
 async function startGameForLobby(lobbyId, hostId) {
+  // Фаза 6: RLS требует guest_id в сеансе.
+  await ensureGuestId()
+
   // 1. Загрузить игроков лобби (с колодами)
   const { data: players, error: playersErr } = await supabase
     .from('lobby_players')

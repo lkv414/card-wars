@@ -3,12 +3,28 @@
  * Hook for game actions: playCard, attack, endTurn.
  * Writes to Supabase with version check (optimistic lock).
  *
+ * Phase 4 (deck refill):
+ *   - `playCard` добирает карту из deck_pile в hand, если hand < STARTING_HAND_SIZE
+ *   - `endTurn` (draw-фаза) добирает 1 карту из deck_pile нового активного игрока
+ *
+ * Phase 5 (server-side validation):
+ *   Все UPDATE/INSERT в games / game_players / game_zones проходят через
+ *   Postgres-триггеры из миграции `20260725010000_phase5_server_validation.sql`:
+ *   - games: проверка status, current_player_id, version (optimistic lock + 1),
+ *     winner_id обязателен при status='finished'.
+ *   - game_players: hand — массив длиной ≤ STARTING_HAND_SIZE (5),
+ *     health ∈ [0..25], deck_pile — массив, deck_remaining авто-синхронизируется
+ *     с длиной deck_pile.
+ *   - game_zones: zone_position ∈ [1..4], cards — массив длиной ≤ 10.
+ *   Клиент шлёт согласованные данные; триггер прозрачен для легитимных операций.
+ *
  * @param {object} game - current game state from useGameState
  * @param {function} reload - callback to reload after successful action
  * @returns {object} - { playCard, attack, endTurn, isApplying, error }
  */
 import { useState, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { STARTING_HAND_SIZE } from '../constants/game'
 
 function shuffleArray(arr) {
   const a = [...arr]
@@ -157,10 +173,21 @@ export function useGameAction(game, reload) {
     const zones = clampZones(me.zones)
     zones[zoneIndex] = [...(zones[zoneIndex] || []), { ...card, id: card.id || `card-${Date.now()}`, tapped: false, flipped: false }]
 
-    // Persist hand + zones
+    // Refill: добираем из deck_pile пока рука < STARTING_HAND_SIZE
+    const deckPile = Array.isArray(me.deck_pile) ? [...me.deck_pile] : []
+    while (hand.length < STARTING_HAND_SIZE && deckPile.length > 0) {
+      hand.push(deckPile.pop())
+    }
+    const newDeckRemaining = deckPile.length
+
+    // Persist hand + deck_pile + deck_remaining + zones
     await supabase
       .from('game_players')
-      .update({ hand })
+      .update({
+        hand,
+        deck_pile: deckPile,
+        deck_remaining: newDeckRemaining,
+      })
       .eq('game_id', game.id)
       .eq('player_id', me.player_id)
 
@@ -253,6 +280,7 @@ export function useGameAction(game, reload) {
   /**
    * End turn: switch to next player.
    * Computes simple alternation: player1 -> player2 -> player1.
+   * Draw-фаза: новый активный добирает 1 карту из своего deck_pile в hand.
    */
   const endTurn = useCallback(async () => {
     if (!game?.players) return { error: 'Игра не загружена' }
@@ -261,10 +289,37 @@ export function useGameAction(game, reload) {
     if (currentIdx === -1) return { error: 'Активный игрок не найден' }
     const nextPlayer = players[(currentIdx + 1) % players.length]
 
+    // Draw-фаза: добрать 1 карту из deck_pile нового активного
+    const nextDeckPile = Array.isArray(nextPlayer.deck_pile) ? [...nextPlayer.deck_pile] : []
+    const nextHand = Array.isArray(nextPlayer.hand) ? [...nextPlayer.hand] : []
+    const drewCard = nextDeckPile.length > 0
+    if (drewCard) {
+      nextHand.push(nextDeckPile.pop())
+    }
+    const nextDeckRemaining = nextDeckPile.length
+
     const newLog = [
       ...(game.game_state?.log || []),
-      { timestamp: Date.now(), message: `Ход переходит к ${nextPlayer.nickname || 'следующему'}` },
+      {
+        timestamp: Date.now(),
+        message: drewCard
+          ? `Ход переходит к ${nextPlayer.nickname || 'следующему'} · добрал 1 карту`
+          : `Ход переходит к ${nextPlayer.nickname || 'следующему'} · колода пуста`,
+      },
     ]
+
+    // Сохранить изменения руки нового активного игрока
+    if (drewCard) {
+      await supabase
+        .from('game_players')
+        .update({
+          hand: nextHand,
+          deck_pile: nextDeckPile,
+          deck_remaining: nextDeckRemaining,
+        })
+        .eq('game_id', game.id)
+        .eq('player_id', nextPlayer.player_id)
+    }
 
     return writeGameState({
       current_player_id: nextPlayer.player_id,

@@ -46,7 +46,7 @@ export function GameScreen() {
       // 2. players
       const { data: players, error: pErr } = await supabase
         .from('game_players')
-        .select('game_id, player_id, nickname, position, health, hand, deck_remaining, player_order, last_seen')
+        .select('game_id, player_id, nickname, position, health, hand, deck_pile, deck_remaining, player_order, last_seen')
         .eq('game_id', gameId)
         .order('player_order', { ascending: true })
 
@@ -79,6 +79,7 @@ export function GameScreen() {
           position: p.position,
           health: p.health,
           hand: p.hand || [],
+          deck_pile: p.deck_pile || [],
           zones: [zonesMap[1], zonesMap[2], zonesMap[3], zonesMap[4]],
           deck_remaining: p.deck_remaining,
           player_order: p.player_order,

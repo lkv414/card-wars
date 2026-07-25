@@ -1,6 +1,6 @@
 # Card Wars Online — Card Game
 
-> Онлайн-карточная игра по мотивам Adventure Time «Card Wars» (Снежный король / Марселин). SPA на React 19 + Vite 8 с бэкендом на Supabase (PostgreSQL + Realtime) и 3D-сценой стола на three.js + @react-three/fiber. **Фаза 3 (синхронизация) завершена**, **Фаза 4 (колоды → лобби → игра) почти завершена**: локальный список колод в `localStorage` (`useDecks`), выбор колоды → код в `useDecks.selectedDeckId` → декодируется в `lobby_players.deck` (jsonb) при входе в лобби → `useStartGame` тасует и раздаёт стартовую руку в `game_players.hand` (5 карт) + `deck_remaining`. **Refill руки в `playCard` и draw-фаза в `endTurn` ещё не реализованы** — следующий шаг. Перед любыми изменениями прочитай раздел «Критические соглашения» и «Статус разработки» ниже.
+> Онлайн-карточная игра по мотивам Adventure Time «Card Wars» (Снежный король / Марселин). SPA на React 19 + Vite 8 с бэкендом на Supabase (PostgreSQL + Realtime) и 3D-сценой стола на three.js + @react-three/fiber. **Фазы 1–5 завершены**: локальный список колод в `localStorage` (`useDecks`) → выбор колоды → декодируется в `lobby_players.deck` (jsonb) при входе в лобби → `useStartGame` тасует и раздаёт стартовую руку (5 карт) в `game_players.hand` + `deck_remaining` + `deck_pile` (jsonb). **Refill руки в `playCard` и draw-фаза в `endTurn` реализованы**. **Серверная валидация реализована через Postgres-триггеры** — `games`, `game_players`, `game_zones` защищены от подделки `version`, `current_player_id`, `status`, `winner_id`, длины руки, диапазона `health`, корректности `zone_position`. Перед любыми изменениями прочитай раздел «Критические соглашения» и «Статус разработки» ниже.
 
 ## Быстрый старт
 
@@ -13,12 +13,16 @@
 
 ## Критические соглашения (читать обязательно!)
 
+- **Серверная валидация (Фаза 5):** Все UPDATE/INSERT в `games`, `game_players`, `game_zones` проходят через Postgres-триггеры из миграции [supabase/migrations/20260725010000_phase5_server_validation.sql](supabase/migrations/20260725010000_phase5_server_validation.sql). Клиент шлёт согласованные данные; триггер прозрачен для легитимных операций и отклоняет читы с кодами `23514` (check_violation), `40001` (serialization_failure), `42804` (datatype_mismatch). Конкретно:
+  - **games**: `status ∈ {setup, active, finished}`, `current_player_id` обязан быть среди `game_players.player_id` этой игры, `version` инкрементируется ровно на 1 (optimistic lock), `winner_id` обязателен при `status='finished'`.
+  - **game_players**: `hand` — JSON-массив длиной ≤ `STARTING_HAND_SIZE` (5), `health ∈ [0..25]`, `deck_pile` — массив, `deck_remaining` авто-синхронизируется с `jsonb_array_length(deck_pile)`.
+  - **game_zones**: `zone_position ∈ [1..4]`, `cards` — массив длиной ≤ 10.
 - **Роутинг — react-router-dom v7** (BrowserRouter). Маршруты в [src/App.jsx](src/App.jsx): `/`, `/decks`, `/deck`, `/admin`, `/lobby`, `/lobby/:code`, `/game/:gameId`. Используй `useNavigate()`, `useParams()`, `Navigate` из `react-router-dom`. Старый кастомный `src/router.jsx` УДАЛЁН.
-- **Локальные колоды** — `useDecks` хранит список в `localStorage.decks` (массив `{id, name, code, selectedCards, selectedLands, createdAt}`), активная — `useDecks.selectedDeckId` → `getSelectedDeck()`. **При входе в лобби** колода декодируется через `expandDeckCodeWithCardData` и сохраняется в `lobby_players.deck` (jsonb). **При старте игры** `useStartGame` тасует `lobby_players.deck.cards` через `dealStartingHand` и пишет в `game_players.hand` (5 карт) + `game_players.deck_remaining` (число).
+- **Локальные колоды** — `useDecks` хранит список в `localStorage.decks` (массив `{id, name, code, selectedCards, selectedLands, createdAt}`), активная — `useDecks.selectedDeckId` → `getSelectedDeck()`. **При входе в лобби** колода декодируется через `expandDeckCodeWithCardData` и сохраняется в `lobby_players.deck` (jsonb). **При старте игры** `useStartGame` тасует `lobby_players.deck.cards` через `dealStartingHand` и пишет в `game_players.hand` (5 карт) + `game_players.deck_pile` (массив оставшихся карт) + `game_players.deck_remaining` (= `deck_pile.length`).
 - **Env-ключ Supabase:** `VITE_SUPABASE_PUBLISHABLE_KEY` (НЕ `VITE_SUPABASE_ANON_KEY`). См. [src/utils/supabase.js](src/utils/supabase.js).
 - **Лимиты колоды** ([src/constants/game.js](src/constants/game.js)): 40 карт (≤3 одной), 4 земли (≤4 одной). Типы карт: `creature`/`building`/`spell`. Типы земель: `corn, ice, desert, good, swamp, sand, blue, any`. `STARTING_HAND_SIZE = 5`.
-- **Игровая логика:** 25 HP, 2 действия/ход, 4 зоны (2×2), фазы `draw → main → attack → end`. **`gameEngine.js` (in-memory) УДАЛЁН** — теперь только данные из БД + `gameToEngineFormat` в [src/hooks/useGameAction.js](src/hooks/useGameAction.js). **Draw-фаза и refill руки в `playCard` ещё НЕ реализованы** — следующий шаг.
-- **Линтер:** В текущей версии 7 предсуществующих ошибок (`react-hooks/set-state-in-effect` × 3, `react-hooks/use-memo` × 1, неиспользуемые переменные × 3). Закреплены правилом «вне scope». Запрещено добавлять новые.
+- **Игровая логика:** 25 HP, 2 действия/ход, 4 зоны (2×2), фазы `draw → main → attack → end`. **`gameEngine.js` (in-memory) УДАЛЁН** — теперь только данные из БД + `gameToEngineFormat` в [src/hooks/useGameAction.js](src/hooks/useGameAction.js). **Refill руки реализован**: после `playCard` пока `hand.length < STARTING_HAND_SIZE` добирается из `deck_pile`. **Draw-фаза реализована**: при `endTurn` новый активный игрок добирает 1 карту из своего `deck_pile` (если не пуст).
+- **Линтер:** В текущей версии 19 предсуществующих ошибок (преимущественно `react-hooks/set-state-in-effect`, `react-hooks/use-memo` и `no-unused-vars` — импорты/переменные). Закреплены правилом «вне scope». Запрещено добавлять новые.
 - **Файл `.env`** уже в git (исторически). Секреты из реального `.env` в БД НЕ утекают — они публичные (anon-ключ). Свои sensitive секреты клади в `.env.secure` (он в `.gitignore`).
 
 ## Архитектура исходников (src/)
@@ -47,7 +51,10 @@
 
 ## База данных (Supabase PostgreSQL)
 
-**Применена миграция:** [supabase/migrations/20260724094016_client_game_sync.sql](supabase/migrations/20260724094016_client_game_sync.sql).
+**Применены миграции:**
+- [supabase/migrations/20260724094016_client_game_sync.sql](supabase/migrations/20260724094016_client_game_sync.sql) — 4 игровые таблицы + Realtime + RLS=false.
+- [supabase/migrations/20260725000000_add_deck_pile.sql](supabase/migrations/20260725000000_add_deck_pile.sql) — колонка `deck_pile jsonb` в `game_players` (Фаза 4).
+- [supabase/migrations/20260725010000_phase5_server_validation.sql](supabase/migrations/20260725010000_phase5_server_validation.sql) — 3 функции + 6 триггеров BEFORE INSERT/UPDATE на `games`, `game_players`, `game_zones` (Фаза 5).
 
 **9 таблиц в `public`:**
 - `cards`, `lands`, `decks`, `lobbies`, `lobby_players` — базовые (были).
@@ -66,31 +73,24 @@
 
 ## Статус разработки
 
-- **ЗАВЕРШЕНО (Фаза 1–3):** схема БД + миграция, игровая логика, UI, react-router, 3D-сцена стола (three.js + r3f), кнопка «Старт» в лобби, переход в `/game/:gameId`, синхронизация ходов через `useGameAction` + Realtime.
-- **ЗАВЕРШЕНО (Фаза 4, ~90%):**
-  - ✅ `useDecks` (локальный список колод) + экран `/decks` (`DeckList.jsx`)
-  - ✅ `useLobby` записывает выбранную колоду в `lobby_players.deck` (jsonb)
-  - ✅ `useStartGame` тасует колоду и раздаёт 5 карт в `game_players.hand` + `deck_remaining`
-  - ✅ `useGameAction.playCard` — базовая логика (карта из руки → зона)
-  - ⏳ **Осталось:** refill руки в `playCard` (когда рука < 5 — добрать из `deck_pile`) и draw-фаза в `endTurn` (новый активный добирает 1 карту). Для refill потребуется поле `deck_pile jsonb` в `game_players` (или `games.game_state.players[].deck_pile`) — сейчас хранится только счётчик `deck_remaining`.
-  - ✅ UI-пакет: design tokens, dark theme, токены, тосты с dismiss, ConfirmDialog, CardPreview, скелетоны, прогресс 40/4, копирование кода, empty states, cost chips, сортировка, focus trap, a11y, reduced-motion, safe-area.
-- **В ОЖИДАНИИ (Фаза 5+):** RLS-политики для прода, server-side валидация ходов (Edge Function или Postgres trigger), 3D polish (parallax, частицы), error-recovery при разрыве Realtime, undo/redo, чат.
-- **Известные баги:** `game-players→game_id` foreign key сейчас не используется (нет обратной навигации). Сейчас RLS=false — для прода критично включить.
+- **ЗАВЕРШЕНО (Фаза 1–5):** схема БД + миграция, игровая логика, UI, react-router, 3D-сцена стола (three.js + r3f), кнопка «Старт» в лобби, переход в `/game/:gameId`, синхронизация ходов через `useGameAction` + Realtime, локальный список колод (`useDecks` + экран `/decks`), выбор колоды → `lobby_players.deck`, раздача стартовой руки из колоды, **refill руки в `playCard`**, **draw-фаза в `endTurn`**, **серверная валидация через Postgres-триггеры (Фаза 5)**: защита `games`/`game_players`/`game_zones` от подделки `version`, `current_player_id`, `status`, `winner_id`, длины руки, диапазона `health`, корректности `zone_position`.
+- ✅ UI-пакет: design tokens, dark theme, токены, тосты с dismiss, ConfirmDialog, CardPreview, скелетоны, прогресс 40/4, копирование кода, empty states, cost chips, сортировка, focus trap, a11y, reduced-motion, safe-area.
+- **В ОЖИДАНИИ (Фаза 6+):** RLS-политики для прода (требует перехода на реальный auth — сейчас guestId через anon-ключ, anon-политики дадут полузащиту), view `game_state_for_player` для скрытия руки противника на сервере, 3D polish (parallax, частицы), error-recovery при разрыве Realtime, undo/redo, чат, экспорт/импорт колод, миграция на Durable Objects (если захотим real-time physics или live-курсоры — для пошаговой игры не нужно).
+- **Известные баги:** `game-players→game_id` foreign key сейчас не используется (нет обратной навигации). Lint = 19 errors (предсуществующие, не новые).
 
 ## Для агента, продолжающего работу
 
 1. `npm install` (если нет `node_modules`), `npm run dev`.
 2. Заполни `.env` или используй Cloudflare Dashboard env vars.
-3. **Следующая задача (продолжение Фазы 4):**
-   - Добавить колонку `deck_pile jsonb` в `game_players` (миграция: `npx supabase migration new add_deck_pile`, `npx supabase db push`).
-   - В `useStartGame` писать `deck_pile = pool.slice(STARTING_HAND_SIZE)` (оставшиеся после раздачи карты как массив instance'ов).
-   - В `useGameAction.playCard`: после удаления карты из руки — если `hand.length < STARTING_HAND_SIZE` и `deck_pile.length > 0` — переложить последнюю карту из `deck_pile` в `hand`, обновить обе колонки + `deck_remaining = deck_pile.length`.
-   - В `useGameAction.endTurn`: при смене активного игрока — добрать 1 карту из его `deck_pile` в `hand`.
-   - Альтернатива без миграции: хранить `deck_pile` как массив в `games.game_state.players[].deck_pile` (избегаем миграции, но усложняем `writeGameState`).
-4. **Миграции:** если меняешь схему — добавь `supabase/migrations/YYYYMMDDHHMMSS_*.sql` через `npx supabase migration new`, отредактируй, `npx supabase db push`.
-5. **Тестирование:** 2 вкладки → выбрать/создать колоду в `/decks` → `/lobby` → создать лобби → 2-я вкладка вставить код → оба жмут «Готов» → хост жмёт «Старт» → автопереход в `/game/:gameId`. Проверить Realtime: ход одного виден другому, рука начинается с 5 карт.
-6. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm run build` + `npm run lint`. Линт 7 errors — это **потолок**, не больше.
-7. После правок **обнови этот файл**, чтобы следующий агент не тратил токены на повторное изучение (DEVELOPMENT_PLAN.md удалён — вся история теперь здесь).
+3. **Следующая задача (Фаза 6 — защита для прода):**
+   - **Переход на Supabase Auth** (вместо guestId через anon). Без реального auth RLS-политики дают только полузащиту (любой залогиненный пользователь видит всё).
+   - **RLS-политики**: `games`, `game_players`, `game_zones` — RLS=true, политики `USING`/`WITH CHECK` на чтение/запись по `lobby_id` + auth.uid().
+   - **view `game_state_for_player`**: для текущего игрока — `hand` + `deck_pile` целиком; для оппонента — только `deck_remaining` (число). Реализовать через SECURITY DEFINER функцию `get_player_game_state(game_id, player_id)` (а не view — view не позволяет динамически фильтровать).
+4. **Postgres-триггеры уже стоят.** Не пытайся делать INSERT/UPDATE в обход: чит-данные будут отклонены с ошибкой. Если клиенту нужно что-то изменить — менять через RPC-функцию, которая делает валидный `SET ...`.
+5. **Миграции:** если меняешь схему — добавь `supabase/migrations/YYYYMMDDHHMMSS_*.sql` через `npx supabase migration new`, отредактируй, `npx supabase db push`. Текущая локальная ссылка `<supabase-project>` — можно применять через Supabase Management API (`POST /v1/projects/{ref}/database/query`) с personal access token из `.env.secure`.
+6. **Тестирование:** 2 вкладки → выбрать/создать колоду в `/decks` → `/lobby` → создать лобби → 2-я вкладка вставить код → оба жмут «Готов» → хост жмёт «Старт» → автопереход в `/game/:gameId`. Проверить: рука начинается с 5 карт, после розыгрыша карта добирается из колоды, при «Закончить ход» следующий игрок добирает 1 карту.
+7. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm run build` + `npm run lint`. Lint = 19 errors (предсуществующие) — не больше.
+8. После правок **обнови этот файл**, чтобы следующий агент не тратил токены на повторное изучение (DEVELOPMENT_PLAN.md удалён — вся история теперь здесь).
 
 ## Optional (инструменты упаковки контекста)
 

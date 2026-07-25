@@ -105,13 +105,14 @@ export function shuffleDeck(cards) {
 
 /**
  * Раздать стартовую руку из payload колоды лобби.
- * @returns {{ hand: object[], deckRemaining: number, lands: object[] }}
+ * @returns {{ hand: object[], deckRemaining: number, deckPile: object[], lands: object[] }}
  */
 export function dealStartingHand(lobbyDeck, handSize = STARTING_HAND_SIZE) {
   const pool = shuffleDeck(lobbyDeck?.cards || [])
   const n = Math.min(handSize, pool.length)
   const hand = pool.slice(0, n)
-  const deckRemaining = pool.length - n
+  const deckPile = pool.slice(n) // массив оставшихся экземпляров карт
+  const deckRemaining = deckPile.length
   const lands = Array.isArray(lobbyDeck?.lands) ? lobbyDeck.lands : []
-  return { hand, deckRemaining, lands }
+  return { hand, deckRemaining, deckPile, lands }
 }

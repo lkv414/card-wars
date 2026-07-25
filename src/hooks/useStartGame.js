@@ -112,12 +112,13 @@ async function startGameForLobby(lobbyId, hostId) {
     return { player: p, ...dealt }
   })
 
-  const gamePlayersRows = dealtByPlayer.map(({ player: p, hand, deckRemaining }, idx) => ({
+  const gamePlayersRows = dealtByPlayer.map(({ player: p, hand, deckRemaining, deckPile }, idx) => ({
     game_id: gameId,
     player_id: p.player_id,
     nickname: p.nickname || `Игрок ${idx + 1}`,
     health: 25,
     hand,
+    deck_pile: deckPile,
     deck_remaining: deckRemaining,
     position: POSITIONS[idx] || `player${idx + 1}`,
     player_order: idx + 1,

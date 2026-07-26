@@ -200,17 +200,17 @@ export function useLobby() {
       return
     }
 
-    const { error: playerErr } = await supabase.from('lobby_players').insert({
-      lobby_id: lobby.id,
-      player_id: guestId,
-      nickname: nickname.trim() || 'Игрок',
-      ready: false,
-      deck: deckPayload,
+    const { data: player, error: playerErr } = await supabase.rpc('upsert_lobby_player', {
+      p_guest_id: guestId,
+      p_lobby_id: lobby.id,
+      p_nickname: nickname.trim() || 'Игрок',
+      p_ready: false,
+      p_deck: deckPayload,
     })
 
-    if (playerErr) {
-      console.error('lobby_players insert error:', playerErr)
-      setError(`Не удалось добавить игрока: ${playerErr.message}`)
+    if (playerErr || !player) {
+      console.error('lobby_players upsert error:', playerErr)
+      setError(`Не удалось добавить игрока: ${playerErr?.message || 'RPC не вернул игрока'}`)
       setStatus('error')
       return
     }
@@ -288,16 +288,17 @@ export function useLobby() {
         return
       }
 
-      const { error: joinErr } = await supabase.from('lobby_players').insert({
-        lobby_id: lobby.id,
-        player_id: guestId,
-        nickname: nickname.trim() || 'Игрок',
-        ready: false,
-        deck: deckPayload,
+      const { data: player, error: joinErr } = await supabase.rpc('upsert_lobby_player', {
+        p_guest_id: guestId,
+        p_lobby_id: lobby.id,
+        p_nickname: nickname.trim() || 'Игрок',
+        p_ready: false,
+        p_deck: deckPayload,
       })
 
-      if (joinErr) {
-        setError('Не удалось войти в лобби')
+      if (joinErr || !player) {
+        console.error('lobby_players upsert error:', joinErr)
+        setError(`Не удалось войти в лобби: ${joinErr?.message || 'RPC не вернул игрока'}`)
         setStatus('error')
         return
       }

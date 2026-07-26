@@ -18,6 +18,7 @@
   - **game_players**: `hand` — JSON-массив длиной ≤ `STARTING_HAND_SIZE` (5), `health ∈ [0..25]`, `deck_pile` — массив, `deck_remaining` авто-синхронизируется с `jsonb_array_length(deck_pile)`.
   - **game_zones**: `zone_position ∈ [1..4]`, `cards` — массив длиной ≤ 10.
 - **RLS + скрытие руки (Фаза 6):**
+  - **Anonymous lobby mutation:** добавлена миграция [supabase/migrations/20260726050000_upsert_lobby_player_guest.sql](supabase/migrations/20260726050000_upsert_lobby_player_guest.sql) с `SECURITY DEFINER` RPC `upsert_lobby_player(...)`. RPC атомарно устанавливает `app.guest_id` и создаёт/обновляет игрока в одной транзакции; клиентский `useLobby` использует RPC вместо прямого INSERT для production RLS.
   - Миграции: [20260725020000_phase6_rls_and_view.sql](supabase/migrations/20260725020000_phase6_rls_and_view.sql) + [20260725020001_phase6_realtime_bypass.sql](supabase/migrations/20260725020001_phase6_realtime_bypass.sql).
   - Идентификация: `guestId` в `localStorage` (см. [src/utils/guestId.js](src/utils/guestId.js)). Клиент при старте вызывает RPC `set_guest_id(p_guest_id)` через [src/utils/guestSession.js](src/utils/guestSession.js) — функция делает `SET LOCAL app.guest_id` (PostgREST оборачивает каждый HTTP-запрос в транзакцию, поэтому `SET LOCAL` действует на весь запрос).
   - RLS=true на `games`, `game_players`, `game_zones`, `lobbies`, `lobby_players`. Политики SELECT/INSERT/UPDATE/DELETE проверяют `current_setting('app.guest_id')` против `lobby_players.player_id` (через helper `is_lobby_member(lobby_id)`).
@@ -83,7 +84,7 @@
 
 - **ЗАВЕРШЕНО (Фаза 1–6) + Сессии A–D:** схема БД + миграция, игровая логика, UI, react-router, 3D-сцена стола (three.js + r3f), кнопка «Старт» в лобби, переход в `/game/:gameId`, синхронизация ходов через `useGameAction` + Realtime, локальный список колод (`useDecks` + экран `/decks`), выбор колоды → `lobby_players.deck`, раздача стартовой руки из колоды, **refill руки в `playCard`**, **draw-фаза в `endTurn`**, **серверная валидация через Postgres-триггеры (Фаза 5)**, **RLS + скрытие руки противника через `get_player_game_state` (Фаза 6)**, **forfeit** (Сессия A), **Reconnect state machine** с баннером (Сессия B), **3D-анимации карт** (smooth lerp Y + gentle float + scale-bounce через useFrame), **log-only реплей** со слайдером и навигацией по действиям (Сессия D).
 - ✅ UI-пакет: design tokens, dark theme, токены, тосты с dismiss, ConfirmDialog, CardPreview, скелетоны, прогресс 40/4, копирование кода, empty states, cost chips, сортировка, focus trap, a11y, reduced-motion, safe-area.
-- **В ОЖИДАНИИ (Фаза 7+):** переход на **Supabase Auth** (вместо guestId через anon — даст настоящую защиту RLS без bypass-политик), удаление `*_realtime_bypass` и замена на `USING(auth.uid() = ...)`, 3D polish (parallax, частицы), error-recovery при разрыве Realtime, undo/redo, чат, экспорт/импорт колод, миграция на Durable Objects (если захотим real-time physics — для пошаговой игры не нужно).
+- **В ОЖИДАНИИ (Фаза 7+):** 3D polish (parallax, частицы), error-recovery при разрыве Realtime, undo/redo, чат, экспорт/импорт колод. **Supabase Auth не планируется и не будет внедряться:** проект навсегда остаётся на anonymous-доступе + `guestId` из `localStorage`; RLS должен быть совместим с этой моделью. Миграция на Durable Objects не нужна для пошаговой игры.
 - **Известные баги:** `game-players→game_id` foreign key сейчас не используется (нет обратной навигации). Lint = 13 errors + 1 warning (предсуществующие, не новые). Bypass-политики для Realtime — временное решение (Фаза 7).
 
 ## Для агента, продолжающего работу
@@ -94,9 +95,10 @@
    - **CSS-декомпозиция:** разделить `App.css` (32 KB) по доменам: `game.css`, `deck.css`, `lobby.css` (Сессия C JSX сделала, CSS не тронут).
    - **`useLobby.js` рефакторинг** через `useReducer` + Context (отложено с Сессии A).
    - **Полный replay snapshots — отложено:** log-only реплей уже реализован; восстановление игрового поля по шагам потребует сохранять полные snapshots в игровых действиях.
+   - **RLS для anonymous guestId:** исправить production-ошибку `lobby_players INSERT` без Supabase Auth. **Решение реализовано в коде:** migration `20260726050000_upsert_lobby_player_guest.sql` добавляет атомарный `SECURITY DEFINER` RPC `upsert_lobby_player`; клиентский `useLobby` уже вызывает его вместо прямого INSERT. Нужно применить migration в live Supabase и затем повторить тест на Cloudflare. Не ослаблять `WITH CHECK` до `true`.
 3a. **Отложено:** (если будет время)
    - **Reconnect в `LobbyScreen.jsx`** — использует `useLobby.js` (там архитектура 9-state машины, рефакторинг сложнее). Подключить когда `useLobby.js` будет разбит на `useLobbyActions` + `useLobbyRealtime` + `useReducer`.
-   - **Postgres Auth (бывш. Фаза 7)** — не делаем, остаёмся на anon + guestId из localStorage.
+   - **Supabase Auth не используем:** это окончательное решение. Остаёмся на anonymous-доступе + `guestId` из `localStorage`; все будущие исправления RLS должны учитывать эту модель.
 3b. **Сделано (Сессия A + B + C):**
    - **Refactor `useGameAction.js`** → подпапка `src/hooks/game/` с 4 атомарными хуками (`useGameState`, `usePlayCard`, `useAttack`, `useTurnControl`) + композитный `useGameAction` для обратной совместимости.
    - **forfeit** — кнопка «🏳️ Сдаться» в HUD GameBoard3D.jsx, логика в `useTurnControl.forfeit` (status='finished', winner_id=opponent).

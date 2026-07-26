@@ -57,9 +57,11 @@ export function LobbyScreen({ toast }) {
 
   const handleStartGame = async () => {
     if (!lobbyId) return
-    const { data: gameId, error: startErr } = await supabase.rpc('start_lobby_game', {
+    // RPC name/params must match SECURITY DEFINER in
+    // supabase/migrations/20260726050000_upsert_lobby_player_guest.sql
+    const { data: gameId, error: startErr } = await supabase.rpc('start_game_for_lobby', {
       p_lobby_id: lobbyId,
-      p_host_id: getGuestId(),
+      p_guest_id: getGuestId(),
     })
 
     if (startErr || !gameId) {

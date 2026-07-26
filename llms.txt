@@ -29,7 +29,7 @@
 - **Env-ключ Supabase:** `VITE_SUPABASE_PUBLISHABLE_KEY` (НЕ `VITE_SUPABASE_ANON_KEY`). См. [src/utils/supabase.js](src/utils/supabase.js).
 - **Лимиты колоды** ([src/constants/game.js](src/constants/game.js)): 40 карт (≤3 одной), 4 земли (≤4 одной). Типы карт: `creature`/`building`/`spell`. Типы земель: `corn, ice, desert, good, swamp, sand, blue, any`. `STARTING_HAND_SIZE = 5`.
 - **Игровая логика:** 25 HP, 2 действия/ход, 4 зоны (2×2), фазы `draw → main → attack → end`. **`gameEngine.js` (in-memory) УДАЛЁН** — теперь только данные из БД + `gameToEngineFormat` в [src/hooks/useGameAction.js](src/hooks/useGameAction.js). **Refill руки реализован**: после `playCard` пока `hand.length < STARTING_HAND_SIZE` добирается из `deck_pile`. **Draw-фаза реализована**: при `endTurn` новый активный игрок добирает 1 карту из своего `deck_pile` (если не пуст).
-- **Линтер:** В текущей версии 13 предсуществующих ошибок + 1 warning (преимущественно `react-hooks/set-state-in-effect`, `react-hooks/use-memo`, `no-unused-vars` и `useRealtimeChannel` exhaustive-deps). Закреплены правилом «вне scope». Запрещено добавлять новые.
+- **Линтер:** После безопасного cleanup в текущей версии осталось 3 предсуществующие ошибки `react-hooks/set-state-in-effect` + 1 warning `react-hooks/exhaustive-deps` (в `GameBoard.jsx`, `GameScreen.jsx`, `useLobby.js`, `useRealtimeChannel.js`). Остальные `no-unused-vars`/`use-memo` исправлены. Следующий этап — отдельно разобрать React state/effect-поведение.
 - **Файл `.env`** уже в git (исторически). Секреты из реального `.env` в БД НЕ утекают — они публичные (anon-ключ). Свои sensitive секреты клади в `.env.secure` (он в `.gitignore`).
 
 ## Архитектура исходников (src/)
@@ -106,7 +106,7 @@
 4. **Postgres-триггеры (Фаза 5) уже стоят.** Не пытайся делать INSERT/UPDATE в обход: чит-данные будут отклонены с ошибкой.
 5. **Применение схемы:** вся схема в [DB_SCHEMA.sql](DB_SCHEMA.sql). Применить на чистую БД: через Supabase Management API (`POST /v1/projects/{ref}/database/query` с personal access token из `.env.secure`) или через Supabase SQL Editor в dashboard.
 6. **Тестирование:** 2 вкладки → выбрать/создать колоду в `/decks` → `/lobby` → создать лобби → 2-я вкладка вставить код → оба жмут «Готов» → хост жмёт «Старт» → автопереход в `/game/:gameId`. Проверить: рука начинается с 5 карт, после розыгрыша карта добирается из колоды, при «Закончить ход» следующий игрок добирает 1 карту. Открыть DevTools → Network → /rest/v1/rpc/get_player_game_state → в ответе у каждого игрока видно `is_self=true/false` и `hand` либо `[…]` либо `[]`.
-7. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm test` + `npm run build` + `npm run lint`. Baseline: 13 errors + 1 warning (предсуществующие) — не больше.
+7. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm test` + `npm run build` + `npm run lint`. Baseline после safe cleanup: 3 errors + 1 warning (React hooks; предсуществующие) — не больше.
 8. После правок **обнови этот файл**, чтобы следующий агент не тратил токены на повторное изучение (DEVELOPMENT_PLAN.md удалён — вся история теперь здесь).
 
 ## Optional (инструменты упаковки контекста)

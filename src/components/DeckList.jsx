@@ -19,7 +19,7 @@ import './DeckList.css'
 
 export function DeckList() {
   const navigate = useNavigate()
-  const { decks, selectedDeckId, selectDeck, removeDeck, addDeck, renameDeck } = useDecks()
+  const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck } = useDecks()
   const [copiedId, setCopiedId] = useState(null)
   const [renamingId, setRenamingId] = useState(null)
   const [draftName, setDraftName] = useState('')
@@ -62,14 +62,6 @@ export function DeckList() {
     navigate('/deck')
   }
 
-  const handleCreateEmpty = () => {
-    const newDeck = addDeck({
-      name: 'Новая колода',
-      selectedCards: {},
-      selectedLands: {},
-    })
-    handleEdit(newDeck)
-  }
 
   return (
     <main className="decks-page">

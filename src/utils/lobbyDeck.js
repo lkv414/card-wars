@@ -21,7 +21,10 @@ export function expandSelectionToInstances(fullCards = []) {
   const instances = []
   for (const card of fullCards) {
     const qty = Math.max(1, Number(card.quantity) || 1)
-    const { quantity: _q, created_at: _c, updated_at: _u, ...rest } = card
+    const rest = { ...card }
+    delete rest.quantity
+    delete rest.created_at
+    delete rest.updated_at
     for (let i = 0; i < qty; i += 1) {
       instances.push({
         ...rest,
@@ -39,7 +42,10 @@ export function expandLandsToInstances(fullLands = []) {
   const instances = []
   for (const land of fullLands) {
     const qty = Math.max(1, Number(land.quantity) || 1)
-    const { quantity: _q, created_at: _c, updated_at: _u, ...rest } = land
+    const rest = { ...land }
+    delete rest.quantity
+    delete rest.created_at
+    delete rest.updated_at
     for (let i = 0; i < qty; i += 1) {
       instances.push({ ...rest })
     }

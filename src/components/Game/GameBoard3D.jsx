@@ -1,26 +1,25 @@
 /**
  * GameBoard3D — 3D-сцена игрового стола (Three.js + react-three-fiber).
  *
+ * Сейчас это **чистая 3D-сцена**: только стол, карты, свет, камера.
+ * Весь HUD (кнопки, баннеры, статусы) вынесен в <HUDOverlay> рядом.
+ *
  * Композиция (от дальнего к ближнему к камере):
  *   1. Сторона противника: 4 строения (ближе к центру) + 4 земли (ближе к игроку-через-центр)
- *   2. Центральная панель с HUD: статус хода, лог, кнопка "Закончить ход"
- *   3. Сторона игрока: 4 строения + 4 земли
- *   4. Летающие карты в воздухе перед игроком (дугой)
- *   5. Камера — подвешена над своей стороной стола, смотрит на центр
+ *   2. Сторона игрока: 4 строения + 4 земли
+ *   3. Летающие карты в воздухе перед игроком (дугой)
+ *   4. Камера — подвешена над своей стороной стола, смотрит на центр
  *
  * Карты — 3D-плоскости через <Card3DModel>. Hover/select через raycast.
- *
- * Сцена НЕ переключает DOM-разметку — это единый <Canvas>, поверх через HTML overlay
- * выводится HUD (используем <Html> из drei).
  */
-import { Suspense, useState, useEffect, useMemo } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Html, Text } from '@react-three/drei'
+import { Suspense, useMemo, useState } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { Card3DModel } from './Card3DModel'
+import { HUDOverlay } from './HUDOverlay'
 
 // Размеры стола и слотов
-const TABLE_WIDTH = 10
 const TABLE_DEPTH = 12
 const TABLE_RADIUS = 6  // радиус круглого стола
 const SLOT_WIDTH = 1.1  // плитки чуть меньше
@@ -34,23 +33,17 @@ const CAMERA_BACK = 2  // ближе к центру, выше
 
 /**
  * 3D-сцена внутри Canvas. Получает game, playerId, колбэки.
+ * HUD НЕ рендерится здесь — он в <HUDOverlay>.
  */
-function Scene({ game, playerId, onPlayCard, onAttack, onEndTurn, selectedCardIndex, setSelectedCardIndex }) {
+function Scene({ game, playerId, onPlayCard, onAttack, selectedCardIndex, setSelectedCardIndex }) {
   const isPlayer1 = playerId === game.players[0].player_id
   const me = isPlayer1 ? game.players[0] : game.players[1]
   const opp = isPlayer1 ? game.players[1] : game.players[0]
 
   const isYourTurn = game.current_player_id === playerId
   const isFinished = game.status === 'finished'
-  const winnerId = game.winner_id
 
-  // Позиции слотов на стороне игрока (front = ближе к камере/игроку)
-  // Симметрично от центра стола (z=0):
-  //   Земли:  z = +1.5  (ближе к центру)
-  //   Строения: z = +3.0  (ближе к игроку, на дальнем от центра конце стола)
-  // Моя сторона:
-  //   Строения: z = +3.0  (ближе к игроку/камере)
-  //   Земли:    z = +1.5  (ближе к центру стола)
+  // Позиции слотов на стороне игрока
   const mySlotPositions = useMemo(() => {
     return Array.from({ length: NUM_SLOTS }).map((_, i) => {
       const x = (i - (NUM_SLOTS - 1) / 2) * (SLOT_WIDTH + SLOT_GAP)
@@ -61,9 +54,7 @@ function Scene({ game, playerId, onPlayCard, onAttack, onEndTurn, selectedCardIn
     })
   }, [])
 
-  // Противник — зеркально по X и по Z.
-  //   Строения: z = -3.0  (ближе к противнику)
-  //   Земли:    z = -1.5  (ближе к центру стола)
+  // Противник — зеркально по X и по Z
   const oppSlotPositions = useMemo(() => {
     return Array.from({ length: NUM_SLOTS }).map((_, i) => {
       const x = -(i - (NUM_SLOTS - 1) / 2) * (SLOT_WIDTH + SLOT_GAP)
@@ -76,8 +67,6 @@ function Scene({ game, playerId, onPlayCard, onAttack, onEndTurn, selectedCardIn
 
   // Позиции карт в воздухе перед игроком (дугой)
   const handCards = me.hand || []
-  const HAND_START_Z = TABLE_DEPTH / 2 - 0.5
-  const HAND_CARD_SPACING = 0.85
 
   return (
     <>
@@ -152,7 +141,7 @@ function Scene({ game, playerId, onPlayCard, onAttack, onEndTurn, selectedCardIn
       {/* ЛЕТАЮЩАЯ РУКА перед игроком */}
       <group position={[0, 1.6, TABLE_DEPTH / 2 - 0.3]}>
         {handCards.map((card, idx) => {
-          const offset = (idx - (handCards.length - 1) / 2) * HAND_CARD_SPACING
+          const offset = (idx - (handCards.length - 1) / 2) * 0.85
           const arc = Math.pow(Math.abs(idx - (handCards.length - 1) / 2), 2) * 0.05
           return (
             <Card3DModel
@@ -169,44 +158,6 @@ function Scene({ game, playerId, onPlayCard, onAttack, onEndTurn, selectedCardIn
           )
         })}
       </group>
-
-      {/* HUD в центре стола */}
-      <Html
-        position={[0, 2.5, 0]}
-        center
-        distanceFactor={6}
-        style={{ pointerEvents: 'auto', userSelect: 'none' }}
-      >
-        <div className="scene-hud">
-          {isFinished ? (
-            <div className="hud-finished">
-              🎉 {winnerId === playerId ? 'Вы выиграли!' : 'Вы проиграли!'}
-            </div>
-          ) : (
-            <div className={`hud-turn ${isYourTurn ? 'your' : 'opponent'}`}>
-              {isYourTurn ? '👉 Ваш ход' : '⏳ Ход противника'}
-              <div className="hud-stats">
-                ❤️ Вы {me.health}/25 · 🤚 Рука {handCards.length} · 📚 Колода {me.deck_remaining}
-              </div>
-              {isYourTurn && (
-                <button className="hud-end-btn" onClick={onEndTurn}>Закончить ход</button>
-              )}
-            </div>
-          )}
-        </div>
-      </Html>
-
-      {/* HUD противника (сверху-далеко) */}
-      <Html
-        position={[0, 3, -TABLE_DEPTH / 2 - 0.3]}
-        center
-        distanceFactor={6}
-        style={{ pointerEvents: 'none', userSelect: 'none' }}
-      >
-        <div className="scene-hud-opponent">
-          Противник · ❤️ {opp.health}/25 · 🂠 × {opp.hand?.length || 0}
-        </div>
-      </Html>
     </>
   )
 }
@@ -269,7 +220,7 @@ function BuildingSlot({ position, isOpponent = false }) {
 }
 
 /**
- * Главный компонент: Canvas + Scene.
+ * Главный компонент: Canvas + Scene + HUDOverlay.
  */
 export function GameBoard3D({
   game,
@@ -278,11 +229,22 @@ export function GameBoard3D({
   onPlayCard,
   onAttack,
   onEndTurn,
+  onForfeit,
+  realtimeStatus = 'connecting',
 }) {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
 
   // Камера — подвешена над своей стороной стола
   const cameraPosition = useMemo(() => [0, CAMERA_HEIGHT, TABLE_DEPTH / 2 - CAMERA_BACK], [])
+
+  // Данные для HUDOverlay
+  const isPlayer1 = playerId === game.players[0].player_id
+  const me = isPlayer1 ? game.players[0] : game.players[1]
+  const opp = isPlayer1 ? game.players[1] : game.players[0]
+  const isYourTurn = game.current_player_id === playerId
+  const isFinished = game.status === 'finished'
+  const winnerId = game.winner_id
+  const handCards = me.hand || []
 
   return (
     <div className="game-board-3d">
@@ -298,7 +260,6 @@ export function GameBoard3D({
             playerId={playerId}
             onPlayCard={onPlayCard}
             onAttack={onAttack}
-            onEndTurn={onEndTurn}
             selectedCardIndex={selectedCardIndex}
             setSelectedCardIndex={setSelectedCardIndex}
           />
@@ -315,69 +276,22 @@ export function GameBoard3D({
         />
       </Canvas>
 
-      {/* Кнопка выхода в лобби — поверх Canvas (вне Three.js) */}
-      <button className="exit-3d-btn" onClick={onGameEnd}>
-        ← Выйти из игры
-      </button>
+      <HUDOverlay
+        playerId={playerId}
+        isYourTurn={isYourTurn}
+        isFinished={isFinished}
+        winnerId={winnerId}
+        me={me}
+        opp={opp}
+        handCards={handCards}
+        log={game.game_state?.log || []}
+        onEndTurn={onEndTurn}
+        onForfeit={onForfeit}
+        onGameEnd={onGameEnd}
+        realtimeStatus={realtimeStatus}
+      />
 
-      {/* Минимальные CSS-стили для HUD-оверх Three.js */}
-      <style>{`
-        .game-board-3d {
-          position: relative;
-          width: 100vw;
-          height: 100vh;
-          overflow: hidden;
-        }
-        .scene-hud {
-          background: rgba(20, 20, 50, 0.85);
-          padding: 12px 18px;
-          border-radius: 12px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(8px);
-          color: white;
-          text-align: center;
-          min-width: 240px;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-        }
-        .scene-hud .hud-turn.your { color: #4caf50; }
-        .scene-hud .hud-turn.opponent { color: #ff9800; }
-        .scene-hud .hud-stats { margin-top: 6px; font-size: 13px; opacity: 0.85; }
-        .scene-hud .hud-finished { font-size: 18px; font-weight: 700; }
-        .hud-end-btn {
-          margin-top: 8px;
-          padding: 6px 14px;
-          background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-          border: none;
-          border-radius: 6px;
-          color: white;
-          font-weight: 700;
-          cursor: pointer;
-        }
-        .scene-hud-opponent {
-          background: rgba(20, 20, 50, 0.7);
-          padding: 6px 14px;
-          border-radius: 8px;
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          color: rgba(255, 255, 255, 0.85);
-          font-size: 13px;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        .exit-3d-btn {
-          position: absolute;
-          top: 12px;
-          left: 12px;
-          padding: 6px 14px;
-          background: rgba(0,0,0,0.5);
-          color: white;
-          border: 1px solid rgba(255,255,255,0.2);
-          border-radius: 6px;
-          cursor: pointer;
-          z-index: 100;
-          font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-        .exit-3d-btn:hover { background: rgba(0,0,0,0.8); }
-      `}</style>
+      <style>{`.game-board-3d { position: relative; width: 100vw; height: 100vh; overflow: hidden; }`}</style>
     </div>
   )
 }

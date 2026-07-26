@@ -15,8 +15,8 @@
  *   onAttack={() => attack(...)}
  * />
  */
-import { useMemo, useState } from 'react'
-import { useLoader } from '@react-three/fiber'
+import { useMemo, useRef, useState } from 'react'
+import { useFrame, useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three'
 
 // Размер карты в мировых координатах (метры в нашей шкале)
@@ -48,6 +48,7 @@ export function Card3DModel({
   isSelected = false,
 }) {
   const [hovered, setHovered] = useState(false)
+  const groupRef = useRef(null)
 
   // Загружаем текстуру из card.image_url. Если нет — null, fallback на backdrop.
   const texture = useLoader(
@@ -61,13 +62,34 @@ export function Card3DModel({
   // Запоминаем текстуру, чтобы не пересоздавать на каждый рендер
   const memoTexture = useMemo(() => texture, [texture])
 
-  // Высота над столом: hover/select приподнимают
-  const yOffset = isSelected ? 0.25 : hovered ? 0.15 : 0
-  const finalPosition = [position[0], position[1] + yOffset, position[2]]
+  // Target Y (высота над столом): select > hover > idle
+  const targetY = position[1] + (isSelected ? 0.25 : hovered ? 0.15 : 0)
+
+  // Анимация каждый кадр: smooth lerp Y + gentle float + scale-bounce на hover
+  useFrame((state) => {
+    const g = groupRef.current
+    if (!g) return
+    const t = state.clock.elapsedTime
+
+    // 1. Smooth Y (lerp к targetY, фактор ~0.15)
+    g.position.y += (targetY - g.position.y) * 0.15
+
+    // 2. Gentle float на idle (sin wave, ±0.02)
+    if (!hovered && !isSelected) {
+      g.position.y += Math.sin(t * 1.5) * 0.02
+    }
+
+    // 3. Scale-bounce на hover (1 + sin*5% * 0.08)
+    const baseScale = isSelected ? 1.1 : 1.0
+    const bounce = hovered ? 1 + Math.sin(t * 8) * 0.05 : 0
+    const s = baseScale + bounce
+    g.scale.set(s, s, s)
+  })
 
   return (
     <group
-      position={finalPosition}
+      ref={groupRef}
+      position={position}
       rotation={rotation}
       onPointerOver={(e) => {
         e.stopPropagation()

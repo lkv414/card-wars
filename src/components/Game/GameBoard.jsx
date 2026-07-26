@@ -11,7 +11,7 @@
  *   8. Летающие карты в воздухе перед игроком (overlap статус)
  */
 import { useState, useEffect } from 'react'
-import { gameToEngineFormat } from '../../hooks/useGameAction'
+import { gameToEngineFormat } from '../../hooks/game'
 import './GameBoard.css'
 import { Card3D } from './Card3D'
 import { GameLog } from './GameLog'

@@ -2,11 +2,12 @@ import { useMemo, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import { TopBar } from './TopBar'
 import { DeckFilters } from './DeckFilters'
-import { CardGrid } from './CardGrid'
 import { DeckModal } from './DeckModal'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
 import { CardPreview } from './Shared/CardPreview'
-import { CardSkeletonGrid } from './Shared/CardSkeleton'
+import { DeckActions } from './deck/DeckActions'
+import { SaveDeckDialog } from './deck/SaveDeckDialog'
+import { DeckCardList } from './deck/DeckCardList'
 import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
 import { normalizeDeckEntryId } from '../utils/deckState'
 import { useDeckSelection } from '../hooks/useDeckSelection'
@@ -14,7 +15,6 @@ import { useDecks } from '../hooks/useDecks'
 import { useNavigate } from 'react-router-dom'
 import {
   DEFAULT_FILTERS,
-  hasActiveFilters,
   matchesCostFilter,
   sortCards,
 } from '../utils/cardSort'
@@ -194,51 +194,13 @@ export function DeckBuilder({
         onCopyCode={copyDeckCode}
       />
 
-      {(cardTotal + landTotal) > 0 && (
-        <>
-          <button
-            type="button"
-            className="panel-button bottom-left trash-btn"
-            title="Очистить колоду"
-            aria-label="Очистить колоду"
-            onClick={() => setClearConfirmOpen(true)}
-          >
-            🗑️
-          </button>
-
-          <button
-            type="button"
-            className="panel-button bottom-right"
-            onClick={() => setDeckModalOpen(true)}
-          >
-            Твоя колода
-          </button>
-
-          <button
-            type="button"
-            className="panel-button save-btn"
-            onClick={handleSaveDeck}
-            style={{
-              position: 'fixed',
-              bottom: '5rem',
-              right: '1.5rem',
-              background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '0.75rem 1.25rem',
-              borderRadius: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              fontSize: '1rem',
-              boxShadow: '0 4px 16px rgba(76, 175, 80, 0.4)',
-              zIndex: 10,
-            }}
-            title="Сохранить колоду"
-          >
-            💾 Сохранить
-          </button>
-        </>
-      )}
+      <DeckActions
+        cardTotal={cardTotal}
+        landTotal={landTotal}
+        onClear={() => setClearConfirmOpen(true)}
+        onSave={handleSaveDeck}
+        onOpenDeck={() => setDeckModalOpen(true)}
+      />
 
       <ConfirmDialog
         open={clearConfirmOpen}
@@ -255,99 +217,20 @@ export function DeckBuilder({
         }}
       />
 
-      {/* Диалог сохранения колоды */}
-      {saveDialogOpen && (
-        <div className="save-dialog-overlay" onClick={closeSaveDialog} role="presentation">
-          <div
-            className="save-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="save-dialog-title"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {saveStep === 'form' ? (
-              <>
-                <h2 id="save-dialog-title">Сохранить колоду</h2>
-                <p className="save-dialog-hint">
-                  Будет сохранено: {cardTotal} карт, {landTotal} земель
-                </p>
-                <label>
-                  Название:
-                  <input
-                    type="text"
-                    value={saveName}
-                    onChange={(e) => setSaveName(e.target.value)}
-                    placeholder="Например: Основная колода"
-                    autoFocus
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleConfirmSave()
-                      if (e.key === 'Escape') closeSaveDialog()
-                    }}
-                  />
-                </label>
-                <div className="save-dialog-actions">
-                  <button
-                    type="button"
-                    className="cancel-btn"
-                    onClick={closeSaveDialog}
-                  >
-                    Отмена
-                  </button>
-                  <button
-                    type="button"
-                    className="confirm-btn"
-                    onClick={handleConfirmSave}
-                  >
-                    Сохранить
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 id="save-dialog-title">Колода сохранена</h2>
-                <p className="save-dialog-hint">
-                  «{savedDeck?.name}» · {cardTotal} карт, {landTotal} земель
-                </p>
-                <div className="save-dialog-code-block">
-                  <span className="save-dialog-code-label">Код колоды</span>
-                  <div className="save-dialog-code-row">
-                    <code className="save-dialog-code" title={savedDeck?.code}>
-                      {savedDeck?.code}
-                    </code>
-                    <button
-                      type="button"
-                      className="save-dialog-copy-btn"
-                      onClick={handleCopySavedCode}
-                      title="Скопировать код"
-                    >
-                      {codeCopied ? '✓' : '📋'}
-                    </button>
-                  </div>
-                </div>
-                <div className="save-dialog-actions">
-                  <button
-                    type="button"
-                    className="cancel-btn"
-                    onClick={closeSaveDialog}
-                  >
-                    Продолжить
-                  </button>
-                  <button
-                    type="button"
-                    className="confirm-btn"
-                    onClick={() => {
-                      closeSaveDialog()
-                      navigate('/decks')
-                    }}
-                  >
-                    К списку колод
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      <SaveDeckDialog
+        open={saveDialogOpen}
+        step={saveStep}
+        saveName={saveName}
+        setSaveName={setSaveName}
+        cardTotal={cardTotal}
+        landTotal={landTotal}
+        savedDeck={savedDeck}
+        codeCopied={codeCopied}
+        onClose={closeSaveDialog}
+        onConfirm={handleConfirmSave}
+        onCopyCode={handleCopySavedCode}
+        onGoToDecks={() => navigate('/decks')}
+      />
 
       <CardPreview
         open={preview.open}
@@ -383,67 +266,26 @@ export function DeckBuilder({
         />
 
         <section className="list">
-          {loadingLibrary && (
-            <>
-              <div className="list-status">Загружаем карты и земли...</div>
-              <CardSkeletonGrid count={12} />
-            </>
-          )}
-
-          {libraryError && (
-            <div className="empty-state empty-state-error">Ошибка Supabase: {libraryError}</div>
-          )}
-
-          {!loadingLibrary && !libraryError && mode === 'cards' && filteredCards.length === 0 && (
-            <div className="empty-state">
-              <p>Нет карт для выбранных фильтров.</p>
-              {hasActiveFilters(filters) && (
-                <button type="button" className="empty-cta" onClick={resetFilters}>
-                  Сбросить фильтры
-                </button>
-              )}
-            </div>
-          )}
-
-          {!loadingLibrary && !libraryError && mode === 'lands' && filteredLands.length === 0 && (
-            <div className="empty-state">
-              <p>В таблице lands пока нет земель{filters.search ? ' по этому поиску' : ''}.</p>
-              {filters.search && (
-                <button
-                  type="button"
-                  className="empty-cta"
-                  onClick={() => setFilters((p) => ({ ...p, search: '' }))}
-                >
-                  Очистить поиск
-                </button>
-              )}
-            </div>
-          )}
-
-          {!loadingLibrary && !libraryError && mode === 'cards' && filteredCards.length > 0 && (
-            <CardGrid
-              cards={filteredCards}
-              selectedCards={selectedCards}
-              addCard={addCard}
-              removeCard={removeCard}
-              cardTotal={cardTotal}
-              onPreview={openPreview}
-              onBlockedAdd={handleBlockedAdd}
-            />
-          )}
-
-          {!loadingLibrary && !libraryError && mode === 'lands' && filteredLands.length > 0 && (
-            <CardGrid
-              cards={filteredLands}
-              selectedCards={selectedLands}
-              addCard={addLand}
-              removeCard={removeLand}
-              cardTotal={landTotal}
-              isLands
-              onPreview={openPreview}
-              onBlockedAdd={handleBlockedAdd}
-            />
-          )}
+          <DeckCardList
+            loadingLibrary={loadingLibrary}
+            libraryError={libraryError}
+            mode={mode}
+            filteredCards={filteredCards}
+            filteredLands={filteredLands}
+            selectedCards={selectedCards}
+            selectedLands={selectedLands}
+            cardTotal={cardTotal}
+            landTotal={landTotal}
+            filters={filters}
+            onPreview={openPreview}
+            onBlockedAdd={handleBlockedAdd}
+            onAddCard={addCard}
+            onRemoveCard={removeCard}
+            onAddLand={addLand}
+            onRemoveLand={removeLand}
+            onResetFilters={resetFilters}
+            onClearSearch={() => setFilters((p) => ({ ...p, search: '' }))}
+          />
         </section>
       </div>
     </main>

@@ -11,14 +11,15 @@
  *                deck_remaining, player_order }],
  *   }
  */
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
 import { ensureGuestId } from '../../utils/guestSession'
 import { GameBoard } from './GameBoard'
 import { GameBoard3D } from './GameBoard3D'
-import { useGameAction } from '../../hooks/useGameAction'
+import { useGameAction } from '../../hooks/game'
+import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
 
 export function GameScreen() {
   const { gameId } = useParams()
@@ -73,35 +74,25 @@ export function GameScreen() {
       }
     }, [gameId, guestId])
 
-  const { playCard, attack, endTurn } = useGameAction(game, loadGame)
+  const { playCard, attack, endTurn, forfeit } = useGameAction(game, loadGame)
 
-  // initial load + Realtime subscription
+  // initial load + Realtime subscription (с state machine + reconnect)
+  const realtimeStatus = useRealtimeChannel({
+    channelName: gameId ? `game:${gameId}` : null,
+    subscriptions: useMemo(() => {
+      if (!gameId) return []
+      const onChange = () => loadGame()
+      return [
+        { table: 'games', filter: `id=eq.${gameId}`, callback: onChange },
+        { table: 'game_players', filter: `game_id=eq.${gameId}`, callback: onChange },
+        { table: 'game_zones', filter: `game_id=eq.${gameId}`, callback: onChange },
+      ]
+    }, [gameId, loadGame]),
+  })
+
   useEffect(() => {
     loadGame()
-
-    const channel = supabase
-      .channel(`game:${gameId}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'games', filter: `id=eq.${gameId}` },
-        () => loadGame(),
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'game_players', filter: `game_id=eq.${gameId}` },
-        () => loadGame(),
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'game_zones', filter: `game_id=eq.${gameId}` },
-        () => loadGame(),
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [gameId, loadGame])
+  }, [loadGame])
 
   if (loading) {
     return <div className="game-loading">Загружаем игру...</div>
@@ -129,6 +120,8 @@ export function GameScreen() {
       onPlayCard={playCard}
       onAttack={attack}
       onEndTurn={endTurn}
+      onForfeit={forfeit}
+      realtimeStatus={realtimeStatus}
     />
   )
 }

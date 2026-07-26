@@ -1,0 +1,222 @@
+/**
+ * game.css — Стили для игровых экранов
+ * 
+ * Содержит стили для GameScreen, GameBoard3D, HUDOverlay и связанных компонентов.
+ */
+
+/* Игровое поле */
+.game-board-3d {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Сообщения о состоянии игры */
+.game-loading,
+.game-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 100;
+}
+
+.game-error h1 {
+  margin-bottom: 12px;
+}
+
+.game-error button {
+  margin-top: 16px;
+}
+
+/* HUD Overlay */
+.hud-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.hud-center .hud-finished {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  background: rgba(20, 20, 50, 0.9);
+  padding: 20px 28px;
+  border-radius: 12px;
+  border: 2px solid #4caf50;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.hud-turn {
+  background: rgba(20, 20, 50, 0.85);
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  color: white;
+  text-align: center;
+  min-width: 240px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+
+.hud-turn.your {
+  color: #4caf50;
+}
+
+.hud-turn.opponent {
+  color: #ff9800;
+}
+
+.hud-stats {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+  color: white;
+}
+
+.hud-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.hud-end-btn {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hud-forfeit-btn {
+  padding: 6px 14px;
+  background: rgba(244, 67, 54, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hud-forfeit-btn:hover {
+  background: rgba(244, 67, 54, 1);
+}
+
+.hud-opponent {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 50, 0.7);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  z-index: 40;
+}
+
+/* Кнопки HUD */
+.exit-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 14px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 100;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.exit-btn:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+.replay-open-btn {
+  position: absolute;
+  top: 12px;
+  left: 166px;
+  padding: 6px 14px;
+  background: rgba(59, 130, 246, 0.72);
+  color: white;
+  border: 1px solid rgba(147, 197, 253, 0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 100;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.replay-open-btn:hover {
+  background: rgba(59, 130, 246, 0.95);
+}
+
+/* Баннер разрыва связи */
+.connection-banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  background: rgba(244, 67, 54, 0.95);
+  color: white;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: connection-pulse 1.5s ease-in-out infinite;
+}
+
+.connection-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.5);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: connection-spin 0.8s linear infinite;
+}
+
+@keyframes connection-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes connection-pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Скелетоны загрузки */
+.card-skeleton {
+  width: var(--card-width);
+  aspect-ratio: var(--card-aspect);
+  border-radius: 14px;
+  background: linear-gradient(90deg, var(--bg-muted) 25%, var(--border) 50%, var(--bg-muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  border: 2px solid var(--border);
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}

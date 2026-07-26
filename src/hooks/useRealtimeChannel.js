@@ -123,6 +123,7 @@ export function useRealtimeChannel({ channelName, subscriptions }) {
       cleanup()
       document.removeEventListener('visibilitychange', handleVisibility)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channelName])
 
   return status

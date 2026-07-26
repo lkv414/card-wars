@@ -10,7 +10,7 @@
  *   7. Полоска статуса игрока (HP, карты в руке лицом)
  *   8. Летающие карты в воздухе перед игроком (overlap статус)
  */
-import { useState, useEffect } from 'react'
+import { useState, useMemo, memo } from 'react'
 import { gameToEngineFormat } from '../../hooks/game'
 import './GameBoard.css'
 import { Card3D } from './Card3D'
@@ -19,28 +19,27 @@ import { GameLog } from './GameLog'
 const NUM_SLOTS = 4
 
 export function GameBoard({ game, playerId, onGameEnd, onPlayCard, onAttack, onEndTurn }) {
-  const [gameState, setGameState] = useState(null)
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
-  const [log, setLog] = useState([])
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
+  const { gameState, log } = useMemo(() => {
     try {
       const formatted = gameToEngineFormat(game, playerId)
       if (!formatted) throw new Error('Не удалось собрать состояние игры')
-      setGameState(formatted)
-      setLog(formatted.gameState.log || [])
-      setLoading(false)
-    } catch (err) {
-      setError(err.message)
-      setLoading(false)
+      return {
+        gameState: formatted,
+        log: formatted.gameState.log || []
+      }
+    } catch {
+      return {
+        gameState: null,
+        log: []
+      }
     }
   }, [game, playerId])
 
-  if (loading) return <div className="game-board loading">Загрузка...</div>
-  if (error) return <div className="game-board error">Ошибка: {error}</div>
-  if (!gameState) return null
+  if (!game) return <div className="game-board loading">Загрузка...</div>
+  if (!gameState) return <div className="game-board error">Ошибка: {'Не удалось загрузить игру'}</div>
 
   const isYourTurn = gameState.gameState.currentPlayerId === playerId
   const isPlayer1 = playerId === game.players[0].player_id
@@ -78,7 +77,10 @@ export function GameBoard({ game, playerId, onGameEnd, onPlayCard, onAttack, onE
   const handleEndTurn = () => {
     if (onEndTurn) {
       const result = onEndTurn()
-      if (result?.error) setError(result.error)
+      if (result?.error) {
+        setError(result.error)
+        setTimeout(() => setError(null), 3000)
+      }
     }
   }
 
@@ -217,7 +219,7 @@ export function GameBoard({ game, playerId, onGameEnd, onPlayCard, onAttack, onE
 /**
  * Slot — пустой или с картами (вид сверху-сбоку, как на столе).
  */
-function Slot({ index, isOpponent, cards = [], onLandClick, onAttack, selected }) {
+const Slot = memo(function Slot({ index, isOpponent, cards = [], onLandClick, onAttack, selected }) {
   const hasCards = cards.length > 0
   return (
     <div
@@ -234,6 +236,6 @@ function Slot({ index, isOpponent, cards = [], onLandClick, onAttack, selected }
       ))}
     </div>
   )
-}
+})
 
 export default GameBoard

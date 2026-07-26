@@ -8,8 +8,8 @@
  * На практике вызываем ensureGuestId() при старте приложения, а потом
  * supabase-js сам переиспользует HTTP-соединение (с тем же сеансом).
  */
-import { supabase } from './supabase'
-import { getGuestId } from './guestId'
+import { supabase } from './supabase.js'
+import { getGuestId } from './guestId.js'
 
 let lastSentId = null
 

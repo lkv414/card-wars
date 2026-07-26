@@ -22,7 +22,7 @@ export function applyDeckEntries(existingEntries = {}, incomingEntries = {}, opt
 
   const nextEntries = { ...normalizedExisting }
   let totalQuantity = Object.values(nextEntries).reduce((sum, quantity) => sum + Number(quantity || 0), 0)
-  if (import.meta.env.DEV) {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
     console.debug('[deckState] applyDeckEntries', {
       existingEntriesJson: JSON.stringify(existingEntries),
       normalizedExisting,
@@ -49,7 +49,7 @@ export function applyDeckEntries(existingEntries = {}, incomingEntries = {}, opt
   }
 
   const result = Object.fromEntries(Object.entries(nextEntries).filter(([, quantity]) => Number(quantity) > 0))
-  if (import.meta.env.DEV) {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
     try {
       console.debug('[deckState] applyDeckEntries result', {
         resultJson: JSON.stringify(result),

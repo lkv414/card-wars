@@ -75,7 +75,18 @@ export function GameScreen() {
 
   const { playCard, attack, endTurn, forfeit } = useGameAction(game, loadGame)
 
-  // initial load + Realtime subscription (с state machine + reconnect)
+  // Initial load при монтировании если gameId есть
+  useEffect(() => {
+    if (gameId) {
+      // Используем requestAnimationFrame чтобы избежать синхронного setState в useEffect
+      const frameId = requestAnimationFrame(() => {
+        loadGame()
+      })
+      return () => cancelAnimationFrame(frameId)
+    }
+  }, [gameId, loadGame])
+
+  // Realtime subscription (с state machine + reconnect)
   const realtimeStatus = useRealtimeChannel({
     channelName: gameId ? `game:${gameId}` : null,
     subscriptions: useMemo(() => {
@@ -89,17 +100,13 @@ export function GameScreen() {
     }, [gameId, loadGame]),
   })
 
-  useEffect(() => {
-    loadGame()
-  }, [loadGame])
-
   if (loading) {
-    return <div className="game-loading">Загружаем игру...</div>
+    return <div className="game-loading" role="status" aria-live="polite">Загружаем игру...</div>
   }
 
   if (error) {
     return (
-      <main className="game-error">
+      <main className="game-error" role="main" aria-live="assertive">
         <h1>Ошибка</h1>
         <p>{error}</p>
         <button onClick={() => navigate('/lobby')}>← Назад в лобби</button>
@@ -108,7 +115,7 @@ export function GameScreen() {
   }
 
   if (!game) {
-    return <div className="game-loading">Игра не найдена</div>
+    return <div className="game-loading" role="status" aria-live="polite">Игра не найдена</div>
   }
 
   return (

@@ -1,0 +1,146 @@
+/**
+ * variables.css — CSS-переменные для темы приложения
+ * 
+ * Содержит цветовую палитру, размеры и другие переменные дизайн-системы.
+ * 
+ * Использование:
+ * - по умолчанию: система переключается автоматически через @media (prefers-color-scheme)
+ * - с useTheme: можно явно задать тему через классы .theme-light / .theme-dark
+ */
+
+:root {
+  /* Размеры карточек */
+  --card-width: 140px;
+  --card-aspect: 5 / 7;
+
+  /* Цвета светлой темы */
+  --bg: #f5efe4;
+  --bg-elevated: #fffaf1;
+  --bg-surface: #fff7e8ee;
+  --bg-muted: #f3ebe0;
+  --border: #e5d7bf;
+  --border-strong: #e0d2bd;
+  --text: #3c3026;
+  --text-heading: #2b1c12;
+  --text-muted: #7a6550;
+  --accent: #f5a623;
+  --accent-hover: #e59200;
+  --accent-soft: #fff1d6;
+  --accent-text: #8a5200;
+  --success: #189653;
+  --success-soft: #e8f8dd;
+  --success-text: #267a22;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-soft: #fee2e2;
+  --danger-text: #b83221;
+  --warn-soft: #fff2c7;
+  --warn-text: #9b6500;
+  --info-soft: #d9e9ff;
+  --info-text: #1d4ed8;
+  --shadow: 0 14px 40px #6b44221a;
+  
+  /* Радиусы */
+  --radius: 12px;
+  --radius-lg: 22px;
+  
+  /* Safe area для мобильных */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  
+  /* Цветовая схема */
+  color-scheme: light;
+}
+
+/* Явная светлая тема (через .theme-light класс) */
+.theme-light {
+  --bg: #f5efe4;
+  --bg-elevated: #fffaf1;
+  --bg-surface: #fff7e8ee;
+  --bg-muted: #f3ebe0;
+  --border: #e5d7bf;
+  --border-strong: #e0d2bd;
+  --text: #3c3026;
+  --text-heading: #2b1c12;
+  --text-muted: #7a6550;
+  --accent: #f5a623;
+  --accent-hover: #e59200;
+  --accent-soft: #fff1d6;
+  --accent-text: #8a5200;
+  --success: #189653;
+  --success-soft: #e8f8dd;
+  --success-text: #267a22;
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-soft: #fee2e2;
+  --danger-text: #b83221;
+  --warn-soft: #fff2c7;
+  --warn-text: #9b6500;
+  --info-soft: #d9e9ff;
+  --info-text: #1d4ed8;
+  --shadow: 0 14px 40px #6b44221a;
+  color-scheme: light;
+}
+
+/* Явная темная тема (через .theme-dark класс) */
+.theme-dark {
+  --bg: #1a1612;
+  --bg-elevated: #242018;
+  --bg-surface: #2a241ce0;
+  --bg-muted: #322b22;
+  --border: #3d3428;
+  --border-strong: #4a3f32;
+  --text: #e8dfd2;
+  --text-heading: #f5efe4;
+  --text-muted: #b5a48e;
+  --accent: #f5a623;
+  --accent-hover: #ffb83d;
+  --accent-soft: #4a3514;
+  --accent-text: #ffc96b;
+  --success: #2fbf71;
+  --success-soft: #1a3d28;
+  --success-text: #7ddea3;
+  --danger: #f87171;
+  --danger-hover: #fb9a9a;
+  --danger-soft: #4a2222;
+  --danger-text: #fca5a5;
+  --warn-soft: #4a3a12;
+  --warn-text: #fbbf24;
+  --info-soft: #1e2a44;
+  --info-text: #93c5fd;
+  --shadow: 0 14px 40px #00000055;
+  color-scheme: dark;
+}
+
+/* Автоматическая темная тема (через @media) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) {
+    --bg: #1a1612;
+    --bg-elevated: #242018;
+    --bg-surface: #2a241ce0;
+    --bg-muted: #322b22;
+    --border: #3d3428;
+    --border-strong: #4a3f32;
+    --text: #e8dfd2;
+    --text-heading: #f5efe4;
+    --text-muted: #b5a48e;
+    --accent: #f5a623;
+    --accent-hover: #ffb83d;
+    --accent-soft: #4a3514;
+    --accent-text: #ffc96b;
+    --success: #2fbf71;
+    --success-soft: #1a3d28;
+    --success-text: #7ddea3;
+    --danger: #f87171;
+    --danger-hover: #fb9a9a;
+    --danger-soft: #4a2222;
+    --danger-text: #fca5a5;
+    --warn-soft: #4a3a12;
+    --warn-text: #fbbf24;
+    --info-soft: #1e2a44;
+    --info-text: #93c5fd;
+    --shadow: 0 14px 40px #00000055;
+    color-scheme: dark;
+  }
+}

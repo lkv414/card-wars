@@ -1,4 +1,4 @@
-import { DECK_LIMITS } from '../constants/game'
+import { DECK_LIMITS } from '../constants/game.js'
 
 export function validateDeck(cards, lands) {
   const toEntries = (value) => {
@@ -26,6 +26,16 @@ export function validateDeck(cards, lands) {
   for (const c of cardEntries) {
     if (c.quantity > DECK_LIMITS.cards.maxPerEntry) {
       errors.push(`Карта ${c.id} встречается более ${DECK_LIMITS.cards.maxPerEntry} раз`)
+    }
+  }
+
+  if (totalLands > DECK_LIMITS.lands.maxTotal) {
+    errors.push(`В колоде больше ${DECK_LIMITS.lands.maxTotal} земель`)
+  }
+
+  for (const l of landEntries) {
+    if (l.quantity > DECK_LIMITS.lands.maxPerEntry) {
+      errors.push(`Земля ${l.id} встречается более ${DECK_LIMITS.lands.maxPerEntry} раз`)
     }
   }
 

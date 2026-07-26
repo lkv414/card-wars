@@ -1,0 +1,714 @@
+/**
+ * deck.css — Стили для работы с колодами
+ * 
+ * Содержит стили для DeckList, DeckBuilder, CardTile и связанных компонентов.
+ */
+
+/* Сетка карточек */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--card-width));
+  gap: 16px;
+  justify-content: center;
+  padding-bottom: 24px;
+}
+
+/* Карточка карты */
+.card-tile {
+  position: relative;
+  width: var(--card-width);
+  aspect-ratio: var(--card-aspect);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #ddd5c8 0%, #f7efe3 55%, #e8dcc8 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 8px 20px #7a4b1f12;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.card-tile-clickable {
+  cursor: pointer;
+}
+
+.card-tile-clickable:hover,
+.card-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px #7a4b1f1f;
+}
+
+.card-tile-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px #f5a62355, 0 12px 28px #7a4b1f1f;
+}
+
+.card-tile-compact {
+  --card-width: 120px;
+}
+
+/* Кнопка превью карты */
+.card-preview-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  background: #0008;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.card-tile:hover .card-preview-btn,
+.card-tile:focus-within .card-preview-btn,
+.card-preview-btn:focus-visible {
+  opacity: 1;
+}
+
+.card-preview-btn:hover {
+  background: #000b;
+}
+
+/* Оверлей карточки */
+.card-tile-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 10px 8px 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 14, 8, 0.05) 0%,
+    rgba(20, 14, 8, 0.35) 42%,
+    rgba(20, 14, 8, 0.82) 100%
+  );
+}
+
+.card-tile-top {
+  margin-top: auto;
+  text-align: center;
+}
+
+/* Название карты */
+.card-tile-name {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+.card-tile-number {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  color: #f3e8d8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Описание карты */
+.card-tile-description {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.3;
+  color: #f5efe4;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Статистика карты */
+.card-tile-stats {
+  font-size: 11px;
+  color: #f8f1e6;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+}
+
+/* Кнопки на карточке */
+.card-tile-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 2px;
+}
+
+.card-add-btn {
+  background: #35b86b;
+  color: white;
+  font-weight: 900;
+  padding: 4px 10px;
+  font-size: 14px;
+  min-width: 34px;
+}
+
+.card-add-btn:hover:not(:disabled) {
+  background: #2d9b5a;
+}
+
+.card-remove-btn {
+  background: var(--danger);
+  color: white;
+  font-weight: 900;
+  padding: 4px 10px;
+  font-size: 14px;
+  min-width: 34px;
+}
+
+.card-remove-btn:hover {
+  background: var(--danger-hover);
+}
+
+.card-qty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 28px;
+}
+
+/* Поиск и фильтры */
+.search-label {
+  position: relative;
+  display: block;
+}
+
+.search-label .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.search-label input {
+  padding-left: 36px;
+  width: 100%;
+}
+
+/* Чипы фильтров */
+.filter-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.filter-chip.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+/* Панель фильтров */
+.filters {
+  position: sticky;
+  top: 56px;
+  width: 260px;
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  box-shadow: 0 8px 20px #805d2a17;
+  scrollbar-width: thin;
+  scrollbar-color: #e0c9a0 transparent;
+  z-index: 9;
+}
+
+/* WebKit scrollbar для фильтров */
+.filters::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filters::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 10px 0;
+}
+
+.filters::-webkit-scrollbar-thumb {
+  background: #e0c9a0;
+  border-radius: 999px;
+}
+
+.filters::-webkit-scrollbar-thumb:hover {
+  background: #d4b078;
+}
+
+.filters h2 {
+  font-size: 18px;
+}
+
+.filters h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.filters-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.filters-title-desktop {
+  font-size: 18px;
+}
+
+.filters-reset {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--danger-soft);
+  color: var(--danger-text);
+  border-radius: 999px;
+}
+
+.filters-head {
+  display: none;
+}
+
+.filters-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Сетка */
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.list {
+  min-width: 0;
+  padding-bottom: 100px;
+}
+
+/* Прогресс колоды */
+.deck-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.deck-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.deck-progress-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.deck-progress-track.land {
+  height: 2px;
+}
+
+.deck-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.deck-progress-fill.cards.ok,
+.deck-progress-fill.lands.ok {
+  background: var(--success);
+}
+
+.deck-progress-modal {
+  margin-top: 8px;
+  max-width: 280px;
+  padding: 0;
+}
+
+/* Счетчики колоды */
+.deck-tally {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.deck-tally.ok {
+  background: var(--success-soft);
+  color: var(--success-text);
+}
+
+.deck-tally.partial {
+  background: var(--warn-soft);
+  color: var(--warn-text);
+}
+
+.deck-tally.invalid {
+  background: var(--danger-soft);
+  color: var(--danger-text);
+}
+
+.tally-sep {
+  opacity: 0.5;
+  font-weight: 600;
+}
+
+.tally-ok {
+  color: var(--success-text);
+}
+
+.tally-bad {
+  color: var(--danger-text);
+}
+
+.deck-tally.ok .tally-ok,
+.deck-tally.ok .tally-bad {
+  color: inherit;
+}
+
+/* Кнопка очистки */
+.admin-link {
+  margin: 14px 0;
+  background: var(--info-soft);
+}
+
+/* Режимы отображения */
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mode-tabs button {
+  width: 100%;
+}
+
+.mode-tabs .active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+}
+
+/* Строки стоимости */
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cost-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a6550;
+}
+
+.cost-row input {
+  width: 100%;
+  min-width: 0;
+}
+
+.cost-chips .cost-chip {
+  min-width: 36px;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.sort-row select {
+  width: 100%;
+}
+
+/* Кнопки панелей */
+.panel-button {
+  position: fixed;
+  right: calc(26px + var(--safe-right));
+  bottom: calc(26px + var(--safe-bottom));
+  z-index: 5;
+  padding: 16px 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 16px 34px #a96c0a55;
+  cursor: pointer;
+}
+
+.panel-button:hover {
+  background: var(--accent-hover);
+}
+
+.panel-button.bottom-left {
+  left: calc(18px + 260px + 18px + var(--safe-left));
+  right: auto;
+}
+
+.panel-button.bottom-right {
+  right: calc(26px + var(--safe-right));
+  left: auto;
+}
+
+.panel-button.trash-btn {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--danger);
+  box-shadow: 0 8px 20px #a96c0a33;
+  font-weight: 900;
+}
+
+.panel-button.trash-btn:hover {
+  background: var(--danger-hover);
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .topbar .code-field {
+    margin-left: 0;
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .filters-title-row {
+    display: none;
+  }
+  
+  .filters-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  
+  .filters-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: var(--danger-soft);
+    font-weight: 800;
+    border-radius: var(--radius);
+  }
+  
+  .filters-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: #1d120866;
+    cursor: pointer;
+  }
+  
+  .filters {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 7;
+    width: min(320px, 88vw);
+    max-width: min(320px, 88vw);
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    box-shadow: 16px 0 40px #0003;
+    padding: 12px;
+  }
+  
+  .filters.filters-open {
+    transform: translateX(0);
+  }
+  
+  .filters-toggle.active {
+    background: var(--accent);
+    color: white;
+  }
+}
+
+@media (max-width: 640px) {
+  .app,
+  .admin {
+    padding: 8px;
+    padding-bottom: calc(8px + var(--safe-bottom));
+  }
+  
+  .admin-top {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .admin-top select,
+  .admin-top button {
+    width: 100%;
+  }
+  
+  .topbar {
+    padding: 6px 12px;
+    gap: 6px;
+  }
+  
+  .topbar .code-field {
+    margin-left: 0;
+    width: 100%;
+    max-width: none;
+  }
+  
+  .cards-grid {
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  .panel-button.bottom-left {
+    left: calc(8px + var(--safe-left));
+  }
+  
+  .panel-button.bottom-right {
+    right: calc(8px + var(--safe-right));
+  }
+  
+  .toasts {
+    top: auto;
+    bottom: calc(88px + var(--safe-bottom));
+    right: 8px;
+    left: 8px;
+    max-width: none;
+  }
+  
+  .card-preview-btn {
+    opacity: 1;
+  }
+  
+  .deck-tally {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .card-row {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+  
+  .row-actions {
+    grid-column: 2;
+  }
+}
+
+/* Копирование кода */
+.code-field .copy-code-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 16px;
+  transition: background 0.2s, opacity 0.2s;
+  cursor: pointer;
+}
+
+.code-field .copy-code-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: white;
+}
+
+.code-field .copy-code-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

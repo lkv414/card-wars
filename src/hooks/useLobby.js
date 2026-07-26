@@ -105,7 +105,8 @@ export function useLobby() {
   useEffect(() => {
     const session = loadLobbySession()
     if (!session) {
-      setStatus('idle')
+      // Используем requestAnimationFrame чтобы избежать синхронного setState в useEffect
+      requestAnimationFrame(() => setStatus('idle'))
       return
     }
 
@@ -120,13 +121,13 @@ export function useLobby() {
 
       if (!lobby) {
         clearLobbySession()
-        setStatus('idle')
+        requestAnimationFrame(() => setStatus('idle'))
         return
       }
 
       if (lobby.status === 'in_game') {
         clearLobbySession()
-        setStatus('idle')
+        requestAnimationFrame(() => setStatus('idle'))
         return
       }
 
@@ -139,7 +140,7 @@ export function useLobby() {
 
       if (!me) {
         clearLobbySession()
-        setStatus('idle')
+        requestAnimationFrame(() => setStatus('idle'))
         return
       }
 
@@ -148,12 +149,14 @@ export function useLobby() {
         .select('*')
         .eq('lobby_id', lobby.id)
 
-      setLobbyId(lobby.id)
-      setLobbyCode(lobby.code)
-      setIsHost(lobby.host_id === guestId)
-      setHostId(lobby.host_id)
-      setPlayers(playersList ?? [])
-      setStatus('waiting')
+      requestAnimationFrame(() => {
+        setLobbyId(lobby.id)
+        setLobbyCode(lobby.code)
+        setIsHost(lobby.host_id === guestId)
+        setHostId(lobby.host_id)
+        setPlayers(playersList ?? [])
+        setStatus('waiting')
+      })
       subscribeToLobby(lobby.id)
     })()
   }, [subscribeToLobby])

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getGuestNickname, setGuestNickname, getGuestId } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
 import { supabase } from '../../utils/supabase'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
+import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
 import { LobbyRoom } from './LobbyRoom'
 import './Lobby.css'
 
@@ -18,6 +19,18 @@ export function LobbyScreen({ toast }) {
   const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
   const { getSelectedDeck, selectedDeckId } = useDecks()
   const selectedDeck = getSelectedDeck()
+  
+  // Realtime status для баннера reconnect
+  const realtimeStatus = useRealtimeChannel({
+    channelName: lobbyId ? `lobby:${lobbyId}` : null,
+    subscriptions: useMemo(() => {
+      if (!lobbyId) return []
+      return [
+        { table: 'lobbies', filter: `id=eq.${lobbyId}`, callback: () => {} },
+        { table: 'lobby_players', filter: `lobby_id=eq.${lobbyId}`, callback: () => {} },
+      ]
+    }, [lobbyId]),
+  })
   // Когда статус 'in_game' — найти gameId для этого лобби и перейти.
   // Retry: после старта игры Realtime может прийти быстрее, чем INSERT в games
   // зафиксируется для SELECT — поэтому пробуем до 5 раз с задержкой.
@@ -148,9 +161,9 @@ export function LobbyScreen({ toast }) {
   // Пока восстанавливаем сессию из localStorage — показываем заглушку
   if (status === 'restoring') {
     return (
-      <main className="lobby-screen">
+      <main className="lobby-screen" role="main">
         <div className="lobby-screen__content">
-          <p className="lobby-restoring">Загрузка...</p>
+          <p className="lobby-restoring" role="status" aria-live="polite">Загрузка...</p>
         </div>
       </main>
     )
@@ -159,17 +172,25 @@ export function LobbyScreen({ toast }) {
   // Показать комнату если есть активное лобби (в т.ч. восстановленное из localStorage)
   if (status === 'waiting' || status === 'in_game') {
     return (
-      <LobbyRoom
-        code={lobbyCode ?? ''}
-        players={players}
-        status={status}
-        isHost={isHost}
-        hostId={hostId}
-        onReady={setReady}
-        onLeave={handleLeave}
-        onStartGame={handleStartGame}
-        toast={toast}
-      />
+      <>
+        {realtimeStatus === 'disconnected' && (
+          <div className="connection-banner" role="alert" aria-live="polite">
+            <span className="connection-spinner" aria-hidden="true"></span>
+            <span>Нет соединения. Пытаемся переподключиться...</span>
+          </div>
+        )}
+        <LobbyRoom
+          code={lobbyCode ?? ''}
+          players={players}
+          status={status}
+          isHost={isHost}
+          hostId={hostId}
+          onReady={setReady}
+          onLeave={handleLeave}
+          onStartGame={handleStartGame}
+          toast={toast}
+        />
+      </>
     )
   }
 
@@ -179,9 +200,15 @@ export function LobbyScreen({ toast }) {
   const busy = status === 'loading' || submitting
 
   return (
-    <main className="lobby-screen">
+    <main className="lobby-screen" role="main">
+      {realtimeStatus === 'disconnected' && (
+        <div className="connection-banner" role="alert" aria-live="polite">
+          <span className="connection-spinner" aria-hidden="true"></span>
+          <span>Нет соединения. Пытаемся переподключиться...</span>
+        </div>
+      )}
       <div className="lobby-screen__content">
-        <button className="lobby-back-btn" onClick={() => navigate('/')}>
+        <button className="lobby-back-btn" onClick={() => navigate('/')} aria-label="Назад в главное меню">
           ← Назад
         </button>
 
@@ -236,6 +263,8 @@ export function LobbyScreen({ toast }) {
                 className="lobby-btn lobby-btn--create"
                 onClick={handleCreate}
                 disabled={busy || !selectedDeck || deckCardCount === 0}
+                aria-busy={busy && !joinCode}
+                aria-label={busy && !joinCode ? 'Создание комнаты' : 'Создать комнату'}
               >
                 {busy && !joinCode ? 'Создаём...' : 'Создать комнату'}
               </button>
@@ -260,6 +289,8 @@ export function LobbyScreen({ toast }) {
                 className="lobby-btn lobby-btn--join"
                 onClick={handleJoin}
                 disabled={busy || !selectedDeck || deckCardCount === 0}
+                aria-busy={busy && joinCode}
+                aria-label={busy && joinCode ? 'Вход в лобби' : 'Войти в лобби'}
               >
                 {busy && joinCode ? 'Входим...' : 'Войти'}
               </button>

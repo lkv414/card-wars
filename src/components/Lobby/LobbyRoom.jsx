@@ -40,9 +40,9 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
   }
 
   return (
-    <main className="lobby-room">
+    <main className="lobby-room" role="main">
       <div className="lobby-room__content">
-        <button className="lobby-back-btn" onClick={onLeave}>
+        <button className="lobby-back-btn" onClick={onLeave} aria-label="Выйти из лобби">
           ← Выйти из лобби
         </button>
 
@@ -52,7 +52,7 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
           <span className="lobby-code-label">Код комнаты</span>
           <div className="lobby-code-value">
             <span>{code}</span>
-            <button className="lobby-copy-btn" onClick={handleCopy} title="Скопировать код">
+            <button className="lobby-copy-btn" onClick={handleCopy} title="Скопировать код" aria-label={copied ? 'Код скопирован' : 'Скопировать код'}>
               {copied ? '✓' : '⎘'}
             </button>
           </div>
@@ -114,6 +114,8 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
               className={`lobby-btn ${amReady ? 'lobby-btn--ready-done' : 'lobby-btn--ready'}`}
               onClick={handleReady}
               disabled={amReady || players.length < 2 || !myHasDeck}
+              aria-pressed={amReady}
+              aria-label={amReady ? 'Вы уже готовы' : 'Отметить себя готовым'}
               title={
                 !myHasDeck
                   ? 'Нет колоды'
@@ -130,6 +132,8 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
                 className="lobby-btn lobby-btn--start"
                 onClick={handleStart}
                 disabled={!allHaveDecks}
+                aria-disabled={!allHaveDecks}
+                aria-label={allHaveDecks ? 'Начать игру' : `Нужно выбрать колоды: ${missingDeckNames.join(', ')}`}
                 style={{ marginTop: '0.5rem', background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)' }}
               >
                 ▶ Начать игру

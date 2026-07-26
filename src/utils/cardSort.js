@@ -1,4 +1,4 @@
-import { CARD_TYPES } from '../constants/game'
+import { CARD_TYPES } from '../constants/game.js'
 
 const TYPE_ORDER = Object.keys(CARD_TYPES)
 
@@ -77,8 +77,9 @@ export const DEFAULT_FILTERS = {
 }
 
 export function hasActiveFilters(filters) {
-  return (
-    Boolean(filters.search?.trim()) ||
+  if (!filters) return false
+  return Boolean(
+    filters.search?.trim() ||
     filters.cardTypes?.length > 0 ||
     filters.landTypes?.length > 0 ||
     filters.rainbow ||

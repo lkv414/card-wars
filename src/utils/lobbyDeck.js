@@ -11,13 +11,14 @@
  *   cardCount, landCount
  * }
  */
-import { STARTING_HAND_SIZE } from '../constants/game'
-import { expandDeckCodeWithCardData, generateDeckCode } from './deckCode'
+import { STARTING_HAND_SIZE } from '../constants/game.js'
+import { expandDeckCodeWithCardData, generateDeckCode } from './deckCode.js'
 
 export { STARTING_HAND_SIZE }
 
 /** Собрать экземпляры карт (quantity → N копий) для игры */
 export function expandSelectionToInstances(fullCards = []) {
+  if (!fullCards) return []
   const instances = []
   for (const card of fullCards) {
     const qty = Math.max(1, Number(card.quantity) || 1)

@@ -16,6 +16,7 @@
 
 import { useState } from 'react'
 import { Replay } from './Replay'
+import { safePlayer } from '../../utils/safePlayer'
 
 export function HUDOverlay({
   playerId,
@@ -30,8 +31,15 @@ export function HUDOverlay({
   onForfeit,
   onGameEnd,
   realtimeStatus,
+  selectedCardIndex = null,
+  setSelectedCardIndex = () => {},
 }) {
   const [isReplayOpen, setReplayOpen] = useState(false)
+
+  // Защита: me/opp могут прийти undefined из Realtime или после forfeit.
+  // safePlayer гарантирует health, hand, deck_pile, zones — никогда undefined.
+  const safeMe = safePlayer([me].filter(Boolean), me?.player_id)
+  const safeOpp = safePlayer([opp].filter(Boolean), opp?.player_id)
 
   return (
     <>
@@ -45,37 +53,9 @@ export function HUDOverlay({
 
       {isReplayOpen && <Replay log={log} onClose={() => setReplayOpen(false)} />}
 
-      {/* Центральный HUD */}
-      <div className="hud-center">
-        {isFinished ? (
-          <div className="hud-finished">
-            🎉 {winnerId === playerId ? 'Вы выиграли!' : 'Вы проиграли!'}
-          </div>
-        ) : (
-          <div className={`hud-turn ${isYourTurn ? 'your' : 'opponent'}`}>
-            {isYourTurn ? '👉 Ваш ход' : '⏳ Ход противника'}
-            <div className="hud-stats">
-              ❤️ Вы {me.health}/25 · 🤚 Рука {handCards.length} · 📚 Колода {me.deck_remaining}
-            </div>
-            {isYourTurn && (
-              <div className="hud-actions">
-                <button className="hud-end-btn" onClick={onEndTurn}>Закончить ход</button>
-                <button
-                  className="hud-forfeit-btn"
-                  onClick={onForfeit}
-                  title="Сдаться — оппонент победит"
-                >
-                  🏳️ Сдаться
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* HUD противника */}
+      {/* HUD противника — сверху */}
       <div className="hud-opponent">
-        Противник · ❤️ {opp.health}/25 · 🂠 × {opp.hand?.length || 0}
+        Противник · ❤️ {safeOpp.health}/25 · 🂠 × {safeOpp.hand?.length || 0}
       </div>
 
       {/* Баннер разрыва связи */}
@@ -88,62 +68,210 @@ export function HUDOverlay({
         </div>
       )}
 
+      {/* НИЖНЯЯ ПАНЕЛЬ: рука + кнопки. Это замена центрального «летающего» меню. */}
+      <div className="hud-bottom">
+        {/* Статус-баннер сверху панели */}
+        <div className={`hud-bottom-status ${isYourTurn ? 'your' : 'opponent'} ${isFinished ? 'finished' : ''}`}>
+          {isFinished
+            ? `🎉 ${winnerId === playerId ? 'Вы выиграли!' : 'Вы проиграли!'}`
+            : (isYourTurn ? '👉 Ваш ход' : '⏳ Ход противника')}
+          <span className="hud-bottom-stats">
+            ❤️ {safeMe.health}/25 · 📚 {safeMe.deck_pile?.length ?? safeMe.deck_remaining ?? 0}
+          </span>
+          {isYourTurn && !isFinished && (
+            <div className="hud-bottom-buttons">
+              <button
+                type="button"
+                className="hud-end-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  if (typeof onEndTurn === 'function') onEndTurn()
+                }}
+              >
+                ⏭ Закончить ход
+              </button>
+              <button
+                type="button"
+                className="hud-forfeit-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  if (typeof onForfeit === 'function') onForfeit()
+                }}
+              >
+                🏳️ Сдаться
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Горизонтальная полоса карт руки. Клик выбирает карту для розыгрыша. */}
+        <div className="hud-hand" role="list" aria-label="Ваша рука">
+          {Array.isArray(handCards) && handCards.length > 0 ? (
+            handCards.map((c, idx) => {
+              const isSel = selectedCardIndex === idx
+              return (
+                <button
+                  type="button"
+                  key={c?.id || c?.instanceId || idx}
+                  className={`hud-hand-card${isSel ? ' selected' : ''}${isYourTurn ? '' : ' disabled'}`}
+                  disabled={!isYourTurn || isFinished}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    setSelectedCardIndex(isSel ? null : idx)
+                  }}
+                  aria-pressed={isSel}
+                  title={c?.name || `Карта ${idx + 1}`}
+                >
+                  <div className="hud-hand-card-cost">{c?.cost ?? '?'}</div>
+                  <div className="hud-hand-card-name">{c?.name || `Карта ${idx + 1}`}</div>
+                  {c?.attack !== undefined && (
+                    <div className="hud-hand-card-attack">⚔ {c.attack}</div>
+                  )}
+                  {c?.health !== undefined && (
+                    <div className="hud-hand-card-health">❤️ {c.health}</div>
+                  )}
+                </button>
+              )
+            })
+          ) : (
+            <div className="hud-hand-empty">Рука пуста</div>
+          )}
+        </div>
+      </div>
+
       <style>{`
-        .hud-center {
+        /* === НИЖНЯЯ ПАНЕЛЬ (замена центрального летающего меню) === */
+        .hud-bottom {
           position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 50;
-          pointer-events: none;
-        }
-        .hud-center .hud-finished {
-          font-size: 28px;
-          font-weight: 700;
-          color: white;
-          background: rgba(20, 20, 50, 0.9);
-          padding: 20px 28px;
-          border-radius: 12px;
-          border: 2px solid #4caf50;
-          text-align: center;
-          pointer-events: auto;
-        }
-        .hud-turn {
-          background: rgba(20, 20, 50, 0.85);
-          padding: 12px 18px;
-          border-radius: 12px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(8px);
-          color: white;
-          text-align: center;
-          min-width: 240px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 60; /* выше Canvas, не перекрыт */
+          background: linear-gradient(180deg, rgba(10,10,30,0) 0%, rgba(10,10,30,0.92) 30%, rgba(10,10,30,0.98) 100%);
+          padding: 14px 18px 18px 18px;
           font-family: 'Segoe UI', system-ui, sans-serif;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-          pointer-events: auto;
+          color: white;
+          pointer-events: auto; /* кликабельна вся панель */
         }
-        .hud-turn.your { color: #4caf50; }
-        .hud-turn.opponent { color: #ff9800; }
-        .hud-stats { margin-top: 6px; font-size: 13px; opacity: 0.85; color: white; }
-        .hud-actions { display: flex; gap: 8px; margin-top: 8px; justify-content: center; }
-        .hud-end-btn {
-          padding: 6px 14px;
-          background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-          border: none;
-          border-radius: 6px;
+        .hud-bottom-status {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          margin-bottom: 10px;
+          flex-wrap: wrap;
+          font-weight: 700;
+          font-size: 16px;
+        }
+        .hud-bottom-status.your { color: #4caf50; }
+        .hud-bottom-status.opponent { color: #ff9800; }
+        .hud-bottom-status.finished { font-size: 22px; color: #ffd700; }
+        .hud-bottom-stats {
+          font-weight: 500;
+          opacity: 0.85;
+          font-size: 14px;
+          margin-left: auto;
+        }
+        .hud-bottom-buttons { display: flex; gap: 10px; }
+        /* Кнопки получают pointer-events: auto, и стоят выше Canvas. */
+        .hud-end-btn, .hud-forfeit-btn {
+          padding: 8px 18px;
           color: white;
           font-weight: 700;
+          font-size: 14px;
+          border-radius: 6px;
           cursor: pointer;
+          border: none;
+          pointer-events: auto;
+          z-index: 61;
         }
+        .hud-end-btn {
+          background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+        .hud-end-btn:hover { filter: brightness(1.15); }
         .hud-forfeit-btn {
-          padding: 6px 14px;
           background: rgba(244, 67, 54, 0.85);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 6px;
-          color: white;
-          font-weight: 700;
-          cursor: pointer;
         }
         .hud-forfeit-btn:hover { background: rgba(244, 67, 54, 1); }
+
+        /* === РУКА (горизонтальная полоса карт) === */
+        .hud-hand {
+          display: flex;
+          gap: 10px;
+          overflow-x: auto;
+          padding-bottom: 6px;
+          pointer-events: auto;
+        }
+        .hud-hand-card {
+          flex: 0 0 auto;
+          min-width: 100px;
+          max-width: 130px;
+          height: 140px;
+          padding: 8px;
+          border-radius: 8px;
+          background: linear-gradient(135deg, #2a3554 0%, #1f2940 100%);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          color: white;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          font-family: 'Segoe UI', system-ui, sans-serif;
+          text-align: left;
+          pointer-events: auto;
+          position: relative;
+          transition: all 0.15s ease;
+        }
+        .hud-hand-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.5); }
+        .hud-hand-card.selected {
+          border-color: #4caf50;
+          box-shadow: 0 0 16px rgba(76, 175, 80, 0.6);
+          transform: translateY(-4px);
+        }
+        .hud-hand-card.disabled { opacity: 0.45; cursor: not-allowed; }
+        .hud-hand-card-cost {
+          position: absolute;
+          top: 4px;
+          left: 6px;
+          width: 22px;
+          height: 22px;
+          background: #ff9800;
+          color: #000;
+          font-weight: 800;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+        }
+        .hud-hand-card-name {
+          font-size: 13px;
+          font-weight: 700;
+          margin-top: 24px;
+          line-height: 1.15;
+          max-height: 38px;
+          overflow: hidden;
+        }
+        .hud-hand-card-attack {
+          font-size: 12px;
+          background: rgba(244, 67, 54, 0.7);
+          padding: 1px 6px;
+          border-radius: 4px;
+          align-self: flex-start;
+        }
+        .hud-hand-card-health {
+          font-size: 12px;
+          background: rgba(76, 175, 80, 0.7);
+          padding: 1px 6px;
+          border-radius: 4px;
+          align-self: flex-start;
+        }
+        .hud-hand-empty { color: rgba(255,255,255,0.5); font-style: italic; }
+
+        /* Старые правила оставлены на случай если где-то в React-неиспользуемых местах */
         .hud-opponent {
           position: absolute;
           top: 80px;

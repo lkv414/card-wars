@@ -209,6 +209,7 @@ export function EnhancedCard3DModel({
   isFlipped = false,
   showStats = true,
   showFlipOption = false,
+  isOpponent = false, // если true — текст name/description «смотрит» к владельцу, не к центру
 }) {
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef(null)
@@ -351,25 +352,40 @@ export function EnhancedCard3DModel({
         </>
       )}
       
-      {/* Название карты сверху */}
-      {hovered && card?.name && (
-        <group position={[0, CARD_HEIGHT/2 + 0.2, 0]}>
+      {/* Название карты — всегда видно сверху (компактнее чем раньше) */}
+      {card?.name && (
+        <group
+          position={[0, CARD_HEIGHT/2 + 0.15, 0]}
+          // Для оппонента — поворачиваем текст на 180° вокруг Y, чтобы имя
+          // «смотрело» к владельцу (от центра стола наружу), а не к центру.
+          rotation={isOpponent ? [0, Math.PI, 0] : [0, 0, 0]}
+        >
           <mesh>
-            <planeGeometry args={[CARD_WIDTH * 1.2, 0.3]} />
-            <meshStandardMaterial color="#000" transparent={true} opacity={0.7} />
+            {/* Плашка чуть уже карты, чтобы оставаться в пределах CARD_WIDTH */}
+            <planeGeometry args={[CARD_WIDTH * 1.05, 0.2]} />
+            <meshStandardMaterial color="#000" transparent={true} opacity={0.6} />
           </mesh>
-          {create3DText(card.name, '#FFF', 0.16, CARD_WIDTH * 1.1)}
+          {/* fontSize снижен, maxWidth = CARD_WIDTH — текст не выходит за рамки */}
+          {create3DText(card.name, '#FFF', 0.09, CARD_WIDTH * 0.95)}
         </group>
       )}
-      
-      {/* Описание карты при наведении (внизу) */}
-      {hovered && card?.description && (
-        <group position={[0, -CARD_HEIGHT/2 - 0.3, 0]}>
+
+      {/* Описание карты — всегда видно снизу. Размер плашки фиксированный
+          (избегаем пересоздания текстурного атласа troika-three-text на hover);
+          hover-эффект даётся через opacity, scale группы и позицию. */}
+      {card?.description && (
+        <group
+          position={[0, -CARD_HEIGHT/2 - 0.22, 0]}
+          scale={hovered ? [1, 1.4, 1] : [1, 1, 1]}
+          rotation={isOpponent ? [0, Math.PI, 0] : [0, 0, 0]}
+        >
           <mesh>
-            <planeGeometry args={[CARD_WIDTH * 1.5, 0.8]} />
-            <meshStandardMaterial color="#000" transparent={true} opacity={0.7} side={THREE.DoubleSide} />
+            {/* Плашка уже карты */}
+            <planeGeometry args={[CARD_WIDTH * 1.2, 0.5]} />
+            <meshStandardMaterial color="#000" transparent={true} opacity={hovered ? 0.78 : 0.5} side={THREE.DoubleSide} />
           </mesh>
-          {create3DText(card.description, '#FFF', 0.1, CARD_WIDTH * 1.4)}
+          {/* fontSize снижен до 0.06; maxWidth = CARD_WIDTH — текст в рамках */}
+          {create3DText(card.description, '#FFF', 0.06, CARD_WIDTH * 0.95)}
         </group>
       )}
     </group>

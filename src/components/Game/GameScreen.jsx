@@ -11,7 +11,7 @@
  *                deck_remaining, player_order }],
  *   }
  */
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
@@ -75,6 +75,24 @@ export function GameScreen() {
 
   const { playCard, attack, endTurn, forfeit, flipCard } = useGameAction(game, loadGame)
 
+  // Debounced reload: одна атака правит 3 таблицы → 3 realtime callback'а.
+  // Без debounce получается 3+ reload RPC подряд. С debounce (150мс) —
+  // несколько событий коалесцируются в один reload.
+  const reloadTimerRef = useRef(null)
+  const debouncedLoad = useCallback(() => {
+    if (reloadTimerRef.current) clearTimeout(reloadTimerRef.current)
+    reloadTimerRef.current = setTimeout(() => {
+      reloadTimerRef.current = null
+      loadGame()
+    }, 150)
+  }, [loadGame])
+
+  useEffect(() => {
+    return () => {
+      if (reloadTimerRef.current) clearTimeout(reloadTimerRef.current)
+    }
+  }, [])
+
   // Initial load при монтировании если gameId есть
   useEffect(() => {
     if (gameId) {
@@ -91,13 +109,13 @@ export function GameScreen() {
     channelName: gameId ? `game:${gameId}` : null,
     subscriptions: useMemo(() => {
       if (!gameId) return []
-      const onChange = () => loadGame()
+      const onChange = debouncedLoad
       return [
         { table: 'games', filter: `id=eq.${gameId}`, callback: onChange },
         { table: 'game_players', filter: `game_id=eq.${gameId}`, callback: onChange },
         { table: 'game_zones', filter: `game_id=eq.${gameId}`, callback: onChange },
       ]
-    }, [gameId, loadGame]),
+    }, [gameId, debouncedLoad]),
   })
 
   if (loading) {

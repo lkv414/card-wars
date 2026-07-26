@@ -5,9 +5,12 @@
  *  1. Достать карту из hand
  *  2. Положить в zone (clampZones гарантирует 4 слота)
  *  3. Refill: добрать из deck_pile пока hand < STARTING_HAND_SIZE
- *  4. Записать в game_players (hand, deck_pile, deck_remaining)
- *  5. Записать в game_zones (cards в конкретной зоне)
- *  6. Обновить log через writeGameState
+ *  4. Записать в game_players (hand, deck_pile, deck_remaining) и
+ *     game_zones (cards в конкретной зоне) ПАРАЛЛЕЛЬНО
+ *  5. Обновить log через writeGameState
+ *
+ * 2 записи + games.update теперь идут через Promise.all — атомарно
+ * по смыслу и быстрее по latency (2×RTT → 1×RTT на persist).
  */
 
 import { useCallback } from 'react'
@@ -39,9 +42,12 @@ export function usePlayCard(game, writeGameState) {
 
       hand.splice(cardIndex, 1)
       const zones = clampZones(me.zones)
+      // instanceId — стабильный ID для инстанса карты в игре (используется
+      // в useAttack / useFlipCard для поиска по карте в зоне).
+      const instanceId = card.instanceId || card.id || `card-${Date.now()}-${cardIndex}`
       zones[zoneIndex] = [
         ...(zones[zoneIndex] || []),
-        { ...card, id: card.id || `card-${Date.now()}`, tapped: false, flipped: false },
+        { ...card, id: card.id, instanceId, tapped: false, flipped: false },
       ]
 
       // Refill: добираем из deck_pile пока рука < STARTING_HAND_SIZE
@@ -51,25 +57,31 @@ export function usePlayCard(game, writeGameState) {
       }
       const newDeckRemaining = deckPile.length
 
-      // Persist hand + deck_pile + deck_remaining + zones
-      await supabase
-        .from('game_players')
-        .update({
-          hand,
-          deck_pile: deckPile,
-          deck_remaining: newDeckRemaining,
-        })
-        .eq('game_id', game.id)
-        .eq('player_id', me.player_id)
+      // Persist hand + zone + log параллельно
+      const [playersRes, zonesRes, gameRes] = await Promise.all([
+        supabase
+          .from('game_players')
+          .update({
+            hand,
+            deck_pile: deckPile,
+            deck_remaining: newDeckRemaining,
+          })
+          .eq('game_id', game.id)
+          .eq('player_id', me.player_id),
+        supabase
+          .from('game_zones')
+          .update({ cards: zones[zoneIndex] })
+          .eq('game_id', game.id)
+          .eq('player_id', me.player_id)
+          .eq('zone_position', zoneIndex + 1),
+        writeGameState({ game_state: { log: newLog } }),
+      ])
 
-      await supabase
-        .from('game_zones')
-        .update({ cards: zones[zoneIndex] })
-        .eq('game_id', game.id)
-        .eq('player_id', me.player_id)
-        .eq('zone_position', zoneIndex + 1)
-
-      return writeGameState({ game_state: { log: newLog } })
+      const err = playersRes.error || zonesRes.error || gameRes?.error
+      if (err) {
+        return { error: `Розыгрыш не сохранился: ${err.message || err}` }
+      }
+      return { success: true }
     },
     [game, writeGameState]
   )

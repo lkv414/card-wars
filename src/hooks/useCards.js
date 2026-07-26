@@ -21,6 +21,8 @@ export function useCards() {
     setLoading(false)
   }, [])
 
+  // Оптимизация: insert/update уже возвращают объект через .select() — не делаем
+  // второй loadCards(). Просто добавляем/заменяем в локальный state.
   const createCard = useCallback(async (cardData) => {
     const { data, error } = await supabase
       .from('cards')
@@ -28,9 +30,9 @@ export function useCards() {
       .select()
       .single()
     if (error) return { success: false, error: error.message }
-    await loadCards()
+    if (data) setCards((prev) => [...prev, data])
     return { success: true, data }
-  }, [loadCards])
+  }, [])
 
   const updateCard = useCallback(async (cardId, cardData) => {
     const { data, error } = await supabase
@@ -40,16 +42,16 @@ export function useCards() {
       .select()
       .single()
     if (error) return { success: false, error: error.message }
-    await loadCards()
+    if (data) setCards((prev) => prev.map((c) => (c.id === cardId ? data : c)))
     return { success: true, data }
-  }, [loadCards])
+  }, [])
 
   const deleteCard = useCallback(async (cardId) => {
     const { error } = await supabase.from('cards').delete().eq('id', cardId)
     if (error) return { success: false, error: error.message }
-    await loadCards()
+    setCards((prev) => prev.filter((c) => c.id !== cardId))
     return { success: true }
-  }, [loadCards])
+  }, [])
 
   const findSimilarCards = useCallback(async (name, description) => {
     const { data, error } = await supabase.rpc('find_similar_cards', {

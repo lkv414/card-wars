@@ -16,53 +16,51 @@ export function clampZones(zones) {
 }
 
 /**
- * Convert GameScreen's flat game object into GameEngine format:
- *   { gameState, player1, player2 }
+ * Convert GameScreen's flat game object into GameEngine format for 2-4 players:
+ *   { gameState, self, opponents }
  *
- * @param {object} game - flat game state from useGameState
- * @param {string} playerId - current player id
- * @returns {object|null} - engine format or null if not enough players
+ * `self` is the current player, `opponents` is the list of other players
+ * (already excluding the current one). For 2 players we also keep the
+ * `player1`/`player2` aliases for the legacy engine.
  */
 export function gameToEngineFormat(game, playerId) {
-  if (!game || !game.players || game.players.length < 2) return null
+  if (!game || !Array.isArray(game.players) || game.players.length < 1) return null
 
   const players = game.players
+  let selfIndex = players.findIndex((p) => p.player_id === playerId)
+  if (selfIndex === -1) selfIndex = 0
+  const self = players[selfIndex]
+  const opponents = players.filter((_, i) => i !== selfIndex)
   const player1 = players[0]
-  const player2 = players[1]
-
-  const isPlayer1 = player1.player_id === playerId
-  const self = isPlayer1 ? player1 : player2
-  const opponent = isPlayer1 ? player2 : player1
+  const player2 = players[1] || null
 
   const gs = game.game_state || {}
+  const defaults = { health: 25, hand: [], deck_remaining: 35, actionsRemaining: 2, hasAttacked: false }
+
+  const normalize = (p, fallbackId) => ({
+    id: p?.player_id ?? fallbackId,
+    health: p?.health ?? defaults.health,
+    hand: p?.hand || [],
+    zones: clampZones(p?.zones),
+    actionsRemaining: p?.actionsRemaining ?? defaults.actionsRemaining,
+    hasAttacked: p?.hasAttacked ?? defaults.hasAttacked,
+    deck_remaining: p?.deck_remaining ?? defaults.deck_remaining,
+  })
 
   return {
     gameState: {
       status: gs.status || game.status || 'active',
       currentTurn: game.current_turn || 0,
-      currentPlayerId: game.current_player_id || player1.player_id,
+      currentPlayerId: game.current_player_id || self?.player_id,
       turnPhase: gs.turnPhase || 'main',
       winner: game.winner_id || null,
       history: gs.history || [],
       log: gs.log || [],
     },
-    player1: {
-      id: player1.player_id,
-      health: player1.health ?? 25,
-      hand: player1.hand || [],
-      zones: clampZones(player1.zones),
-      actionsRemaining: self.actionsRemaining ?? 2,
-      hasAttacked: self.hasAttacked ?? false,
-      deck_remaining: player1.deck_remaining ?? 35,
-    },
-    player2: {
-      id: player2.player_id,
-      health: player2.health ?? 25,
-      hand: opponent.hand || [],
-      zones: clampZones(opponent.zones),
-      actionsRemaining: opponent.actionsRemaining ?? 2,
-      hasAttacked: opponent.hasAttacked ?? false,
-      deck_remaining: player2.deck_remaining ?? 35,
-    },
+    self: normalize(self, selfIndex),
+    opponents: opponents.map((p, i) => normalize(p, `${selfIndex + 1}_${i}`)),
+    // legacy aliases for the 2-player engine
+    player1: normalize(player1, 0),
+    player2: player2 ? normalize(player2, 1) : null,
   }
 }

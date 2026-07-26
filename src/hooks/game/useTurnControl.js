@@ -9,6 +9,7 @@
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
+import { safePlayer, safePlayers } from '../../utils/safePlayer'
 
 export function useTurnControl(game, writeGameState) {
   /**
@@ -19,10 +20,10 @@ export function useTurnControl(game, writeGameState) {
   const endTurn = useCallback(async () => {
     if (!game?.players) return { error: 'Игра не загружена' }
     await ensureGuestId()
-    const players = game.players
+    const players = safePlayers(game.players) // filter null/undefined + health: number
     const currentIdx = players.findIndex((p) => p.player_id === game.current_player_id)
     if (currentIdx === -1) return { error: 'Активный игрок не найден' }
-    const nextPlayer = players[(currentIdx + 1) % players.length]
+    const nextPlayer = safePlayer(players, (currentIdx + 1) % players.length)
 
     // Draw-фаза: добрать 1 карту из deck_pile нового активного
     const nextDeckPile = Array.isArray(nextPlayer.deck_pile) ? [...nextPlayer.deck_pile] : []
@@ -64,33 +65,64 @@ export function useTurnControl(game, writeGameState) {
   }, [game, writeGameState])
 
   /**
-   * Forfeit — сдаться. Текущий игрок проигрывает, оппонент побеждает.
-   * Триггер validate_game_before_write требует winner_id при status='finished',
-   * что мы обеспечиваем.
+   * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается
+   * между оставшимися живыми; если остался ровно 1 — статус 'finished' и
+   * winner_id = последний живой.
+   * В 2-player работает как «проиграл сразу» (для обратной совместимости).
    */
   const forfeit = useCallback(async () => {
     if (!game?.players) return { error: 'Игра не загружена' }
     await ensureGuestId()
-    const me = game.players.find((p) => p.player_id === game.current_player_id)
-    if (!me) return { error: 'Сейчас не ваш ход' }
-    const opponent = game.players.find((p) => p.player_id !== me.player_id)
-    if (!opponent) return { error: 'Противник не найден' }
+    const me = safePlayer(safePlayers(game.players), game.current_player_id)
+    if (me.__isFallback) return { error: 'Сейчас не ваш ход' }
+
+    // Помечаем сдавшегося как мёртвого (health = 0).
+    const myHpRes = await supabase
+      .from('game_players')
+      .update({ health: 0 })
+      .eq('game_id', game.id)
+      .eq('player_id', me.player_id)
+    if (myHpRes.error) return { error: myHpRes.error.message }
+
+    // Считаем оставшихся живых (исключая меня — я только что сдался).
+    const remaining = safePlayers(game.players).filter(
+      (p) => p.player_id !== me.player_id && (p.health ?? 0) > 0
+    )
 
     const newLog = [
       ...(game.game_state?.log || []),
       {
         timestamp: Date.now(),
-        message: `${me.nickname || 'Игрок'} сдался. Победил ${opponent.nickname || 'противник'}.`,
+        message: `${me?.nickname || 'Игрок'} сдался. Осталось в игре: ${remaining.length}.`,
       },
     ]
 
-    return writeGameState({
-      status: 'finished',
-      winner_id: opponent.player_id,
-      current_player_id: opponent.player_id,
-      ended_at: new Date().toISOString(),
-      game_state: { log: newLog },
-    })
+    // Если остался 1 живой — игра окончена, он победил.
+    // Если 0 (только я был) — игра окончена, никто не победил (winner_id = null).
+    // Если > 1 — игра продолжается; ход переходит к следующему живому.
+    const patch = { game_state: { log: newLog } }
+    if (remaining.length <= 1) {
+      patch.status = 'finished'
+      patch.winner_id = remaining[0]?.player_id || null
+      patch.current_player_id = remaining[0]?.player_id || me.player_id
+      patch.ended_at = new Date().toISOString()
+    } else {
+      const players = safePlayers(game.players)
+      const myIdx = players.findIndex((p) => p.player_id === me.player_id)
+      // Следующий живой по кругу. safePlayer защищает от sparse arrays.
+      for (let i = 1; i <= players.length; i++) {
+        const idx = (myIdx + i + players.length) % players.length
+        const next = safePlayer(players, idx)
+        if (next.__isFallback) continue
+        if (next.player_id !== me.player_id && (next.health ?? 0) > 0) {
+          patch.current_player_id = next.player_id
+          patch.current_turn = (game.current_turn || 0) + 1
+          break
+        }
+      }
+    }
+
+    return writeGameState(patch)
   }, [game, writeGameState])
 
   return { endTurn, forfeit }

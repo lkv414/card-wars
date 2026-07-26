@@ -1,7 +1,6 @@
 -- Cleanup for stale anonymous lobbies.
 -- A lobby is stale after two hours without recent activity. The current
--- schema has no last_activity_at column, so created_at is the safe fallback
--- until activity timestamps are added.
+-- schema has no last_activity_at column, so created_at is the safe fallback.
 
 CREATE OR REPLACE FUNCTION public.cleanup_stale_lobbies()
 RETURNS integer
@@ -34,10 +33,9 @@ GRANT EXECUTE ON FUNCTION public.cleanup_stale_lobbies() TO postgres, service_ro
 
 CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA extensions;
 
-SELECT cron.unschedule('cleanup-stale-lobbies-every-hour')
-WHERE EXISTS (
-  SELECT 1 FROM cron.job WHERE jobname = 'cleanup-stale-lobbies-every-hour'
-);
+SELECT cron.unschedule(jobid)
+FROM cron.job
+WHERE jobname = 'cleanup-stale-lobbies-every-hour';
 
 SELECT cron.schedule(
   'cleanup-stale-lobbies-every-hour',

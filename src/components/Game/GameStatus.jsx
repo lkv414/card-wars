@@ -2,8 +2,13 @@
  * GameStatus - Display player status (health, frozen tokens)
  */
 import './GameStatus.css'
+import { safePlayer } from '../../utils/safePlayer'
 
 export function GameStatus({ player, isOpponent }) {
+  // Защита: player может прийти undefined из Realtime payload.
+  // safePlayer гарантирует все нужные поля.
+  const safeP = safePlayer([player].filter(Boolean), player?.player_id)
+
   return (
     <div className={`game-status ${isOpponent ? 'opponent' : 'player'}`}>
       <div className="player-info">
@@ -12,28 +17,28 @@ export function GameStatus({ player, isOpponent }) {
         <div className="health-section">
           <div className="health-display">
             <span className="health-label">❤️ Здоровье</span>
-            <span className="health-value">{player.health}/25</span>
+            <span className="health-value">{safeP.health}/25</span>
           </div>
           <div className="health-bar">
             <div
               className="health-fill"
               style={{
-                width: `${(Math.max(0, player.health) / 25) * 100}%`,
+                width: `${(Math.max(0, safeP.health) / 25) * 100}%`,
               }}
             />
           </div>
         </div>
 
-        {player.frozenTokens > 0 && (
+        {safeP.frozenTokens > 0 && (
           <div className="frozen-tokens">
             <span className="frozen-label">❄️ Заморожено</span>
-            <span className="frozen-count">{player.frozenTokens}</span>
+            <span className="frozen-count">{safeP.frozenTokens}</span>
           </div>
         )}
 
         <div className="deck-info">
           <span className="deck-label">📚 В колоде</span>
-          <span className="deck-count">{player.deckCount}</span>
+          <span className="deck-count">{safeP.deckCount ?? safeP.deck_pile?.length ?? 0}</span>
         </div>
       </div>
     </div>

@@ -32,36 +32,46 @@ export function LobbyScreen({ toast }) {
     }, [lobbyId]),
   })
   // Когда статус 'in_game' — найти gameId для этого лобби и перейти.
-  // Retry: после старта игры Realtime может прийти быстрее, чем INSERT в games
-  // зафиксируется для SELECT — поэтому пробуем до 5 раз с задержкой.
+  // Realtime может прийти раньше, чем INSERT в games зафиксируется для SELECT.
+  // Стратегия: 1 retry через 300мс — обычно хватает (RPC быстрый).
   useEffect(() => {
     if (status !== 'in_game' || !lobbyId) return
     let cancelled = false
-    let attempts = 0
-    const maxAttempts = 8
     const findGameAndGo = async () => {
-      while (attempts < maxAttempts && !cancelled) {
-        attempts++
-        try {
-          const { data } = await supabase
-            .from('games')
-            .select('id')
-            .eq('lobby_id', lobbyId)
-            .maybeSingle()
-          if (cancelled) return
-          if (data?.id) {
-            navigate(`/game/${data.id}`)
-            return
-          }
-          // Ещё нет — ждём 400ms и пробуем снова
-          await new Promise((r) => setTimeout(r, 400))
-        } catch (err) {
-          toast?.('error', 'Не удалось найти игру: ' + (err?.message || err))
+      try {
+        const { data, error } = await supabase
+          .from('games')
+          .select('id')
+          .eq('lobby_id', lobbyId)
+          .maybeSingle()
+        if (cancelled) return
+        if (data?.id) {
+          navigate(`/game/${data.id}`)
           return
         }
-      }
-      if (!cancelled) {
-        toast?.('error', 'Игра создаётся, но не найдена. Обновите страницу.')
+        // 1 retry через 300мс
+        await new Promise((r) => setTimeout(r, 300))
+        if (cancelled) return
+        const { data: data2, error: err2 } = await supabase
+          .from('games')
+          .select('id')
+          .eq('lobby_id', lobbyId)
+          .maybeSingle()
+        if (cancelled) return
+        if (data2?.id) {
+          navigate(`/game/${data2.id}`)
+          return
+        }
+        if (!cancelled) {
+          toast?.('error', 'Игра создаётся, но не найдена. Обновите страницу.')
+        }
+        if (error || err2) {
+          toast?.('error', 'Не удалось найти игру: ' + ((error || err2)?.message || ''))
+        }
+      } catch (err) {
+        if (!cancelled) {
+          toast?.('error', 'Не удалось найти игру: ' + (err?.message || err))
+        }
       }
     }
     findGameAndGo()

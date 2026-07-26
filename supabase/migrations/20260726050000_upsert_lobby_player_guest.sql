@@ -194,7 +194,7 @@ BEGIN
       game_id, player_id, nickname, health, hand, deck_pile, deck_remaining, position, player_order
     ) VALUES (
       v_game_id, v_player.player_id, coalesce(v_player.nickname, 'Игрок ' || v_idx),
-      25, v_hand, v_deck_pile, v_deck_remaining, 'player' || v_idx, v_idx
+      25, v_hand, v_deck_pile, v_deck_remaining, v_idx::text, v_idx
     );
 
     FOR v_z IN 1..4 LOOP

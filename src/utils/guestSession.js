@@ -12,20 +12,31 @@ import { supabase } from './supabase.js'
 import { getGuestId } from './guestId.js'
 
 let lastSentId = null
+let inflight = null
 
 /**
  * Один раз за сессию отправляет guestId на сервер.
  * Идемпотентна — повторные вызовы с тем же id не делают запрос.
+ * Гонки: если несколько вызовов стартуют параллельно до того, как
+ * первый успеет присвоить lastSentId, inflight Promise разделяется
+ * между ними — set_guest_id летит ровно один раз.
  */
 export async function ensureGuestId() {
   const id = getGuestId()
   if (lastSentId === id) return
-  try {
-    await supabase.rpc('set_guest_id', { p_guest_id: id })
-    lastSentId = id
-  } catch (err) {
-    console.warn('set_guest_id failed (non-fatal):', err?.message || err)
-  }
+  if (inflight) return inflight
+
+  inflight = (async () => {
+    try {
+      await supabase.rpc('set_guest_id', { p_guest_id: id })
+      lastSentId = id
+    } catch (err) {
+      console.warn('set_guest_id failed (non-fatal):', err?.message || err)
+    } finally {
+      inflight = null
+    }
+  })()
+  return inflight
 }
 
 /**

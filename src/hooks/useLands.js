@@ -21,26 +21,28 @@ export function useLands() {
     setLoading(false)
   }, [])
 
+  // Оптимизация: insert/update уже возвращают объект — обновляем локально,
+  // не делая повторный loadLands() (2 RTT → 1 RTT).
   const createLand = useCallback(async (landData) => {
     const { data, error } = await supabase.from('lands').insert([landData]).select().single()
     if (error) return { success: false, error: error.message }
-    await loadLands()
+    if (data) setLands((prev) => [...prev, data])
     return { success: true, data }
-  }, [loadLands])
+  }, [])
 
   const updateLand = useCallback(async (landId, landData) => {
     const { data, error } = await supabase.from('lands').update(landData).eq('id', landId).select().single()
     if (error) return { success: false, error: error.message }
-    await loadLands()
+    if (data) setLands((prev) => prev.map((l) => (l.id === landId ? data : l)))
     return { success: true, data }
-  }, [loadLands])
+  }, [])
 
   const deleteLand = useCallback(async (landId) => {
     const { error } = await supabase.from('lands').delete().eq('id', landId)
     if (error) return { success: false, error: error.message }
-    await loadLands()
+    setLands((prev) => prev.filter((l) => l.id !== landId))
     return { success: true }
-  }, [loadLands])
+  }, [])
 
   useEffect(() => {
     void Promise.resolve().then(loadLands)

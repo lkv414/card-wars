@@ -73,7 +73,7 @@ export function GameScreen() {
       }
     }, [gameId, guestId])
 
-  const { playCard, attack, endTurn, forfeit } = useGameAction(game, loadGame)
+  const { playCard, attack, endTurn, forfeit, flipCard } = useGameAction(game, loadGame)
 
   // Initial load при монтировании если gameId есть
   useEffect(() => {
@@ -125,6 +125,7 @@ export function GameScreen() {
       onGameEnd={() => navigate('/lobby')}
       onPlayCard={playCard}
       onAttack={attack}
+      onFlipCard={flipCard}
       onEndTurn={endTurn}
       onForfeit={forfeit}
       realtimeStatus={realtimeStatus}

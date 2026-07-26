@@ -19,14 +19,16 @@ import { useGameState } from './useGameState'
 import { usePlayCard } from './usePlayCard'
 import { useAttack } from './useAttack'
 import { useTurnControl } from './useTurnControl'
+import { useFlipCard } from './useFlipCard'
 
 export function useGameAction(game, reload) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
   const playCard = usePlayCard(game, writeGameState)
   const attack = useAttack(game, writeGameState)
   const { endTurn, forfeit } = useTurnControl(game, writeGameState)
+  const flipCard = useFlipCard(game, writeGameState)
 
-  return { playCard, attack, endTurn, forfeit, isApplying, error }
+  return { playCard, attack, endTurn, forfeit, flipCard, isApplying, error }
 }
 
 // Re-exports для обратной совместимости

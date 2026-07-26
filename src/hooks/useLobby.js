@@ -267,15 +267,13 @@ export function useLobby() {
 
     if (existing) {
       // Уже в лобби — обновить ник, колоду и сбросить ready
-      await supabase
-        .from('lobby_players')
-        .update({
-          ready: false,
-          nickname: nickname.trim() || 'Игрок',
-          deck: deckPayload,
-        })
-        .eq('lobby_id', lobby.id)
-        .eq('player_id', guestId)
+      await supabase.rpc('upsert_lobby_player', {
+        p_guest_id: guestId,
+        p_lobby_id: lobby.id,
+        p_nickname: nickname.trim() || 'Игрок',
+        p_ready: false,
+        p_deck: deckPayload,
+      })
     } else {
       const { data: allPlayers } = await supabase
         .from('lobby_players')
@@ -322,12 +320,11 @@ export function useLobby() {
     const id = lobbyIdRef.current
     if (!id) return
 
-    await ensureGuestId()
-    const { error: readyErr } = await supabase
-      .from('lobby_players')
-      .update({ ready: true })
-      .eq('lobby_id', id)
-      .eq('player_id', guestId)
+    const { data, error: readyErr } = await supabase.rpc('set_lobby_player_ready', {
+      p_guest_id: guestId,
+      p_lobby_id: id,
+      p_ready: true,
+    })
 
     if (readyErr) {
       setError(`Не удалось отметить готовность: ${readyErr.message}`)
@@ -335,7 +332,7 @@ export function useLobby() {
     }
 
     setPlayers((current) => current.map((player) =>
-      player.player_id === guestId ? { ...player, ready: true } : player
+      player.player_id === guestId ? { ...player, ready: true, ...(data || {}) } : player
     ))
   }, [])
 

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
+import { getGuestNickname, setGuestNickname, getGuestId } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
-import { useStartGame } from '../../hooks/useStartGame'
 import { useDecks } from '../../hooks/useDecks'
 import { supabase } from '../../utils/supabase'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
@@ -17,10 +16,8 @@ export function LobbyScreen({ toast }) {
   const [submitting, setSubmitting] = useState(false)
 
   const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
-  const { startGame } = useStartGame()
   const { getSelectedDeck, selectedDeckId } = useDecks()
   const selectedDeck = getSelectedDeck()
-
   // Когда статус 'in_game' — найти gameId для этого лобби и перейти.
   // Retry: после старта игры Realtime может прийти быстрее, чем INSERT в games
   // зафиксируется для SELECT — поэтому пробуем до 5 раз с задержкой.
@@ -60,10 +57,17 @@ export function LobbyScreen({ toast }) {
 
   const handleStartGame = async () => {
     if (!lobbyId) return
-    const result = await startGame(lobbyId)
-    if (result?.error) {
-      toast?.('error', result.error)
+    const { data: gameId, error: startErr } = await supabase.rpc('start_lobby_game', {
+      p_lobby_id: lobbyId,
+      p_host_id: getGuestId(),
+    })
+
+    if (startErr || !gameId) {
+      toast?.('error', startErr?.message || 'Не удалось создать игру')
+      return
     }
+
+    navigate(`/game/${gameId}`)
   }
 
   // Обновить URL когда код лобби становится известен

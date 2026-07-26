@@ -77,7 +77,9 @@ async function startGameForLobby(lobbyId, hostId) {
     ...players.slice(hostIndex + 1),
   ]
 
-  // 4. Создать game
+  // 4. Подготовить игровые строки до создания games.
+  // Триггер games_validate проверяет current_player_id по game_players,
+  // поэтому INSERT games должен выполняться после game_players.
   const firstPlayerId = ordered[0].player_id
   const initialGameState = {
     status: 'active',
@@ -90,14 +92,21 @@ async function startGameForLobby(lobbyId, hostId) {
     })),
   }
 
+  const dealtByPlayer = ordered.map((p) => {
+    const dealt = dealStartingHand(p.deck, STARTING_HAND_SIZE)
+    return { player: p, ...dealt }
+  })
+
+  // 5. Сначала создать временную games-запись без current_player_id.
+  // Затем добавить game_players и отдельным UPDATE назначить первый ход.
   const { data: game, error: gameErr } = await supabase
     .from('games')
     .insert({
       lobby_id: lobbyId,
-      status: 'active',
+      status: 'setup',
       current_turn: 0,
-      current_player_id: firstPlayerId,
-      game_state: initialGameState,
+      current_player_id: null,
+      game_state: { ...initialGameState, status: 'setup', currentPlayerId: null },
       version: 1,
       started_at: new Date().toISOString(),
     })
@@ -109,12 +118,6 @@ async function startGameForLobby(lobbyId, hostId) {
   }
 
   const gameId = game.id
-
-  // 5. Раздать стартовые руки из колоды каждого игрока
-  const dealtByPlayer = ordered.map((p) => {
-    const dealt = dealStartingHand(p.deck, STARTING_HAND_SIZE)
-    return { player: p, ...dealt }
-  })
 
   const gamePlayersRows = dealtByPlayer.map(({ player: p, hand, deckRemaining, deckPile }, idx) => ({
     game_id: gameId,
@@ -159,7 +162,22 @@ async function startGameForLobby(lobbyId, hostId) {
     throw new Error(`Не удалось создать зоны: ${zonesErr.message}`)
   }
 
-  // 7. Обновить статус лобби (useLobby подхватит через Realtime)
+  const { error: activateErr } = await supabase
+    .from('games')
+    .update({
+      status: 'active',
+      current_player_id: firstPlayerId,
+      game_state: initialGameState,
+      version: 2,
+    })
+    .eq('id', gameId)
+    .eq('version', 1)
+
+  if (activateErr) {
+    throw new Error(`Не удалось активировать игру: ${activateErr.message}`)
+  }
+
+  // 8. Обновить статус лобби (useLobby подхватит через Realtime)
   await supabase
     .from('lobbies')
     .update({ status: 'in_game' })

@@ -322,14 +322,21 @@ export function useLobby() {
     const id = lobbyIdRef.current
     if (!id) return
 
-    // Только отмечаем готовность игрока. Перевод лобби в 'in_game' делает
-    // ТОЛЬКО useStartGame (хост жмёт «Старт»), иначе LobbyScreen
-    // пытается перейти на /game/:id до того, как игра создана.
-    await supabase
+    await ensureGuestId()
+    const { error: readyErr } = await supabase
       .from('lobby_players')
       .update({ ready: true })
       .eq('lobby_id', id)
       .eq('player_id', guestId)
+
+    if (readyErr) {
+      setError(`Не удалось отметить готовность: ${readyErr.message}`)
+      return
+    }
+
+    setPlayers((current) => current.map((player) =>
+      player.player_id === guestId ? { ...player, ready: true } : player
+    ))
   }, [])
 
   const leaveLobby = useCallback(async () => {

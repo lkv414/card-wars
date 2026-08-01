@@ -19,6 +19,7 @@ import { EnhancedCard3DModel } from './EnhancedCard3DModel'
 import { HUDOverlay } from './HUDOverlay'
 import { ZONES_PER_PLAYER } from '../../constants/gameMultiplayer'
 import { safePlayers, safePlayer } from '../../utils/safePlayer'
+import { hasFlipAbility } from '../../hooks/game'
 
 // Размеры стола и слотов
 const TABLE_DEPTH = 12
@@ -192,14 +193,14 @@ function Scene({
     if (!isYourTurn || isFinished) return
 
     // Атаковать можно ТОЛЬКО по чужим картам (не по своим).
-    // Клик по своей карте в 3D-сцене — это flip-ability, а не атака.
-    if (playerIndex === myIndex) {
-      if (card?.abilities?.includes('Флюп')) {
-        const choice = window.confirm('Флюпнуть карту вместо атаки?')
-        if (choice) onFlipCard(myIndex, zoneIndex, card.id || cardIndex)
-      }
-      return
-    }
+        // Клик по своей карте в 3D-сцене — это flip-ability, а не атака.
+        if (playerIndex === myIndex) {
+          if (hasFlipAbility(card)) {
+            const choice = window.confirm('Флюпнуть карту вместо атаки?')
+            if (choice) onFlipCard(myIndex, zoneIndex, card.id || cardIndex)
+          }
+          return
+        }
 
     // Атака чужой карты: toPlayerId обязателен для 3-4 игроков.
     const toPlayerId = players[playerIndex]?.player_id

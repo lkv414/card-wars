@@ -12,6 +12,8 @@
  *   - На CLOSED/CHANNEL_ERROR: schedule reconnect (backoff 1s, 2s, 4s, 8s, max 16s)
  *   - На reconnect: removeChannel + новая подписка
  *   - При возврате на вкладку (visibilitychange) — форсированный reconnect
+ *     ТОЛЬКО если соединение не живое (БАГ-ФИКС: раньше рефрешило канал
+ *     при каждом возврате на вкладку, даже когда он работал → лишний лаг)
  *   - На unmount: removeChannel + clear timer
  *
  * @param {object} config
@@ -32,6 +34,9 @@ export function useRealtimeChannel({ channelName, subscriptions }) {
   const channelRef = useRef(null)
   const timerRef = useRef(null)
   const attemptsRef = useRef(0)
+  // statusRef — текущий статус внутри ref, чтобы handleVisibility (слушатель)
+  // не зависел от closure. Без него мы бы смотрели на устаревший status.
+  const statusRef = useRef('connecting')
   // refs позволяют callback'ам не триггерить пересоздание подписки
   const subsRef = useRef(subscriptions)
 
@@ -52,11 +57,16 @@ export function useRealtimeChannel({ channelName, subscriptions }) {
       }
     }
 
+    const updateStatus = (next) => {
+      statusRef.current = next
+      setStatus(next)
+    }
+
     const subscribe = () => {
       cleanup()
       if (cancelled) return
 
-      setStatus(attemptsRef.current === 0 ? 'connecting' : 'reconnecting')
+      updateStatus(attemptsRef.current === 0 ? 'connecting' : 'reconnecting')
 
       const channel = supabase.channel(channelName)
 
@@ -80,9 +90,9 @@ export function useRealtimeChannel({ channelName, subscriptions }) {
         const sysEvent = ext?.event ?? payload?.event
         if (sysEvent === 'SUBSCRIBED') {
           attemptsRef.current = 0
-          setStatus('connected')
+          updateStatus('connected')
         } else if (sysEvent === 'CHANNEL_ERROR' || sysEvent === 'CLOSED') {
-          setStatus('disconnected')
+          updateStatus('disconnected')
           scheduleReconnect()
         }
       })
@@ -107,11 +117,12 @@ export function useRealtimeChannel({ channelName, subscriptions }) {
 
     subscribe()
 
-    // При возврате на вкладку — форсированный reconnect если disconnected
+    // При возврате на вкладку — форсированный reconnect ТОЛЬКО если соединение
+    // не живое. Без проверки статуса мы бы пересоздавали канал при каждом
+    // возврате на вкладку даже когда он работает — лишний лаг для UI.
     const handleVisibility = () => {
       if (cancelled) return
-      if (document.visibilityState === 'visible') {
-        // rely on current status from closure — всегда пробуем рефреш
+      if (document.visibilityState === 'visible' && statusRef.current !== 'connected') {
         attemptsRef.current = 0
         subscribe()
       }

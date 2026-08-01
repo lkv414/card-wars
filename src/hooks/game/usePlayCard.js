@@ -12,7 +12,7 @@
 
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
-import { ensureGuestId } from '../../utils/guestSession'
+import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 
 export function usePlayCard(game, writeGameState) {
   return useCallback(
@@ -35,7 +35,7 @@ export function usePlayCard(game, writeGameState) {
         },
       ]
 
-      // Пробуем атомарный RPC play_card (миграция supabase/migrations/..._play_card_rpc.sql)
+      // Пробуем атомарный RPC play_card (миграция supabase/migrations/20260801200000_play_card_rpc.sql)
       try {
         const { data, error: rpcErr } = await supabase.rpc('play_card', {
           p_game_id: game.id,
@@ -70,41 +70,46 @@ export function usePlayCard(game, writeGameState) {
       const { clampZones } = await import('./format')
       const { STARTING_HAND_SIZE } = await import('../../constants/game')
 
-      hand.splice(cardIndex, 1)
+      // Безопасная замена splice: создаём НОВЫЙ массив без удалённой карты.
+      // Раньше hand.splice(cardIndex, 1) мутировал массив из game.players,
+      // что ломало React-оптимизацию (та же ссылка → нет ре-рендера).
+      const newHand = hand.filter((_, i) => i !== cardIndex)
       const zones = clampZones(me.zones)
       const instanceId = card.instanceId || card.id || `card-${Date.now()}-${cardIndex}`
       zones[zoneIndex] = [
         ...(zones[zoneIndex] || []),
         { ...card, id: card.id, instanceId, tapped: false, flipped: false },
       ]
-      // Refill: добираем максимум 1 карту из deck_pile (предотвращаем
-      // двойной refill при двойном вызове onClick+onDrop).
+      // Refill: добираем максимум до STARTING_HAND_SIZE из deck_pile.
       const deckPile = Array.isArray(me.deck_pile) ? [...me.deck_pile] : []
-      while (hand.length < STARTING_HAND_SIZE && deckPile.length > 0) {
-        hand.push(deckPile.pop())
-        // Ограничитель: даже если цикл странно сработает — не больше 1
-        if (hand.length >= STARTING_HAND_SIZE) break
+      while (newHand.length < STARTING_HAND_SIZE && deckPile.length > 0) {
+        newHand.push(deckPile.pop())
+        if (newHand.length >= STARTING_HAND_SIZE) break
       }
       const newDeckRemaining = deckPile.length
 
-      const [playersRes, zonesRes, gameRes] = await Promise.all([
-        supabase
-          .from('game_players')
-          .update({
-            hand,
-            deck_pile: deckPile,
-            deck_remaining: newDeckRemaining,
-          })
-          .eq('game_id', game.id)
-          .eq('player_id', me.player_id),
-        supabase
-          .from('game_zones')
-          .update({ cards: zones[zoneIndex] })
-          .eq('game_id', game.id)
-          .eq('player_id', me.player_id)
-          .eq('zone_position', zoneIndex + 1),
-        writeGameState({ game_state: { log: newLog } }),
-      ])
+      // withGuestId оборачивает весь блок: перед каждым запросом PostgREST
+      // получает свежий app.guest_id (избегаем RLS-гонки из-за пула соединений).
+      const [playersRes, zonesRes, gameRes] = await withGuestId(() =>
+        Promise.all([
+          supabase
+            .from('game_players')
+            .update({
+              hand: newHand,
+              deck_pile: deckPile,
+              deck_remaining: newDeckRemaining,
+            })
+            .eq('game_id', game.id)
+            .eq('player_id', me.player_id),
+          supabase
+            .from('game_zones')
+            .update({ cards: zones[zoneIndex] })
+            .eq('game_id', game.id)
+            .eq('player_id', me.player_id)
+            .eq('zone_position', zoneIndex + 1),
+          writeGameState({ game_state: { log: newLog } }),
+        ])
+      )
 
       const err = playersRes.error || zonesRes.error || gameRes?.error
       if (err) {

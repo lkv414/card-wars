@@ -8,7 +8,7 @@
 
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
-import { ensureGuestId } from '../../utils/guestSession'
+import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
 
 export function useTurnControl(game, writeGameState, reload) {
@@ -79,65 +79,97 @@ export function useTurnControl(game, writeGameState, reload) {
     }, [game, writeGameState, reload])
 
   /**
-   * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается
-   * между оставшимися живыми; если остался ровно 1 — статус 'finished' и
-   * winner_id = последний живой.
-   * В 2-player работает как «проиграл сразу» (для обратной совместимости).
-   */
-  const forfeit = useCallback(async () => {
-    if (!game?.players) return { error: 'Игра не загружена' }
-    await ensureGuestId()
-    const me = safePlayer(safePlayers(game.players), game.current_player_id)
-    if (me.__isFallback) return { error: 'Сейчас не ваш ход' }
+     * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается
+     * между оставшимися живыми; если остался ровно 1 — статус 'finished' и
+     * winner_id = последний живой.
+     * В 2-player работает как «проиграл сразу» (для обратной совместимости).
+     *
+     * Использует SECURITY DEFINER RPC `forfeit_game(p_guest_id, p_game_id)`.
+     * RPC внутри делает set_config('app.guest_id', ...) и блокирует game
+     * FOR UPDATE — атомарно. Fallback на клиентскую логику если RPC не
+     * задеплоен (старая БД).
+     */
+    const forfeit = useCallback(async () => {
+      if (!game?.players) return { error: 'Игра не загружена' }
+      await ensureGuestId()
+      const me = safePlayer(safePlayers(game.players), game.current_player_id)
+      if (me.__isFallback) return { error: 'Сейчас не ваш ход' }
 
-    // Помечаем сдавшегося как мёртвого (health = 0).
-    const myHpRes = await supabase
-      .from('game_players')
-      .update({ health: 0 })
-      .eq('game_id', game.id)
-      .eq('player_id', me.player_id)
-    if (myHpRes.error) return { error: myHpRes.error.message }
+      // === RPC-путь (атомарный) ===
+      try {
+        const { data, error: rpcErr } = await supabase.rpc('forfeit_game', {
+          p_guest_id: me.player_id,
+          p_game_id: game.id,
+        })
+        console.log('[forfeit] RPC response:', { data, rpcErr })
+        if (!rpcErr && data?.success) {
+          if (writeGameState && typeof reload === 'function') await reload()
+          return { success: true, finished: data.finished, winnerId: data.winner_id }
+        }
+        // RPC не сработал — fallback если функция просто не существует
+        if (rpcErr && /function .* does not exist/i.test(rpcErr.message || '')) {
+          console.warn('[forfeit] RPC not deployed — using fallback')
+        } else if (rpcErr) {
+          return { error: rpcErr.message }
+        } else if (data?.error) {
+          return { error: data.error }
+        }
+      } catch (e) {
+        console.warn('[forfeit] RPC threw, falling back:', e?.message)
+      }
 
-    // Считаем оставшихся живых (исключая меня — я только что сдался).
-    const remaining = safePlayers(game.players).filter(
-      (p) => p.player_id !== me.player_id && (p.health ?? 0) > 0
-    )
+      // === Fallback: клиентская логика (если RPC нет) ===
+      // Помечаем сдавшегося как мёртвого (health = 0). Обёртка withGuestId
+      // принудительно шлёт set_guest_id перед запросом, чтобы RLS пустил.
+      const myHpRes = await withGuestId(() =>
+        supabase
+          .from('game_players')
+          .update({ health: 0 })
+          .eq('game_id', game.id)
+          .eq('player_id', me.player_id)
+      )
+      if (myHpRes.error) return { error: myHpRes.error.message }
 
-    const newLog = [
-      ...(game.game_state?.log || []),
-      {
-        timestamp: Date.now(),
-        message: `${me?.nickname || 'Игрок'} сдался. Осталось в игре: ${remaining.length}.`,
-      },
-    ]
+      // Считаем оставшихся живых (исключая меня — я только что сдался).
+      const remaining = safePlayers(game.players).filter(
+        (p) => p.player_id !== me.player_id && (p.health ?? 0) > 0
+      )
 
-    // Если остался 1 живой — игра окончена, он победил.
-    // Если 0 (только я был) — игра окончена, никто не победил (winner_id = null).
-    // Если > 1 — игра продолжается; ход переходит к следующему живому.
-    const patch = { game_state: { log: newLog } }
-    if (remaining.length <= 1) {
-      patch.status = 'finished'
-      patch.winner_id = remaining[0]?.player_id || null
-      patch.current_player_id = remaining[0]?.player_id || me.player_id
-      patch.ended_at = new Date().toISOString()
-    } else {
-      const players = safePlayers(game.players)
-      const myIdx = players.findIndex((p) => p.player_id === me.player_id)
-      // Следующий живой по кругу. safePlayer защищает от sparse arrays.
-      for (let i = 1; i <= players.length; i++) {
-        const idx = (myIdx + i + players.length) % players.length
-        const next = safePlayer(players, idx)
-        if (next.__isFallback) continue
-        if (next.player_id !== me.player_id && (next.health ?? 0) > 0) {
-          patch.current_player_id = next.player_id
-          patch.current_turn = (game.current_turn || 0) + 1
-          break
+      const newLog = [
+        ...(game.game_state?.log || []),
+        {
+          timestamp: Date.now(),
+          message: `${me?.nickname || 'Игрок'} сдался. Осталось в игре: ${remaining.length}.`,
+        },
+      ]
+
+      // Если остался 1 живой — игра окончена, он победил.
+      // Если 0 (только я был) — игра окончена, никто не победил (winner_id = null).
+      // Если > 1 — игра продолжается; ход переходит к следующему живому.
+      const patch = { game_state: { log: newLog } }
+      if (remaining.length <= 1) {
+        patch.status = 'finished'
+        patch.winner_id = remaining[0]?.player_id || null
+        patch.current_player_id = remaining[0]?.player_id || me.player_id
+        patch.ended_at = new Date().toISOString()
+      } else {
+        const players = safePlayers(game.players)
+        const myIdx = players.findIndex((p) => p.player_id === me.player_id)
+        // Следующий живой по кругу. safePlayer защищает от sparse arrays.
+        for (let i = 1; i <= players.length; i++) {
+          const idx = (myIdx + i + players.length) % players.length
+          const next = safePlayer(players, idx)
+          if (next.__isFallback) continue
+          if (next.player_id !== me.player_id && (next.health ?? 0) > 0) {
+            patch.current_player_id = next.player_id
+            patch.current_turn = (game.current_turn || 0) + 1
+            break
+          }
         }
       }
-    }
 
-    return writeGameState(patch)
-  }, [game, writeGameState])
+      return writeGameState(patch)
+    }, [game, writeGameState, reload])
 
   return { endTurn, forfeit }
 }

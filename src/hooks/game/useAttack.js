@@ -17,7 +17,7 @@
 
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
-import { ensureGuestId } from '../../utils/guestSession'
+import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { clampZones } from './format'
 import { canAttack } from './zoneOpposition'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
@@ -91,7 +91,7 @@ export function useAttack(game, writeGameState) {
         .filter((c) => c.health > 0)
       newOppZones[toOpponentZone] = surviving
 
-      // Mark attacking card tapped
+      // Mark attacking card tapped (создаём новый массив — без мутации me.zones)
       myZones[fromZone] = myZones[fromZone].map((c) =>
         c.id === cardId || c.instanceId === cardId
           ? { ...c, tapped: true }
@@ -116,26 +116,29 @@ export function useAttack(game, writeGameState) {
 
       // Persist: 4 параллельных записи. Если хотя бы одна упала — откатываем
       // через reload() (Realtime дёрнет) и возвращаем ошибку.
-      const [myZoneRes, oppHpRes, oppZoneRes, gameRes] = await Promise.all([
-        supabase
-          .from('game_zones')
-          .update({ cards: myZones[fromZone] })
-          .eq('game_id', game.id)
-          .eq('player_id', me.player_id)
-          .eq('zone_position', fromZone + 1),
-        supabase
-          .from('game_players')
-          .update({ health: newOppHealth })
-          .eq('game_id', game.id)
-          .eq('player_id', opponent.player_id),
-        supabase
-          .from('game_zones')
-          .update({ cards: newOppZones[toOpponentZone] })
-          .eq('game_id', game.id)
-          .eq('player_id', opponent.player_id)
-          .eq('zone_position', toOpponentZone + 1),
-        writeGameState(patch),
-      ])
+      // withGuestId оборачивает весь блок чтобы избежать RLS-гонки в пуле.
+      const [myZoneRes, oppHpRes, oppZoneRes, gameRes] = await withGuestId(() =>
+        Promise.all([
+          supabase
+            .from('game_zones')
+            .update({ cards: myZones[fromZone] })
+            .eq('game_id', game.id)
+            .eq('player_id', me.player_id)
+            .eq('zone_position', fromZone + 1),
+          supabase
+            .from('game_players')
+            .update({ health: newOppHealth })
+            .eq('game_id', game.id)
+            .eq('player_id', opponent.player_id),
+          supabase
+            .from('game_zones')
+            .update({ cards: newOppZones[toOpponentZone] })
+            .eq('game_id', game.id)
+            .eq('player_id', opponent.player_id)
+            .eq('zone_position', toOpponentZone + 1),
+          writeGameState(patch),
+        ])
+      )
 
       const writeErr =
         myZoneRes.error || oppHpRes.error || oppZoneRes.error || gameRes?.error

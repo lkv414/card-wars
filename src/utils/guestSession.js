@@ -1,12 +1,29 @@
 /**
  * guestSession — управление guest_id в Postgres-сеансе.
  *
- * Фаза 6: RLS-политики проверяют current_setting('app.guest_id', true).
- * Клиент должен вызвать set_guest_id() на сервере ПЕРЕД каждым запросом
- * (или хотя бы раз при старте сессии — PostgREST переиспользует сеанс).
+ * Проблема (01.08.2026): PostgREST использует пул HTTP-соединений, и
+ * `SET LOCAL app.guest_id = ...` (который делает RPC `set_guest_id`)
+ * действует только до конца транзакции. Между запросами соединение
+ * переиспользуется — НО `app.guest_id` сбрасывается на NULL. Из-за
+ * этого RLS-политики, проверяющие `current_setting('app.guest_id')`,
+ * могут ловить чужой guest_id из предыдущего запроса ИЛИ NULL → UPDATE
+ * возвращает 0 затронутых строк, клиент видит "version conflict" и
+ * уходит в бесконечный retry.
  *
- * На практике вызываем ensureGuestId() при старте приложения, а потом
- * supabase-js сам переиспользует HTTP-соединение (с тем же сеансом).
+ * Фикс (Этап 7): для каждого мутирующего RPC-вызова клиент должен
+ * явно слать guest_id в параметрах RPC (например, `end_turn(p_game_id,
+ * p_player_id)`). Для прямых UPDATE/INSERT в таблицы game_players /
+ * game_zones — обёртка `withGuestId(fn)` дёргает `set_guest_id` ровно
+ * перед запросом в той же сессии. RPC с SECURITY DEFINER (end_turn,
+ * play_card, forfeit_game) внутри делают `PERFORM set_config(...)`,
+ * так что им достаточно правильного p_player_id в параметрах.
+ *
+ * Поведение:
+ *   - ensureGuestId() — отправляет guest_id один раз за сессию (идемпотентно).
+ *     Для SECURITY DEFINER RPC это уже гарантирует корректную работу.
+ *   - withGuestId(fn) — обёртка для прямых UPDATE/INSERT: перед fn
+ *     принудительно дёргает `set_guest_id` чтобы соединение в пуле
+ *     увидело свежий guest_id.
  */
 import { supabase } from './supabase.js'
 import { getGuestId } from './guestId.js'
@@ -15,7 +32,7 @@ let lastSentId = null
 let inflight = null
 
 /**
- * Один раз за сессию отправляет guestId на сервер.
+ * Один раз за сессию отправляет guestId на сервер (через SET LOCAL).
  * Идемпотентна — повторные вызовы с тем же id не делают запрос.
  * Гонки: если несколько вызовов стартуют параллельно до того, как
  * первый успеет присвоить lastSentId, inflight Promise разделяется
@@ -40,9 +57,26 @@ export async function ensureGuestId() {
 }
 
 /**
- * Принудительно переустановить guestId (например, если он изменился).
+ * Принудительно сбросить кэш lastSentId (используется при logout или
+ * после серьёзной ошибки RLS).
  */
-export async function resetGuestId() {
+export function resetGuestIdCache() {
   lastSentId = null
+}
+
+/**
+ * Обёртка для прямых мутирующих запросов (UPDATE/INSERT в game_players,
+ * game_zones и т.п.). Принудительно устанавливает guest_id в текущем
+ * HTTP-соединении через `set_guest_id` RPC, потом выполняет переданный
+ * запрос. На каждый вызов — новый RPC, потому что PostgREST может
+ * перебросить соединение.
+ *
+ * @template T
+ * @param {() => Promise<T>} fn — функция, выполняющая supabase.from(...).update/insert
+ * @returns {Promise<T>}
+ */
+export async function withGuestId(fn) {
+  resetGuestIdCache()
   await ensureGuestId()
+  return fn()
 }

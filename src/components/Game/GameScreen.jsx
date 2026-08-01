@@ -30,53 +30,60 @@ export function GameScreen() {
   const [loading, setLoading] = useState(true)
 
   const loadGame = useCallback(async () => {
-      if (!gameId) return
-      await ensureGuestId()
-      setLoading(true)
-      setError(null)
-      try {
-        // Фаза 6: читаем через get_player_game_state — функция сама
-        // скрывает hand/deck_pile оппонента и возвращает счётчики.
-        const { data: state, error: rpcErr } = await supabase
-          .rpc('get_player_game_state', {
-            p_game_id: gameId,
-            p_player_id: guestId,
-          })
+        if (!gameId) return null
+        await ensureGuestId()
+        // НЕ вызываем setLoading(true) — иначе GameScreen размонтирует
+        // <GameBoard3D> и пересоздаст Canvas со всеми текстурами (1.5s лаг).
+        // loading управляется только при ПЕРВОМ mount (см. setLoading(true)
+        // в useEffect) и при ошибке. Повторные reload (после действия или
+        // Realtime-события) молча обновляют state через setGame.
+        setError(null)
+        try {
+          // Фаза 6: читаем через get_player_game_state — функция сама
+          // скрывает hand/deck_pile оппонента и возвращает счётчики.
+          const { data: state, error: rpcErr } = await supabase
+            .rpc('get_player_game_state', {
+              p_game_id: gameId,
+              p_player_id: guestId,
+            })
 
-        if (rpcErr) throw new Error(rpcErr.message)
-        if (!state) throw new Error('Игра не найдена или доступ запрещён')
+          if (rpcErr) throw new Error(rpcErr.message)
+          if (!state) throw new Error('Игра не найдена или доступ запрещён')
 
-        const nextGame = {
-          id: state.id,
-          lobby_id: state.lobby_id,
-          status: state.status,
-          current_turn: state.current_turn,
-          current_player_id: state.current_player_id,
-          winner_id: state.winner_id,
-          game_state: state.game_state,
-          version: state.version,
-          started_at: state.started_at,
-          ended_at: state.ended_at,
-          players: (state.players || []).map((p) => ({
-            ...p,
-            // Руки/колоды оппонентов остаются скрытыми в RPC, но карты на земле
-            // публичные: сохраняем zones каждого игрока и отдаём их в GameBoard3D.
-            zones: Array.isArray(p.zones)
-              ? p.zones
-                  .sort((a, b) => a.zone_position - b.zone_position)
-                  .map((z) => z.cards || [])
-              : [[], [], [], []],
-          })),
-        }
-        setGame(nextGame)
-        return nextGame
-      } catch (err) {
-        setError(err.message || 'Не удалось загрузить игру')
-        return null
-      } finally {
-        setLoading(false)
-      }
-    }, [gameId, guestId])
+          const nextGame = {
+            id: state.id,
+            lobby_id: state.lobby_id,
+            status: state.status,
+            current_turn: state.current_turn,
+            current_player_id: state.current_player_id,
+            winner_id: state.winner_id,
+            game_state: state.game_state,
+            version: state.version,
+            started_at: state.started_at,
+            ended_at: state.ended_at,
+            players: (state.players || []).map((p) => ({
+              ...p,
+              // Руки/колоды оппонентов остаются скрытыми в RPC, но карты на земле
+              // публичные: сохраняем zones каждого игрока и отдаём их в GameBoard3D.
+              zones: Array.isArray(p.zones)
+                ? p.zones
+                    .sort((a, b) => a.zone_position - b.zone_position)
+                    .map((z) => z.cards || [])
+                : [[], [], [], []],
+            })),
+          }
+          setGame(nextGame)
+                    setLoading(false)
+                    return nextGame
+                  } catch (err) {
+                    setError(err.message || 'Не удалось загрузить игру')
+                    setLoading(false)
+                    return null
+                  }
+                  // loading=false только при успехе/ошибке ПЕРВОГО load. При последующих
+                  // reload (realtime или после действия) loading не трогаем — state
+                  // обновляется молча, UI не размонтируется.
+                }, [gameId, guestId])
 
   const { playCard, attack, endTurn, forfeit, flipCard, isApplying, error: actionError } = useGameAction(game, loadGame)
 

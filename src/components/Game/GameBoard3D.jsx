@@ -94,6 +94,16 @@ function calculatePlayerSlotPositions(playerIndex, playerCount) {
   })
 }
 
+// Хелпер: угол поворота по Y для слота `playerIndex` так, чтобы нормаль
+// текстуры карты смотрела К ВЛАДЕЛЬЦУ. Угол поворота = π - угол
+// расположения игрока (так для player0 (angle=π) → rotation.y=0 = лицом
+// к 180°, для player1 (angle=0) → rotation.y=π = лицом к 0°).
+function ownerRotationY(playerIndex, playerCount) {
+  const angleDeg = PLAYER_ANGLES[playerCount]?.[playerIndex] || 0
+  const angleRad = (angleDeg * Math.PI) / 180
+  return Math.PI - angleRad
+}
+
 /**
  * Хелпер для расчета позиции камеры для игрока
  * @param {number} playerIndex - Индекс текущего игрока
@@ -103,7 +113,7 @@ function calculatePlayerSlotPositions(playerIndex, playerCount) {
 function calculateCameraPosition(playerIndex, playerCount) {
   const angle = PLAYER_ANGLES[playerCount]?.[playerIndex] || 0
   const rad = (angle * Math.PI) / 180
-  
+
   if (playerCount === 2) {
     if (playerIndex === 0) {
       return [0, CAMERA_HEIGHT, TABLE_DEPTH / 2 - CAMERA_BACK]
@@ -111,7 +121,7 @@ function calculateCameraPosition(playerIndex, playerCount) {
       return [0, CAMERA_HEIGHT, -TABLE_DEPTH / 2 + CAMERA_BACK]
     }
   }
-  
+
   // Для 3-4 игроков
   const camDistance = PLAYER_DISTANCE + 3
   const camX = Math.cos(rad) * camDistance
@@ -309,16 +319,17 @@ function Scene({
                       const cards = Array.isArray(zone) ? zone : (zone?.cards || [])
 
               return (
-                <EnhancedSlot
-                  key={`p${opponent.id}-land-${i}`}
-                  position={p.land}
-                  cards={cards}
-                  isOpponent
-                  isMyTurn={isYourTurn}
-                  onZoneCardClick={(card, idx) => handleZoneCardClick(opp.index, i, card, idx)}
-                />
-              )
-            })}
+                              <EnhancedSlot
+                                key={`p${opponent.id}-land-${i}`}
+                                position={p.land}
+                                cards={cards}
+                                ownerAngleRad={ownerRotationY(opp.index, playerCount)}
+                                isOwnerMe={false}
+                                isMyTurn={isYourTurn}
+                                onZoneCardClick={(card, idx) => handleZoneCardClick(opp.index, i, card, idx)}
+                              />
+                            )
+                          })}
           </React.Fragment>
         )
       })}
@@ -339,19 +350,20 @@ function Scene({
                     const isLandPlayable = isYourTurn && selectedCardIndex !== null && cards.length === 0
 
               return (
-                <EnhancedSlot
-                  key={`me-land-${i}`}
-                  position={p.land}
-                  cards={cards}
-                  isOpponent={false}
-                  isSelected={isSelectedZone}
-                  isMyTurn={isYourTurn}
-                  highlighted={isLandPlayable}
-                  onClick={() => handleLandClick(i)}
-                  onZoneCardClick={(card, idx) => handleZoneCardClick(myIndex, i, card, idx)}
-                />
-              )
-            })}
+                              <EnhancedSlot
+                                key={`me-land-${i}`}
+                                position={p.land}
+                                cards={cards}
+                                ownerAngleRad={ownerRotationY(myIndex, playerCount)}
+                                isOwnerMe={true}
+                                isSelected={isSelectedZone}
+                                isMyTurn={isYourTurn}
+                                highlighted={isLandPlayable}
+                                onClick={() => handleLandClick(i)}
+                                onZoneCardClick={(card, idx) => handleZoneCardClick(myIndex, i, card, idx)}
+                              />
+                            )
+                          })}
 
       {/* Рука вынесена в HUDOverlay (DOM-слой) — летающее 3D-меню убрано */}
     </>
@@ -359,14 +371,21 @@ function Scene({
 }
 
 /**
- * EnhancedSlot — улучшенный слот с EnhancedCard3DModel
- * Отображает карты с характеристиками и поддерживает флюп
+ * EnhancedSlot — слот игрока с EnhancedCard3DModel.
+ *
+ * Поворачивает всю группу по Y на угол владельца (`ownerAngleRad`) —
+ * чтобы нормаль текстуры карт и земли была направлена к владельцу
+ * (от центра стола наружу). Текстура в EnhancedCard3DModel — DoubleSide,
+ * чтобы картинка была видна с обеих сторон после поворота.
+ *
+ * isOwnerMe — true если это слот ТЕКУЩЕГО игрока (рендерим подсветку
+ * drop-target и флип-кнопку только на нём).
  */
-// Поднять состояние выбора карты из Scene наружу, чтобы использовать в drag-обработчиках HUDOverlay
 function EnhancedSlot({
   position,
   cards = [],
-  isOpponent = false,
+  ownerAngleRad = 0,
+  isOwnerMe = false,
   isSelected = false,
   isMyTurn = false,
   onClick,
@@ -378,7 +397,7 @@ function EnhancedSlot({
 }) {
   const [isHovered, setIsHovered] = useState(false)
   return (
-    <group position={position}>
+    <group position={position} rotation={[0, ownerAngleRad, 0]}>
       {/* Высокий блок-земля (как пьедестал для карт) */}
       <mesh
         receiveShadow
@@ -405,38 +424,34 @@ function EnhancedSlot({
       >
         <boxGeometry args={[SLOT_WIDTH, 0.5, SLOT_DEPTH]} />
         <meshStandardMaterial
-          color={isHovered && highlighted ? '#7d6eaa' : (highlighted ? '#5d4e8a' : (isOpponent ? '#1f2a40' : '#2c3e5e'))}
+          color={isHovered && highlighted ? '#7d6eaa' : (highlighted ? '#5d4e8a' : (isOwnerMe ? '#2c3e5e' : '#1f2a40'))}
           emissive={highlighted ? (isHovered ? '#80ff80' : '#4caf50') : '#000000'}
           emissiveIntensity={isHovered && highlighted ? 0.6 : (highlighted ? 0.4 : 0)}
-                    roughness={0.7}
-                  />
+          roughness={0.7}
+          side={THREE.DoubleSide}
+        />
       </mesh>
 
-      {/* Карты стоят на верхушке блока */}
+      {/* Карты стоят на верхушке блока. Карты на земле — открытая информация,
+          их видят все игроки (нормаль повёрнута к владельцу через group rotation).
+          Подняты на 0.55 (а не 0.3) — карты визуально «парят» над землёй. */}
       {cards.map((card, ci) => {
         const isFlipped = card?.status === 'flipped' || card?.isFlipped
-        const canShowStats = !isOpponent || card?.isFaceUp
-        
+        const canShowStats = true
+
         return (
           <EnhancedCard3DModel
             key={card.id || card.instanceId || ci}
             card={card}
-            position={[0, 0.3 + ci * 0.02, -SLOT_DEPTH / 2 + 0.5 + ci * 0.05]}
+            position={[0, 0.55 + ci * 0.18, -SLOT_DEPTH / 2 + 0.5 + ci * 0.18]}
             rotation={[-Math.PI / 2.4, 0, isFlipped ? Math.PI / 2 : 0]}
-            isFaceUp={!isOpponent}
+            isFaceUp={true}
             isSelected={isSelected}
             isFlipped={isFlipped}
-            isOpponent={isOpponent}
             showStats={canShowStats}
-            showFlipOption={isMyTurn && !isOpponent}
-            // Кликабельность: передаём onClick, чтобы EnhancedCard3DModel
-            // прокинул событие через raycast → родительский onZoneCardClick.
-            // Без этого карты оппонента НЕ реагировали на клики.
+            showFlipOption={isMyTurn && isOwnerMe}
             onClick={() => {
               if (onZoneCardClick) onZoneCardClick(card, ci)
-            }}
-            onFlip={() => {
-              // Флюп обрабатывается через onZoneCardClick с выбором
             }}
           />
         )

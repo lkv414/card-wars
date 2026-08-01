@@ -1,16 +1,21 @@
 /**
  * EnhancedCard3DModel — Улучшенная 3D-карта с отображением характеристик
- * 
+ *
  * Отображает:
  * - Стоимость (слева сверху)
  * - Атаку (снизу слева)
  * - HP/Защиту (снизу справа)
  * - При наведении: описание карты во всплывающем окне
- * 
+ *
  * Поддержка:
  * - Флюп (flip) механика: карта поворачивается на 90 градусов
  * - Выбор между атакой и флюпом для карт с способностью Флюп
  * - Разные цвета для разных типов карт
+ *
+ * Ориентация: родительская группа (EnhancedSlot) поворачивает всю сцену
+ * по Y на угол владельца. Текст и текстура внутри карты НЕ поворачиваются
+ * дополнительно — они и так уже ориентированы правильно после поворота
+ * группы. Это работает потому что текстура имеет side=DoubleSide.
  */
 
 import { useMemo, useRef, useState } from 'react'
@@ -18,6 +23,7 @@ import { useFrame, useLoader } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import { TextureLoader } from 'three'
 import * as THREE from 'three'
+import { hasFlipAbility } from '../../hooks/game/cardAbilities.js'
 
 // Placeholder-цвет, пока текстура грузится / не задана
 const PLACEHOLDER_COLOR = '#5d4e8a'
@@ -25,13 +31,6 @@ const PLACEHOLDER_COLOR = '#5d4e8a'
 // Размер карты в мировых координатах
 const CARD_WIDTH = 0.7
 const CARD_HEIGHT = 1.0
-
-// Цвета для типов карт
-const TYPE_COLORS = {
-  creature: '#4CAF50',    // Зелёный для существ
-  building: '#2196F3',    // Синий для строений
-  spell: '#9C27B0',       // Пурпурный для заклинаний
-}
 
 // Цвета для элементов земель
 const LAND_TYPE_ICONS = {
@@ -80,14 +79,14 @@ function create3DText(text, color = 'white', fontSize = 0.12, maxWidth = 0.6) {
  */
 function CostIndicator({ cost, position }) {
   if (cost === undefined || cost === null) return null
-  
+
   return (
     <group position={position}>
       <mesh>
         <planeGeometry args={[0.25, 0.2]} />
-        <meshStandardMaterial 
-          color="#FF9800" 
-          transparent={true} 
+        <meshStandardMaterial
+          color="#FF9800"
+          transparent={true}
           opacity={0.9}
           side={THREE.DoubleSide}
         />
@@ -102,14 +101,14 @@ function CostIndicator({ cost, position }) {
  */
 function AttackIndicator({ attack, position }) {
   if (attack === undefined || attack === null) return null
-  
+
   return (
     <group position={position}>
       <mesh>
         <planeGeometry args={[0.25, 0.2]} />
-        <meshStandardMaterial 
-          color="#F44336" 
-          transparent={true} 
+        <meshStandardMaterial
+          color="#F44336"
+          transparent={true}
           opacity={0.9}
           side={THREE.DoubleSide}
         />
@@ -124,14 +123,14 @@ function AttackIndicator({ attack, position }) {
  */
 function DefenseIndicator({ defense, position }) {
   if (defense === undefined || defense === null) return null
-  
+
   return (
     <group position={position}>
       <mesh>
         <planeGeometry args={[0.25, 0.2]} />
-        <meshStandardMaterial 
-          color="#4CAF50" 
-          transparent={true} 
+        <meshStandardMaterial
+          color="#4CAF50"
+          transparent={true}
           opacity={0.9}
           side={THREE.DoubleSide}
         />
@@ -146,9 +145,9 @@ function DefenseIndicator({ defense, position }) {
  */
 function LandTypeIndicator({ landType, position }) {
   if (!landType || landType === 'any') return null
-  
+
   const icon = LAND_TYPE_ICONS[landType] || '?'
-  
+
   return (
     <group position={position}>
       {create3DText(icon, '#FFF', 0.16)}
@@ -157,37 +156,18 @@ function LandTypeIndicator({ landType, position }) {
 }
 
 /**
- * Рамка карты с цветом по типу
- */
-function CardFrame({ card, width = CARD_WIDTH + 0.05, height = CARD_HEIGHT + 0.05 }) {
-  const typeColor = TYPE_COLORS[card?.type] || PLACEHOLDER_COLOR
-  
-  return (
-    <mesh>
-      <planeGeometry args={[width, height]} />
-      <meshStandardMaterial 
-        color={typeColor}
-        transparent={true}
-        opacity={0.3}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  )
-}
-
-/**
  * Иконка флюпа (если карта может флюпаться)
  */
 function FlipIndicator({ canFlip, position }) {
   if (!canFlip) return null
-  
+
   return (
     <group position={position}>
       <mesh>
         <planeGeometry args={[0.2, 0.2]} />
-        <meshStandardMaterial 
-          color="#FFC107" 
-          transparent={true} 
+        <meshStandardMaterial
+          color="#FFC107"
+          transparent={true}
           opacity={0.8}
           side={THREE.DoubleSide}
         />
@@ -209,14 +189,14 @@ export function EnhancedCard3DModel({
   isFlipped = false,
   showStats = true,
   showFlipOption = false,
-  isOpponent = false, // если true — текст name/description «смотрит» к владельцу, не к центру
 }) {
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef(null)
-  
-  // Проверяем, можно ли флюпать эту карту
-  const canFlip = card?.abilities?.includes('Флюп') || card?.flip_ability
-  
+
+  // Проверяем, можно ли флюпать эту карту (используем hasFlipAbility —
+  // поля card.abilities в данных из БД нет, см. cardAbilities.js).
+  const canFlip = hasFlipAbility(card)
+
   // Загружаем текстуру
   const texture = useLoader(
     TextureLoader,
@@ -250,7 +230,7 @@ export function EnhancedCard3DModel({
     const bounce = hovered ? 1 + Math.sin(t * 8) * 0.05 : 0
     const s = baseScale + bounce
     g.scale.set(s, s, s)
-    
+
     // Rotate для флюпнутой карты
     if (isFlipped) {
       g.rotation.z = Math.PI / 2  // 90 градусов
@@ -262,7 +242,7 @@ export function EnhancedCard3DModel({
   // Обработка клика с выбором между атакой и флюпом
   const handleClick = (e) => {
     e.stopPropagation()
-    
+
     if (showFlipOption && canFlip && onFlip) {
       // Показываем меню выбора
       const choice = window.confirm('Флюпнуть карту вместо атаки?')
@@ -321,19 +301,19 @@ export function EnhancedCard3DModel({
       }}
       onClick={handleClick}
     >
-      {/* Рамка карты */}
-      <CardFrame card={card} />
-      
-      {/* Текстура карты */}
+      {/* Текстура карты. DoubleSide — чтобы после родительского flip
+          (EnhancedSlot поворачивает на угол владельца по Y) текстура
+          была видна с обеих сторон, а не пропала задней гранью. */}
       <mesh>
         <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-        <meshStandardMaterial 
+        <meshStandardMaterial
           map={memoTexture}
           roughness={0.7}
           metalness={0.1}
+          side={THREE.DoubleSide}
         />
       </mesh>
-      
+
       {/* Индикаторы характеристик */}
       {showStats && (
         <>
@@ -351,40 +331,38 @@ export function EnhancedCard3DModel({
           <FlipIndicator canFlip={canFlip} position={flipPos} />
         </>
       )}
-      
-      {/* Название карты — всегда видно сверху (компактнее чем раньше) */}
+
+      {/* Название карты — всегда видно сверху. Поворот текста больше не
+          нужен: родительская группа (EnhancedSlot) уже повернула всю
+          сцену по Y на угол владельца, и текст поворачивается вместе
+          с ней. Дополнительный поворот здесь вернул бы текст обратно. */}
       {card?.name && (
         <group
           position={[0, CARD_HEIGHT/2 + 0.15, 0]}
-          // Для оппонента — поворачиваем текст на 180° вокруг Y, чтобы имя
-          // «смотрело» к владельцу (от центра стола наружу), а не к центру.
-          rotation={isOpponent ? [0, Math.PI, 0] : [0, 0, 0]}
+          rotation={[0, 0, 0]}
         >
           <mesh>
             {/* Плашка чуть уже карты, чтобы оставаться в пределах CARD_WIDTH */}
             <planeGeometry args={[CARD_WIDTH * 1.05, 0.2]} />
-            <meshStandardMaterial color="#000" transparent={true} opacity={0.6} />
+            <meshStandardMaterial color="#000" transparent={true} opacity={0.6} side={THREE.DoubleSide} />
           </mesh>
-          {/* fontSize снижен, maxWidth = CARD_WIDTH — текст не выходит за рамки */}
           {create3DText(card.name, '#FFF', 0.09, CARD_WIDTH * 0.95)}
         </group>
       )}
 
-      {/* Описание карты — всегда видно снизу. Размер плашки фиксированный
-          (избегаем пересоздания текстурного атласа troika-three-text на hover);
-          hover-эффект даётся через opacity, scale группы и позицию. */}
+      {/* Описание карты — всегда видно снизу. Поворот не нужен — родитель
+          (EnhancedSlot) уже повернул группу по Y. */}
       {card?.description && (
         <group
           position={[0, -CARD_HEIGHT/2 - 0.22, 0]}
           scale={hovered ? [1, 1.4, 1] : [1, 1, 1]}
-          rotation={isOpponent ? [0, Math.PI, 0] : [0, 0, 0]}
+          rotation={[0, 0, 0]}
         >
           <mesh>
             {/* Плашка уже карты */}
             <planeGeometry args={[CARD_WIDTH * 1.2, 0.5]} />
             <meshStandardMaterial color="#000" transparent={true} opacity={hovered ? 0.78 : 0.5} side={THREE.DoubleSide} />
           </mesh>
-          {/* fontSize снижен до 0.06; maxWidth = CARD_WIDTH — текст в рамках */}
           {create3DText(card.description, '#FFF', 0.06, CARD_WIDTH * 0.95)}
         </group>
       )}

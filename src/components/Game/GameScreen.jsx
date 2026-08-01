@@ -46,7 +46,7 @@ export function GameScreen() {
         if (rpcErr) throw new Error(rpcErr.message)
         if (!state) throw new Error('Игра не найдена или доступ запрещён')
 
-        setGame({
+        const nextGame = {
           id: state.id,
           lobby_id: state.lobby_id,
           status: state.status,
@@ -59,15 +59,20 @@ export function GameScreen() {
           ended_at: state.ended_at,
           players: (state.players || []).map((p) => ({
             ...p,
+            // Руки/колоды оппонентов остаются скрытыми в RPC, но карты на земле
+            // публичные: сохраняем zones каждого игрока и отдаём их в GameBoard3D.
             zones: Array.isArray(p.zones)
               ? p.zones
                   .sort((a, b) => a.zone_position - b.zone_position)
                   .map((z) => z.cards || [])
               : [[], [], [], []],
           })),
-        })
+        }
+        setGame(nextGame)
+        return nextGame
       } catch (err) {
         setError(err.message || 'Не удалось загрузить игру')
+        return null
       } finally {
         setLoading(false)
       }

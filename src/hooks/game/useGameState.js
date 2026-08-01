@@ -39,7 +39,7 @@ export function useGameState(game, reload) {
       setIsApplying(true)
       setError(null)
 
-      const MAX_RETRIES = 1
+      const MAX_RETRIES = 2
 
       try {
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -88,8 +88,14 @@ export function useGameState(game, reload) {
 
           // data === null → version conflict
           console.warn(`[writeGameState] version conflict (attempt ${attempt}/${MAX_RETRIES})`)
-          if (reload) await reload()
-          // 100мс чтобы новый state точно пришёл в ref
+          if (reload) {
+            const freshGame = await reload()
+            if (freshGame?.id) {
+              gameRef.current = freshGame
+            }
+          }
+          // 100мс чтобы новый state точно пришёл в ref/react-state, если reload
+          // не возвращает объект (старые call-sites).
           await new Promise((r) => setTimeout(r, 100))
         }
 

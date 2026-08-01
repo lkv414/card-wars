@@ -41,15 +41,16 @@ export function useTurnControl(game, writeGameState, reload) {
         if (rpcErr) {
           const msg = rpcErr.message || ''
           const isMissingFn = /function .* does not exist/i.test(msg)
-          console.warn('[endTurn] RPC failed:', msg, '— fallback?', !isMissingFn)
+          console.warn('[endTurn] RPC failed:', msg, '— fallback?', isMissingFn)
           if (!isMissingFn) {
-            // Реальная ошибка RPC (а не «функция не существует»)
-            // Всё равно пробуем fallback — на случай если RPC сработал,
-            // но Realtime уже успел обновить state и теперь версия конфликтует
-            console.log('[endTurn] Trying fallback writeGameState anyway')
+            // Если RPC существует, но вернул реальную ошибку, не запускаем
+            // клиентский fallback поверх потенциально уже изменённой игры: именно
+            // это давало ложный «Конфликт версий» после нажатия кнопки.
+            return { error: msg || 'Не удалось передать ход' }
           }
         } else if (!data?.success && data?.error) {
           console.warn('[endTurn] RPC returned error:', data.error)
+          return { error: data.error }
         }
       } catch (e) {
         console.warn('[endTurn] RPC threw, falling back:', e?.message)

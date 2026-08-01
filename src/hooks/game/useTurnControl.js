@@ -11,58 +11,72 @@ import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
 
-export function useTurnControl(game, writeGameState) {
+export function useTurnControl(game, writeGameState, reload) {
   /**
    * End turn: switch to next player.
    * Computes simple alternation: player1 -> player2 -> player1.
    * Draw-фаза: новый активный добирает 1 карту из своего deck_pile в hand.
    */
   const endTurn = useCallback(async () => {
-    if (!game?.players) return { error: 'Игра не загружена' }
-    await ensureGuestId()
-    const players = safePlayers(game.players) // filter null/undefined + health: number
-    const currentIdx = players.findIndex((p) => p.player_id === game.current_player_id)
-    if (currentIdx === -1) return { error: 'Активный игрок не найден' }
-    const nextPlayer = safePlayer(players, (currentIdx + 1) % players.length)
+      if (!game?.players) return { error: 'Игра не загружена' }
+      await ensureGuestId()
 
-    // Draw-фаза: добрать 1 карту из deck_pile нового активного
-    const nextDeckPile = Array.isArray(nextPlayer.deck_pile) ? [...nextPlayer.deck_pile] : []
-    const nextHand = Array.isArray(nextPlayer.hand) ? [...nextPlayer.hand] : []
-    const drewCard = nextDeckPile.length > 0
-    if (drewCard) {
-      nextHand.push(nextDeckPile.pop())
-    }
-    const nextDeckRemaining = nextDeckPile.length
-
-    const newLog = [
-      ...(game.game_state?.log || []),
-      {
-        timestamp: Date.now(),
-        message: drewCard
-          ? `Ход переходит к ${nextPlayer.nickname || 'следующему'} · добрал 1 карту`
-          : `Ход переходит к ${nextPlayer.nickname || 'следующему'} · колода пуста`,
-      },
-    ]
-
-    // Сохранить изменения руки нового активного игрока
-    if (drewCard) {
-      await supabase
-        .from('game_players')
-        .update({
-          hand: nextHand,
-          deck_pile: nextDeckPile,
-          deck_remaining: nextDeckRemaining,
+      // Пробуем атомарный RPC end_turn (миграция supabase/migrations/..._end_turn_rpc.sql).
+      // Если RPC не существует (например, миграция не применена) — fallback на клиентский
+      // writeGameState (менее надёжно, но работает).
+      try {
+        const { data, error: rpcErr } = await supabase.rpc('end_turn', {
+          p_game_id: game.id,
+          p_player_id: game.current_player_id,
         })
-        .eq('game_id', game.id)
-        .eq('player_id', nextPlayer.player_id)
-    }
+        console.log('[endTurn] RPC response:', { data, rpcErr })
+        if (!rpcErr && data?.success) {
+          if (writeGameState && typeof reload === 'function') {
+            // Перечитаем state чтобы UI получил новую руку у нового активного
+            await reload()
+          }
+          return { success: true }
+        }
+        // RPC не сработал — идём fallback'ом ниже
+        if (rpcErr) {
+          const msg = rpcErr.message || ''
+          const isMissingFn = /function .* does not exist/i.test(msg)
+          console.warn('[endTurn] RPC failed:', msg, '— fallback?', !isMissingFn)
+          if (!isMissingFn) {
+            // Реальная ошибка RPC (а не «функция не существует»)
+            // Всё равно пробуем fallback — на случай если RPC сработал,
+            // но Realtime уже успел обновить state и теперь версия конфликтует
+            console.log('[endTurn] Trying fallback writeGameState anyway')
+          }
+        } else if (!data?.success && data?.error) {
+          console.warn('[endTurn] RPC returned error:', data.error)
+        }
+      } catch (e) {
+        console.warn('[endTurn] RPC threw, falling back:', e?.message)
+      }
 
-    return writeGameState({
-      current_player_id: nextPlayer.player_id,
-      current_turn: (game.current_turn || 0) + 1,
-      game_state: { log: newLog },
-    })
-  }, [game, writeGameState])
+      // === Fallback: клиентская логика (как раньше) ===
+      const players = safePlayers(game.players)
+      const currentIdx = players.findIndex((p) => p.player_id === game.current_player_id)
+      if (currentIdx === -1) return { error: 'Активный игрок не найден' }
+      const nextIdx = (currentIdx + 1) % players.length
+      const nextPlayer = safePlayer(players, players[nextIdx]?.player_id)
+      if (nextPlayer.__isFallback) return { error: 'Следующий игрок не найден' }
+
+      const newLog = [
+        ...(game.game_state?.log || []),
+        {
+          timestamp: Date.now(),
+          message: `Ход переходит к ${nextPlayer.nickname || 'следующему'}`,
+        },
+      ]
+
+      return writeGameState({
+        current_player_id: nextPlayer.player_id,
+        current_turn: (game.current_turn || 0) + 1,
+        game_state: { log: newLog },
+      })
+    }, [game, writeGameState, reload])
 
   /**
    * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается

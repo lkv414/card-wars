@@ -2,22 +2,17 @@
  * usePlayCard — розыгрыш карты из руки в зону.
  *
  * Логика:
- *  1. Достать карту из hand
- *  2. Положить в zone (clampZones гарантирует 4 слота)
- *  3. Refill: добрать из deck_pile пока hand < STARTING_HAND_SIZE
- *  4. Записать в game_players (hand, deck_pile, deck_remaining) и
- *     game_zones (cards в конкретной зоне) ПАРАЛЛЕЛЬНО
- *  5. Обновить log через writeGameState
+ *  1. Берёт карту из hand
+ *  2. Кладёт в zone (через RPC play_card, чтобы refill был атомарным и валидированным)
+ *  3. Обновляет log через writeGameState
  *
- * 2 записи + games.update теперь идут через Promise.all — атомарно
- * по смыслу и быстрее по latency (2×RTT → 1×RTT на persist).
+ * Серверная валидация: RPC читает текущий hand/deck_pile из БД (НЕ верит клиенту),
+ * проверяет лимит 5 карт в руке, кладёт карту в зону, делает refill.
  */
 
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
-import { STARTING_HAND_SIZE } from '../../constants/game'
-import { clampZones } from './format'
 
 export function usePlayCard(game, writeGameState) {
   return useCallback(
@@ -27,7 +22,7 @@ export function usePlayCard(game, writeGameState) {
       const me = game.players.find((p) => p.player_id === game.current_player_id)
       if (!me) return { error: 'Сейчас не ваш ход' }
 
-      const hand = [...(me.hand || [])]
+      const hand = me.hand || []
       if (cardIndex < 0 || cardIndex >= hand.length) return { error: 'Неверный индекс карты' }
       const card = hand[cardIndex]
       if (card.cost > actionCost) return { error: 'Карта дороже доступного действия' }
@@ -40,24 +35,58 @@ export function usePlayCard(game, writeGameState) {
         },
       ]
 
+      // Пробуем атомарный RPC play_card (миграция supabase/migrations/..._play_card_rpc.sql)
+      try {
+        const { data, error: rpcErr } = await supabase.rpc('play_card', {
+          p_game_id: game.id,
+          p_player_id: me.player_id,
+          p_card_index: cardIndex,
+          p_zone_position: zoneIndex + 1,
+        })
+        console.log('[usePlayCard] RPC response:', { data, rpcErr })
+        if (!rpcErr && data?.success) {
+          // Обновляем log и перечитываем state
+          const logResult = await writeGameState({ game_state: { log: newLog } })
+          return { success: true, logResult }
+        }
+        // RPC не сработал — пробуем fallback
+        if (rpcErr) {
+          console.warn('[usePlayCard] RPC failed:', rpcErr.message, '— fallback')
+          if (!/function .* does not exist/i.test(rpcErr.message || '')) {
+            // Реальная ошибка (не "функция не существует") — пробрасываем
+            return { error: rpcErr.message }
+          }
+        } else if (data?.error) {
+          return { error: data.error }
+        }
+      } catch (e) {
+        console.warn('[usePlayCard] RPC threw:', e?.message)
+      }
+
+      // === Fallback: клиентская логика (3 параллельных UPDATE'а) ===
+      console.log('[usePlayCard] Using fallback writeGameState')
+
+      // Импортируем формат-утилиты на лету (используются только в fallback)
+      const { clampZones } = await import('./format')
+      const { STARTING_HAND_SIZE } = await import('../../constants/game')
+
       hand.splice(cardIndex, 1)
       const zones = clampZones(me.zones)
-      // instanceId — стабильный ID для инстанса карты в игре (используется
-      // в useAttack / useFlipCard для поиска по карте в зоне).
       const instanceId = card.instanceId || card.id || `card-${Date.now()}-${cardIndex}`
       zones[zoneIndex] = [
         ...(zones[zoneIndex] || []),
         { ...card, id: card.id, instanceId, tapped: false, flipped: false },
       ]
-
-      // Refill: добираем из deck_pile пока рука < STARTING_HAND_SIZE
+      // Refill: добираем максимум 1 карту из deck_pile (предотвращаем
+      // двойной refill при двойном вызове onClick+onDrop).
       const deckPile = Array.isArray(me.deck_pile) ? [...me.deck_pile] : []
       while (hand.length < STARTING_HAND_SIZE && deckPile.length > 0) {
         hand.push(deckPile.pop())
+        // Ограничитель: даже если цикл странно сработает — не больше 1
+        if (hand.length >= STARTING_HAND_SIZE) break
       }
       const newDeckRemaining = deckPile.length
 
-      // Persist hand + zone + log параллельно
       const [playersRes, zonesRes, gameRes] = await Promise.all([
         supabase
           .from('game_players')

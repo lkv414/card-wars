@@ -73,7 +73,7 @@ export function GameScreen() {
       }
     }, [gameId, guestId])
 
-  const { playCard, attack, endTurn, forfeit, flipCard } = useGameAction(game, loadGame)
+  const { playCard, attack, endTurn, forfeit, flipCard, isApplying, error: actionError } = useGameAction(game, loadGame)
 
   // Debounced reload: одна атака правит 3 таблицы → 3 realtime callback'а.
   // Без debounce получается 3+ reload RPC подряд. С debounce (150мс) —
@@ -145,8 +145,10 @@ export function GameScreen() {
       onAttack={attack}
       onFlipCard={flipCard}
       onEndTurn={endTurn}
-      onForfeit={forfeit}
-      realtimeStatus={realtimeStatus}
-    />
+            onForfeit={forfeit}
+            realtimeStatus={realtimeStatus}
+            isApplying={isApplying}
+            actionError={actionError}
+          />
   )
 }

@@ -11,7 +11,7 @@
  * Карты — 3D-плоскости через <EnhancedCard3DModel> с отображением характеристик.
  * Hover/select через raycast.
  */
-import React, { Suspense, useMemo, useState, useCallback } from 'react'
+import React, { Suspense, useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -172,18 +172,20 @@ function Scene({
   }, [playerCount, myIndex])
 
   // Обработка клика по земле для размещения карты
-  const handleLandClick = useCallback(async (zoneIndex) => {
-    if (!isYourTurn || isFinished || selectedCardIndex === null) return
-    try {
-      await onPlayCard(selectedCardIndex, zoneIndex, myIndex)
-    } catch (e) {
-      console.error('Play card failed:', e)
-    } finally {
-      // Сбрасываем выделение в ЛЮБОМ случае — иначе карта «зависнет» выбранной.
-      setSelectedCardIndex(null)
-      setSelectedZoneIndex(null)
-    }
-  }, [isYourTurn, isFinished, selectedCardIndex, myIndex, onPlayCard, setSelectedCardIndex, setSelectedZoneIndex])
+    const handleLandClick = useCallback(async (zoneIndex) => {
+      if (!isYourTurn || isFinished || selectedCardIndex === null) return
+      try {
+        // Третий аргумент — actionCost (1 карта), а не myIndex.
+        // myIndex RPC берёт сама из JWT/guestId.
+        await onPlayCard(selectedCardIndex, zoneIndex, 1)
+      } catch (e) {
+        console.error('Play card failed:', e)
+      } finally {
+        // Сбрасываем выделение в ЛЮБОМ случае — иначе карта «зависнет» выбранной.
+        setSelectedCardIndex(null)
+        setSelectedZoneIndex(null)
+      }
+    }, [isYourTurn, isFinished, selectedCardIndex, onPlayCard, setSelectedCardIndex, setSelectedZoneIndex])
 
   // Обработка клика по карте в зоне (атака или флюп)
   const handleZoneCardClick = useCallback(async (playerIndex, zoneIndex, card, cardIndex) => {
@@ -278,24 +280,32 @@ function Scene({
         const opponent = safePlayer(players, players[opp.index]?.player_id)
         if (!opponent || opponent.__isFallback) return null
 
-        // safePlayer гарантирует zones = { 0: [], 1: [], 2: [], 3: [] }
-        const opponentZones = opponent.zones || { 0: [], 1: [], 2: [], 3: [] }
+        // safePlayer гарантирует zones как массив массивов. После loadGame зоны
+                // приходят как Array<Array<Card>>, но старый код мог ожидать {0:[],1:[],...}.
+                // Оба формата поддерживаем через normalize.
+                const opponentZonesRaw = opponent.zones
+                const opponentZones = Array.isArray(opponentZonesRaw)
+                  ? opponentZonesRaw
+                  : (opponentZonesRaw && typeof opponentZonesRaw === 'object'
+                      ? [opponentZonesRaw[0] || [], opponentZonesRaw[1] || [], opponentZonesRaw[2] || [], opponentZonesRaw[3] || []]
+                      : [[], [], [], []])
 
-        return (
-          <React.Fragment key={`player-${opponent.id}`}>
-            {/* СТРОЕНИЯ противника */}
-            {opp.positions.map((p, i) => (
-              <BuildingSlot
-                key={`p${opponent.id}-b-${i}`}
-                position={p.building}
-                isOpponent
-              />
-            ))}
+                return (
+                  <React.Fragment key={`player-${opponent.id}`}>
+                    {/* СТРОЕНИЯ противника */}
+                    {opp.positions.map((p, i) => (
+                      <BuildingSlot
+                        key={`p${opponent.id}-b-${i}`}
+                        position={p.building}
+                        isOpponent
+                      />
+                    ))}
 
-            {/* ЗЕМЛИ и карты противников */}
-            {opp.positions.map((p, i) => {
-              const zone = opponentZones[i] || { cards: [] }
-              const cards = zone.cards || []
+                    {/* ЗЕМЛИ и карты противников */}
+                    {opp.positions.map((p, i) => {
+                      const zone = opponentZones[i] || []
+                      // После loadGame zone это просто массив карт
+                      const cards = Array.isArray(zone) ? zone : (zone?.cards || [])
 
               return (
                 <EnhancedSlot
@@ -317,25 +327,30 @@ function Scene({
         <BuildingSlot key={`me-b-${i}`} position={p.building} />
       ))}
 
-      {/* ЗЕМЛИ и карты текущего игрока */}
-      {mySlotPositions.map((p, i) => {
-        const zone = (me?.zones || [])[i] || {}
-        const cards = zone.cards || []
-        const isSelectedZone = selectedZoneIndex === i
-        
-        return (
-          <EnhancedSlot
-            key={`me-land-${i}`}
-            position={p.land}
-            cards={cards}
-            isOpponent={false}
-            isSelected={isSelectedZone}
-            isMyTurn={isYourTurn}
-            onClick={() => handleLandClick(i)}
-            onZoneCardClick={(card, idx) => handleZoneCardClick(myIndex, i, card, idx)}
-          />
-        )
-      })}
+      {/* ЗЕМЛИ и карты текущего игрока — подсвечиваем земли когда выбрана карта */}
+                  {mySlotPositions.map((p, i) => {
+                    const zone = (me?.zones || [])[i] || []
+                    // После loadGame zone это просто массив карт (Array<Card>).
+                    // Старый код ожидал {cards: []} — оба формата поддерживаем.
+                    const cards = Array.isArray(zone) ? zone : (zone?.cards || [])
+                    const isSelectedZone = selectedZoneIndex === i
+                    // Подсветка земли: наш ход + выбрана карта в руке + слот свободен
+                    const isLandPlayable = isYourTurn && selectedCardIndex !== null && cards.length === 0
+
+              return (
+                <EnhancedSlot
+                  key={`me-land-${i}`}
+                  position={p.land}
+                  cards={cards}
+                  isOpponent={false}
+                  isSelected={isSelectedZone}
+                  isMyTurn={isYourTurn}
+                  highlighted={isLandPlayable}
+                  onClick={() => handleLandClick(i)}
+                  onZoneCardClick={(card, idx) => handleZoneCardClick(myIndex, i, card, idx)}
+                />
+              )
+            })}
 
       {/* Рука вынесена в HUDOverlay (DOM-слой) — летающее 3D-меню убрано */}
     </>
@@ -346,16 +361,21 @@ function Scene({
  * EnhancedSlot — улучшенный слот с EnhancedCard3DModel
  * Отображает карты с характеристиками и поддерживает флюп
  */
-function EnhancedSlot({ 
-  position, 
-  cards = [], 
-  isOpponent = false, 
+// Поднять состояние выбора карты из Scene наружу, чтобы использовать в drag-обработчиках HUDOverlay
+function EnhancedSlot({
+  position,
+  cards = [],
+  isOpponent = false,
   isSelected = false,
   isMyTurn = false,
   onClick,
   onZoneCardClick,
-  highlighted = false
+  highlighted = false,
+  onPointerEnterZone = null,
+  onPointerLeaveZone = null,
+  zoneIndex = -1,
 }) {
+  const [isHovered, setIsHovered] = useState(false)
   return (
     <group position={position}>
       {/* Высокий блок-земля (как пьедестал для карт) */}
@@ -366,14 +386,29 @@ function EnhancedSlot({
           e.stopPropagation()
           if (onClick) onClick()
         }}
+        onPointerOver={(e) => {
+          e.stopPropagation()
+          setIsHovered(true)
+          // Подсвечиваем курсором когда можно drop
+          if (isMyTurn && highlighted) {
+            document.body.style.cursor = 'grab'
+          }
+          if (onPointerEnterZone) onPointerEnterZone(zoneIndex)
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation()
+          setIsHovered(false)
+          document.body.style.cursor = 'default'
+          if (onPointerLeaveZone) onPointerLeaveZone(zoneIndex)
+        }}
       >
         <boxGeometry args={[SLOT_WIDTH, 0.5, SLOT_DEPTH]} />
         <meshStandardMaterial
-          color={highlighted ? '#5d4e8a' : (isOpponent ? '#1f2a40' : '#2c3e5e')}
-          emissive={highlighted ? '#4caf50' : '#000000'}
-          emissiveIntensity={highlighted ? 0.4 : 0}
-          roughness={0.7}
-        />
+          color={isHovered && highlighted ? '#7d6eaa' : (highlighted ? '#5d4e8a' : (isOpponent ? '#1f2a40' : '#2c3e5e'))}
+          emissive={highlighted ? (isHovered ? '#80ff80' : '#4caf50') : '#000000'}
+          emissiveIntensity={isHovered && highlighted ? 0.6 : (highlighted ? 0.4 : 0)}
+                    roughness={0.7}
+                  />
       </mesh>
 
       {/* Карты стоят на верхушке блока */}
@@ -439,6 +474,8 @@ export function GameBoard3D({
   onForfeit,
   onFlipCard,
   realtimeStatus = 'connecting',
+  isApplying = false,
+  actionError = null,
 }) {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
   const [selectedZoneIndex, setSelectedZoneIndex] = useState(null)
@@ -473,14 +510,58 @@ export function GameBoard3D({
     }
   }, [onFlipCard])
 
-  return (
-    <div className="game-board-3d">
-      <Canvas
-        shadows
-        camera={{ position: cameraPosition, fov: 60 }}
-        gl={{ antialias: true }}
-        style={{ background: 'linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 100%)' }}
-      >
+  // Используем ref чтобы всегда получать актуальный onPlayCard (избегаем stale closure)
+    const onPlayCardRef = useRef(onPlayCard)
+    useEffect(() => {
+      onPlayCardRef.current = onPlayCard
+    }, [onPlayCard])
+
+    // Snap-to-target drop: при drop над Canvas (или где угодно вне ручной панели)
+    // ставим карту в первую свободную зону — пользователю не нужно прицеливаться в 3D.
+    // Для точного drop на 3D нужен raycast, но snap-to-target проще и не уступает по UX.
+    const handleCanvasDrop = useCallback(
+      (e) => {
+        e.preventDefault()
+        const cardIdxStr = e.dataTransfer.getData('text/card-index')
+        if (!cardIdxStr) return
+        const cardIdx = parseInt(cardIdxStr, 10)
+        if (Number.isNaN(cardIdx)) return
+        // Если drop произошёл ВНЕ нашей ручной панели — играем в первую свободную землю.
+        // (Если drop НАД hud-hand — игнорируем, не играем.)
+        const inHandArea = e.target?.closest?.('.hud-hand')
+        if (inHandArea) return
+        // Находим первую свободную землю через cards моих зон
+        const myZones = me?.zones || []
+        const firstEmpty = myZones.findIndex((z) => Array.isArray(z) ? z.length === 0 : (z?.cards?.length || 0) === 0)
+        if (firstEmpty === -1) return
+        if (typeof onPlayCardRef.current === 'function') {
+          Promise.resolve(onPlayCardRef.current(cardIdx, firstEmpty, 1)).catch((err) => {
+            console.error('[Drop] play failed:', err)
+          })
+        }
+      },
+      [
+  me, // используется в myZones.findIndex
+    ]
+    )
+
+    const handleCanvasDragOver = useCallback((e) => {
+      if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('text/card-index')) {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+      }
+    }, [])
+
+    return (
+      <div className="game-board-3d">
+        <Canvas
+          shadows
+          camera={{ position: cameraPosition, fov: 60 }}
+          gl={{ antialias: true }}
+          style={{ background: 'linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 100%)' }}
+          onDragOver={handleCanvasDragOver}
+          onDrop={handleCanvasDrop}
+        >
         <Suspense fallback={null}>
           <Scene
             game={game}
@@ -507,22 +588,27 @@ export function GameBoard3D({
       </Canvas>
 
       <HUDOverlay
-        playerId={playerId}
-        isYourTurn={isYourTurn}
-        isFinished={isFinished}
-        winnerId={winnerId}
-        me={me}
-        opp={opp}
-        handCards={handCards}
-        log={game.game_state?.log || []}
-        onEndTurn={onEndTurn}
-        onForfeit={onForfeit}
-        onGameEnd={onGameEnd}
-        realtimeStatus={realtimeStatus}
-        // для рендера руки в HUD + клика по картам руки
-        selectedCardIndex={selectedCardIndex}
-        setSelectedCardIndex={setSelectedCardIndex}
-      />
+              playerId={playerId}
+              isYourTurn={isYourTurn}
+              isFinished={isFinished}
+              winnerId={winnerId}
+              me={me}
+              opp={opp}
+              handCards={handCards}
+              log={game.game_state?.log || []}
+              onEndTurn={onEndTurn}
+              onForfeit={onForfeit}
+              onGameEnd={onGameEnd}
+              realtimeStatus={realtimeStatus}
+              // для рендера руки в HUD + клика по картам руки
+              selectedCardIndex={selectedCardIndex}
+              setSelectedCardIndex={setSelectedCardIndex}
+              // для диагностики «кнопка не работает»
+              isApplying={isApplying}
+              actionError={actionError}
+              // для drag-and-drop карты на землю
+              onPlayCard={onPlayCard}
+            />
 
       <style>{`.game-board-3d { position: relative; width: 100vw; height: 100vh; overflow: hidden; }`}</style>
     </div>

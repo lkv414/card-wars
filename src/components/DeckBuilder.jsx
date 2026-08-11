@@ -4,20 +4,18 @@ import { TopBar } from './TopBar'
 import { DeckFilters } from './DeckFilters'
 import { DeckModal } from './DeckModal'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
-import { CardPreview } from './Shared/CardPreview'
 import { DeckActions } from './deck/DeckActions'
 import { SaveDeckDialog } from './deck/SaveDeckDialog'
 import { DeckCardList } from './deck/DeckCardList'
+import { LibraryToolbar } from './deck/LibraryToolbar'
 import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
-import { normalizeDeckEntryId } from '../utils/deckState'
+import { normalizeDeckImportMap } from '../utils/deckImport'
+import { copyToClipboard } from '../utils/clipboard'
 import { useDeckSelection } from '../hooks/useDeckSelection'
 import { useDecks } from '../hooks/useDecks'
+import { useDeckSave } from '../hooks/useDeckSave'
 import { useNavigate } from 'react-router-dom'
-import {
-  DEFAULT_FILTERS,
-  matchesCostFilter,
-  sortCards,
-} from '../utils/cardSort'
+import { DEFAULT_FILTERS, filterCards, filterLands } from '../utils/cardSort'
 
 export function DeckBuilder({
   cards,
@@ -43,87 +41,41 @@ export function DeckBuilder({
   } = useDeckSelection()
   const { addDeck, getSelectedDeck } = useDecks()
   const navigate = useNavigate()
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
-  const [saveStep, setSaveStep] = useState('form') // 'form' | 'success'
-  const [saveName, setSaveName] = useState('')
-  const [savedDeck, setSavedDeck] = useState(null) // { name, code }
-  const [codeCopied, setCodeCopied] = useState(false)
+  const {
+    saveDialogOpen,
+    saveStep,
+    saveName,
+    setSaveName,
+    savedDeck,
+    codeCopied,
+    closeSaveDialog,
+    handleSaveDeck,
+    handleConfirmSave,
+    handleCopySavedCode,
+  } = useDeckSave({
+    cardTotal,
+    landTotal,
+    errors,
+    selectedCards,
+    selectedLands,
+    getSelectedDeck,
+    addDeck,
+    toast,
+  })
 
   const [mode, setMode] = useState('cards')
   const [filters, setFilters] = useState({ ...DEFAULT_FILTERS })
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [deckModalOpen, setDeckModalOpen] = useState(false)
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false)
-  const [preview, setPreview] = useState({ open: false, card: null, isLand: false })
 
   const deckCode = useMemo(
     () => generateDeckCode(selectedCards, selectedLands),
     [selectedCards, selectedLands]
   )
 
-  const closeSaveDialog = () => {
-    setSaveDialogOpen(false)
-    setSaveStep('form')
-    setSaveName('')
-    setSavedDeck(null)
-    setCodeCopied(false)
-  }
-
-  const handleSaveDeck = () => {
-    if (cardTotal === 0 && landTotal === 0) {
-      toast?.('error', 'Колода пустая — добавьте хотя бы одну карту')
-      return
-    }
-    if (errors.length > 0) {
-      toast?.('error', 'Исправьте ошибки в колоде перед сохранением')
-      return
-    }
-    setSaveName(getSelectedDeck()?.name || '')
-    setSaveStep('form')
-    setSavedDeck(null)
-    setCodeCopied(false)
-    setSaveDialogOpen(true)
-  }
-
-  const handleConfirmSave = () => {
-    const name = saveName.trim() || `Колода ${new Date().toLocaleDateString('ru-RU')}`
-    const newDeck = addDeck({ name, selectedCards, selectedLands })
-    setSavedDeck({ name: newDeck.name, code: newDeck.code })
-    setSaveStep('success')
-  }
-
-  const handleCopySavedCode = async () => {
-    if (!savedDeck?.code) return
-    try {
-      await navigator.clipboard.writeText(savedDeck.code)
-      setCodeCopied(true)
-      setTimeout(() => setCodeCopied(false), 1500)
-    } catch {
-      window.prompt('Скопируй код колоды:', savedDeck.code)
-    }
-  }
-
-  const filteredCards = useMemo(() => {
-    const next = cards.filter(
-      (card) =>
-        (!filters.search ||
-          `${card.name} ${card.description}`
-            .toLowerCase()
-            .includes(filters.search.toLowerCase())) &&
-        (!filters.cardTypes.length || filters.cardTypes.includes(card.card_type)) &&
-        (!filters.landTypes.length || filters.landTypes.includes(card.land_type)) &&
-        (!filters.rainbow || card.is_rainbow) &&
-        matchesCostFilter(card.cost, filters.costs) &&
-        (!filters.flipOnly || card.has_flip)
-    )
-    return sortCards(next, filters.sort || 'number')
-  }, [cards, filters])
-
-  const filteredLands = useMemo(() => {
-    if (!filters.search) return lands
-    const q = filters.search.toLowerCase()
-    return lands.filter((land) => String(land.name || '').toLowerCase().includes(q))
-  }, [lands, filters.search])
+  const filteredCards = useMemo(() => filterCards(cards, filters), [cards, filters])
+  const filteredLands = useMemo(() => filterLands(lands, filters.search), [lands, filters.search])
 
   const importDeck = async (code) => {
     const trimmedCode = code.trim()
@@ -137,15 +89,8 @@ export function DeckBuilder({
       const { selectedCards: importedCards, selectedLands: importedLands } =
         await expandDeckCodeWithCardData(trimmedCode, supabase)
 
-      const normalizeToLowerMap = (obj) =>
-        Object.fromEntries(
-          Object.entries(obj || {})
-            .map(([id, qty]) => [normalizeDeckEntryId(id), Number(qty) || 0])
-            .filter(([, q]) => q > 0)
-        )
-
-      setSelectedCards(normalizeToLowerMap(importedCards))
-      setSelectedLands(normalizeToLowerMap(importedLands))
+      setSelectedCards(normalizeDeckImportMap(importedCards))
+      setSelectedLands(normalizeDeckImportMap(importedLands))
       toast(
         'success',
         `Колода импортирована: ${Object.keys(importedCards || {}).length} карт, ${
@@ -162,26 +107,18 @@ export function DeckBuilder({
       toast('error', 'Код колоды пуст')
       return
     }
-    try {
-      await navigator.clipboard.writeText(code)
-      toast('success', 'Код скопирован')
-    } catch {
-      toast('error', 'Не удалось скопировать код')
-    }
+    const ok = await copyToClipboard(code)
+    toast(ok ? 'success' : 'error', ok ? 'Код скопирован' : 'Не удалось скопировать код')
   }
 
   const resetFilters = () => setFilters({ ...DEFAULT_FILTERS, sort: filters.sort })
-
-  const openPreview = (card, isLand = false) => {
-    setPreview({ open: true, card, isLand })
-  }
 
   const handleBlockedAdd = (reason) => {
     if (reason) toast('error', reason)
   }
 
   return (
-    <main className="app">
+    <main className="deck-builder">
       <TopBar
         deckCode={deckCode}
         cardTotal={cardTotal}
@@ -232,13 +169,6 @@ export function DeckBuilder({
         onGoToDecks={() => navigate('/decks')}
       />
 
-      <CardPreview
-        open={preview.open}
-        card={preview.card}
-        isLand={preview.isLand}
-        onClose={() => setPreview({ open: false, card: null, isLand: false })}
-      />
-
       <DeckModal
         open={deckModalOpen}
         onClose={() => setDeckModalOpen(false)}
@@ -250,7 +180,6 @@ export function DeckBuilder({
         removeCard={removeCard}
         addLand={addLand}
         removeLand={removeLand}
-        onPreview={openPreview}
         onBlockedAdd={handleBlockedAdd}
       />
 
@@ -258,14 +187,20 @@ export function DeckBuilder({
         <DeckFilters
           filters={filters}
           setFilters={setFilters}
-          mode={mode}
-          setMode={setMode}
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
           onReset={resetFilters}
+          mode={mode}
         />
 
-        <section className="list">
+        <section className="deck-library">
+          <LibraryToolbar
+            mode={mode}
+            setMode={setMode}
+            resultCount={mode === 'cards' ? filteredCards.length : filteredLands.length}
+            filters={filters}
+            onResetFilters={resetFilters}
+          />
           <DeckCardList
             loadingLibrary={loadingLibrary}
             libraryError={libraryError}
@@ -277,7 +212,6 @@ export function DeckBuilder({
             cardTotal={cardTotal}
             landTotal={landTotal}
             filters={filters}
-            onPreview={openPreview}
             onBlockedAdd={handleBlockedAdd}
             onAddCard={addCard}
             onRemoveCard={removeCard}

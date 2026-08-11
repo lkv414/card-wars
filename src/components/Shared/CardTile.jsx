@@ -1,8 +1,14 @@
-import { memo, useState } from 'react'
-import { DECK_LIMITS } from '../../constants/game'
+import { memo, useCallback, useState } from 'react'
+import { useArtTileZoom } from '../../hooks/useArtTileZoom'
+import { CARD_ZOOM_SCALE, CARD_ZOOM_SCALE_COMPACT } from '../../utils/cardZoom'
+import { getDeckTileBlockReason } from '../../utils/deckTileLimits'
 import { normalizeDeckEntryId } from '../../utils/deckState'
 
-const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
+const ZONE_RATIO = 0.30
+
+function releaseFocus(el) {
+  el?.blur?.()
+}
 
 export const CardTile = memo(function CardTile({
   item,
@@ -11,13 +17,13 @@ export const CardTile = memo(function CardTile({
   selectedCards,
   addCard,
   removeCard,
-  cardTotal,
+  selectionTotal,
   showControls = true,
-  onPreview,
   onBlockedAdd,
   compact = false,
 }) {
   const [imageFailed, setImageFailed] = useState(false)
+
   const normalizedId = normalizeDeckEntryId(item.id)
   const quantity = selectedCards
     ? selectedCards[item.id] || selectedCards[normalizedId] || 0
@@ -25,159 +31,191 @@ export const CardTile = memo(function CardTile({
 
   const isLandCard = isLand || (!!item.name && !item.card_type)
   const hasImage = item.image_url && !imageFailed
+  const artOnly = hasImage && !isLandCard
+  const zoomScale = compact ? CARD_ZOOM_SCALE_COMPACT : CARD_ZOOM_SCALE
 
-  const blockReason = (() => {
-    if (isLandCard) {
-      if (cardTotal >= LAND_LIMITS.maxTotal) return `В колоде уже ${LAND_LIMITS.maxTotal} земли`
-      return null
-    }
-    if (quantity >= CARD_LIMITS.maxPerEntry) return `Максимум ${CARD_LIMITS.maxPerEntry} копии этой карты`
-    if (cardTotal >= CARD_LIMITS.maxTotal) return `Колода полна (${CARD_LIMITS.maxTotal} карт)`
-    return null
-  })()
+  const { tileRef, zoomOrigin, onMouseEnter, onMouseLeave } = useArtTileZoom(artOnly, zoomScale)
 
+  const blockReason = getDeckTileBlockReason({ isLandCard, quantity, selectionTotal })
   const disabled = Boolean(blockReason)
 
-  const tryAdd = () => {
+  const tryAdd = useCallback(() => {
     if (disabled) {
       onBlockedAdd?.(blockReason)
       return
     }
     addCard?.(item.id)
-  }
+  }, [addCard, blockReason, disabled, item.id, onBlockedAdd])
 
-  const handleTileActivate = (event) => {
-    if (event.target.closest('button')) return
-    if (onClick) {
-      onClick(item)
+  const tryRemove = useCallback(() => {
+    if (quantity > 0) removeCard?.(item.id)
+  }, [item.id, quantity, removeCard])
+
+  const handleArtClick = (event) => {
+    const tile = event.currentTarget
+    const rect = tile.getBoundingClientRect()
+    const yRatio = (event.clientY - rect.top) / rect.height
+
+    if (quantity > 0 && yRatio <= ZONE_RATIO) {
+      tryRemove()
+      releaseFocus(tile)
       return
     }
+
+    if (onClick) {
+      onClick(item)
+      releaseFocus(tile)
+      return
+    }
+
     if (addCard) tryAdd()
+    releaseFocus(tile)
   }
 
   const handleKeyDown = (event) => {
-    if (event.target.closest('button')) return
-
     if (event.key === 'Enter' || event.key === '+') {
       event.preventDefault()
       if (onClick) onClick(item)
       else if (addCard) tryAdd()
+      releaseFocus(event.currentTarget)
       return
     }
 
     if ((event.key === '-' || event.key === '_') && quantity > 0) {
       event.preventDefault()
-      removeCard?.(item.id)
-      return
-    }
-
-    if (event.key === 'i' || event.key === 'I' || event.key === ' ') {
-      if (event.key === ' ') event.preventDefault()
-      onPreview?.(item, isLandCard)
+      tryRemove()
+      releaseFocus(event.currentTarget)
     }
   }
 
-  const handleAdd = (event) => {
-    event.stopPropagation()
-    tryAdd()
-  }
-
-  const handleRemove = (event) => {
-    event.stopPropagation()
-    removeCard?.(item.id)
-  }
-
-  const handlePreview = (event) => {
-    event.stopPropagation()
-    onPreview?.(item, isLandCard)
-  }
+  const legacyControls =
+    showControls && addCard && removeCard && !artOnly ? (
+      <div className="card-tile-buttons">
+        {quantity > 0 && (
+          <>
+            <button
+              type="button"
+              className="card-remove-btn"
+              title="Убрать карту"
+              aria-label="Убрать карту"
+              onClick={(e) => {
+                e.stopPropagation()
+                tryRemove()
+              }}
+            >
+              −
+            </button>
+            <span className="card-qty">×{quantity}</span>
+          </>
+        )}
+        <button
+          type="button"
+          className="card-add-btn"
+          title={disabled ? blockReason : 'Добавить'}
+          aria-label={disabled ? blockReason : 'Добавить карту'}
+          aria-disabled={disabled}
+          onClick={(e) => {
+            e.stopPropagation()
+            tryAdd()
+          }}
+        >
+          ＋
+        </button>
+      </div>
+    ) : null
 
   return (
     <article
+      ref={tileRef}
       className={[
         'card-tile',
         addCard || onClick ? 'card-tile-clickable' : '',
         quantity > 0 ? 'card-tile-selected' : '',
         compact ? 'card-tile-compact' : '',
+        hasImage ? 'card-tile-has-art' : '',
+        artOnly ? 'card-tile-art-only' : '',
       ]
         .filter(Boolean)
         .join(' ')}
-      style={hasImage ? { backgroundImage: `url("${item.image_url}")` } : undefined}
-      onClick={handleTileActivate}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseDown={artOnly ? (e) => e.preventDefault() : undefined}
+      onClick={artOnly ? handleArtClick : undefined}
       onKeyDown={handleKeyDown}
-      tabIndex={0}
+      tabIndex={artOnly ? -1 : 0}
       role="button"
-      aria-label={`${item.name}${quantity ? `, в колоде ×${quantity}` : ''}. Enter — добавить, − — убрать, I — превью`}
+      aria-label={`${item.name}${quantity ? `, в колоде ×${quantity}` : ''}. Клик — добавить, верх — убрать`}
     >
-      {hasImage && (
-        <img
-          src={item.image_url}
-          alt=""
-          className="card-tile-preload"
-          onError={() => setImageFailed(true)}
-        />
-      )}
-
-      {onPreview && (
-        <button
-          type="button"
-          className="card-preview-btn"
-          title="Превью"
-          aria-label={`Превью: ${item.name}`}
-          onClick={handlePreview}
+      {artOnly ? (
+        <div
+          className="card-tile-visual"
+          style={{
+            '--card-zoom-scale': zoomScale,
+            '--card-zoom-origin': zoomOrigin,
+          }}
         >
-          ℹ
-        </button>
-      )}
-
-      <div className="card-tile-overlay">
-        <div className="card-tile-top">
-          <h4 className="card-tile-name">{item.name}</h4>
-          {!isLandCard && !compact && (
-            <span className="card-tile-number">#{item.card_number}</span>
+          <img
+            src={item.image_url}
+            alt=""
+            className="card-tile-img"
+            loading="lazy"
+            decoding="async"
+            onError={() => setImageFailed(true)}
+          />
+          {quantity > 0 && (
+            <div className="card-tile-zone card-tile-zone--remove" aria-hidden="true" />
+          )}
+          <div className="card-tile-zone card-tile-zone--add" aria-hidden="true" />
+          {quantity > 0 && (
+            <span className="card-tile-qty-badge" aria-hidden="true">
+              ×{quantity}
+            </span>
           )}
         </div>
+      ) : (
+        <>
+          {hasImage ? (
+            <img
+              src={item.image_url}
+              alt=""
+              className="card-tile-img"
+              loading="lazy"
+              decoding="async"
+              onError={() => setImageFailed(true)}
+            />
+          ) : (
+            <div className="card-tile-fallback" aria-hidden="true" />
+          )}
+        </>
+      )}
 
-        {!isLandCard && (
-          <div className="card-tile-stats">
-            <span>💧 {item.cost}</span>
-            {item.card_type === 'creature' && (
-              <span>
-                · ⚔️ {item.attack} · ❤️ {item.health}
-              </span>
-            )}
+      {!artOnly && (
+        <div
+          className="card-tile-overlay"
+          onClick={(event) => {
+            if (event.target.closest('button')) return
+            if (onClick) onClick(item)
+            else if (addCard) tryAdd()
+          }}
+        >
+          <div className="card-tile-top">
+            <h4 className="card-tile-name">{item.name}</h4>
           </div>
-        )}
 
-        {showControls && addCard && removeCard && (
-          <div className="card-tile-buttons">
-            {quantity > 0 && (
-              <>
-                <button
-                  type="button"
-                  className="card-remove-btn"
-                  title="Убрать карту"
-                  aria-label="Убрать карту"
-                  onClick={handleRemove}
-                >
-                  −
-                </button>
-                <span className="card-qty">×{quantity}</span>
-              </>
-            )}
-            <button
-              type="button"
-              className="card-add-btn"
-              title={disabled ? blockReason : 'Добавить'}
-              aria-label={disabled ? blockReason : 'Добавить карту'}
-              aria-disabled={disabled}
-              onClick={handleAdd}
-            >
-              ＋
-            </button>
-          </div>
-        )}
-      </div>
+          {!isLandCard && (
+            <div className="card-tile-stats">
+              <span>💧 {item.cost}</span>
+              {item.card_type === 'creature' && (
+                <span>
+                  · ⚔️ {item.attack} · ❤️ {item.health}
+                </span>
+              )}
+            </div>
+          )}
+
+          {legacyControls}
+        </div>
+      )}
     </article>
   )
 })

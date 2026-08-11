@@ -1,24 +1,9 @@
 /**
  * SaveDeckDialog — двухшаговый диалог сохранения колоды.
- *
- * Шаг 'form': ввод имени + кнопки «Отмена» / «Сохранить»
- * Шаг 'success': показ кода колоды + кнопка копирования + переход на /decks
- *
- * Закрытие по клику на overlay или Escape.
- * Enter в поле имени = сохранить.
- *
- * Props:
- *   - open: boolean
- *   - step: 'form' | 'success'
- *   - onClose: () => void
- *   - onConfirm: () => void  (вызывается при клике «Сохранить»)
- *   - onCopyCode: () => Promise<void>
- *   - onGoToDecks: () => void
- *   - saveName, cardTotal, landTotal
- *   - setSaveName: (name: string) => void
- *   - savedDeck: { name, code } | null
- *   - codeCopied: boolean
  */
+
+import { useEffect, useRef } from 'react'
+import { useFocusTrap } from '../../hooks/useFocusTrap'
 
 export function SaveDeckDialog({
   open,
@@ -34,6 +19,18 @@ export function SaveDeckDialog({
   onCopyCode,
   onGoToDecks,
 }) {
+  const dialogRef = useRef(null)
+  useFocusTrap(open, dialogRef)
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open, onClose])
+
   if (!open) return null
 
   const handleKeyDown = (e) => {
@@ -44,15 +41,16 @@ export function SaveDeckDialog({
   return (
     <div
       className="save-dialog-overlay"
-      onClick={onClose}
+      onMouseDown={onClose}
       role="presentation"
     >
       <div
+        ref={dialogRef}
         className="save-dialog"
         role="dialog"
         aria-modal="true"
         aria-labelledby="save-dialog-title"
-        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         {step === 'form' ? (
           <>
@@ -60,9 +58,10 @@ export function SaveDeckDialog({
             <p className="save-dialog-hint">
               Будет сохранено: {cardTotal} карт, {landTotal} земель
             </p>
-            <label>
+            <label htmlFor="save-deck-name">
               Название:
               <input
+                id="save-deck-name"
                 type="text"
                 value={saveName}
                 onChange={(e) => setSaveName(e.target.value)}
@@ -97,6 +96,7 @@ export function SaveDeckDialog({
                   className="save-dialog-copy-btn"
                   onClick={onCopyCode}
                   title="Скопировать код"
+                  aria-label={codeCopied ? 'Код скопирован' : 'Скопировать код колоды'}
                 >
                   {codeCopied ? '✓' : '📋'}
                 </button>

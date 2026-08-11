@@ -329,6 +329,11 @@
   flex: 1;
   min-width: 0;
   line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
 }
 
 .toast-dismiss {
@@ -422,6 +427,71 @@
   margin-top: 6px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.tally-ok {
+  color: var(--success-text);
+}
+
+.tally-bad {
+  color: var(--danger-text);
+}
+
+.deck-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.deck-progress-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.deck-progress-track.land {
+  height: 2px;
+}
+
+.deck-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.deck-progress-fill.cards.ok,
+.deck-progress-fill.lands.ok {
+  background: var(--success);
+}
+
+.deck-progress-modal {
+  margin-top: 8px;
+  max-width: 280px;
+  padding: 0;
+}
+
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mode-tabs button {
+  width: 100%;
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.mode-tabs .active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
 }
 
 .deck-modal-close {
@@ -549,6 +619,39 @@
   animation: pop 0.22s ease;
 }
 
+.preview-dialog-art {
+  width: min(420px, 92vw);
+  padding: 12px;
+  background: #111;
+}
+
+.preview-art-only {
+  width: 100%;
+  max-width: none;
+  aspect-ratio: var(--card-aspect);
+  border: none;
+  border-radius: 14px;
+  background: #1a1a1a;
+}
+
+.preview-art-only .preview-art-img {
+  object-fit: contain;
+}
+
+.preview-art-fallback-name {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.preview-art-fallback-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .preview-close {
   position: absolute;
   top: 12px;
@@ -576,10 +679,17 @@
   border-radius: 16px;
   border: 1px solid var(--border);
   background: linear-gradient(160deg, #ddd5c8, #f7efe3);
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
   display: grid;
   place-items: center;
+}
+
+.preview-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .preview-art-fallback {
@@ -592,6 +702,12 @@
 .preview-name {
   font-size: 26px;
   margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
 }
 
 .preview-sub {

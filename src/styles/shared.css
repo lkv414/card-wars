@@ -9,6 +9,32 @@
   box-sizing: border-box;
 }
 
+/* Text overflow utilities */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.text-clamp-2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.text-clamp-3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
 /* HTML и Body */
 html {
   scrollbar-width: none;
@@ -188,12 +214,33 @@ h3 {
 }
 
 /* Вспомогательные классы */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .validation {
   flex: 1 0 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   font-size: 14px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.validation > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Пустые состояния */

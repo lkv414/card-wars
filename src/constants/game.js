@@ -5,14 +5,13 @@ export const CARD_TYPES = {
 }
 
 export const LAND_TYPES = {
-  corn: { label: 'Кукурузное поле', icon: '🌽' },
-  ice: { label: 'Ледяная', icon: '❄️' },
-  desert: { label: 'Пустынная', icon: '🏜️' },
-  good: { label: 'Добрая', icon: '🌸' },
-  swamp: { label: 'Бесполезное болото', icon: '🌿' },
-  sand: { label: 'Песчаная', icon: '🏖️' },
-  blue: { label: 'Синяя равнина', icon: '🔵' },
-  any: { label: 'Любой', icon: '🌈' },
+  corn: { shortLabel: 'Кукуруза', label: 'Кукурузное поле', icon: '🌽' },
+  ice: { shortLabel: 'Ледяная', label: 'Ледяная земля', icon: '❄️' },
+  good: { shortLabel: 'Добрая', label: 'Добрая земля', icon: '🌸' },
+  swamp: { shortLabel: 'Болото', label: 'Бесполезное болото', icon: '🌿' },
+  sand: { shortLabel: 'Пустынная', label: 'Пустынная земля', icon: '🏜️' },
+  blue: { shortLabel: 'Синяя', label: 'Синяя равнина', icon: '🔵' },
+  any: { shortLabel: 'Радужные', label: 'Любая земля', icon: '🌈' },
 }
 
 export const DECK_LIMITS = {

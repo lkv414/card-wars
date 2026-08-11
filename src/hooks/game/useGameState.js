@@ -29,7 +29,7 @@ export function useGameState(game, reload) {
    * через reload() и повторяем попытку до MAX_RETRIES раз.
    */
   const writeGameState = useCallback(
-    async (patch) => {
+    async (patch, options = {}) => {
       if (!game?.id) {
         const e = 'Игра не загружена'
         setError(e)
@@ -39,17 +39,17 @@ export function useGameState(game, reload) {
       setIsApplying(true)
       setError(null)
 
-      const MAX_RETRIES = 2
+      const MAX_RETRIES = 3
 
       try {
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-          // Берём всегда АКТУАЛЬНЫЙ game из ref (обновляется useEffect'ом)
           const currentGame = gameRef.current || game
           if (!currentGame?.id) {
             throw new Error('Игра не загружена')
           }
 
-          const expectedVersion = currentGame.version
+          const expectedVersion =
+            options.expectedVersion ?? currentGame.version
           const next = {
             ...currentGame,
             ...patch,
@@ -76,17 +76,14 @@ export function useGameState(game, reload) {
             .maybeSingle()
 
           if (updateErr) {
-            // Реальная ошибка БД — не retry-им
             throw new Error(updateErr.message)
           }
 
           if (data) {
-            // Успех! Перечитываем state чтобы frontend получил свежие данные
             if (reload) await reload()
             return { success: true, version: data.version }
           }
 
-          // data === null → version conflict
           console.warn(`[writeGameState] version conflict (attempt ${attempt}/${MAX_RETRIES})`)
           if (reload) {
             const freshGame = await reload()
@@ -94,15 +91,17 @@ export function useGameState(game, reload) {
               gameRef.current = freshGame
             }
           }
-          // 100мс чтобы новый state точно пришёл в ref/react-state, если reload
-          // не возвращает объект (старые call-sites).
+          // Сбрасываем override — после reload берём актуальную version из ref
+          options.expectedVersion = undefined
           await new Promise((r) => setTimeout(r, 100))
         }
 
         throw new Error('Конфликт версий — состояние не синхронизировано. Перечитайте игру.')
       } catch (err) {
         const msg = err?.message || 'Не удалось обновить игру'
-        setError(msg)
+        if (!options.softFail) {
+          setError(msg)
+        }
         return { error: msg }
       } finally {
         setIsApplying(false)

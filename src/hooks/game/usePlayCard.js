@@ -14,7 +14,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 
-export function usePlayCard(game, writeGameState) {
+export function usePlayCard(game, writeGameState, reload) {
   return useCallback(
     async (cardIndex, zoneIndex, actionCost = 1) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -27,15 +27,12 @@ export function usePlayCard(game, writeGameState) {
       const card = hand[cardIndex]
       if (card.cost > actionCost) return { error: 'Карта дороже доступного действия' }
 
-      const newLog = [
-        ...(game.game_state?.log || []),
-        {
-          timestamp: Date.now(),
-          message: `${me.nickname || 'Игрок'} сыграл ${card.name} в зону ${zoneIndex + 1}`,
-        },
-      ]
+      const logEntry = {
+        timestamp: Date.now(),
+        message: `${me.nickname || 'Игрок'} сыграл ${card.name} в зону ${zoneIndex + 1}`,
+      }
+      const newLog = [...(game.game_state?.log || []), logEntry]
 
-      // Пробуем атомарный RPC play_card (миграция supabase/migrations/20260801200000_play_card_rpc.sql)
       try {
         const { data, error: rpcErr } = await supabase.rpc('play_card', {
           p_game_id: game.id,
@@ -45,15 +42,21 @@ export function usePlayCard(game, writeGameState) {
         })
         console.log('[usePlayCard] RPC response:', { data, rpcErr })
         if (!rpcErr && data?.success) {
-          // Обновляем log и перечитываем state
-          const logResult = await writeGameState({ game_state: { log: newLog } })
+          // RPC уже обновил hand/zones и bumpнул games.version — пишем log поверх актуальной version
+          const logResult = await writeGameState(
+            { game_state: { log: newLog } },
+            { expectedVersion: data.version, softFail: true },
+          )
+          if (logResult?.error) {
+            console.warn('[usePlayCard] log sync failed after RPC play:', logResult.error)
+            if (typeof reload === 'function') await reload()
+            return { success: true }
+          }
           return { success: true, logResult }
         }
-        // RPC не сработал — пробуем fallback
         if (rpcErr) {
           console.warn('[usePlayCard] RPC failed:', rpcErr.message, '— fallback')
           if (!/function .* does not exist/i.test(rpcErr.message || '')) {
-            // Реальная ошибка (не "функция не существует") — пробрасываем
             return { error: rpcErr.message }
           }
         } else if (data?.error) {
@@ -117,6 +120,6 @@ export function usePlayCard(game, writeGameState) {
       }
       return { success: true }
     },
-    [game, writeGameState]
+    [game, writeGameState, reload]
   )
 }

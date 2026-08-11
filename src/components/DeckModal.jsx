@@ -3,15 +3,9 @@ import { DECK_LIMITS } from '../constants/game'
 import { CardGrid } from './CardGrid'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { groupCardsByCost, groupCardsByType } from '../utils/cardSort'
+import { findByDeckEntryId, sumDeckQuantities } from '../utils/deckState'
 
 const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
-
-const normalizeId = (value) => String(value).trim().toLowerCase()
-
-const findById = (list, id) => {
-  const normalized = normalizeId(id)
-  return list.find((item) => normalizeId(item.id) === normalized)
-}
 
 export function DeckModal({
   open,
@@ -24,7 +18,6 @@ export function DeckModal({
   removeCard,
   addLand,
   removeLand,
-  onPreview,
   onBlockedAdd,
 }) {
   const dialogRef = useRef(null)
@@ -43,8 +36,8 @@ export function DeckModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  const cardTotal = Object.values(selectedCards).reduce((a, b) => a + b, 0)
-  const landTotal = Object.values(selectedLands).reduce((a, b) => a + b, 0)
+  const cardTotal = sumDeckQuantities(selectedCards)
+  const landTotal = sumDeckQuantities(selectedLands)
   const cardsOk = cardTotal === CARD_LIMITS.maxTotal
   const landsOk = landTotal === LAND_LIMITS.maxTotal
 
@@ -52,7 +45,7 @@ export function DeckModal({
     () =>
       Object.keys(selectedCards).map((id) => ({
         id,
-        found: findById(cards, id),
+        found: findByDeckEntryId(cards, id),
       })),
     [selectedCards, cards]
   )
@@ -61,7 +54,7 @@ export function DeckModal({
     () =>
       Object.keys(selectedLands).map((id) => ({
         id,
-        found: findById(lands, id),
+        found: findByDeckEntryId(lands, id),
       })),
     [selectedLands, lands]
   )
@@ -184,8 +177,7 @@ export function DeckModal({
                     selectedCards={selectedCards}
                     addCard={addCard}
                     removeCard={removeCard}
-                    cardTotal={cardTotal}
-                    onPreview={onPreview}
+                    selectionTotal={cardTotal}
                     onBlockedAdd={onBlockedAdd}
                     compact
                   />
@@ -222,9 +214,8 @@ export function DeckModal({
                 selectedCards={selectedLands}
                 addCard={addLand}
                 removeCard={removeLand}
-                cardTotal={landTotal}
+                selectionTotal={landTotal}
                 isLands
-                onPreview={onPreview}
                 onBlockedAdd={onBlockedAdd}
                 compact
               />

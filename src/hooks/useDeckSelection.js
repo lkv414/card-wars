@@ -1,32 +1,32 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { DECK_LIMITS } from '../constants/game'
-import { applyDeckEntries, normalizeDeckEntryId } from '../utils/deckState'
+import {
+  applyDeckEntries,
+  loadDeckSelection,
+  normalizeDeckEntryId,
+  saveDeckSelection,
+} from '../utils/deckState'
 import { validateDeck } from '../utils/deckValidation'
 
-const STORAGE_KEY = 'deckSelection'
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { selectedCards: {}, selectedLands: {} }
-    return JSON.parse(raw)
-  } catch {
-    return { selectedCards: {}, selectedLands: {} }
-  }
-}
-
-function saveToStorage(selectedCards, selectedLands) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ selectedCards, selectedLands }))
+function decrementEntry(setter, id) {
+  const normalizedId = normalizeDeckEntryId(id)
+  setter((prev) => {
+    const next = { ...prev }
+    const current = Number(next[normalizedId] || 0)
+    const updated = current - 1
+    if (updated <= 0) delete next[normalizedId]
+    else next[normalizedId] = updated
+    return next
+  })
 }
 
 export function useDeckSelection() {
-  const initial = useMemo(() => loadFromStorage(), [])
+  const initial = useMemo(() => loadDeckSelection(), [])
   const [selectedCards, setSelectedCards] = useState(initial.selectedCards)
   const [selectedLands, setSelectedLands] = useState(initial.selectedLands)
 
-  // Сохранять в localStorage при каждом изменении
   useEffect(() => {
-    saveToStorage(selectedCards, selectedLands)
+    saveDeckSelection(selectedCards, selectedLands)
   }, [selectedCards, selectedLands])
 
   const { cardTotal, landTotal, errors, warnings } = useMemo(
@@ -34,34 +34,23 @@ export function useDeckSelection() {
     [selectedCards, selectedLands]
   )
 
-  const addCard = useCallback((id) =>
-    setSelectedCards((p) => applyDeckEntries(p, { [id]: 1 }, DECK_LIMITS.cards)), [])
+  const addCard = useCallback(
+    (id) => setSelectedCards((p) => applyDeckEntries(p, { [id]: 1 }, DECK_LIMITS.cards)),
+    []
+  )
 
-  const removeCard = useCallback((id) => {
-    const normalizedId = normalizeDeckEntryId(id)
-    setSelectedCards((p) => {
-      const next = { ...p }
-      const current = Number(next[normalizedId] || 0)
-      const updated = current - 1
-      if (updated <= 0) delete next[normalizedId]
-      else next[normalizedId] = updated
-      return next
-    })
-  }, [])
+  const removeCard = useCallback((id) => decrementEntry(setSelectedCards, id), [])
 
-  const addLand = useCallback((id) =>
-    setSelectedLands((p) => applyDeckEntries(p, { [id]: 1 }, DECK_LIMITS.lands)), [])
+  const addLand = useCallback(
+    (id) => setSelectedLands((p) => applyDeckEntries(p, { [id]: 1 }, DECK_LIMITS.lands)),
+    []
+  )
 
-  const removeLand = useCallback((id) => {
-    const normalizedId = normalizeDeckEntryId(id)
-    setSelectedLands((p) => {
-      const next = { ...p }
-      const current = Number(next[normalizedId] || 0)
-      const updated = current - 1
-      if (updated <= 0) delete next[normalizedId]
-      else next[normalizedId] = updated
-      return next
-    })
+  const removeLand = useCallback((id) => decrementEntry(setSelectedLands, id), [])
+
+  const loadSelection = useCallback((cards, lands) => {
+    setSelectedCards(cards || {})
+    setSelectedLands(lands || {})
   }, [])
 
   const clearDeck = useCallback(() => {
@@ -79,6 +68,7 @@ export function useDeckSelection() {
     addLand,
     removeLand,
     clearDeck,
+    loadSelection,
     cardTotal,
     landTotal,
     errors,

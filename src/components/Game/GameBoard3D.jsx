@@ -1,485 +1,14 @@
 /**
  * GameBoard3D — 3D-сцена игрового стола (Three.js + react-three-fiber).
- *
- * Адаптивная сцена для 2-4 игроков с улучшенными картами.
- * Весь HUD (кнопки, баннеры, статусы) вынесен в <HUDOverlay> рядом.
- *
- * Композиция (от дальнего к ближнему к камере):
- *   - Для 2 игроков: противник напротив, игрок внизу
- *   - Для 3-4 игроков: игроки расположены по кругу
- *   
- * Карты — 3D-плоскости через <EnhancedCard3DModel> с отображением характеристик.
- * Hover/select через raycast.
  */
-import React, { Suspense, useMemo, useState, useCallback, useRef, useEffect } from 'react'
+import { Suspense, useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import * as THREE from 'three'
-import { EnhancedCard3DModel } from './EnhancedCard3DModel'
 import { HUDOverlay } from './HUDOverlay'
-import { ZONES_PER_PLAYER } from '../../constants/gameMultiplayer'
+import { GameScene } from './gameBoard3D/GameScene'
+import { calculateCameraPosition, TABLE_DEPTH, CAMERA_HEIGHT, CAMERA_BACK } from './gameBoard3D/layout'
 import { safePlayers, safePlayer } from '../../utils/safePlayer'
-import { hasFlipAbility } from '../../hooks/game'
 
-// Размеры стола и слотов
-const TABLE_DEPTH = 12
-const TABLE_RADIUS = 6  // радиус круглого стола
-const SLOT_WIDTH = 1.1  // плитки чуть меньше
-const SLOT_DEPTH = 1.4
-const SLOT_GAP = 0.4
-const NUM_SLOTS = ZONES_PER_PLAYER
-
-// Высота камеры — высоко над столом, чтобы видеть все стороны
-const CAMERA_HEIGHT = 9
-const CAMERA_BACK = 2  // ближе к центру, выше
-
-// Углы для расположения игроков по кругу (для 3-4 игроков)
-const PLAYER_ANGLES = {
-  2: [180, 0],        // 2 игрока: напротив друг друга
-  3: [180, 60, 300], // 3 игрока: равномерно по кругу
-  4: [180, 90, 0, 270] // 4 игрока: по квадрантам
-}
-
-// Расстояние от центра до стороны игрока
-const PLAYER_DISTANCE = 4
-
-/**
- * Хелпер для расчета позиций слотов игрока
- * @param {number} playerIndex - Индекс игрока
- * @param {number} playerCount - Общее количество игроков
- * @returns {Array} Массив позиций {building, land} для каждого слота
- */
-function calculatePlayerSlotPositions(playerIndex, playerCount) {
-  const angle = PLAYER_ANGLES[playerCount]?.[playerIndex] || 0
-  const rad = (angle * Math.PI) / 180
-  
-  // Для 2 игроков: специфические позиции
-  if (playerCount === 2) {
-    if (playerIndex === 0) {
-      // Игрок 0 (нижний)
-      return Array.from({ length: NUM_SLOTS }).map((_, i) => {
-        const x = (i - (NUM_SLOTS - 1) / 2) * (SLOT_WIDTH + SLOT_GAP)
-        return {
-          building: [x, 0.05, 3.0],
-          land: [x, 0.05, 1.5],
-        }
-      })
-    } else {
-      // Игрок 1 (верхний)
-      return Array.from({ length: NUM_SLOTS }).map((_, i) => {
-        const x = -(i - (NUM_SLOTS - 1) / 2) * (SLOT_WIDTH + SLOT_GAP)
-        return {
-          building: [x, 0.05, -3.0],
-          land: [x, 0.05, -1.5],
-        }
-      })
-    }
-  }
-  
-  // Для 3-4 игроков: расположение по кругу
-  const baseX = Math.cos(rad) * PLAYER_DISTANCE
-  const baseZ = Math.sin(rad) * PLAYER_DISTANCE
-  
-  return Array.from({ length: NUM_SLOTS }).map((_, i) => {
-    // Слоты расположены дугой относительно игрока
-    const slotOffset = (i - (NUM_SLOTS - 1) / 2) * (SLOT_WIDTH + SLOT_GAP)
-    // Поворот слотов вдоль окружности
-    const slotX = baseX + slotOffset * Math.cos(rad + Math.PI / 2)
-    const slotZ = baseZ + slotOffset * Math.sin(rad + Math.PI / 2)
-    
-    return {
-      building: [slotX, 0.05, slotZ],
-      land: [slotX, 0.05, slotZ + 1.5],
-    }
-  })
-}
-
-// Хелпер: угол поворота по Y для слота `playerIndex` так, чтобы нормаль
-// текстуры карты смотрела К ВЛАДЕЛЬЦУ. Угол поворота = π - угол
-// расположения игрока (так для player0 (angle=π) → rotation.y=0 = лицом
-// к 180°, для player1 (angle=0) → rotation.y=π = лицом к 0°).
-function ownerRotationY(playerIndex, playerCount) {
-  const angleDeg = PLAYER_ANGLES[playerCount]?.[playerIndex] || 0
-  const angleRad = (angleDeg * Math.PI) / 180
-  return Math.PI - angleRad
-}
-
-/**
- * Хелпер для расчета позиции камеры для игрока
- * @param {number} playerIndex - Индекс текущего игрока
- * @param {number} playerCount - Общее количество игроков
- * @returns {Array} [x, y, z] позиция камеры
- */
-function calculateCameraPosition(playerIndex, playerCount) {
-  const angle = PLAYER_ANGLES[playerCount]?.[playerIndex] || 0
-  const rad = (angle * Math.PI) / 180
-
-  if (playerCount === 2) {
-    if (playerIndex === 0) {
-      return [0, CAMERA_HEIGHT, TABLE_DEPTH / 2 - CAMERA_BACK]
-    } else {
-      return [0, CAMERA_HEIGHT, -TABLE_DEPTH / 2 + CAMERA_BACK]
-    }
-  }
-
-  // Для 3-4 игроков
-  const camDistance = PLAYER_DISTANCE + 3
-  const camX = Math.cos(rad) * camDistance
-  const camZ = Math.sin(rad) * camDistance
-  return [camX, CAMERA_HEIGHT, camZ]
-}
-
-/**
- * 3D-сцена внутри Canvas. Получает game, playerId, колбэки.
- * HUD НЕ рендерится здесь — он в <HUDOverlay>.
- */
-function Scene({ 
-  game, 
-  playerId, 
-  onPlayCard, 
-  onAttack, 
-  onFlipCard,
-  selectedCardIndex, 
-  setSelectedCardIndex,
-  selectedZoneIndex,
-  setSelectedZoneIndex
-}) {
-  const players = useMemo(() => safePlayers(game.players), [game.players])
-  const playerCount = players.length
-  let myIndex = players.findIndex(p => p.player_id === playerId)
-
-  if (myIndex === -1 && players.length > 0) {
-    // Fallback для старых данных — берём первого, не падаем на players[1] если их <2
-    myIndex = 0
-  }
-
-  // safePlayer гарантирует все поля; myIndex === -1 → safePlayer вернёт фоллбек
-  const me = myIndex >= 0 ? safePlayer(players, players[myIndex]?.player_id) : safePlayer([], null)
-  const isYourTurn = game.current_player_id === playerId
-  const isFinished = game.status === 'finished'
-
-  // Позиции слотов для всех игроков
-  const playerSlotPositions = useMemo(() => {
-    return Array.from({ length: playerCount }).map((_, index) => 
-      calculatePlayerSlotPositions(index, playerCount)
-    )
-  }, [playerCount])
-
-  // Позиции слотов текущего игрока
-  const mySlotPositions = playerSlotPositions[myIndex] || calculatePlayerSlotPositions(myIndex, playerCount)
-  
-  // Позиции слотов противников
-  const opponentSlotPositions = useMemo(() => {
-    const opponents = []
-    for (let i = 0; i < playerCount; i++) {
-      if (i !== myIndex) {
-        opponents.push({
-          index: i,
-          positions: calculatePlayerSlotPositions(i, playerCount)
-        })
-      }
-    }
-    return opponents
-  }, [playerCount, myIndex])
-
-  // Обработка клика по земле для размещения карты
-    const handleLandClick = useCallback(async (zoneIndex) => {
-      if (!isYourTurn || isFinished || selectedCardIndex === null) return
-      try {
-        // Третий аргумент — actionCost (1 карта), а не myIndex.
-        // myIndex RPC берёт сама из JWT/guestId.
-        await onPlayCard(selectedCardIndex, zoneIndex, 1)
-      } catch (e) {
-        console.error('Play card failed:', e)
-      } finally {
-        // Сбрасываем выделение в ЛЮБОМ случае — иначе карта «зависнет» выбранной.
-        setSelectedCardIndex(null)
-        setSelectedZoneIndex(null)
-      }
-    }, [isYourTurn, isFinished, selectedCardIndex, onPlayCard, setSelectedCardIndex, setSelectedZoneIndex])
-
-  // Обработка клика по карте в зоне (атака или флюп)
-  const handleZoneCardClick = useCallback(async (playerIndex, zoneIndex, card, cardIndex) => {
-    if (!isYourTurn || isFinished) return
-
-    // Атаковать можно ТОЛЬКО по чужим картам (не по своим).
-        // Клик по своей карте в 3D-сцене — это flip-ability, а не атака.
-        if (playerIndex === myIndex) {
-          if (hasFlipAbility(card)) {
-            const choice = window.confirm('Флюпнуть карту вместо атаки?')
-            if (choice) onFlipCard(myIndex, zoneIndex, card.id || cardIndex)
-          }
-          return
-        }
-
-    // Атака чужой карты: toPlayerId обязателен для 3-4 игроков.
-    const toPlayerId = players[playerIndex]?.player_id
-    if (!toPlayerId) return
-    try {
-      await onAttack(zoneIndex, card.id || cardIndex, zoneIndex, toPlayerId)
-    } catch (e) {
-      console.error('Attack failed:', e)
-    }
-  }, [isYourTurn, isFinished, myIndex, onAttack, onFlipCard, players])
-
-  return (
-    <>
-      {/* Свет — максимум 3 источника (perf).
-          - ambient: базовое освещение всего
-          - directional: основной + тени
-          - point (тёплый): подсвечивает центр стола снизу */}
-      <ambientLight intensity={0.7} />
-      <directionalLight
-        position={[5, 8, 5]}
-        intensity={1.4}
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-      />
-      <pointLight position={[0, 3, 0]} intensity={0.6} color="#fff4d4" distance={8} decay={2} />
-      {/* Per-player подсветки убраны для производительности.
-          Различаем противников через emissive-цвета слотов (см. ниже). */}
-
-      {/* === Декор стола === */}
-      {/* Основной каменный диск (тёмный, чуть шершавый) */}
-      <mesh receiveShadow position={[0, 0, 0]}>
-        <cylinderGeometry args={[TABLE_RADIUS, TABLE_RADIUS, 0.18, 64]} />
-        <meshStandardMaterial color="#1f2940" roughness={0.95} metalness={0.05} />
-      </mesh>
-
-      {/* Внутренний круг — каменная плита с лёгким золотым тиснением */}
-      <mesh receiveShadow position={[0, 0.092, 0]}>
-        <cylinderGeometry args={[TABLE_RADIUS - 0.5, TABLE_RADIUS - 0.5, 0.02, 64]} />
-        <meshStandardMaterial color="#2a3554" roughness={0.7} metalness={0.15} />
-      </mesh>
-
-      {/* Золотое кольцо-обод по краю стола (большое) */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.094, 0]}>
-        <ringGeometry args={[TABLE_RADIUS - 0.55, TABLE_RADIUS - 0.4, 64]} />
-        <meshStandardMaterial color="#ffd700" emissive="#ffd700" emissiveIntensity={0.35} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* Центральный золотой круг (зона действия/мана) */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.095, 0]}>
-        <ringGeometry args={[1.6, 2.0, 48]} />
-        <meshStandardMaterial color="#ffd700" emissive="#ffd700" emissiveIntensity={0.3} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* 8 декоративных рун вокруг центрального круга */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const a = (i / 8) * Math.PI * 2
-        const r = 1.8
-        const x = Math.cos(a) * r
-        const z = Math.sin(a) * r
-        return (
-          <mesh key={`rune-${i}`} rotation={[-Math.PI / 2, 0, a]} position={[x, 0.097, z]}>
-            <ringGeometry args={[0.12, 0.18, 6]} />
-            <meshStandardMaterial color="#7fb3ff" emissive="#7fb3ff" emissiveIntensity={0.6} side={THREE.DoubleSide} />
-          </mesh>
-        )
-      })}
-
-      {/* Внутренний заливочный круг (полупрозрачный, как мана-поле) */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.093, 0]}>
-        <circleGeometry args={[1.55, 48]} />
-        <meshStandardMaterial color="#3d5a8a" transparent opacity={0.18} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* Рендерим всех противников */}
-      {opponentSlotPositions.map((opp) => {
-        // safePlayer защищает от players[opp.index] === undefined / sparse arrays
-        const opponent = safePlayer(players, players[opp.index]?.player_id)
-        if (!opponent || opponent.__isFallback) return null
-
-        // safePlayer гарантирует zones как массив массивов. После loadGame зоны
-                // приходят как Array<Array<Card>>, но старый код мог ожидать {0:[],1:[],...}.
-                // Оба формата поддерживаем через normalize.
-                const opponentZonesRaw = opponent.zones
-                const opponentZones = Array.isArray(opponentZonesRaw)
-                  ? opponentZonesRaw
-                  : (opponentZonesRaw && typeof opponentZonesRaw === 'object'
-                      ? [opponentZonesRaw[0] || [], opponentZonesRaw[1] || [], opponentZonesRaw[2] || [], opponentZonesRaw[3] || []]
-                      : [[], [], [], []])
-
-                return (
-                  <React.Fragment key={`player-${opponent.id}`}>
-                    {/* СТРОЕНИЯ противника */}
-                    {opp.positions.map((p, i) => (
-                      <BuildingSlot
-                        key={`p${opponent.id}-b-${i}`}
-                        position={p.building}
-                        isOpponent
-                      />
-                    ))}
-
-                    {/* ЗЕМЛИ и карты противников */}
-                    {opp.positions.map((p, i) => {
-                      const zone = opponentZones[i] || []
-                      // После loadGame zone это просто массив карт
-                      const cards = Array.isArray(zone) ? zone : (zone?.cards || [])
-
-              return (
-                              <EnhancedSlot
-                                key={`p${opponent.id}-land-${i}`}
-                                position={p.land}
-                                cards={cards}
-                                ownerAngleRad={ownerRotationY(opp.index, playerCount)}
-                                isOwnerMe={false}
-                                isMyTurn={isYourTurn}
-                                onZoneCardClick={(card, idx) => handleZoneCardClick(opp.index, i, card, idx)}
-                              />
-                            )
-                          })}
-          </React.Fragment>
-        )
-      })}
-
-      {/* СТРОЕНИЯ текущего игрока */}
-      {mySlotPositions.map((p, i) => (
-        <BuildingSlot key={`me-b-${i}`} position={p.building} />
-      ))}
-
-      {/* ЗЕМЛИ и карты текущего игрока — подсвечиваем земли когда выбрана карта */}
-                  {mySlotPositions.map((p, i) => {
-                    const zone = (me?.zones || [])[i] || []
-                    // После loadGame zone это просто массив карт (Array<Card>).
-                    // Старый код ожидал {cards: []} — оба формата поддерживаем.
-                    const cards = Array.isArray(zone) ? zone : (zone?.cards || [])
-                    const isSelectedZone = selectedZoneIndex === i
-                    // Подсветка земли: наш ход + выбрана карта в руке + слот свободен
-                    const isLandPlayable = isYourTurn && selectedCardIndex !== null && cards.length === 0
-
-              return (
-                              <EnhancedSlot
-                                key={`me-land-${i}`}
-                                position={p.land}
-                                cards={cards}
-                                ownerAngleRad={ownerRotationY(myIndex, playerCount)}
-                                isOwnerMe={true}
-                                isSelected={isSelectedZone}
-                                isMyTurn={isYourTurn}
-                                highlighted={isLandPlayable}
-                                onClick={() => handleLandClick(i)}
-                                onZoneCardClick={(card, idx) => handleZoneCardClick(myIndex, i, card, idx)}
-                              />
-                            )
-                          })}
-
-      {/* Рука вынесена в HUDOverlay (DOM-слой) — летающее 3D-меню убрано */}
-    </>
-  )
-}
-
-/**
- * EnhancedSlot — слот игрока с EnhancedCard3DModel.
- *
- * Поворачивает всю группу по Y на угол владельца (`ownerAngleRad`) —
- * чтобы нормаль текстуры карт и земли была направлена к владельцу
- * (от центра стола наружу). Текстура в EnhancedCard3DModel — DoubleSide,
- * чтобы картинка была видна с обеих сторон после поворота.
- *
- * isOwnerMe — true если это слот ТЕКУЩЕГО игрока (рендерим подсветку
- * drop-target и флип-кнопку только на нём).
- */
-function EnhancedSlot({
-  position,
-  cards = [],
-  ownerAngleRad = 0,
-  isOwnerMe = false,
-  isSelected = false,
-  isMyTurn = false,
-  onClick,
-  onZoneCardClick,
-  highlighted = false,
-  onPointerEnterZone = null,
-  onPointerLeaveZone = null,
-  zoneIndex = -1,
-}) {
-  const [isHovered, setIsHovered] = useState(false)
-  return (
-    <group position={position} rotation={[0, ownerAngleRad, 0]}>
-      {/* Высокий блок-земля (как пьедестал для карт) */}
-      <mesh
-        receiveShadow
-        castShadow
-        onClick={(e) => {
-          e.stopPropagation()
-          if (onClick) onClick()
-        }}
-        onPointerOver={(e) => {
-          e.stopPropagation()
-          setIsHovered(true)
-          // Подсвечиваем курсором когда можно drop
-          if (isMyTurn && highlighted) {
-            document.body.style.cursor = 'grab'
-          }
-          if (onPointerEnterZone) onPointerEnterZone(zoneIndex)
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation()
-          setIsHovered(false)
-          document.body.style.cursor = 'default'
-          if (onPointerLeaveZone) onPointerLeaveZone(zoneIndex)
-        }}
-      >
-        <boxGeometry args={[SLOT_WIDTH, 0.5, SLOT_DEPTH]} />
-        <meshStandardMaterial
-          color={isHovered && highlighted ? '#7d6eaa' : (highlighted ? '#5d4e8a' : (isOwnerMe ? '#2c3e5e' : '#1f2a40'))}
-          emissive={highlighted ? (isHovered ? '#80ff80' : '#4caf50') : '#000000'}
-          emissiveIntensity={isHovered && highlighted ? 0.6 : (highlighted ? 0.4 : 0)}
-          roughness={0.7}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* Карты стоят на верхушке блока. Карты на земле — открытая информация,
-          их видят все игроки (нормаль повёрнута к владельцу через group rotation).
-          Подняты на 0.55 (а не 0.3) — карты визуально «парят» над землёй. */}
-      {cards.map((card, ci) => {
-        const isFlipped = card?.status === 'flipped' || card?.isFlipped
-        const canShowStats = true
-
-        return (
-          <EnhancedCard3DModel
-            key={card.id || card.instanceId || ci}
-            card={card}
-            position={[0, 0.55 + ci * 0.18, -SLOT_DEPTH / 2 + 0.5 + ci * 0.18]}
-            rotation={[-Math.PI / 2.4, 0, isFlipped ? Math.PI / 2 : 0]}
-            isFaceUp={true}
-            isSelected={isSelected}
-            isFlipped={isFlipped}
-            showStats={canShowStats}
-            showFlipOption={isMyTurn && isOwnerMe}
-            onClick={() => {
-              if (onZoneCardClick) onZoneCardClick(card, ci)
-            }}
-          />
-        )
-      })}
-    </group>
-  )
-}
-
-/**
- * BuildingSlot — плоская плитка (как декор, чуть приподнятая над столом).
- */
-function BuildingSlot({ position, isOpponent = false }) {
-  return (
-    <mesh receiveShadow position={position}>
-      <boxGeometry args={[SLOT_WIDTH, 0.1, SLOT_DEPTH]} />
-      <meshStandardMaterial
-        color={isOpponent ? '#1a2335' : '#243a52'}
-        emissive="#3b82f6"
-        emissiveIntensity={0.15}
-        roughness={0.6}
-      />
-    </mesh>
-  )
-}
-
-/**
- * Главный компонент: Canvas + Scene + HUDOverlay.
- */
 export function GameBoard3D({
   game,
   playerId,
@@ -495,12 +24,11 @@ export function GameBoard3D({
 }) {
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
   const [selectedZoneIndex, setSelectedZoneIndex] = useState(null)
-  
+
   const players = useMemo(() => safePlayers(game.players), [game.players])
   const playerCount = players.length
-  const myIndex = players.findIndex(p => p.player_id === playerId)
+  const myIndex = players.findIndex((p) => p.player_id === playerId)
 
-  // Камера — подвешена над стороной стола текущего игрока
   const cameraPosition = useMemo(() => {
     if (myIndex === -1) {
       return [0, CAMERA_HEIGHT, TABLE_DEPTH / 2 - CAMERA_BACK]
@@ -508,78 +36,71 @@ export function GameBoard3D({
     return calculateCameraPosition(myIndex, playerCount)
   }, [myIndex, playerCount])
 
-  // Данные для HUDOverlay
-  // safePlayer гарантирует что me никогда не null со всеми нужными полями
   const isPlayer1 = playerId === players[0]?.player_id
   const fallbackPlayer = isPlayer1 ? players[0] : players[1]
   const me = safePlayer(players, players[myIndex]?.player_id || fallbackPlayer?.player_id)
-  const opp = safePlayer(players, players.find((p) => p.player_id !== (players[myIndex]?.player_id || playerId))?.player_id)
+  const opp = safePlayer(
+    players,
+    players.find((p) => p.player_id !== (players[myIndex]?.player_id || playerId))?.player_id
+  )
   const isYourTurn = game.current_player_id === playerId
   const isFinished = game.status === 'finished'
-  const winnerId = game.winner_id
-  const handCards = me?.hand || []  // safePlayer даёт hand: []
+  const handCards = me?.hand || []
 
-  // Обработчик флипа карты
-  const handleFlipCard = useCallback((playerIndex, zoneIndex, cardId) => {
-    if (onFlipCard) {
-      onFlipCard(playerIndex, zoneIndex, cardId)
-    }
-  }, [onFlipCard])
+  const handleFlipCard = useCallback(
+    (playerIndex, zoneIndex, cardId) => {
+      onFlipCard?.(playerIndex, zoneIndex, cardId)
+    },
+    [onFlipCard]
+  )
 
-  // Используем ref чтобы всегда получать актуальный onPlayCard (избегаем stale closure)
-    const onPlayCardRef = useRef(onPlayCard)
-    useEffect(() => {
-      onPlayCardRef.current = onPlayCard
-    }, [onPlayCard])
+  const onPlayCardRef = useRef(onPlayCard)
+  useEffect(() => {
+    onPlayCardRef.current = onPlayCard
+  }, [onPlayCard])
 
-    // Snap-to-target drop: при drop над Canvas (или где угодно вне ручной панели)
-    // ставим карту в первую свободную зону — пользователю не нужно прицеливаться в 3D.
-    // Для точного drop на 3D нужен raycast, но snap-to-target проще и не уступает по UX.
-    const handleCanvasDrop = useCallback(
-      (e) => {
-        e.preventDefault()
-        const cardIdxStr = e.dataTransfer.getData('text/card-index')
-        if (!cardIdxStr) return
-        const cardIdx = parseInt(cardIdxStr, 10)
-        if (Number.isNaN(cardIdx)) return
-        // Если drop произошёл ВНЕ нашей ручной панели — играем в первую свободную землю.
-        // (Если drop НАД hud-hand — игнорируем, не играем.)
-        const inHandArea = e.target?.closest?.('.hud-hand')
-        if (inHandArea) return
-        // Находим первую свободную землю через cards моих зон
-        const myZones = me?.zones || []
-        const firstEmpty = myZones.findIndex((z) => Array.isArray(z) ? z.length === 0 : (z?.cards?.length || 0) === 0)
-        if (firstEmpty === -1) return
-        if (typeof onPlayCardRef.current === 'function') {
-          Promise.resolve(onPlayCardRef.current(cardIdx, firstEmpty, 1)).catch((err) => {
-            console.error('[Drop] play failed:', err)
-          })
-        }
-      },
-      [
-  me, // используется в myZones.findIndex
-    ]
-    )
+  const handleCanvasDrop = useCallback(
+    (e) => {
+      e.preventDefault()
+      const cardIdxStr = e.dataTransfer.getData('text/card-index')
+      if (!cardIdxStr) return
+      const cardIdx = parseInt(cardIdxStr, 10)
+      if (Number.isNaN(cardIdx)) return
+      if (e.target?.closest?.('.hud-hand')) return
 
-    const handleCanvasDragOver = useCallback((e) => {
-      if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('text/card-index')) {
-        e.preventDefault()
-        e.dataTransfer.dropEffect = 'move'
+      const myZones = me?.zones || []
+      const firstEmpty = myZones.findIndex((z) =>
+        Array.isArray(z) ? z.length === 0 : (z?.cards?.length || 0) === 0
+      )
+      if (firstEmpty === -1) return
+      if (typeof onPlayCardRef.current === 'function') {
+        Promise.resolve(onPlayCardRef.current(cardIdx, firstEmpty, 1)).catch((err) => {
+          console.error('[Drop] play failed:', err)
+        })
       }
-    }, [])
+    },
+    [me]
+  )
 
-    return (
-      <div className="game-board-3d">
-        <Canvas
-          shadows
-          camera={{ position: cameraPosition, fov: 60 }}
-          gl={{ antialias: true }}
-          style={{ background: 'linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 100%)' }}
-          onDragOver={handleCanvasDragOver}
-          onDrop={handleCanvasDrop}
-        >
+  const handleCanvasDragOver = useCallback((e) => {
+    if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('text/card-index')) {
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'move'
+    }
+  }, [])
+
+  return (
+    <div className="game-board-3d">
+      <Canvas
+        shadows
+        camera={{ position: cameraPosition, fov: 60 }}
+        gl={{ antialias: true }}
+        style={{ background: 'linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 100%)' }}
+        onDragOver={handleCanvasDragOver}
+        onDrop={handleCanvasDrop}
+      >
         <Suspense fallback={null}>
-          <Scene
+          <GameScene
             game={game}
             playerId={playerId}
             onPlayCard={onPlayCard}
@@ -591,9 +112,6 @@ export function GameBoard3D({
             setSelectedZoneIndex={setSelectedZoneIndex}
           />
         </Suspense>
-
-        {/* OrbitControls: можно крутить камеру мышью (для дебага).
-            В проде лучше выключить, чтобы игрок не крутил стол. */}
         <OrbitControls
           enablePan={false}
           minPolarAngle={Math.PI / 6}
@@ -604,29 +122,24 @@ export function GameBoard3D({
       </Canvas>
 
       <HUDOverlay
-              playerId={playerId}
-              isYourTurn={isYourTurn}
-              isFinished={isFinished}
-              winnerId={winnerId}
-              me={me}
-              opp={opp}
-              handCards={handCards}
-              log={game.game_state?.log || []}
-              onEndTurn={onEndTurn}
-              onForfeit={onForfeit}
-              onGameEnd={onGameEnd}
-              realtimeStatus={realtimeStatus}
-              // для рендера руки в HUD + клика по картам руки
-              selectedCardIndex={selectedCardIndex}
-              setSelectedCardIndex={setSelectedCardIndex}
-              // для диагностики «кнопка не работает»
-              isApplying={isApplying}
-              actionError={actionError}
-              // для drag-and-drop карты на землю
-              onPlayCard={onPlayCard}
-            />
-
-      <style>{`.game-board-3d { position: relative; width: 100vw; height: 100vh; overflow: hidden; }`}</style>
+        playerId={playerId}
+        isYourTurn={isYourTurn}
+        isFinished={isFinished}
+        winnerId={game.winner_id}
+        me={me}
+        opp={opp}
+        handCards={handCards}
+        log={game.game_state?.log || []}
+        onEndTurn={onEndTurn}
+        onForfeit={onForfeit}
+        onGameEnd={onGameEnd}
+        realtimeStatus={realtimeStatus}
+        selectedCardIndex={selectedCardIndex}
+        setSelectedCardIndex={setSelectedCardIndex}
+        isApplying={isApplying}
+        actionError={actionError}
+        onPlayCard={onPlayCard}
+      />
     </div>
   )
 }

@@ -11,14 +11,15 @@
  *                deck_remaining, player_order }],
  *   }
  */
-import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
+import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
 import { ensureGuestId } from '../../utils/guestSession'
-import { GameBoard3D } from './GameBoard3D'
 import { useGameAction } from '../../hooks/game'
 import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
+
+const GameBoard3D = lazy(() => import('./GameBoard3D'))
 
 export function GameScreen() {
   const { gameId } = useParams()
@@ -149,18 +150,26 @@ export function GameScreen() {
   }
 
   return (
-    <GameBoard3D
-      game={game}
-      playerId={guestId}
-      onGameEnd={() => navigate('/lobby')}
-      onPlayCard={playCard}
-      onAttack={attack}
-      onFlipCard={flipCard}
-      onEndTurn={endTurn}
-            onForfeit={forfeit}
-            realtimeStatus={realtimeStatus}
-            isApplying={isApplying}
-            actionError={actionError}
-          />
+    <Suspense
+      fallback={
+        <div className="game-loading" role="status" aria-live="polite">
+          Загружаем 3D-сцену...
+        </div>
+      }
+    >
+      <GameBoard3D
+        game={game}
+        playerId={guestId}
+        onGameEnd={() => navigate('/lobby')}
+        onPlayCard={playCard}
+        onAttack={attack}
+        onFlipCard={flipCard}
+        onEndTurn={endTurn}
+        onForfeit={forfeit}
+        realtimeStatus={realtimeStatus}
+        isApplying={isApplying}
+        actionError={actionError}
+      />
+    </Suspense>
   )
 }

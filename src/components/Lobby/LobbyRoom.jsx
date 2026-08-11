@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { getGuestId } from '../../utils/guestId'
+import { copyToClipboard } from '../../utils/clipboard'
 import { isLobbyDeckPlayable } from '../../utils/lobbyDeck'
 import './Lobby.css'
 
@@ -15,12 +16,12 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
     .filter(p => !isLobbyDeckPlayable(p.deck))
     .map(p => p.nickname || p.player_id.slice(0, 6))
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const url = `${window.location.origin}/lobby/${code}`
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
+    const ok = await copyToClipboard(url)
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   const handleReady = () => {

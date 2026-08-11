@@ -1,46 +1,21 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { logError } from '../utils/errorLogger'
 import { getGuestId } from '../utils/guestId'
 import { ensureGuestId } from '../utils/guestSession'
 import { generateLobbyCode } from '../utils/lobbyCode'
-
-const LOBBY_STORAGE_KEY = 'activeLobby'
-const LOBBY_MAX_AGE_HOURS = 6
-
-function saveLobbySession(lobbyId, code, hostId, isHost) {
-  localStorage.setItem(LOBBY_STORAGE_KEY, JSON.stringify({ lobbyId, code, hostId, isHost, savedAt: Date.now() }))
-}
-
-function loadLobbySession() {
-  try {
-    const raw = localStorage.getItem(LOBBY_STORAGE_KEY)
-    if (!raw) return null
-    const session = JSON.parse(raw)
-    const ageHours = (Date.now() - session.savedAt) / 1000 / 3600
-    if (ageHours > LOBBY_MAX_AGE_HOURS) {
-      localStorage.removeItem(LOBBY_STORAGE_KEY)
-      return null
-    }
-    return session
-  } catch {
-    return null
-  }
-}
-
-function clearLobbySession() {
-  localStorage.removeItem(LOBBY_STORAGE_KEY)
-}
-
-async function cleanupOldLobbies() {
-  const cutoff = new Date(Date.now() - LOBBY_MAX_AGE_HOURS * 3600 * 1000).toISOString()
-  await supabase.from('lobbies').delete().lt('created_at', cutoff)
-}
+import {
+  saveLobbySession,
+  loadLobbySession,
+  clearLobbySession,
+  cleanupOldLobbies,
+} from '../utils/lobbySession'
+import { createLobbyChannel } from './lobby/createLobbyChannel'
 
 export function useLobby() {
   // 'idle' | 'restoring' | 'loading' | 'waiting' | 'in_game' | 'error' | 'dismissed'
   const [status, setStatus] = useState('restoring')
 
-  // Фаза 6: RLS — установить guest_id в Postgres-сеанс при старте.
   useEffect(() => {
     ensureGuestId()
   }, [])
@@ -60,74 +35,69 @@ export function useLobby() {
   useEffect(() => { lobbyIdRef.current = lobbyId }, [lobbyId])
   useEffect(() => { isHostRef.current = isHost }, [isHost])
 
+  const resetLobbyState = useCallback(() => {
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current)
+      channelRef.current = null
+    }
+    setLobbyId(null)
+    setLobbyCode(null)
+    setPlayers([])
+    setIsHost(false)
+    setHostId(null)
+  }, [])
+
   const subscribeToLobby = useCallback((id) => {
     if (channelRef.current) supabase.removeChannel(channelRef.current)
 
-    const channel = supabase
-      .channel(`lobby_room:${id}`)
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'lobby_players', filter: `lobby_id=eq.${id}` },
-        async () => {
-          const { data } = await supabase.from('lobby_players').select('*').eq('lobby_id', id)
-          setPlayers(data ?? [])
-        }
-      )
-      .on('postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'lobbies', filter: `id=eq.${id}` },
-        ({ new: updated }) => {
-          if (updated?.status) setStatus(updated.status)
-        }
-      )
-      .on('postgres_changes',
-        { event: 'DELETE', schema: 'public', table: 'lobbies', filter: `id=eq.${id}` },
-        () => {
-          clearLobbySession()
-          if (channelRef.current) {
-            supabase.removeChannel(channelRef.current)
-            channelRef.current = null
-          }
-          setLobbyId(null)
-          setLobbyCode(null)
-          setPlayers([])
-          setIsHost(false)
-          setHostId(null)
-          // Показать сообщение что лобби было закрыто хостом
-          setDismissedMessage('Хост закрыл лобби')
-          setStatus('idle')
-        }
-      )
-      .subscribe()
+    channelRef.current = createLobbyChannel(id, {
+      setPlayers,
+      setStatus,
+      setDismissedMessage,
+      resetLobby: resetLobbyState,
+    })
+  }, [resetLobbyState])
 
-    channelRef.current = channel
-  }, [])
-
-  // Восстановить лобби из localStorage при монтировании
   useEffect(() => {
+    let cancelled = false
+
     const session = loadLobbySession()
     if (!session) {
-      // Используем requestAnimationFrame чтобы избежать синхронного setState в useEffect
-      requestAnimationFrame(() => setStatus('idle'))
-      return
+      requestAnimationFrame(() => {
+        if (!cancelled) setStatus('idle')
+      })
+      return () => {
+        cancelled = true
+      }
     }
 
     const guestId = getGuestId()
 
     ;(async () => {
-      const { data: lobby } = await supabase
+      const { data: lobby, error: lobbyError } = await supabase
         .from('lobbies')
         .select('*')
         .eq('id', session.lobbyId)
         .maybeSingle()
 
+      if (cancelled) return
+      if (lobbyError) {
+        logError(lobbyError, { hook: 'useLobby', action: 'restoreLobby' })
+      }
+
       if (!lobby) {
         clearLobbySession()
-        requestAnimationFrame(() => setStatus('idle'))
+        requestAnimationFrame(() => {
+          if (!cancelled) setStatus('idle')
+        })
         return
       }
 
       if (lobby.status === 'in_game') {
         clearLobbySession()
-        requestAnimationFrame(() => setStatus('idle'))
+        requestAnimationFrame(() => {
+          if (!cancelled) setStatus('idle')
+        })
         return
       }
 
@@ -138,9 +108,13 @@ export function useLobby() {
         .eq('player_id', guestId)
         .maybeSingle()
 
+      if (cancelled) return
+
       if (!me) {
         clearLobbySession()
-        requestAnimationFrame(() => setStatus('idle'))
+        requestAnimationFrame(() => {
+          if (!cancelled) setStatus('idle')
+        })
         return
       }
 
@@ -149,7 +123,10 @@ export function useLobby() {
         .select('*')
         .eq('lobby_id', lobby.id)
 
+      if (cancelled) return
+
       requestAnimationFrame(() => {
+        if (cancelled) return
         setLobbyId(lobby.id)
         setLobbyCode(lobby.code)
         setIsHost(lobby.host_id === guestId)
@@ -159,10 +136,12 @@ export function useLobby() {
       })
       subscribeToLobby(lobby.id)
     })()
+
+    return () => {
+      cancelled = true
+    }
   }, [subscribeToLobby])
 
-  // Удалить игрока при закрытии вкладки (sendBeacon не работает с DELETE через Supabase REST,
-  // поэтому полагаемся на cleanupOldLobbies + leaveLobby)
   useEffect(() => {
     const handleUnload = () => {
       clearLobbySession()
@@ -173,7 +152,7 @@ export function useLobby() {
 
   /**
    * @param {string} nickname
-   * @param {object|null} deckPayload  payload из buildLobbyDeckPayload (локальная колода)
+   * @param {object|null} deckPayload
    */
   const createLobby = useCallback(async (nickname, deckPayload = null) => {
     setStatus('loading')
@@ -181,9 +160,8 @@ export function useLobby() {
     setDismissedMessage(null)
     const guestId = getGuestId()
 
-    cleanupOldLobbies()
+    cleanupOldLobbies(supabase)
 
-    // Генерировать уникальный код (импорт вынесен наружу цикла)
     let code = generateLobbyCode()
     for (let i = 0; i < 4; i++) {
       const { data: existing } = await supabase.from('lobbies').select('id').eq('code', code).maybeSingle()
@@ -235,7 +213,7 @@ export function useLobby() {
   /**
    * @param {string} code
    * @param {string} nickname
-   * @param {object|null} deckPayload  payload из buildLobbyDeckPayload
+   * @param {object|null} deckPayload
    */
   const joinLobby = useCallback(async (code, nickname, deckPayload = null) => {
     setStatus('loading')
@@ -269,7 +247,6 @@ export function useLobby() {
       .maybeSingle()
 
     if (existing) {
-      // Уже в лобби — обновить ник, колоду и сбросить ready
       await supabase.rpc('upsert_lobby_player', {
         p_guest_id: guestId,
         p_lobby_id: lobby.id,
@@ -373,5 +350,18 @@ export function useLobby() {
     }
   }, [])
 
-  return { status, lobbyId, lobbyCode, players, error, isHost, hostId, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby }
+  return {
+    status,
+    lobbyId,
+    lobbyCode,
+    players,
+    error,
+    isHost,
+    hostId,
+    dismissedMessage,
+    createLobby,
+    joinLobby,
+    setReady,
+    leaveLobby,
+  }
 }

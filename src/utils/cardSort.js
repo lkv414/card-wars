@@ -60,18 +60,43 @@ export function groupCardsByCost(cards) {
     }))
 }
 
-export function matchesCostFilter(cardCost, selectedCosts) {
-  if (!selectedCosts?.length) return true
+/** Фильтр стоимости: tier 0|1|2 или 3 (= 3+) */
+export function matchesCostTier(cardCost, tier) {
+  if (tier == null) return true
   const cost = Number(cardCost) || 0
-  return selectedCosts.some((c) => (c === 6 ? cost >= 6 : cost === c))
+  if (tier === 3) return cost >= 3
+  return cost === tier
+}
+
+function matchesSearch(card, query) {
+  if (!query) return true
+  const haystack = `${card.name} ${card.description}`.toLowerCase()
+  return haystack.includes(query.toLowerCase())
+}
+
+export function filterCards(cards, filters) {
+  const next = cards.filter(
+    (card) =>
+      matchesSearch(card, filters.search) &&
+      (!filters.cardTypes.length || filters.cardTypes.includes(card.card_type)) &&
+      (!filters.landTypes.length || filters.landTypes.includes(card.land_type)) &&
+      matchesCostTier(card.cost, filters.costTier) &&
+      (!filters.flipOnly || card.has_flip)
+  )
+  return sortCards(next, filters.sort || 'number')
+}
+
+export function filterLands(lands, search) {
+  if (!search) return lands
+  const q = search.toLowerCase()
+  return lands.filter((land) => String(land.name || '').toLowerCase().includes(q))
 }
 
 export const DEFAULT_FILTERS = {
   search: '',
   cardTypes: [],
   landTypes: [],
-  rainbow: false,
-  costs: [],
+  costTier: null,
   flipOnly: false,
   sort: 'number',
 }
@@ -82,8 +107,7 @@ export function hasActiveFilters(filters) {
     filters.search?.trim() ||
     filters.cardTypes?.length > 0 ||
     filters.landTypes?.length > 0 ||
-    filters.rainbow ||
-    filters.costs?.length > 0 ||
+    filters.costTier != null ||
     filters.flipOnly
   )
 }

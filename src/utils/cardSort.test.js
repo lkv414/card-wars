@@ -8,9 +8,11 @@ import {
   sortCards,
   groupCardsByType,
   groupCardsByCost,
-  matchesCostFilter,
+  matchesCostTier,
+  filterCards,
+  filterLands,
   DEFAULT_FILTERS,
-  hasActiveFilters
+  hasActiveFilters,
 } from './cardSort.js'
 
 const mockCards = [
@@ -153,30 +155,6 @@ test('groupCardsByCost handles invalid cost values', () => {
   assert.equal(result[0].items.length, 3)
 })
 
-test('matchesCostFilter returns true when no filters selected', () => {
-  assert.equal(matchesCostFilter(5, []), true)
-  assert.equal(matchesCostFilter(5, null), true)
-  assert.equal(matchesCostFilter(5, undefined), true)
-})
-
-test('matchesCostFilter matches exact cost', () => {
-  assert.equal(matchesCostFilter(3, [3]), true)
-  assert.equal(matchesCostFilter(3, [1, 2, 3]), true)
-  assert.equal(matchesCostFilter(3, [1, 2]), false)
-})
-
-test('matchesCostFilter matches 6+ for costs >= 6', () => {
-  assert.equal(matchesCostFilter(6, [6]), true)
-  assert.equal(matchesCostFilter(7, [6]), true)
-  assert.equal(matchesCostFilter(10, [6]), true)
-  assert.equal(matchesCostFilter(5, [6]), false)
-})
-
-test('matchesCostFilter handles string cost values', () => {
-  assert.equal(matchesCostFilter('3', [3]), true)
-  assert.equal(matchesCostFilter('invalid', [3]), false)
-})
-
 test('hasActiveFilters returns false for default filters', () => {
   assert.equal(hasActiveFilters(DEFAULT_FILTERS), false)
 })
@@ -189,8 +167,17 @@ test('hasActiveFilters returns true when cardTypes is not empty', () => {
   assert.equal(hasActiveFilters({ ...DEFAULT_FILTERS, cardTypes: ['creature'] }), true)
 })
 
-test('hasActiveFilters returns true when costs is not empty', () => {
-  assert.equal(hasActiveFilters({ ...DEFAULT_FILTERS, costs: [1, 2] }), true)
+test('hasActiveFilters returns true when costTier is set', () => {
+  assert.equal(hasActiveFilters({ ...DEFAULT_FILTERS, costTier: 2 }), true)
+})
+
+test('matchesCostTier filters exact and 3+ bucket', () => {
+  assert.equal(matchesCostTier(0, 0), true)
+  assert.equal(matchesCostTier(1, 0), false)
+  assert.equal(matchesCostTier(2, 2), true)
+  assert.equal(matchesCostTier(3, 3), true)
+  assert.equal(matchesCostTier(6, 3), true)
+  assert.equal(matchesCostTier(2, null), true)
 })
 
 test('hasActiveFilters returns false for empty filters object', () => {
@@ -202,13 +189,39 @@ test('hasActiveFilters returns false for null/undefined', () => {
   assert.equal(hasActiveFilters(undefined), false)
 })
 
+test('filterCards applies search, type, cost tier and sort', () => {
+  const cards = [
+    { card_number: 2, name: 'Alpha', description: '', card_type: 'creature', land_type: 'fire', cost: 1, has_flip: false },
+    { card_number: 1, name: 'Beta spell', description: 'fire bolt', card_type: 'spell', land_type: 'fire', cost: 3, has_flip: true },
+    { card_number: 3, name: 'Gamma', description: '', card_type: 'building', land_type: 'water', cost: 2, has_flip: false },
+  ]
+
+  const filtered = filterCards(cards, {
+    ...DEFAULT_FILTERS,
+    search: 'fire',
+    cardTypes: ['spell'],
+    costTier: 3,
+    flipOnly: true,
+    sort: 'name',
+  })
+
+  assert.equal(filtered.length, 1)
+  assert.equal(filtered[0].name, 'Beta spell')
+})
+
+test('filterLands filters by name', () => {
+  const lands = [{ name: 'Огонь' }, { name: 'Вода' }]
+  assert.equal(filterLands(lands, '').length, 2)
+  assert.equal(filterLands(lands, 'ог').length, 1)
+  assert.equal(filterLands(lands, 'ог')[0].name, 'Огонь')
+})
+
 test('DEFAULT_FILTERS has expected structure', () => {
   assert.deepEqual(DEFAULT_FILTERS, {
     search: '',
     cardTypes: [],
     landTypes: [],
-    rainbow: false,
-    costs: [],
+    costTier: null,
     flipOnly: false,
     sort: 'number',
   })

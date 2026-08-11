@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { getReplayEntry, normalizeReplayLog } from '../../utils/replayLog'
+import { useFocusTrap } from '../../hooks/useFocusTrap'
 import './Replay.css'
 
 export function Replay({ log, onClose }) {
   const entries = useMemo(() => normalizeReplayLog(log), [log])
   const [stepIndex, setStepIndex] = useState(() => Math.max(entries.length - 1, 0))
+  const dialogRef = useRef(null)
+  useFocusTrap(true, dialogRef)
 
   const lastIndex = Math.max(entries.length - 1, 0)
   const activeIndex = Math.min(stepIndex, lastIndex)
@@ -31,6 +34,7 @@ export function Replay({ log, onClose }) {
   return (
     <div className="replay-backdrop" role="presentation" onMouseDown={onClose}>
       <section
+        ref={dialogRef}
         className="replay-dialog"
         role="dialog"
         aria-modal="true"
@@ -76,7 +80,7 @@ export function Replay({ log, onClose }) {
 
             <ol className="replay-timeline">
               {entries.map((item, index) => (
-                <li key={`${item.timestamp}-${index}`} className={index === activeIndex ? 'active' : ''}>
+                <li key={`replay-step-${item.step}`} className={index === activeIndex ? 'active' : ''}>
                   <button onClick={() => setStepIndex(index)}>
                     <span>{item.step}</span>
                     {item.message}

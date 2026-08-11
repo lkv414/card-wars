@@ -1,25 +1,39 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { logError, toUserFacingError } from '../utils/errorLogger'
 
+function applyCardsResponse(data, error, setCards, setError, setLoading) {
+  if (error) {
+    logError(error, { hook: 'useCards', action: 'loadCards' })
+    setError(toUserFacingError(error))
+    setCards([])
+  } else {
+    setCards(data || [])
+    setError(null)
+  }
+  setLoading(false)
+}
 
 export function useCards() {
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  const fetchCards = useCallback(
+    () => supabase.from('cards').select('*').order('card_number'),
+    [],
+  )
+
   const loadCards = useCallback(async () => {
     setLoading(true)
     setError(null)
-    const { data, error } = await supabase.from('cards').select('*').order('card_number')
-    if (error) {
-      console.error('Ошибка загрузки карт:', error)
-      setError(error.message)
-      setCards([])
-    } else {
-      setCards(data || [])
+    try {
+      const { data, error: fetchError } = await fetchCards()
+      applyCardsResponse(data, fetchError, setCards, setError, setLoading)
+    } catch (err) {
+      applyCardsResponse(null, err, setCards, setError, setLoading)
     }
-    setLoading(false)
-  }, [])
+  }, [fetchCards])
 
   // Оптимизация: insert/update уже возвращают объект через .select() — не делаем
   // второй loadCards(). Просто добавляем/заменяем в локальный state.
@@ -66,8 +80,23 @@ export function useCards() {
   }, [])
 
   useEffect(() => {
-    void Promise.resolve().then(loadCards)
-  }, [loadCards])
+    let cancelled = false
+    ;(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const { data, error: fetchError } = await fetchCards()
+        if (cancelled) return
+        applyCardsResponse(data, fetchError, setCards, setError, setLoading)
+      } catch (err) {
+        if (cancelled) return
+        applyCardsResponse(null, err, setCards, setError, setLoading)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [fetchCards])
 
   return { cards, loading, error, loadCards, createCard, updateCard, deleteCard, findSimilarCards }
 }

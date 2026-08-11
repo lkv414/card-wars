@@ -62,7 +62,13 @@ export function Card3D({ card, isOpponent, onAttack }) {
         </div>
 
         {card.has_flip && (
-          <button className="flip-btn" onClick={handleFlip} title="Flip card">
+          <button
+            type="button"
+            className="flip-btn"
+            onClick={handleFlip}
+            title="Перевернуть карту"
+            aria-label="Перевернуть карту"
+          >
             🔄
           </button>
         )}
@@ -70,12 +76,17 @@ export function Card3D({ card, isOpponent, onAttack }) {
 
       {/* Back side (flipped state) */}
       {card.has_flip && (
-        <div className="card-back" onClick={handleFlip}>
+        <button
+          type="button"
+          className="card-back"
+          onClick={handleFlip}
+          aria-label="Перевернуть карту на лицевую сторону"
+        >
           <div className="card-flip-content">
             <h4>Flipped</h4>
             <p>{card.flip_description || 'Card flipped'}</p>
           </div>
-        </div>
+        </button>
       )}
 
       {/* Tapped indicator */}

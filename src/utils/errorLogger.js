@@ -6,13 +6,55 @@
  */
 
 /**
+ * @param {unknown} error
+ * @returns {string}
+ */
+export function formatErrorMessage(error) {
+  if (error instanceof Error) return error.message
+  if (error && typeof error === 'object') {
+    if (typeof error.message === 'string') return error.message
+    if (typeof error.error === 'string') return error.error
+    if (typeof error.details === 'string') return error.details
+  }
+  if (typeof error === 'string') return error
+  try {
+    return JSON.stringify(error)
+  } catch {
+    return 'Unknown error'
+  }
+}
+
+/**
+ * User-friendly message for common Supabase/network failures.
+ * @param {unknown} error
+ * @returns {string}
+ */
+export function toUserFacingError(error) {
+  const msg = formatErrorMessage(error)
+  const lower = msg.toLowerCase()
+  if (
+    lower.includes('failed to fetch')
+    || lower.includes('networkerror')
+    || lower.includes('connection refused')
+    || lower.includes('err_connection_refused')
+  ) {
+    const url = import.meta.env.VITE_SUPABASE_URL || ''
+    if (url.includes('127.0.0.1') || url.includes('localhost')) {
+      return 'Локальный Supabase недоступен. Запустите Docker и выполните: npx supabase start'
+    }
+    return 'Не удалось подключиться к Supabase. Проверьте интернет и VITE_SUPABASE_URL.'
+  }
+  return msg
+}
+
+/**
  * Логировать ошибку
- * @param {Error|string} error - Ошибка или сообщение об ошибке
+ * @param {Error|string|object} error - Ошибка или сообщение об ошибке
  * @param {Object} [context={}] - Контекст ошибки (модуль, действие, дополнительные данные)
  * @param {string} [level='error'] - Уровень логирования ('error', 'warn', 'info')
  */
 export function logError(error, context = {}, level = 'error') {
-  const message = error instanceof Error ? error.message : String(error);
+  const message = formatErrorMessage(error);
   const stack = error instanceof Error ? error.stack : undefined;
   
   const logEntry = {
@@ -132,6 +174,8 @@ export async function safeExecute(fn, context = {}) {
 }
 
 export default {
+  formatErrorMessage,
+  toUserFacingError,
   logError,
   logWarn,
   logInfo,

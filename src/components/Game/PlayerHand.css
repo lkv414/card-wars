@@ -68,6 +68,11 @@
   height: 140px;
   position: relative;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
               box-shadow 0.35s ease, z-index 0s linear 0.18s;
   transform-origin: center bottom;

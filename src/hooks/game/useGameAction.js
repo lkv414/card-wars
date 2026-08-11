@@ -23,7 +23,7 @@ import { useFlipCard } from './useFlipCard'
 
 export function useGameAction(game, reload) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
-    const playCard = usePlayCard(game, writeGameState)
+    const playCard = usePlayCard(game, writeGameState, reload)
     const attack = useAttack(game, writeGameState)
     const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload)
   const flipCard = useFlipCard(game, writeGameState)

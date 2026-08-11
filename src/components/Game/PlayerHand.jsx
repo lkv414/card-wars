@@ -34,17 +34,21 @@ export function PlayerHand({
       <div className="hand-cards">
         {cards.length > 0 ? (
           cards.map((card, idx) => (
-            <div
-              key={idx}
+            <button
+              type="button"
+              key={card?.id ?? card?.instanceId ?? `hand-${idx}`}
               className={`hand-card-wrapper ${selectedCardIndex === idx ? 'selected' : ''} ${!isYourTurn ? 'disabled' : ''}`}
               style={{ '--i': idx, '--n': cards.length }}
               onClick={() => handleCardSelect(idx)}
+              disabled={!isYourTurn || actionsRemaining <= 0}
+              aria-label={card?.name ?? `Карта ${idx + 1}`}
+              aria-pressed={selectedCardIndex === idx}
             >
               <Card3D card={card} isOpponent={false} />
               <div className="card-info">
                 <span className="cost-badge">{card.cost} ✨</span>
               </div>
-            </div>
+            </button>
           ))
         ) : (
           <div className="empty-hand">Нет карт на руке</div>

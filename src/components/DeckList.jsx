@@ -13,8 +13,9 @@
  *   - Кнопка «Удалить» (с подтверждением)
  */
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDecks } from '../hooks/useDecks'
+import { ConfirmDialog } from './Shared/ConfirmDialog'
 import './DeckList.css'
 
 export function DeckList() {
@@ -24,12 +25,27 @@ export function DeckList() {
   const [renamingId, setRenamingId] = useState(null)
   const [draftName, setDraftName] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+  const copyTimeoutRef = useRef(null)
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current !== null) {
+        window.clearTimeout(copyTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleCopy = async (code, id) => {
     try {
       await navigator.clipboard.writeText(code)
       setCopiedId(id)
-      setTimeout(() => setCopiedId(null), 1500)
+      if (copyTimeoutRef.current !== null) {
+        window.clearTimeout(copyTimeoutRef.current)
+      }
+      copyTimeoutRef.current = window.setTimeout(() => {
+        setCopiedId(null)
+        copyTimeoutRef.current = null
+      }, 1500)
     } catch {
       window.prompt('Скопируй код:', code)
     }
@@ -124,9 +140,11 @@ export function DeckList() {
                   </h3>
                 )}
                 <button
+                  type="button"
                   className="rename-btn"
                   onClick={() => handleStartRename(deck)}
                   title="Переименовать"
+                  aria-label="Переименовать колоду"
                 >
                   ✏️
                 </button>
@@ -146,6 +164,7 @@ export function DeckList() {
                   className="copy-btn"
                   onClick={() => handleCopy(deck.code, deck.id)}
                   title="Скопировать полный код"
+                  aria-label={copiedId === deck.id ? 'Код скопирован' : 'Скопировать код колоды'}
                   disabled={!deck.code}
                 >
                   {copiedId === deck.id ? '✓' : '📋'}
@@ -173,28 +192,19 @@ export function DeckList() {
               </div>
 
               {confirmDeleteId === deck.id && (
-                <div className="confirm-overlay" onClick={() => setConfirmDeleteId(null)}>
-                  <div className="confirm-box" onClick={(e) => e.stopPropagation()}>
-                    <p>Удалить колоду «{deck.name}»?</p>
-                    <div className="confirm-actions">
-                      <button
-                        className="confirm-cancel"
-                        onClick={() => setConfirmDeleteId(null)}
-                      >
-                        Отмена
-                      </button>
-                      <button
-                        className="confirm-delete"
-                        onClick={() => {
-                          removeDeck(deck.id)
-                          setConfirmDeleteId(null)
-                        }}
-                      >
-                        Удалить
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ConfirmDialog
+                  open
+                  title="Удалить колоду?"
+                  message={`Удалить колоду «${deck.name}»?`}
+                  confirmLabel="Удалить"
+                  cancelLabel="Отмена"
+                  danger
+                  onConfirm={() => {
+                    removeDeck(deck.id)
+                    setConfirmDeleteId(null)
+                  }}
+                  onCancel={() => setConfirmDeleteId(null)}
+                />
               )}
             </div>
           )

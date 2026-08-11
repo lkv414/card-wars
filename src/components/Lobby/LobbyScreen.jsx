@@ -283,9 +283,13 @@ export function LobbyScreen({ toast }) {
             <span className="lobby-or">или</span>
 
             <div className="lobby-option">
-              <h2>Войти по коду</h2>
+              <h2 id="lobby-join-heading">Войти по коду</h2>
               <div className="lobby-form__group">
+                <label htmlFor="lob-join-code" className="visually-hidden">
+                  Код лобби
+                </label>
                 <input
+                  id="lob-join-code"
                   type="text"
                   maxLength={6}
                   placeholder="XXXXXX"
@@ -293,6 +297,7 @@ export function LobbyScreen({ toast }) {
                   onChange={e => setJoinCode(e.target.value.toUpperCase())}
                   onKeyDown={e => e.key === 'Enter' && handleJoin()}
                   className="lobby-code-input"
+                  aria-labelledby="lobby-join-heading"
                 />
               </div>
               <button

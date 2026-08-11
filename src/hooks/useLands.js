@@ -1,25 +1,39 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { logError, toUserFacingError } from '../utils/errorLogger'
 
+function applyLandsResponse(data, error, setLands, setError, setLoading) {
+  if (error) {
+    logError(error, { hook: 'useLands', action: 'loadLands' })
+    setError(toUserFacingError(error))
+    setLands([])
+  } else {
+    setLands(data || [])
+    setError(null)
+  }
+  setLoading(false)
+}
 
 export function useLands() {
   const [lands, setLands] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  const fetchLands = useCallback(
+    () => supabase.from('lands').select('*').order('name'),
+    [],
+  )
+
   const loadLands = useCallback(async () => {
     setLoading(true)
     setError(null)
-    const { data, error } = await supabase.from('lands').select('*').order('name')
-    if (error) {
-      console.error('Ошибка загрузки земель:', error)
-      setError(error.message)
-      setLands([])
-    } else {
-      setLands(data || [])
+    try {
+      const { data, error: fetchError } = await fetchLands()
+      applyLandsResponse(data, fetchError, setLands, setError, setLoading)
+    } catch (err) {
+      applyLandsResponse(null, err, setLands, setError, setLoading)
     }
-    setLoading(false)
-  }, [])
+  }, [fetchLands])
 
   // Оптимизация: insert/update уже возвращают объект — обновляем локально,
   // не делая повторный loadLands() (2 RTT → 1 RTT).
@@ -45,8 +59,23 @@ export function useLands() {
   }, [])
 
   useEffect(() => {
-    void Promise.resolve().then(loadLands)
-  }, [loadLands])
+    let cancelled = false
+    ;(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const { data, error: fetchError } = await fetchLands()
+        if (cancelled) return
+        applyLandsResponse(data, fetchError, setLands, setError, setLoading)
+      } catch (err) {
+        if (cancelled) return
+        applyLandsResponse(null, err, setLands, setError, setLoading)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [fetchLands])
 
   return { lands, loading, error, loadLands, createLand, updateLand, deleteLand }
 }

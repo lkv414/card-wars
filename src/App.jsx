@@ -1,37 +1,42 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import { useCards } from './hooks/useCards'
-import { useLands } from './hooks/useLands'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
 import { useToasts } from './hooks/useToasts'
 import { ensureGuestId } from './utils/guestSession'
+import { LibraryProvider } from './context/LibraryContext'
+import { DeckBuilderPage, AdminPanelPage } from './pages/LibraryPages'
+import { ErrorBoundary } from './components/Shared/ErrorBoundary'
 import './App.css'
 
 import { MainMenu } from './components/MainMenu'
 import { DeckList } from './components/DeckList'
-import { DeckBuilder } from './components/DeckBuilder'
-import { AdminPanel } from './components/AdminPanel'
 import { LobbyScreen } from './components/Lobby/LobbyScreen'
-import { GameScreen } from './components/Game/GameScreen'
 import { Toasts } from './components/Shared/Toasts'
 
+const GameScreen = lazy(() =>
+  import('./components/Game/GameScreen').then((m) => ({ default: m.GameScreen })),
+)
+
+function GameLoadingFallback({ message = 'Загружаем игру...' }) {
+  return (
+    <div className="game-loading" role="status" aria-live="polite">
+      {message}
+    </div>
+  )
+}
+
+function GameRoute() {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<GameLoadingFallback />}>
+        <GameScreen />
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
+
 function App() {
-  const {
-    cards,
-    loading: loadingCards,
-    error: cardsError,
-    createCard,
-    updateCard,
-    deleteCard,
-    findSimilarCards,
-  } = useCards()
-  const { lands, loading: loadingLands, error: landsError } = useLands()
-
-  const loadingLibrary = loadingCards || loadingLands
-  const libraryError = cardsError || landsError || ''
-
   const { toasts, toast, dismissToast } = useToasts()
 
-  // Фаза 6: RLS — установить guest_id в Postgres-сеанс при старте.
   useEffect(() => {
     ensureGuestId()
   }, [])
@@ -43,49 +48,16 @@ function App() {
 
         <Route path="/decks" element={<DeckList />} />
 
-        <Route
-          path="/deck"
-          element={
-            <DeckBuilder
-              cards={cards}
-              lands={lands}
-              loadingLibrary={loadingLibrary}
-              libraryError={libraryError}
-              toast={toast}
-            />
-          }
-        />
+        <Route element={<LibraryProvider><Outlet /></LibraryProvider>}>
+          <Route path="/deck" element={<DeckBuilderPage toast={toast} />} />
+          <Route path="/admin" element={<AdminPanelPage toast={toast} />} />
+        </Route>
 
-        <Route
-          path="/admin"
-          element={
-            <AdminPanel
-              cards={cards}
-              toast={toast}
-              createCard={createCard}
-              updateCard={updateCard}
-              deleteCard={deleteCard}
-              findSimilarCards={findSimilarCards}
-            />
-          }
-        />
+        <Route path="/lobby" element={<LobbyScreen toast={toast} />} />
+        <Route path="/lobby/:code" element={<LobbyScreen toast={toast} />} />
 
-        <Route
-          path="/lobby"
-          element={<LobbyScreen toast={toast} />}
-        />
+        <Route path="/game/:gameId" element={<GameRoute />} />
 
-        <Route
-          path="/lobby/:code"
-          element={<LobbyScreen toast={toast} />}
-        />
-
-        <Route
-          path="/game/:gameId"
-          element={<GameScreen />}
-        />
-
-        {/* Неизвестный маршрут — на главную */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 

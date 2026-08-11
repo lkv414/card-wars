@@ -10,7 +10,10 @@ export function GameLog({ log }) {
       <div className="log-entries">
         {log && log.length > 0 ? (
           log.map((entry, idx) => (
-            <div key={idx} className="log-entry">
+            <div
+              key={entry.id ?? `${entry.timestamp}-${entry.message}-${idx}`}
+              className="log-entry"
+            >
               <span className="log-time">
                 {new Date(entry.timestamp).toLocaleTimeString()}
               </span>

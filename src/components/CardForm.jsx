@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Modal } from './Shared/Modal'
 import { ImageThumb } from './Shared/ImageThumb'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
@@ -33,9 +33,13 @@ export function CardForm({
     card ? { ...card, mechanics: JSON.stringify(card.mechanics ?? [], null, 2) } : emptyCard
   )
   const [jsonError, setJsonError] = useState('')
-  const [imageWarning, setImageWarning] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const submitRef = useRef(() => {})
+
+  const imageWarning =
+    form.image_url && !/^https?:\/\//.test(form.image_url)
+      ? 'URL должен начинаться с http:// или https://'
+      : ''
 
   const set = (key, value) =>
     setForm((prev) => ({
@@ -45,7 +49,7 @@ export function CardForm({
       ...(key === 'is_rainbow' && value ? { land_type: 'any' } : {}),
     }))
 
-  const submit = async (force = false) => {
+  const submit = useCallback(async (force = false) => {
     let mechanics
     try {
       mechanics = JSON.parse(form.mechanics || '[]')
@@ -72,7 +76,7 @@ export function CardForm({
       health: Number(form.health || 0),
       mechanics,
     })
-  }
+  }, [form, isNew, onFindSimilarCards, onSave, setSimilarCards])
 
   const confirmDelete = async () => {
     if (onDelete) {
@@ -83,7 +87,7 @@ export function CardForm({
 
   useEffect(() => {
     submitRef.current = submit
-  })
+  }, [submit])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -122,9 +126,10 @@ export function CardForm({
     <Modal onClose={onClose} stacked>
       <h2>{isNew ? '➕ Новая карта' : '✏️ Редактировать карту'}</h2>
       <div className="form-grid">
-        <label>
+        <label htmlFor="card-number">
           Номер карты
           <input
+            id="card-number"
             type="number"
             required
             value={form.card_number}
@@ -132,18 +137,19 @@ export function CardForm({
           />
         </label>
 
-        <label>
+        <label htmlFor="card-name">
           Название
           <input
+            id="card-name"
             required
             value={form.name}
             onChange={(e) => set('name', e.target.value)}
           />
         </label>
 
-        <label>
+        <label htmlFor="card-type">
           Тип карты
-          <select value={form.card_type} onChange={(e) => set('card_type', e.target.value)}>
+          <select id="card-type" value={form.card_type} onChange={(e) => set('card_type', e.target.value)}>
             {Object.entries(CARD_TYPES).map(([v, l]) => (
               <option value={v} key={v}>
                 {l}
@@ -152,9 +158,10 @@ export function CardForm({
           </select>
         </label>
 
-        <label>
+        <label htmlFor="card-cost">
           Стоимость
           <input
+            id="card-cost"
             type="number"
             required
             value={form.cost}
@@ -164,20 +171,20 @@ export function CardForm({
 
         {form.card_type === 'creature' && (
           <>
-            <label>
+            <label htmlFor="card-attack">
               Атака
-              <input type="number" value={form.attack} onChange={(e) => set('attack', e.target.value)} />
+              <input id="card-attack" type="number" value={form.attack} onChange={(e) => set('attack', e.target.value)} />
             </label>
-            <label>
+            <label htmlFor="card-health">
               Защита
-              <input type="number" value={form.health} onChange={(e) => set('health', e.target.value)} />
+              <input id="card-health" type="number" value={form.health} onChange={(e) => set('health', e.target.value)} />
             </label>
           </>
         )}
 
-        <label>
+        <label htmlFor="land-type">
           Тип земель
-          <select value={form.land_type} onChange={(e) => set('land_type', e.target.value)}>
+          <select id="land-type" value={form.land_type} onChange={(e) => set('land_type', e.target.value)}>
             {Object.entries(LAND_TYPES).map(([v, l]) => (
               <option value={v} key={v}>
                 {l.label}
@@ -205,31 +212,31 @@ export function CardForm({
         </label>
 
         {form.has_flip && (
-          <label className="wide">
+          <label className="wide" htmlFor="flip-description">
             Описание флюпа
-            <input value={form.flip_description || ''} onChange={(e) => set('flip_description', e.target.value)} />
+            <input id="flip-description" value={form.flip_description || ''} onChange={(e) => set('flip_description', e.target.value)} />
           </label>
         )}
 
-        <label className="wide">
+        <label className="wide" htmlFor="card-description">
           Описание карты
-          <textarea value={form.description} onChange={(e) => set('description', e.target.value)} />
+          <textarea id="card-description" value={form.description} onChange={(e) => set('description', e.target.value)} />
         </label>
 
-        <label className="wide">
+        <label className="wide" htmlFor="card-image-url">
           URL картинки
           <input
+            id="card-image-url"
             value={form.image_url || ''}
-            onChange={(e) => {
-              set('image_url', e.target.value)
-              setImageWarning(
-                e.target.value && !/^https?:\/\//.test(e.target.value)
-                  ? 'URL должен начинаться с http:// или https://'
-                  : ''
-              )
-            }}
+            onChange={(e) => set('image_url', e.target.value)}
+            aria-invalid={Boolean(imageWarning)}
+            aria-describedby={imageWarning ? 'card-image-url-warning' : undefined}
           />
-          {imageWarning && <small style={{ color: '#c2410c' }}>⚠️ {imageWarning}</small>}
+          {imageWarning && (
+            <small id="card-image-url-warning" style={{ color: '#c2410c' }} role="alert">
+              ⚠️ {imageWarning}
+            </small>
+          )}
         </label>
 
         {form.image_url && (
@@ -244,14 +251,21 @@ export function CardForm({
           </div>
         )}
 
-        <label className="wide">
+        <label className="wide" htmlFor="card-mechanics">
           Механики (JSON)
           <textarea
+            id="card-mechanics"
             value={form.mechanics}
             onChange={(e) => set('mechanics', e.target.value)}
             style={{ fontFamily: 'ui-monospace, monospace' }}
+            aria-invalid={Boolean(jsonError)}
+            aria-describedby={jsonError ? 'card-mechanics-error' : undefined}
           />
-          {jsonError && <small style={{ color: '#c2410c' }}>❌ {jsonError}</small>}
+          {jsonError && (
+            <small id="card-mechanics-error" style={{ color: '#c2410c' }} role="alert">
+              ❌ {jsonError}
+            </small>
+          )}
         </label>
       </div>
 

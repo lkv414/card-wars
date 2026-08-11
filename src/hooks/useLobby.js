@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { logError } from '../utils/errorLogger'
 import { getGuestId } from '../utils/guestId'
 import { ensureGuestId } from '../utils/guestSession'
 import { generateLobbyCode } from '../utils/lobbyCode'
@@ -103,31 +104,45 @@ export function useLobby() {
 
   // Восстановить лобби из localStorage при монтировании
   useEffect(() => {
+    let cancelled = false
+
     const session = loadLobbySession()
     if (!session) {
-      // Используем requestAnimationFrame чтобы избежать синхронного setState в useEffect
-      requestAnimationFrame(() => setStatus('idle'))
-      return
+      requestAnimationFrame(() => {
+        if (!cancelled) setStatus('idle')
+      })
+      return () => {
+        cancelled = true
+      }
     }
 
     const guestId = getGuestId()
 
     ;(async () => {
-      const { data: lobby } = await supabase
+      const { data: lobby, error: lobbyError } = await supabase
         .from('lobbies')
         .select('*')
         .eq('id', session.lobbyId)
         .maybeSingle()
 
+      if (cancelled) return
+      if (lobbyError) {
+        logError(lobbyError, { hook: 'useLobby', action: 'restoreLobby' })
+      }
+
       if (!lobby) {
         clearLobbySession()
-        requestAnimationFrame(() => setStatus('idle'))
+        requestAnimationFrame(() => {
+          if (!cancelled) setStatus('idle')
+        })
         return
       }
 
       if (lobby.status === 'in_game') {
         clearLobbySession()
-        requestAnimationFrame(() => setStatus('idle'))
+        requestAnimationFrame(() => {
+          if (!cancelled) setStatus('idle')
+        })
         return
       }
 
@@ -138,9 +153,13 @@ export function useLobby() {
         .eq('player_id', guestId)
         .maybeSingle()
 
+      if (cancelled) return
+
       if (!me) {
         clearLobbySession()
-        requestAnimationFrame(() => setStatus('idle'))
+        requestAnimationFrame(() => {
+          if (!cancelled) setStatus('idle')
+        })
         return
       }
 
@@ -149,7 +168,10 @@ export function useLobby() {
         .select('*')
         .eq('lobby_id', lobby.id)
 
+      if (cancelled) return
+
       requestAnimationFrame(() => {
+        if (cancelled) return
         setLobbyId(lobby.id)
         setLobbyCode(lobby.code)
         setIsHost(lobby.host_id === guestId)
@@ -159,6 +181,10 @@ export function useLobby() {
       })
       subscribeToLobby(lobby.id)
     })()
+
+    return () => {
+      cancelled = true
+    }
   }, [subscribeToLobby])
 
   // Удалить игрока при закрытии вкладки (sendBeacon не работает с DELETE через Supabase REST,

@@ -17,6 +17,7 @@
 import { useState } from 'react'
 import { Replay } from './Replay'
 import { safePlayer } from '../../utils/safePlayer'
+import { logError } from '../../utils/errorLogger'
 
 export function HUDOverlay({
   playerId,
@@ -66,7 +67,7 @@ export function HUDOverlay({
 
       {/* Баннер разрыва связи */}
             {(realtimeStatus === 'disconnected' || realtimeStatus === 'reconnecting') && (
-              <div className="connection-banner">
+              <div className="connection-banner" role="alert" aria-live="polite">
                 <span className="connection-spinner" />
                 {realtimeStatus === 'disconnected'
                   ? '⚠️ Связь потеряна — переподключаемся...'
@@ -108,7 +109,7 @@ export function HUDOverlay({
                             e.stopPropagation()
                             if (typeof onEndTurn === 'function') {
                               Promise.resolve(onEndTurn()).catch((err) => {
-                                console.error('[EndTurn] failed:', err)
+                                logError(err, { component: 'HUDOverlay', action: 'endTurn' })
                               })
                             }
                           }}
@@ -124,7 +125,7 @@ export function HUDOverlay({
                             e.stopPropagation()
                             if (typeof onForfeit === 'function') {
                               Promise.resolve(onForfeit()).catch((err) => {
-                                console.error('[Forfeit] failed:', err)
+                                logError(err, { component: 'HUDOverlay', action: 'forfeit' })
                               })
                             }
                           }}
@@ -146,22 +147,25 @@ export function HUDOverlay({
                       const isEmpty = !Array.isArray(cards) || cards.length === 0
                       let wasDragged = false
                       const handleDrop = (e) => {
-                                              e.stopPropagation()
-                                              e.preventDefault()
-                                              wasDragged = true
-                                              if (!isEmpty || draggingCardIndex === null) return
-                                              setDraggingCardIndex(null)
-                                              if (typeof onPlayCard === 'function') {
-                                                setJustPlayedCardIndex(draggingCardIndex)
-                                                setJustPlayedZoneIndex(idx)
-                                                setTimeout(() => {
-                                                  setJustPlayedCardIndex(null)
-                                                  setJustPlayedZoneIndex(null)
-                                                  wasDragged = false
-                                                }, 1800)
-                                                Promise.resolve(onPlayCard(draggingCardIndex, idx, 1)).catch(() => {})
-                                              }
-                                            }
+                        e.stopPropagation()
+                        e.preventDefault()
+                        if (isApplying) return
+                        wasDragged = true
+                        if (!isEmpty || draggingCardIndex === null) return
+                        setDraggingCardIndex(null)
+                        if (typeof onPlayCard === 'function') {
+                          setJustPlayedCardIndex(draggingCardIndex)
+                          setJustPlayedZoneIndex(idx)
+                          setTimeout(() => {
+                            setJustPlayedCardIndex(null)
+                            setJustPlayedZoneIndex(null)
+                            wasDragged = false
+                          }, 1800)
+                          Promise.resolve(onPlayCard(draggingCardIndex, idx, 1)).catch((err) => {
+                            logError(err, { component: 'HUDOverlay', action: 'playCard' })
+                          })
+                        }
+                      }
                                             const handleClick = (e) => {
                                               if (wasDragged) return
                                               handleDrop(e)
@@ -183,6 +187,11 @@ export function HUDOverlay({
                                                   setTimeout(() => { wasDragged = false }, 100)
                                                 }}
                                                 title={isEmpty ? `Разместить на земле ${idx + 1}` : 'Земля занята'}
+                                                aria-label={
+                                                  isEmpty
+                                                    ? `Земля ${idx + 1}, свободна`
+                                                    : `Земля ${idx + 1}, занята`
+                                                }
                                               >
                           <span className="hud-drop-zone-num">{idx + 1}</span>
                           <span className="hud-drop-zone-label">{isEmpty ? 'Свободно' : 'Занято'}</span>
@@ -210,14 +219,13 @@ export function HUDOverlay({
                             setSelectedCardIndex(isSel ? null : idx)
                           }}
                           onDragStart={(e) => {
-                            if (!isYourTurn || isFinished) {
+                            if (!isYourTurn || isFinished || isApplying) {
                               e.preventDefault()
                               return
                             }
                             setDraggingCardIndex(idx)
                             setSelectedCardIndex(idx)
-                            // Подсказка для зон: данные в dataTransfer
-                            e.dataTransfer.setData('text/card-index', String(idx))
+                            e.dataTransfer.setData('text/plain', String(idx))
                             e.dataTransfer.effectAllowed = 'move'
                           }}
                           onDragEnd={() => {
@@ -230,6 +238,7 @@ export function HUDOverlay({
                             }
                           }}
                           aria-pressed={isSel}
+                          aria-label={c?.name ?? `Карта ${idx + 1}`}
                           title={c?.name || `Карта ${idx + 1}`}
                         >
                   <div className="hud-hand-card-cost">{c?.cost ?? '?'}</div>

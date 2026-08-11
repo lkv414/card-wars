@@ -27,3 +27,10 @@ dist-ssr
 .env.secure
 supabase/.temp
 
+# Agent skills (local Cursor/ECC install, not part of app)
+.agents/
+skills-lock.json
+.claude/skills/
+agent/skills/
+data/skills/
+

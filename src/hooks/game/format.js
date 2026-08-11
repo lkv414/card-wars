@@ -15,6 +15,24 @@ export function clampZones(zones) {
   return out
 }
 
+/** Нормализует одну зону: Array<Card> или { cards: [] } → массив карт */
+export function normalizeZoneCards(zone) {
+  if (Array.isArray(zone)) return zone
+  if (zone && typeof zone === 'object') return zone.cards || []
+  return []
+}
+
+/** Нормализует все 4 зоны игрока */
+export function normalizePlayerZones(zonesRaw) {
+  if (Array.isArray(zonesRaw)) {
+    return zonesRaw.map((zone) => normalizeZoneCards(zone))
+  }
+  if (zonesRaw && typeof zonesRaw === 'object') {
+    return [0, 1, 2, 3].map((i) => normalizeZoneCards(zonesRaw[i]))
+  }
+  return [[], [], [], []]
+}
+
 /**
  * Convert GameScreen's flat game object into GameEngine format for 2-4 players:
  *   { gameState, self, opponents }

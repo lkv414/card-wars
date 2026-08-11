@@ -44,10 +44,7 @@ export function PlayerHand({
               aria-label={card?.name ?? `Карта ${idx + 1}`}
               aria-pressed={selectedCardIndex === idx}
             >
-              <Card3D card={card} isOpponent={false} />
-              <div className="card-info">
-                <span className="cost-badge">{card.cost} ✨</span>
-              </div>
+              <Card3D card={card} isOpponent={false} compact />
             </button>
           ))
         ) : (

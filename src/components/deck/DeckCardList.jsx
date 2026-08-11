@@ -13,7 +13,7 @@
  *   - selectedCards, selectedLands
  *   - addCard / removeCard / addLand / removeLand
  *   - cardTotal, landTotal
- *   - onPreview, onBlockedAdd
+ *   - onBlockedAdd
  *   - filters, resetFilters
  */
 
@@ -32,7 +32,6 @@ export function DeckCardList({
   cardTotal,
   landTotal,
   filters,
-  onPreview,
   onBlockedAdd,
   onAddCard,
   onRemoveCard,
@@ -93,7 +92,6 @@ export function DeckCardList({
         addCard={onAddCard}
         removeCard={onRemoveCard}
         cardTotal={cardTotal}
-        onPreview={onPreview}
         onBlockedAdd={onBlockedAdd}
       />
     )
@@ -108,7 +106,6 @@ export function DeckCardList({
       removeCard={onRemoveLand}
       cardTotal={landTotal}
       isLands
-      onPreview={onPreview}
       onBlockedAdd={onBlockedAdd}
     />
   )

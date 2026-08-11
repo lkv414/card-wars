@@ -4,10 +4,10 @@ import { TopBar } from './TopBar'
 import { DeckFilters } from './DeckFilters'
 import { DeckModal } from './DeckModal'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
-import { CardPreview } from './Shared/CardPreview'
 import { DeckActions } from './deck/DeckActions'
 import { SaveDeckDialog } from './deck/SaveDeckDialog'
 import { DeckCardList } from './deck/DeckCardList'
+import { LibraryToolbar } from './deck/LibraryToolbar'
 import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
 import { normalizeDeckEntryId } from '../utils/deckState'
 import { useDeckSelection } from '../hooks/useDeckSelection'
@@ -15,7 +15,7 @@ import { useDecks } from '../hooks/useDecks'
 import { useNavigate } from 'react-router-dom'
 import {
   DEFAULT_FILTERS,
-  matchesCostFilter,
+  matchesCostTier,
   sortCards,
 } from '../utils/cardSort'
 
@@ -44,9 +44,9 @@ export function DeckBuilder({
   const { addDeck, getSelectedDeck } = useDecks()
   const navigate = useNavigate()
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
-  const [saveStep, setSaveStep] = useState('form') // 'form' | 'success'
+  const [saveStep, setSaveStep] = useState('form')
   const [saveName, setSaveName] = useState('')
-  const [savedDeck, setSavedDeck] = useState(null) // { name, code }
+  const [savedDeck, setSavedDeck] = useState(null)
   const [codeCopied, setCodeCopied] = useState(false)
 
   const [mode, setMode] = useState('cards')
@@ -54,7 +54,6 @@ export function DeckBuilder({
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [deckModalOpen, setDeckModalOpen] = useState(false)
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false)
-  const [preview, setPreview] = useState({ open: false, card: null, isLand: false })
 
   const deckCode = useMemo(
     () => generateDeckCode(selectedCards, selectedLands),
@@ -112,8 +111,7 @@ export function DeckBuilder({
             .includes(filters.search.toLowerCase())) &&
         (!filters.cardTypes.length || filters.cardTypes.includes(card.card_type)) &&
         (!filters.landTypes.length || filters.landTypes.includes(card.land_type)) &&
-        (!filters.rainbow || card.is_rainbow) &&
-        matchesCostFilter(card.cost, filters.costs) &&
+        matchesCostTier(card.cost, filters.costTier) &&
         (!filters.flipOnly || card.has_flip)
     )
     return sortCards(next, filters.sort || 'number')
@@ -172,16 +170,12 @@ export function DeckBuilder({
 
   const resetFilters = () => setFilters({ ...DEFAULT_FILTERS, sort: filters.sort })
 
-  const openPreview = (card, isLand = false) => {
-    setPreview({ open: true, card, isLand })
-  }
-
   const handleBlockedAdd = (reason) => {
     if (reason) toast('error', reason)
   }
 
   return (
-    <main className="app">
+    <main className="deck-builder">
       <TopBar
         deckCode={deckCode}
         cardTotal={cardTotal}
@@ -232,13 +226,6 @@ export function DeckBuilder({
         onGoToDecks={() => navigate('/decks')}
       />
 
-      <CardPreview
-        open={preview.open}
-        card={preview.card}
-        isLand={preview.isLand}
-        onClose={() => setPreview({ open: false, card: null, isLand: false })}
-      />
-
       <DeckModal
         open={deckModalOpen}
         onClose={() => setDeckModalOpen(false)}
@@ -250,7 +237,6 @@ export function DeckBuilder({
         removeCard={removeCard}
         addLand={addLand}
         removeLand={removeLand}
-        onPreview={openPreview}
         onBlockedAdd={handleBlockedAdd}
       />
 
@@ -258,14 +244,20 @@ export function DeckBuilder({
         <DeckFilters
           filters={filters}
           setFilters={setFilters}
-          mode={mode}
-          setMode={setMode}
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
           onReset={resetFilters}
+          mode={mode}
         />
 
-        <section className="list">
+        <section className="deck-library">
+          <LibraryToolbar
+            mode={mode}
+            setMode={setMode}
+            resultCount={mode === 'cards' ? filteredCards.length : filteredLands.length}
+            filters={filters}
+            onResetFilters={resetFilters}
+          />
           <DeckCardList
             loadingLibrary={loadingLibrary}
             libraryError={libraryError}
@@ -277,7 +269,6 @@ export function DeckBuilder({
             cardTotal={cardTotal}
             landTotal={landTotal}
             filters={filters}
-            onPreview={openPreview}
             onBlockedAdd={handleBlockedAdd}
             onAddCard={addCard}
             onRemoveCard={removeCard}

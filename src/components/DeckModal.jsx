@@ -24,7 +24,6 @@ export function DeckModal({
   removeCard,
   addLand,
   removeLand,
-  onPreview,
   onBlockedAdd,
 }) {
   const dialogRef = useRef(null)
@@ -185,7 +184,6 @@ export function DeckModal({
                     addCard={addCard}
                     removeCard={removeCard}
                     cardTotal={cardTotal}
-                    onPreview={onPreview}
                     onBlockedAdd={onBlockedAdd}
                     compact
                   />
@@ -224,7 +222,6 @@ export function DeckModal({
                 removeCard={removeLand}
                 cardTotal={landTotal}
                 isLands
-                onPreview={onPreview}
                 onBlockedAdd={onBlockedAdd}
                 compact
               />

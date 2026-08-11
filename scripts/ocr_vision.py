@@ -57,7 +57,7 @@ def vision_ocr_card(card_id, name, image_rel_path):
 {
   "name": "русское название",
   "card_type": "creature|spell|building|landscape",
-  "land_type": "blue|corn|nice|ice|sand|swamp|rainbow|any",
+  "land_type": "blue|corn|good|ice|sand|swamp|rainbow|any",
   "cost": число из кружка слева вверху,
   "attack": число слева внизу (0 если строение/заклинание),
   "health": число справа внизу (0 если строение/заклинание),

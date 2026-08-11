@@ -155,6 +155,24 @@ def ascii_copy(src_path):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Нормализация land_type (OCR / legacy → значения фронта)
+# ─────────────────────────────────────────────────────────────────────────────
+LAND_TYPE_ALIASES = {
+    "nice": "good",
+    "desert": "sand",
+    "rainbow": "any",
+}
+
+
+def normalize_land_type(raw: str | None, is_rainbow: bool = False) -> str | None:
+    if not raw:
+        return raw
+    if is_rainbow or raw == "rainbow":
+        return "any"
+    return LAND_TYPE_ALIASES.get(raw, raw)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Vision OCR
 # ─────────────────────────────────────────────────────────────────────────────
 GRID_PROMPT = """This is a Card Wars trading card sheet photo with exactly 8 cards in a 2x4 or 4x2 grid.
@@ -164,7 +182,7 @@ For EACH of the 8 cards return a JSON array element:
   "slot": 1-8,
   "name": "Russian card name exactly as printed",
   "card_type": "creature|spell|building|landscape",
-  "land_type": "blue|corn|nice|ice|sand|swamp|rainbow|any",
+  "land_type": "blue|corn|good|ice|sand|swamp|rainbow|any",
   "cost": number,
   "attack": number or 0,
   "health": number or 0,
@@ -454,11 +472,11 @@ def process_hero(hero_slug, skip_ocr=False, match_only=False):
 
         name = ocr_dict.get("name") or f"UNKNOWN_{hero_slug}_{global_slot}"
         card_type = ocr_dict.get("card_type")
-        land_type = ocr_dict.get("land_type")
         cost = ocr_dict.get("cost")
         attack = ocr_dict.get("attack") or 0
         health = ocr_dict.get("health") or 0
         is_rainbow = bool(ocr_dict.get("is_rainbow")) if ocr_dict.get("is_rainbow") is not None else False
+        land_type = normalize_land_type(ocr_dict.get("land_type"), is_rainbow)
         has_flip = bool(ocr_dict.get("has_flip")) if ocr_dict.get("has_flip") is not None else False
         flip_description = ocr_dict.get("flip_description")
         description = ocr_dict.get("description")

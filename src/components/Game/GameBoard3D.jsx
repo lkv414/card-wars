@@ -437,8 +437,6 @@ function EnhancedSlot({
           Подняты на 0.55 (а не 0.3) — карты визуально «парят» над землёй. */}
       {cards.map((card, ci) => {
         const isFlipped = card?.status === 'flipped' || card?.isFlipped
-        const canShowStats = true
-
         return (
           <EnhancedCard3DModel
             key={card.id || card.instanceId || ci}
@@ -448,7 +446,7 @@ function EnhancedSlot({
             isFaceUp={true}
             isSelected={isSelected}
             isFlipped={isFlipped}
-            showStats={canShowStats}
+            showStats={false}
             showFlipOption={isMyTurn && isOwnerMe}
             onClick={() => {
               if (onZoneCardClick) onZoneCardClick(card, ci)

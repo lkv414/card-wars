@@ -277,9 +277,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: 12px 14px;
   border-radius: 10px;
   background: #afa088;
+  min-width: 0;
 }
 
 .lobby-player--empty {
@@ -288,10 +290,38 @@
   background: transparent;
 }
 
+.lobby-player__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .lobby-player__name {
   font-weight: 600;
   font-size: 15px;
   color: #2b1c12;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby-player__deck {
+  font-size: 12px;
+  color: #5a4a3a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby-player__deck.missing {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+.lobby-player__deck.ok {
+  color: #3d6b4f;
 }
 
 .lobby-player__you {
@@ -306,6 +336,7 @@
 }
 
 .lobby-player__status {
+  flex-shrink: 0;
   font-size: 13px;
   font-weight: 700;
   padding: 4px 10px;
@@ -319,6 +350,56 @@
   font-size: 13px;
   color: #8a7060;
   text-align: center;
+}
+
+/* Deck picker on lobby screen */
+.lobby-deck-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #bfb09c;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.07);
+  min-width: 0;
+}
+
+.lobby-deck-picker__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #8a7060;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lobby-deck-picker__active {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lobby-deck-picker__active strong {
+  font-size: 16px;
+  color: var(--text-heading, #2b1c12);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby-deck-picker__active span {
+  font-size: 13px;
+  color: #6b5c4e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby-deck-picker__empty {
+  font-size: 14px;
+  color: #8a7060;
+  font-style: italic;
 }
 
 /* Game start */

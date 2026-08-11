@@ -32,6 +32,7 @@ export function GameZone({ zoneIndex, cards, isOpponentZone, onCardClick, onAtta
                   card={card}
                   isOpponent={isOpponentZone}
                   onAttack={() => handleAttackClick(card)}
+                  compact
                 />
               </div>
             ))

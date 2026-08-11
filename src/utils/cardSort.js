@@ -66,12 +66,37 @@ export function matchesCostFilter(cardCost, selectedCosts) {
   return selectedCosts.some((c) => (c === 6 ? cost >= 6 : cost === c))
 }
 
+/** Фильтр стоимости: tier 0|1|2 или 3 (= 3+) */
+export function matchesCostTier(cardCost, tier) {
+  if (tier == null) return true
+  const cost = Number(cardCost) || 0
+  if (tier === 3) return cost >= 3
+  return cost === tier
+}
+
+/** @deprecated используй matchesCostTier */
+export function matchesCostPreset(cardCost, preset) {
+  if (!preset) return true
+  const cost = Number(cardCost) || 0
+  switch (preset) {
+    case '0-2':
+      return cost <= 2
+    case '3-4':
+      return cost >= 3 && cost <= 4
+    case '5':
+      return cost === 5
+    case '6+':
+      return cost >= 6
+    default:
+      return true
+  }
+}
+
 export const DEFAULT_FILTERS = {
   search: '',
   cardTypes: [],
   landTypes: [],
-  rainbow: false,
-  costs: [],
+  costTier: null,
   flipOnly: false,
   sort: 'number',
 }
@@ -82,8 +107,10 @@ export function hasActiveFilters(filters) {
     filters.search?.trim() ||
     filters.cardTypes?.length > 0 ||
     filters.landTypes?.length > 0 ||
-    filters.rainbow ||
+    filters.costTier != null ||
+    filters.flipOnly ||
+    filters.costPreset ||
     filters.costs?.length > 0 ||
-    filters.flipOnly
+    filters.rainbow
   )
 }

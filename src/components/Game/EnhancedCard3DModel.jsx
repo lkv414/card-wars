@@ -36,10 +36,9 @@ const CARD_HEIGHT = 1.0
 const LAND_TYPE_ICONS = {
   corn: '🌽',
   ice: '❄️',
-  desert: '🏜️',
   good: '🌸',
   swamp: '🌿',
-  sand: '🏖️',
+  sand: '🏜️',
   blue: '🔵',
   any: '🌈',
 }
@@ -187,7 +186,7 @@ export function EnhancedCard3DModel({
   isFaceUp = true,
   isSelected = false,
   isFlipped = false,
-  showStats = true,
+  showStats = false,
   showFlipOption = false,
 }) {
   const [hovered, setHovered] = useState(false)
@@ -332,40 +331,6 @@ export function EnhancedCard3DModel({
         </>
       )}
 
-      {/* Название карты — всегда видно сверху. Поворот текста больше не
-          нужен: родительская группа (EnhancedSlot) уже повернула всю
-          сцену по Y на угол владельца, и текст поворачивается вместе
-          с ней. Дополнительный поворот здесь вернул бы текст обратно. */}
-      {card?.name && (
-        <group
-          position={[0, CARD_HEIGHT/2 + 0.15, 0]}
-          rotation={[0, 0, 0]}
-        >
-          <mesh>
-            {/* Плашка чуть уже карты, чтобы оставаться в пределах CARD_WIDTH */}
-            <planeGeometry args={[CARD_WIDTH * 1.05, 0.2]} />
-            <meshStandardMaterial color="#000" transparent={true} opacity={0.6} side={THREE.DoubleSide} />
-          </mesh>
-          {create3DText(card.name, '#FFF', 0.09, CARD_WIDTH * 0.95)}
-        </group>
-      )}
-
-      {/* Описание карты — всегда видно снизу. Поворот не нужен — родитель
-          (EnhancedSlot) уже повернул группу по Y. */}
-      {card?.description && (
-        <group
-          position={[0, -CARD_HEIGHT/2 - 0.22, 0]}
-          scale={hovered ? [1, 1.4, 1] : [1, 1, 1]}
-          rotation={[0, 0, 0]}
-        >
-          <mesh>
-            {/* Плашка уже карты */}
-            <planeGeometry args={[CARD_WIDTH * 1.2, 0.5]} />
-            <meshStandardMaterial color="#000" transparent={true} opacity={hovered ? 0.78 : 0.5} side={THREE.DoubleSide} />
-          </mesh>
-          {create3DText(card.description, '#FFF', 0.06, CARD_WIDTH * 0.95)}
-        </group>
-      )}
     </group>
   )
 }

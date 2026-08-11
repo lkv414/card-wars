@@ -44,7 +44,7 @@ Return ONLY one JSON object:
   "cost": number,
   "attack": number,
   "health": number,
-  "land_type": "blue|corn|nice|ice|sand|swamp|rainbow|any",
+  "land_type": "blue|corn|good|ice|sand|swamp|rainbow|any",
   "is_rainbow": true|false,
   "has_flip": true|false,
   "flip_description": "text or null",

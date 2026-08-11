@@ -19,7 +19,7 @@ DB_PATH = r"C:\Users\<redacted>\WebstormProjects\card_game\data\cards.db"
 OCR_SCRIPT = r"C:\Users\<redacted>\WebstormProjects\card_game\scripts\ocr_all_cards.py"
 
 PROMPT = """This is a Card Wars trading card. Read it CAREFULLY and return ONLY this JSON:
-{"name":"Russian name as printed exactly","card_type":"creature|spell|building|landscape","cost":N,"attack":N,"health":N,"land_type":"blue|corn|nice|ice|sand|swamp|rainbow|any","is_rainbow":true|false,"has_flip":true|false,"flip_description":"text or null","description":"FULL Russian ability text or null"}
+{"name":"Russian name as printed exactly","card_type":"creature|spell|building|landscape","cost":N,"attack":N,"health":N,"land_type":"blue|corn|good|ice|sand|swamp|rainbow|any","is_rainbow":true|false,"has_flip":true|false,"flip_description":"text or null","description":"FULL Russian ability text or null"}
 Be precise with numbers. Return ONLY the JSON object, no other text."""
 
 

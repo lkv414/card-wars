@@ -8,7 +8,6 @@ export const CardGrid = memo(function CardGrid({
   removeCard,
   cardTotal,
   isLands = false,
-  onPreview,
   onBlockedAdd,
   compact = false,
 }) {
@@ -23,7 +22,6 @@ export const CardGrid = memo(function CardGrid({
             addCard={addCard}
             removeCard={removeCard}
             cardTotal={cardTotal}
-            onPreview={onPreview}
             onBlockedAdd={onBlockedAdd}
             compact={compact}
           />

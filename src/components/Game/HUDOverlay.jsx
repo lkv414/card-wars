@@ -241,13 +241,15 @@ export function HUDOverlay({
                           aria-label={c?.name ?? `Карта ${idx + 1}`}
                           title={c?.name || `Карта ${idx + 1}`}
                         >
-                  <div className="hud-hand-card-cost">{c?.cost ?? '?'}</div>
-                  <div className="hud-hand-card-name">{c?.name || `Карта ${idx + 1}`}</div>
-                  {c?.attack !== undefined && (
-                    <div className="hud-hand-card-attack">⚔ {c.attack}</div>
-                  )}
-                  {c?.health !== undefined && (
-                    <div className="hud-hand-card-health">❤️ {c.health}</div>
+                  {c?.image_url ? (
+                    <img
+                      src={c.image_url}
+                      alt=""
+                      className="hud-hand-card-img"
+                      draggable={false}
+                    />
+                  ) : (
+                    <span className="hud-hand-card-fallback">{c?.name || `Карта ${idx + 1}`}</span>
                   )}
                 </button>
               )
@@ -323,25 +325,23 @@ export function HUDOverlay({
                 }
                 .hud-hand-card {
                   flex: 0 0 auto;
-                  min-width: 100px;
-                  max-width: 130px;
-                  height: 140px;
-                  padding: 8px;
+                  width: 92px;
+                  height: 128px;
+                  padding: 0;
                   border-radius: 8px;
-                  background: linear-gradient(135deg, #2a3554 0%, #1f2940 100%);
+                  background: #111;
                   border: 2px solid rgba(255, 255, 255, 0.2);
                   color: white;
                   cursor: grab;
-                  display: flex;
-                  flex-direction: column;
-                  gap: 4px;
+                  display: block;
                   font-family: 'Segoe UI', system-ui, sans-serif;
                   text-align: left;
                   pointer-events: auto;
                   position: relative;
+                  overflow: hidden;
                   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
                   user-select: none;
-                  touch-action: none; /* drag на тачскринах */
+                  touch-action: none;
                 }
                 .hud-hand-card:active { cursor: grabbing; }
                 .hud-hand-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.5); }
@@ -353,42 +353,27 @@ export function HUDOverlay({
                 /* Активный drag — карта становится полупрозрачной в исходном месте */
                 .hud-hand-card.dragging { opacity: 0.35; }
                 .hud-hand-card.disabled { opacity: 0.45; cursor: not-allowed; }
-        .hud-hand-card-cost {
-          position: absolute;
-          top: 4px;
-          left: 6px;
-          width: 22px;
-          height: 22px;
-          background: #ff9800;
-          color: #000;
-          font-weight: 800;
-          border-radius: 50%;
+        .hud-hand-card-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
+          pointer-events: none;
+          user-select: none;
+        }
+        .hud-hand-card-fallback {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 13px;
-        }
-        .hud-hand-card-name {
-          font-size: 13px;
+          width: 100%;
+          height: 100%;
+          padding: 8px;
+          font-size: 11px;
           font-weight: 700;
-          margin-top: 24px;
-          line-height: 1.15;
-          max-height: 38px;
-          overflow: hidden;
-        }
-        .hud-hand-card-attack {
-          font-size: 12px;
-          background: rgba(244, 67, 54, 0.7);
-          padding: 1px 6px;
-          border-radius: 4px;
-          align-self: flex-start;
-        }
-        .hud-hand-card-health {
-          font-size: 12px;
-          background: rgba(76, 175, 80, 0.7);
-          padding: 1px 6px;
-          border-radius: 4px;
-          align-self: flex-start;
+          line-height: 1.2;
+          text-align: center;
+          background: linear-gradient(135deg, #2a3554 0%, #1f2940 100%);
         }
         .hud-hand-empty { color: rgba(255,255,255,0.5); font-style: italic; }
 

@@ -9,8 +9,9 @@ import {
   groupCardsByType,
   groupCardsByCost,
   matchesCostFilter,
+  matchesCostTier,
   DEFAULT_FILTERS,
-  hasActiveFilters
+  hasActiveFilters,
 } from './cardSort.js'
 
 const mockCards = [
@@ -189,8 +190,17 @@ test('hasActiveFilters returns true when cardTypes is not empty', () => {
   assert.equal(hasActiveFilters({ ...DEFAULT_FILTERS, cardTypes: ['creature'] }), true)
 })
 
-test('hasActiveFilters returns true when costs is not empty', () => {
-  assert.equal(hasActiveFilters({ ...DEFAULT_FILTERS, costs: [1, 2] }), true)
+test('hasActiveFilters returns true when costTier is set', () => {
+  assert.equal(hasActiveFilters({ ...DEFAULT_FILTERS, costTier: 2 }), true)
+})
+
+test('matchesCostTier filters exact and 3+ bucket', () => {
+  assert.equal(matchesCostTier(0, 0), true)
+  assert.equal(matchesCostTier(1, 0), false)
+  assert.equal(matchesCostTier(2, 2), true)
+  assert.equal(matchesCostTier(3, 3), true)
+  assert.equal(matchesCostTier(6, 3), true)
+  assert.equal(matchesCostTier(2, null), true)
 })
 
 test('hasActiveFilters returns false for empty filters object', () => {
@@ -207,8 +217,7 @@ test('DEFAULT_FILTERS has expected structure', () => {
     search: '',
     cardTypes: [],
     landTypes: [],
-    rainbow: false,
-    costs: [],
+    costTier: null,
     flipOnly: false,
     sort: 'number',
   })

@@ -4,6 +4,24 @@ import { DECK_LIMITS } from '../constants/game'
 
 const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
 
+function DeckStat({ label, current, max, ok, warn }) {
+  const pct = Math.min(100, (current / max) * 100)
+  return (
+    <div className={`deck-stat ${ok ? 'deck-stat--ok' : warn ? 'deck-stat--warn' : ''}`}>
+      <div className="deck-stat-head">
+        <span className="deck-stat-label">{label}</span>
+        <span className="deck-stat-value">
+          {current}
+          <span className="deck-stat-max">/{max}</span>
+        </span>
+      </div>
+      <div className="deck-stat-track" aria-hidden="true">
+        <div className="deck-stat-fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  )
+}
+
 export function TopBar({
   deckCode,
   cardTotal,
@@ -22,114 +40,99 @@ export function TopBar({
 
   const cardsOk = cardTotal === CARD_LIMITS.maxTotal
   const landsOk = landTotal === LAND_LIMITS.maxTotal
-  const cardProgress = Math.min(100, (cardTotal / CARD_LIMITS.maxTotal) * 100)
-  const landProgress = Math.min(100, (landTotal / LAND_LIMITS.maxTotal) * 100)
-
-  const tallyClass = [
-    'deck-tally',
-    errors.length ? 'invalid' : cardsOk && landsOk ? 'ok' : cardsOk || landTotal > 0 ? 'partial' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const cardsWarn = errors.some((e) => e.includes('карт'))
+  const hasMessages = warnings.length > 0 || errors.length > 0
 
   const handleCodeKeyDown = (event) => {
     if (event.key !== 'Enter') return
-
     event.preventDefault()
     const normalizedCode = codeInputValue.trim()
     setCodeDraft(normalizedCode)
     setIsEditingCode(false)
-
-    if (normalizedCode) {
-      importDeck(normalizedCode)
-    }
+    if (normalizedCode) importDeck(normalizedCode)
   }
 
   return (
-    <header className="topbar">
-      <button type="button" className="back-btn" onClick={() => navigate('/')}>
-        ← Назад
-      </button>
-
-      <button
-        type="button"
-        className={`filters-toggle ${filtersOpen ? 'active' : ''}`}
-        onClick={onToggleFilters}
-        aria-expanded={filtersOpen}
-        aria-controls="deck-filters"
-      >
-        {filtersOpen ? '✕ Фильтры' : '☰ Фильтры'}
-      </button>
-
-      <div className="deck-progress-wrap" title="Прогресс колоды">
-        <span className={tallyClass}>
-          <span className={cardsOk ? 'tally-ok' : errors.some((e) => e.includes('карт')) ? 'tally-bad' : ''}>
-            {cardTotal} / {CARD_LIMITS.maxTotal}
-          </span>
-          <span className="tally-sep" aria-hidden="true">
-            |
-          </span>
-          <span className={landsOk ? 'tally-ok' : landTotal > 0 || errors.length ? 'tally-bad' : ''}>
-            {landTotal} / {LAND_LIMITS.maxTotal}
-          </span>
-        </span>
-        <div className="deck-progress" aria-hidden="true">
-          <div className="deck-progress-track">
-            <div
-              className={`deck-progress-fill cards ${cardsOk ? 'ok' : ''}`}
-              style={{ width: `${cardProgress}%` }}
-            />
-          </div>
-          <div className="deck-progress-track land">
-            <div
-              className={`deck-progress-fill lands ${landsOk ? 'ok' : ''}`}
-              style={{ width: `${landProgress}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="code-field">
-        <div className="code-input-wrapper">
-          <input
-            aria-label="Live-код колоды или код для загрузки"
-            className="code-input"
-            placeholder="Код DK-XXXXXX"
-            title="Live-код текущей колоды. Вставьте другой код и нажмите Enter, чтобы загрузить колоду."
-            value={codeInputValue}
-            onFocus={(event) => {
-              const input = event.currentTarget
-              setCodeDraft(deckCode)
-              setIsEditingCode(true)
-              requestAnimationFrame(() => input.select())
-            }}
-            onBlur={() => setIsEditingCode(false)}
-            onChange={(e) => setCodeDraft(e.target.value)}
-            onKeyDown={handleCodeKeyDown}
-          />
-          <button
-            type="button"
-            className="copy-code-btn"
-            title="Скопировать код колоды"
-            aria-label="Скопировать код колоды"
-            disabled={!deckCode}
-            onClick={() => onCopyCode?.(deckCode)}
-          >
-            📋
+    <header className="deck-header">
+      <div className="deck-header-row">
+        <div className="deck-header-start">
+          <button type="button" className="deck-icon-btn" onClick={() => navigate('/')} aria-label="Назад">
+            ←
           </button>
+          <div className="deck-header-brand">
+            <h1>Редактор колод</h1>
+          </div>
         </div>
+
+        <div className="deck-header-stats" aria-label="Прогресс колоды">
+          <DeckStat
+            label="Карты"
+            current={cardTotal}
+            max={CARD_LIMITS.maxTotal}
+            ok={cardsOk}
+            warn={cardsWarn}
+          />
+          <DeckStat
+            label="Земли"
+            current={landTotal}
+            max={LAND_LIMITS.maxTotal}
+            ok={landsOk}
+            warn={!landsOk && (landTotal > 0 || errors.length > 0)}
+          />
+        </div>
+
+        <div className="deck-header-code">
+          <label className="visually-hidden" htmlFor="deck-code-input">
+            Код колоды
+          </label>
+          <div className="deck-code-input">
+            <input
+              id="deck-code-input"
+              placeholder="Код колоды — Enter для импорта"
+              value={codeInputValue}
+              onFocus={(event) => {
+                const input = event.currentTarget
+                setCodeDraft(deckCode)
+                setIsEditingCode(true)
+                requestAnimationFrame(() => input.select())
+              }}
+              onBlur={() => setIsEditingCode(false)}
+              onChange={(e) => setCodeDraft(e.target.value)}
+              onKeyDown={handleCodeKeyDown}
+            />
+            <button
+              type="button"
+              className="deck-icon-btn deck-icon-btn--accent"
+              aria-label="Скопировать код колоды"
+              disabled={!deckCode}
+              onClick={() => onCopyCode?.(deckCode)}
+            >
+              ⧉
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className={`deck-filters-btn ${filtersOpen ? 'is-active' : ''}`}
+          onClick={onToggleFilters}
+          aria-expanded={filtersOpen}
+          aria-controls="deck-filters"
+        >
+          Фильтры
+        </button>
       </div>
 
-      {(warnings.length > 0 || errors.length > 0) && (
-        <div className="validation">
+      {hasMessages && (
+        <div className="deck-header-alerts" role="status" aria-live="polite">
           {warnings.map((w) => (
-            <span className="warn" key={w}>
-              ⚠️ {w}
+            <span className="deck-alert deck-alert--warn" key={w}>
+              {w}
             </span>
           ))}
           {errors.map((e) => (
-            <span className="err" key={e}>
-              ❌ {e}
+            <span className="deck-alert deck-alert--err" key={e}>
+              {e}
             </span>
           ))}
         </div>

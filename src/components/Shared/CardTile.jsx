@@ -1,86 +1,14 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
-import { DECK_LIMITS } from '../../constants/game'
+import { memo, useCallback, useState } from 'react'
+import { useArtTileZoom } from '../../hooks/useArtTileZoom'
+import { CARD_ZOOM_SCALE, CARD_ZOOM_SCALE_COMPACT } from '../../utils/cardZoom'
+import { getDeckTileBlockReason } from '../../utils/deckTileLimits'
 import { normalizeDeckEntryId } from '../../utils/deckState'
 
-const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
-const ZOOM_SCALE = 2.85
-const ZOOM_SCALE_COMPACT = 3.1
-const EDGE_PAD = 4
-
-function getZoomBounds(el) {
-  const library = el.closest('.deck-library')
-  const pad = EDGE_PAD
-
-  if (!library) {
-    const grid = el.closest('.cards-grid')
-    if (!grid) return null
-    const r = grid.getBoundingClientRect()
-    return { left: r.left + pad, right: r.right - pad, top: r.top + pad, bottom: r.bottom - pad }
-  }
-
-  const lib = library.getBoundingClientRect()
-  const toolbar = library.querySelector('.library-toolbar')
-  const dock = el.closest('.deck-builder')?.querySelector('.deck-dock')
-
-  let top = lib.top + pad
-  if (toolbar) {
-    top = Math.max(top, toolbar.getBoundingClientRect().bottom + pad)
-  }
-
-  let bottom = lib.bottom - pad
-  if (dock) {
-    const dockTop = dock.getBoundingClientRect().top
-    if (Number.isFinite(dockTop)) {
-      bottom = Math.min(bottom, dockTop - pad)
-    }
-  }
-
-  return {
-    left: lib.left + pad,
-    right: lib.right - pad,
-    top,
-    bottom,
-  }
-}
-
-function clampOrigin(min, max, preferred = 0.5) {
-  if (min <= max) return Math.max(min, Math.min(max, preferred))
-  // Не хватает места с обеих сторон — прижимаем к ближайшему краю
-  return Math.abs(min - preferred) <= Math.abs(max - preferred) ? min : max
-}
-
-/** Смещает origin при полном zoom, чтобы карта целиком влезала в контейнер библиотеки */
-function computeZoomOrigin(el, scale) {
-  const r = el.getBoundingClientRect()
-  const bounds = getZoomBounds(el)
-  if (!bounds || scale <= 1) return '50% 50%'
-
-  const W = r.width
-  const H = r.height
-  const denomX = W * (1 - scale)
-  const denomY = H * (1 - scale)
-
-  let ox = 0.5
-  let oy = 0.5
-
-  if (denomX !== 0) {
-    const oxMin = (bounds.right - r.left - W * scale) / denomX
-    const oxMax = (bounds.left - r.left) / denomX
-    ox = clampOrigin(oxMin, oxMax, 0.5)
-    ox = Math.max(0, Math.min(1, ox))
-  }
-
-  if (denomY !== 0) {
-    const oyMin = (bounds.bottom - r.top - H * scale) / denomY
-    const oyMax = (bounds.top - r.top) / denomY
-    oy = clampOrigin(oyMin, oyMax, 0.5)
-    oy = Math.max(0, Math.min(1, oy))
-  }
-
-  return `${ox * 100}% ${oy * 100}%`
-}
-
 const ZONE_RATIO = 0.30
+
+function releaseFocus(el) {
+  el?.blur?.()
+}
 
 export const CardTile = memo(function CardTile({
   item,
@@ -95,9 +23,6 @@ export const CardTile = memo(function CardTile({
   compact = false,
 }) {
   const [imageFailed, setImageFailed] = useState(false)
-  const [zoomOrigin, setZoomOrigin] = useState('50% 50%')
-  const tileRef = useRef(null)
-  const scrollCleanupRef = useRef(null)
 
   const normalizedId = normalizeDeckEntryId(item.id)
   const quantity = selectedCards
@@ -107,30 +32,11 @@ export const CardTile = memo(function CardTile({
   const isLandCard = isLand || (!!item.name && !item.card_type)
   const hasImage = item.image_url && !imageFailed
   const artOnly = hasImage && !isLandCard
-  const zoomScale = compact ? ZOOM_SCALE_COMPACT : ZOOM_SCALE
+  const zoomScale = compact ? CARD_ZOOM_SCALE_COMPACT : CARD_ZOOM_SCALE
 
-  const updateZoomOrigin = useCallback(() => {
-    if (!tileRef.current || !artOnly) return
-    setZoomOrigin(computeZoomOrigin(tileRef.current, zoomScale))
-  }, [artOnly, zoomScale])
+  const { tileRef, zoomOrigin, onMouseEnter, onMouseLeave } = useArtTileZoom(artOnly, zoomScale)
 
-  useEffect(
-    () => () => {
-      scrollCleanupRef.current?.()
-    },
-    []
-  )
-
-  const blockReason = (() => {
-    if (isLandCard) {
-      if (cardTotal >= LAND_LIMITS.maxTotal) return `В колоде уже ${LAND_LIMITS.maxTotal} земли`
-      return null
-    }
-    if (quantity >= CARD_LIMITS.maxPerEntry) return `Максимум ${CARD_LIMITS.maxPerEntry} копии этой карты`
-    if (cardTotal >= CARD_LIMITS.maxTotal) return `Колода полна (${CARD_LIMITS.maxTotal} карт)`
-    return null
-  })()
-
+  const blockReason = getDeckTileBlockReason({ isLandCard, quantity, cardTotal })
   const disabled = Boolean(blockReason)
 
   const tryAdd = useCallback(() => {
@@ -144,28 +50,6 @@ export const CardTile = memo(function CardTile({
   const tryRemove = useCallback(() => {
     if (quantity > 0) removeCard?.(item.id)
   }, [item.id, quantity, removeCard])
-
-  const releaseFocus = (el) => {
-    if (el && typeof el.blur === 'function') el.blur()
-  }
-
-  const handleMouseEnter = () => {
-    if (!artOnly || !tileRef.current) return
-    updateZoomOrigin()
-
-    scrollCleanupRef.current?.()
-    const library = tileRef.current.closest('.deck-library')
-    if (!library) return
-
-    const onScroll = () => updateZoomOrigin()
-    library.addEventListener('scroll', onScroll, { passive: true })
-    scrollCleanupRef.current = () => library.removeEventListener('scroll', onScroll)
-  }
-
-  const handleMouseLeave = () => {
-    scrollCleanupRef.current?.()
-    scrollCleanupRef.current = null
-  }
 
   const handleArtClick = (event) => {
     const tile = event.currentTarget
@@ -253,8 +137,8 @@ export const CardTile = memo(function CardTile({
       ]
         .filter(Boolean)
         .join(' ')}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       onMouseDown={artOnly ? (e) => e.preventDefault() : undefined}
       onClick={artOnly ? handleArtClick : undefined}
       onKeyDown={handleKeyDown}

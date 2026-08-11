@@ -10,6 +10,8 @@ import {
   groupCardsByCost,
   matchesCostFilter,
   matchesCostTier,
+  filterCards,
+  filterLands,
   DEFAULT_FILTERS,
   hasActiveFilters,
 } from './cardSort.js'
@@ -210,6 +212,33 @@ test('hasActiveFilters returns false for empty filters object', () => {
 test('hasActiveFilters returns false for null/undefined', () => {
   assert.equal(hasActiveFilters(null), false)
   assert.equal(hasActiveFilters(undefined), false)
+})
+
+test('filterCards applies search, type, cost tier and sort', () => {
+  const cards = [
+    { card_number: 2, name: 'Alpha', description: '', card_type: 'creature', land_type: 'fire', cost: 1, has_flip: false },
+    { card_number: 1, name: 'Beta spell', description: 'fire bolt', card_type: 'spell', land_type: 'fire', cost: 3, has_flip: true },
+    { card_number: 3, name: 'Gamma', description: '', card_type: 'building', land_type: 'water', cost: 2, has_flip: false },
+  ]
+
+  const filtered = filterCards(cards, {
+    ...DEFAULT_FILTERS,
+    search: 'fire',
+    cardTypes: ['spell'],
+    costTier: 3,
+    flipOnly: true,
+    sort: 'name',
+  })
+
+  assert.equal(filtered.length, 1)
+  assert.equal(filtered[0].name, 'Beta spell')
+})
+
+test('filterLands filters by name', () => {
+  const lands = [{ name: 'Огонь' }, { name: 'Вода' }]
+  assert.equal(filterLands(lands, '').length, 2)
+  assert.equal(filterLands(lands, 'ог').length, 1)
+  assert.equal(filterLands(lands, 'ог')[0].name, 'Огонь')
 })
 
 test('DEFAULT_FILTERS has expected structure', () => {

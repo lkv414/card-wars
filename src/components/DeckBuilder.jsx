@@ -13,11 +13,7 @@ import { normalizeDeckEntryId } from '../utils/deckState'
 import { useDeckSelection } from '../hooks/useDeckSelection'
 import { useDecks } from '../hooks/useDecks'
 import { useNavigate } from 'react-router-dom'
-import {
-  DEFAULT_FILTERS,
-  matchesCostTier,
-  sortCards,
-} from '../utils/cardSort'
+import { DEFAULT_FILTERS, filterCards, filterLands } from '../utils/cardSort'
 
 export function DeckBuilder({
   cards,
@@ -102,26 +98,8 @@ export function DeckBuilder({
     }
   }
 
-  const filteredCards = useMemo(() => {
-    const next = cards.filter(
-      (card) =>
-        (!filters.search ||
-          `${card.name} ${card.description}`
-            .toLowerCase()
-            .includes(filters.search.toLowerCase())) &&
-        (!filters.cardTypes.length || filters.cardTypes.includes(card.card_type)) &&
-        (!filters.landTypes.length || filters.landTypes.includes(card.land_type)) &&
-        matchesCostTier(card.cost, filters.costTier) &&
-        (!filters.flipOnly || card.has_flip)
-    )
-    return sortCards(next, filters.sort || 'number')
-  }, [cards, filters])
-
-  const filteredLands = useMemo(() => {
-    if (!filters.search) return lands
-    const q = filters.search.toLowerCase()
-    return lands.filter((land) => String(land.name || '').toLowerCase().includes(q))
-  }, [lands, filters.search])
+  const filteredCards = useMemo(() => filterCards(cards, filters), [cards, filters])
+  const filteredLands = useMemo(() => filterLands(lands, filters.search), [lands, filters.search])
 
   const importDeck = async (code) => {
     const trimmedCode = code.trim()

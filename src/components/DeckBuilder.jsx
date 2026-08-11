@@ -13,6 +13,7 @@ import { normalizeDeckImportMap } from '../utils/deckImport'
 import { copyToClipboard } from '../utils/clipboard'
 import { useDeckSelection } from '../hooks/useDeckSelection'
 import { useDecks } from '../hooks/useDecks'
+import { useDeckSave } from '../hooks/useDeckSave'
 import { useNavigate } from 'react-router-dom'
 import { DEFAULT_FILTERS, filterCards, filterLands } from '../utils/cardSort'
 
@@ -40,11 +41,27 @@ export function DeckBuilder({
   } = useDeckSelection()
   const { addDeck, getSelectedDeck } = useDecks()
   const navigate = useNavigate()
-  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
-  const [saveStep, setSaveStep] = useState('form')
-  const [saveName, setSaveName] = useState('')
-  const [savedDeck, setSavedDeck] = useState(null)
-  const [codeCopied, setCodeCopied] = useState(false)
+  const {
+    saveDialogOpen,
+    saveStep,
+    saveName,
+    setSaveName,
+    savedDeck,
+    codeCopied,
+    closeSaveDialog,
+    handleSaveDeck,
+    handleConfirmSave,
+    handleCopySavedCode,
+  } = useDeckSave({
+    cardTotal,
+    landTotal,
+    errors,
+    selectedCards,
+    selectedLands,
+    getSelectedDeck,
+    addDeck,
+    toast,
+  })
 
   const [mode, setMode] = useState('cards')
   const [filters, setFilters] = useState({ ...DEFAULT_FILTERS })
@@ -56,46 +73,6 @@ export function DeckBuilder({
     () => generateDeckCode(selectedCards, selectedLands),
     [selectedCards, selectedLands]
   )
-
-  const closeSaveDialog = () => {
-    setSaveDialogOpen(false)
-    setSaveStep('form')
-    setSaveName('')
-    setSavedDeck(null)
-    setCodeCopied(false)
-  }
-
-  const handleSaveDeck = () => {
-    if (cardTotal === 0 && landTotal === 0) {
-      toast?.('error', 'Колода пустая — добавьте хотя бы одну карту')
-      return
-    }
-    if (errors.length > 0) {
-      toast?.('error', 'Исправьте ошибки в колоде перед сохранением')
-      return
-    }
-    setSaveName(getSelectedDeck()?.name || '')
-    setSaveStep('form')
-    setSavedDeck(null)
-    setCodeCopied(false)
-    setSaveDialogOpen(true)
-  }
-
-  const handleConfirmSave = () => {
-    const name = saveName.trim() || `Колода ${new Date().toLocaleDateString('ru-RU')}`
-    const newDeck = addDeck({ name, selectedCards, selectedLands })
-    setSavedDeck({ name: newDeck.name, code: newDeck.code })
-    setSaveStep('success')
-  }
-
-  const handleCopySavedCode = async () => {
-    if (!savedDeck?.code) return
-    const ok = await copyToClipboard(savedDeck.code, { fallbackPromptLabel: 'Скопируй код колоды:' })
-    if (ok) {
-      setCodeCopied(true)
-      setTimeout(() => setCodeCopied(false), 1500)
-    }
-  }
 
   const filteredCards = useMemo(() => filterCards(cards, filters), [cards, filters])
   const filteredLands = useMemo(() => filterLands(lands, filters.search), [lands, filters.search])

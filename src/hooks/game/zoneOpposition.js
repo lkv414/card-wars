@@ -12,8 +12,8 @@
  * Используется в useAttack (валидация) и в UI (подсветка доступных целей).
  */
 
-import { ZONE_OPPOSITION } from '../../constants/gameMultiplayer'
-import { safePlayers } from '../../utils/safePlayer'
+import { ZONE_OPPOSITION } from '../../constants/gameMultiplayer.js'
+import { safePlayers } from '../../utils/safePlayer.js'
 
 /**
  * Вернуть список { playerId, zones: [0..3] } — цели для атаки из моей зоны.

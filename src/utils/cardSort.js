@@ -60,12 +60,6 @@ export function groupCardsByCost(cards) {
     }))
 }
 
-export function matchesCostFilter(cardCost, selectedCosts) {
-  if (!selectedCosts?.length) return true
-  const cost = Number(cardCost) || 0
-  return selectedCosts.some((c) => (c === 6 ? cost >= 6 : cost === c))
-}
-
 /** Фильтр стоимости: tier 0|1|2 или 3 (= 3+) */
 export function matchesCostTier(cardCost, tier) {
   if (tier == null) return true

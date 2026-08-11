@@ -429,6 +429,71 @@
   font-variant-numeric: tabular-nums;
 }
 
+.tally-ok {
+  color: var(--success-text);
+}
+
+.tally-bad {
+  color: var(--danger-text);
+}
+
+.deck-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.deck-progress-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.deck-progress-track.land {
+  height: 2px;
+}
+
+.deck-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.deck-progress-fill.cards.ok,
+.deck-progress-fill.lands.ok {
+  background: var(--success);
+}
+
+.deck-progress-modal {
+  margin-top: 8px;
+  max-width: 280px;
+  padding: 0;
+}
+
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mode-tabs button {
+  width: 100%;
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.mode-tabs .active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+}
+
 .deck-modal-close {
   background: var(--accent);
   color: #fff;

@@ -8,7 +8,6 @@ import {
   sortCards,
   groupCardsByType,
   groupCardsByCost,
-  matchesCostFilter,
   matchesCostTier,
   filterCards,
   filterLands,
@@ -154,30 +153,6 @@ test('groupCardsByCost handles invalid cost values', () => {
   const result = groupCardsByCost(cards)
   assert.equal(result[0].key, '0')
   assert.equal(result[0].items.length, 3)
-})
-
-test('matchesCostFilter returns true when no filters selected', () => {
-  assert.equal(matchesCostFilter(5, []), true)
-  assert.equal(matchesCostFilter(5, null), true)
-  assert.equal(matchesCostFilter(5, undefined), true)
-})
-
-test('matchesCostFilter matches exact cost', () => {
-  assert.equal(matchesCostFilter(3, [3]), true)
-  assert.equal(matchesCostFilter(3, [1, 2, 3]), true)
-  assert.equal(matchesCostFilter(3, [1, 2]), false)
-})
-
-test('matchesCostFilter matches 6+ for costs >= 6', () => {
-  assert.equal(matchesCostFilter(6, [6]), true)
-  assert.equal(matchesCostFilter(7, [6]), true)
-  assert.equal(matchesCostFilter(10, [6]), true)
-  assert.equal(matchesCostFilter(5, [6]), false)
-})
-
-test('matchesCostFilter handles string cost values', () => {
-  assert.equal(matchesCostFilter('3', [3]), true)
-  assert.equal(matchesCostFilter('invalid', [3]), false)
 })
 
 test('hasActiveFilters returns false for default filters', () => {

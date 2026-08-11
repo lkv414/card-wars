@@ -1,0 +1,145 @@
+/* Deck builder — breakpoints */
+
+.filters-backdrop {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .deck-header-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'start filters'
+      'stats stats'
+      'code code';
+  }
+
+  .deck-header-start {
+    grid-area: start;
+  }
+
+  .deck-header-stats {
+    grid-area: stats;
+  }
+
+  .deck-header-code {
+    grid-area: code;
+    max-width: none;
+  }
+
+  .deck-filters-btn {
+    display: inline-flex;
+    align-items: center;
+    grid-area: filters;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 1024px) {
+  .deck-builder {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .deck-builder .layout {
+    flex: none;
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .deck-library {
+    height: auto;
+    overflow: visible;
+  }
+
+  .deck-header {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+  }
+
+  .deck-filters {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    width: min(320px, 88vw);
+    height: 100%;
+    max-height: none;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease;
+    box-shadow: 16px 0 40px #00000033;
+  }
+
+  .deck-filters.is-open {
+    transform: translateX(0);
+  }
+
+  .deck-filters-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    background: var(--bg-muted);
+    font-weight: 800;
+  }
+
+  .filters-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    border: 0;
+    padding: 0;
+    background: #1d120866;
+    cursor: pointer;
+  }
+
+  .deck-dock {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 24px);
+    flex-wrap: wrap;
+    justify-content: center;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .deck-builder {
+    padding: 8px;
+    padding-bottom: calc(100px + var(--safe-bottom));
+  }
+
+  .deck-header {
+    padding: 8px;
+  }
+
+  .deck-header-stats {
+    flex-direction: row;
+  }
+
+  .deck-stat {
+    max-width: none;
+    min-width: 0;
+  }
+
+  .library-toolbar {
+    gap: 8px;
+  }
+
+  .library-reset {
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .deck-dock-btn {
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}

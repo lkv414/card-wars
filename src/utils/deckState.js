@@ -2,6 +2,11 @@ export function normalizeDeckEntryId(value) {
   return String(value ?? '').trim().toLowerCase()
 }
 
+export function findByDeckEntryId(list, id) {
+  const normalized = normalizeDeckEntryId(id)
+  return list?.find((item) => normalizeDeckEntryId(item.id) === normalized)
+}
+
 export function applyDeckEntries(existingEntries = {}, incomingEntries = {}, options = {}) {
   const { maxPerEntry = 3, maxTotal = 40 } = options
   const normalizedExisting = Object.entries(existingEntries || {}).reduce((acc, [id, quantity]) => {

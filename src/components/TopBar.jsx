@@ -1,26 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DECK_LIMITS } from '../constants/game'
+import { DeckStat } from './deck/DeckStat'
 
 const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
-
-function DeckStat({ label, current, max, ok, warn }) {
-  const pct = Math.min(100, (current / max) * 100)
-  return (
-    <div className={`deck-stat ${ok ? 'deck-stat--ok' : warn ? 'deck-stat--warn' : ''}`}>
-      <div className="deck-stat-head">
-        <span className="deck-stat-label">{label}</span>
-        <span className="deck-stat-value">
-          {current}
-          <span className="deck-stat-max">/{max}</span>
-        </span>
-      </div>
-      <div className="deck-stat-track" aria-hidden="true">
-        <div className="deck-stat-fill" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  )
-}
 
 export function TopBar({
   deckCode,

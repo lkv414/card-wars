@@ -1,0 +1,16 @@
+﻿.deck-builder {
+  --deck-sidebar: 252px;
+  --deck-gap: 12px;
+  --deck-shell-pad: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--deck-shell-pad) 12px;
+  padding-bottom: calc(var(--deck-shell-pad) + var(--safe-bottom));
+  overflow: hidden;
+  background: var(--bg);
+  box-sizing: border-box;
+}

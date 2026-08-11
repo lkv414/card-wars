@@ -1,0 +1,54 @@
+﻿/* ===== Action dock ===== */
+.deck-dock {
+  position: fixed;
+  right: calc(20px + var(--safe-right));
+  bottom: calc(20px + var(--safe-bottom));
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-elevated) 94%, transparent);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.deck-dock-btn {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+
+.deck-dock-btn--ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.deck-dock-btn--ghost:hover:not(:disabled) {
+  background: var(--bg-muted);
+}
+
+.deck-dock-btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.deck-dock-btn--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.deck-dock-btn--success {
+  background: var(--success);
+  color: #fff;
+}
+
+.deck-dock-btn--success:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+

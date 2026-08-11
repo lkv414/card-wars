@@ -12,7 +12,7 @@
  *   - Кнопка «Редактировать» (загружает в редактор)
  *   - Кнопка «Удалить» (с подтверждением)
  */
-import { useNavigate } from 'react-router-dom'
+import { copyToClipboard } from '../utils/clipboard'
 import { useEffect, useRef, useState } from 'react'
 import { useDecks } from '../hooks/useDecks'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
@@ -36,9 +36,9 @@ export function DeckList() {
   }, [])
 
   const handleCopy = async (code, id) => {
-    try {
-      await navigator.clipboard.writeText(code)
-      setCopiedId(id)
+    const ok = await copyToClipboard(code, { fallbackPromptLabel: 'Скопируй код:' })
+    if (!ok) return
+    setCopiedId(id)
       if (copyTimeoutRef.current !== null) {
         window.clearTimeout(copyTimeoutRef.current)
       }
@@ -46,9 +46,6 @@ export function DeckList() {
         setCopiedId(null)
         copyTimeoutRef.current = null
       }, 1500)
-    } catch {
-      window.prompt('Скопируй код:', code)
-    }
   }
 
   const handleStartRename = (deck) => {

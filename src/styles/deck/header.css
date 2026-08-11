@@ -1,0 +1,220 @@
+﻿/* ===== Header вЂ” РІСЃРµРіРґР° СЃРІРµСЂС…Сѓ, РЅРµ СЃРєСЂРѕР»Р»РёС‚СЃСЏ ===== */
+.deck-header {
+  flex-shrink: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--deck-gap);
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  box-shadow: 0 4px 16px #00000010;
+}
+
+.deck-header-row {
+  display: grid;
+  grid-template-columns: auto 1fr minmax(200px, 300px);
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.deck-header-start {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.deck-header-brand h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.deck-header-stats {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.deck-stat {
+  flex: 1 1 96px;
+  min-width: 88px;
+  max-width: 140px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  background: var(--bg-muted);
+  border: 1px solid transparent;
+}
+
+.deck-stat-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.deck-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.deck-stat-value {
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.deck-stat-max {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.deck-stat-track {
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border-strong) 70%, transparent);
+  overflow: hidden;
+}
+
+.deck-code-input {
+  display: flex;
+  align-items: stretch;
+  gap: 5px;
+  height: 34px;
+}
+
+.deck-code-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  font-size: 12px;
+}
+
+.deck-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.deck-filters-btn {
+  display: none;
+  padding: 0 12px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.deck-header-alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.deck-alert {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.deck-alert--err {
+  background: var(--danger-soft);
+  color: var(--danger-text);
+}
+
+.deck-stat--ok {
+  background: var(--success-soft);
+  border-color: color-mix(in srgb, var(--success) 25%, transparent);
+}
+
+.deck-stat--warn {
+  background: var(--danger-soft);
+  border-color: color-mix(in srgb, var(--danger) 25%, transparent);
+}
+
+.deck-stat-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.deck-stat--ok .deck-stat-fill {
+  background: var(--success);
+}
+
+.deck-header-code {
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.deck-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: var(--bg-muted);
+  color: var(--text);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.deck-icon-btn:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.deck-icon-btn--accent {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.deck-icon-btn--accent:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.deck-filters-btn.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.deck-alert--warn {
+  background: var(--warn-soft);
+  color: var(--warn-text);
+}
+
+.deck-link-btn {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.deck-link-btn:hover:not(:disabled) {
+  background: none;
+  color: var(--accent-hover);
+}

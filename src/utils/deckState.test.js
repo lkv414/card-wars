@@ -4,7 +4,7 @@
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { normalizeDeckEntryId, applyDeckEntries } from './deckState.js'
+import { normalizeDeckEntryId, applyDeckEntries, findByDeckEntryId } from './deckState.js'
 
 test('normalizeDeckEntryId normalizes valid UUID', () => {
   assert.equal(
@@ -31,6 +31,12 @@ test('normalizeDeckEntryId handles null/undefined/empty', () => {
   assert.equal(normalizeDeckEntryId(null), '')
   assert.equal(normalizeDeckEntryId(undefined), '')
   assert.equal(normalizeDeckEntryId(''), '')
+})
+
+test('findByDeckEntryId matches case-insensitively', () => {
+  const list = [{ id: 'ABC-123', name: 'Test' }]
+  assert.equal(findByDeckEntryId(list, 'abc-123')?.name, 'Test')
+  assert.equal(findByDeckEntryId(list, 'missing'), undefined)
 })
 
 test('applyDeckEntries returns empty object for empty inputs', () => {

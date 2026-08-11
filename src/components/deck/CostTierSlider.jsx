@@ -6,24 +6,20 @@ const TICKS = [
 ]
 
 export function CostTierSlider({ value, onChange }) {
-  const sliderValue = value === null ? 0 : value
-  const activeLabel =
-    value === null ? 'Все' : value === 3 ? '3+' : String(value)
-
-  const handleRange = (event) => {
-    const tier = Number(event.target.value)
-    onChange(tier)
-  }
+  const isAll = value === null
+  const activeLabel = isAll ? 'Все' : value === 3 ? '3+' : String(value)
+  const fillWidth = isAll ? 0 : (value / 3) * 100
 
   return (
-    <div className="cost-slider">
+    <div className={`cost-slider ${isAll ? 'cost-slider--all' : ''}`}>
       <div className="cost-slider-head">
         <span className="filter-field">Стоимость</span>
         <button
           type="button"
-          className={`cost-slider-badge ${value === null ? 'is-muted' : 'is-on'}`}
+          className={`cost-slider-badge ${isAll ? 'is-muted' : 'is-on'}`}
           onClick={() => onChange(null)}
           title="Показать все стоимости"
+          aria-pressed={isAll}
         >
           {activeLabel}
         </button>
@@ -31,12 +27,7 @@ export function CostTierSlider({ value, onChange }) {
 
       <div className="cost-slider-track-wrap">
         <div className="cost-slider-track" aria-hidden="true">
-          <div
-            className="cost-slider-fill"
-            style={{
-              width: value === null ? '0%' : `${(sliderValue / 3) * 100}%`,
-            }}
-          />
+          <div className="cost-slider-fill" style={{ width: `${fillWidth}%` }} />
         </div>
 
         <input
@@ -45,10 +36,10 @@ export function CostTierSlider({ value, onChange }) {
           min={0}
           max={3}
           step={1}
-          value={sliderValue}
-          onChange={handleRange}
+          value={isAll ? 0 : value}
+          onChange={(event) => onChange(Number(event.target.value))}
           aria-label="Стоимость карты"
-          aria-valuetext={activeLabel}
+          aria-valuetext={isAll ? 'Все стоимости' : activeLabel}
         />
 
         <div className="cost-slider-ticks">

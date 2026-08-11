@@ -1,5 +1,6 @@
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 import { hasActiveFilters } from '../utils/cardSort'
+import { toggleFilterList } from '../utils/filterState'
 import { CostTierSlider } from './deck/CostTierSlider'
 
 const SORT_OPTIONS = [
@@ -10,13 +11,7 @@ const SORT_OPTIONS = [
 ]
 
 export function DeckFilters({ filters, setFilters, mode, open, onClose, onReset }) {
-  const toggleList = (key, value) =>
-    setFilters((prev) => ({
-      ...prev,
-      [key]: prev[key].includes(value)
-        ? prev[key].filter((item) => item !== value)
-        : [...prev[key], value],
-    }))
+  const toggleList = (key, value) => setFilters((prev) => toggleFilterList(prev, key, value))
 
   const active = hasActiveFilters(filters)
   const isLands = mode === 'lands'

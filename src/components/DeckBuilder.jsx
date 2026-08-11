@@ -9,7 +9,8 @@ import { SaveDeckDialog } from './deck/SaveDeckDialog'
 import { DeckCardList } from './deck/DeckCardList'
 import { LibraryToolbar } from './deck/LibraryToolbar'
 import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
-import { normalizeDeckEntryId } from '../utils/deckState'
+import { normalizeDeckImportMap } from '../utils/deckImport'
+import { copyToClipboard } from '../utils/clipboard'
 import { useDeckSelection } from '../hooks/useDeckSelection'
 import { useDecks } from '../hooks/useDecks'
 import { useNavigate } from 'react-router-dom'
@@ -89,12 +90,10 @@ export function DeckBuilder({
 
   const handleCopySavedCode = async () => {
     if (!savedDeck?.code) return
-    try {
-      await navigator.clipboard.writeText(savedDeck.code)
+    const ok = await copyToClipboard(savedDeck.code, { fallbackPromptLabel: 'Скопируй код колоды:' })
+    if (ok) {
       setCodeCopied(true)
       setTimeout(() => setCodeCopied(false), 1500)
-    } catch {
-      window.prompt('Скопируй код колоды:', savedDeck.code)
     }
   }
 
@@ -113,15 +112,8 @@ export function DeckBuilder({
       const { selectedCards: importedCards, selectedLands: importedLands } =
         await expandDeckCodeWithCardData(trimmedCode, supabase)
 
-      const normalizeToLowerMap = (obj) =>
-        Object.fromEntries(
-          Object.entries(obj || {})
-            .map(([id, qty]) => [normalizeDeckEntryId(id), Number(qty) || 0])
-            .filter(([, q]) => q > 0)
-        )
-
-      setSelectedCards(normalizeToLowerMap(importedCards))
-      setSelectedLands(normalizeToLowerMap(importedLands))
+      setSelectedCards(normalizeDeckImportMap(importedCards))
+      setSelectedLands(normalizeDeckImportMap(importedLands))
       toast(
         'success',
         `Колода импортирована: ${Object.keys(importedCards || {}).length} карт, ${
@@ -138,12 +130,8 @@ export function DeckBuilder({
       toast('error', 'Код колоды пуст')
       return
     }
-    try {
-      await navigator.clipboard.writeText(code)
-      toast('success', 'Код скопирован')
-    } catch {
-      toast('error', 'Не удалось скопировать код')
-    }
+    const ok = await copyToClipboard(code)
+    toast(ok ? 'success' : 'error', ok ? 'Код скопирован' : 'Не удалось скопировать код')
   }
 
   const resetFilters = () => setFilters({ ...DEFAULT_FILTERS, sort: filters.sort })

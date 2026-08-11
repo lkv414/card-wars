@@ -1,0 +1,48 @@
+﻿/* ===== Layout вЂ” СЃРєСЂРѕР»Р» С‚РѕР»СЊРєРѕ Сѓ Р±РёР±Р»РёРѕС‚РµРєРё Рё С‚РµР»Р° С„РёР»СЊС‚СЂРѕРІ ===== */
+.deck-builder .layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: var(--deck-sidebar) minmax(0, 1fr);
+  gap: var(--deck-gap);
+  align-items: stretch;
+  margin-top: 0;
+}
+
+.deck-library {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding-bottom: 72px;
+  scrollbar-width: thin;
+}
+
+.deck-library .cards-grid {
+  overflow: visible;
+}
+
+.deck-library .cards-grid > [role='listitem']:has(.card-tile-art-only:hover) {
+  z-index: 5;
+}
+
+.deck-library .card-tile-art-only:hover {
+  z-index: 5;
+}
+
+.library-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}

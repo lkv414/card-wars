@@ -1,139 +1,226 @@
 # Card Wars Online — Card Game
 
-> Онлайн-карточная игра по мотивам Adventure Time «Card Wars» (Снежный король / Марселин). SPA на React 19 + Vite 8 с бэкендом на Supabase (PostgreSQL + Realtime) и 3D-сценой стола на three.js + @react-three/fiber. **Фазы 1–6 + Сессии A & B завершены**: локальный список колод в `localStorage` (`useDecks`) → выбор колоды → декодируется в `lobby_players.deck` (jsonb) при входе в лобби → `useStartGame` тасует и раздаёт стартовую руку (5 карт) в `game_players.hand` + `deck_remaining` + `deck_pile` (jsonb). **Refill руки в `playCard` и draw-фаза в `endTurn` реализованы**. **Серверная валидация реализована через Postgres-триггеры** (Фаза 5). **RLS + скрытие руки противника (Фаза 6):** идентификация через `guestId` в `localStorage` → RPC `set_guest_id` устанавливает `current_setting('app.guest_id')` → RLS-политики по `lobby_id` → клиент читает игру через `get_player_game_state(game_id, player_id)` — функция возвращает свою руку + счётчики, оппоненту отдаёт пустые массивы + `hand_count`/`deck_remaining`. Перед любыми изменениями прочитай раздел «Критические соглашения» и «Статус разработки» ниже.
+> Онлайн-карточная игра по мотивам Adventure Time «Card Wars». SPA: **React 19 + Vite 8**, бэкенд **Supabase** (PostgreSQL + Realtime), 3D-стол **three.js + @react-three/fiber**. Фазы 1–6 завершены; multiplayer 2–4 игрока; серверная валидация через Postgres-триггеры и RPC.
+
+**Для AI-агента:** прочитай этот файл целиком, затем [skills/README.md](skills/README.md) и релевантные `skills/*/SKILL.md` **до** написания кода.
+
+---
 
 ## Быстрый старт
 
-- [package.json](package.json): `npm run dev` (Vite, :5173/:5174), `build`, `lint`, `preview`. Зависимости — react 19, react-dom 19, react-router-dom 7, @supabase/supabase-js 2, three, @react-three/fiber, @react-three/drei.
-- [README.md](README.md): базовый README, пометка про включение Supabase RLS.
-- [.env](.env): переменные окружения (Supabase URL + publishable key; в `.gitignore`).
-- **Фронтенд-хостинг:** Cloudflare Pages (статика, SPA fallback через `_redirects`).
-- **БД:** Supabase (PostgreSQL + Realtime через `supabase_realtime` publication).
-- **3D-стек:** three.js + @react-three/fiber + @react-three/drei — игровой стол рендерится в `<Canvas>` через `GameBoard3D.jsx` + `Card3DModel.jsx`. `GameBoard.jsx` остался как DOM-fallback/legacy.
+| Команда | Назначение |
+|---------|------------|
+| `npm install` | Зависимости |
+| `npm run dev` | Vite dev-server (:5173) |
+| `npm test` | Vitest (unit) |
+| `npm run lint` | ESLint — baseline: 0 errors, 0 warnings |
+| `npm run build` | Production build → `dist/` |
+
+**Env:** скопируй [.env.example](.env.example) в `.env` или `.env.local`. Облачный Supabase:
+
+```
+VITE_SUPABASE_URL=https://<supabase-project>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=<anon key из dashboard>
+```
+
+⚠️ Не указывай `http://127.0.0.1:54321` без запущенного локального Supabase — будет `ERR_CONNECTION_REFUSED`. Секреты для CLI — в `.env.secure` (gitignored).
+
+**Хостинг:** Cloudflare Pages (`dist/`, SPA fallback [public/_redirects](public/_redirects)).
+
+---
+
+## Как работать агенту (обязательный workflow)
+
+```
+1. Прочитать llms.txt (этот файл)
+2. Открыть skills/README.md → выбрать skill bundle под задачу
+3. Прочитать skills/<name>/SKILL.md перед кодом
+4. search-first: grep/читать существующий код, не дублировать
+5. Минимальный diff — только то, что просили
+6. npm test && npm run lint && npm run build
+7. Обновить llms.txt, если менялась архитектура
+```
+
+### Agent Skills
+
+20 skills в [skills/](skills/) (версионируются в git). Индекс и маршрутизация — [skills/README.md](skills/README.md).
+
+| Задача | Skills |
+|--------|--------|
+| React / hooks / UI | `react-patterns`, `frontend-a11y`, `frontend-patterns` |
+| Производительность / lazy load | `react-performance`, `vite-patterns` |
+| Supabase / SQL / RPC | `postgres-patterns`, `database-migrations`, `security-review` |
+| Ошибки / UX | `error-handling` |
+| Новая фича | `search-first` → domain skills → `verification-loop` |
+| Экономия контекста | `context-budget`, `strategic-compact`, `token-budget-advisor` |
+
+Локальная копия Cursor: `.agents/skills/` (gitignored) — **каноническая** для всех агентов: `skills/`.
+
+---
 
 ## Критические соглашения (читать обязательно!)
 
-- **Серверная валидация (Фаза 5):** Все UPDATE/INSERT в `games`, `game_players`, `game_zones` проходят через Postgres-триггеры из миграции [supabase/migrations/20260725010000_phase5_server_validation.sql](supabase/migrations/20260725010000_phase5_server_validation.sql). Клиент шлёт согласованные данные; триггер прозрачен для легитимных операций и отклоняет читы с кодами `23514` (check_violation), `40001` (serialization_failure), `42804` (datatype_mismatch). Конкретно:
-  - **games**: `status ∈ {setup, active, finished}`, `current_player_id` обязан быть среди `game_players.player_id` этой игры, `version` инкрементируется ровно на 1 (optimistic lock), `winner_id` обязателен при `status='finished'`.
-  - **game_players**: `hand` — JSON-массив длиной ≤ `STARTING_HAND_SIZE` (5), `health ∈ [0..25]`, `deck_pile` — массив, `deck_remaining` авто-синхронизируется с `jsonb_array_length(deck_pile)`.
-  - **game_zones**: `zone_position ∈ [1..4]`, `cards` — массив длиной ≤ 10.
-- **RLS + скрытие руки (Фаза 6):**
-  - **Anonymous lobby mutation:** добавлена миграция [supabase/migrations/20260726050000_upsert_lobby_player_guest.sql](supabase/migrations/20260726050000_upsert_lobby_player_guest.sql) с `SECURITY DEFINER` RPC `upsert_lobby_player(...)`. RPC атомарно устанавливает `app.guest_id` и создаёт/обновляет игрока в одной транзакции; клиентский `useLobby` использует RPC вместо прямого INSERT для production RLS.
-  - Миграции: [20260725020000_phase6_rls_and_view.sql](supabase/migrations/20260725020000_phase6_rls_and_view.sql) + [20260725020001_phase6_realtime_bypass.sql](supabase/migrations/20260725020001_phase6_realtime_bypass.sql).
-  - Идентификация: `guestId` в `localStorage` (см. [src/utils/guestId.js](src/utils/guestId.js)). Клиент при старте вызывает RPC `set_guest_id(p_guest_id)` через [src/utils/guestSession.js](src/utils/guestSession.js) — функция делает `SET LOCAL app.guest_id` (PostgREST оборачивает каждый HTTP-запрос в транзакцию, поэтому `SET LOCAL` действует на весь запрос).
-  - RLS=true на `games`, `game_players`, `game_zones`, `lobbies`, `lobby_players`. Политики SELECT/INSERT/UPDATE/DELETE проверяют `current_setting('app.guest_id')` против `lobby_players.player_id` (через helper `is_lobby_member(lobby_id)`).
-  - Чтение игры — **только через RPC `get_player_game_state(game_id, player_id)`**. Функция `SECURITY DEFINER` обходит RLS внутри себя и возвращает: свою руку + колоду целиком; оппоненту — пустые массивы `hand=[]`, `deck_pile=[]`, но счётчики `hand_count`, `deck_remaining` — публично. Чужой (не в lobby_players) получает `NULL`.
-  - **Realtime bypass:** политики `*_realtime_bypass` с `USING(true)` на SELECT (только чтение) для Realtime-подписок (`postgres_changes`), т.к. WS-сеанс не несёт `app.guest_id`. INSERT/UPDATE/DELETE защищены по guest_id — читы невозможны. ⚠️ **Для прода** — заменить `USING(true)` на `USING(is_lobby_member(...))` (Фаза 7 с Supabase Auth).
-  - Клиент: `GameScreen.loadGame` вызывает `get_player_game_state` вместо прямых SELECT'ов; `useGameAction`/`useStartGame`/`useLobby` вызывают `ensureGuestId()` перед мутациями (на случай если App ещё не успел).
-- **Роутинг — react-router-dom v7** (BrowserRouter). Маршруты в [src/App.jsx](src/App.jsx): `/`, `/decks`, `/deck`, `/admin`, `/lobby`, `/lobby/:code`, `/game/:gameId`. Используй `useNavigate()`, `useParams()`, `Navigate` из `react-router-dom`. Старый кастомный `src/router.jsx` УДАЛЁН.
-- **Локальные колоды** — `useDecks` хранит список в `localStorage.decks` (массив `{id, name, code, selectedCards, selectedLands, createdAt}`), активная — `useDecks.selectedDeckId` → `getSelectedDeck()`. При входе колода сохраняется в `lobby_players.deck`; серверный `start_game_for_lobby` тасует и раздаёт стартовую руку из 5 карт, а остаток пишет в `deck_pile`.
-- **Позиция игрока в БД:** live constraint `game_players_position_check` принимает `player1`–`player4` (2–4 игрока). RPC `start_game_for_lobby` пишет `position = 'player' || v_idx`; не менять на `v_idx::text`, иначе старт игры падает.
-- **Игровой старт:** активная страница лобби вызывает RPC `start_game_for_lobby(p_guest_id, p_lobby_id)`, который атомарно создаёт игру, игроков и зоны для 2–4 игроков. `useStartGame.js` содержит совместимую обёртку.
-- **Игровая логика:** 25 HP, 2 действия/ход, 4 зоны (2×2), фазы `draw → main → attack → end`. `EnhancedCard3DModel`/`useMultiplayerGameEngine` поддерживают 2–4 игроков; `useGameAction` содержит flip/refill/draw.
-- **Очистка лобби:** live pg_cron запускает `cleanup_stale_lobbies()` каждый час (`0 * * * *`) и удаляет `waiting`/`in_game` лобби старше 2 часов по `created_at`. Поле `last_activity_at` пока отсутствует.
-- **Линтер:** текущий baseline после последних изменений — 0 errors, 0 warnings.
-- **Файл `.env`** уже в git (исторически). Секреты из реального `.env` в БД НЕ утекают — они публичные (anon-ключ). Свои sensitive секреты клади в `.env.secure` (он в `.gitignore`).
+### Серверная валидация (Фаза 5)
 
-## Архитектура исходников (src/)
+UPDATE/INSERT в `games`, `game_players`, `game_zones` проходят Postgres-триггеры ([supabase/migrations/](supabase/migrations/), также сводка в [DB_SCHEMA.sql](DB_SCHEMA.sql)):
 
-- [src/main.jsx](src/main.jsx): entry, `createRoot` + `StrictMode` + `ErrorBoundary` + `<BrowserRouter>`.
-- [src/App.jsx](src/App.jsx): `<Routes>` + `useCards`/`useLands`/`useToasts` + `<Toasts>`. Маршруты: `/`, `/decks`, `/deck`, `/admin`, `/lobby`, `/lobby/:code`, `/game/:gameId`.
-- [src/constants/game.js](src/constants/game.js): константы (`DECK_LIMITS`, `STARTING_HAND_SIZE = 5`, `CARD_TYPES`, `LAND_TYPES`).
-- [src/hooks/useLobby/](src/hooks/useLobby/): **рефакторинг через useReducer + Context** — новая модульная структура:
-  - `index.js` — композитный хук для обратной совместимости
-  - `lobbyReducer.js` — reducer с экшнами (SET_STATUS, SET_LOBBY, SET_PLAYERS, etc.)
-  - `useLobbyState.js` — основной хук на useReducer
-  - `useLobbyActions.js` — экшены (createLobby, joinLobby, setReady, leaveLobby)
-  - `useLobbyRealtime.js` — Realtime подписки для лобби
-  - `useLobbySession.js` — работа с localStorage сессией
-  - **[LEGACY] [src/hooks/useLobby.js](src/hooks/useLobby.js)** — старый хук, сохранён для обратной совместимости (использует новый рефакторинг внутри).
-- [src/hooks/useDecks.js](src/hooks/useDecks.js): **список локальных колод** в `localStorage.decks`. API: `listDecks`, `addDeck`, `removeDeck`, `selectDeck(id)`, `getSelectedDeck()`. Используется в `DeckList.jsx` и `DeckBuilder.jsx`.
-- [src/hooks/useStartGame.js](src/hooks/useStartGame.js) + [LobbyScreen.jsx](src/components/Lobby/LobbyScreen.jsx): **старт игры** — хост жмёт «Старт» → RPC **`start_game_for_lobby(p_guest_id text, p_lobby_id uuid)`** (SECURITY DEFINER, миграция `20260726050000_…`). Сервер атомарно создаёт `games`/`game_players`/`game_zones`, раздаёт руку, ставит лобби `in_game`. ⚠️ Имя RPC **не** `start_lobby_game` и параметр **`p_guest_id`**, не `p_host_id` — иначе PostgREST: «Could not find the function … in the schema cache».
-- [src/hooks/game/useGameAction.js](src/hooks/game/useGameAction.js): композитный хук игровых действий. Реэкспортирует `playCard`, `attack`, `endTurn`, `forfeit`, `flipCard`, `isApplying`, `error`, `gameToEngineFormat`. Собирает из пяти атомарных хуков: `useGameState` (writeGameState), `usePlayCard`, `useAttack`, `useTurnControl` (endTurn + forfeit), `useFlipCard`. Фаза 4 (refill + draw), Фаза 5 (триггеры), Фаза 6 (ensureGuestId). Подмодули: `useGameState.js`, `usePlayCard.js`, `useAttack.js`, `useTurnControl.js`, `useFlipCard.js`, `format.js` (clampZones, gameToEngineFormat), `index.js` (публичный API). **Важно:** `GameScreen.loadGame` возвращает свежий объект игры после RPC `get_player_game_state`; `useGameState.writeGameState` использует этот return для retry после optimistic-lock conflict, а `useTurnControl.endTurn` не запускает клиентский fallback при реальной ошибке существующего RPC `end_turn`, чтобы не создавать ложный «Конфликт версий». Карты в `game_zones.cards` публичны для всех игроков; скрываются только `hand`/`deck_pile` оппонентов.
-- [src/hooks/useGameRealtimeSync.js](src/hooks/useGameRealtimeSync.js): legacy, используется в `GameScreen` (новая подписка встроена туда).
-- [src/hooks/game/useMultiplayerGameEngine.js](src/hooks/game/useMultiplayerGameEngine.js): **Игровой движок для 2-4 игроков**. Реализует правила Card Wars: адаптивные зоны боя, противостояние зон по правилам (для 2 игроков: все против всех, для 3-4: левые зоны против правых зон соседа), механика флюпа, урон по картам и HP, фазы хода. Экспортирует: `gameState`, `getCurrentPlayer`, `getCurrentOpponents`, `getGameInfo`, `getAvailableAttackZones`, `canDealDamageToCard`, `initializeGame`, `nextTurn`, `prepareCards`, `playCard`, `flipCard`, `attack`, `endPhase`. Использует константы из `gameMultiplayer.js`.
-- [src/hooks/useCards.js](src/hooks/useCards.js), [src/hooks/useLands.js](src/hooks/useLands.js), [src/hooks/useDeckSelection.js](src/hooks/useDeckSelection.js) (текущая редактируемая колода в `localStorage.deckSelection`), [src/hooks/useToasts.js](src/hooks/useToasts.js), [src/hooks/useFocusTrap.js](src/hooks/useFocusTrap.js).
-- **Тема:** [src/hooks/useTheme.js](src/hooks/useTheme.js) — хук для управления темой (light/dark/system) с авто-применением к document. [src/styles/variables.css](src/styles/variables.css) — CSS-переменные с поддержкой тем.
-- **Realtime:** [src/hooks/useRealtimeChannel.js](src/hooks/useRealtimeChannel.js) — обёртка над Supabase Realtime с state machine, exponential backoff и авто-reconnect.
-- **Error logging:** [src/utils/errorLogger.js](src/utils/errorLogger.js) — централизованное логирование ошибок с поддержкой Sentry. Интегрирован в useLobbyActions и ErrorBoundary.
-- [src/utils/supabase.js](src/utils/supabase.js), [src/utils/deckCode.js](src/utils/deckCode.js) (`generateDeckCode`, `expandDeckCodeWithCardData`), [src/utils/deckState.js](src/utils/deckState.js), [src/utils/deckValidation.js](src/utils/deckValidation.js), [src/utils/cardSort.js](src/utils/cardSort.js), [src/utils/guestId.js](src/utils/guestId.js), [src/utils/guestSession.js](src/utils/guestSession.js), [src/utils/lobbyCode.js](src/utils/lobbyCode.js), [src/utils/uuidMatch.js](src/utils/uuidMatch.js), [src/utils/lobbyDeck.js](src/utils/lobbyDeck.js) (**`buildLobbyDeckPayload`, `expandSelectionToInstances`, `shuffleDeck`, `dealStartingHand`, `isLobbyDeckPlayable`** — сборка колоды для лобби и раздача при старте).
-- [src/components/Game/GameScreen.jsx](src/components/Game/GameScreen.jsx): **точка входа в игру.** Подписывается на `games`/`game_players`/`game_zones` через Realtime, формирует `game` для GameBoard, подключает `useGameAction`. Рендерит `<GameBoard3D>` (основной). **Исправлен useEffect** (используется requestAnimationFrame для избежания синхронного setState). ARIA атрибуты добавлены для loading/error states.
-- [src/components/Game/GameBoard3D.jsx](src/components/Game/GameBoard3D.jsx): **3D-цена стола** — Three.js + react-three-fiber. **Обновлено для поддержки 2-4 игроков** с адаптивным расположением по кругу. Карты заменены на `EnhancedCard3DModel` с отображением характеристик (стоимость, атака, защита) и подсказками при наведении. Камера адаптируется под количество игроков. HUD вынесен в `HUDOverlay.jsx` (Сессия C). Карты с useFrame-анимациями: smooth lerp Y, gentle float, scale-bounce.
-- [src/components/Game/HUDOverlay.jsx](src/components/Game/HUDOverlay.jsx): **2D-оверлей над 3D-сценой** — кнопка выхода, кнопка «Реплей», центральный HUD (статус хода, HP, рука, колода, кнопки «Закончить ход» и «🏳️ Сдаться»), HUD противника, баннер дисконнекта. Рендерится DOM-ом над Canvas.
-- [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx): **Legacy DOM-renderer** — НЕ создаёт `new GameEngine(...)`, использует `gameToEngineFormat` через пропс `game`. **Исправлен useEffect** (используется useMemo для форматирования game state). Slot компонент обёрнут в React.memo для оптимизации.
-- [src/components/Game/Replay.jsx](src/components/Game/Replay.jsx) (+ [Replay.css](src/components/Game/Replay.css)): **log-only реплей партии** — модальное окно со слайдером, переходом по шагам, списком действий и управлением клавишами ←/→/Escape. Использует `game.game_state.log`; игровое поле не восстанавливает, потому что snapshots пока не сохраняются.
-- [src/utils/replayLog.js](src/utils/replayLog.js) (+ [replayLog.test.js](src/utils/replayLog.test.js)): нормализация записей журнала и безопасный выбор шага реплея; тесты запускаются через `npm test`.
-- [src/components/Game/Card3DModel.jsx](src/components/Game/Card3DModel.jsx): 3D-модель карты (плоскость с артом, hover/select через raycast, useFrame-анимации). **Legacy компонент**. 
-- [src/components/Game/EnhancedCard3DModel.jsx](src/components/Game/EnhancedCard3DModel.jsx): **Улучшенная 3D-модель карты** с отображением характеристик: стоимость (слева сверху), атака (снизу слева), защита (снизу справа), иконка типа земли, индикатор флюпа. При наведении показывает название и описание карты. Поддерживает визуальный поворот на 90° при флюпе. Использует `Text` из @react-three/drei для 3D-текста.
-- [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx): **legacy DOM-рендер** — НЕ создаёт `new GameEngine(...)`, использует `gameToEngineFormat` через пропс `game`. Сохранён как fallback.
-- [src/components/Game/GameZone.jsx](src/components/Game/GameZone.jsx), [src/components/Game/Card3D.jsx](src/components/Game/Card3D.jsx) (CSS-3D fallback), [src/components/Game/PlayerHand.jsx](src/components/Game/PlayerHand.jsx), [src/components/Game/GameStatus.jsx](src/components/Game/GameStatus.jsx), [src/components/Game/GameLog.jsx](src/components/Game/GameLog.jsx) (+ .css).
-- [src/components/Lobby/LobbyScreen.jsx](src/components/Lobby/LobbyScreen.jsx): экран лобби. При `status='in_game'` ищет `game.id` и переходит на `/game/:gameId`. **Добавлен reconnect баннер** через useRealtimeChannel — показывает статус соединения и авто-переподключение. ARIA атрибуты добавлены для доступности.
-- [src/components/Lobby/LobbyRoom.jsx](src/components/Lobby/LobbyRoom.jsx): UI лобби. Показывает «Твоя колода: [название]» из `lobby_players.deck`. Кнопка «Старт» только для хоста (вызывает `onStartGame`). ARIA атрибуты добавлены для кнопок.
-- Подкомпоненты `DeckBuilder`: [src/components/deck/DeckActions.jsx](src/components/deck/DeckActions.jsx), [src/components/deck/SaveDeckDialog.jsx](src/components/deck/SaveDeckDialog.jsx), [src/components/deck/DeckCardList.jsx](src/components/deck/DeckCardList.jsx).
-- [src/components/DeckList.jsx](src/components/DeckList.jsx) (+ .css): **экран «Мои колоды»** на роуте `/decks`. Карточки сохранённых колод: превью, код, кнопки «Выбрать», «Редактировать», «Удалить», «Копировать код». Кнопка «Создать новую» → `/deck`.
-- [src/components/DeckBuilder.jsx](src/components/DeckBuilder.jsx): редактор колоды. Делегирует 3 подкомпонентам: `DeckActions` (плавающие кнопки), `SaveDeckDialog` (2-шаговый диалог), `DeckCardList` (секция библиотеки). Сам содержит state, эффекты, связку.
-- [src/components/Shared/](src/components/Shared/): `Modal`, `Toasts`, `ConfirmDialog`, `CardTile`, `CardPreview`, `CardSkeleton`, `ImageThumb`, `ErrorBoundary`.
-- [src/components/](src/components/): `MainMenu`, `TopBar`, `AdminPanel`, `CardForm`, `CardGrid`, `DeckFilters`, `DeckModal`. **В топбаре убраны**: кнопки «Сохранить» и «Админ» (вход в админку — через URL `/admin` или пункт меню). Кнопка «Очистить» перенесена вниз слева, показывается только когда в колоде есть карты.
+- **games:** `status ∈ {setup, active, finished}`, `version` +1 (optimistic lock), `winner_id` при `finished`
+- **game_players:** `hand` JSON-массив, `health ∈ [0..25]`, `deck_remaining` синхронизируется с `deck_pile`
+- **game_zones:** `zone_position ∈ [1..4]`, `cards` массив ≤ 10
+
+### RLS + скрытие руки (Фаза 6)
+
+- **Идентификация:** `guestId` в `localStorage` → RPC `set_guest_id` ([src/utils/guestSession.js](src/utils/guestSession.js))
+- **Лобби:** RPC `upsert_lobby_player` (не прямой INSERT) — [src/hooks/useLobby/](src/hooks/useLobby/)
+- **Чтение игры:** только RPC `get_player_game_state(game_id, player_id)` — своя рука целиком, оппоненту `hand=[]` + счётчики
+- **Realtime bypass:** SELECT-политики `USING(true)` для WS; INSERT/UPDATE/DELETE по `guest_id`
+- **Auth не планируется** — навсегда anonymous + `guestId`
+
+### Optimistic lock / version conflicts
+
+- `writeGameState` в [src/hooks/game/useGameState.js](src/hooks/game/useGameState.js): `expectedVersion`, `softFail`, до 3 retry
+- RPC `play_card` **уже bump'ит** `games.version` → после успеха писать log с `{ expectedVersion: data.version, softFail: true }` ([src/hooks/game/usePlayCard.js](src/hooks/game/usePlayCard.js))
+- Не вызывать `writeGameState` со stale version — иначе «Конфликт версий» и reload
+
+### Роутинг (react-router-dom v7)
+
+Маршруты в [src/App.jsx](src/App.jsx):
+
+| Route | Компонент | Примечание |
+|-------|-----------|------------|
+| `/` | MainMenu | |
+| `/decks` | DeckList | локальные колоды |
+| `/deck` | DeckBuilderPage | внутри `LibraryProvider` |
+| `/admin` | AdminPanelPage | внутри `LibraryProvider` |
+| `/lobby`, `/lobby/:code` | LobbyScreen | |
+| `/game/:gameId` | GameScreen (lazy) | отдельный ErrorBoundary + Suspense |
+
+### Игровая логика
+
+- 25 HP, 2 действия/ход, 4 зоны, фазы `draw → main → attack → end`
+- Локальные колоды: `useDecks` → `localStorage.decks` → `lobby_players.deck` (jsonb)
+- Старт: RPC `start_game_for_lobby(p_guest_id, p_lobby_id)` — параметр **`p_guest_id`**, не `p_host_id`
+- `game_players.position`: `player1`–`player4` (не просто `"1"`)
+- Движок: [src/hooks/game/useMultiplayerGameEngine.js](src/hooks/game/useMultiplayerGameEngine.js)
+
+### Code-splitting (Three.js)
+
+- `GameScreen` — `lazy()` в App.jsx
+- `GameBoard3D` — `lazy()` в GameScreen.jsx
+- [vite.config.js](vite.config.js): `manualChunks` → `three-vendor` (three, r3f, drei)
+- Основной бандл ~500 KB gzip; Three.js грузится только на `/game/:gameId`
+
+---
+
+## Архитектура (src/)
+
+### Entry & routing
+
+- [src/main.jsx](src/main.jsx): `StrictMode` + `ErrorBoundary` + `BrowserRouter`
+- [src/App.jsx](src/App.jsx): Routes, `useToasts`, lazy `GameScreen`, `LibraryProvider` только для `/deck` и `/admin`
+- [src/context/LibraryContext.jsx](src/context/LibraryContext.jsx): `useCards` + `useLands` → `useLibrary()` — **не** грузить карты на главной/лobby/game
+- [src/pages/LibraryPages.jsx](src/pages/LibraryPages.jsx): обёртки DeckBuilder / AdminPanel
+
+### Hooks (ключевые)
+
+| Hook / модуль | Файл | Назначение |
+|---------------|------|------------|
+| useGameAction | [src/hooks/game/useGameAction.js](src/hooks/game/useGameAction.js) | playCard, attack, endTurn, forfeit, flipCard |
+| usePlayCard | [src/hooks/game/usePlayCard.js](src/hooks/game/usePlayCard.js) | RPC play_card + log sync с expectedVersion |
+| useGameState | [src/hooks/game/useGameState.js](src/hooks/game/useGameState.js) | writeGameState, optimistic lock |
+| useLobby | [src/hooks/useLobby/](src/hooks/useLobby/) | useReducer + Context, Realtime |
+| useCards / useLands | [src/hooks/useCards.js](src/hooks/useCards.js), [useLands.js](src/hooks/useLands.js) | fetch + AbortController + logError |
+| useDecks | [src/hooks/useDecks.js](src/hooks/useDecks.js) | localStorage колоды |
+| useStartGame | [src/hooks/useStartGame.js](src/hooks/useStartGame.js) | start_game_for_lobby |
+| useRealtimeChannel | [src/hooks/useRealtimeChannel.js](src/hooks/useRealtimeChannel.js) | reconnect + backoff |
+| useToasts | [src/hooks/useToasts.js](src/hooks/useToasts.js) | тосты с cleanup on unmount |
+
+### Utils
+
+- [src/utils/supabase.js](src/utils/supabase.js): клиент + валидация env
+- [src/utils/errorLogger.js](src/utils/errorLogger.js): `logError`, `formatErrorMessage`, `toUserFacingError`
+- [src/utils/guestId.js](src/utils/guestId.js), [guestSession.js](src/utils/guestSession.js)
+- [src/utils/deckCode.js](src/utils/deckCode.js), [deckState.js](src/utils/deckState.js), [lobbyDeck.js](src/utils/lobbyDeck.js)
+
+### Game UI
+
+- [src/components/Game/GameScreen.jsx](src/components/Game/GameScreen.jsx): Realtime, loadGame → get_player_game_state
+- [src/components/Game/GameBoard3D.jsx](src/components/Game/GameBoard3D.jsx): 3D стол 2–4 игроков
+- [src/components/Game/HUDOverlay.jsx](src/components/Game/HUDOverlay.jsx): 2D HUD, drag-drop карт (блок при `isApplying`)
+- [src/components/Game/EnhancedCard3DModel.jsx](src/components/Game/EnhancedCard3DModel.jsx): 3D карта с stats
+- [src/components/Game/Replay.jsx](src/components/Game/Replay.jsx): log-only реплей
+- [src/components/Game/GameBoard.jsx](src/components/Game/GameBoard.jsx): legacy DOM fallback
+
+### Прочее UI
+
+- Lobby: [LobbyScreen.jsx](src/components/Lobby/LobbyScreen.jsx), [LobbyRoom.jsx](src/components/Lobby/LobbyRoom.jsx)
+- Deck: [DeckList.jsx](src/components/DeckList.jsx), [DeckBuilder.jsx](src/components/DeckBuilder.jsx), [deck/*](src/components/deck/)
+- Shared: [ErrorBoundary.jsx](src/components/Shared/ErrorBoundary.jsx), Modal, Toasts, ConfirmDialog
+
+---
 
 ## База данных (Supabase PostgreSQL)
 
-**Применена схема:** [DB_SCHEMA.sql](DB_SCHEMA.sql) — полная актуальная схема БД после Фаз 1–6 (962 строки: 9 таблиц, 62 constraints, 6 функций, 6 триггеров, 22 RLS-политики). Идемпотентный — можно применять на чистую БД через Supabase SQL Editor, Management API или psql. Это **единственный файл схемы** — миграции в `supabase/migrations/` удалены за ненадобностью.
+**Схема:** [DB_SCHEMA.sql](DB_SCHEMA.sql) — полная актуальная схема (9 таблиц, RLS, триггеры, функции).
 
-**9 таблиц в `public`:**
-- `cards`, `lands`, `decks`, `lobbies`, `lobby_players` — базовые (были).
-- `games`, `game_players`, `game_zones`, `game_chat` — **созданы миграцией** (с полями `version`, `winner_id`, `player_order`, `nickname`, `turn_started_at`, `started_at`, `ended_at`, `last_seen`).
-- Все 4 игровые таблицы добавлены в `supabase_realtime` publication.
-- **RLS**: `true` на `games`, `game_players`, `game_zones`, `lobbies`, `lobby_players` (Фаза 6). SELECT/INSERT/UPDATE/DELETE защищены политиками по `current_setting('app.guest_id')` через RPC `set_guest_id`. Realtime-подписки работают через отдельные SELECT-bypass-политики. Подробности — в «Критические соглашения → RLS + скрытие руки» выше.
+**Миграции:** [supabase/migrations/](supabase/migrations/) — применять через Supabase CLI или SQL Editor. Ключевые:
 
-**Схема (полная):** [DB_SCHEMA.sql](DB_SCHEMA.sql) — единственный файл со всей актуальной схемой.
+| Миграция | Содержание |
+|----------|------------|
+| `20260725010000_phase5_server_validation.sql` | Триггеры валидации |
+| `20260725020000_phase6_rls_and_view.sql` | RLS + get_player_game_state |
+| `20260726050000_upsert_lobby_player_guest.sql` | upsert_lobby_player RPC |
+| `20260801200000_play_card_rpc.sql` | play_card RPC |
 
-## Деплой и инфраструктура
+**Таблицы:** `cards`, `lands`, `decks`, `lobbies`, `lobby_players`, `games`, `game_players`, `game_zones`, `game_chat`.
 
-- **Фронтенд:** Cloudflare Pages. Команда сборки: `npm run build`, выход: `dist/`. SPA fallback через [public/_redirects](public/_redirects).
-- **БД:** Supabase (PostgreSQL + Realtime + Storage). Клиент в [src/utils/supabase.js](src/utils/supabase.js) через env `VITE_SUPABASE_URL` и `VITE_SUPABASE_PUBLISHABLE_KEY`.
-- **Supabase CLI:** v2.109.1 установлен. Миграции удалены за ненадобностью — вся схема в одном файле [DB_SCHEMA.sql](DB_SCHEMA.sql). Команда применения: `curl -X POST https://api.supabase.com/v1/projects/{ref}/database/query -H "Authorization: Bearer $TOKEN" -d "$(cat DB_SCHEMA.sql | jq -Rs '{query: .}')"`. Логин через токен в `.env.secure` (в `.gitignore`).
-- ⚠️ **Docker** для `supabase db pull` не работает (виртуализация выключена в BIOS, нужно включить `Intel VT-x` / `AMD-V`).
+**Облачный проект:** `<supabase-project>` — 121 cards, 7 lands в проде.
 
-## Статус разработки
+---
 
-- **ЗАВЕРШЕНО (Фаза 1–6) + Сессии A–D:** схема БД + миграция, игровая логика, UI, react-router, 3D-сцена стола (three.js + r3f), кнопка «Старт» в лобби, переход в `/game/:gameId`, синхронизация ходов через `useGameAction` + Realtime, локальный список колод (`useDecks` + экран `/decks`), выбор колоды → `lobby_players.deck`, раздача стартовой руки из колоды, **refill руки в `playCard`**, **draw-фаза в `endTurn`**, **серверная валидация через Postgres-триггеры (Фаза 5)**, **RLS + скрытие руки противника через `get_player_game_state` (Фаза 6)**, **forfeit** (Сессия A), **Reconnect state machine** с баннером (Сессия B), **3D-анимации карт** (smooth lerp Y + gentle float + scale-bounce через useFrame), **log-only реплей** со слайдером и навигацией по действиям (Сессия D).
-- ✅ **НОВОЕ (Интеграция EnhancedCard3DModel + Multiplayer):** Заменён `Card3DModel` на `EnhancedCard3DModel` во всех компонентах, карты теперь отображают характеристики (стоимость, атака, защита, тип земли, флюп-индикатор), при наведении показывается название и описание. **Адаптивная 3D-сцена для 2-4 игроков** в `GameBoard3D.jsx` с расположением по кругу, динамической камерой и зонами боя по правилам игры. **Добавлен useMultiplayerGameEngine.js** с логикой флюпа, урона по картам, противостояния зон. **Добавлен useFlipCard.js** для флюпа карт на поле.
-- ✅ UI-пакет: design tokens, dark theme, токены, тосты с dismiss, ConfirmDialog, CardPreview, скелетоны, прогресс 40/4, копирование кода, empty states, cost chips, сортировка, focus trap, a11y, reduced-motion, safe-area.
-- **В ОЖИДАНИИ (Фаза 7+):** 3D polish (parallax, частицы), error-recovery при разрыве Realtime, undo/redo, чат, экспорт/импорт колод. **Supabase Auth не планируется и не будет внедряться:** проект навсегда остаётся на anonymous-доступе + `guestId` из `localStorage`; RLS должен быть совместим с этой моделью. Миграция на Durable Objects не нужна для пошаговой игры.
-- **Известные баги:** `game-players→game_id` foreign key сейчас не используется (нет обратной навигации). Bypass-политики для Realtime — временное решение (Фаза 7).
+## Деплой
 
-## Для агента, продолжающего работу
+- **Фронт:** Cloudflare Pages, `npm run build`, output `dist/`
+- **БД:** Supabase cloud; env `VITE_SUPABASE_URL` + `VITE_SUPABASE_PUBLISHABLE_KEY`
+- **CLI:** `npx supabase --version`; миграции: `npx supabase db push` (нужен `supabase login`)
 
-1. `npm install` (если нет `node_modules`), `npm run dev`.
-2. Заполни `.env` или используй Cloudflare Dashboard env vars.
-3. **Следующая задача:**
-   - **CSS-декомпозиция:** ✅ Сделана — `App.css` теперь импортирует модули: `variables.css`, `shared.css`, `game.css`, `deck.css`, `lobby.css`, `modal.css`.
-   - **`useLobby.js` рефакторинг** через `useReducer` + Context — ✅ Сделано: создана папка `src/hooks/useLobby/` с подхуками (`lobbyReducer.js`, `useLobbyState.js`, `useLobbyActions.js`, `useLobbyRealtime.js`, `useLobbySession.js`, `index.js`). Старый `useLobby.js` сохранён для обратной совместимости.
-   - **Полный replay snapshots — отложено:** log-only реплей уже реализован; восстановление игрового поля по шагам потребует сохранять полные snapshots в игровых действиях.
-   - **RLS для anonymous guestId:** исправить production-ошибку `lobby_players INSERT` без Supabase Auth. **Решение реализовано в коде:** migration `20260726050000_upsert_lobby_player_guest.sql` добавляет атомарный `SECURITY DEFINER` RPC `upsert_lobby_player`; клиентский `useLobby` уже вызывает его вместо прямого INSERT. Нужно применить migration в live Supabase и затем повторить тест на Cloudflare. Не ослаблять `WITH CHECK` до `true`.
-3a. **Сделано (Сессия A + B + C):**
-   - **Refactor `useGameAction.js`** → подпапка `src/hooks/game/` с 5 атомарными хуками (`useGameState`, `usePlayCard`, `useAttack`, `useTurnControl`, `useFlipCard`) + композитный `useGameAction` для обратной совместимости.
-   - **forfeit** — кнопка «🏳️ Сдаться» в HUD GameBoard3D.jsx, логика в `useTurnControl.forfeit` (status='finished', winner_id=opponent).
-   - **Reconnect state machine** — `src/hooks/useRealtimeChannel.js`. EXPONENTIAL BACKOFF (1s→2s→4s→8s→16s), авто-reconnect при возврате на вкладку, banner в HUD при разрыве. Применён в `GameScreen.jsx` и `LobbyScreen.jsx`.
-   - **3D-анимации карт** в `Card3DModel.jsx` и `EnhancedCard3DModel.jsx`: smooth lerp Y при hover/select, gentle float на idle (sin wave), scale-bounce на hover через `useFrame`.
-   - **Декомпозиция UI**: `DeckBuilder.jsx` (451 → 296) + 3 подкомпонента (`DeckActions`, `SaveDeckDialog`, `DeckCardList`). `GameBoard3D.jsx` — чистая 3D-сцена, HUD вынесен в `HUDOverlay.jsx`.
-3b. **Сделано (Приоритет 2 + 3):**
-   - **Unit tests:** 119 тестов во всех `src/utils/*.test.js` — всё проходит.
-   - **Исправлены все `react-hooks/set-state-in-effect`:** GameBoard.jsx (useMemo), GameScreen.jsx (requestAnimationFrame), useLobby.js (requestAnimationFrame).
-   - **Accessibility:** Добавлены ARIA атрибуты в GameScreen, LobbyScreen, LobbyRoom (role, aria-live, aria-label, aria-pressed, aria-disabled).
-   - **Reconnect в LobbyScreen:** Баннер дисконнекта с авто-reconnect через useRealtimeChannel.
-   - **Оптимизация:** Slot компонент обёрнут в React.memo.
-   - **Тематический дизайн:** useTheme.js + variables.css с поддержкой light/dark/system тем.
-   - **Error logging:** Интегрирован logError в useLobbyActions и ErrorBoundary.
-4. **Postgres-триггеры (Фаза 5) уже стоят.** Не пытайся делать INSERT/UPDATE в обход: чит-данные будут отклонены с ошибкой. 
-   **Примечание по интеграции:** `GameBoard3D.jsx` теперь поддерживает 2-4 игроков с адаптивным расположением. Для полного тестирования multiplayer нужно создать игру с 3-4 игроками и проверить, что зоныбора правильно противостоят друг другу согласно `ZONE_OPPOSITION`.
-5. **Применение схемы:** вся схема в [DB_SCHEMA.sql](DB_SCHEMA.sql). Применить на чистую БД: через Supabase Management API (`POST /v1/projects/{ref}/database/query` с personal access token из `.env.secure`) или через Supabase SQL Editor в dashboard.
-6. **Тестирование:** 2 вкладки → выбрать/создать колоду в `/decks` → `/lobby` → создать лобби → 2-я вкладка вставить код → оба жмут «Готов» → хост жмёт «Старт» → автопереход в `/game/:gameId`. Проверить: рука начинается с 5 карт, после розыгрыша карта добирается из колоды, при «Закончить ход» следующий игрок добирает 1 карту. Открыть DevTools → Network → /rest/v1/rpc/get_player_game_state → в ответе у каждого игрока видно `is_self=true/false` и `hand` либо `[…]` либо `[]`.
-7. **На новую ошибку линтера:** сначала проверь, что твоя правка не сломала ничего. Запусти `npm test` + `npm run build` + `npm run lint`. Baseline: 0 errors, 0 warnings.
-8. После правок **обнови этот файл**, чтобы следующий агент не тратил токены на повторное изучение (DEVELOPMENT_PLAN.md удалён — вся история теперь здесь).
+---
 
-## Optional (инструменты упаковки контекста)
+## Статус и известные ограничения
 
-- **Стандарт `llms.txt`:** https://llmstxt.org — формат этого файла.
-- **Repomix** (если понадобится): устанавливал ранее, но `repomix.config.json` был потерян при откате. Можно восстановить: `npx repomix --init && npx repomix` — упакует весь репо в `repomix-output.txt` с подсчётом токенов.
-- **supabase CLI:** `npx supabase --version` → 2.109.1. `npx supabase db push` — применить миграции. `npx supabase migration new <name>` — создать новую.
+**Готово:** фазы 1–6, multiplayer 2–4, forfeit, reconnect, 3D-анимации, log-replay, RLS, play_card RPC, lazy Three.js, LibraryProvider, a11y baseline, error logging.
+
+**В ожидании:** full replay snapshots, 3D polish, чат, undo/redo, ужесточение Realtime bypass-политик.
+
+**Известные баги / tech debt:** Realtime SELECT bypass — временное решение; RLS на `cards`/`lands` может быть отключён (проверить advisors).
+
+---
+
+## Тестирование (ручное)
+
+1. Две вкладки → `/decks` → выбрать колоду
+2. `/lobby` → создать → вторая вкладка по коду → «Готов» → хост «Старт»
+3. `/game/:gameId`: рука 5 карт, drag на зону, refill, end turn → draw
+4. DevTools → Network → `get_player_game_state`: `is_self`, `hand` vs `hand_count`
+5. После drag карты — **нет** «Конфликт версий»
+
+**Автотесты:** `npm test` — utils + hooks; baseline 143 tests pass.
+
+---
+
+## Чеклист перед commit
+
+- [ ] `npm test` — pass
+- [ ] `npm run lint` — 0 errors/warnings
+- [ ] `npm run build` — pass
+- [ ] Не коммитить `.env`, `.env.local`, `.env.secure`
+- [ ] Обновить `llms.txt` при архитектурных изменениях
+- [ ] Ветки: `cursor/<short-description>`; commit message — why, not what
+
+---
+
+## Ссылки
+
+- Стандарт llms.txt: https://llmstxt.org
+- Agent skills index: [skills/README.md](skills/README.md)
+- ECC skills source: https://github.com/affaan-m/ECC

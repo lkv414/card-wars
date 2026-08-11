@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "project": "card_game",
+  "skillsDir": "skills",
+  "source": "affaan-m/ECC",
+  "skills": {
+    "browser-qa": { "skillPath": "skills/browser-qa/SKILL.md" },
+    "coding-standards": { "skillPath": "skills/coding-standards/SKILL.md" },
+    "context-budget": { "skillPath": "skills/context-budget/SKILL.md" },
+    "database-migrations": { "skillPath": "skills/database-migrations/SKILL.md" },
+    "e2e-testing": { "skillPath": "skills/e2e-testing/SKILL.md" },
+    "error-handling": { "skillPath": "skills/error-handling/SKILL.md" },
+    "frontend-a11y": { "skillPath": "skills/frontend-a11y/SKILL.md" },
+    "frontend-patterns": { "skillPath": "skills/frontend-patterns/SKILL.md" },
+    "git-workflow": { "skillPath": "skills/git-workflow/SKILL.md" },
+    "postgres-patterns": { "skillPath": "skills/postgres-patterns/SKILL.md" },
+    "react-patterns": { "skillPath": "skills/react-patterns/SKILL.md" },
+    "react-performance": { "skillPath": "skills/react-performance/SKILL.md" },
+    "react-testing": { "skillPath": "skills/react-testing/SKILL.md" },
+    "search-first": { "skillPath": "skills/search-first/SKILL.md" },
+    "security-review": { "skillPath": "skills/security-review/SKILL.md" },
+    "strategic-compact": { "skillPath": "skills/strategic-compact/SKILL.md" },
+    "tdd-workflow": { "skillPath": "skills/tdd-workflow/SKILL.md" },
+    "token-budget-advisor": { "skillPath": "skills/token-budget-advisor/SKILL.md" },
+    "verification-loop": { "skillPath": "skills/verification-loop/SKILL.md" },
+    "vite-patterns": { "skillPath": "skills/vite-patterns/SKILL.md" }
+  }
+}

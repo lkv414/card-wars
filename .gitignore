@@ -27,9 +27,8 @@ dist-ssr
 .env.secure
 supabase/.temp
 
-# Agent skills (local Cursor/ECC install, not part of app)
+# Agent skills — committed copy is in skills/ (see llms.txt)
 .agents/
-skills-lock.json
 .claude/skills/
 agent/skills/
 data/skills/

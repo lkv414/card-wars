@@ -3,7 +3,7 @@ import { DECK_LIMITS } from '../constants/game'
 import { CardGrid } from './CardGrid'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import { groupCardsByCost, groupCardsByType } from '../utils/cardSort'
-import { findByDeckEntryId } from '../utils/deckState'
+import { findByDeckEntryId, sumDeckQuantities } from '../utils/deckState'
 
 const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
 
@@ -36,8 +36,8 @@ export function DeckModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  const cardTotal = Object.values(selectedCards).reduce((a, b) => a + b, 0)
-  const landTotal = Object.values(selectedLands).reduce((a, b) => a + b, 0)
+  const cardTotal = sumDeckQuantities(selectedCards)
+  const landTotal = sumDeckQuantities(selectedLands)
   const cardsOk = cardTotal === CARD_LIMITS.maxTotal
   const landsOk = landTotal === LAND_LIMITS.maxTotal
 
@@ -177,7 +177,7 @@ export function DeckModal({
                     selectedCards={selectedCards}
                     addCard={addCard}
                     removeCard={removeCard}
-                    cardTotal={cardTotal}
+                    selectionTotal={cardTotal}
                     onBlockedAdd={onBlockedAdd}
                     compact
                   />
@@ -214,7 +214,7 @@ export function DeckModal({
                 selectedCards={selectedLands}
                 addCard={addLand}
                 removeCard={removeLand}
-                cardTotal={landTotal}
+                selectionTotal={landTotal}
                 isLands
                 onBlockedAdd={onBlockedAdd}
                 compact

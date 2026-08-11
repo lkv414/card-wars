@@ -91,7 +91,7 @@ export function DeckCardList({
         selectedCards={selectedCards}
         addCard={onAddCard}
         removeCard={onRemoveCard}
-        cardTotal={cardTotal}
+        selectionTotal={cardTotal}
         onBlockedAdd={onBlockedAdd}
       />
     )
@@ -104,7 +104,7 @@ export function DeckCardList({
       selectedCards={selectedLands}
       addCard={onAddLand}
       removeCard={onRemoveLand}
-      cardTotal={landTotal}
+      selectionTotal={landTotal}
       isLands
       onBlockedAdd={onBlockedAdd}
     />

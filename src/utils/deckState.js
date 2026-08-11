@@ -2,6 +2,34 @@ export function normalizeDeckEntryId(value) {
   return String(value ?? '').trim().toLowerCase()
 }
 
+export const DECK_SELECTION_STORAGE_KEY = 'deckSelection'
+
+export function loadDeckSelection() {
+  try {
+    const raw = localStorage.getItem(DECK_SELECTION_STORAGE_KEY)
+    if (!raw) return { selectedCards: {}, selectedLands: {} }
+    const parsed = JSON.parse(raw)
+    return {
+      selectedCards: parsed.selectedCards || {},
+      selectedLands: parsed.selectedLands || {},
+    }
+  } catch {
+    return { selectedCards: {}, selectedLands: {} }
+  }
+}
+
+export function saveDeckSelection(selectedCards, selectedLands) {
+  localStorage.setItem(
+    DECK_SELECTION_STORAGE_KEY,
+    JSON.stringify({ selectedCards, selectedLands })
+  )
+}
+
+export function sumDeckQuantities(entries) {
+  if (!entries || typeof entries !== 'object') return 0
+  return Object.values(entries).reduce((sum, qty) => sum + (Number(qty) || 0), 0)
+}
+
 export function findByDeckEntryId(list, id) {
   const normalized = normalizeDeckEntryId(id)
   return list?.find((item) => normalizeDeckEntryId(item.id) === normalized)

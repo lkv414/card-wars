@@ -17,7 +17,7 @@ export const CardTile = memo(function CardTile({
   selectedCards,
   addCard,
   removeCard,
-  cardTotal,
+  selectionTotal,
   showControls = true,
   onBlockedAdd,
   compact = false,
@@ -36,7 +36,7 @@ export const CardTile = memo(function CardTile({
 
   const { tileRef, zoomOrigin, onMouseEnter, onMouseLeave } = useArtTileZoom(artOnly, zoomScale)
 
-  const blockReason = getDeckTileBlockReason({ isLandCard, quantity, cardTotal })
+  const blockReason = getDeckTileBlockReason({ isLandCard, quantity, selectionTotal })
   const disabled = Boolean(blockReason)
 
   const tryAdd = useCallback(() => {

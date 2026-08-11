@@ -30,6 +30,3 @@ export function useGameAction(game, reload) {
 
   return { playCard, attack, endTurn, forfeit, flipCard, isApplying, error }
 }
-
-// Re-exports для обратной совместимости
-export { gameToEngineFormat, clampZones } from './format'

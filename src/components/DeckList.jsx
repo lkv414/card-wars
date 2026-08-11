@@ -1,19 +1,11 @@
 /**
  * DeckList
  * Экран «Мои колоды» — список сохранённых локально колод.
- *
- * Маршрут: /decks (между меню и редактором колод)
- *
- * Каждая колода:
- *   - Название (редактируется inline)
- *   - Код (DK-XXXXXX) с кнопкой «Скопировать»
- *   - Превью: «12 карт / 3 земли»
- *   - Кнопка «Выбрать» (отмечает как активную)
- *   - Кнопка «Редактировать» (загружает в редактор)
- *   - Кнопка «Удалить» (с подтверждением)
  */
-import { copyToClipboard } from '../utils/clipboard'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { copyToClipboard } from '../utils/clipboard'
+import { saveDeckSelection, sumDeckQuantities } from '../utils/deckState'
 import { useDecks } from '../hooks/useDecks'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
 import './DeckList.css'
@@ -39,13 +31,13 @@ export function DeckList() {
     const ok = await copyToClipboard(code, { fallbackPromptLabel: 'Скопируй код:' })
     if (!ok) return
     setCopiedId(id)
-      if (copyTimeoutRef.current !== null) {
-        window.clearTimeout(copyTimeoutRef.current)
-      }
-      copyTimeoutRef.current = window.setTimeout(() => {
-        setCopiedId(null)
-        copyTimeoutRef.current = null
-      }, 1500)
+    if (copyTimeoutRef.current !== null) {
+      window.clearTimeout(copyTimeoutRef.current)
+    }
+    copyTimeoutRef.current = window.setTimeout(() => {
+      setCopiedId(null)
+      copyTimeoutRef.current = null
+    }, 1500)
   }
 
   const handleStartRename = (deck) => {
@@ -60,21 +52,10 @@ export function DeckList() {
   }
 
   const handleEdit = (deck) => {
-    // Загрузить выбор этой колоды в deckSelection (использует useDeckSelection).
-    try {
-      localStorage.setItem(
-        'deckSelection',
-        JSON.stringify({
-          selectedCards: deck.selectedCards || {},
-          selectedLands: deck.selectedLands || {},
-        })
-      )
-    } catch {
-      /* ignore */
-    }
+    selectDeck(deck.id)
+    saveDeckSelection(deck.selectedCards || {}, deck.selectedLands || {})
     navigate('/deck')
   }
-
 
   return (
     <main className="decks-page">
@@ -107,8 +88,8 @@ export function DeckList() {
         )}
 
         {decks.map((deck) => {
-          const cardCount = Object.values(deck.selectedCards || {}).reduce((s, q) => s + Number(q || 0), 0)
-          const landCount = Object.values(deck.selectedLands || {}).reduce((s, q) => s + Number(q || 0), 0)
+          const cardCount = sumDeckQuantities(deck.selectedCards)
+          const landCount = sumDeckQuantities(deck.selectedLands)
           const isActive = deck.id === selectedDeckId
 
           return (

@@ -44,7 +44,7 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<MainMenu toast={toast} />} />
+        <Route path="/" element={<MainMenu />} />
 
         <Route path="/decks" element={<DeckList />} />
 

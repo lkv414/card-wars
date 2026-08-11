@@ -18,6 +18,7 @@ import { useState } from 'react'
 import { Replay } from './Replay'
 import { safePlayer } from '../../utils/safePlayer'
 import { logError } from '../../utils/errorLogger'
+import { INITIAL_HEALTH } from '../../constants/gameMultiplayer'
 
 export function HUDOverlay({
   playerId,
@@ -62,7 +63,7 @@ export function HUDOverlay({
 
       {/* HUD противника — сверху */}
       <div className="hud-opponent">
-        Противник · ❤️ {safeOpp.health}/25 · 🂠 × {safeOpp.hand?.length || 0}
+        Противник · ❤️ {safeOpp.health}/{INITIAL_HEALTH} · 🂠 × {safeOpp.hand?.length || 0}
       </div>
 
       {/* Баннер разрыва связи */}
@@ -97,7 +98,7 @@ export function HUDOverlay({
             ? `🎉 ${winnerId === playerId ? 'Вы выиграли!' : 'Вы проиграли!'}`
             : (isYourTurn ? '👉 Ваш ход' : '⏳ Ход противника')}
           <span className="hud-bottom-stats">
-            ❤️ {safeMe.health}/25 · 📚 {safeMe.deck_pile?.length ?? safeMe.deck_remaining ?? 0}
+            ❤️ {safeMe.health}/{INITIAL_HEALTH} · 📚 {safeMe.deck_pile?.length ?? safeMe.deck_remaining ?? 0}
           </span>
           {isYourTurn && !isFinished && (
                       <div className="hud-bottom-buttons">

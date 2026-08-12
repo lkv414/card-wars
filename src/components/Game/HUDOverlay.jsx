@@ -1,11 +1,14 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Replay } from './Replay'
 import { safePlayer } from '../../utils/safePlayer'
 import { HUDTopBar } from './hud/HUDTopBar'
+import { HUDOpponents } from './hud/HUDOpponents'
 import { HUDConnectionBanners } from './hud/HUDConnectionBanners'
 import { HUDBottomBar } from './hud/HUDBottomBar'
-import { HUDDropZones } from './hud/HUDDropZones'
 import { HUDHand } from './hud/HUDHand'
+import { CardActionMenu } from './hud/CardActionMenu'
+import { ZoneCardActionMenu } from './hud/ZoneCardActionMenu'
+import { mergeLogWithBattle } from '../../hooks/game/battleLog'
 
 export function HUDOverlay({
   playerId,
@@ -13,46 +16,63 @@ export function HUDOverlay({
   isFinished,
   winnerId,
   me,
-  opp,
+  players = [],
   handCards,
+  actionsRemaining = 2,
+  canDealDamage = true,
   log,
+  battleEvents = [],
   onEndTurn,
   onForfeit,
+  onDrawCard,
   onGameEnd,
   realtimeStatus,
   selectedCardIndex = null,
   setSelectedCardIndex = () => {},
   isApplying = false,
   actionError = null,
-  onPlayCard = null,
+  draggingCardIndex = null,
+  setDraggingCardIndex = () => {},
+  updatePointer,
+  cardActionMenu = null,
+  zoneCardActionMenu = null,
+  onCloseCardActionMenu = () => {},
+  onCloseZoneCardActionMenu = () => {},
 }) {
-  const [draggingCardIndex, setDraggingCardIndex] = useState(null)
-  const [justPlayedCardIndex, setJustPlayedCardIndex] = useState(null)
-  const [justPlayedZoneIndex, setJustPlayedZoneIndex] = useState(null)
   const [isReplayOpen, setReplayOpen] = useState(false)
 
   const safeMe = safePlayer([me].filter(Boolean), me?.player_id)
-  const safeOpp = safePlayer([opp].filter(Boolean), opp?.player_id)
-
-  const handleJustPlayed = (cardIndex, zoneIndex) => {
-    setJustPlayedCardIndex(cardIndex)
-    setJustPlayedZoneIndex(zoneIndex)
-    setTimeout(() => {
-      setJustPlayedCardIndex(null)
-      setJustPlayedZoneIndex(null)
-    }, 1800)
-  }
+  const replayLog = useMemo(() => mergeLogWithBattle(log, battleEvents), [log, battleEvents])
 
   return (
     <>
       <HUDTopBar
         onGameEnd={onGameEnd}
-        logLength={Array.isArray(log) ? log.length : 0}
+        logLength={replayLog.length}
         onOpenReplay={() => setReplayOpen(true)}
-        opponent={safeOpp}
       />
 
-      {isReplayOpen && <Replay log={log} onClose={() => setReplayOpen(false)} />}
+      <HUDOpponents players={players} myPlayerId={playerId} />
+
+      {isReplayOpen && <Replay log={replayLog} onClose={() => setReplayOpen(false)} />}
+
+      {cardActionMenu && (
+        <CardActionMenu
+          card={cardActionMenu.card}
+          onAttack={cardActionMenu.onAttack}
+          onFlip={cardActionMenu.onFlip}
+          onClose={onCloseCardActionMenu}
+        />
+      )}
+
+      {zoneCardActionMenu && (
+        <ZoneCardActionMenu
+          card={zoneCardActionMenu.card}
+          onFlip={zoneCardActionMenu.onFlip}
+          onDiscard={zoneCardActionMenu.onDiscard}
+          onClose={onCloseZoneCardActionMenu}
+        />
+      )}
 
       <HUDConnectionBanners
         realtimeStatus={realtimeStatus}
@@ -67,21 +87,13 @@ export function HUDOverlay({
           winnerId={winnerId}
           playerId={playerId}
           me={safeMe}
+          actionsRemaining={actionsRemaining}
+          canDealDamage={canDealDamage}
           isApplying={isApplying}
           onEndTurn={onEndTurn}
           onForfeit={onForfeit}
+          onDrawCard={onDrawCard}
         />
-
-        {isYourTurn && !isFinished && draggingCardIndex !== null && (
-          <HUDDropZones
-            me={me}
-            draggingCardIndex={draggingCardIndex}
-            isApplying={isApplying}
-            onPlayCard={onPlayCard}
-            onDragEnd={() => setDraggingCardIndex(null)}
-            onJustPlayed={handleJustPlayed}
-          />
-        )}
 
         <HUDHand
           handCards={handCards}
@@ -92,16 +104,9 @@ export function HUDOverlay({
           setSelectedCardIndex={setSelectedCardIndex}
           draggingCardIndex={draggingCardIndex}
           setDraggingCardIndex={setDraggingCardIndex}
-          justPlayedCardIndex={justPlayedCardIndex}
-          onPlayCard={onPlayCard}
+          updatePointer={updatePointer}
         />
       </div>
-
-      {justPlayedCardIndex !== null && justPlayedZoneIndex !== null && (
-        <div className="hud-just-played-toast" role="status" aria-live="polite">
-          ✅ Карта #{justPlayedCardIndex + 1} выложена на землю {justPlayedZoneIndex + 1}
-        </div>
-      )}
     </>
   )
 }

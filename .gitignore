@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 # Supabase CLI secrets (local-only, never commit)
+.env
 .env.secure
 supabase/.temp
 
@@ -41,6 +42,7 @@ data/supabase_batches/
 data/*.json
 data/*.md
 data/*.sql
+data/*.log
 .archive/
 scripts/__pycache__/
 scripts/_*.py

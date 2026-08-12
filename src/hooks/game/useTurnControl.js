@@ -10,6 +10,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
 export function useTurnControl(game, writeGameState, reload) {
   /**
@@ -29,13 +30,12 @@ export function useTurnControl(game, writeGameState, reload) {
           p_game_id: game.id,
           p_player_id: game.current_player_id,
         })
-        console.log('[endTurn] RPC response:', { data, rpcErr })
         if (!rpcErr && data?.success) {
-          if (writeGameState && typeof reload === 'function') {
-            // Перечитаем state чтобы UI получил новую руку у нового активного
-            await reload()
+          return {
+            success: true,
+            battleEvents: data.battle_events || [],
+            gameFinished: Boolean(data.game_finished),
           }
-          return { success: true }
         }
         // RPC не сработал — идём fallback'ом ниже
         if (rpcErr) {
@@ -53,7 +53,14 @@ export function useTurnControl(game, writeGameState, reload) {
           return { error: data.error }
         }
       } catch (e) {
+        if (!ALLOW_CLIENT_FALLBACK) {
+          return { error: e?.message || 'Не удалось передать ход' }
+        }
         console.warn('[endTurn] RPC threw, falling back:', e?.message)
+      }
+
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Передача хода недоступна (обновите сервер)' }
       }
 
       // === Fallback: клиентская логика (как раньше) ===
@@ -102,7 +109,6 @@ export function useTurnControl(game, writeGameState, reload) {
           p_guest_id: me.player_id,
           p_game_id: game.id,
         })
-        console.log('[forfeit] RPC response:', { data, rpcErr })
         if (!rpcErr && data?.success) {
           if (writeGameState && typeof reload === 'function') await reload()
           return { success: true, finished: data.finished, winnerId: data.winner_id }
@@ -116,7 +122,14 @@ export function useTurnControl(game, writeGameState, reload) {
           return { error: data.error }
         }
       } catch (e) {
+        if (!ALLOW_CLIENT_FALLBACK) {
+          return { error: e?.message || 'Не удалось сдаться' }
+        }
         console.warn('[forfeit] RPC threw, falling back:', e?.message)
+      }
+
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Сдача недоступна (обновите сервер)' }
       }
 
       // === Fallback: клиентская логика (если RPC нет) ===

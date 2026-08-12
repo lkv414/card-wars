@@ -80,9 +80,10 @@ export function Replay({ log, onClose }) {
 
             <ol className="replay-timeline">
               {entries.map((item, index) => (
-                <li key={`replay-step-${item.step}`} className={index === activeIndex ? 'active' : ''}>
+                <li key={`replay-step-${item.step}`} className={`${index === activeIndex ? 'active' : ''}${item.type === 'battle' ? ' replay-step--battle' : ''}`}>
                   <button onClick={() => setStepIndex(index)}>
                     <span>{item.step}</span>
+                    {item.type === 'battle' && <span className="replay-badge">⚔️</span>}
                     {item.message}
                   </button>
                 </li>

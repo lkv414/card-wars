@@ -1,5 +1,5 @@
 /**
- * game-hud.css — HUD overlay над 3D-сценой
+ * game-hud.css — HUD в стиле Card Wars
  */
 
 .hud-bottom {
@@ -8,9 +8,9 @@
   right: 0;
   bottom: 0;
   z-index: 60;
-  background: linear-gradient(180deg, rgba(10, 10, 30, 0) 0%, rgba(10, 10, 30, 0.92) 30%, rgba(10, 10, 30, 0.98) 100%);
-  padding: 14px 18px 18px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(180deg, rgba(10, 10, 30, 0) 0%, rgba(18, 22, 38, 0.88) 22%, rgba(12, 14, 28, 0.96) 100%);
+  padding: 10px 16px 16px;
+  font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
   color: white;
   pointer-events: auto;
 }
@@ -18,28 +18,175 @@
 .hud-bottom-status {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 800;
+  font-size: 15px;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.65);
 }
 
-.hud-bottom-status.your { color: #4caf50; }
-.hud-bottom-status.opponent { color: #ff9800; }
-.hud-bottom-status.finished { font-size: 22px; color: #ffd700; }
+.hud-bottom-status.your { color: #a5d6a7; }
+.hud-bottom-status.opponent { color: #ffcc80; }
+.hud-bottom-status.finished { font-size: 22px; color: #ffd54f; }
 
-.hud-bottom-stats {
-  font-weight: 500;
-  opacity: 0.85;
+.hud-resource-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-resource {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 56px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(180deg, rgba(40, 48, 72, 0.95) 0%, rgba(22, 28, 44, 0.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+.hud-resource--deck { border-color: rgba(255, 183, 77, 0.55); }
+.hud-resource--discard { border-color: rgba(100, 181, 246, 0.55); }
+
+.hud-resource-icon { font-size: 18px; line-height: 1; }
+
+.hud-resource-count {
+  font-size: 18px;
+  font-weight: 900;
+  min-width: 1.2em;
+  text-align: center;
+}
+
+.hud-turn-banner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hud-health-pill {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hud-actions-pill {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 193, 7, 0.18);
+  border: 1px solid rgba(255, 235, 59, 0.45);
+  color: #ffe082;
+}
+
+.hud-no-damage-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(33, 150, 243, 0.15);
+  border: 1px solid rgba(100, 181, 246, 0.45);
+  color: #90caf9;
+}
+
+.hud-draw-btn {
+  padding: 10px 14px;
+  color: #fff;
+  font-weight: 800;
   font-size: 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(180deg, #42a5f5 0%, #1565c0 100%);
+  box-shadow: 0 3px 0 #0d47a1, 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+
+.hud-draw-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.damage-flash-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  background: rgba(220, 20, 60, 0.42);
+  animation: damage-flash-pulse 0.55s ease-out forwards;
+}
+
+@keyframes damage-flash-pulse {
+  0% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+.game-board-3d {
+  position: relative;
+}
+
+.hud-bottom-buttons {
+  display: flex;
+  gap: 8px;
   margin-left: auto;
 }
 
-.hud-bottom-buttons { display: flex; gap: 10px; }
+.hud-battle-btn {
+  padding: 10px 22px;
+  color: #fff;
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  pointer-events: auto;
+  z-index: 61;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+  background: linear-gradient(180deg, #66bb6a 0%, #2e7d32 55%, #1b5e20 100%);
+  box-shadow: 0 4px 0 #1b5e20, 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
 
-.hud-end-btn,
+.hud-battle-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.hud-battle-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1b5e20, 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.hud-battle-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .hud-forfeit-btn {
+  padding: 8px 12px;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(244, 67, 54, 0.75);
+  pointer-events: auto;
+  z-index: 61;
+}
+
+.hud-forfeit-btn:hover { background: rgba(244, 67, 54, 1); }
+
+.hud-end-btn {
   padding: 8px 18px;
   color: white;
   font-weight: 700;
@@ -49,57 +196,62 @@
   border: none;
   pointer-events: auto;
   z-index: 61;
-}
-
-.hud-end-btn {
   background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
 }
 
 .hud-end-btn:hover { filter: brightness(1.15); }
 
-.hud-forfeit-btn {
-  background: rgba(244, 67, 54, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.hud-forfeit-btn:hover { background: rgba(244, 67, 54, 1); }
-
 .hud-hand {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding-bottom: 6px;
+  overflow-y: visible;
+  padding: 20px 0 6px;
   pointer-events: auto;
+  align-items: flex-end;
 }
 
 .hud-hand-card {
   flex: 0 0 auto;
-  width: 92px;
-  height: 128px;
+  width: 96px;
+  height: 132px;
   padding: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #111;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 3px solid var(--card-land-border, rgba(255, 255, 255, 0.35));
   color: white;
   cursor: grab;
   display: block;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
   text-align: left;
   pointer-events: auto;
   position: relative;
   overflow: hidden;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   user-select: none;
   touch-action: none;
+  transform-origin: bottom center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 .hud-hand-card:active { cursor: grabbing; }
-.hud-hand-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.5); }
+
+.hud-hand-card:hover:not(.disabled):not(.dragging) {
+  transform: translateY(-18px) scale(1.42);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+  z-index: 20;
+}
 
 .hud-hand-card.selected {
-  border-color: #4caf50;
-  box-shadow: 0 0 16px rgba(76, 175, 80, 0.6);
-  transform: translateY(-4px);
+  border-color: #fff;
+  box-shadow: 0 0 22px color-mix(in srgb, var(--card-land-border, #4caf50) 70%, white);
+  transform: translateY(-14px) scale(1.28);
+  z-index: 15;
+}
+
+.hud-hand-card.selected:hover:not(.dragging) {
+  transform: translateY(-20px) scale(1.48);
 }
 
 .hud-hand-card.dragging { opacity: 0.35; }
@@ -133,28 +285,29 @@
 
 .hud-drop-zones {
   display: flex;
-  gap: 10px;
+  gap: 0;
   margin-bottom: 10px;
-  padding: 8px;
-  background: rgba(76, 175, 80, 0.15);
-  border: 1px dashed rgba(76, 175, 80, 0.5);
+  padding: 4px;
+  background: rgba(230, 126, 34, 0.12);
+  border: 2px solid #e67e22;
   border-radius: 8px;
   animation: drop-zone-pulse 1.5s ease-in-out infinite;
   pointer-events: auto;
 }
 
 @keyframes drop-zone-pulse {
-  0%, 100% { background: rgba(76, 175, 80, 0.12); }
-  50% { background: rgba(76, 175, 80, 0.22); }
+  0%, 100% { background: rgba(230, 126, 34, 0.1); }
+  50% { background: rgba(230, 126, 34, 0.2); }
 }
 
 .hud-drop-zone {
   flex: 1;
   min-width: 90px;
-  padding: 10px 14px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #2c4a35 0%, #1a2e22 100%);
-  border: 2px solid rgba(76, 175, 80, 0.4);
+  padding: 8px 10px;
+  border-radius: 0;
+  background: color-mix(in srgb, #5d4e37 40%, #1a1a2e);
+  border: 0;
+  border-right: 2px solid #e67e22;
   color: white;
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 12px;
@@ -169,31 +322,40 @@
   user-select: none;
 }
 
+.hud-drop-zone:last-child {
+  border-right: 0;
+}
+
 .hud-drop-zone:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4caf50 0%, #2c7d2c 100%);
-  border-color: #66ff66;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+  background: color-mix(in srgb, #e67e22 35%, #1a1a2e);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(230, 126, 34, 0.35);
 }
 
 .hud-drop-zone:disabled {
   background: rgba(60, 60, 60, 0.5);
-  border-color: rgba(255, 100, 100, 0.3);
   cursor: not-allowed;
   opacity: 0.55;
 }
 
 .hud-drop-zone-num {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
-  color: #4caf50;
+  color: #f5b041;
 }
 
 .hud-drop-zone.full .hud-drop-zone-num { color: #ff5252; }
 
 .hud-drop-zone-label {
-  font-size: 11px;
-  opacity: 0.85;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.hud-drop-zone::after {
+  content: 'Существо · Строение';
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .hud-hand-card.just-played {
@@ -349,4 +511,35 @@
 @keyframes connection-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
+}
+
+.hud-opponents {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: min(320px, 40vw);
+}
+
+.hud-opponent-chip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hud-opponent-dead {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #c62828;
+  font-size: 10px;
 }

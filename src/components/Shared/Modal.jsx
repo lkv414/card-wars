@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useFocusTrap } from '../../hooks/useFocusTrap'
 
-export function Modal({ children, onClose, stacked = false }) {
+export function Modal({ children, onClose, stacked = false, className = '' }) {
   const dialogRef = useRef(null)
   useFocusTrap(true, dialogRef)
 
@@ -23,7 +23,7 @@ export function Modal({ children, onClose, stacked = false }) {
     >
       <div
         ref={dialogRef}
-        className="modal"
+        className={`modal ${className}`.trim()}
         role="dialog"
         aria-modal="true"
         onMouseDown={(e) => e.stopPropagation()}

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { normalizeZoneCards, normalizePlayerZones } from './format.js'
+import { normalizeZoneCards, normalizePlayerZones, normalizePlayerZoneRows } from './format.js'
 
 test('normalizeZoneCards handles array and object shapes', () => {
   assert.deepEqual(normalizeZoneCards([{ id: 'a' }]), [{ id: 'a' }])
@@ -22,4 +22,12 @@ test('normalizePlayerZones handles object map', () => {
   assert.equal(result[0][0].id, 'x')
   assert.equal(result[2][0].id, 'y')
   assert.deepEqual(result[1], [])
+})
+
+test('normalizePlayerZoneRows preserves land metadata', () => {
+  const rows = normalizePlayerZoneRows([
+    { zone_position: 1, cards: [], land_id: 'a', land_type: 'corn', land_name: 'Corn' },
+  ])
+  assert.equal(rows[0].land_type, 'corn')
+  assert.equal(rows[0].land_name, 'Corn')
 })

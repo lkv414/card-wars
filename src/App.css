@@ -18,5 +18,6 @@
 @import url('./styles/game.css');
 @import url('./styles/game-hud.css');
 @import url('./styles/deck.css');
+@import url('./styles/admin.css');
 @import url('./styles/lobby.css');
 @import url('./styles/modal.css');

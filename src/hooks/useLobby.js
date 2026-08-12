@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { supabase } from '../utils/supabase'
 import { logError } from '../utils/errorLogger'
 import { getGuestId } from '../utils/guestId'
 import { ensureGuestId } from '../utils/guestSession'
-import { generateLobbyCode } from '../utils/lobbyCode'
 import {
   saveLobbySession,
   loadLobbySession,
   clearLobbySession,
-  cleanupOldLobbies,
 } from '../utils/lobbySession'
-import { createLobbyChannel } from './lobby/createLobbyChannel'
+import { useLobbyChannel } from './lobby/useLobbyChannel'
+import { createLobbyAction } from './lobby/useCreateLobby'
+import { joinLobbyAction } from './lobby/useJoinLobby'
 
 export function useLobby() {
   // 'idle' | 'restoring' | 'loading' | 'waiting' | 'in_game' | 'error' | 'dismissed'
@@ -28,18 +28,10 @@ export function useLobby() {
   const [hostId, setHostId] = useState(null)
   const [dismissedMessage, setDismissedMessage] = useState(null)
 
-  const channelRef = useRef(null)
   const lobbyIdRef = useRef(null)
   const isHostRef = useRef(false)
 
-  useEffect(() => { lobbyIdRef.current = lobbyId }, [lobbyId])
-  useEffect(() => { isHostRef.current = isHost }, [isHost])
-
   const resetLobbyState = useCallback(() => {
-    if (channelRef.current) {
-      supabase.removeChannel(channelRef.current)
-      channelRef.current = null
-    }
     setLobbyId(null)
     setLobbyCode(null)
     setPlayers([])
@@ -47,16 +39,29 @@ export function useLobby() {
     setHostId(null)
   }, [])
 
-  const subscribeToLobby = useCallback((id) => {
-    if (channelRef.current) supabase.removeChannel(channelRef.current)
+  const { channelRef, subscribeToLobby } = useLobbyChannel({
+    setPlayers,
+    setStatus,
+    setDismissedMessage,
+    resetLobbyState,
+  })
 
-    channelRef.current = createLobbyChannel(id, {
-      setPlayers,
+  useEffect(() => { lobbyIdRef.current = lobbyId }, [lobbyId])
+  useEffect(() => { isHostRef.current = isHost }, [isHost])
+
+  const lobbySetState = useMemo(
+    () => ({
       setStatus,
+      setError,
       setDismissedMessage,
-      resetLobby: resetLobbyState,
-    })
-  }, [resetLobbyState])
+      setLobbyId,
+      setLobbyCode,
+      setIsHost,
+      setHostId,
+      setPlayers,
+    }),
+    []
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -155,60 +160,12 @@ export function useLobby() {
    * @param {object|null} deckPayload
    */
   const createLobby = useCallback(async (nickname, deckPayload = null) => {
-    setStatus('loading')
-    setError(null)
-    setDismissedMessage(null)
     const guestId = getGuestId()
-
-    cleanupOldLobbies(supabase)
-
-    let code = generateLobbyCode()
-    for (let i = 0; i < 4; i++) {
-      const { data: existing } = await supabase.from('lobbies').select('id').eq('code', code).maybeSingle()
-      if (!existing) break
-      code = generateLobbyCode()
-    }
-
-    const { data: lobby, error: lobbyErr } = await supabase
-      .from('lobbies')
-      .insert({ code, host_id: guestId })
-      .select()
-      .single()
-
-    if (lobbyErr) {
-      setError('Не удалось создать лобби')
-      setStatus('error')
-      return
-    }
-
-    const { data: player, error: playerErr } = await supabase.rpc('upsert_lobby_player', {
-      p_guest_id: guestId,
-      p_lobby_id: lobby.id,
-      p_nickname: nickname.trim() || 'Игрок',
-      p_ready: false,
-      p_deck: deckPayload,
+    return createLobbyAction(guestId, nickname, deckPayload, {
+      subscribeToLobby,
+      setState: lobbySetState,
     })
-
-    if (playerErr || !player) {
-      console.error('lobby_players upsert error:', playerErr)
-      setError(`Не удалось добавить игрока: ${playerErr?.message || 'RPC не вернул игрока'}`)
-      setStatus('error')
-      return
-    }
-
-    setLobbyId(lobby.id)
-    setLobbyCode(code)
-    setIsHost(true)
-    setHostId(guestId)
-    subscribeToLobby(lobby.id)
-
-    const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', lobby.id)
-    setPlayers(playersList ?? [])
-    setStatus('waiting')
-
-    saveLobbySession(lobby.id, code, guestId, true)
-    return code
-  }, [subscribeToLobby])
+  }, [subscribeToLobby, lobbySetState])
 
   /**
    * @param {string} code
@@ -216,84 +173,12 @@ export function useLobby() {
    * @param {object|null} deckPayload
    */
   const joinLobby = useCallback(async (code, nickname, deckPayload = null) => {
-    setStatus('loading')
-    setError(null)
-    setDismissedMessage(null)
     const guestId = getGuestId()
-
-    const { data: lobby, error: findErr } = await supabase
-      .from('lobbies')
-      .select('*')
-      .eq('code', code.trim().toUpperCase())
-      .maybeSingle()
-
-    if (findErr || !lobby) {
-      setError('Лобби с таким кодом не найдено')
-      setStatus('error')
-      return
-    }
-
-    if (lobby.status === 'in_game') {
-      setError('Игра уже началась')
-      setStatus('error')
-      return
-    }
-
-    const { data: existing } = await supabase
-      .from('lobby_players')
-      .select('player_id')
-      .eq('lobby_id', lobby.id)
-      .eq('player_id', guestId)
-      .maybeSingle()
-
-    if (existing) {
-      await supabase.rpc('upsert_lobby_player', {
-        p_guest_id: guestId,
-        p_lobby_id: lobby.id,
-        p_nickname: nickname.trim() || 'Игрок',
-        p_ready: false,
-        p_deck: deckPayload,
-      })
-    } else {
-      const { data: allPlayers } = await supabase
-        .from('lobby_players')
-        .select('player_id')
-        .eq('lobby_id', lobby.id)
-
-      if ((allPlayers ?? []).length >= 4) {
-        setError('Лобби уже заполнено (максимум 4 игрока)')
-        setStatus('error')
-        return
-      }
-
-      const { data: player, error: joinErr } = await supabase.rpc('upsert_lobby_player', {
-        p_guest_id: guestId,
-        p_lobby_id: lobby.id,
-        p_nickname: nickname.trim() || 'Игрок',
-        p_ready: false,
-        p_deck: deckPayload,
-      })
-
-      if (joinErr || !player) {
-        console.error('lobby_players upsert error:', joinErr)
-        setError(`Не удалось войти в лобби: ${joinErr?.message || 'RPC не вернул игрока'}`)
-        setStatus('error')
-        return
-      }
-    }
-
-    setLobbyId(lobby.id)
-    setLobbyCode(lobby.code)
-    setIsHost(lobby.host_id === guestId)
-    setHostId(lobby.host_id)
-    setStatus(lobby.status === 'waiting' ? 'waiting' : lobby.status)
-    subscribeToLobby(lobby.id)
-
-    const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', lobby.id)
-    setPlayers(playersList ?? [])
-
-    saveLobbySession(lobby.id, lobby.code, lobby.host_id, lobby.host_id === guestId)
-  }, [subscribeToLobby])
+    return joinLobbyAction(guestId, code, nickname, deckPayload, {
+      subscribeToLobby,
+      setState: lobbySetState,
+    })
+  }, [subscribeToLobby, lobbySetState])
 
   const setReady = useCallback(async () => {
     const guestId = getGuestId()

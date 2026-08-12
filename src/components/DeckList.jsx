@@ -7,12 +7,14 @@ import { useNavigate } from 'react-router-dom'
 import { copyToClipboard } from '../utils/clipboard'
 import { saveDeckSelection, sumDeckQuantities } from '../utils/deckState'
 import { useDecks } from '../hooks/useDecks'
+import { usePresetDecks, presetToDeckSelection } from '../hooks/usePresetDecks'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
 import './DeckList.css'
 
 export function DeckList() {
   const navigate = useNavigate()
-  const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck } = useDecks()
+  const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck, addDeck } = useDecks()
+  const { presets, loading: presetsLoading, error: presetsError } = usePresetDecks()
   const [copiedId, setCopiedId] = useState(null)
   const [renamingId, setRenamingId] = useState(null)
   const [draftName, setDraftName] = useState('')
@@ -54,6 +56,13 @@ export function DeckList() {
   const handleEdit = (deck) => {
     selectDeck(deck.id)
     saveDeckSelection(deck.selectedCards || {}, deck.selectedLands || {})
+    navigate('/deck')
+  }
+
+  const handleImportPreset = (preset) => {
+    const { selectedCards, selectedLands, name } = presetToDeckSelection(preset)
+    const deck = addDeck({ name, selectedCards, selectedLands })
+    saveDeckSelection(deck.selectedCards, deck.selectedLands)
     navigate('/deck')
   }
 
@@ -188,6 +197,35 @@ export function DeckList() {
           )
         })}
       </div>
+
+      <section className="decks-presets" aria-label="Готовые колоды">
+        <h2>Готовые колоды</h2>
+        {presetsLoading && <p role="status">Загрузка пресетов…</p>}
+        {presetsError && <p className="decks-presets-error" role="alert">{presetsError}</p>}
+        {!presetsLoading && presets.length === 0 && (
+          <p className="decks-presets-empty">Пресеты пока не загружены в базу.</p>
+        )}
+        <div className="decks-presets-grid">
+          {presets.map((preset) => {
+            const { selectedCards, selectedLands } = presetToDeckSelection(preset)
+            const cardCount = sumDeckQuantities(selectedCards)
+            const landCount = sumDeckQuantities(selectedLands)
+            return (
+              <article key={preset.id} className="deck-card deck-card--preset">
+                <h3>{preset.name}</h3>
+                {preset.description && <p className="deck-preset-desc">{preset.description}</p>}
+                <div className="deck-stats">
+                  <span>🃏 {cardCount}</span>
+                  <span>🌍 {landCount}</span>
+                </div>
+                <button type="button" className="select-btn" onClick={() => handleImportPreset(preset)}>
+                  Импортировать
+                </button>
+              </article>
+            )
+          })}
+        </div>
+      </section>
     </main>
   )
 }

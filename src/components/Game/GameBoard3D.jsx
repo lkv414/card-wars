@@ -4,37 +4,65 @@
 import { Suspense, useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+import * as THREE from 'three'
 import { HUDOverlay } from './HUDOverlay'
 import { GameScene } from './gameBoard3D/GameScene'
-import { calculateCameraPosition, TABLE_DEPTH, CAMERA_HEIGHT, CAMERA_BACK } from './gameBoard3D/layout'
+import { AdaptiveBoardCamera, CAMERA_FOV, PLAY_FIELD_Y } from './gameBoard3D/AdaptiveBoardCamera'
+import { getBoardLookAtTarget } from './gameBoard3D/layout'
 import { safePlayers, safePlayer } from '../../utils/safePlayer'
+
+import { DamageFlashOverlay } from './DamageFlashOverlay'
+import { LandSetupOverlay } from './LandSetupOverlay'
+import { canPlayerDealDamage } from '../../hooks/game/combat'
+import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
+import { useGraphicsSettings } from '../../hooks/useGraphicsSettings'
 
 export function GameBoard3D({
   game,
   playerId,
+  landCatalog = {},
   onGameEnd,
   onPlayCard,
   onAttack,
+  onDrawCard,
   onEndTurn,
+  onReloadGame,
+  onSuppressRealtimeReload,
   onForfeit,
   onFlipCard,
+  onDiscardFromZone,
+  onReorderLands,
+  onConfirmLandSetup,
   realtimeStatus = 'connecting',
   isApplying = false,
   actionError = null,
+  toast = () => {},
 }) {
+  const { shadowsEnabled } = useGraphicsSettings()
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
   const [selectedZoneIndex, setSelectedZoneIndex] = useState(null)
+  const [draggingCardIndex, setDraggingCardIndex] = useState(null)
+  const [damageFlash, setDamageFlash] = useState(false)
+  const [damageMarkers, setDamageMarkers] = useState([])
+  const [battleEvents, setBattleEvents] = useState([])
+  const [cardActionMenu, setCardActionMenu] = useState(null)
+  const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null)
+
+  const boardRef = useRef(null)
+  const pointerRef = useRef({ x: 0, y: 0 })
+  const rayTargetRef = useRef(null)
+  const placingLockRef = useRef(false)
+  const cardIndexRef = useRef(null)
+
+  useEffect(() => {
+    cardIndexRef.current = draggingCardIndex ?? selectedCardIndex
+  }, [draggingCardIndex, selectedCardIndex])
 
   const players = useMemo(() => safePlayers(game.players), [game.players])
   const playerCount = players.length
   const myIndex = players.findIndex((p) => p.player_id === playerId)
-
-  const cameraPosition = useMemo(() => {
-    if (myIndex === -1) {
-      return [0, CAMERA_HEIGHT, TABLE_DEPTH / 2 - CAMERA_BACK]
-    }
-    return calculateCameraPosition(myIndex, playerCount)
-  }, [myIndex, playerCount])
+  const controlsRef = useRef(null)
+  const boardTarget = useMemo(() => getBoardLookAtTarget(), [])
 
   const isPlayer1 = playerId === players[0]?.player_id
   const fallbackPlayer = isPlayer1 ? players[0] : players[1]
@@ -45,100 +73,253 @@ export function GameBoard3D({
   )
   const isYourTurn = game.current_player_id === playerId
   const isFinished = game.status === 'finished'
+  const inSetup = game.status === 'setup'
   const handCards = me?.hand || []
-
-  const handleFlipCard = useCallback(
-    (playerIndex, zoneIndex, cardId) => {
-      onFlipCard?.(playerIndex, zoneIndex, cardId)
-    },
-    [onFlipCard]
+  const actionsRemaining = isYourTurn
+    ? (me?.actions_remaining ?? game.actions_remaining ?? 2)
+    : 0
+  const aliveCount = players.filter((p) => (p.health ?? 0) > 0).length
+  const canDealDamage = canPlayerDealDamage(
+    me?.player_order,
+    aliveCount,
+    game.current_turn ?? 0
   )
+
+  const isPlacementActive =
+    isYourTurn && !isFinished && !inSetup && (selectedCardIndex !== null || draggingCardIndex !== null)
+
+  const updatePointer = useCallback((clientX, clientY) => {
+    const el = boardRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    if (rect.width <= 0 || rect.height <= 0) return
+    pointerRef.current = {
+      x: ((clientX - rect.left) / rect.width) * 2 - 1,
+      y: -((clientY - rect.top) / rect.height) * 2 + 1,
+    }
+  }, [])
+
+  useEffect(() => {
+    const onMove = (e) => updatePointer(e.clientX, e.clientY)
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => window.removeEventListener('pointermove', onMove)
+  }, [updatePointer])
 
   const onPlayCardRef = useRef(onPlayCard)
   useEffect(() => {
     onPlayCardRef.current = onPlayCard
   }, [onPlayCard])
 
-  const handleCanvasDrop = useCallback(
-    (e) => {
-      e.preventDefault()
-      const cardIdxStr = e.dataTransfer.getData('text/card-index')
-      if (!cardIdxStr) return
-      const cardIdx = parseInt(cardIdxStr, 10)
-      if (Number.isNaN(cardIdx)) return
-      if (e.target?.closest?.('.hud-hand')) return
+  const handleRayRelease = useCallback(
+    async (cardIdx, target) => {
+      if (placingLockRef.current) return
+      const card = handCards[cardIdx]
+      if (!card || !target) return
 
-      const myZones = me?.zones || []
-      const firstEmpty = myZones.findIndex((z) =>
-        Array.isArray(z) ? z.length === 0 : (z?.cards?.length || 0) === 0
-      )
-      if (firstEmpty === -1) return
-      if (typeof onPlayCardRef.current === 'function') {
-        Promise.resolve(onPlayCardRef.current(cardIdx, firstEmpty, 1)).catch((err) => {
-          console.error('[Drop] play failed:', err)
-        })
+      placingLockRef.current = true
+      try {
+        const result = await onPlayCardRef.current?.(cardIdx, target.zoneIndex, 1, target.slotType)
+        if (result?.error) {
+          toast('error', result.error)
+          return
+        }
+        setSelectedCardIndex(null)
+        setDraggingCardIndex(null)
+        rayTargetRef.current = null
+      } catch (err) {
+        toast('error', err?.message || 'Не удалось сыграть карту')
+      } finally {
+        placingLockRef.current = false
       }
     },
-    [me]
+    [handCards, toast]
   )
 
-  const handleCanvasDragOver = useCallback((e) => {
-    if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('text/card-index')) {
-      e.preventDefault()
-      e.dataTransfer.dropEffect = 'move'
+  const handleEndTurn = useCallback(async () => {
+    onSuppressRealtimeReload?.(4000)
+    const result = await onEndTurn?.()
+    if (result?.error) {
+      toast('error', result.error)
+      return result
     }
-  }, [])
+
+    const events = result?.battleEvents
+    if (Array.isArray(events) && events.length > 0) {
+      setBattleEvents((prev) => [...prev, ...events])
+      const { markers, flashMe } = battleEventsToVisuals(events, playerId)
+      if (markers.length > 0) {
+        setDamageMarkers((prev) => [...prev, ...markers])
+        for (const m of markers) {
+          setTimeout(() => {
+            setDamageMarkers((prev) => prev.filter((x) => x.key !== m.key))
+          }, 1400)
+        }
+      }
+      if (flashMe) {
+        setDamageFlash(true)
+        setTimeout(() => setDamageFlash(false), 550)
+      }
+      await new Promise((r) => setTimeout(r, 900))
+    }
+
+    if (typeof onReloadGame === 'function') await onReloadGame()
+    return result
+  }, [onEndTurn, onReloadGame, onSuppressRealtimeReload, playerId, toast])
+
+  const handleFlipCard = useCallback(
+    async (playerIndex, zoneIndex, cardId) => {
+      const result = await onFlipCard?.(playerIndex, zoneIndex, cardId)
+      if (result?.error) toast('error', result.error)
+      else if (typeof onReloadGame === 'function') await onReloadGame()
+    },
+    [onFlipCard, onReloadGame, toast]
+  )
+
+  const handleRequestZoneAction = useCallback(
+    ({ zoneIndex, card, canFlip }) => {
+      const cardId = card.id || card.instanceId
+      setZoneCardActionMenu({
+        card,
+        onFlip: canFlip
+          ? () => handleFlipCard(myIndex, zoneIndex, cardId)
+          : undefined,
+        onDiscard: () => onDiscardFromZone?.(zoneIndex, cardId).then((r) => {
+          if (r?.error) toast('error', r.error)
+        }),
+      })
+    },
+    [handleFlipCard, myIndex, onDiscardFromZone, toast]
+  )
+
+  const handleBoardPointerDown = useCallback(
+    (e) => {
+      updatePointer(e.clientX, e.clientY)
+    },
+    [updatePointer]
+  )
 
   return (
-    <div className="game-board-3d">
+    <div
+      ref={boardRef}
+      className={`game-board-3d${isPlacementActive ? ' game-board-3d--placing' : ''}`}
+      onPointerDown={handleBoardPointerDown}
+    >
       <Canvas
-        shadows
-        camera={{ position: cameraPosition, fov: 60 }}
-        gl={{ antialias: true }}
-        style={{ background: 'linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 100%)' }}
-        onDragOver={handleCanvasDragOver}
-        onDrop={handleCanvasDrop}
+        shadows={shadowsEnabled}
+        camera={{
+          fov: CAMERA_FOV,
+          near: 0.1,
+          far: 100,
+          position: [0, PLAY_FIELD_Y + 12, 12],
+        }}
+        gl={{ antialias: true, powerPreference: 'high-performance' }}
+        style={{ background: 'linear-gradient(180deg, #5a6a75 0%, #3d4a52 100%)' }}
+        onCreated={({ gl }) => {
+          gl.domElement.style.touchAction = 'none'
+          gl.toneMapping = THREE.ACESFilmicToneMapping
+          gl.toneMappingExposure = 1.08
+          if (shadowsEnabled) gl.shadowMap.type = THREE.PCFSoftShadowMap
+          const canvas = gl.domElement
+          canvas.addEventListener('webglcontextlost', (e) => {
+            e.preventDefault()
+            toast('error', 'WebGL контекст потерян — перезагрузите страницу')
+          })
+        }}
       >
+        <AdaptiveBoardCamera
+          playerIndex={myIndex}
+          playerCount={playerCount}
+          controlsRef={controlsRef}
+        />
         <Suspense fallback={null}>
           <GameScene
             game={game}
             playerId={playerId}
+            landCatalog={landCatalog}
             onPlayCard={onPlayCard}
-            onAttack={onAttack}
             onFlipCard={handleFlipCard}
+            onDiscardFromZone={onDiscardFromZone}
+            onRequestZoneAction={handleRequestZoneAction}
+            damageMarkers={damageMarkers}
             selectedCardIndex={selectedCardIndex}
             setSelectedCardIndex={setSelectedCardIndex}
             selectedZoneIndex={selectedZoneIndex}
             setSelectedZoneIndex={setSelectedZoneIndex}
+            draggingCardIndex={draggingCardIndex}
+            setDraggingCardIndex={setDraggingCardIndex}
+            handCards={handCards}
+            pointerRef={pointerRef}
+            rayTargetRef={rayTargetRef}
+            placingLockRef={placingLockRef}
+            isPlacementActive={isPlacementActive}
+            boardRectRef={boardRef}
+            cardIndexRef={cardIndexRef}
+            onRayRelease={handleRayRelease}
           />
         </Suspense>
         <OrbitControls
+          ref={controlsRef}
+          target={boardTarget}
           enablePan={false}
-          minPolarAngle={Math.PI / 6}
-          maxPolarAngle={Math.PI / 2.2}
-          minDistance={4}
-          maxDistance={12}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 2.05}
+          enabled={!draggingCardIndex}
         />
       </Canvas>
 
+      {game.status === 'setup' && (
+        <LandSetupOverlay
+          game={game}
+          playerId={playerId}
+          landCatalog={landCatalog}
+          onReorder={async (...args) => {
+            try {
+              await onReorderLands?.(...args)
+            } catch (e) {
+              toast('error', e?.message || 'Не удалось переставить земли')
+            }
+          }}
+          onConfirm={async () => {
+            try {
+              await onConfirmLandSetup?.()
+            } catch (e) {
+              toast('error', e?.message || 'Не удалось подтвердить расстановку')
+            }
+          }}
+          isApplying={isApplying}
+        />
+      )}
+
+      <DamageFlashOverlay active={damageFlash} />
+
       <HUDOverlay
         playerId={playerId}
-        isYourTurn={isYourTurn}
+        isYourTurn={isYourTurn && game.status !== 'setup'}
         isFinished={isFinished}
         winnerId={game.winner_id}
         me={me}
-        opp={opp}
+        players={players}
         handCards={handCards}
+        actionsRemaining={actionsRemaining}
+        canDealDamage={canDealDamage}
         log={game.game_state?.log || []}
-        onEndTurn={onEndTurn}
+        battleEvents={battleEvents}
+        onEndTurn={handleEndTurn}
         onForfeit={onForfeit}
+        onDrawCard={onDrawCard}
         onGameEnd={onGameEnd}
         realtimeStatus={realtimeStatus}
         selectedCardIndex={selectedCardIndex}
         setSelectedCardIndex={setSelectedCardIndex}
         isApplying={isApplying}
         actionError={actionError}
-        onPlayCard={onPlayCard}
+        draggingCardIndex={draggingCardIndex}
+        setDraggingCardIndex={setDraggingCardIndex}
+        updatePointer={updatePointer}
+        cardActionMenu={cardActionMenu}
+        zoneCardActionMenu={zoneCardActionMenu}
+        onCloseCardActionMenu={() => setCardActionMenu(null)}
+        onCloseZoneCardActionMenu={() => setZoneCardActionMenu(null)}
       />
     </div>
   )

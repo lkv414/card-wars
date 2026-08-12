@@ -309,3 +309,43 @@
 .create-btn:hover {
   filter: brightness(1.1);
 }
+
+.decks-presets {
+  max-width: 1200px;
+  margin: 2.5rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.decks-presets h2 {
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+}
+
+.decks-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.deck-card--preset {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.deck-preset-desc {
+  margin: 0.35rem 0 0.75rem;
+  opacity: 0.85;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.decks-presets-error {
+  color: #ffcdd2;
+}
+
+.decks-presets-empty {
+  opacity: 0.8;
+}

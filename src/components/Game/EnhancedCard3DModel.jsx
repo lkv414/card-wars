@@ -24,6 +24,22 @@ import { Text } from '@react-three/drei'
 import { TextureLoader } from 'three'
 import * as THREE from 'three'
 import { hasFlipAbility } from '../../hooks/game/cardAbilities.js'
+import {
+  getCardHealth,
+  getCardAttack,
+  isCreatureCard,
+  isBuildingCard,
+} from '../../utils/cardFields.ts'
+import { getPlaceholderTextureUrl, loadCachedTexture } from '../../utils/textureCache.js'
+
+class CachedTextureLoader extends TextureLoader {
+  load(url, onLoad, onProgress, onError) {
+    loadCachedTexture(url || getPlaceholderTextureUrl(), { crossOrigin: 'anonymous' })
+      .then(onLoad)
+      .catch(onError)
+    return this
+  }
+}
 
 // Placeholder-цвет, пока текстура грузится / не задана
 const PLACEHOLDER_COLOR = '#5d4e8a'
@@ -183,56 +199,58 @@ export function EnhancedCard3DModel({
   onClick = null,
   onAttack = null,
   onFlip = null,
+  onRequestActionMenu = null,
   isFaceUp = true,
   isSelected = false,
   isFlipped = false,
   showStats = false,
   showFlipOption = false,
+  flatOnTable = false,
+  tableScale = 1,
 }) {
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef(null)
 
-  // Проверяем, можно ли флюпать эту карту (используем hasFlipAbility —
-  // поля card.abilities в данных из БД нет, см. cardAbilities.js).
   const canFlip = hasFlipAbility(card)
 
   // Загружаем текстуру
   const texture = useLoader(
-    TextureLoader,
-    card?.image_url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkAAIAAAoAAv/lxKUAAAAASUVORK5CYII=',
-    (loader) => {
-      loader.crossOrigin = 'anonymous'
-    }
+    CachedTextureLoader,
+    card?.image_url || getPlaceholderTextureUrl(),
   )
 
   const memoTexture = useMemo(() => texture, [texture])
 
-  // Target Y для анимаций
-  const targetY = position[1] + (isSelected ? 0.25 : hovered ? 0.15 : 0)
+  const targetY = flatOnTable
+    ? position[1]
+    : position[1] + (isSelected ? 0.25 : hovered ? 0.15 : 0)
 
-  // Анимации через useFrame
   useFrame((state) => {
     const g = groupRef.current
     if (!g) return
-    const t = state.clock.elapsedTime
 
-    // Smooth Y
+    if (flatOnTable) {
+      g.position.set(position[0], position[1], position[2])
+      g.rotation.set(rotation[0], rotation[1], isFlipped ? Math.PI / 2 : rotation[2])
+      const s = isSelected ? tableScale * 1.04 : tableScale
+      g.scale.set(s, s, s)
+      return
+    }
+
+    const t = state.clock.elapsedTime
     g.position.y += (targetY - g.position.y) * 0.15
 
-    // Gentle float на idle
     if (!hovered && !isSelected) {
       g.position.y += Math.sin(t * 1.5) * 0.02
     }
 
-    // Scale-bounce на hover
     const baseScale = isSelected ? 1.1 : 1.0
     const bounce = hovered ? 1 + Math.sin(t * 8) * 0.05 : 0
     const s = baseScale + bounce
     g.scale.set(s, s, s)
 
-    // Rotate для флюпнутой карты
     if (isFlipped) {
-      g.rotation.z = Math.PI / 2  // 90 градусов
+      g.rotation.z = Math.PI / 2
     } else {
       g.rotation.z = 0
     }
@@ -242,14 +260,13 @@ export function EnhancedCard3DModel({
   const handleClick = (e) => {
     e.stopPropagation()
 
-    if (showFlipOption && canFlip && onFlip) {
-      // Показываем меню выбора
-      const choice = window.confirm('Флюпнуть карту вместо атаки?')
-      if (choice) {
-        onFlip(card)
-      } else if (onAttack) {
-        onAttack(card)
+    if (showFlipOption && canFlip && (onRequestActionMenu || onFlip || onAttack)) {
+      if (onRequestActionMenu) {
+        onRequestActionMenu(card)
+        return
       }
+      onAttack?.(card)
+      return
     } else if (onClick) {
       onClick(card)
     } else if (onAttack) {
@@ -291,11 +308,11 @@ export function EnhancedCard3DModel({
       rotation={[rotation[0], rotation[1], isFlipped ? Math.PI / 2 : rotation[2]]}
       onPointerOver={(e) => {
         e.stopPropagation()
-        setHovered(true)
+        if (!flatOnTable) setHovered(true)
         document.body.style.cursor = onClick || onAttack || onFlip ? 'pointer' : 'default'
       }}
       onPointerOut={() => {
-        setHovered(false)
+        if (!flatOnTable) setHovered(false)
         document.body.style.cursor = 'default'
       }}
       onClick={handleClick}
@@ -318,14 +335,14 @@ export function EnhancedCard3DModel({
         <>
           <CostIndicator cost={card?.cost} position={costPos} />
           <LandTypeIndicator landType={card?.land_type} position={landTypePos} />
-          {card?.type === 'creature' && (
+          {isCreatureCard(card) && (
             <>
-              <AttackIndicator attack={card?.attack} position={attackPos} />
-              <DefenseIndicator defense={card?.defense} position={defensePos} />
+              <AttackIndicator attack={getCardAttack(card)} position={attackPos} />
+              <DefenseIndicator defense={getCardHealth(card)} position={defensePos} />
             </>
           )}
-          {card?.type === 'building' && (
-            <DefenseIndicator defense={card?.defense} position={defensePos} />
+          {isBuildingCard(card) && (
+            <DefenseIndicator defense={getCardHealth(card)} position={defensePos} />
           )}
           <FlipIndicator canFlip={canFlip} position={flipPos} />
         </>

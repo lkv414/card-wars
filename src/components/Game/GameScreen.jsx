@@ -11,13 +11,17 @@
  *                deck_remaining, player_order }],
  *   }
  */
-import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
+import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef, startTransition } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
 import { ensureGuestId } from '../../utils/guestSession'
 import { useGameAction } from '../../hooks/game'
+import { useLandSetup } from '../../hooks/game/useLandSetup'
+import { useLands } from '../../hooks/useLands'
 import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
+import { useToasts } from '../../hooks/useToasts'
+import { Toasts } from '../Shared/Toasts'
 
 const GameBoard3D = lazy(() => import('./GameBoard3D'))
 
@@ -30,74 +34,130 @@ export function GameScreen() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const { lands } = useLands()
+  const { toasts, toast, dismissToast } = useToasts()
+
+  const landCatalog = useMemo(() => {
+    const map = {}
+    for (const land of lands || []) {
+      if (land?.id) map[land.id] = land
+    }
+    return map
+  }, [lands])
+
+  const loadInFlightRef = useRef(null)
+  const pendingReloadRef = useRef(false)
+  const hasLoadedOnceRef = useRef(false)
+  const realtimeSuppressUntilRef = useRef(0)
+  const reloadTimerRef = useRef(null)
+
+  const suppressRealtimeReload = useCallback((ms = 2000) => {
+    realtimeSuppressUntilRef.current = Date.now() + ms
+    if (reloadTimerRef.current) {
+      clearTimeout(reloadTimerRef.current)
+      reloadTimerRef.current = null
+    }
+  }, [])
+
   const loadGame = useCallback(async () => {
-        if (!gameId) return null
-        await ensureGuestId()
-        // НЕ вызываем setLoading(true) — иначе GameScreen размонтирует
-        // <GameBoard3D> и пересоздаст Canvas со всеми текстурами (1.5s лаг).
-        // loading управляется только при ПЕРВОМ mount (см. setLoading(true)
-        // в useEffect) и при ошибке. Повторные reload (после действия или
-        // Realtime-события) молча обновляют state через setGame.
-        setError(null)
-        try {
-          // Фаза 6: читаем через get_player_game_state — функция сама
-          // скрывает hand/deck_pile оппонента и возвращает счётчики.
-          const { data: state, error: rpcErr } = await supabase
-            .rpc('get_player_game_state', {
-              p_game_id: gameId,
-              p_player_id: guestId,
-            })
+    if (!gameId) return null
 
-          if (rpcErr) throw new Error(rpcErr.message)
-          if (!state) throw new Error('Игра не найдена или доступ запрещён')
+    if (loadInFlightRef.current) {
+      pendingReloadRef.current = true
+      return loadInFlightRef.current
+    }
 
-          const nextGame = {
-            id: state.id,
-            lobby_id: state.lobby_id,
-            status: state.status,
-            current_turn: state.current_turn,
-            current_player_id: state.current_player_id,
-            winner_id: state.winner_id,
-            game_state: state.game_state,
-            version: state.version,
-            started_at: state.started_at,
-            ended_at: state.ended_at,
-            players: (state.players || []).map((p) => ({
-              ...p,
-              // Руки/колоды оппонентов остаются скрытыми в RPC, но карты на земле
-              // публичные: сохраняем zones каждого игрока и отдаём их в GameBoard3D.
-              zones: Array.isArray(p.zones)
-                ? p.zones
-                    .sort((a, b) => a.zone_position - b.zone_position)
-                    .map((z) => z.cards || [])
-                : [[], [], [], []],
-            })),
-          }
+    const run = async () => {
+      await ensureGuestId()
+      setError(null)
+      try {
+        const { data: state, error: rpcErr } = await supabase.rpc('get_player_game_state', {
+          p_game_id: gameId,
+          p_player_id: guestId,
+        })
+
+        if (rpcErr) throw new Error(rpcErr.message)
+        if (!state) throw new Error('Игра не найдена или доступ запрещён')
+
+        const nextGame = {
+          id: state.id,
+          lobby_id: state.lobby_id,
+          status: state.status,
+          current_turn: state.current_turn,
+          current_player_id: state.current_player_id,
+          winner_id: state.winner_id,
+          game_state: state.game_state,
+          actions_remaining: state.actions_remaining,
+          version: state.version,
+          started_at: state.started_at,
+          ended_at: state.ended_at,
+          players: (state.players || []).map((p) => ({
+            ...p,
+            actions_remaining: p.actions_remaining ?? 2,
+            zones: Array.isArray(p.zones)
+              ? p.zones
+                  .sort((a, b) => a.zone_position - b.zone_position)
+                  .map((z) => ({
+                    zone_position: z.zone_position,
+                    cards: z.cards || [],
+                    land_id: z.land_id ?? null,
+                    land_type: z.land_type ?? null,
+                    land_name: z.land_name ?? null,
+                  }))
+              : [],
+          })),
+        }
+        if (!hasLoadedOnceRef.current) {
           setGame(nextGame)
-                    setLoading(false)
-                    return nextGame
-                  } catch (err) {
-                    setError(err.message || 'Не удалось загрузить игру')
-                    setLoading(false)
-                    return null
-                  }
-                  // loading=false только при успехе/ошибке ПЕРВОГО load. При последующих
-                  // reload (realtime или после действия) loading не трогаем — state
-                  // обновляется молча, UI не размонтируется.
-                }, [gameId, guestId])
+          setLoading(false)
+          hasLoadedOnceRef.current = true
+        } else {
+          startTransition(() => setGame(nextGame))
+        }
+        return nextGame
+      } catch (err) {
+        setError(err.message || 'Не удалось загрузить игру')
+        setLoading(false)
+        return null
+      }
+    }
 
-  const { playCard, attack, endTurn, forfeit, flipCard, isApplying, error: actionError } = useGameAction(game, loadGame)
+    loadInFlightRef.current = run()
+    try {
+      return await loadInFlightRef.current
+    } finally {
+      loadInFlightRef.current = null
+      if (pendingReloadRef.current) {
+        pendingReloadRef.current = false
+        queueMicrotask(() => loadGame())
+      }
+    }
+  }, [gameId, guestId])
+
+  /** После RPC reload — не дублировать через Realtime (debounce 500ms). */
+  const reloadAfterAction = useCallback(async () => {
+    suppressRealtimeReload(2500)
+    return loadGame()
+  }, [loadGame, suppressRealtimeReload])
+
+  const { playCard, attack, drawCard, endTurn, forfeit, flipCard, discardFromZone, isApplying, error: actionError } = useGameAction(game, reloadAfterAction)
+  const { reorderLands, confirmLandSetup } = useLandSetup(game, reloadAfterAction)
+
+  useEffect(() => {
+    if (actionError) toast('error', actionError)
+  }, [actionError, toast])
 
   // Debounced reload: одна атака правит 3 таблицы → 3 realtime callback'а.
-  // Без debounce получается 3+ reload RPC подряд. С debounce (150мс) —
+  // Без debounce получается 3+ reload RPC подряд. С debounce (500мс) —
   // несколько событий коалесцируются в один reload.
-  const reloadTimerRef = useRef(null)
   const debouncedLoad = useCallback(() => {
+    if (Date.now() < realtimeSuppressUntilRef.current) return
     if (reloadTimerRef.current) clearTimeout(reloadTimerRef.current)
     reloadTimerRef.current = setTimeout(() => {
       reloadTimerRef.current = null
+      if (Date.now() < realtimeSuppressUntilRef.current) return
       loadGame()
-    }, 150)
+    }, 500)
   }, [loadGame])
 
   useEffect(() => {
@@ -150,26 +210,37 @@ export function GameScreen() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="game-loading" role="status" aria-live="polite">
-          Загружаем 3D-сцену...
-        </div>
-      }
-    >
-      <GameBoard3D
-        game={game}
-        playerId={guestId}
-        onGameEnd={() => navigate('/lobby')}
-        onPlayCard={playCard}
-        onAttack={attack}
-        onFlipCard={flipCard}
-        onEndTurn={endTurn}
-        onForfeit={forfeit}
-        realtimeStatus={realtimeStatus}
-        isApplying={isApplying}
-        actionError={actionError}
-      />
-    </Suspense>
+    <>
+      <Suspense
+        fallback={
+          <div className="game-loading" role="status" aria-live="polite">
+            Загружаем 3D-сцену...
+          </div>
+        }
+      >
+        <GameBoard3D
+          game={game}
+          playerId={guestId}
+          landCatalog={landCatalog}
+          onGameEnd={() => navigate('/lobby')}
+          onPlayCard={playCard}
+          onAttack={attack}
+          onDrawCard={drawCard}
+          onFlipCard={flipCard}
+          onDiscardFromZone={discardFromZone}
+          onEndTurn={endTurn}
+          onReloadGame={loadGame}
+          onSuppressRealtimeReload={suppressRealtimeReload}
+          onForfeit={forfeit}
+          onReorderLands={reorderLands}
+          onConfirmLandSetup={confirmLandSetup}
+          realtimeStatus={realtimeStatus}
+          isApplying={isApplying}
+          actionError={actionError}
+          toast={toast}
+        />
+      </Suspense>
+      <Toasts toasts={toasts} onDismiss={dismissToast} />
+    </>
   )
 }

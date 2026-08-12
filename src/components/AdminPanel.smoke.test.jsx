@@ -2,11 +2,22 @@ import React from 'react'
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { AdminPanel } from './AdminPanel.jsx'
 
 vi.mock('../context/AdminAuthContext', () => ({
   useAdminAuth: () => ({ signOut: vi.fn() }),
 }))
+
+vi.mock('../hooks/useCardArt', () => ({
+  useCardArt: () => ({
+    rows: [],
+    loading: false,
+    addArt: vi.fn(),
+    setPrimary: vi.fn(),
+    removeArt: vi.fn(),
+  }),
+}))
+
+import { AdminPanel } from './AdminPanel.jsx'
 
 const sampleCards = [
   {

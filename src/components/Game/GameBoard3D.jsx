@@ -24,9 +24,11 @@ export function GameBoard3D({
   onGameEnd,
   onPlayCard,
   onAttack,
-  onDrawCard,
+  onDrawFreeCard,
+  onDrawPaidCard,
+  onShuffleDeck,
+  onDiscardFromHand,
   onEndTurn,
-  onReloadGame,
   onSuppressRealtimeReload,
   onForfeit,
   onFlipCard,
@@ -117,6 +119,7 @@ export function GameBoard3D({
       if (!card || !target) return
 
       placingLockRef.current = true
+      setDraggingCardIndex(null)
       try {
         const result = await onPlayCardRef.current?.(cardIdx, target.zoneIndex, 1, target.slotType)
         if (result?.error) {
@@ -124,7 +127,6 @@ export function GameBoard3D({
           return
         }
         setSelectedCardIndex(null)
-        setDraggingCardIndex(null)
         rayTargetRef.current = null
       } catch (err) {
         toast('error', err?.message || 'Не удалось сыграть карту')
@@ -132,16 +134,20 @@ export function GameBoard3D({
         placingLockRef.current = false
       }
     },
-    [handCards, toast]
+    [handCards, toast, setDraggingCardIndex]
   )
 
   const handleEndTurn = useCallback(async () => {
-    onSuppressRealtimeReload?.(4000)
+    onSuppressRealtimeReload?.(8000)
     const result = await onEndTurn?.()
     if (result?.error) {
       toast('error', result.error)
       return result
     }
+
+    setSelectedCardIndex(null)
+    setSelectedZoneIndex(null)
+    setDraggingCardIndex(null)
 
     const events = result?.battleEvents
     if (Array.isArray(events) && events.length > 0) {
@@ -162,17 +168,15 @@ export function GameBoard3D({
       await new Promise((r) => setTimeout(r, 900))
     }
 
-    if (typeof onReloadGame === 'function') await onReloadGame()
     return result
-  }, [onEndTurn, onReloadGame, onSuppressRealtimeReload, playerId, toast])
+  }, [onEndTurn, onSuppressRealtimeReload, playerId, toast])
 
   const handleFlipCard = useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       const result = await onFlipCard?.(playerIndex, zoneIndex, cardId)
       if (result?.error) toast('error', result.error)
-      else if (typeof onReloadGame === 'function') await onReloadGame()
     },
-    [onFlipCard, onReloadGame, toast]
+    [onFlipCard, toast]
   )
 
   const handleRequestZoneAction = useCallback(
@@ -306,9 +310,14 @@ export function GameBoard3D({
         battleEvents={battleEvents}
         onEndTurn={handleEndTurn}
         onForfeit={onForfeit}
-        onDrawCard={onDrawCard}
+        onDrawFreeCard={onDrawFreeCard}
+        onDrawPaidCard={onDrawPaidCard}
+        onShuffleDeck={onShuffleDeck}
+        onDiscardFromHand={onDiscardFromHand}
         onGameEnd={onGameEnd}
         realtimeStatus={realtimeStatus}
+        playerCount={playerCount}
+        myIndex={myIndex}
         selectedCardIndex={selectedCardIndex}
         setSelectedCardIndex={setSelectedCardIndex}
         isApplying={isApplying}

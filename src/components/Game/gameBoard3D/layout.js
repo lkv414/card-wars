@@ -128,7 +128,8 @@ function buildCircularRow(playerIndex, playerCount) {
 
   const rowCenterX = outwardX * LAND_ROW_RADIUS
   const rowCenterZ = outwardZ * LAND_ROW_RADIUS
-  const rotationY = Math.atan2(-outwardX, -outwardZ)
+  // +π so cards face the owning player's camera, not the table center
+  const rotationY = Math.atan2(-outwardX, -outwardZ) + Math.PI
 
   return Array.from({ length: NUM_SLOTS }, (_, i) => {
     const along = (i - (NUM_SLOTS - 1) / 2) * LANE_WIDTH
@@ -184,4 +185,27 @@ export function columnSpacing(playerCount) {
 
 export function getBoardLookAtTarget() {
   return [0, PLAY_FIELD_Y, 0]
+}
+
+/** Точка над рядом земель игрока для всплывающего ника. */
+export function getPlayerNameLabelAnchor(playerIndex, playerCount, myIndex = 0) {
+  const labelY = PLAY_FIELD_Y + 0.55
+  const rowHalf = HALF_LANE_DEPTH / 2
+  const outwardPad = 0.55
+
+  if (playerCount === 2) {
+    const onNearSide = playerIndex === myIndex
+    const z = onNearSide ? rowHalf + outwardPad : -(rowHalf + outwardPad)
+    return [0, labelY, z]
+  }
+
+  const slots = calculatePlayerSlotPositions(playerIndex, playerCount)
+  if (!slots.length) return [0, labelY, 0]
+
+  const cx = slots.reduce((sum, slot) => sum + slot.center[0], 0) / slots.length
+  const cz = slots.reduce((sum, slot) => sum + slot.center[2], 0) / slots.length
+  const dist = Math.hypot(cx, cz) || 1
+  const push = 0.7
+
+  return [cx + (cx / dist) * push, labelY, cz + (cz / dist) * push]
 }

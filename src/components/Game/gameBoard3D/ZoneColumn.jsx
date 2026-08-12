@@ -16,19 +16,31 @@ import {
 } from '../../../constants/landColors'
 import { SLOT_BUILDING, SLOT_CREATURE, splitZoneCards } from '../../../hooks/game/zoneCards'
 import { registerPlayableSlot } from './slotRegistry'
+import { CreatureFieldStats } from './CreatureFieldStats'
 
 const LAND_SURFACE_Y = 0.002
 const FIELD_CARD_SCALE = computeFieldCardScale(0.88)
 
 /** Плоская земля — ровно LANE_WIDTH × HALF_LANE_DEPTH, без налезания на соседей. */
-function LandMat({ landType }) {
+function LandMat({ landType, onClick, isSelected }) {
   const palette = getLandPalette(landType)
   const fill = useMemo(() => new THREE.Color(palette.fill), [palette.fill])
 
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, LAND_SURFACE_Y, 0]} receiveShadow>
+    <mesh
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, LAND_SURFACE_Y, 0]}
+      receiveShadow
+      onClick={onClick}
+    >
       <planeGeometry args={[LANE_WIDTH, HALF_LANE_DEPTH]} />
-      <meshStandardMaterial color={fill} roughness={0.92} metalness={0} />
+      <meshStandardMaterial
+        color={isSelected ? '#fff8e1' : fill}
+        roughness={0.92}
+        metalness={0}
+        emissive={isSelected ? '#ff9800' : '#000000'}
+        emissiveIntensity={isSelected ? 0.15 : 0}
+      />
     </mesh>
   )
 }
@@ -89,7 +101,7 @@ function SlotPad({ slot, slotType, zoneIndex, playable, rayHovered, tint, onClic
   )
 }
 
-function renderFieldCard(card, slot, { isMyTurn, isOwnerMe, isSelected, isAttackerSelected, onZoneCardClick }) {
+function renderFieldCard(card, slot, { isMyTurn, isOwnerMe, isSelected, isAttackerSelected, onZoneCardClick, recentDamage }) {
   if (!card) return null
   const isFlipped = card?.status === 'flipped' || card?.isFlipped
   return (
@@ -148,13 +160,14 @@ export function ZoneColumn({
   onBuildingSlotClick,
   onZoneAttackClick,
   onZoneCardClick,
+  onLandClick,
 }) {
   const slots = getLandSlotLayout()
   const { creatureCard, buildingCard } = splitZoneCards(cards)
 
   return (
     <group position={center} rotation={[0, rotationY, 0]}>
-      <LandMat landType={landType} />
+      <LandMat landType={landType} onClick={onLandClick} isSelected={isSelected} />
       <LandOutline />
 
       {isAttackTarget && (
@@ -214,6 +227,10 @@ export function ZoneColumn({
 
       {damageAmount != null && creatureCard && (
         <DamageFloater amount={damageAmount} slot={slots.creature} />
+      )}
+
+      {creatureCard && (
+        <CreatureFieldStats card={creatureCard} slot={slots.creature} rotationY={rotationY} />
       )}
     </group>
   )

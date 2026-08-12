@@ -37,3 +37,9 @@ export function isBuildingCard(card: CardLike): boolean {
 export function isSpellCard(card: CardLike): boolean {
   return getCardType(card) === 'spell'
 }
+
+export function getCardCost(card: CardLike & { cost?: number | string | null }): number {
+  if (card?.cost == null || card.cost === '') return 1
+  const n = Number(card.cost)
+  return Number.isFinite(n) ? Math.max(0, n) : 1
+}

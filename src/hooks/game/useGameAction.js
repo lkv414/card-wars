@@ -22,15 +22,34 @@ import { useTurnControl } from './useTurnControl'
 import { useFlipCard } from './useFlipCard'
 import { useDiscardFromZone } from './useDiscardFromZone'
 import { useDrawCard } from './useDrawCard'
+import { useDrawFreeCard } from './useDrawFreeCard'
+import { useShuffleDeck } from './useShuffleDeck'
+import { useDiscardFromHand } from './useDiscardFromHand'
 
-export function useGameAction(game, reload) {
+export function useGameAction(game, reload, { patchGame, cardCatalog } = {}) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
-  const playCard = usePlayCard(game, writeGameState, reload)
+  const playCard = usePlayCard(game, writeGameState, reload, { patchGame, cardCatalog })
   const attack = useAttack(game, reload)
   const drawCard = useDrawCard(game, reload)
+  const drawFreeCard = useDrawFreeCard(game, reload)
+  const shuffleDeck = useShuffleDeck(game, reload)
+  const discardFromHand = useDiscardFromHand(game, reload)
   const discardFromZone = useDiscardFromZone(game, writeGameState, reload)
-  const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload)
-  const flipCard = useFlipCard(game)
+  const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload, { patchGame })
+  const flipCard = useFlipCard(game, { patchGame })
 
-  return { playCard, attack, drawCard, discardFromZone, endTurn, forfeit, flipCard, isApplying, error }
+  return {
+    playCard,
+    attack,
+    drawCard,
+    drawFreeCard,
+    shuffleDeck,
+    discardFromHand,
+    discardFromZone,
+    endTurn,
+    forfeit,
+    flipCard,
+    isApplying,
+    error,
+  }
 }

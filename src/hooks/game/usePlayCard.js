@@ -9,8 +9,10 @@ import { canPlayCardToSlot, getCardSlotType } from './zoneCards'
 import { clampZones } from './format'
 import { isRpcUnavailable } from './rpcUtils'
 import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
+import { getCardCost } from '../../utils/cardFields.ts'
+import { applyPlayCardPatch } from '../../utils/gameStatePatch'
 
-export function usePlayCard(game, _writeGameState, reload) {
+export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog } = {}) {
   return useCallback(
     async (cardIndex, zoneIndex, _actionCost = 1, slotType = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -22,9 +24,12 @@ export function usePlayCard(game, _writeGameState, reload) {
       if (cardIndex < 0 || cardIndex >= hand.length) return { error: 'Неверный индекс карты' }
       const card = hand[cardIndex]
       const slot = slotType || getCardSlotType(card)
+      const actionCost = getCardCost(card)
 
       const actionsLeft = me.actions_remaining ?? game.actions_remaining ?? 2
-      if (actionsLeft < 1) return { error: 'Нет доступных действий' }
+      if (actionsLeft < actionCost) {
+        return { error: `Недостаточно действий (нужно ${actionCost}, осталось ${actionsLeft})` }
+      }
 
       const zones = clampZones(me.zones)
       const zoneCards = zones[zoneIndex] || []
@@ -54,7 +59,11 @@ export function usePlayCard(game, _writeGameState, reload) {
         }
 
         if (!rpcErr && data?.success) {
-          if (typeof reload === 'function') await reload()
+          if (typeof patchGame === 'function') {
+            patchGame((state) =>
+              applyPlayCardPatch(state, me.player_id, cardIndex, zoneIndex, slot, data, cardCatalog)
+            )
+          }
           return { success: true }
         }
         if (rpcErr) {
@@ -98,7 +107,7 @@ export function usePlayCard(game, _writeGameState, reload) {
               hand: newHand,
               deck_pile: deckPile,
               deck_remaining: deckPile.length,
-              actions_remaining: actionsLeft - 1,
+              actions_remaining: actionsLeft - actionCost,
             })
             .eq('game_id', game.id)
             .eq('player_id', me.player_id),
@@ -113,9 +122,13 @@ export function usePlayCard(game, _writeGameState, reload) {
 
       const err = playersRes.error || zonesRes.error
       if (err) return { error: `Розыгрыш не сохранился: ${err.message || err}` }
-      if (typeof reload === 'function') await reload()
+      if (typeof patchGame === 'function') {
+        patchGame((state) =>
+          applyPlayCardPatch(state, me.player_id, cardIndex, zoneIndex, slot, {}, cardCatalog)
+        )
+      }
       return { success: true }
     },
-    [game, reload]
+    [game, patchGame, cardCatalog]
   )
 }

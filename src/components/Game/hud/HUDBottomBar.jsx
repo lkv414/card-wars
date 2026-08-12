@@ -10,12 +10,40 @@ export function HUDBottomBar({
   actionsRemaining = 2,
   canDealDamage = true,
   isApplying,
+  freeDrawUsed = false,
+  paidDrawUsed = false,
   onEndTurn,
   onForfeit,
-  onDrawCard,
+  onDrawFreeCard,
+  onDrawPaidCard,
+  onShuffleDeck,
 }) {
   const deckCount = me.deck_pile?.length ?? me.deck_remaining ?? 0
   const discardCount = me.discard_pile?.length ?? me.discard_count ?? 0
+  const canDrawFromPile = deckCount > 0 || discardCount > 0
+
+  const drawLabel = !freeDrawUsed
+    ? '📥 Бесплатная карта'
+    : !paidDrawUsed
+      ? '📥 +1 (−1 ⚡)'
+      : '📥 использовано'
+
+  const drawDisabled =
+    isApplying
+    || (freeDrawUsed && paidDrawUsed)
+    || (!freeDrawUsed ? !canDrawFromPile : actionsRemaining < 1 || !canDrawFromPile)
+
+  const drawTitle = !freeDrawUsed
+    ? 'Взять 1 бесплатную карту (1 раз за ход)'
+    : !paidDrawUsed
+      ? 'Взять 1 карту за 1 действие (1 раз за ход)'
+      : 'Добор уже использован в этом ходу'
+
+  const handleDraw = () => {
+    if (!freeDrawUsed) return onDrawFreeCard?.()
+    if (!paidDrawUsed) return onDrawPaidCard?.()
+    return Promise.resolve()
+  }
 
   return (
     <div className={`hud-bottom-status ${isYourTurn ? 'your' : 'opponent'} ${isFinished ? 'finished' : ''}`}>
@@ -56,16 +84,30 @@ export function HUDBottomBar({
           <button
             type="button"
             className="hud-draw-btn"
-            disabled={isApplying || actionsRemaining < 1 || deckCount < 1}
+            disabled={drawDisabled}
             onClick={(e) => {
               e.stopPropagation()
-              Promise.resolve(onDrawCard?.()).catch((err) => {
+              Promise.resolve(handleDraw()).catch((err) => {
                 logError(err, { component: 'HUDBottomBar', action: 'drawCard' })
               })
             }}
-            title="Взять 1 карту (−1 действие)"
+            title={drawTitle}
           >
-            📥 +1
+            {drawLabel}
+          </button>
+          <button
+            type="button"
+            className="hud-shuffle-btn"
+            disabled={isApplying || (deckCount + (me.hand?.length ?? 0) < 1 && discardCount < 1)}
+            onClick={(e) => {
+              e.stopPropagation()
+              Promise.resolve(onShuffleDeck?.()).catch((err) => {
+                logError(err, { component: 'HUDBottomBar', action: 'shuffleDeck' })
+              })
+            }}
+            title="Перемешать руку и колоду (сброс → колода если колода пуста)"
+          >
+            🔀
           </button>
           <button
             type="button"

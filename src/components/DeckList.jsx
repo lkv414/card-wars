@@ -210,14 +210,28 @@ export function DeckList() {
             const { selectedCards, selectedLands } = presetToDeckSelection(preset)
             const cardCount = sumDeckQuantities(selectedCards)
             const landCount = sumDeckQuantities(selectedLands)
+            const landscapes = Array.isArray(preset.landscapes) ? preset.landscapes : []
+            const winrate = preset.winrate != null ? Number(preset.winrate) : null
             return (
               <article key={preset.id} className="deck-card deck-card--preset">
                 <h3>{preset.name}</h3>
                 {preset.description && <p className="deck-preset-desc">{preset.description}</p>}
+                {winrate != null && !Number.isNaN(winrate) && (
+                  <p className="deck-preset-winrate">📊 Винрейт: {winrate.toFixed(1)}%</p>
+                )}
                 <div className="deck-stats">
-                  <span>🃏 {cardCount}</span>
-                  <span>🌍 {landCount}</span>
+                  <span>🃏 {cardCount} / 40</span>
+                  <span>🌍 {landCount} / 4</span>
                 </div>
+                {landscapes.length > 0 && (
+                  <ul className="deck-preset-lands" aria-label="Земли колоды">
+                    {landscapes.map((land, i) => (
+                      <li key={land.card_id || land.id || i}>
+                        🌍 {land.name || land.land_type || 'Земля'}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <button type="button" className="select-btn" onClick={() => handleImportPreset(preset)}>
                   Импортировать
                 </button>

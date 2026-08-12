@@ -11,8 +11,9 @@ import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
 import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
+import { applyEndTurnPatch } from '../../utils/gameStatePatch'
 
-export function useTurnControl(game, writeGameState, reload) {
+export function useTurnControl(game, writeGameState, reload, { patchGame } = {}) {
   /**
    * End turn: switch to next player.
    * Computes simple alternation: player1 -> player2 -> player1.
@@ -31,6 +32,9 @@ export function useTurnControl(game, writeGameState, reload) {
           p_player_id: game.current_player_id,
         })
         if (!rpcErr && data?.success) {
+          if (typeof patchGame === 'function') {
+            patchGame((state) => applyEndTurnPatch(state, data))
+          }
           return {
             success: true,
             battleEvents: data.battle_events || [],
@@ -84,7 +88,7 @@ export function useTurnControl(game, writeGameState, reload) {
         current_turn: (game.current_turn || 0) + 1,
         game_state: { log: newLog },
       })
-    }, [game, writeGameState, reload])
+    }, [game, writeGameState, reload, patchGame])
 
   /**
      * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается
@@ -183,7 +187,7 @@ export function useTurnControl(game, writeGameState, reload) {
       }
 
       return writeGameState(patch)
-    }, [game, writeGameState, reload])
+    }, [game, writeGameState, reload, patchGame])
 
   return { endTurn, forfeit }
 }

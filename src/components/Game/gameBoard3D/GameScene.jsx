@@ -10,11 +10,15 @@ import {
   splitZoneCards,
 } from '../../../hooks/game/zoneCards'
 import { calculatePlayerSlotPositions, calculateTwoPlayerBoard, ownerRotationY } from './layout'
+import { getAttackTargets } from '../../../hooks/game/zoneOpposition'
+import { getBattleTargetZone } from '../../../hooks/game/battlePhase'
 import { TableDecor } from './TableDecor'
 import { ZoneColumn } from './ZoneColumn'
 import { SceneLighting } from './SceneLighting'
 import { PlacementRaycaster } from './PlacementRaycaster'
 import { PlacementPointerRelease } from './PlacementPointerRelease'
+import { AttackDirectionHint } from './AttackDirectionHint'
+import { PlayerNameLabels } from './PlayerNameLabels'
 
 export function GameScene({
   game,
@@ -83,12 +87,49 @@ export function GameScene({
     if (playerCount === 2) return []
     const opponents = []
     for (let i = 0; i < playerCount; i++) {
-      if (i !== myIndex) {
+      if (i !== myIndex && (players[i]?.health ?? 0) > 0) {
         opponents.push({ index: i, positions: calculatePlayerSlotPositions(i, playerCount) })
       }
     }
     return opponents
-  }, [playerCount, myIndex])
+  }, [playerCount, myIndex, players])
+
+  const attackTargetZones = useMemo(() => {
+    if (selectedZoneIndex == null || !isYourTurn) return new Set()
+    const targets = getAttackTargets(playerId, players, selectedZoneIndex)
+    const keys = new Set()
+    for (const t of targets) {
+      for (const z of t.zones) {
+        keys.add(`${t.playerId}:${z}`)
+      }
+    }
+    return keys
+  }, [selectedZoneIndex, isYourTurn, playerId, players])
+
+  const attackHint = useMemo(() => {
+    if (selectedZoneIndex == null || playerCount < 2) return null
+    const myPos = playerCount === 2
+      ? sharedLanes?.[selectedZoneIndex]?.near?.center
+      : mySlotPositions[selectedZoneIndex]?.center
+    if (!myPos) return null
+
+    const toZone = getBattleTargetZone(selectedZoneIndex, playerCount)
+    const targets = getAttackTargets(playerId, players, selectedZoneIndex)
+    if (!targets.length) return null
+
+    let toCenter = null
+    if (playerCount === 2 && sharedLanes) {
+      toCenter = sharedLanes[toZone]?.far?.center
+    } else {
+      const oppIdx = players.findIndex((p) => p.player_id === targets[0].playerId)
+      if (oppIdx >= 0) {
+        const oppPos = calculatePlayerSlotPositions(oppIdx, playerCount)
+        toCenter = oppPos[toZone]?.center
+      }
+    }
+    if (!toCenter) return null
+    return { from: myPos, to: toCenter }
+  }, [selectedZoneIndex, playerCount, sharedLanes, mySlotPositions, playerId, players])
 
   const resolveLandType = useCallback(
     (zoneRow) => {
@@ -112,13 +153,15 @@ export function GameScene({
       if (!canPlayCardToSlot(cards, activeCard)) return false
 
       if (placingLockRef) placingLockRef.current = true
-      setSelectedCardIndex(null)
-      setDraggingCardIndex?.(null)
       setRayTarget(null)
       if (rayTargetRef) rayTargetRef.current = null
 
       try {
-        await onPlayCard(cardIdx, zoneIndex, 1, slotType)
+        const result = await onPlayCard(cardIdx, zoneIndex, 1, slotType)
+        if (result?.error) return false
+        setSelectedCardIndex(null)
+        setDraggingCardIndex?.(null)
+        return true
       } catch (e) {
         console.error('Play card failed:', e)
         return false
@@ -126,7 +169,6 @@ export function GameScene({
         if (placingLockRef) placingLockRef.current = false
         setSelectedZoneIndex(null)
       }
-      return true
     },
     [
       draggingCardIndex,
@@ -168,6 +210,14 @@ export function GameScene({
     [damageMarkers]
   )
 
+  const tryPlayToSlot = useCallback(
+    (zoneIndex, slotType) => {
+      if (draggingCardIndex !== null || placingLockRef?.current) return
+      playToSlotRef.current(zoneIndex, slotType)
+    },
+    [draggingCardIndex, placingLockRef]
+  )
+
   const handleZoneCardClick = useCallback(
     (playerIndex, zoneIndex, card) => {
       if (inSetup || !isYourTurn || isFinished || playerIndex !== myIndex) return
@@ -182,6 +232,7 @@ export function GameScene({
     const row = zoneRows[zoneIndex] || {}
     const cards = normalizeZoneCards(row)
     const isSelectedZone = isOwnerMe && selectedZoneIndex === zoneIndex
+    const isTargetZone = attackTargetZones.has(`${player.player_id}:${zoneIndex}`)
 
     const creaturePlayable =
       isOwnerMe && isYourTurn && !inSetup && !isFinished && activeCard
@@ -209,16 +260,22 @@ export function GameScene({
         isOwnerMe={isOwnerMe}
         isSelected={isSelectedZone}
         isMyTurn={isYourTurn}
+        isAttackTarget={isTargetZone}
         damageAmount={damageAmount}
         creaturePlayable={creaturePlayable}
         buildingPlayable={buildingPlayable}
-        creatureRayHover={rayTarget?.zoneIndex === zoneIndex && rayTarget?.slotType === SLOT_CREATURE}
-        buildingRayHover={rayTarget?.zoneIndex === zoneIndex && rayTarget?.slotType === SLOT_BUILDING}
+        creatureRayHover={isOwnerMe && rayTarget?.zoneIndex === zoneIndex && rayTarget?.slotType === SLOT_CREATURE}
+        buildingRayHover={isOwnerMe && rayTarget?.zoneIndex === zoneIndex && rayTarget?.slotType === SLOT_BUILDING}
         onCreatureSlotClick={
-          isOwnerMe ? () => playToSlotRef.current(zoneIndex, SLOT_CREATURE) : undefined
+          isOwnerMe ? () => tryPlayToSlot(zoneIndex, SLOT_CREATURE) : undefined
         }
         onBuildingSlotClick={
-          isOwnerMe ? () => playToSlotRef.current(zoneIndex, SLOT_BUILDING) : undefined
+          isOwnerMe ? () => tryPlayToSlot(zoneIndex, SLOT_BUILDING) : undefined
+        }
+        onLandClick={
+          isOwnerMe && !activeCard
+            ? () => setSelectedZoneIndex(isSelectedZone ? null : zoneIndex)
+            : undefined
         }
         onZoneCardClick={(card) => handleZoneCardClick(playerIndex, zoneIndex, card)}
       />
@@ -233,10 +290,12 @@ export function GameScene({
     return sharedLanes.map((lane) => {
       const nearPlayer = safePlayer(players, players[lane.near.playerIndex]?.player_id)
       const farPlayer = safePlayer(players, players[lane.far.playerIndex]?.player_id)
+      const farAlive = farPlayer && !farPlayer.__isFallback && (farPlayer.health ?? 0) > 0
+      const nearAlive = nearPlayer && !nearPlayer.__isFallback && (nearPlayer.health ?? 0) > 0
       return (
         <React.Fragment key={`lane-${lane.laneIndex}`}>
-          {farPlayer && !farPlayer.__isFallback && renderZoneColumn(farPlayer, lane.far.playerIndex, lane.far, false)}
-          {nearPlayer && !nearPlayer.__isFallback && renderZoneColumn(nearPlayer, lane.near.playerIndex, lane.near, true)}
+          {farAlive && renderZoneColumn(farPlayer, lane.far.playerIndex, lane.far, false)}
+          {nearAlive && renderZoneColumn(nearPlayer, lane.near.playerIndex, lane.near, true)}
         </React.Fragment>
       )
     })
@@ -248,21 +307,33 @@ export function GameScene({
 
       <TableDecor playerCount={playerCount} />
 
+      <PlayerNameLabels
+        players={players}
+        playerCount={playerCount}
+        myIndex={myIndex}
+        myPlayerId={playerId}
+        currentPlayerId={game.current_player_id}
+      />
+
       {playerCount === 2 ? (
         renderTwoPlayerLanes()
       ) : (
         <>
           {opponentSlotPositions.map((opp) => {
             const opponent = safePlayer(players, players[opp.index]?.player_id)
-            if (!opponent || opponent.__isFallback) return null
+            if (!opponent || opponent.__isFallback || (opponent.health ?? 0) <= 0) return null
             return (
               <React.Fragment key={`player-${opp.index}`}>
                 {renderPlayerColumns(opponent, opp.positions, opp.index, false)}
               </React.Fragment>
             )
           })}
-          {renderPlayerColumns(me, mySlotPositions, myIndex, true)}
+          {(me.health ?? 0) > 0 && renderPlayerColumns(me, mySlotPositions, myIndex, true)}
         </>
+      )}
+
+      {attackHint && (
+        <AttackDirectionHint fromCenter={attackHint.from} toCenter={attackHint.to} />
       )}
 
       <PlacementRaycaster

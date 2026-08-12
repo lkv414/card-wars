@@ -12,8 +12,8 @@ export function usePresetDecks() {
     const { data, error: fetchErr } = await supabase
       .from('preset_decks')
       .select(`
-        id, slug, name, hero_slug, mode, description, sort_order,
-        preset_deck_cards ( slot, is_landscape, card_id, cards ( id, card_number, name, cost, card_type, land_type ) )
+        id, slug, name, hero_slug, mode, description, winrate, landscapes, sort_order,
+        preset_deck_cards ( slot, is_landscape, card_id, cards ( id, card_number, name, cost, card_type, land_type, description, attack, health, image_url ) )
       `)
       .eq('is_active', true)
       .order('sort_order')
@@ -41,11 +41,21 @@ export function presetToDeckSelection(preset) {
   for (const row of preset.preset_deck_cards || []) {
     const id = row.card_id
     if (!id) continue
-    if (row.is_landscape) {
+    if (row.is_landscape || row.cards?.card_type === 'landscape') {
       selectedLands[id] = (selectedLands[id] || 0) + 1
     } else {
       selectedCards[id] = (selectedCards[id] || 0) + 1
     }
   }
+
+  // Also import lands from landscapes JSONB when not in preset_deck_cards
+  const landscapes = preset.landscapes
+  if (Array.isArray(landscapes)) {
+    for (const land of landscapes) {
+      const id = land?.card_id || land?.id
+      if (id) selectedLands[id] = (selectedLands[id] || 0) + 1
+    }
+  }
+
   return { selectedCards, selectedLands, name: preset.name }
 }

@@ -115,6 +115,270 @@
   cursor: not-allowed;
 }
 
+.hud-shuffle-btn {
+  padding: 10px 14px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(180deg, #ab47bc 0%, #6a1b9a 100%);
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+
+.hud-shuffle-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.player-side-indicator {
+  position: absolute;
+  bottom: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(76, 175, 80, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.player-side-indicator-icon {
+  font-size: 18px;
+}
+
+.hud-hand-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  max-width: 100%;
+  padding: 0 8px;
+}
+
+.hud-hand {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 20px 0 6px;
+  pointer-events: auto;
+  align-items: flex-end;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - 88px);
+  scrollbar-width: thin;
+}
+
+.hud-hand-card-cost {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(255, 152, 0, 0.92);
+  color: #111;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.hud-hand-trash {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 88px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 12px;
+  border: 2px dashed rgba(244, 67, 54, 0.55);
+  background: rgba(30, 30, 50, 0.75);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.hud-hand-trash:hover:not(:disabled) {
+  background: rgba(244, 67, 54, 0.25);
+  border-color: rgba(244, 67, 54, 0.85);
+  transform: translateY(-2px);
+}
+
+.hud-hand-trash.active {
+  background: rgba(244, 67, 54, 0.35);
+  border-color: #f44336;
+  border-style: solid;
+}
+
+.hud-hand-trash:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.hud-hand-trash-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.hud-hand-trash-label {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.card-preview-modal h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.card-preview-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.card-preview-img {
+  width: 88px;
+  height: 122px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-preview-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.card-preview-desc {
+  margin: 0 0 0.75rem;
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
+.card-preview-desc--empty {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.card-preview-flip {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 193, 7, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.35);
+}
+
+.player-name-bubble-html {
+  background: transparent !important;
+}
+
+.player-name-bubble {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 220px;
+  padding: 7px 14px 9px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.38);
+  background: linear-gradient(180deg, rgba(38, 44, 68, 0.96) 0%, rgba(18, 22, 38, 0.98) 100%);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+  white-space: nowrap;
+}
+
+.player-name-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  transform: translateX(-50%) rotate(45deg);
+  background: rgba(22, 26, 42, 0.98);
+  border-right: 2px solid rgba(255, 255, 255, 0.28);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+.player-name-bubble--me {
+  border-color: rgba(129, 199, 132, 0.8);
+  background: linear-gradient(180deg, rgba(46, 95, 56, 0.96) 0%, rgba(24, 58, 32, 0.98) 100%);
+}
+
+.player-name-bubble--me::after {
+  background: rgba(28, 62, 36, 0.98);
+  border-color: rgba(129, 199, 132, 0.55);
+}
+
+.player-name-bubble--turn {
+  border-color: rgba(255, 235, 59, 0.85);
+  box-shadow:
+    0 0 14px rgba(255, 235, 59, 0.35),
+    0 6px 18px rgba(0, 0, 0, 0.42);
+}
+
+.player-name-bubble-turn-badge {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 193, 7, 0.28);
+  border: 1px solid rgba(255, 235, 59, 0.65);
+  color: #ffe082;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.creature-field-stats-html {
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+.creature-field-stats {
+  display: flex;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.creature-field-stats-atk { color: #ffab91; }
+.creature-field-stats-hp { color: #a5d6a7; }
+
 .damage-flash-overlay {
   position: absolute;
   inset: 0;
@@ -200,16 +464,6 @@
 }
 
 .hud-end-btn:hover { filter: brightness(1.15); }
-
-.hud-hand {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  overflow-y: visible;
-  padding: 20px 0 6px;
-  pointer-events: auto;
-  align-items: flex-end;
-}
 
 .hud-hand-card {
   flex: 0 0 auto;

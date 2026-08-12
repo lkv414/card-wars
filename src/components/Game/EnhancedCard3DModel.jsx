@@ -30,6 +30,7 @@ import {
   isCreatureCard,
   isBuildingCard,
 } from '../../utils/cardFields.ts'
+import { resolveCardImageUrl } from '../../utils/enrichGameCards.js'
 import { getPlaceholderTextureUrl, loadCachedTexture } from '../../utils/textureCache.js'
 
 class CachedTextureLoader extends TextureLoader {
@@ -192,6 +193,42 @@ function FlipIndicator({ canFlip, position }) {
   )
 }
 
+function CardFaceMesh({ card, memoTexture, showNameFallback = false }) {
+  const resolvedUrl = resolveCardImageUrl(card)
+  if (!resolvedUrl) {
+    return (
+      <>
+        <CardBackdrop />
+        {showNameFallback && card?.name && (
+          <Text
+            color="#ffffff"
+            fontSize={0.11}
+            maxWidth={CARD_WIDTH * 0.85}
+            textAlign="center"
+            anchorX="center"
+            anchorY="middle"
+            position={[0, 0, 0.01]}
+          >
+            {card.name}
+          </Text>
+        )}
+      </>
+    )
+  }
+
+  return (
+    <mesh>
+      <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+      <meshStandardMaterial
+        map={memoTexture}
+        roughness={0.7}
+        metalness={0.1}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  )
+}
+
 export function EnhancedCard3DModel({
   card,
   position = [0, 0, 0],
@@ -212,12 +249,10 @@ export function EnhancedCard3DModel({
   const groupRef = useRef(null)
 
   const canFlip = hasFlipAbility(card)
+  const textureUrl = resolveCardImageUrl(card) || getPlaceholderTextureUrl()
 
   // Загружаем текстуру
-  const texture = useLoader(
-    CachedTextureLoader,
-    card?.image_url || getPlaceholderTextureUrl(),
-  )
+  const texture = useLoader(CachedTextureLoader, textureUrl)
 
   const memoTexture = useMemo(() => texture, [texture])
 
@@ -317,18 +352,12 @@ export function EnhancedCard3DModel({
       }}
       onClick={handleClick}
     >
-      {/* Текстура карты. DoubleSide — чтобы после родительского flip
-          (EnhancedSlot поворачивает на угол владельца по Y) текстура
-          была видна с обеих сторон, а не пропала задней гранью. */}
-      <mesh>
-        <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-        <meshStandardMaterial
-          map={memoTexture}
-          roughness={0.7}
-          metalness={0.1}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
+      {/* Текстура карты или fallback с названием */}
+      <CardFaceMesh
+        card={card}
+        memoTexture={memoTexture}
+        showNameFallback={flatOnTable}
+      />
 
       {/* Индикаторы характеристик */}
       {showStats && (

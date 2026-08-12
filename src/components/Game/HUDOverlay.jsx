@@ -8,6 +8,8 @@ import { HUDBottomBar } from './hud/HUDBottomBar'
 import { HUDHand } from './hud/HUDHand'
 import { CardActionMenu } from './hud/CardActionMenu'
 import { ZoneCardActionMenu } from './hud/ZoneCardActionMenu'
+import { CardPreviewModal } from './hud/CardPreviewModal'
+import { PlayerSideIndicator } from './hud/PlayerSideIndicator'
 import { mergeLogWithBattle } from '../../hooks/game/battleLog'
 
 export function HUDOverlay({
@@ -24,9 +26,14 @@ export function HUDOverlay({
   battleEvents = [],
   onEndTurn,
   onForfeit,
-  onDrawCard,
+  onDrawFreeCard,
+  onDrawPaidCard,
+  onShuffleDeck,
+  onDiscardFromHand,
   onGameEnd,
   realtimeStatus,
+  playerCount = 2,
+  myIndex = 0,
   selectedCardIndex = null,
   setSelectedCardIndex = () => {},
   isApplying = false,
@@ -40,6 +47,7 @@ export function HUDOverlay({
   onCloseZoneCardActionMenu = () => {},
 }) {
   const [isReplayOpen, setReplayOpen] = useState(false)
+  const [previewCard, setPreviewCard] = useState(null)
 
   const safeMe = safePlayer([me].filter(Boolean), me?.player_id)
   const replayLog = useMemo(() => mergeLogWithBattle(log, battleEvents), [log, battleEvents])
@@ -53,6 +61,12 @@ export function HUDOverlay({
       />
 
       <HUDOpponents players={players} myPlayerId={playerId} />
+
+      <PlayerSideIndicator playerCount={playerCount} myIndex={myIndex} />
+
+      {previewCard && (
+        <CardPreviewModal card={previewCard} onClose={() => setPreviewCard(null)} />
+      )}
 
       {isReplayOpen && <Replay log={replayLog} onClose={() => setReplayOpen(false)} />}
 
@@ -90,9 +104,13 @@ export function HUDOverlay({
           actionsRemaining={actionsRemaining}
           canDealDamage={canDealDamage}
           isApplying={isApplying}
+          freeDrawUsed={Boolean(safeMe.free_draw_used)}
+          paidDrawUsed={Boolean(safeMe.paid_draw_used)}
           onEndTurn={onEndTurn}
           onForfeit={onForfeit}
-          onDrawCard={onDrawCard}
+          onDrawFreeCard={onDrawFreeCard}
+          onDrawPaidCard={onDrawPaidCard}
+          onShuffleDeck={onShuffleDeck}
         />
 
         <HUDHand
@@ -105,6 +123,8 @@ export function HUDOverlay({
           draggingCardIndex={draggingCardIndex}
           setDraggingCardIndex={setDraggingCardIndex}
           updatePointer={updatePointer}
+          onPreviewCard={setPreviewCard}
+          onDiscardToTrash={onDiscardFromHand}
         />
       </div>
     </>

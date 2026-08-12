@@ -18,10 +18,11 @@ import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { CARD_STATUSES } from '../../constants/gameMultiplayer'
 import { hasFlipAbility } from './cardAbilities.js'
+import { applyFlipCardPatch } from '../../utils/gameStatePatch'
 
 export { hasFlipAbility } from './cardAbilities.js'
 
-export function useFlipCard(game) {
+export function useFlipCard(game, { patchGame } = {}) {
   const flipCard = useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -70,9 +71,12 @@ export function useFlipCard(game) {
       if (zoneRes.error) {
         return { error: `Флюп не сохранился: ${zoneRes.error.message || zoneRes.error}` }
       }
+      if (typeof patchGame === 'function') {
+        patchGame((state) => applyFlipCardPatch(state, player.player_id, zoneIndex, cardId))
+      }
       return { success: true }
     },
-    [game]
+    [game, patchGame]
   )
 
   return flipCard

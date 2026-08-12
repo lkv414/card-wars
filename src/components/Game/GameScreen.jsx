@@ -11,7 +11,7 @@
  *                deck_remaining, player_order }],
  *   }
  */
-import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef, startTransition } from 'react'
+import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
@@ -19,6 +19,8 @@ import { ensureGuestId } from '../../utils/guestSession'
 import { useGameAction } from '../../hooks/game'
 import { useLandSetup } from '../../hooks/game/useLandSetup'
 import { useLands } from '../../hooks/useLands'
+import { useCards } from '../../hooks/useCards'
+import { buildCardCatalog, enrichGameStateAsync, collectMissingCardIds } from '../../utils/enrichGameCards'
 import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
 import { useToasts } from '../../hooks/useToasts'
 import { Toasts } from '../Shared/Toasts'
@@ -35,6 +37,8 @@ export function GameScreen() {
   const [loading, setLoading] = useState(true)
 
   const { lands } = useLands()
+  const { cards: catalogCards, loading: catalogLoading } = useCards()
+  const cardCatalog = useMemo(() => buildCardCatalog(catalogCards), [catalogCards])
   const { toasts, toast, dismissToast } = useToasts()
 
   const landCatalog = useMemo(() => {
@@ -50,6 +54,10 @@ export function GameScreen() {
   const hasLoadedOnceRef = useRef(false)
   const realtimeSuppressUntilRef = useRef(0)
   const reloadTimerRef = useRef(null)
+  const syncReloadTimerRef = useRef(null)
+  const catalogEnrichKeyRef = useRef('')
+  const gameVersionRef = useRef(0)
+  const gameRef = useRef(null)
 
   const suppressRealtimeReload = useCallback((ms = 2000) => {
     realtimeSuppressUntilRef.current = Date.now() + ms
@@ -59,12 +67,56 @@ export function GameScreen() {
     }
   }, [])
 
+  const commitGameState = useCallback(
+    (nextGame) => {
+      if (!nextGame) return false
+      const nextVersion = nextGame.version ?? 0
+      const currentVersion = gameVersionRef.current ?? 0
+      if (nextVersion < currentVersion && currentVersion > 0) return false
+
+      gameVersionRef.current = nextVersion
+      gameRef.current = nextGame
+      catalogEnrichKeyRef.current = `${nextGame.id}:${nextGame.version}:${cardCatalog.size}`
+
+      if (!hasLoadedOnceRef.current) {
+        setGame(nextGame)
+        setLoading(false)
+        hasLoadedOnceRef.current = true
+      } else {
+        setGame(nextGame)
+      }
+      return true
+    },
+    [cardCatalog.size]
+  )
+
+  const patchGame = useCallback(
+    (patcher) => {
+      setGame((prev) => {
+        if (!prev) return prev
+        const next = typeof patcher === 'function' ? patcher(prev) : { ...prev, ...patcher }
+        if (!next || next === prev) return prev
+        const v = next.version ?? prev.version ?? 0
+        gameVersionRef.current = Math.max(gameVersionRef.current ?? 0, v)
+        gameRef.current = next
+        catalogEnrichKeyRef.current = `${next.id}:${next.version}:${cardCatalog.size}`
+        return next
+      })
+    },
+    [cardCatalog.size]
+  )
+
   const loadGame = useCallback(async () => {
-    if (!gameId) return null
+    if (!gameId) return gameRef.current
 
     if (loadInFlightRef.current) {
       pendingReloadRef.current = true
-      return loadInFlightRef.current
+      await loadInFlightRef.current
+      if (pendingReloadRef.current) {
+        pendingReloadRef.current = false
+        return loadGame()
+      }
+      return gameRef.current
     }
 
     const run = async () => {
@@ -79,7 +131,7 @@ export function GameScreen() {
         if (rpcErr) throw new Error(rpcErr.message)
         if (!state) throw new Error('Игра не найдена или доступ запрещён')
 
-        const nextGame = {
+        const mapped = {
           id: state.id,
           lobby_id: state.lobby_id,
           status: state.status,
@@ -94,6 +146,8 @@ export function GameScreen() {
           players: (state.players || []).map((p) => ({
             ...p,
             actions_remaining: p.actions_remaining ?? 2,
+            free_draw_used: p.free_draw_used ?? false,
+            paid_draw_used: p.paid_draw_used ?? false,
             zones: Array.isArray(p.zones)
               ? p.zones
                   .sort((a, b) => a.zone_position - b.zone_position)
@@ -107,13 +161,9 @@ export function GameScreen() {
               : [],
           })),
         }
-        if (!hasLoadedOnceRef.current) {
-          setGame(nextGame)
-          setLoading(false)
-          hasLoadedOnceRef.current = true
-        } else {
-          startTransition(() => setGame(nextGame))
-        }
+
+        const nextGame = await enrichGameStateAsync(mapped, cardCatalog, supabase)
+        commitGameState(nextGame)
         return nextGame
       } catch (err) {
         setError(err.message || 'Не удалось загрузить игру')
@@ -127,20 +177,61 @@ export function GameScreen() {
       return await loadInFlightRef.current
     } finally {
       loadInFlightRef.current = null
-      if (pendingReloadRef.current) {
-        pendingReloadRef.current = false
-        queueMicrotask(() => loadGame())
-      }
     }
-  }, [gameId, guestId])
+  }, [gameId, guestId, cardCatalog, commitGameState])
 
-  /** После RPC reload — не дублировать через Realtime (debounce 500ms). */
-  const reloadAfterAction = useCallback(async () => {
-    suppressRealtimeReload(2500)
-    return loadGame()
+  // Пере-обогащение когда догрузился каталог (у второго клиента рука часто пустая до загрузки cards)
+  useEffect(() => {
+    if (catalogLoading || !game || cardCatalog.size === 0) return
+
+    const enrichKey = `${game.id}:${game.version}:${cardCatalog.size}`
+    const missing = collectMissingCardIds(game, cardCatalog)
+    if (missing.length === 0) {
+      catalogEnrichKeyRef.current = enrichKey
+      return
+    }
+    if (catalogEnrichKeyRef.current === enrichKey) return
+
+    let cancelled = false
+    const baseVersion = game.version
+    ;(async () => {
+      const next = await enrichGameStateAsync(game, cardCatalog, supabase)
+      if (cancelled) return
+      if ((gameRef.current?.version ?? 0) > (baseVersion ?? 0)) return
+      if ((next.version ?? 0) < (gameVersionRef.current ?? 0)) return
+      catalogEnrichKeyRef.current = enrichKey
+      commitGameState(next)
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [catalogLoading, cardCatalog, game, game?.id, game?.version, commitGameState])
+
+  /** Фоновая синхронизация — только для добора/сброса/атаки, не для розыгрыша и передачи хода. */
+  const scheduleSyncReload = useCallback(() => {
+    suppressRealtimeReload(5000)
+    if (syncReloadTimerRef.current) clearTimeout(syncReloadTimerRef.current)
+    syncReloadTimerRef.current = setTimeout(() => {
+      syncReloadTimerRef.current = null
+      loadGame()
+    }, 1500)
   }, [loadGame, suppressRealtimeReload])
 
-  const { playCard, attack, drawCard, endTurn, forfeit, flipCard, discardFromZone, isApplying, error: actionError } = useGameAction(game, reloadAfterAction)
+  const reloadAfterAction = useCallback(() => {
+    scheduleSyncReload()
+  }, [scheduleSyncReload])
+
+  const gameActions = useMemo(
+    () => ({ patchGame, cardCatalog }),
+    [patchGame, cardCatalog]
+  )
+
+  const { playCard, attack, drawCard, drawFreeCard, shuffleDeck, discardFromHand, endTurn, forfeit, flipCard, discardFromZone, isApplying, error: actionError } = useGameAction(
+    game,
+    reloadAfterAction,
+    gameActions
+  )
   const { reorderLands, confirmLandSetup } = useLandSetup(game, reloadAfterAction)
 
   useEffect(() => {
@@ -163,6 +254,7 @@ export function GameScreen() {
   useEffect(() => {
     return () => {
       if (reloadTimerRef.current) clearTimeout(reloadTimerRef.current)
+      if (syncReloadTimerRef.current) clearTimeout(syncReloadTimerRef.current)
     }
   }, [])
 
@@ -225,11 +317,29 @@ export function GameScreen() {
           onGameEnd={() => navigate('/lobby')}
           onPlayCard={playCard}
           onAttack={attack}
-          onDrawCard={drawCard}
+          onDrawFreeCard={async () => {
+            const r = await drawFreeCard()
+            if (r?.error) toast('error', r.error)
+            return r
+          }}
+          onDrawPaidCard={async () => {
+            const r = await drawCard()
+            if (r?.error) toast('error', r.error)
+            return r
+          }}
+          onShuffleDeck={async () => {
+            const r = await shuffleDeck()
+            if (r?.error) toast('error', r.error)
+            return r
+          }}
+          onDiscardFromHand={async (idx) => {
+            const r = await discardFromHand(idx)
+            if (r?.error) toast('error', r.error)
+            return r
+          }}
           onFlipCard={flipCard}
           onDiscardFromZone={discardFromZone}
           onEndTurn={endTurn}
-          onReloadGame={loadGame}
           onSuppressRealtimeReload={suppressRealtimeReload}
           onForfeit={forfeit}
           onReorderLands={reorderLands}

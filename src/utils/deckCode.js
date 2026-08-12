@@ -194,7 +194,7 @@ export async function expandDeckCodeWithCardData(deckCode, supabaseClient) {
   // Загружаем карточки и земли раздельно, т.к. они лежат в разных таблицах
   const [{ data: dbCards, error: cardsError }, { data: dbLands, error: landsError }] = await Promise.all([
     cardUuids.length
-      ? supabaseClient.from('cards').select('*').in('id', cardUuids)
+      ? supabaseClient.from('cards').select('id, card_number, name, description, card_type, cost, attack, health, land_type, is_rainbow, has_flip, flip_description, image_url, mechanics, hero, source').in('id', cardUuids)
       : Promise.resolve({ data: [], error: null }),
     landUuids.length
       ? supabaseClient.from('lands').select('*').in('id', landUuids)

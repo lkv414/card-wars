@@ -2,6 +2,7 @@ import { useLayoutEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import {
   computeBoardCameraDistance,
+  calculateCameraPosition,
   getBoardLookAtTarget,
   PLAY_FIELD_Y,
 } from './layout'
@@ -22,6 +23,9 @@ export function AdaptiveBoardCamera({ playerIndex, playerCount, controlsRef }) {
     if (playerCount === 2 && playerIndex >= 0) {
       const zSign = playerIndex === 0 ? 1 : -1
       camera.position.set(tx, ty + dist * 0.74, tz + zSign * dist * 0.58)
+    } else if (playerIndex >= 0 && playerCount >= 3) {
+      const [cx, cy, cz] = calculateCameraPosition(playerIndex, playerCount, aspect, CAMERA_FOV)
+      camera.position.set(cx, cy, cz)
     } else {
       camera.position.set(tx, ty + dist * 0.8, tz + dist * 0.65)
     }

@@ -331,11 +331,15 @@ def build_sql(
         pg_card = id_map.get(row["card_id"])
         if not pg_deck or not pg_card:
             continue
+        is_landscape = bool(row.get("is_landscape"))
+        if not is_landscape:
+            card_row = next((c for c in cards if c["id"] == row["card_id"]), None)
+            is_landscape = card_row and card_row.get("card_type") == "landscape"
         lines.append(
             "INSERT INTO public.preset_deck_cards "
             "(preset_deck_id, card_id, slot, is_landscape) VALUES ("
             f"{sql_str(pg_deck)}::uuid, {sql_str(pg_card)}::uuid, "
-            f"{row['slot']}, false);"
+            f"{row['slot']}, {sql_bool(is_landscape)});"
         )
 
     lines.extend(["", "COMMIT;", ""])

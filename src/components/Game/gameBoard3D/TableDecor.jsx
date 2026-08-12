@@ -1,46 +1,34 @@
 import * as THREE from 'three'
-import { TABLE_RADIUS } from './layout'
+import { PLAY_MAT_COLOR } from '../../../constants/landColors'
+import { PLAY_FIELD_Y, PLAY_FIELD_WIDTH, PLAY_FIELD_DEPTH, TABLE_RADIUS } from './layout'
+import { PlayFieldGrid } from './PlayFieldGrid'
 
-export function TableDecor() {
+function PlayFieldMat() {
+  return (
+    <group position={[0, PLAY_FIELD_Y - 0.002, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[PLAY_FIELD_WIDTH + 0.2, PLAY_FIELD_DEPTH + 0.2]} />
+        <meshStandardMaterial color={PLAY_MAT_COLOR} roughness={0.95} metalness={0} />
+      </mesh>
+      <PlayFieldGrid />
+    </group>
+  )
+}
+
+export function TableDecor({ playerCount = 2 }) {
   return (
     <>
-      <mesh receiveShadow position={[0, 0, 0]}>
-        <cylinderGeometry args={[TABLE_RADIUS, TABLE_RADIUS, 0.18, 64]} />
-        <meshStandardMaterial color="#1f2940" roughness={0.95} metalness={0.05} />
+      <mesh receiveShadow position={[0, 0.04, 0]}>
+        <cylinderGeometry args={[TABLE_RADIUS, TABLE_RADIUS + 0.06, 0.08, 64]} />
+        <meshStandardMaterial color="#5d4037" roughness={0.94} metalness={0.02} />
       </mesh>
 
-      <mesh receiveShadow position={[0, 0.092, 0]}>
-        <cylinderGeometry args={[TABLE_RADIUS - 0.5, TABLE_RADIUS - 0.5, 0.02, 64]} />
-        <meshStandardMaterial color="#2a3554" roughness={0.7} metalness={0.15} />
+      <mesh receiveShadow position={[0, 0.085, 0]}>
+        <cylinderGeometry args={[TABLE_RADIUS - 0.2, TABLE_RADIUS - 0.2, 0.012, 64]} />
+        <meshStandardMaterial color="#6d4c41" roughness={0.88} metalness={0.04} />
       </mesh>
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.094, 0]}>
-        <ringGeometry args={[TABLE_RADIUS - 0.55, TABLE_RADIUS - 0.4, 64]} />
-        <meshStandardMaterial color="#ffd700" emissive="#ffd700" emissiveIntensity={0.35} side={THREE.DoubleSide} />
-      </mesh>
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.095, 0]}>
-        <ringGeometry args={[1.6, 2.0, 48]} />
-        <meshStandardMaterial color="#ffd700" emissive="#ffd700" emissiveIntensity={0.3} side={THREE.DoubleSide} />
-      </mesh>
-
-      {Array.from({ length: 8 }).map((_, i) => {
-        const a = (i / 8) * Math.PI * 2
-        const r = 1.8
-        const x = Math.cos(a) * r
-        const z = Math.sin(a) * r
-        return (
-          <mesh key={`rune-${i}`} rotation={[-Math.PI / 2, 0, a]} position={[x, 0.097, z]}>
-            <ringGeometry args={[0.12, 0.18, 6]} />
-            <meshStandardMaterial color="#7fb3ff" emissive="#7fb3ff" emissiveIntensity={0.6} side={THREE.DoubleSide} />
-          </mesh>
-        )
-      })}
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.093, 0]}>
-        <circleGeometry args={[1.55, 48]} />
-        <meshStandardMaterial color="#3d5a8a" transparent opacity={0.18} side={THREE.DoubleSide} />
-      </mesh>
+      {playerCount === 2 && <PlayFieldMat />}
     </>
   )
 }

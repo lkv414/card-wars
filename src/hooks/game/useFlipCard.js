@@ -21,7 +21,7 @@ import { hasFlipAbility } from './cardAbilities.js'
 
 export { hasFlipAbility } from './cardAbilities.js'
 
-export function useFlipCard(game, writeGameState) {
+export function useFlipCard(game) {
   const flipCard = useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -57,34 +57,22 @@ export function useFlipCard(game, writeGameState) {
           : c
       )
 
-      const newLog = [
-        ...(game.game_state?.log || []),
-        {
-          timestamp: Date.now(),
-          message: `${player.nickname || 'Игрок'} флюпнул ${card.name}`,
-        },
-      ]
-
-      // Сохраняем зону + log параллельно, через withGuestId для RLS.
-      const [zoneRes, gameRes] = await withGuestId(() =>
-        Promise.all([
-          supabase
-            .from('game_zones')
-            .update({ cards: newCards })
-            .eq('game_id', game.id)
-            .eq('player_id', player.player_id)
-            .eq('zone_position', zoneIndex + 1),
-          writeGameState({ game_state: { log: newLog } }),
-        ])
+      // Сохраняем зону; log не пишем в games — RPC/end_turn уже bump'ят version.
+      const zoneRes = await withGuestId(() =>
+        supabase
+          .from('game_zones')
+          .update({ cards: newCards })
+          .eq('game_id', game.id)
+          .eq('player_id', player.player_id)
+          .eq('zone_position', zoneIndex + 1)
       )
 
-      const err = zoneRes.error || gameRes?.error
-      if (err) {
-        return { error: `Флюп не сохранился: ${err.message || err}` }
+      if (zoneRes.error) {
+        return { error: `Флюп не сохранился: ${zoneRes.error.message || zoneRes.error}` }
       }
       return { success: true }
     },
-    [game, writeGameState]
+    [game]
   )
 
   return flipCard

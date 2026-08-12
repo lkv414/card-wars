@@ -8,7 +8,7 @@ const TYPE_CLASS = {
   spell: 'badge-spell',
 }
 
-export const AdminCardTile = memo(function AdminCardTile({ card, issues = [], onClick }) {
+export const AdminCardTile = memo(function AdminCardTile({ card, issues = [], onClick, selected = false }) {
   const [imageFailed, setImageFailed] = useState(false)
   const hasImage = card.image_url && !imageFailed
   const severity = getIssueSeverity(issues)
@@ -20,6 +20,7 @@ export const AdminCardTile = memo(function AdminCardTile({ card, issues = [], on
         'admin-card-tile',
         severity ? `admin-card-tile--${severity}` : '',
         onClick ? 'admin-card-tile--clickable' : '',
+        selected ? 'admin-card-tile--selected' : '',
       ]
         .filter(Boolean)
         .join(' ')}

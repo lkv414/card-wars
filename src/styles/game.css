@@ -9,6 +9,51 @@
   overflow: hidden;
 }
 
+.game-board-3d--placing {
+  cursor: crosshair;
+}
+
+.game-board-3d--placing canvas {
+  cursor: crosshair;
+}
+
+.game-board-3d-reticle {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 30;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+.game-board-3d-reticle::before,
+.game-board-3d-reticle::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.game-board-3d-reticle::before {
+  left: 50%;
+  top: 2px;
+  width: 2px;
+  height: 18px;
+  margin-left: -1px;
+}
+
+.game-board-3d-reticle::after {
+  top: 50%;
+  left: 2px;
+  height: 2px;
+  width: 18px;
+  margin-top: -1px;
+}
+
 .game-loading,
 .game-error {
   position: absolute;
@@ -25,6 +70,178 @@
 
 .game-error button {
   margin-top: 16px;
+}
+
+/* Фаза расстановки земель */
+.land-setup-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(8, 10, 24, 0.82);
+  backdrop-filter: blur(6px);
+}
+
+.land-setup-panel {
+  width: min(720px, 100%);
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(22, 26, 48, 0.96);
+  color: #f5f5f5;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+.land-setup-panel h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.land-setup-hint {
+  margin: 0 0 20px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.land-setup-slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border: 3px solid #e67e22;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.land-setup-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 12px 8px;
+  border: 0;
+  border-right: 2px solid #e67e22;
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.land-setup-slot:last-child {
+  border-right: 0;
+}
+
+.land-setup-slot.is-selected {
+  background: rgba(230, 126, 34, 0.22);
+  outline: 2px solid #f39c12;
+  outline-offset: -2px;
+}
+
+.land-setup-slot.is-locked {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.land-setup-slot-num {
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+
+.land-setup-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 2px solid var(--land-border, #e67e22);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--land-fill, #5d4e37) 55%, #1a1a2e);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.land-setup-chip-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.land-setup-slot-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.land-setup-creature {
+  padding: 4px;
+  border: 2px solid #c0392b;
+  border-radius: 4px;
+  text-align: center;
+  color: #ffb4b4;
+}
+
+.land-setup-building {
+  padding: 4px;
+  border: 2px solid #27ae60;
+  border-radius: 4px;
+  text-align: center;
+  color: #b8f5c8;
+}
+
+.land-setup-status {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.land-setup-wait {
+  color: #f39c12;
+}
+
+.land-setup-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.land-setup-confirm {
+  min-height: 42px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.land-setup-confirm:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .land-setup-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .land-setup-slot:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .land-setup-slot:nth-child(-n + 2) {
+    border-bottom: 2px solid #e67e22;
+  }
 }
 
 .card-skeleton {

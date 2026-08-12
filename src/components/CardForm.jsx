@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Modal } from './Shared/Modal'
+import { CardArtEditor } from './admin/CardArtEditor'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
 
 const emptyCard = {
@@ -16,6 +17,10 @@ const emptyCard = {
   description: '',
   image_url: '',
   mechanics: '[]',
+  rarity: '',
+  hero: '',
+  source: '',
+  notes: '',
 }
 
 export function CardForm({
@@ -294,7 +299,7 @@ export function CardForm({
                 <textarea id="card-description" value={form.description} onChange={(e) => set('description', e.target.value)} />
               </label>
 
-              <label className="wide" htmlFor="card-image-url">
+              <label htmlFor="card-image-url">
                 URL картинки
                 <input
                   id="card-image-url"
@@ -308,6 +313,32 @@ export function CardForm({
                     ⚠️ {imageWarning}
                   </small>
                 )}
+              </label>
+
+              <label htmlFor="card-rarity">
+                Редкость
+                <select id="card-rarity" value={form.rarity || ''} onChange={(e) => set('rarity', e.target.value)}>
+                  <option value="">—</option>
+                  <option value="common">common</option>
+                  <option value="uncommon">uncommon</option>
+                  <option value="rare">rare</option>
+                  <option value="promo">promo</option>
+                </select>
+              </label>
+
+              <label htmlFor="card-hero">
+                Герой
+                <input id="card-hero" value={form.hero || ''} onChange={(e) => set('hero', e.target.value)} />
+              </label>
+
+              <label htmlFor="card-source">
+                Источник
+                <input id="card-source" value={form.source || ''} onChange={(e) => set('source', e.target.value)} />
+              </label>
+
+              <label className="wide" htmlFor="card-notes">
+                Заметки
+                <textarea id="card-notes" value={form.notes || ''} onChange={(e) => set('notes', e.target.value)} />
               </label>
 
               <label className="wide" htmlFor="card-mechanics">
@@ -326,6 +357,15 @@ export function CardForm({
                   </small>
                 )}
               </label>
+
+              {!isNew && card?.id && (
+                <CardArtEditor
+                  cardId={card.id}
+                  onPrimaryChange={() => {
+                    /* preview uses image_url; admin can copy primary URL manually */
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>

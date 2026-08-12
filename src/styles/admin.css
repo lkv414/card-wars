@@ -413,6 +413,130 @@
   text-align: center;
 }
 
+.admin-card-tile--selected {
+  outline: 3px solid #1565c0;
+  outline-offset: 2px;
+}
+
+.admin-bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff8e1;
+}
+
+.admin-import-label {
+  cursor: pointer;
+}
+
+.admin-login {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.admin-login-form {
+  width: min(400px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg-elevated);
+}
+
+.admin-login-sub {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.admin-login-error {
+  margin: 0;
+  color: #c62828;
+  font-size: 13px;
+}
+
+.card-art-editor {
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-muted);
+}
+
+.card-art-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.card-art-list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.card-art-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+
+.card-art-row.is-primary {
+  border-color: #1565c0;
+}
+
+.card-art-thumb {
+  width: 56px;
+  height: 78px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #222;
+}
+
+.card-art-url {
+  display: block;
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.card-art-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #e3f2fd;
+  color: #1565c0;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.card-art-add {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+}
+
+.card-art-error {
+  margin: 8px 0 0;
+  color: #c62828;
+  font-size: 12px;
+}
+
 @media (max-width: 900px) {
   .admin-layout {
     grid-template-columns: 1fr;

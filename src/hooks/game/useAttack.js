@@ -1,152 +1,79 @@
 /**
- * useAttack — атака картой из своей зоны в зону противника.
- *
- * Логика:
- *  1. Найти атакующую карту в myZones[fromZone]
- *  2. Посчитать damage vs defense сумму живых defenders в oppZones[toOppZone]
- *  3. Если damage > defense → excess уходит в HP противника
- *  4. Уменьшить health визамых defenders, удалить уничтоженных
- *  5. Пометить атакующую карту tapped
- *  6. Если HP противника <= 0 → status='finished', winner_id = me
- *  7. Сохранить в game_zones (моя зона, зона противника) + game_players (HP)
- *  8. Обновить log через writeGameState
- *
- * Все 4 записи идут параллельно через Promise.all — это убирает частичную
- * запись при ошибке и снижает latency с 4×RTT до 1×RTT.
+ * useAttack — атака своим существом по зоне противника (RPC perform_attack).
  */
 
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
-import { ensureGuestId, withGuestId } from '../../utils/guestSession'
-import { clampZones } from './format'
+import { ensureGuestId } from '../../utils/guestSession'
 import { canAttack } from './zoneOpposition'
-import { safePlayer, safePlayers } from '../../utils/safePlayer'
+import { canPlayerDealDamage } from './combat'
+import { safePlayers } from '../../utils/safePlayer'
+import { isRpcUnavailable } from './rpcUtils'
 
-export function useAttack(game, writeGameState) {
+export function useAttack(game, reload) {
   return useCallback(
     async (fromZone, cardId, toOpponentZone, toPlayerId = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
       await ensureGuestId()
-      // safePlayers фильтрует null/undefined и фиксит health → .player_id безопасен
+
       const playersSafe = safePlayers(game.players)
       const me = playersSafe.find((p) => p.player_id === game.current_player_id)
       if (!me) return { error: 'Сейчас не ваш ход' }
 
-      // Определяем целевого игрока: явно переданный → ищем по id; иначе —
-      // единственный оппонент (для обратной совместимости с 2-player вызовами).
-      // Идём через safePlayer — он гарантированно не вернёт undefined и
-      // подставит дефолтное health=25, если в Realtime-payload поле битое.
-      // __isFallback=true означает «игрока не нашли, вернули фоллбек».
       let opponent
       if (toPlayerId) {
-        opponent = safePlayer(game.players, toPlayerId)
-        if (opponent.__isFallback) {
-          return { error: 'Целевой игрок не найден' }
-        }
-        if (opponent.player_id === me.player_id) {
-          return { error: 'Нельзя атаковать себя' }
-        }
+        opponent = playersSafe.find((p) => p.player_id === toPlayerId)
+        if (!opponent) return { error: 'Целевой игрок не найден' }
+        if (opponent.player_id === me.player_id) return { error: 'Нельзя атаковать себя' }
       } else {
-        const others = game.players.filter((p) => p && p.player_id !== me.player_id)
+        const others = playersSafe.filter((p) => p.player_id !== me.player_id && (p.health ?? 0) > 0)
         if (others.length === 0) return { error: 'Противник не найден' }
         if (others.length > 1) {
           return { error: 'Укажите toPlayerId: целевой игрок неоднозначен (3-4 игрока)' }
         }
-        opponent = safePlayer(others, 0)
+        opponent = others[0]
       }
 
-      const myZones = clampZones(me.zones)
-      const card = (myZones[fromZone] || []).find(
-        (c) => c.id === cardId || c.instanceId === cardId
-      )
-      if (!card) return { error: 'Карта не найдена' }
-      if (card.tapped) return { error: 'Карта уже использовалась' }
+      const aliveCount = playersSafe.filter((p) => (p.health ?? 0) > 0).length
+      if (
+        !canPlayerDealDamage(me.player_order, aliveCount, game.current_turn ?? 0)
+      ) {
+        return { error: 'Урон ещё недоступен (первый ход)' }
+      }
 
-      // Валидация: эта зона реально противостоит цели?
       if (!canAttack(me.player_id, game.players, fromZone, opponent.player_id, toOpponentZone)) {
-        return { error: 'Эта зона не противостоит цели (правила 3-4 игроков)' }
+        return { error: 'Эта зона не противостоит цели' }
       }
 
-      // clampZones защищает и от undefined (возвращает [[],[],[],[]])
-      const oppZones = clampZones(opponent?.zones)
-      // Только живые defenders защищают (health > 0)
-      const liveDefenders = (oppZones[toOpponentZone] || []).filter(
-        (c) => (c.health || 0) > 0
-      )
-      const damage = card.attack || 0
-      const totalDefense = liveDefenders.reduce(
-        (sum, c) => sum + (c.health || 0),
-        0
-      )
+      const { data, error: rpcErr } = await supabase.rpc('perform_attack', {
+        p_game_id: game.id,
+        p_player_id: me.player_id,
+        p_from_zone: fromZone + 1,
+        p_attacker_card_id: String(cardId),
+        p_to_player_id: opponent.player_id,
+        p_to_zone: toOpponentZone + 1,
+      })
 
-      // safePlayer гарантирует health: number, но опц. цепочка на всякий случай
-      let newOppHealth = opponent?.health ?? 25
-      const newOppZones = { ...oppZones }
-      if (damage > totalDefense) {
-        const excess = damage - totalDefense
-        newOppHealth = (opponent?.health ?? 25) - excess
+      if (rpcErr) {
+        if (isRpcUnavailable(rpcErr)) {
+          return { error: 'Атака недоступна (обновите сервер)' }
+        }
+        return { error: rpcErr.message }
       }
-      const surviving = (oppZones[toOpponentZone] || [])
-        .map((c) => ({ ...c, health: (c.health || 0) - damage }))
-        .filter((c) => c.health > 0)
-      newOppZones[toOpponentZone] = surviving
+      if (data?.error) return { error: data.error }
 
-      // Mark attacking card tapped (создаём новый массив — без мутации me.zones)
-      myZones[fromZone] = myZones[fromZone].map((c) =>
-        c.id === cardId || c.instanceId === cardId
-          ? { ...c, tapped: true }
-          : c
-      )
+      if (typeof reload === 'function') await reload()
 
-      const newLog = [
-        ...(game.game_state?.log || []),
-        {
-          timestamp: Date.now(),
-          message: `${me?.nickname || 'Игрок'} атаковал ${card.name} (${damage} урона). Защита: ${totalDefense}`,
-        },
-      ]
-
-      // Determine winner
-      const patch = { game_state: { log: newLog } }
-      if (newOppHealth <= 0) {
-        patch.status = 'finished'
-        patch.winner_id = me.player_id
-        patch.ended_at = new Date().toISOString()
+      return {
+        success: true,
+        damage: data.damage ?? 0,
+        faceDamage: data.face_damage ?? 0,
+        creatureKilled: Boolean(data.creature_killed),
+        creatureDamaged: Boolean(data.creature_damaged),
+        defenderHealth: data.defender_health,
+        gameFinished: Boolean(data.game_finished),
       }
-
-      // Persist: 4 параллельных записи. Если хотя бы одна упала — откатываем
-      // через reload() (Realtime дёрнет) и возвращаем ошибку.
-      // withGuestId оборачивает весь блок чтобы избежать RLS-гонки в пуле.
-      const [myZoneRes, oppHpRes, oppZoneRes, gameRes] = await withGuestId(() =>
-        Promise.all([
-          supabase
-            .from('game_zones')
-            .update({ cards: myZones[fromZone] })
-            .eq('game_id', game.id)
-            .eq('player_id', me.player_id)
-            .eq('zone_position', fromZone + 1),
-          supabase
-            .from('game_players')
-            .update({ health: newOppHealth })
-            .eq('game_id', game.id)
-            .eq('player_id', opponent.player_id),
-          supabase
-            .from('game_zones')
-            .update({ cards: newOppZones[toOpponentZone] })
-            .eq('game_id', game.id)
-            .eq('player_id', opponent.player_id)
-            .eq('zone_position', toOpponentZone + 1),
-          writeGameState(patch),
-        ])
-      )
-
-      const writeErr =
-        myZoneRes.error || oppHpRes.error || oppZoneRes.error || gameRes?.error
-      if (writeErr) {
-        return { error: `Атака не сохранилась полностью: ${writeErr.message || writeErr}` }
-      }
-      return { success: true }
     },
-    [game, writeGameState]
+    [game, reload]
   )
 }

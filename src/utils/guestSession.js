@@ -31,6 +31,8 @@ import { getGuestId } from './guestId.js'
 let lastSentId = null
 let inflight = null
 
+const SET_GUEST_TIMEOUT_MS = 10_000
+
 /**
  * Один раз за сессию отправляет guestId на сервер (через SET LOCAL).
  * Идемпотентна — повторные вызовы с тем же id не делают запрос.
@@ -45,10 +47,16 @@ export async function ensureGuestId() {
 
   inflight = (async () => {
     try {
-      await supabase.rpc('set_guest_id', { p_guest_id: id })
+      const rpcPromise = supabase.rpc('set_guest_id', { p_guest_id: id })
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('set_guest_id timeout')), SET_GUEST_TIMEOUT_MS)
+      })
+      const { error } = await Promise.race([rpcPromise, timeoutPromise])
+      if (error) throw error
       lastSentId = id
     } catch (err) {
       console.warn('set_guest_id failed (non-fatal):', err?.message || err)
+      lastSentId = null
     } finally {
       inflight = null
     }

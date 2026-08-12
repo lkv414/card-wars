@@ -75,8 +75,17 @@ export function useGameState(game, reload) {
             .select('version')
             .maybeSingle()
 
-          if (updateErr) {
-            throw new Error(updateErr.message)
+        if (updateErr) {
+            const msg = updateErr.message || ''
+            if (/Конфликт версий/i.test(msg)) {
+              console.warn('[writeGameState] version trigger conflict — reload and abort')
+              if (reload) {
+                const freshGame = await reload()
+                if (freshGame?.id) gameRef.current = freshGame
+              }
+              throw new Error('Конфликт версий — перечитайте игру и повторите действие')
+            }
+            throw new Error(msg)
           }
 
           if (data) {

@@ -20,13 +20,17 @@ import { usePlayCard } from './usePlayCard'
 import { useAttack } from './useAttack'
 import { useTurnControl } from './useTurnControl'
 import { useFlipCard } from './useFlipCard'
+import { useDiscardFromZone } from './useDiscardFromZone'
+import { useDrawCard } from './useDrawCard'
 
 export function useGameAction(game, reload) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
-    const playCard = usePlayCard(game, writeGameState, reload)
-    const attack = useAttack(game, writeGameState)
-    const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload)
-  const flipCard = useFlipCard(game, writeGameState)
+  const playCard = usePlayCard(game, writeGameState, reload)
+  const attack = useAttack(game, reload)
+  const drawCard = useDrawCard(game, reload)
+  const discardFromZone = useDiscardFromZone(game, writeGameState, reload)
+  const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload)
+  const flipCard = useFlipCard(game)
 
-  return { playCard, attack, endTurn, forfeit, flipCard, isApplying, error }
+  return { playCard, attack, drawCard, discardFromZone, endTurn, forfeit, flipCard, isApplying, error }
 }

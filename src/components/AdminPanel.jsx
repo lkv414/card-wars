@@ -2,8 +2,16 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CardForm } from './CardForm'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
+import { AdminBulkEdit } from './admin/AdminBulkEdit'
 import { AdminFilters } from './admin/AdminFilters'
 import { AdminCardTile } from './admin/AdminCardTile'
+import {
+  exportCatalogJson,
+  exportCatalogCsv,
+  parseCatalogImport,
+  downloadTextFile,
+} from '../utils/adminCatalogExport'
+import { useAdminAuth } from '../context/AdminAuthContext'
 import {
   DEFAULT_ADMIN_FILTERS,
   buildAnomalyMap,
@@ -21,8 +29,11 @@ export function AdminPanel({
   findSimilarCards,
 }) {
   const navigate = useNavigate()
+  const { signOut } = useAdminAuth()
   const [filters, setFilters] = useState({ ...DEFAULT_ADMIN_FILTERS })
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [selectMode, setSelectMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState(() => new Set())
   const [editing, setEditing] = useState(null)
   const [similar, setSimilar] = useState([])
   const [pendingDelete, setPendingDelete] = useState(null)
@@ -82,6 +93,52 @@ export function AdminPanel({
 
   const filtersActive = hasActiveAdminFilters(filters)
 
+  const toggleSelect = (card) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(card.id)) next.delete(card.id)
+      else next.add(card.id)
+      return next
+    })
+  }
+
+  const handleTileClick = (card) => {
+    if (selectMode) toggleSelect(card)
+    else setEditing(card)
+  }
+
+  const applyBulk = async (ids, patch) => {
+    for (const id of ids) {
+      const card = cards.find((c) => c.id === id)
+      if (!card) continue
+      const result = await updateCard(id, { ...card, ...patch })
+      if (!result?.success) {
+        toast('error', result.error || 'Bulk update failed')
+        return
+      }
+    }
+    toast('success', `Обновлено карт: ${ids.length}`)
+  }
+
+  const handleImport = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const text = await file.text()
+    const { cards: imported, error } = parseCatalogImport(text)
+    if (error) {
+      toast('error', error)
+      return
+    }
+    let ok = 0
+    for (const row of imported) {
+      if (!row.name || row.card_number == null) continue
+      const result = await createCard(row)
+      if (result.success) ok += 1
+    }
+    toast('success', `Импортировано: ${ok}`)
+    e.target.value = ''
+  }
+
   return (
     <main className="admin-panel">
       <header className="admin-header">
@@ -107,6 +164,22 @@ export function AdminPanel({
         </div>
 
         <div className="admin-header-actions">
+          <button type="button" className="deck-link-btn" onClick={() => setSelectMode((v) => !v)}>
+            {selectMode ? '✓ Выбор' : 'Выбор'}
+          </button>
+          <button type="button" className="deck-link-btn" onClick={() => downloadTextFile('catalog.json', exportCatalogJson(cards))}>
+            JSON
+          </button>
+          <button type="button" className="deck-link-btn" onClick={() => downloadTextFile('catalog.csv', exportCatalogCsv(cards), 'text/csv')}>
+            CSV
+          </button>
+          <label className="deck-link-btn admin-import-label">
+            Импорт
+            <input type="file" accept="application/json,.json" hidden onChange={handleImport} />
+          </label>
+          <button type="button" className="deck-link-btn" onClick={() => signOut()}>
+            Выйти
+          </button>
           <button
             type="button"
             className={`deck-filters-btn ${filtersOpen ? 'is-active' : ''} ${filtersActive ? 'has-active' : ''}`}
@@ -144,6 +217,13 @@ export function AdminPanel({
             )}
           </div>
 
+          <AdminBulkEdit
+            selectedIds={selectedIds}
+            cards={cards}
+            onApply={applyBulk}
+            onClear={() => setSelectedIds(new Set())}
+          />
+
           {filtered.length === 0 ? (
             <div className="admin-empty" role="status">
               <p>Нет карт по выбранным фильтрам</p>
@@ -158,7 +238,8 @@ export function AdminPanel({
                   <AdminCardTile
                     card={card}
                     issues={anomalyMap.get(card.id) || []}
-                    onClick={setEditing}
+                    selected={selectedIds.has(card.id)}
+                    onClick={handleTileClick}
                   />
                 </div>
               ))}

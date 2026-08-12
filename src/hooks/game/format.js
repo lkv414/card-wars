@@ -7,30 +7,51 @@
  */
 
 export function clampZones(zones) {
-  // Ensure exactly 4 zones of arrays
   const out = [[], [], [], []]
   for (let i = 0; i < 4; i++) {
-    if (Array.isArray(zones?.[i])) out[i] = zones[i]
+    out[i] = normalizeZoneCards(zones?.[i])
   }
   return out
 }
 
-/** Нормализует одну зону: Array<Card> или { cards: [] } → массив карт */
+/** Нормализует одну зону: Array<Card> или { cards, land_id, ... } */
 export function normalizeZoneCards(zone) {
   if (Array.isArray(zone)) return zone
   if (zone && typeof zone === 'object') return zone.cards || []
   return []
 }
 
-/** Нормализует все 4 зоны игрока */
+/** Метаданные одной зоны (земля + карты). */
+export function normalizeZoneRow(zone, index = 0) {
+  if (Array.isArray(zone)) {
+    return { zone_position: index + 1, cards: zone, land_id: null, land_type: null, land_name: null }
+  }
+  if (zone && typeof zone === 'object') {
+    return {
+      zone_position: zone.zone_position ?? index + 1,
+      cards: zone.cards || [],
+      land_id: zone.land_id ?? null,
+      land_type: zone.land_type ?? null,
+      land_name: zone.land_name ?? null,
+    }
+  }
+  return { zone_position: index + 1, cards: [], land_id: null, land_type: null, land_name: null }
+}
+
+/** Нормализует все 4 зоны игрока — только массивы карт (legacy). */
 export function normalizePlayerZones(zonesRaw) {
+  return normalizePlayerZoneRows(zonesRaw).map((row) => normalizeZoneCards(row))
+}
+
+/** Полные строки зон с land_id / land_type. */
+export function normalizePlayerZoneRows(zonesRaw) {
   if (Array.isArray(zonesRaw)) {
-    return zonesRaw.map((zone) => normalizeZoneCards(zone))
+    return [0, 1, 2, 3].map((i) => normalizeZoneRow(zonesRaw[i], i))
   }
   if (zonesRaw && typeof zonesRaw === 'object') {
-    return [0, 1, 2, 3].map((i) => normalizeZoneCards(zonesRaw[i]))
+    return [0, 1, 2, 3].map((i) => normalizeZoneRow(zonesRaw[i], i))
   }
-  return [[], [], [], []]
+  return [0, 1, 2, 3].map((i) => normalizeZoneRow(null, i))
 }
 
 /**
@@ -53,14 +74,15 @@ export function gameToEngineFormat(game, playerId) {
   const player2 = players[1] || null
 
   const gs = game.game_state || {}
-  const defaults = { health: 25, hand: [], deck_remaining: 35, actionsRemaining: 2, hasAttacked: false }
+  const selfActions = self?.actions_remaining ?? game.actions_remaining ?? gs.actionsRemaining ?? 2
+  const defaults = { health: 25, hand: [], deck_remaining: 35, actionsRemaining: selfActions, hasAttacked: false }
 
   const normalize = (p, fallbackId) => ({
     id: p?.player_id ?? fallbackId,
     health: p?.health ?? defaults.health,
     hand: p?.hand || [],
     zones: clampZones(p?.zones),
-    actionsRemaining: p?.actionsRemaining ?? defaults.actionsRemaining,
+    actionsRemaining: p?.actions_remaining ?? (p?.player_id === self?.player_id ? selfActions : 2),
     hasAttacked: p?.hasAttacked ?? defaults.hasAttacked,
     deck_remaining: p?.deck_remaining ?? defaults.deck_remaining,
   })

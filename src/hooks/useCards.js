@@ -2,6 +2,42 @@ import { useCallback } from 'react'
 import { supabase } from '../utils/supabase'
 import { useSupabaseTable } from './useSupabaseTable'
 
+const CARD_WRITE_FIELDS = [
+  'card_number',
+  'name',
+  'description',
+  'card_type',
+  'cost',
+  'attack',
+  'health',
+  'has_flip',
+  'flip_description',
+  'mechanics',
+  'image_url',
+  'land_type',
+  'is_rainbow',
+  'rarity',
+  'source',
+  'hero',
+  'notes',
+]
+
+function pickCardPayload(cardData) {
+  const payload = {}
+  for (const key of CARD_WRITE_FIELDS) {
+    if (cardData[key] !== undefined) payload[key] = cardData[key]
+  }
+  return payload
+}
+
+function formatCardMutationError(error) {
+  if (!error) return 'Не удалось сохранить карту'
+  if (error.code === 'PGRST116') {
+    return 'Карта не найдена или нет прав на изменение'
+  }
+  return error.message
+}
+
 export function useCards() {
   const { rows: cards, setRows: setCards, loading, error, reload: loadCards } = useSupabaseTable(
     'cards',
@@ -9,25 +45,29 @@ export function useCards() {
   )
 
   const createCard = useCallback(async (cardData) => {
+    const payload = pickCardPayload(cardData)
     const { data, error: insertError } = await supabase
       .from('cards')
-      .insert([{ ...cardData, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }])
+      .insert([payload])
       .select()
-      .single()
-    if (insertError) return { success: false, error: insertError.message }
-    if (data) setCards((prev) => [...prev, data])
+      .maybeSingle()
+    if (insertError) return { success: false, error: formatCardMutationError(insertError) }
+    if (!data) return { success: false, error: 'Карта не была создана' }
+    setCards((prev) => [...prev, data])
     return { success: true, data }
   }, [setCards])
 
   const updateCard = useCallback(async (cardId, cardData) => {
+    const payload = pickCardPayload(cardData)
     const { data, error: updateError } = await supabase
       .from('cards')
-      .update({ ...cardData, updated_at: new Date().toISOString() })
+      .update(payload)
       .eq('id', cardId)
       .select()
-      .single()
-    if (updateError) return { success: false, error: updateError.message }
-    if (data) setCards((prev) => prev.map((c) => (c.id === cardId ? data : c)))
+      .maybeSingle()
+    if (updateError) return { success: false, error: formatCardMutationError(updateError) }
+    if (!data) return { success: false, error: 'Карта не найдена или нет прав на изменение' }
+    setCards((prev) => prev.map((c) => (c.id === cardId ? data : c)))
     return { success: true, data }
   }, [setCards])
 

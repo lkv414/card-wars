@@ -1,9 +1,16 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CardForm } from './CardForm'
-import { CardTile } from './Shared/CardTile'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
-import { CARD_TYPES, LAND_TYPES } from '../constants/game'
+import { AdminFilters } from './admin/AdminFilters'
+import { AdminCardTile } from './admin/AdminCardTile'
+import {
+  DEFAULT_ADMIN_FILTERS,
+  buildAnomalyMap,
+  countAnomalies,
+  filterAdminCards,
+  hasActiveAdminFilters,
+} from '../utils/adminCardValidation'
 
 export function AdminPanel({
   cards,
@@ -14,16 +21,22 @@ export function AdminPanel({
   findSimilarCards,
 }) {
   const navigate = useNavigate()
-  const [type, setType] = useState('all')
-  const [land, setLand] = useState('all')
+  const [filters, setFilters] = useState({ ...DEFAULT_ADMIN_FILTERS })
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [similar, setSimilar] = useState([])
   const [pendingDelete, setPendingDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
 
-  const filtered = cards.filter(
-    (card) => (type === 'all' || card.card_type === type) && (land === 'all' || card.land_type === land)
+  const anomalyMap = useMemo(() => buildAnomalyMap(cards), [cards])
+  const stats = useMemo(() => countAnomalies(anomalyMap), [anomalyMap])
+
+  const filtered = useMemo(
+    () => filterAdminCards(cards, filters, anomalyMap),
+    [cards, filters, anomalyMap]
   )
+
+  const resetFilters = () => setFilters({ ...DEFAULT_ADMIN_FILTERS })
 
   const saveCard = async (card) => {
     if (!card) return
@@ -67,47 +80,91 @@ export function AdminPanel({
     }
   }
 
+  const filtersActive = hasActiveAdminFilters(filters)
+
   return (
-    <main className="admin">
-      <div className="admin-top">
-        <button type="button" onClick={() => navigate('/deck')}>
-          ← К редактору колод
-        </button>
-        <h1>Панель админа: Управление картами</h1>
-        <button type="button" className="primary" onClick={() => setEditing({ isNew: true })}>
-          Добавить карту
-        </button>
+    <main className="admin-panel">
+      <header className="admin-header">
+        <div className="admin-header-start">
+          <button type="button" className="deck-icon-btn" onClick={() => navigate('/deck')} aria-label="К редактору">
+            ←
+          </button>
+          <div className="admin-header-brand">
+            <h1>Каталог карт</h1>
+            <p className="admin-header-sub">Проверка данных и редактирование</p>
+          </div>
+        </div>
 
-        <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Фильтр по типу">
-          <option value="all">Все</option>
-          {Object.entries(CARD_TYPES).map(([v, l]) => (
-            <option value={v} key={v}>
-              {l}
-            </option>
-          ))}
-        </select>
+        <div className="admin-header-stats" aria-label="Сводка качества">
+          <span className="admin-stat-pill admin-stat-pill--total">{cards.length} карт</span>
+          <span className="admin-stat-pill admin-stat-pill--ok">{stats.clean} OK</span>
+          {stats.warnings > 0 && (
+            <span className="admin-stat-pill admin-stat-pill--warn">{stats.warnings} ⚠</span>
+          )}
+          {stats.errors > 0 && (
+            <span className="admin-stat-pill admin-stat-pill--err">{stats.errors} !</span>
+          )}
+        </div>
 
-        <select value={land} onChange={(e) => setLand(e.target.value)} aria-label="Фильтр по земле">
-          <option value="all">Все земли</option>
-          {Object.entries(LAND_TYPES).map(([v, l]) => (
-            <option value={v} key={v}>
-              {l.label}
-            </option>
-          ))}
-        </select>
+        <div className="admin-header-actions">
+          <button
+            type="button"
+            className={`deck-filters-btn ${filtersOpen ? 'is-active' : ''} ${filtersActive ? 'has-active' : ''}`}
+            aria-expanded={filtersOpen}
+            aria-controls="admin-filters"
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            Фильтры{filtersActive ? ' •' : ''}
+          </button>
+          <button type="button" className="primary admin-add-btn" onClick={() => setEditing({ isNew: true })}>
+            + Карта
+          </button>
+        </div>
+      </header>
 
-        <b>Всего карт: {filtered.length}</b>
-      </div>
+      <div className="admin-layout">
+        <AdminFilters
+          filters={filters}
+          setFilters={setFilters}
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          onReset={resetFilters}
+          stats={stats}
+        />
 
-      <div className="cards-grid">
-        {filtered.map((card) => (
-          <CardTile
-            key={card.id}
-            item={card}
-            showControls={false}
-            onClick={() => setEditing(card)}
-          />
-        ))}
+        <section className="admin-library" aria-label="Список карт">
+          <div className="admin-toolbar">
+            <span className="admin-toolbar-count">
+              Показано <strong>{filtered.length}</strong> из {cards.length}
+            </span>
+            {filtersActive && (
+              <button type="button" className="deck-link-btn" onClick={resetFilters}>
+                Сбросить фильтры
+              </button>
+            )}
+          </div>
+
+          {filtered.length === 0 ? (
+            <div className="admin-empty" role="status">
+              <p>Нет карт по выбранным фильтрам</p>
+              <button type="button" className="deck-link-btn" onClick={resetFilters}>
+                Показать все
+              </button>
+            </div>
+          ) : (
+            <div className="admin-cards-grid" role="list">
+              {filtered.map((card) => (
+                <div role="listitem" key={card.id}>
+                  <AdminCardTile
+                    card={card}
+                    issues={anomalyMap.get(card.id) || []}
+                    onClick={setEditing}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
 
       {editing && (

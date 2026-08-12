@@ -27,7 +27,9 @@ export const isLocalSupabase = Boolean(
   supabaseUrl?.includes('127.0.0.1') || supabaseUrl?.includes('localhost'),
 )
 
-if (!supabaseUrl || !supabaseKey) {
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey)
+
+if (!isSupabaseConfigured) {
   console.error(
     '[CardWars] Supabase не настроен: задайте VITE_SUPABASE_URL и VITE_SUPABASE_PUBLISHABLE_KEY в .env или .env.local',
   )
@@ -35,7 +37,7 @@ if (!supabaseUrl || !supabaseKey) {
   console.info(`[CardWars] Supabase → ${supabaseUrl}`)
 }
 
-export const supabase = createClient(supabaseUrl ?? '', supabaseKey ?? '', {
+const clientOptions = {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -48,4 +50,30 @@ export const supabase = createClient(supabaseUrl ?? '', supabaseKey ?? '', {
       eventsPerSecond: 10,
     },
   },
-})
+}
+
+let supabaseClient = null
+
+function getSupabaseClient() {
+  if (!isSupabaseConfigured) {
+    throw new Error(
+      'Supabase не настроен: задайте VITE_SUPABASE_URL и VITE_SUPABASE_PUBLISHABLE_KEY',
+    )
+  }
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseKey, clientOptions)
+  }
+  return supabaseClient
+}
+
+/** Lazy proxy — не падает при импорте, если env не заданы (Cloudflare build без vars). */
+export const supabase = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      const client = getSupabaseClient()
+      const value = client[prop]
+      return typeof value === 'function' ? value.bind(client) : value
+    },
+  },
+)

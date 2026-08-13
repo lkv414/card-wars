@@ -11,6 +11,9 @@ import { useLobbyChannel } from './lobby/useLobbyChannel'
 import { createLobbyAction } from './lobby/useCreateLobby'
 import { joinLobbyAction } from './lobby/useJoinLobby'
 import { publishLobbySync } from '../utils/lobbySync'
+import { isGameWsEnabled } from '../utils/gameWebSocket'
+import { useLobbyWebSocketTransport } from './useLobbyWebSocketTransport'
+import { mapLobbyPlayers, lobbyStatus } from '../utils/mapGameState'
 
 export function useLobby() {
   // 'idle' | 'restoring' | 'loading' | 'waiting' | 'in_game' | 'error' | 'dismissed'
@@ -45,12 +48,39 @@ export function useLobby() {
     setStatus('in_game')
   }, [])
 
+  const handleLobbyWsUpdate = useCallback(
+    async (lobbyRow) => {
+      if (!lobbyRow) return
+      const playersList = mapLobbyPlayers(lobbyRow)
+      if (playersList) setPlayers(playersList)
+      if (lobbyStatus(lobbyRow) === 'in_game') {
+        const id = lobbyRow.id ?? lobbyIdRef.current
+        const { data: game } = await supabase
+          .from('games')
+          .select('id')
+          .eq('lobby_id', id)
+          .maybeSingle()
+        if (game?.id) {
+          onGameStarted(game.id)
+        } else {
+          setStatus('in_game')
+        }
+      }
+    },
+    [onGameStarted]
+  )
+
+  const lobbyTransport = useLobbyWebSocketTransport(lobbyId, getGuestId(), {
+    onLobbyUpdate: handleLobbyWsUpdate,
+  })
+
   const { unsubscribeRef, subscribeToLobby, connectionStatus, onlinePlayerIds } = useLobbyChannel({
     setPlayers,
     setStatus,
     setDismissedMessage,
     resetLobbyState,
     onGameStarted,
+    lobbyTransport,
   })
 
   const subscribeRef = useRef(subscribeToLobby)
@@ -61,8 +91,9 @@ export function useLobby() {
   useEffect(() => { lobbyIdRef.current = lobbyId }, [lobbyId])
   useEffect(() => { isHostRef.current = isHost }, [isHost])
 
-  // Fallback: пока Ably недоступен или сообщение потерялось — подтягиваем лобби из Postgres.
+  // Fallback poll when Ably/WS push missed
   useEffect(() => {
+    if (isGameWsEnabled()) return undefined
     if (!lobbyId || status !== 'waiting') return undefined
 
     let cancelled = false
@@ -239,6 +270,15 @@ export function useLobby() {
     const id = lobbyIdRef.current
     if (!id) return
 
+    if (isGameWsEnabled()) {
+      try {
+        await lobbyTransport.sendActionAsync('set_ready', { ready: true })
+      } catch (err) {
+        setError(`Не удалось отметить готовность: ${err.message}`)
+      }
+      return
+    }
+
     const { data, error: readyErr } = await supabase.rpc('set_lobby_player_ready', {
       p_guest_id: guestId,
       p_lobby_id: id,
@@ -261,18 +301,65 @@ export function useLobby() {
       setPlayers(playersList)
       await publishLobbySync(id, { type: 'players', players: playersList, actorId: guestId })
     }
-  }, [])
+  }, [lobbyTransport])
+
+  const startGame = useCallback(async () => {
+    const guestId = getGuestId()
+    const id = lobbyIdRef.current
+    if (!id) return { error: 'Лобби не найдено' }
+
+    if (isGameWsEnabled()) {
+      try {
+        await lobbyTransport.sendActionAsync('start_game', {})
+        const { data: game } = await supabase
+          .from('games')
+          .select('id')
+          .eq('lobby_id', id)
+          .maybeSingle()
+        if (game?.id) {
+          onGameStarted(game.id)
+          return { gameId: game.id }
+        }
+        return { error: 'Игра создаётся…' }
+      } catch (err) {
+        return { error: err.message || 'Не удалось создать игру' }
+      }
+    }
+
+    const { data: gameId, error: startErr } = await supabase.rpc('start_game_for_lobby', {
+      p_lobby_id: id,
+      p_guest_id: guestId,
+    })
+    if (startErr || !gameId) {
+      return { error: startErr?.message || 'Не удалось создать игру' }
+    }
+    await publishLobbySync(id, {
+      type: 'game_started',
+      gameId,
+      status: 'in_game',
+      actorId: guestId,
+    })
+    return { gameId }
+  }, [lobbyTransport, onGameStarted])
 
   const leaveLobby = useCallback(async () => {
     const guestId = getGuestId()
     const id = lobbyIdRef.current
+
+    if (id && isGameWsEnabled()) {
+      try {
+        await lobbyTransport.sendActionAsync('leave', {})
+      } catch {
+        /* still clear local session */
+      }
+    }
 
     if (unsubscribeRef.current) {
       unsubscribeRef.current()
       unsubscribeRef.current = null
     }
 
-    if (id) {
+    if (id && !isGameWsEnabled()) {
       if (isHostRef.current) {
         await publishLobbySync(id, { type: 'closed', actorId: guestId })
       } else {
@@ -301,7 +388,7 @@ export function useLobby() {
     setDismissedMessage(null)
     setStatus('idle')
     setError(null)
-  }, [])
+  }, [lobbyTransport, unsubscribeRef])
 
   useEffect(() => {
     return () => {
@@ -327,6 +414,7 @@ export function useLobby() {
     createLobby,
     joinLobby,
     setReady,
+    startGame,
     leaveLobby,
   }
 }

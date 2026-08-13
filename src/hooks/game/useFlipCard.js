@@ -10,7 +10,9 @@ import { publishGameSync } from '../../utils/gameSync'
 
 export { hasFlipAbility } from './cardAbilities.js'
 
-export function useFlipCard(game, { patchGame, suppressRealtimeReload } = {}) {
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
+
+export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload } = {}) {
   const flipCard = useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -37,6 +39,15 @@ export function useFlipCard(game, { patchGame, suppressRealtimeReload } = {}) {
       if (!hasFlipAbility(card)) {
         return { error: 'У карты нет способности Флюп' }
       }
+
+      const ws = await runViaTransport(transport, 'flip_card', {
+        zonePosition: zoneIndex + 1,
+        cardId: String(cardId),
+      })
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws)
+      if (wsOk) return wsOk
 
       const { data, error: rpcErr } = await supabase.rpc('flip_card', {
         p_game_id: game.id,
@@ -74,7 +85,7 @@ export function useFlipCard(game, { patchGame, suppressRealtimeReload } = {}) {
 
       return { success: true }
     },
-    [game, patchGame, suppressRealtimeReload]
+    [game, patchGame, transport, suppressRealtimeReload]
   )
 
   return flipCard

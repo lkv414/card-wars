@@ -5,7 +5,6 @@ import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
 import { supabase } from '../../utils/supabase'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
-import { publishLobbySync } from '../../utils/lobbySync'
 import { LobbyRoom } from './LobbyRoom'
 import './Lobby.css'
 
@@ -16,7 +15,7 @@ export function LobbyScreen({ toast }) {
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
   const [submitting, setSubmitting] = useState(false)
 
-  const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, pendingGameId, connectionStatus, onlinePlayerIds, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+  const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, pendingGameId, connectionStatus, onlinePlayerIds, createLobby, joinLobby, setReady, startGame, leaveLobby } = useLobby()
   const { getSelectedDeck, selectedDeckId } = useDecks()
   const selectedDeck = getSelectedDeck()
 
@@ -70,24 +69,19 @@ export function LobbyScreen({ toast }) {
 
   const handleStartGame = async () => {
     if (!lobbyId) return
-    const { data: gameId, error: startErr } = await supabase.rpc('start_game_for_lobby', {
-      p_lobby_id: lobbyId,
-      p_guest_id: getGuestId(),
-    })
-
-    if (startErr || !gameId) {
-      toast?.('error', startErr?.message || 'Не удалось создать игру')
-      return
+    setSubmitting(true)
+    try {
+      const result = await startGame()
+      if (result?.error) {
+        toast?.('error', result.error)
+        return
+      }
+      if (result?.gameId) {
+        navigate(`/game/${result.gameId}`)
+      }
+    } finally {
+      setSubmitting(false)
     }
-
-    await publishLobbySync(lobbyId, {
-      type: 'game_started',
-      gameId,
-      status: 'in_game',
-      actorId: getGuestId(),
-    })
-
-    navigate(`/game/${gameId}`)
   }
 
   // Обновить URL когда код лобби становится известен

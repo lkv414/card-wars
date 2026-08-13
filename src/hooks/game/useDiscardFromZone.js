@@ -6,7 +6,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { clampZones, normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
-import { publishGameSync } from '../../utils/gameSync'
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 /**
  * applyDiscardFromZonePatch — remove card from zone and add to discard.
@@ -42,13 +42,22 @@ function applyDiscardFromZonePatch(game, playerId, zoneIndex, cardId) {
   }
 }
 
-export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, suppressRealtimeReload } = {}) {
+export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(
     async (zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
       await ensureGuestId()
       const me = game.players.find((p) => p.player_id === game.current_player_id)
       if (!me) return { error: 'Сейчас не ваш ход' }
+
+      const ws = await runViaTransport(transport, 'discard_from_zone', {
+        zonePosition: zoneIndex + 1,
+        cardId: String(cardId),
+      })
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws)
+      if (wsOk) return wsOk
 
       try {
         const { data, error: rpcErr } = await supabase.rpc('discard_from_zone', {
@@ -131,6 +140,6 @@ export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, s
       })
       return { success: true }
     },
-    [game, reload, patchGame, suppressRealtimeReload]
+    [game, reload, patchGame, transport, suppressRealtimeReload]
   )
 }

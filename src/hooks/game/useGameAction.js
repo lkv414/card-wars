@@ -26,17 +26,21 @@ import { useDrawFreeCard } from './useDrawFreeCard'
 import { useShuffleDeck } from './useShuffleDeck'
 import { useDiscardFromHand } from './useDiscardFromHand'
 
-export function useGameAction(game, reload, { patchGame, cardCatalog, suppressRealtimeReload } = {}) {
+export function useGameAction(game, reload, { patchGame, cardCatalog, transport, suppressRealtimeReload } = {}) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
-  const playCard = usePlayCard(game, writeGameState, reload, { patchGame, cardCatalog })
-  const attack = useAttack(game, { patchGame, suppressRealtimeReload })
-  const drawCard = useDrawCard(game, reload, { patchGame, suppressRealtimeReload })
-  const drawFreeCard = useDrawFreeCard(game, reload, { patchGame, suppressRealtimeReload })
-  const shuffleDeck = useShuffleDeck(game, reload)
-  const discardFromHand = useDiscardFromHand(game, reload, { patchGame, suppressRealtimeReload })
-  const discardFromZone = useDiscardFromZone(game, writeGameState, reload, { patchGame, suppressRealtimeReload })
-  const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload, { patchGame, suppressRealtimeReload })
-  const flipCard = useFlipCard(game, { patchGame, suppressRealtimeReload })
+  const playCard = usePlayCard(game, writeGameState, reload, { patchGame, cardCatalog, transport })
+  const attack = useAttack(game, { patchGame, transport, suppressRealtimeReload })
+  const drawCard = useDrawCard(game, reload, { patchGame, transport, suppressRealtimeReload })
+  const drawFreeCard = useDrawFreeCard(game, reload, { patchGame, transport, suppressRealtimeReload })
+  const shuffleDeck = useShuffleDeck(game, reload, { transport })
+  const discardFromHand = useDiscardFromHand(game, reload, { patchGame, transport, suppressRealtimeReload })
+  const discardFromZone = useDiscardFromZone(game, writeGameState, reload, { patchGame, transport, suppressRealtimeReload })
+  const { endTurn, forfeit } = useTurnControl(game, writeGameState, reload, {
+    patchGame,
+    transport,
+    suppressRealtimeReload,
+  })
+  const flipCard = useFlipCard(game, { patchGame, transport, suppressRealtimeReload })
 
   return {
     playCard,

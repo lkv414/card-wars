@@ -14,7 +14,9 @@ import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { applyEndTurnPatch } from '../../utils/gameStatePatch'
 import { publishGameSync } from '../../utils/gameSync'
 
-export function useTurnControl(game, writeGameState, reload, { patchGame, suppressRealtimeReload } = {}) {
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
+
+export function useTurnControl(game, writeGameState, reload, { patchGame, transport, suppressRealtimeReload } = {}) {
   /**
    * End turn: switch to next player.
    * Computes simple alternation: player1 -> player2 -> player1.
@@ -24,7 +26,13 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, suppre
       if (!game?.players) return { error: 'Игра не загружена' }
       await ensureGuestId()
 
-      // Пробуем атомарный RPC end_turn (миграция supabase/migrations/..._end_turn_rpc.sql).
+      const ws = await runViaTransport(transport, 'end_turn', {})
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws, { battleEvents: [], gameFinished: false })
+      if (wsOk) return wsOk
+
+      // Пробуем атомарный RPC end_turn
       // Если RPC не существует (например, миграция не применена) — fallback на клиентский
       // writeGameState (менее надёжно, но работает).
       try {
@@ -101,7 +109,7 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, suppre
         current_turn: (game.current_turn || 0) + 1,
         game_state: { log: newLog },
       })
-    }, [game, writeGameState, reload, patchGame, suppressRealtimeReload])
+    }, [game, writeGameState, reload, patchGame, transport, suppressRealtimeReload])
 
   /**
      * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается
@@ -119,6 +127,12 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, suppre
       await ensureGuestId()
       const me = safePlayer(safePlayers(game.players), game.current_player_id)
       if (me.__isFallback) return { error: 'Сейчас не ваш ход' }
+
+      const ws = await runViaTransport(transport, 'forfeit', {})
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws)
+      if (wsOk) return wsOk
 
       // === RPC-путь (атомарный) ===
       try {
@@ -205,7 +219,7 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, suppre
       }
 
       return writeGameState(patch)
-    }, [game, writeGameState, reload, patchGame])
+    }, [game, writeGameState, reload, patchGame, transport])
 
   return { endTurn, forfeit }
 }

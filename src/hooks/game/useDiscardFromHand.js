@@ -4,7 +4,7 @@ import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
 import { publishGameSync } from '../../utils/gameSync'
 import { normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
-import { getGuestId } from '../../utils/guestId'
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 /**
  * applyDiscardFromHandPatch — remove card from hand and add to discard.
@@ -33,13 +33,19 @@ function applyDiscardFromHandPatch(game, playerId, cardIndex) {
   }
 }
 
-export function useDiscardFromHand(game, reload, { patchGame, suppressRealtimeReload } = {}) {
+export function useDiscardFromHand(game, reload, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(
     async (cardIndex) => {
       if (!game?.id) return { error: 'Игра не загружена' }
       await ensureGuestId()
       const me = game.players?.find((p) => p.player_id === game.current_player_id)
       if (!me) return { error: 'Сейчас не ваш ход' }
+
+      const ws = await runViaTransport(transport, 'discard_from_hand', { cardIndex })
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws)
+      if (wsOk) return wsOk
 
       const { data, error: rpcErr } = await supabase.rpc('discard_from_hand', {
         p_game_id: game.id,
@@ -103,6 +109,6 @@ export function useDiscardFromHand(game, reload, { patchGame, suppressRealtimeRe
 
       return { success: true }
     },
-    [game, reload, patchGame, suppressRealtimeReload]
+    [game, reload, patchGame, transport, suppressRealtimeReload]
   )
 }

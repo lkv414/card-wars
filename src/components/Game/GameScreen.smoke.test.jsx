@@ -38,6 +38,15 @@ vi.mock('../../hooks/useAblyChannel', () => ({
   useAblyChannel: () => 'connected',
 }))
 
+vi.mock('../../hooks/useGameTransport', () => ({
+  useGameTransport: () => ({
+    enabled: false,
+    status: 'disabled',
+    sendActionAsync: vi.fn(),
+  }),
+  wsConnectionLabel: (s) => s,
+}))
+
 vi.mock('../../hooks/game', () => ({
   useGameAction: () => ({
     playCard: vi.fn(),

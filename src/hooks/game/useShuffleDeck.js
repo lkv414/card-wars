@@ -8,12 +8,20 @@ import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
 import { publishGameSync } from '../../utils/gameSync'
 
-export function useShuffleDeck(game, reload) {
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
+
+export function useShuffleDeck(game, reload, { transport } = {}) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
     const me = game.players?.find((p) => p.player_id === game.current_player_id)
     if (!me) return { error: 'Сейчас не ваш ход' }
+
+    const ws = await runViaTransport(transport, 'shuffle_deck', {})
+    const wsErr = transportError(ws)
+    if (wsErr) return wsErr
+    const wsOk = transportOk(ws)
+    if (wsOk) return wsOk
 
     const { data, error: rpcErr } = await supabase.rpc('shuffle_deck', {
       p_game_id: game.id,
@@ -35,5 +43,5 @@ export function useShuffleDeck(game, reload) {
       actorId: me.player_id,
     })
     return { success: true }
-  }, [game, reload])
+  }, [game, reload, transport])
 }

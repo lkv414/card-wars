@@ -26,6 +26,7 @@ dist-ssr
 # Supabase CLI secrets (local-only, never commit)
 .env
 .env.secure
+workers/.dev.vars
 supabase/.temp
 
 # Agent skills — committed copy is in skills/ (see llms.txt)

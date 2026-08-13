@@ -1,7 +1,7 @@
 /**
  * GameScreen
  * Загружает gameState из Supabase по gameId.
- * Синхронизация между игроками — Ably pub/sub (без Supabase Realtime).
+ * Realtime: Cloudflare Workers WebSocket (если VITE_GAME_WS_URL) или Ably fallback.
  */
 import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -13,6 +13,9 @@ import { useLandSetup } from '../../hooks/game/useLandSetup'
 import { useLands } from '../../hooks/useLands'
 import { useCards } from '../../hooks/useCards'
 import { buildCardCatalog, enrichGameStateAsync, collectMissingCardIds } from '../../utils/enrichGameCards'
+import { mapRpcGameState } from '../../utils/mapGameState'
+import { isGameWsEnabled } from '../../utils/gameWebSocket'
+import { useGameTransport, wsConnectionLabel } from '../../hooks/useGameTransport'
 import { useAblyChannel } from '../../hooks/useAblyChannel'
 import { GAME_SYNC_EVENT, applyIncomingGameSync } from '../../utils/gameSync'
 import { gameDebugLog, gameDebugSnapshot } from '../../utils/gameDebug'
@@ -28,6 +31,7 @@ export function GameScreen() {
   const { gameId } = useParams()
   const navigate = useNavigate()
   const guestId = getGuestId()
+  const wsEnabled = isGameWsEnabled()
 
   const [game, setGame] = useState(null)
   const [error, setError] = useState(null)
@@ -138,36 +142,7 @@ export function GameScreen() {
       if (rpcErr) throw new Error(rpcErr.message)
       if (!state) throw new Error('Игра не найдена или доступ запрещён')
 
-      const mapped = {
-        id: state.id,
-        lobby_id: state.lobby_id,
-        status: state.status,
-        current_turn: state.current_turn,
-        current_player_id: state.current_player_id,
-        winner_id: state.winner_id,
-        game_state: state.game_state,
-        actions_remaining: state.actions_remaining,
-        version: state.version,
-        started_at: state.started_at,
-        ended_at: state.ended_at,
-        players: (state.players || []).map((p) => ({
-          ...p,
-          actions_remaining: p.actions_remaining ?? 2,
-          free_draw_used: p.free_draw_used ?? false,
-          paid_draw_used: p.paid_draw_used ?? false,
-          zones: Array.isArray(p.zones)
-            ? p.zones
-                .sort((a, b) => a.zone_position - b.zone_position)
-                .map((z) => ({
-                  zone_position: z.zone_position,
-                  cards: z.cards || [],
-                  land_id: z.land_id ?? null,
-                  land_type: z.land_type ?? null,
-                  land_name: z.land_name ?? null,
-                }))
-            : [],
-        })),
-      }
+      const mapped = mapRpcGameState(state)
 
       const catalog = cardCatalogRef.current
       const nextGame = catalog.size > 0
@@ -303,9 +278,29 @@ export function GameScreen() {
     [requestLoadGame]
   )
 
+  const applyIncomingRpcState = useCallback(
+    async (rawState, source = 'ws:state') => {
+      if (!rawState) return
+      const mapped = mapRpcGameState(rawState)
+      const catalog = cardCatalogRef.current
+      const nextGame =
+        catalog.size > 0 ? await enrichGameStateAsync(mapped, catalog, supabase) : mapped
+      commitGameState(nextGame, source)
+    },
+    [commitGameState]
+  )
+
+  const transport = useGameTransport(gameId, guestId, {
+    onState: (raw, msg) => {
+      gameDebugLog('ws', 'state', { source: msg?.requestId ? 'action' : 'push', version: raw?.version })
+      applyIncomingRpcState(raw, msg?.requestId ? 'ws:action' : 'ws:push')
+    },
+    onError: (message) => toast('error', message),
+  })
+
   const gameActions = useMemo(
-    () => ({ patchGame, cardCatalog, suppressRealtimeReload }),
-    [patchGame, cardCatalog, suppressRealtimeReload]
+    () => ({ patchGame, cardCatalog, transport, suppressRealtimeReload }),
+    [patchGame, cardCatalog, transport, suppressRealtimeReload]
   )
 
   const {
@@ -323,7 +318,7 @@ export function GameScreen() {
     error: actionError,
   } = useGameAction(game, reloadAfterAction, gameActions)
 
-  const { reorderLands, confirmLandSetup } = useLandSetup(game, reloadAfterAction)
+  const { reorderLands, confirmLandSetup } = useLandSetup(game, reloadAfterAction, { transport })
 
   useEffect(() => {
     if (actionError) toast('error', actionError)
@@ -359,14 +354,16 @@ export function GameScreen() {
   }, [requestLoadGame])
 
   const realtimeStatus = useAblyChannel({
-    channelName: gameId ? `game:${gameId}` : null,
+    channelName: !wsEnabled && gameId ? `game:${gameId}` : null,
     eventName: GAME_SYNC_EVENT,
     onMessage: handleAblySyncStable,
     onSubscribed: handleAblySubscribed,
   })
 
+  const connectionStatus = wsEnabled ? wsConnectionLabel(transport.status) : realtimeStatus
+
   useEffect(() => {
-    if (!gameId || loading || !game) return undefined
+    if (wsEnabled || !gameId || loading || !game) return undefined
 
     let cancelled = false
     const pollVersion = async () => {
@@ -397,10 +394,27 @@ export function GameScreen() {
       cancelled = true
       clearInterval(timer)
     }
-  }, [gameId, loading, game, requestLoadGame])
+  }, [gameId, loading, game, requestLoadGame, wsEnabled])
+
+  useEffect(() => {
+    if (!wsEnabled || !gameId) return undefined
+    const timer = setTimeout(() => {
+      if (!hasLoadedOnceRef.current) {
+        gameDebugLog('ws', 'fallback load (no state yet)')
+        requestLoadGame('ws:fallback', { force: true })
+      }
+    }, 12_000)
+    return () => clearTimeout(timer)
+  }, [wsEnabled, gameId, requestLoadGame])
 
   useEffect(() => {
     if (!gameId) return undefined
+    if (wsEnabled) {
+      hasLoadedOnceRef.current = false
+      gameVersionRef.current = 0
+      gameRef.current = null
+      return undefined
+    }
     hasLoadedOnceRef.current = false
     gameVersionRef.current = 0
     gameRef.current = null
@@ -409,7 +423,7 @@ export function GameScreen() {
       requestLoadGame('mount:gameId', { force: true })
     })
     return () => cancelAnimationFrame(frameId)
-  }, [gameId, requestLoadGame])
+  }, [gameId, requestLoadGame, wsEnabled])
 
   if (loading) {
     return <div className="game-loading" role="status" aria-live="polite">Загружаем игру...</div>
@@ -472,7 +486,7 @@ export function GameScreen() {
           onReorderLands={reorderLands}
           onConfirmLandSetup={confirmLandSetup}
           onSuppressRealtimeReload={suppressRealtimeReload}
-          realtimeStatus={realtimeStatus}
+          realtimeStatus={connectionStatus}
           isApplying={isApplying}
           actionError={actionError}
           toast={toast}

@@ -10,12 +10,20 @@ import { applyDrawPatch, normalizeDrawRpcData, sanitizeDrawRpcDataForSync } from
 import { publishGameSync } from '../../utils/gameSync'
 import { getGuestId } from '../../utils/guestId'
 
-export function useDrawCard(game, _reload, { patchGame, suppressRealtimeReload } = {}) {
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
+
+export function useDrawCard(game, _reload, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
     const me = game.players?.find((p) => p.player_id === game.current_player_id)
     if (!me) return { error: 'Сейчас не ваш ход' }
+
+    const ws = await runViaTransport(transport, 'draw_paid', {})
+    const wsErr = transportError(ws)
+    if (wsErr) return wsErr
+    const wsOk = transportOk(ws)
+    if (wsOk) return { ...wsOk, actions_remaining: undefined, hand_count: undefined }
 
     const { data, error: rpcErr } = await supabase.rpc('draw_card_for_action', {
       p_game_id: game.id,
@@ -53,5 +61,5 @@ export function useDrawCard(game, _reload, { patchGame, suppressRealtimeReload }
       actions_remaining: data.actions_remaining,
       hand_count: data.hand_count,
     }
-  }, [game, patchGame, suppressRealtimeReload])
+  }, [game, patchGame, transport, suppressRealtimeReload])
 }

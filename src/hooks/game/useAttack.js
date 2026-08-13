@@ -12,7 +12,9 @@ import { isRpcUnavailable } from './rpcUtils'
 import { applyAttackPatch } from '../../utils/gameStatePatch'
 import { publishGameSync } from '../../utils/gameSync'
 
-export function useAttack(game, { patchGame, suppressRealtimeReload } = {}) {
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
+
+export function useAttack(game, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(
     async (fromZone, cardId, toOpponentZone, toPlayerId = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -46,6 +48,17 @@ export function useAttack(game, { patchGame, suppressRealtimeReload } = {}) {
       if (!canAttack(me.player_id, game.players, fromZone, opponent.player_id, toOpponentZone)) {
         return { error: 'Эта зона не противостоит цели' }
       }
+
+      const ws = await runViaTransport(transport, 'attack', {
+        fromZone: fromZone + 1,
+        attackerCardId: String(cardId),
+        toPlayerId: opponent.player_id,
+        toZone: toOpponentZone + 1,
+      })
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws)
+      if (wsOk) return wsOk
 
       const { data, error: rpcErr } = await supabase.rpc('perform_attack', {
         p_game_id: game.id,
@@ -90,6 +103,6 @@ export function useAttack(game, { patchGame, suppressRealtimeReload } = {}) {
         gameFinished: Boolean(data.game_finished),
       }
     },
-    [game, patchGame, suppressRealtimeReload]
+    [game, patchGame, transport, suppressRealtimeReload]
   )
 }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { subscribeAblyLobby } from './createLobbyChannel'
+import { isGameWsEnabled } from '../../utils/gameWebSocket'
 
 export function useLobbyChannel({
   setPlayers,
@@ -7,6 +8,7 @@ export function useLobbyChannel({
   setDismissedMessage,
   resetLobbyState,
   onGameStarted,
+  lobbyTransport,
 }) {
   const unsubscribeRef = useRef(null)
   const [connectionStatus, setConnectionStatus] = useState('connecting')
@@ -25,27 +27,38 @@ export function useLobbyChannel({
       unsubscribeRef.current()
       unsubscribeRef.current = null
     }
+    lobbyTransport?.disconnect?.()
     setOnlinePlayerIds([])
     resetLobbyState?.()
-  }, [resetLobbyState])
+  }, [resetLobbyState, lobbyTransport])
 
-  const subscribeToLobby = useCallback((id, { nickname } = {}) => {
-    if (unsubscribeRef.current) {
-      unsubscribeRef.current()
-      unsubscribeRef.current = null
-    }
-    const h = handlersRef.current
-    unsubscribeRef.current = subscribeAblyLobby(id, {
-      nickname,
-      setPlayers: h.setPlayers,
-      setStatus: h.setStatus,
-      setDismissedMessage: h.setDismissedMessage,
-      resetLobby,
-      onGameStarted: h.onGameStarted,
-      onConnectionChange: setConnectionStatus,
-      onPresenceChange: setOnlinePlayerIds,
-    })
-  }, [resetLobby])
+  const subscribeToLobby = useCallback(
+    (id, { nickname } = {}) => {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current()
+        unsubscribeRef.current = null
+      }
+
+      if (isGameWsEnabled() && lobbyTransport?.connect) {
+        lobbyTransport.connect(id)
+        unsubscribeRef.current = () => lobbyTransport.disconnect()
+        return
+      }
+
+      const h = handlersRef.current
+      unsubscribeRef.current = subscribeAblyLobby(id, {
+        nickname,
+        setPlayers: h.setPlayers,
+        setStatus: h.setStatus,
+        setDismissedMessage: h.setDismissedMessage,
+        resetLobby,
+        onGameStarted: h.onGameStarted,
+        onConnectionChange: setConnectionStatus,
+        onPresenceChange: setOnlinePlayerIds,
+      })
+    },
+    [resetLobby, lobbyTransport]
+  )
 
   useEffect(
     () => () => {
@@ -57,5 +70,20 @@ export function useLobbyChannel({
     []
   )
 
-  return { unsubscribeRef, subscribeToLobby, connectionStatus, onlinePlayerIds }
+  const wsStatus = lobbyTransport?.status
+  const effectiveConnectionStatus =
+    isGameWsEnabled() && wsStatus && wsStatus !== 'idle' && wsStatus !== 'disabled'
+      ? wsStatus === 'connected'
+        ? 'connected'
+        : wsStatus === 'connecting'
+          ? 'connecting'
+          : 'disconnected'
+      : connectionStatus
+
+  return {
+    unsubscribeRef,
+    subscribeToLobby,
+    connectionStatus: effectiveConnectionStatus,
+    onlinePlayerIds,
+  }
 }

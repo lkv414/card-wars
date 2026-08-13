@@ -10,12 +10,20 @@ import { applyDrawPatch, normalizeDrawRpcData, sanitizeDrawRpcDataForSync } from
 import { publishGameSync } from '../../utils/gameSync'
 import { getGuestId } from '../../utils/guestId'
 
-export function useDrawFreeCard(game, _reload, { patchGame, suppressRealtimeReload } = {}) {
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
+
+export function useDrawFreeCard(game, _reload, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
     const me = game.players?.find((p) => p.player_id === game.current_player_id)
     if (!me) return { error: 'Сейчас не ваш ход' }
+
+    const ws = await runViaTransport(transport, 'draw_free', {})
+    const wsErr = transportError(ws)
+    if (wsErr) return wsErr
+    const wsOk = transportOk(ws, { draw_type: 'free' })
+    if (wsOk) return wsOk
 
     const { data, error: rpcErr } = await supabase.rpc('draw_free_card', {
       p_game_id: game.id,
@@ -49,5 +57,5 @@ export function useDrawFreeCard(game, _reload, { patchGame, suppressRealtimeRelo
     })
 
     return { success: true, draw_type: 'free' }
-  }, [game, patchGame, suppressRealtimeReload])
+  }, [game, patchGame, transport, suppressRealtimeReload])
 }

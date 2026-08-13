@@ -24,10 +24,11 @@ import { getCardCost } from '../../utils/cardFields.ts'
 
 import { applyPlayCardPatch } from '../../utils/gameStatePatch'
 import { publishGameSync, enrichZoneCardsForSync } from '../../utils/gameSync'
+import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 
 
-export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog } = {}) {
+export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport } = {}) {
 
   return useCallback(
 
@@ -76,6 +77,18 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
         return { error: 'Слот существа занят или карта не подходит' }
 
       }
+
+
+
+      const ws = await runViaTransport(transport, 'play_card', {
+        cardIndex,
+        zonePosition: zoneIndex + 1,
+        slotType: slot,
+      })
+      const wsErr = transportError(ws)
+      if (wsErr) return wsErr
+      const wsOk = transportOk(ws)
+      if (wsOk) return wsOk
 
 
 
@@ -316,7 +329,7 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
 
     },
 
-    [game, patchGame, cardCatalog]
+    [game, patchGame, cardCatalog, transport]
 
   )
 

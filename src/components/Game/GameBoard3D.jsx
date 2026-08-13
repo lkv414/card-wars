@@ -120,6 +120,7 @@ export function GameBoard3D({
 
       placingLockRef.current = true
       setDraggingCardIndex(null)
+      onSuppressRealtimeReload?.(5000)
       try {
         const result = await onPlayCardRef.current?.(cardIdx, target.zoneIndex, 1, target.slotType)
         if (result?.error) {
@@ -134,7 +135,7 @@ export function GameBoard3D({
         placingLockRef.current = false
       }
     },
-    [handCards, toast, setDraggingCardIndex]
+    [handCards, toast, setDraggingCardIndex, onSuppressRealtimeReload]
   )
 
   const handleEndTurn = useCallback(async () => {
@@ -222,7 +223,7 @@ export function GameBoard3D({
           gl.domElement.style.touchAction = 'none'
           gl.toneMapping = THREE.ACESFilmicToneMapping
           gl.toneMappingExposure = 1.08
-          if (shadowsEnabled) gl.shadowMap.type = THREE.PCFSoftShadowMap
+          if (shadowsEnabled) gl.shadowMap.type = THREE.PCFShadowMap
           const canvas = gl.domElement
           canvas.addEventListener('webglcontextlost', (e) => {
             e.preventDefault()

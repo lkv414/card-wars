@@ -12,6 +12,7 @@ import {
   applyDrawPatch,
 } from './gameStatePatch'
 import { enrichCard } from './enrichGameCards'
+import { gameDebugLog, gameDebugSnapshot } from './gameDebug'
 
 export const GAME_SYNC_EVENT = 'sync'
 
@@ -19,40 +20,55 @@ export const GAME_SYNC_EVENT = 'sync'
 export async function publishGameSync(gameId, payload) {
   if (!gameId || !payload) return
   try {
+    gameDebugLog('sync', 'publish', { gameId, type: payload.type, version: payload.version })
     const channel = await getAblyChannel(`game:${gameId}`)
     await channel.publish(GAME_SYNC_EVENT, payload)
+    gameDebugLog('sync', 'publish ok', { gameId, type: payload.type })
   } catch (err) {
     console.warn('[gameSync] publish failed:', err?.message || err)
+    gameDebugLog('sync', 'publish failed', { gameId, error: err?.message || String(err) })
   }
 }
 
 /**
  * @param {object} data
  * @param {object} ctx
- * @param {string} ctx.guestId
- * @param {Map} ctx.cardCatalog
- * @param {() => object|null} ctx.getGame
- * @param {(next: object) => boolean} ctx.commitGame
- * @param {() => void} ctx.loadGame
  */
 export function applyIncomingGameSync(data, ctx) {
-  if (!data || data.actorId === ctx.guestId) return false
-
-  const remoteVersion = data.version ?? 0
   const localVersion = ctx.gameVersionRef.current ?? 0
-  if (remoteVersion > 0 && remoteVersion <= localVersion) return false
+  const prev = ctx.getGame()
 
-  const { getGame, commitGame, loadGame, cardCatalog, guestId } = ctx
+  gameDebugLog('sync', 'incoming', {
+    type: data?.type,
+    actorId: data?.actorId,
+    remoteVersion: data?.version ?? 0,
+    localVersion,
+    snapshot: gameDebugSnapshot(prev, ctx.gameVersionRef),
+  })
 
-  if (data.type === 'reload') {
-    loadGame()
-    return true
+  if (!data || data.actorId === ctx.guestId) {
+    gameDebugLog('skip', 'sync own message or empty', { actorId: data?.actorId })
+    return { applied: false, reason: 'own_or_empty' }
   }
 
-  const prev = getGame()
+  const remoteVersion = data.version ?? 0
+  if (remoteVersion > 0 && remoteVersion <= localVersion) {
+    gameDebugLog('skip', 'sync stale version', { remoteVersion, localVersion })
+    return { applied: false, reason: 'stale_version' }
+  }
+
+  const { getGame, commitGame, requestLoadGame, cardCatalog, guestId } = ctx
+
+  if (data.type === 'reload') {
+    gameDebugLog('sync', '→ full reload (type=reload)', { remoteVersion })
+    requestLoadGame?.('ably:reload', { force: false })
+    return { applied: false, reason: 'reload_event' }
+  }
+
   if (!prev) {
-    loadGame()
-    return true
+    gameDebugLog('sync', '→ full reload (no local game)', { remoteVersion })
+    requestLoadGame?.('ably:no-local-state')
+    return { applied: false, reason: 'no_local_state' }
   }
 
   let next = prev
@@ -90,25 +106,46 @@ export function applyIncomingGameSync(data, ctx) {
       next = applyDrawPatch(prev, data.playerId, data.rpcData || {}, guestId)
       break
     default:
-      loadGame()
-      return true
+      gameDebugLog('sync', '→ full reload (unknown type)', { type: data.type })
+      requestLoadGame?.('ably:unknown-type', { force: false })
+      return { applied: false, reason: 'unknown_type' }
   }
 
   if (!next || next === prev) {
-    loadGame()
-    return true
+    gameDebugLog('sync', '→ full reload (patch no-op)', {
+      type: data.type,
+      remoteVersion,
+      localVersion: prev.version,
+    })
+    requestLoadGame?.('ably:patch-noop')
+    return { applied: false, reason: 'patch_noop' }
   }
 
   const nextVersion = next.version ?? prev.version ?? 0
   if (remoteVersion > 0 && nextVersion < remoteVersion) {
-    loadGame()
-    return true
+    gameDebugLog('sync', '→ full reload (patch version lag)', {
+      nextVersion,
+      remoteVersion,
+    })
+    requestLoadGame?.('ably:patch-version-lag')
+    return { applied: false, reason: 'patch_version_lag' }
   }
 
   if (!commitGame(next)) {
-    loadGame()
+    gameDebugLog('sync', '→ full reload (commit rejected)', {
+      nextVersion,
+      refVersion: ctx.gameVersionRef.current,
+    })
+    requestLoadGame?.('ably:commit-rejected')
+    return { applied: false, reason: 'commit_rejected' }
   }
-  return true
+
+  gameDebugLog('patch', 'sync applied', {
+    type: data.type,
+    version: nextVersion,
+    snapshot: gameDebugSnapshot(next, ctx.gameVersionRef),
+  })
+  return { applied: true, reason: 'patched', version: nextVersion }
 }
 
 /** Обогащает карты зоны (локальный optimistic UI). */

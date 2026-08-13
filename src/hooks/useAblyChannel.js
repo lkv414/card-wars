@@ -16,6 +16,7 @@ import {
   isAblyConfigured,
 } from '../utils/ablyClient'
 import { ensureGuestId } from '../utils/guestSession'
+import { gameDebugLog } from '../utils/gameDebug'
 
 export function useAblyChannel({ channelName, eventName = 'sync', onMessage, onSubscribed }) {
   const [status, setStatus] = useState(() =>
@@ -49,6 +50,11 @@ export function useAblyChannel({ channelName, eventName = 'sync', onMessage, onS
 
     const onConnChange = (stateChange) => {
       if (cancelled) return
+      gameDebugLog('ably', 'connection', {
+        channelName,
+        from: stateChange.previous,
+        to: stateChange.current,
+      })
       const mapped = mapConnectionState(stateChange.current)
       if (stateChange.current === 'connecting' && statusRef.current === 'disconnected') {
         updateStatus('reconnecting')
@@ -66,14 +72,17 @@ export function useAblyChannel({ channelName, eventName = 'sync', onMessage, onS
 
     ;(async () => {
       try {
+        gameDebugLog('ably', 'subscribe start', { channelName, eventName })
         await ensureGuestId()
         const channel = await getAblyChannel(channelName)
         if (cancelled) return
         channel.subscribe(eventName, handler)
         updateStatus('connected')
+        gameDebugLog('ably', 'subscribe ok', { channelName, eventName })
         onSubscribedRef.current?.()
       } catch (err) {
         console.warn('[ably] channel subscribe failed:', channelName, err?.message || err)
+        gameDebugLog('ably', 'subscribe failed', { channelName, error: err?.message || String(err) })
         if (!cancelled) updateStatus('disconnected')
       }
     })()

@@ -8,6 +8,11 @@ const mockRpc = vi.fn()
 vi.mock('../../utils/supabase', () => ({
   supabase: {
     rpc: (...args) => mockRpc(...args),
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn().mockResolvedValue({ data: { version: 1 }, error: null }),
+    })),
     channel: vi.fn(() => ({ on: vi.fn().mockReturnThis(), subscribe: vi.fn() })),
     removeChannel: vi.fn(),
   },
@@ -23,6 +28,10 @@ vi.mock('../../utils/guestSession', () => ({
 
 vi.mock('../../hooks/useLands', () => ({
   useLands: () => ({ lands: [] }),
+}))
+
+vi.mock('../../hooks/useCards', () => ({
+  useCards: () => ({ cards: [], loading: false }),
 }))
 
 vi.mock('../../hooks/useAblyChannel', () => ({

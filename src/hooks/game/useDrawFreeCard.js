@@ -6,11 +6,10 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
-import { applyDrawPatch } from '../../utils/gameStatePatch'
+import { normalizeDrawRpcData } from '../../utils/gameStatePatch'
 import { publishGameSync } from '../../utils/gameSync'
-import { getGuestId } from '../../utils/guestId'
 
-export function useDrawFreeCard(game, reload, { patchGame } = {}) {
+export function useDrawFreeCard(game, reload) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
@@ -30,19 +29,19 @@ export function useDrawFreeCard(game, reload, { patchGame } = {}) {
     }
     if (data?.error) return { error: data.error }
 
-    if (typeof patchGame === 'function') {
-      patchGame((state) => applyDrawPatch(state, me.player_id, data, getGuestId()))
+    // RPC не возвращает hand — перечитываем полное состояние (как до Ably).
+    if (typeof reload === 'function') {
+      await reload('draw-free', { force: true })
     }
-    if (typeof reload === 'function') await reload()
 
     await publishGameSync(game.id, {
       type: 'draw',
       version: data.version,
       actorId: me.player_id,
       playerId: me.player_id,
-      rpcData: data,
+      rpcData: normalizeDrawRpcData(data),
     })
 
     return { success: true, draw_type: 'free' }
-  }, [game, reload, patchGame])
+  }, [game, reload])
 }

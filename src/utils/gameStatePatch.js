@@ -240,34 +240,53 @@ export function applyAttackPatch(game, rpcData = {}) {
   return next
 }
 
+/** RPC draw_* не всегда отдаёт флаги — дополняем из draw_type для Ably sync. */
+export function normalizeDrawRpcData(rpcData = {}) {
+  const drawType = rpcData.draw_type
+  return {
+    ...rpcData,
+    free_draw_used:
+      rpcData.free_draw_used ?? (drawType === 'free' ? true : undefined),
+    paid_draw_used:
+      rpcData.paid_draw_used ?? (drawType === 'paid' ? true : undefined),
+  }
+}
+
 /**
- * Patch после draw_card / draw_free_card — для наблюдателей (своя рука всё равно через reload при необходимости).
+ * Patch после draw_card / draw_free_card.
+ * Полная рука в RPC не приходит — актор обновляет UI через reload после RPC.
  */
 export function applyDrawPatch(game, playerId, rpcData = {}, guestId) {
   if (!game?.players) return game
-  const version = rpcData.version ?? (game.version ?? 0) + 1
+  const normalized = normalizeDrawRpcData(rpcData)
+  const version = normalized.version ?? (game.version ?? 0) + 1
 
   return {
     ...game,
     version,
     actions_remaining:
-      playerId === game.current_player_id && rpcData.actions_remaining != null
-        ? rpcData.actions_remaining
+      playerId === game.current_player_id && normalized.actions_remaining != null
+        ? normalized.actions_remaining
         : game.actions_remaining,
     players: game.players.map((player) => {
       if (player.player_id !== playerId) return player
       const patch = {
         ...player,
-        actions_remaining: rpcData.actions_remaining ?? player.actions_remaining,
-        deck_remaining: rpcData.deck_remaining ?? player.deck_remaining,
-        free_draw_used: rpcData.free_draw_used ?? player.free_draw_used,
-        paid_draw_used: rpcData.paid_draw_used ?? player.paid_draw_used,
+        actions_remaining: normalized.actions_remaining ?? player.actions_remaining,
+        deck_remaining: normalized.deck_remaining ?? player.deck_remaining,
+        free_draw_used: normalized.free_draw_used ?? player.free_draw_used,
+        paid_draw_used: normalized.paid_draw_used ?? player.paid_draw_used,
       }
-      // Полная рука приходит только актору; наблюдатель видит счётчик
-      if (playerId === guestId && Array.isArray(rpcData.hand)) {
-        patch.hand = rpcData.hand
-      } else if (rpcData.hand_count != null) {
-        patch.hand_count = rpcData.hand_count
+      if (normalized.deck_remaining != null) {
+        patch.deck_remaining = normalized.deck_remaining
+        if (Array.isArray(player.deck_pile) && player.deck_pile.length > 0) {
+          patch.deck_pile = player.deck_pile.slice(0, normalized.deck_remaining)
+        }
+      }
+      if (playerId === guestId && Array.isArray(normalized.hand)) {
+        patch.hand = normalized.hand
+      } else if (normalized.hand_count != null) {
+        patch.hand_count = normalized.hand_count
       }
       return patch
     }),

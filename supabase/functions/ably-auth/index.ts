@@ -90,6 +90,10 @@ Deno.serve(async (req) => {
     for (const ch of body.channels) channelNames.add(String(ch))
   }
 
+  if (channelNames.size === 0) {
+    return jsonResponse({ error: 'channelName or channels required' }, 400)
+  }
+
   const supabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })

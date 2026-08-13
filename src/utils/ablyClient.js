@@ -3,6 +3,7 @@
  */
 import Ably from 'ably'
 import { getGuestId } from './guestId'
+import { gameDebugLog } from './gameDebug'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim()
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim()
@@ -19,6 +20,9 @@ const channelCache = new Map()
 /** @type {Promise<void> | null} */
 let authInflight = null
 
+/** Каналы, для которых уже запрошен capability (накопительный список для renew). */
+const authorizedChannels = new Set()
+
 function mapConnectionState(state) {
   if (state === 'connected') return 'connected'
   if (state === 'connecting' || state === 'initialized') return 'connecting'
@@ -26,21 +30,25 @@ function mapConnectionState(state) {
   return 'connecting'
 }
 
-function resolveChannelName(tokenParams = {}) {
-  if (tokenParams.channelName) return String(tokenParams.channelName)
-  if (tokenParams.params?.channelName) return String(tokenParams.params.channelName)
-  if (Array.isArray(tokenParams.channels) && tokenParams.channels.length > 0) {
-    return String(tokenParams.channels[0])
+function resolveChannelNames(tokenParams = {}) {
+  const names = new Set(authorizedChannels)
+  const single = tokenParams.channelName || tokenParams.params?.channelName
+  if (single) names.add(String(single))
+  if (Array.isArray(tokenParams.channels)) {
+    for (const ch of tokenParams.channels) names.add(String(ch))
   }
-  return null
+  return [...names]
 }
 
 async function fetchTokenRequest(tokenParams = {}) {
   const clientId = getGuestId()
-  const body = { clientId }
-  const channelName = resolveChannelName(tokenParams)
-  if (channelName) body.channelName = channelName
-  if (Array.isArray(tokenParams.channels)) body.channels = tokenParams.channels
+  const channels = resolveChannelNames(tokenParams)
+  if (channels.length === 0) {
+    throw new Error('Ably auth: no channel names (refusing empty capability token)')
+  }
+
+  const body = { clientId, channels }
+  gameDebugLog('ably', 'fetch token', { channels })
 
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), AUTH_TIMEOUT_MS)
@@ -58,6 +66,7 @@ async function fetchTokenRequest(tokenParams = {}) {
     })
     if (!res.ok) {
       const text = await res.text()
+      gameDebugLog('ably', 'fetch token failed', { status: res.status, body: text.slice(0, 200) })
       throw new Error(text || res.statusText)
     }
     return res.json()
@@ -77,11 +86,13 @@ export function getAblyClient() {
     clientId: getGuestId(),
     closeOnUnload: true,
     echoMessages: false,
+    autoConnect: false,
     authCallback: (tokenParams, callback) => {
       fetchTokenRequest(tokenParams)
         .then((tokenRequest) => callback(null, tokenRequest))
         .catch((err) => {
           console.warn('[ably] auth failed:', err?.message || err)
+          gameDebugLog('ably', 'authCallback failed', { error: err?.message || String(err) })
           callback(err)
         })
     },
@@ -95,19 +106,32 @@ export function getAblyConnectionState() {
   return mapConnectionState(realtimeClient.connection.state)
 }
 
-/** Запросить capability для канала до attach. */
+/** Запросить capability для канала(ов) и подключиться. */
 export async function authorizeAblyChannel(channelName) {
+  if (!channelName) return
+  authorizedChannels.add(channelName)
+
   const client = getAblyClient()
   if (authInflight) await authInflight
-  authInflight = client.auth
-    .authorize({ clientId: getGuestId(), channelName })
-    .then(
-    () => {},
-    (err) => {
+
+  authInflight = (async () => {
+    gameDebugLog('ably', 'authorize', { channelName, all: [...authorizedChannels] })
+    try {
+      const tokenRequest = await fetchTokenRequest({ channels: [...authorizedChannels] })
+      await client.auth.authorize(tokenRequest)
+
+      const state = client.connection.state
+      if (state === 'initialized' || state === 'disconnected' || state === 'suspended') {
+        client.connect()
+      }
+      gameDebugLog('ably', 'authorize ok', { channelName, connection: client.connection.state })
+    } catch (err) {
       console.warn('[ably] authorize failed:', channelName, err?.message || err)
+      gameDebugLog('ably', 'authorize failed', { channelName, error: err?.message || String(err) })
       throw err
     }
-  )
+  })()
+
   try {
     await authInflight
   } finally {
@@ -151,6 +175,7 @@ export function closeAblyClient() {
   for (const name of [...channelCache.keys()]) {
     releaseAblyChannel(name)
   }
+  authorizedChannels.clear()
   if (realtimeClient) {
     realtimeClient.close()
     realtimeClient = null

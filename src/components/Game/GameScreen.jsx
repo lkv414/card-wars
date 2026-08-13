@@ -111,7 +111,7 @@ export function GameScreen() {
         setGame(merged)
         setLoading(false)
         hasLoadedOnceRef.current = true
-      } else {
+      } else if (merged !== prev) {
         setGame(merged)
       }
       return true

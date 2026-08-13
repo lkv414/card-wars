@@ -1,9 +1,7 @@
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import { useMemo, useEffect, useRef } from 'react'
-import { EnhancedCard3DModel } from '../EnhancedCard3DModel'
+import { useMemo, useEffect, useRef, memo } from 'react'
 import {
-  computeFieldCardScale,
   getLandSlotLayout,
   HALF_LANE_DEPTH,
   LANE_WIDTH,
@@ -16,10 +14,9 @@ import {
 } from '../../../constants/landColors'
 import { SLOT_BUILDING, SLOT_CREATURE, splitZoneCards } from '../../../hooks/game/zoneCards'
 import { registerPlayableSlot } from './slotRegistry'
-import { CreatureFieldStats } from './CreatureFieldStats'
+import { FieldCardSlot } from './FieldCardSlot'
 
 const LAND_SURFACE_Y = 0.002
-const FIELD_CARD_SCALE = computeFieldCardScale(0.88)
 
 /** Плоская земля — ровно LANE_WIDTH × HALF_LANE_DEPTH, без налезания на соседей. */
 function LandMat({ landType, onClick, isSelected }) {
@@ -101,27 +98,6 @@ function SlotPad({ slot, slotType, zoneIndex, playable, rayHovered, tint, onClic
   )
 }
 
-function renderFieldCard(card, slot, { isMyTurn, isOwnerMe, isSelected, isAttackerSelected, onZoneCardClick, recentDamage }) {
-  if (!card) return null
-  const isFlipped = card?.status === 'flipped' || card?.isFlipped
-  return (
-    <EnhancedCard3DModel
-      key={card.id || card.instanceId}
-      card={card}
-      position={[slot.x, LAND_SURFACE_Y + 0.004, slot.z]}
-      rotation={[-Math.PI / 2, 0, isFlipped ? Math.PI / 2 : 0]}
-      flatOnTable
-      tableScale={FIELD_CARD_SCALE}
-      isFaceUp
-      isSelected={isSelected || isAttackerSelected}
-      isFlipped={isFlipped}
-      showStats={false}
-      showFlipOption={isMyTurn && isOwnerMe}
-      onClick={() => onZoneCardClick?.(card)}
-    />
-  )
-}
-
 function DamageFloater({ amount, slot }) {
   if (!amount) return null
   return (
@@ -140,7 +116,7 @@ function DamageFloater({ amount, slot }) {
   )
 }
 
-export function ZoneColumn({
+export const ZoneColumn = memo(function ZoneColumn({
   center,
   rotationY = 0,
   landType = null,
@@ -210,28 +186,27 @@ export function ZoneColumn({
         }}
       />
 
-      {renderFieldCard(creatureCard, slots.creature, {
-        isMyTurn,
-        isOwnerMe,
-        isSelected,
-        isAttackerSelected,
-        onZoneCardClick,
-      })}
-      {renderFieldCard(buildingCard, slots.building, {
-        isMyTurn,
-        isOwnerMe,
-        isSelected: false,
-        isAttackerSelected: false,
-        onZoneCardClick,
-      })}
+      <FieldCardSlot
+        slot={slots.creature}
+        slotKind="creature"
+        card={creatureCard}
+        isSelected={isSelected || isAttackerSelected}
+        isFlipped={Boolean(creatureCard?.status === 'flipped' || creatureCard?.isFlipped)}
+        onClick={onZoneCardClick}
+      />
+
+      <FieldCardSlot
+        slot={slots.building}
+        slotKind="building"
+        card={buildingCard}
+        isSelected={false}
+        isFlipped={Boolean(buildingCard?.status === 'flipped' || buildingCard?.isFlipped)}
+        onClick={onZoneCardClick}
+      />
 
       {damageAmount != null && creatureCard && (
         <DamageFloater amount={damageAmount} slot={slots.creature} />
       )}
-
-      {creatureCard && (
-        <CreatureFieldStats card={creatureCard} slot={slots.creature} rotationY={rotationY} />
-      )}
     </group>
   )
-}
+})

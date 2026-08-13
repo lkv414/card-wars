@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useRef } from 'react'
+import React, { useMemo, useCallback, useState, useRef, memo } from 'react'
 import { safePlayers, safePlayer } from '../../../utils/safePlayer'
 import { hasFlipAbility } from '../../../hooks/game'
 import { normalizePlayerZoneRows, normalizeZoneCards } from '../../../hooks/game/format'
@@ -20,7 +20,7 @@ import { PlacementPointerRelease } from './PlacementPointerRelease'
 import { AttackDirectionHint } from './AttackDirectionHint'
 import { PlayerNameLabels } from './PlayerNameLabels'
 
-export function GameScene({
+export const GameScene = memo(function GameScene({
   game,
   playerId,
   landCatalog = {},
@@ -351,4 +351,4 @@ export function GameScene({
       />
     </>
   )
-}
+})

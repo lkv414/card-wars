@@ -78,7 +78,18 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
 
       }
 
-
+      if (typeof patchGame === 'function') {
+        patchGame(
+          (state) =>
+            applyPlayCardPatch(state, me.player_id, cardIndex, zoneIndex, slot, {
+              version: (state.version ?? 0) + 1,
+              actions_remaining: actionsLeft - actionCost,
+              action_cost: actionCost,
+              card,
+            }, cardCatalog),
+          'optimistic:play_card'
+        )
+      }
 
       const ws = await runViaTransport(transport, 'play_card', {
         cardIndex,

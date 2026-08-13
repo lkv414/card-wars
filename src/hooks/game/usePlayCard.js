@@ -28,7 +28,7 @@ import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 
 
-export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport } = {}) {
+export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport, applyTransportState } = {}) {
 
   return useCallback(
 
@@ -88,7 +88,12 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
       const wsErr = transportError(ws)
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
-      if (wsOk) return wsOk
+      if (wsOk) {
+        if (typeof applyTransportState === 'function' && wsOk.state) {
+          await applyTransportState(wsOk.state, 'ws:action:play_card')
+        }
+        return wsOk
+      }
 
 
 
@@ -329,7 +334,7 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
 
     },
 
-    [game, patchGame, cardCatalog, transport]
+    [game, patchGame, cardCatalog, transport, applyTransportState]
 
   )
 

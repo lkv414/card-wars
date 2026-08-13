@@ -12,7 +12,7 @@ import { getGuestId } from '../../utils/guestId'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function useDrawFreeCard(game, _reload, { patchGame, transport, suppressRealtimeReload } = {}) {
+export function useDrawFreeCard(game, _reload, { patchGame, transport, suppressRealtimeReload, applyTransportState } = {}) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
@@ -23,7 +23,12 @@ export function useDrawFreeCard(game, _reload, { patchGame, transport, suppressR
     const wsErr = transportError(ws)
     if (wsErr) return wsErr
     const wsOk = transportOk(ws, { draw_type: 'free' })
-    if (wsOk) return wsOk
+    if (wsOk) {
+      if (typeof applyTransportState === 'function' && wsOk.state) {
+        await applyTransportState(wsOk.state, 'ws:action:draw')
+      }
+      return wsOk
+    }
 
     const { data, error: rpcErr } = await supabase.rpc('draw_free_card', {
       p_game_id: game.id,
@@ -57,5 +62,5 @@ export function useDrawFreeCard(game, _reload, { patchGame, transport, suppressR
     })
 
     return { success: true, draw_type: 'free' }
-  }, [game, patchGame, transport, suppressRealtimeReload])
+  }, [game, patchGame, transport, suppressRealtimeReload, applyTransportState])
 }

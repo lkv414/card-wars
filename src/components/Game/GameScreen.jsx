@@ -299,8 +299,14 @@ export function GameScreen() {
   })
 
   const gameActions = useMemo(
-    () => ({ patchGame, cardCatalog, transport, suppressRealtimeReload }),
-    [patchGame, cardCatalog, transport, suppressRealtimeReload]
+    () => ({
+      patchGame,
+      cardCatalog,
+      transport,
+      suppressRealtimeReload,
+      applyTransportState: applyIncomingRpcState,
+    }),
+    [patchGame, cardCatalog, transport, suppressRealtimeReload, applyIncomingRpcState]
   )
 
   const {

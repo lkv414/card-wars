@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
-import { publishGameSync } from '../../utils/gameSync'
 import { normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -62,14 +61,6 @@ export function useDiscardFromHand(game, reload, { patchGame, transport, suppres
         if (typeof suppressRealtimeReload === 'function') {
           suppressRealtimeReload(3000)
         }
-
-        await publishGameSync(game.id, {
-          type: 'discard_from_hand',
-          version: data.version,
-          actorId: me.player_id,
-          playerId: me.player_id,
-          rpcData: data,
-        })
         return { success: true }
       }
 

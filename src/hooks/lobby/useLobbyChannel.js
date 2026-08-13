@@ -1,26 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { subscribeAblyLobby } from './createLobbyChannel'
-import { isGameWsEnabled } from '../../utils/gameWebSocket'
 
-export function useLobbyChannel({
-  setPlayers,
-  setStatus,
-  setDismissedMessage,
-  resetLobbyState,
-  onGameStarted,
-  lobbyTransport,
-}) {
+export function useLobbyChannel({ resetLobbyState, lobbyTransport }) {
   const unsubscribeRef = useRef(null)
   const [connectionStatus, setConnectionStatus] = useState('connecting')
   const [onlinePlayerIds, setOnlinePlayerIds] = useState([])
-
-  const handlersRef = useRef({})
-  handlersRef.current = {
-    setPlayers,
-    setStatus,
-    setDismissedMessage,
-    onGameStarted,
-  }
 
   const resetLobby = useCallback(() => {
     if (unsubscribeRef.current) {
@@ -33,31 +16,17 @@ export function useLobbyChannel({
   }, [resetLobbyState, lobbyTransport])
 
   const subscribeToLobby = useCallback(
-    (id, { nickname } = {}) => {
+    (id) => {
       if (unsubscribeRef.current) {
         unsubscribeRef.current()
         unsubscribeRef.current = null
       }
-
-      if (isGameWsEnabled() && lobbyTransport?.connect) {
+      if (lobbyTransport?.connect) {
         lobbyTransport.connect(id)
         unsubscribeRef.current = () => lobbyTransport.disconnect()
-        return
       }
-
-      const h = handlersRef.current
-      unsubscribeRef.current = subscribeAblyLobby(id, {
-        nickname,
-        setPlayers: h.setPlayers,
-        setStatus: h.setStatus,
-        setDismissedMessage: h.setDismissedMessage,
-        resetLobby,
-        onGameStarted: h.onGameStarted,
-        onConnectionChange: setConnectionStatus,
-        onPresenceChange: setOnlinePlayerIds,
-      })
     },
-    [resetLobby, lobbyTransport]
+    [lobbyTransport]
   )
 
   useEffect(
@@ -70,20 +39,20 @@ export function useLobbyChannel({
     []
   )
 
-  const wsStatus = lobbyTransport?.status
-  const effectiveConnectionStatus =
-    isGameWsEnabled() && wsStatus && wsStatus !== 'idle' && wsStatus !== 'disabled'
-      ? wsStatus === 'connected'
-        ? 'connected'
-        : wsStatus === 'connecting'
-          ? 'connecting'
-          : 'disconnected'
-      : connectionStatus
+  useEffect(() => {
+    const wsStatus = lobbyTransport?.status
+    if (!wsStatus || wsStatus === 'idle') return
+    if (wsStatus === 'connected') setConnectionStatus('connected')
+    else if (wsStatus === 'connecting') setConnectionStatus('connecting')
+    else if (wsStatus === 'reconnecting') setConnectionStatus('reconnecting')
+    else setConnectionStatus('disconnected')
+  }, [lobbyTransport?.status])
 
   return {
     unsubscribeRef,
     subscribeToLobby,
-    connectionStatus: effectiveConnectionStatus,
+    connectionStatus,
     onlinePlayerIds,
+    resetLobby,
   }
 }

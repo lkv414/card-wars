@@ -6,7 +6,6 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
-import { publishGameSync } from '../../utils/gameSync'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -37,11 +36,6 @@ export function useShuffleDeck(game, reload, { transport } = {}) {
     if (data?.error) return { error: data.error }
 
     if (typeof reload === 'function') await reload()
-    await publishGameSync(game.id, {
-      type: 'reload',
-      version: data.version,
-      actorId: me.player_id,
-    })
     return { success: true }
   }, [game, reload, transport])
 }

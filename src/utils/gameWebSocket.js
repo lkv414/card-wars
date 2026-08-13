@@ -1,15 +1,27 @@
 /**
  * WebSocket client for Cloudflare GameRoom / LobbyRoom Durable Objects.
  *
- * Env: VITE_GAME_WS_URL — e.g. http://127.0.0.1:8787 (wrangler dev) or wss://card-wars-game.<account>.workers.dev
+ * Required env: VITE_GAME_WS_URL
+ * e.g. http://127.0.0.1:8787 (wrangler dev) or https://card-wars-game.<account>.workers.dev
  */
 
-export function isGameWsEnabled() {
+const MAX_RECONNECT_DELAY_MS = 15_000
+
+export function isGameWsConfigured() {
   return Boolean(import.meta.env.VITE_GAME_WS_URL?.trim())
 }
 
+/** @deprecated use isGameWsConfigured */
+export function isGameWsEnabled() {
+  return isGameWsConfigured()
+}
+
 export function getGameWsBaseUrl() {
-  return import.meta.env.VITE_GAME_WS_URL?.trim() ?? ''
+  const base = import.meta.env.VITE_GAME_WS_URL?.trim()
+  if (!base) {
+    throw new Error('VITE_GAME_WS_URL не задан — realtime через Cloudflare Workers недоступен')
+  }
+  return base
 }
 
 function wsBaseHost(baseUrl) {
@@ -21,6 +33,15 @@ function wsBaseHost(baseUrl) {
   const protocol = base.startsWith('https') ? 'wss' : 'ws'
   const host = base.replace(/^https?:\/\//, '')
   return `${protocol}://${host}`
+}
+
+function httpBaseHost(baseUrl) {
+  const base = String(baseUrl ?? '').replace(/\/$/, '')
+  if (!base) return null
+  if (base.startsWith('http://') || base.startsWith('https://')) {
+    return base.replace(/\/$/, '')
+  }
+  return `https://${base.replace(/^wss?:\/\//, '')}`
 }
 
 export function gameWsUrl(baseUrl, gameId) {
@@ -35,38 +56,105 @@ export function lobbyWsUrl(baseUrl, lobbyId) {
   return `${root}/lobby/${lobbyId}/ws`
 }
 
-function createSocket({ url, clientId, onMessage, onError, onClose }) {
-  const ws = new WebSocket(url)
+/** Ask LobbyRoom DO to push fresh snapshot to all connected clients. */
+export async function notifyLobbyRoom(lobbyId) {
+  if (!lobbyId) return
+  const httpRoot = httpBaseHost(getGameWsBaseUrl())
+  if (!httpRoot) return
+  try {
+    await fetch(`${httpRoot}/lobby/${lobbyId}/notify`, { method: 'POST' })
+  } catch (err) {
+    console.warn('[lobby] notify failed:', err?.message || err)
+  }
+}
 
-  ws.addEventListener('open', () => {
-    ws.send(JSON.stringify({ type: 'join', clientId }))
-  })
+/**
+ * Reconnecting WebSocket — server-authoritative sync pattern:
+ * join on connect → receive full state snapshot → auto-rejoin on disconnect.
+ *
+ * @param {object} options
+ */
+function createReconnectingSocket({
+  url,
+  clientId,
+  onMessage,
+  onError,
+  onClose,
+  onStatusChange,
+}) {
+  /** @type {WebSocket | null} */
+  let ws = null
+  let intentionalClose = false
+  let retryAttempt = 0
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let retryTimer = null
 
-  ws.addEventListener('message', (event) => {
-    try {
-      onMessage?.(JSON.parse(String(event.data)))
-    } catch {
-      /* ignore */
+  const clearRetry = () => {
+    if (retryTimer) {
+      clearTimeout(retryTimer)
+      retryTimer = null
     }
-  })
+  }
 
-  ws.addEventListener('error', (e) => onError?.(e))
-  ws.addEventListener('close', () => onClose?.())
+  const connect = () => {
+    if (intentionalClose) return
+    onStatusChange?.('connecting')
+    ws = new WebSocket(url)
+
+    ws.addEventListener('open', () => {
+      retryAttempt = 0
+      ws.send(JSON.stringify({ type: 'join', clientId }))
+    })
+
+    ws.addEventListener('message', (event) => {
+      try {
+        onMessage?.(JSON.parse(String(event.data)))
+      } catch {
+        /* ignore malformed */
+      }
+    })
+
+    ws.addEventListener('error', (e) => onError?.(e))
+
+    ws.addEventListener('close', () => {
+      ws = null
+      onClose?.()
+      if (intentionalClose) return
+      onStatusChange?.('reconnecting')
+      const delay = Math.min(1000 * 2 ** retryAttempt, MAX_RECONNECT_DELAY_MS)
+      retryAttempt += 1
+      clearRetry()
+      retryTimer = setTimeout(connect, delay)
+    })
+  }
+
+  connect()
 
   return {
     close() {
-      ws.close()
+      intentionalClose = true
+      clearRetry()
+      ws?.close()
+      ws = null
     },
-    raw: ws,
+    send(data) {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        throw new Error('WebSocket not connected')
+      }
+      ws.send(data)
+    },
+    get raw() {
+      return ws
+    },
   }
 }
 
 /** @param {object} options */
 export function connectGameSocket(options) {
-  return createSocket(options)
+  return createReconnectingSocket(options)
 }
 
 /** @param {object} options */
 export function connectLobbySocket(options) {
-  return createSocket(options)
+  return createReconnectingSocket(options)
 }

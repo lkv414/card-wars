@@ -1,7 +1,7 @@
 /**
  * GameScreen
- * Загружает gameState из Supabase по gameId.
- * Realtime: Cloudflare Workers WebSocket (если VITE_GAME_WS_URL) или Ably fallback.
+ * Server-authoritative sync via Cloudflare Workers WebSocket (GameRoom DO).
+ * State updates in-place via React — no page reloads.
  */
 import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -12,12 +12,21 @@ import { useGameAction } from '../../hooks/game'
 import { useLandSetup } from '../../hooks/game/useLandSetup'
 import { useLands } from '../../hooks/useLands'
 import { useCards } from '../../hooks/useCards'
-import { buildCardCatalog, enrichGameStateAsync, collectMissingCardIds } from '../../utils/enrichGameCards'
+import {
+  buildCardCatalog,
+  enrichGameState,
+  enrichGameStateAsync,
+  collectMissingCardIds,
+} from '../../utils/enrichGameCards'
 import { mapRpcGameState } from '../../utils/mapGameState'
-import { isGameWsEnabled } from '../../utils/gameWebSocket'
+import { stabilizeGameState } from '../../utils/stabilizeGameState'
+import {
+  forgetGameSession,
+  peekGameSession,
+  rememberGameSession,
+} from '../../utils/gameSessionCache'
+import { isGameWsConfigured } from '../../utils/gameWebSocket'
 import { useGameTransport, wsConnectionLabel } from '../../hooks/useGameTransport'
-import { useAblyChannel } from '../../hooks/useAblyChannel'
-import { GAME_SYNC_EVENT, applyIncomingGameSync } from '../../utils/gameSync'
 import { gameDebugLog, gameDebugSnapshot } from '../../utils/gameDebug'
 import { useToasts } from '../../hooks/useToasts'
 import { Toasts } from '../Shared/Toasts'
@@ -25,13 +34,13 @@ import { Toasts } from '../Shared/Toasts'
 const GameBoard3D = lazy(() => import('./GameBoard3D'))
 
 const DUPLICATE_LOAD_MS = 600
-const POLL_INTERVAL_MS = 3000
+const WS_FALLBACK_LOAD_MS = 12_000
 
 export function GameScreen() {
   const { gameId } = useParams()
   const navigate = useNavigate()
   const guestId = getGuestId()
-  const wsEnabled = isGameWsEnabled()
+  const wsConfigured = isGameWsConfigured()
 
   const [game, setGame] = useState(null)
   const [error, setError] = useState(null)
@@ -61,6 +70,8 @@ export function GameScreen() {
   const gameRef = useRef(null)
   const suppressReloadUntilRef = useRef(0)
   const lastLoadMetaRef = useRef({ source: '', at: 0, version: 0 })
+  const prevGameIdRef = useRef(null)
+  const applyStateQueueRef = useRef(Promise.resolve())
 
   const commitGameState = useCallback(
     (nextGame, source = 'commit') => {
@@ -76,23 +87,32 @@ export function GameScreen() {
         return false
       }
 
+      const prev = gameRef.current
+      const merged = prev ? stabilizeGameState(prev, nextGame) : nextGame
+      if (merged === prev && hasLoadedOnceRef.current) {
+        gameVersionRef.current = Math.max(currentVersion, nextVersion)
+        gameDebugLog('skip', 'commit unchanged (stable refs)', { source, version: nextVersion })
+        return true
+      }
+
       gameVersionRef.current = nextVersion
-      gameRef.current = nextGame
-      catalogEnrichKeyRef.current = `${nextGame.id}:${nextGame.version}:${cardCatalogRef.current.size}`
+      gameRef.current = merged
+      rememberGameSession(merged.id, merged)
+      catalogEnrichKeyRef.current = `${merged.id}:${merged.version}:${cardCatalogRef.current.size}`
 
       gameDebugLog('patch', 'commitGameState', {
         source,
         from: currentVersion,
         to: nextVersion,
-        snapshot: gameDebugSnapshot(nextGame, gameVersionRef),
+        snapshot: gameDebugSnapshot(merged, gameVersionRef),
       })
 
       if (!hasLoadedOnceRef.current) {
-        setGame(nextGame)
+        setGame(merged)
         setLoading(false)
         hasLoadedOnceRef.current = true
       } else {
-        setGame(nextGame)
+        setGame(merged)
       }
       return true
     },
@@ -274,18 +294,46 @@ export function GameScreen() {
   }, [catalogLoading, cardCatalog, game, game?.id, game?.version, commitGameState])
 
   const reloadAfterAction = useCallback(
-    (source = 'action', opts = {}) => requestLoadGame(`action:${source}`, opts),
-    [requestLoadGame]
+    async (source = 'action', opts = {}) => {
+      if (wsConfigured) return gameRef.current
+      return requestLoadGame(`action:${source}`, opts)
+    },
+    [wsConfigured, requestLoadGame]
   )
 
   const applyIncomingRpcState = useCallback(
-    async (rawState, source = 'ws:state') => {
-      if (!rawState) return
-      const mapped = mapRpcGameState(rawState)
-      const catalog = cardCatalogRef.current
-      const nextGame =
-        catalog.size > 0 ? await enrichGameStateAsync(mapped, catalog, supabase) : mapped
-      commitGameState(nextGame, source)
+    (rawState, source = 'ws:state') => {
+      if (!rawState) return Promise.resolve()
+
+      applyStateQueueRef.current = applyStateQueueRef.current
+        .then(async () => {
+          const incomingVersion = Number(rawState.version ?? 0)
+          const currentVersion = gameVersionRef.current ?? 0
+          if (incomingVersion < currentVersion && currentVersion > 0) {
+            gameDebugLog('skip', 'ws state stale', { source, incomingVersion, currentVersion })
+            return
+          }
+
+          const mapped = mapRpcGameState(rawState)
+          const catalog = cardCatalogRef.current
+          let nextGame = mapped
+
+          if (catalog.size > 0) {
+            const missing = collectMissingCardIds(mapped, catalog)
+            nextGame =
+              missing.length === 0
+                ? enrichGameState(mapped, catalog)
+                : await enrichGameStateAsync(mapped, catalog, supabase)
+          }
+
+          if (Number(nextGame.version ?? 0) < (gameVersionRef.current ?? 0)) return
+          commitGameState(nextGame, source)
+        })
+        .catch((err) => {
+          gameDebugLog('ws', 'apply state failed', { source, error: err?.message || String(err) })
+        })
+
+      return applyStateQueueRef.current
     },
     [commitGameState]
   )
@@ -298,15 +346,17 @@ export function GameScreen() {
     onError: (message) => toast('error', message),
   })
 
+  const connectionStatus = wsConnectionLabel(transport.status)
+
   const gameActions = useMemo(
     () => ({
       patchGame,
       cardCatalog,
       transport,
       suppressRealtimeReload,
-      applyTransportState: applyIncomingRpcState,
+      reloadEnabled: !wsConfigured,
     }),
-    [patchGame, cardCatalog, transport, suppressRealtimeReload, applyIncomingRpcState]
+    [patchGame, cardCatalog, transport, suppressRealtimeReload, wsConfigured]
   )
 
   const {
@@ -330,108 +380,63 @@ export function GameScreen() {
     if (actionError) toast('error', actionError)
   }, [actionError, toast])
 
-  const syncCommitGame = useCallback(
-    (nextGame) => commitGameState(nextGame, 'sync:patch'),
-    [commitGameState]
-  )
-
-  const syncCtxRef = useRef({})
-  syncCtxRef.current = {
-    guestId,
-    cardCatalog,
-    getGame: () => gameRef.current,
-    commitGame: syncCommitGame,
-    requestLoadGame,
-    gameVersionRef,
-  }
-
-  const handleAblySyncStable = useCallback((message) => {
-    applyIncomingGameSync(message.data, syncCtxRef.current)
-  }, [])
-
-  const handleAblySubscribed = useCallback(() => {
-    if (!hasLoadedOnceRef.current) {
-      requestLoadGame('ably:subscribe-initial')
-      return
-    }
-    gameDebugLog('ably', 'subscribed (skip load — already have state)', {
-      version: gameVersionRef.current,
-    })
-  }, [requestLoadGame])
-
-  const realtimeStatus = useAblyChannel({
-    channelName: !wsEnabled && gameId ? `game:${gameId}` : null,
-    eventName: GAME_SYNC_EVENT,
-    onMessage: handleAblySyncStable,
-    onSubscribed: handleAblySubscribed,
-  })
-
-  const connectionStatus = wsEnabled ? wsConnectionLabel(transport.status) : realtimeStatus
-
   useEffect(() => {
-    if (wsEnabled || !gameId || loading || !game) return undefined
-
-    let cancelled = false
-    const pollVersion = async () => {
-      const { data, error: pollErr } = await supabase
-        .from('games')
-        .select('version')
-        .eq('id', gameId)
-        .maybeSingle()
-
-      if (cancelled) return
-      if (pollErr) {
-        gameDebugLog('poll', 'error', { error: pollErr.message })
-        return
-      }
-
-      const remoteVersion = data?.version ?? 0
-      const localVersion = gameVersionRef.current ?? 0
-
-      if (remoteVersion <= localVersion) return
-
-      gameDebugLog('poll', 'version ahead', { remoteVersion, localVersion })
-      requestLoadGame('poll:version')
-    }
-
-    pollVersion()
-    const timer = setInterval(pollVersion, POLL_INTERVAL_MS)
-    return () => {
-      cancelled = true
-      clearInterval(timer)
-    }
-  }, [gameId, loading, game, requestLoadGame, wsEnabled])
-
-  useEffect(() => {
-    if (!wsEnabled || !gameId) return undefined
+    if (!wsConfigured || !gameId) return undefined
     const timer = setTimeout(() => {
       if (!hasLoadedOnceRef.current) {
         gameDebugLog('ws', 'fallback load (no state yet)')
         requestLoadGame('ws:fallback', { force: true })
       }
-    }, 12_000)
+    }, WS_FALLBACK_LOAD_MS)
     return () => clearTimeout(timer)
-  }, [wsEnabled, gameId, requestLoadGame])
+  }, [wsConfigured, gameId, requestLoadGame])
 
   useEffect(() => {
     if (!gameId) return undefined
-    if (wsEnabled) {
-      hasLoadedOnceRef.current = false
-      gameVersionRef.current = 0
-      gameRef.current = null
+
+    if (prevGameIdRef.current && prevGameIdRef.current !== gameId) {
+      forgetGameSession(prevGameIdRef.current)
+    }
+    prevGameIdRef.current = gameId
+
+    const cached = peekGameSession(gameId)
+    if (cached) {
+      hasLoadedOnceRef.current = true
+      gameVersionRef.current = cached.version ?? 0
+      gameRef.current = cached
+      setGame(cached)
+      setLoading(false)
+      setError(null)
       return undefined
     }
+
     hasLoadedOnceRef.current = false
     gameVersionRef.current = 0
     gameRef.current = null
+    setLoading(true)
+    setGame(null)
+    setError(null)
 
-    const frameId = requestAnimationFrame(() => {
+    if (!wsConfigured) {
       requestLoadGame('mount:gameId', { force: true })
-    })
-    return () => cancelAnimationFrame(frameId)
-  }, [gameId, requestLoadGame, wsEnabled])
+    }
 
-  if (loading) {
+    return undefined
+  }, [gameId, wsConfigured, requestLoadGame])
+
+  if (!wsConfigured) {
+    return (
+      <main className="game-error" role="alert">
+        <h1>Realtime недоступен</h1>
+        <p>
+          Задайте <code>VITE_GAME_WS_URL</code> (Cloudflare Workers) для multiplayer.
+        </p>
+        <button type="button" onClick={() => navigate('/lobby')}>← Назад в лобби</button>
+      </main>
+    )
+  }
+
+  if (loading && !game) {
     return <div className="game-loading" role="status" aria-live="polite">Загружаем игру...</div>
   }
 

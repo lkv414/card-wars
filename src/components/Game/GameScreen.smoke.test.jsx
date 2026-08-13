@@ -1,20 +1,17 @@
-import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
-const mockRpc = vi.fn()
+const isGameWsConfigured = vi.fn(() => true)
 
 vi.mock('../../utils/supabase', () => ({
   supabase: {
-    rpc: (...args) => mockRpc(...args),
+    rpc: vi.fn(),
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       maybeSingle: vi.fn().mockResolvedValue({ data: { version: 1 }, error: null }),
     })),
-    channel: vi.fn(() => ({ on: vi.fn().mockReturnThis(), subscribe: vi.fn() })),
-    removeChannel: vi.fn(),
   },
 }))
 
@@ -26,6 +23,12 @@ vi.mock('../../utils/guestSession', () => ({
   ensureGuestId: vi.fn(async () => {}),
 }))
 
+vi.mock('../../utils/gameWebSocket', () => ({
+  isGameWsConfigured: () => isGameWsConfigured(),
+  isGameWsEnabled: () => isGameWsConfigured(),
+  getGameWsBaseUrl: () => 'http://127.0.0.1:8787',
+}))
+
 vi.mock('../../hooks/useLands', () => ({
   useLands: () => ({ lands: [] }),
 }))
@@ -34,14 +37,10 @@ vi.mock('../../hooks/useCards', () => ({
   useCards: () => ({ cards: [], loading: false }),
 }))
 
-vi.mock('../../hooks/useAblyChannel', () => ({
-  useAblyChannel: () => 'connected',
-}))
-
 vi.mock('../../hooks/useGameTransport', () => ({
   useGameTransport: () => ({
-    enabled: false,
-    status: 'disabled',
+    enabled: true,
+    status: 'connecting',
     sendActionAsync: vi.fn(),
   }),
   wsConnectionLabel: (s) => s,
@@ -86,22 +85,19 @@ function renderGame(gameId = 'game-1') {
 
 describe('GameScreen smoke', () => {
   beforeEach(() => {
-    mockRpc.mockReset()
+    isGameWsConfigured.mockReturnValue(true)
   })
 
-  it('shows loading while game fetch is in flight', async () => {
-    mockRpc.mockReturnValue(new Promise(() => {}))
-
+  it('shows loading while waiting for WS state', () => {
     renderGame()
     expect(screen.getByRole('status')).toHaveTextContent(/загружаем игру/i)
   })
 
-  it('shows error when game fetch fails', async () => {
-    mockRpc.mockResolvedValue({ data: null, error: { message: 'DB down' } })
-
+  it('shows alert when VITE_GAME_WS_URL is missing', async () => {
+    isGameWsConfigured.mockReturnValue(false)
     renderGame()
     await waitFor(() => {
-      expect(screen.getByRole('main')).toHaveTextContent('DB down')
+      expect(screen.getByRole('alert')).toHaveTextContent(/VITE_GAME_WS_URL/i)
     })
   })
 })

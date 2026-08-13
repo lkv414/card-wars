@@ -1,25 +1,27 @@
 /**
- * WebSocket transport for game room — promise-based actions + live state push.
+ * WebSocket transport for game room — server-authoritative state push.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   connectGameSocket,
   gameWsUrl,
   getGameWsBaseUrl,
-  isGameWsEnabled,
+  isGameWsConfigured,
 } from '../utils/gameWebSocket'
 
 const ACTION_TIMEOUT_MS = 45_000
 
-export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
-  const [status, setStatus] = useState(() => (isGameWsEnabled() ? 'connecting' : 'disabled'))
+export function useGameTransport(gameId, clientId, { onState, onError, onPresence } = {}) {
+  const [status, setStatus] = useState(() => (isGameWsConfigured() ? 'connecting' : 'disabled'))
   const socketRef = useRef(null)
   const pendingRef = useRef(new Map())
   const seqRef = useRef(0)
   const onStateRef = useRef(onState)
   const onErrorRef = useRef(onError)
+  const onPresenceRef = useRef(onPresence)
   onStateRef.current = onState
   onErrorRef.current = onError
+  onPresenceRef.current = onPresence
 
   const settlePending = useCallback((requestId, fn) => {
     if (!requestId) return
@@ -45,6 +47,10 @@ export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
         setStatus('connected')
         return
       }
+      if (msg?.type === 'presence') {
+        onPresenceRef.current?.(msg.onlineIds ?? [])
+        return
+      }
       if (msg?.type === 'state') {
         onStateRef.current?.(msg.game, msg)
         settlePending(msg.requestId, ({ resolve }) => resolve(msg.game))
@@ -54,7 +60,7 @@ export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
   )
 
   useEffect(() => {
-    if (!isGameWsEnabled() || !gameId || !clientId) {
+    if (!isGameWsConfigured() || !gameId || !clientId) {
       setStatus('disabled')
       return undefined
     }
@@ -71,7 +77,12 @@ export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
       clientId,
       onMessage: handleMessage,
       onError: () => setStatus('error'),
-      onClose: () => setStatus('closed'),
+      onClose: () => {
+        setStatus('reconnecting')
+      },
+      onStatusChange: (next) => {
+        setStatus(next === 'connected' ? 'connected' : next)
+      },
     })
     socketRef.current = socket
 
@@ -95,7 +106,13 @@ export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
       seqRef.current += 1
       const requestId = `g${seqRef.current}`
       pendingRef.current.set(requestId, { resolve, reject })
-      socket.raw.send(JSON.stringify({ type: 'action', action, payload, requestId }))
+      try {
+        socket.send(JSON.stringify({ type: 'action', action, payload, requestId }))
+      } catch (err) {
+        pendingRef.current.delete(requestId)
+        reject(err)
+        return
+      }
       setTimeout(() => {
         if (!pendingRef.current.has(requestId)) return
         pendingRef.current.delete(requestId)
@@ -106,7 +123,7 @@ export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
 
   return useMemo(
     () => ({
-      enabled: isGameWsEnabled(),
+      enabled: isGameWsConfigured(),
       status,
       sendActionAsync,
     }),
@@ -117,6 +134,7 @@ export function useGameTransport(gameId, clientId, { onState, onError } = {}) {
 export function wsConnectionLabel(status) {
   if (status === 'connected') return 'connected'
   if (status === 'connecting') return 'connecting'
-  if (status === 'disabled') return 'connecting'
+  if (status === 'reconnecting') return 'reconnecting'
+  if (status === 'disabled') return 'disconnected'
   return 'disconnected'
 }

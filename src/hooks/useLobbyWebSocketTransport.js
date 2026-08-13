@@ -1,23 +1,27 @@
 /**
- * WebSocket transport for lobby room.
+ * WebSocket transport for lobby room — server-authoritative lobby snapshots.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   connectLobbySocket,
   getGameWsBaseUrl,
-  isGameWsEnabled,
+  isGameWsConfigured,
   lobbyWsUrl,
 } from '../utils/gameWebSocket'
 
 const ACTION_TIMEOUT_MS = 45_000
 
-export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate } = {}) {
-  const [status, setStatus] = useState(() => (isGameWsEnabled() ? 'idle' : 'disabled'))
+export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, onClosed, onPresence } = {}) {
+  const [status, setStatus] = useState(() => (isGameWsConfigured() ? 'idle' : 'disabled'))
   const socketRef = useRef(null)
   const pendingRef = useRef(new Map())
   const seqRef = useRef(0)
   const onLobbyUpdateRef = useRef(onLobbyUpdate)
+  const onClosedRef = useRef(onClosed)
+  const onPresenceRef = useRef(onPresence)
   onLobbyUpdateRef.current = onLobbyUpdate
+  onClosedRef.current = onClosed
+  onPresenceRef.current = onPresence
 
   const settlePending = useCallback((requestId, fn) => {
     if (!requestId) return
@@ -27,9 +31,37 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate } 
     fn(entry)
   }, [])
 
+  const handleMessage = useCallback(
+    (msg) => {
+      if (msg?.type === 'error') {
+        settlePending(msg.requestId, ({ reject }) =>
+          reject(new Error(msg.message || 'Lobby action failed'))
+        )
+        return
+      }
+      if (msg?.type === 'joined') {
+        setStatus('connected')
+        return
+      }
+      if (msg?.type === 'closed') {
+        onClosedRef.current?.(msg.reason)
+        return
+      }
+      if (msg?.type === 'presence') {
+        onPresenceRef.current?.(msg.onlineIds ?? [])
+        return
+      }
+      if (msg?.type === 'lobby') {
+        settlePending(msg.requestId, ({ resolve }) => resolve(msg.lobby))
+        onLobbyUpdateRef.current?.(msg.lobby, msg)
+      }
+    },
+    [settlePending]
+  )
+
   const connect = useCallback(
     (id) => {
-      if (!isGameWsEnabled() || !id || !clientId) return
+      if (!isGameWsConfigured() || !id || !clientId) return
 
       if (socketRef.current) {
         socketRef.current.close()
@@ -43,28 +75,19 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate } 
       const socket = connectLobbySocket({
         url,
         clientId,
-        onMessage: (msg) => {
-          if (msg?.type === 'error') {
-            settlePending(msg.requestId, ({ reject }) =>
-              reject(new Error(msg.message || 'Lobby action failed'))
-            )
-            return
-          }
-          if (msg?.type === 'joined') {
-            setStatus('connected')
-            return
-          }
-          if (msg?.type === 'lobby') {
-            settlePending(msg.requestId, ({ resolve }) => resolve(msg.lobby))
-            onLobbyUpdateRef.current?.(msg.lobby, msg)
-          }
-        },
+        onMessage: handleMessage,
         onError: () => setStatus('error'),
-        onClose: () => setStatus('closed'),
+        onClose: () => {
+          if (socketRef.current) setStatus('reconnecting')
+        },
+        onStatusChange: (next) => {
+          if (next === 'reconnecting') setStatus('reconnecting')
+          else if (next === 'connecting') setStatus('connecting')
+        },
       })
       socketRef.current = socket
     },
-    [clientId, settlePending]
+    [clientId, handleMessage]
   )
 
   const disconnect = useCallback(() => {
@@ -96,7 +119,13 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate } 
       seqRef.current += 1
       const requestId = `l${seqRef.current}`
       pendingRef.current.set(requestId, { resolve, reject })
-      socket.raw.send(JSON.stringify({ type: 'action', action, payload, requestId }))
+      try {
+        socket.send(JSON.stringify({ type: 'action', action, payload, requestId }))
+      } catch (err) {
+        pendingRef.current.delete(requestId)
+        reject(err)
+        return
+      }
       setTimeout(() => {
         if (!pendingRef.current.has(requestId)) return
         pendingRef.current.delete(requestId)
@@ -107,7 +136,7 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate } 
 
   return useMemo(
     () => ({
-      enabled: isGameWsEnabled(),
+      enabled: isGameWsConfigured(),
       status,
       connect,
       disconnect,

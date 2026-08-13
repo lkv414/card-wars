@@ -10,6 +10,8 @@ export type ServerMessage =
   | { type: 'pong'; requestId?: string }
   | { type: 'state'; version: number; game: unknown; requestId?: string }
   | { type: 'lobby'; lobby: unknown; requestId?: string }
+  | { type: 'presence'; onlineIds: string[]; requestId?: string }
+  | { type: 'closed'; reason?: string; requestId?: string }
   | { type: 'error'; code: string; message: string; requestId?: string }
 
 /** RPC names aligned with Supabase — engine port will replace these calls in-process. */

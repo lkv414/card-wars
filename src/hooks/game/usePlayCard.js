@@ -23,12 +23,12 @@ import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { getCardCost } from '../../utils/cardFields.ts'
 
 import { applyPlayCardPatch } from '../../utils/gameStatePatch'
-import { publishGameSync, enrichZoneCardsForSync } from '../../utils/gameSync'
+import { enrichZoneCardsForSync } from '../../utils/enrichGameCards'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 
 
-export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport, applyTransportState } = {}) {
+export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport } = {}) {
 
   return useCallback(
 
@@ -88,12 +88,7 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
       const wsErr = transportError(ws)
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
-      if (wsOk) {
-        if (typeof applyTransportState === 'function' && wsOk.state) {
-          await applyTransportState(wsOk.state, 'ws:action:play_card')
-        }
-        return wsOk
-      }
+      if (wsOk) return wsOk
 
 
 
@@ -168,18 +163,6 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
             playerAfter?.zones?.[zoneIndex]?.cards ?? [],
             cardCatalog
           )
-          await publishGameSync(game.id, {
-            type: 'play_card',
-            version: data.version,
-            actorId: me.player_id,
-            playerId: me.player_id,
-            cardIndex,
-            zoneIndex,
-            slotType: slot,
-            rpcData: data,
-            zoneCards: zoneSnapshot,
-          })
-
           return { success: true }
 
         }
@@ -318,23 +301,11 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
 
       }
 
-      await publishGameSync(game.id, {
-        type: 'play_card',
-        version: (game.version ?? 0) + 1,
-        actorId: me.player_id,
-        playerId: me.player_id,
-        cardIndex,
-        zoneIndex,
-        slotType: slot,
-        rpcData: { card, actions_remaining: actionsLeft - actionCost },
-        zoneCards: enrichZoneCardsForSync(nextZones[zoneIndex], cardCatalog),
-      })
-
       return { success: true }
 
     },
 
-    [game, patchGame, cardCatalog, transport, applyTransportState]
+    [game, patchGame, cardCatalog, transport]
 
   )
 

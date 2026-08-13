@@ -35,6 +35,9 @@ function buildRpcArgs(
   }
 
   const base = { p_game_id: gameId, p_player_id: clientId }
+  if (!gameId || !String(gameId).trim()) {
+    throw new Error('p_game_id is required')
+  }
 
   switch (action) {
     case 'play_card':

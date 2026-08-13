@@ -177,3 +177,9 @@ export function resolveCardImageUrl(card) {
   }
   return null
 }
+
+/** Обогащает карты зоны для локального optimistic UI. */
+export function enrichZoneCardsForSync(cards, catalog) {
+  if (!Array.isArray(cards) || !catalog?.size) return cards
+  return cards.map((card) => enrichCard(card, catalog))
+}

@@ -1,70 +1,67 @@
 # WebSocket game server (Cloudflare Workers)
 
-Realtime и игровые действия через **Cloudflare Workers + Durable Objects**. Postgres (Supabase) пока остаётся source of truth: Worker проксирует RPC, затем рассылает персонализированный `state` каждому игроку.
+**Единственный realtime-транспорт** для multiplayer: Cloudflare Workers + Durable Objects. Postgres (Supabase) — source of truth; Worker валидирует RPC и рассылает authoritative `state` / `lobby` всем клиентам без перезагрузки страницы.
 
-## Архитектура
+## Архитектура (server-authoritative)
 
 ```
-Browser ──WebSocket──► Worker router ──► GameRoom DO (per gameId)
+Browser ──WebSocket──► Worker router ──► GameRoom / LobbyRoom DO
                               │
                               └──► Supabase RPC (service role)
-                              └──► broadcast get_player_game_state per client
+                              └──► broadcast персонализированный state каждому clientId
 ```
 
-Маршруты:
+Паттерн как у production multiplayer:
 
-| Path | Durable Object |
-|------|----------------|
+1. Клиент шлёт **intent** (`action`), не мутирует state напрямую
+2. Worker применяет RPC атомарно
+3. Worker **broadcast** свежий snapshot всем в комнате
+4. React обновляет UI через `commitGameState` — без reload
+5. Reconnect: auto-rejoin + полный snapshot
+
+## Маршруты
+
+| Path | Назначение |
+|------|------------|
 | `GET /health` | health check |
-| `WS /game/:gameId/ws` | `GameRoom` |
-| `WS /lobby/:lobbyId/ws` | `LobbyRoom` |
+| `WS /game/:gameId/ws` | `GameRoom` DO |
+| `WS /lobby/:lobbyId/ws` | `LobbyRoom` DO |
+| `POST /lobby/:lobbyId/notify` | push snapshot после create/join через REST |
 
 ## Локальная разработка
 
 ### 1. Секреты Worker
 
 ```bash
-# из корня репозитория
 npm install
 
-# Supabase service role — только на Worker, НЕ в Vite
 npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --config workers/wrangler.jsonc
-
-# URL можно задать в wrangler.jsonc vars или secret:
 npx wrangler secret put SUPABASE_URL --config workers/wrangler.jsonc
 ```
 
-Либо создай `workers/.dev.vars` (gitignored):
+Или `workers/.dev.vars` (gitignored):
 
 ```
 SUPABASE_URL=https://<supabase-project>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-### 2. Запуск Worker
+### 2. Worker + frontend
 
 ```bash
 npm run workers:dev
-# default: http://127.0.0.1:8787
+# http://127.0.0.1:8787
 ```
 
-### 3. Frontend
-
-В `.env.local`:
+`.env.local`:
 
 ```
 VITE_GAME_WS_URL=http://127.0.0.1:8787
 ```
 
-При заданном `VITE_GAME_WS_URL`:
+`VITE_GAME_WS_URL` **обязателен** для lobby и game.
 
-- **GameScreen** — WebSocket transport ([`useGameTransport`](../src/hooks/useGameTransport.js)), Ably и poll отключены
-- **Lobby** — WebSocket transport ([`useLobbyWebSocketTransport`](../src/hooks/useLobbyWebSocketTransport.js))
-- Все игровые хуки (`draw`, `play`, `attack`, …) идут через WS → Worker → Supabase RPC
-
-Без `VITE_GAME_WS_URL` — прежний путь: Ably + прямые RPC из браузера.
-
-## Протокол (кратко)
+## Протокол
 
 **Client → Server**
 
@@ -77,10 +74,13 @@ VITE_GAME_WS_URL=http://127.0.0.1:8787
 
 ```json
 { "type": "state", "version": 12, "game": { ... } }
+{ "type": "lobby", "lobby": { ... } }
+{ "type": "presence", "onlineIds": ["uuid1", "uuid2"] }
+{ "type": "closed", "reason": "lobby_gone" }
 { "type": "error", "code": "action_failed", "message": "..." }
 ```
 
-Действия `action` → RPC: см. [`workers/src/protocol.ts`](../workers/src/protocol.ts) (`GAME_ACTION_RPC`).
+Действия → RPC: [`workers/src/protocol.ts`](../workers/src/protocol.ts).
 
 ## Deploy
 
@@ -88,17 +88,11 @@ VITE_GAME_WS_URL=http://127.0.0.1:8787
 npm run workers:deploy
 ```
 
-После деплоя:
+Production env:
 
 ```
 VITE_GAME_WS_URL=https://card-wars-game.<your-subdomain>.workers.dev
 ```
-
-## Дальнейшие фазы
-
-1. **Сейчас:** WS transport + RPC proxy (Tier 2)
-2. **Далее:** перенос правил в `packages/game-engine` внутри DO (Tier 3)
-3. **Выключить:** Ably, client `publishGameSync`, poll fallback
 
 ## Проверка
 
@@ -107,4 +101,4 @@ npm run workers:check
 curl http://127.0.0.1:8787/health
 ```
 
-WebSocket вручную (websocat / browser devtools): подключиться к `ws://127.0.0.1:8787/game/<game-uuid>/ws`, отправить `join`.
+WebSocket: `ws://127.0.0.1:8787/game/<game-uuid>/ws` → `{ "type": "join", "clientId": "..." }`.

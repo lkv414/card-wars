@@ -6,8 +6,6 @@ import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { hasFlipAbility } from './cardAbilities.js'
 import { applyFlipCardPatch } from '../../utils/gameStatePatch'
-import { publishGameSync } from '../../utils/gameSync'
-
 export { hasFlipAbility } from './cardAbilities.js'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
@@ -73,15 +71,6 @@ export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload
       if (typeof suppressRealtimeReload === 'function') {
         suppressRealtimeReload(3000)
       }
-
-      await publishGameSync(game.id, {
-        type: 'flip_card',
-        version: data.version,
-        actorId: player.player_id,
-        playerId: player.player_id,
-        zoneIndex,
-        cardId,
-      })
 
       return { success: true }
     },

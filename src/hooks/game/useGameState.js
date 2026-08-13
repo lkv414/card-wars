@@ -12,7 +12,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 
-export function useGameState(game, reload) {
+export function useGameState(game, reload, { reloadEnabled = true } = {}) {
   const [isApplying, setIsApplying] = useState(false)
   const [error, setError] = useState(null)
 
@@ -79,7 +79,7 @@ export function useGameState(game, reload) {
             const msg = updateErr.message || ''
             if (/Конфликт версий/i.test(msg)) {
               console.warn('[writeGameState] version trigger conflict — reload and abort')
-              if (reload) {
+              if (reload && reloadEnabled) {
                 const freshGame = await reload()
                 if (freshGame?.id) gameRef.current = freshGame
               }
@@ -89,12 +89,12 @@ export function useGameState(game, reload) {
           }
 
           if (data) {
-            if (reload) await reload()
+            if (reload && reloadEnabled) await reload()
             return { success: true, version: data.version }
           }
 
           console.warn(`[writeGameState] version conflict (attempt ${attempt}/${MAX_RETRIES})`)
-          if (reload) {
+          if (reload && reloadEnabled) {
             const freshGame = await reload()
             if (freshGame?.id) {
               gameRef.current = freshGame
@@ -116,7 +116,7 @@ export function useGameState(game, reload) {
         setIsApplying(false)
       }
     },
-    [game, reload]
+    [game, reload, reloadEnabled]
   )
 
   return { writeGameState, isApplying, error, setError }

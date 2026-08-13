@@ -4,7 +4,7 @@ export { LobbyRoom } from './lobby-room'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Upgrade, Connection',
 }
 
@@ -40,10 +40,21 @@ export default {
       return stub.fetch(new Request(roomUrl.toString(), request))
     }
 
+    const lobbyNotifyMatch = url.pathname.match(/^\/lobby\/([^/]+)\/notify$/)
+    if (lobbyNotifyMatch && request.method === 'POST') {
+      const lobbyId = lobbyNotifyMatch[1]
+      const id = env.LOBBY_ROOM.idFromName(lobbyId)
+      const stub = env.LOBBY_ROOM.get(id)
+      const roomUrl = new URL(request.url)
+      roomUrl.pathname = '/internal/broadcast'
+      roomUrl.searchParams.set('lobbyId', lobbyId)
+      return stub.fetch(new Request(roomUrl.toString(), { method: 'POST' }))
+    }
+
     return json(
       {
         service: 'card-wars-game',
-        routes: ['/health', '/game/:gameId/ws', '/lobby/:lobbyId/ws'],
+        routes: ['/health', '/game/:gameId/ws', '/lobby/:lobbyId/ws', '/lobby/:lobbyId/notify'],
       },
       404
     )

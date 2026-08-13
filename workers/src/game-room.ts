@@ -13,12 +13,24 @@ interface SessionMeta {
 }
 
 export class GameRoom extends DurableObject<Env> {
-  /** game UUID from room name */
+  /** game UUID — also available via ctx.id.name after hibernation */
   gameId = ''
+
+  private resolveGameId(): string {
+    if (this.gameId) return this.gameId
+    const fromName = this.ctx.id.name
+    if (fromName) {
+      this.gameId = fromName
+      return fromName
+    }
+    throw new Error('gameId missing on room')
+  }
 
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url)
-    this.gameId = url.searchParams.get('gameId') ?? this.gameId
+    const fromQuery = url.searchParams.get('gameId')
+    if (fromQuery) this.gameId = fromQuery
+    else this.resolveGameId()
 
     if (request.headers.get('Upgrade') !== 'websocket') {
       return new Response('Expected WebSocket', { status: 426 })
@@ -52,20 +64,19 @@ export class GameRoom extends DurableObject<Env> {
         if (!clientId) {
           throw new Error('clientId required')
         }
-        if (!this.gameId) {
-          throw new Error('gameId missing on room')
-        }
-        await assertPlayerInGame(this.env, this.gameId, clientId)
+        const gameId = this.resolveGameId()
+        await assertPlayerInGame(this.env, gameId, clientId)
         ws.serializeAttachment({ clientId } satisfies SessionMeta)
         ws.send(
           serverMsg({
             type: 'joined',
-            roomId: this.gameId,
+            roomId: gameId,
             clientId,
             requestId: msg.requestId,
           })
         )
         await this.sendStateTo(ws, clientId, msg.requestId)
+        this.broadcastPresence()
         return
       }
 
@@ -75,7 +86,7 @@ export class GameRoom extends DurableObject<Env> {
         }
         await runGameAction(
           this.env,
-          this.gameId,
+          this.resolveGameId(),
           session.clientId,
           msg.action as GameActionName,
           msg.payload ?? {}
@@ -106,10 +117,12 @@ export class GameRoom extends DurableObject<Env> {
 
   async webSocketClose(ws: WebSocket): Promise<void> {
     ws.close()
+    this.broadcastPresence()
   }
 
   async webSocketError(ws: WebSocket): Promise<void> {
     ws.close(1011, 'WebSocket error')
+    this.broadcastPresence()
   }
 
   private getSession(ws: WebSocket): SessionMeta | null {
@@ -119,9 +132,25 @@ export class GameRoom extends DurableObject<Env> {
   }
 
   private async sendStateTo(ws: WebSocket, clientId: string, requestId?: string): Promise<void> {
-    const game = await getPlayerGameState(this.env, this.gameId, clientId)
+    const game = await getPlayerGameState(this.env, this.resolveGameId(), clientId)
     const version = Number(game.version ?? 0)
     ws.send(serverMsg({ type: 'state', version, game, requestId }))
+  }
+
+  private onlineClientIds(): string[] {
+    const ids = new Set<string>()
+    for (const ws of this.ctx.getWebSockets()) {
+      const session = this.getSession(ws)
+      if (session?.clientId) ids.add(session.clientId)
+    }
+    return [...ids]
+  }
+
+  private broadcastPresence(): void {
+    const payload = serverMsg({ type: 'presence', onlineIds: this.onlineClientIds() })
+    for (const ws of this.ctx.getWebSockets()) {
+      ws.send(payload)
+    }
   }
 
   private async broadcastStates(requestId?: string): Promise<void> {

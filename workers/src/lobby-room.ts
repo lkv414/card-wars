@@ -10,9 +10,29 @@ interface SessionMeta {
 export class LobbyRoom extends DurableObject<Env> {
   lobbyId = ''
 
+  private resolveLobbyId(): string {
+    if (this.lobbyId) return this.lobbyId
+    const fromName = this.ctx.id.name
+    if (fromName) {
+      this.lobbyId = fromName
+      return fromName
+    }
+    throw new Error('lobbyId missing on room')
+  }
+
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url)
-    this.lobbyId = url.searchParams.get('lobbyId') ?? this.lobbyId
+    const fromQuery = url.searchParams.get('lobbyId')
+    if (fromQuery) this.lobbyId = fromQuery
+    else this.resolveLobbyId()
+
+    if (request.method === 'POST' && url.pathname.endsWith('/internal/broadcast')) {
+      await this.broadcastLobby()
+      this.broadcastPresence()
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
 
     if (request.headers.get('Upgrade') !== 'websocket') {
       return new Response('Expected WebSocket', { status: 426 })
@@ -41,20 +61,22 @@ export class LobbyRoom extends DurableObject<Env> {
 
       if (msg.type === 'join') {
         const clientId = String(msg.clientId ?? '').trim()
-        if (!clientId || !this.lobbyId) {
+        const lobbyId = this.resolveLobbyId()
+        if (!clientId || !lobbyId) {
           throw new Error('clientId and lobbyId required')
         }
-        await assertPlayerInLobby(this.env, this.lobbyId, clientId)
+        await assertPlayerInLobby(this.env, lobbyId, clientId)
         ws.serializeAttachment({ clientId } satisfies SessionMeta)
         ws.send(
           serverMsg({
             type: 'joined',
-            roomId: this.lobbyId,
+            roomId: lobbyId,
             clientId,
             requestId: msg.requestId,
           })
         )
         await this.sendLobbyTo(ws, msg.requestId)
+        this.broadcastPresence()
         return
       }
 
@@ -65,6 +87,7 @@ export class LobbyRoom extends DurableObject<Env> {
         }
         await this.runLobbyAction(session.clientId, msg.action, msg.payload ?? {})
         await this.broadcastLobby(msg.requestId)
+        this.broadcastPresence()
         return
       }
 
@@ -90,10 +113,12 @@ export class LobbyRoom extends DurableObject<Env> {
 
   async webSocketClose(ws: WebSocket): Promise<void> {
     ws.close()
+    this.broadcastPresence()
   }
 
   async webSocketError(ws: WebSocket): Promise<void> {
     ws.close(1011, 'WebSocket error')
+    this.broadcastPresence()
   }
 
   private async runLobbyAction(
@@ -101,7 +126,7 @@ export class LobbyRoom extends DurableObject<Env> {
     action: string,
     payload: Record<string, unknown>
   ): Promise<void> {
-    const lobbyId = this.lobbyId
+    const lobbyId = this.resolveLobbyId()
 
     switch (action) {
       case 'set_ready':
@@ -131,7 +156,7 @@ export class LobbyRoom extends DurableObject<Env> {
   private async fetchLobbySnapshot(): Promise<unknown> {
     const { url, key } = this.requireSupabase()
     const res = await fetch(
-      `${url}/rest/v1/lobbies?id=eq.${this.lobbyId}&select=*,lobby_players(*)`,
+      `${url}/rest/v1/lobbies?id=eq.${this.resolveLobbyId()}&select=*,lobby_players(*)`,
       {
         headers: {
           apikey: key,
@@ -155,13 +180,40 @@ export class LobbyRoom extends DurableObject<Env> {
     return { url, key }
   }
 
+  private onlineClientIds(): string[] {
+    const ids = new Set<string>()
+    for (const ws of this.ctx.getWebSockets()) {
+      const session = ws.deserializeAttachment() as SessionMeta | null
+      if (session?.clientId) ids.add(session.clientId)
+    }
+    return [...ids]
+  }
+
+  private broadcastPresence(): void {
+    const payload = serverMsg({ type: 'presence', onlineIds: this.onlineClientIds() })
+    for (const ws of this.ctx.getWebSockets()) {
+      ws.send(payload)
+    }
+  }
+
   private async sendLobbyTo(ws: WebSocket, requestId?: string): Promise<void> {
     const lobby = await this.fetchLobbySnapshot()
+    if (!lobby) {
+      ws.send(serverMsg({ type: 'closed', reason: 'lobby_gone', requestId }))
+      return
+    }
     ws.send(serverMsg({ type: 'lobby', lobby, requestId }))
   }
 
   private async broadcastLobby(requestId?: string): Promise<void> {
     const lobby = await this.fetchLobbySnapshot()
+    if (!lobby) {
+      const closed = serverMsg({ type: 'closed', reason: 'lobby_gone', requestId })
+      for (const ws of this.ctx.getWebSockets()) {
+        ws.send(closed)
+      }
+      return
+    }
     const payload = serverMsg({ type: 'lobby', lobby, requestId })
     for (const ws of this.ctx.getWebSockets()) {
       ws.send(payload)

@@ -10,8 +10,6 @@ import { canPlayerDealDamage } from './combat'
 import { safePlayers } from '../../utils/safePlayer'
 import { isRpcUnavailable } from './rpcUtils'
 import { applyAttackPatch } from '../../utils/gameStatePatch'
-import { publishGameSync } from '../../utils/gameSync'
-
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 export function useAttack(game, { patchGame, transport, suppressRealtimeReload } = {}) {
@@ -85,13 +83,6 @@ export function useAttack(game, { patchGame, transport, suppressRealtimeReload }
       if (typeof suppressRealtimeReload === 'function') {
         suppressRealtimeReload(8000)
       }
-
-      await publishGameSync(game.id, {
-        type: 'attack',
-        version: data.version,
-        actorId: me.player_id,
-        rpcData: data,
-      })
 
       return {
         success: true,

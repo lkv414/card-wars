@@ -76,15 +76,6 @@ export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, t
             suppressRealtimeReload(4000)
           }
 
-          await publishGameSync(game.id, {
-            type: 'discard_from_zone',
-            version: data.version,
-            actorId: me.player_id,
-            playerId: me.player_id,
-            zoneIndex,
-            cardId,
-            rpcData: data,
-          })
           return { success: true }
         }
         if (rpcErr && !/function .* does not exist/i.test(rpcErr.message || '')) {
@@ -130,14 +121,6 @@ export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, t
         suppressRealtimeReload(4000)
       }
 
-      await publishGameSync(game.id, {
-        type: 'discard_from_zone',
-        version: (game.version ?? 0) + 1,
-        actorId: me.player_id,
-        playerId: me.player_id,
-        zoneIndex,
-        cardId,
-      })
       return { success: true }
     },
     [game, reload, patchGame, transport, suppressRealtimeReload]

@@ -7,12 +7,11 @@ import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
 import { applyDrawPatch, normalizeDrawRpcData, sanitizeDrawRpcDataForSync } from '../../utils/gameStatePatch'
-import { publishGameSync } from '../../utils/gameSync'
 import { getGuestId } from '../../utils/guestId'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function useDrawCard(game, _reload, { patchGame, transport, suppressRealtimeReload, applyTransportState } = {}) {
+export function useDrawCard(game, _reload, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
@@ -23,12 +22,7 @@ export function useDrawCard(game, _reload, { patchGame, transport, suppressRealt
     const wsErr = transportError(ws)
     if (wsErr) return wsErr
     const wsOk = transportOk(ws)
-    if (wsOk) {
-      if (typeof applyTransportState === 'function' && wsOk.state) {
-        await applyTransportState(wsOk.state, 'ws:action:draw')
-      }
-      return { ...wsOk, actions_remaining: undefined, hand_count: undefined }
-    }
+    if (wsOk) return { ...wsOk, actions_remaining: undefined, hand_count: undefined }
 
     const { data, error: rpcErr } = await supabase.rpc('draw_card_for_action', {
       p_game_id: game.id,
@@ -53,18 +47,10 @@ export function useDrawCard(game, _reload, { patchGame, transport, suppressRealt
       suppressRealtimeReload(8000)
     }
 
-    await publishGameSync(game.id, {
-      type: 'draw',
-      version: data.version,
-      actorId: me.player_id,
-      playerId: me.player_id,
-      rpcData: sanitizeDrawRpcDataForSync(rpcData),
-    })
-
     return {
       success: true,
       actions_remaining: data.actions_remaining,
       hand_count: data.hand_count,
     }
-  }, [game, patchGame, transport, suppressRealtimeReload, applyTransportState])
+  }, [game, patchGame, transport, suppressRealtimeReload])
 }

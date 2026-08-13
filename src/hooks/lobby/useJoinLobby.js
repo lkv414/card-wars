@@ -1,6 +1,6 @@
 import { supabase } from '../../utils/supabase'
 import { saveLobbySession } from '../../utils/lobbySession'
-import { publishLobbySync } from '../../utils/lobbySync'
+import { notifyLobbyRoom } from '../../utils/gameWebSocket'
 
 export async function joinLobbyAction(guestId, code, nickname, deckPayload, { subscribeToLobby, setState }) {
   const {
@@ -87,6 +87,6 @@ export async function joinLobbyAction(guestId, code, nickname, deckPayload, { su
 
   const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', lobby.id)
   setPlayers(playersList ?? [])
-  await publishLobbySync(lobby.id, { type: 'players', players: playersList ?? [], actorId: guestId })
+  await notifyLobbyRoom(lobby.id)
   saveLobbySession(lobby.id, lobby.code, lobby.host_id, lobby.host_id === guestId)
 }

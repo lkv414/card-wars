@@ -14,7 +14,7 @@ import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { applyEndTurnPatch } from '../../utils/gameStatePatch'
 import { publishGameSync } from '../../utils/gameSync'
 
-export function useTurnControl(game, writeGameState, reload, { patchGame } = {}) {
+export function useTurnControl(game, writeGameState, reload, { patchGame, suppressRealtimeReload } = {}) {
   /**
    * End turn: switch to next player.
    * Computes simple alternation: player1 -> player2 -> player1.
@@ -36,6 +36,12 @@ export function useTurnControl(game, writeGameState, reload, { patchGame } = {})
           if (typeof patchGame === 'function') {
             patchGame((state) => applyEndTurnPatch(state, data))
           }
+
+          // Suppress realtime reload for 8s to allow battle animations and turn transition
+          if (typeof suppressRealtimeReload === 'function') {
+            suppressRealtimeReload(8000)
+          }
+
           await publishGameSync(game.id, {
             type: 'end_turn',
             version: data.version,
@@ -95,7 +101,7 @@ export function useTurnControl(game, writeGameState, reload, { patchGame } = {})
         current_turn: (game.current_turn || 0) + 1,
         game_state: { log: newLog },
       })
-    }, [game, writeGameState, reload, patchGame])
+    }, [game, writeGameState, reload, patchGame, suppressRealtimeReload])
 
   /**
      * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается

@@ -10,7 +10,7 @@ import { publishGameSync } from '../../utils/gameSync'
 
 export { hasFlipAbility } from './cardAbilities.js'
 
-export function useFlipCard(game, { patchGame } = {}) {
+export function useFlipCard(game, { patchGame, suppressRealtimeReload } = {}) {
   const flipCard = useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -58,6 +58,11 @@ export function useFlipCard(game, { patchGame } = {}) {
         )
       }
 
+      // Suppress realtime reload for 3s to avoid interrupting flip animation (~300ms)
+      if (typeof suppressRealtimeReload === 'function') {
+        suppressRealtimeReload(3000)
+      }
+
       await publishGameSync(game.id, {
         type: 'flip_card',
         version: data.version,
@@ -69,7 +74,7 @@ export function useFlipCard(game, { patchGame } = {}) {
 
       return { success: true }
     },
-    [game, patchGame]
+    [game, patchGame, suppressRealtimeReload]
   )
 
   return flipCard

@@ -105,6 +105,24 @@ export function applyIncomingGameSync(data, ctx) {
     case 'draw':
       next = applyDrawPatch(prev, data.playerId, data.rpcData || {}, guestId)
       break
+    case 'discard_from_hand':
+      // Observer sees hand_count update only
+      next = {
+        ...prev,
+        version: data.version ?? prev.version,
+        players: prev.players.map((player) => {
+          if (player.player_id !== data.playerId) return player
+          return {
+            ...player,
+            hand_count: data.rpcData?.hand_count ?? player.hand_count,
+          }
+        }),
+      }
+      break
+    case 'discard_from_zone':
+      // Observer doesn't see the discard, but zone might be visible
+      next = prev
+      break
     default:
       gameDebugLog('sync', '→ full reload (unknown type)', { type: data.type })
       requestLoadGame?.('ably:unknown-type', { force: false })

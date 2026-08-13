@@ -5,10 +5,44 @@
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
-import { clampZones } from './format'
+import { clampZones, normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
 import { publishGameSync } from '../../utils/gameSync'
 
-export function useDiscardFromZone(game, _writeGameState, reload) {
+/**
+ * applyDiscardFromZonePatch — remove card from zone and add to discard.
+ */
+function applyDiscardFromZonePatch(game, playerId, zoneIndex, cardId) {
+  if (!game?.players) return game
+
+  return {
+    ...game,
+    version: (game.version ?? 0) + 1,
+    players: game.players.map((player) => {
+      if (player.player_id !== playerId) return player
+
+      const zoneRows = normalizePlayerZoneRows(player.zones)
+      const zone = zoneRows[zoneIndex]
+      if (!zone) return player
+
+      const cards = normalizeZoneCards(zone)
+      const card = cards.find((c) => c.id === cardId || c.instanceId === cardId)
+      if (!card) return player
+
+      const newCards = cards.filter((c) => c.id !== cardId && c.instanceId !== cardId)
+      const discard = [...(player.discard_pile || []), card]
+
+      zoneRows[zoneIndex] = { ...zone, cards: newCards }
+
+      return {
+        ...player,
+        zones: zoneRows,
+        discard_pile: discard,
+      }
+    }),
+  }
+}
+
+export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, suppressRealtimeReload } = {}) {
   return useCallback(
     async (zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -24,11 +58,23 @@ export function useDiscardFromZone(game, _writeGameState, reload) {
           p_card_id: String(cardId),
         })
         if (!rpcErr && data?.success) {
-          if (typeof reload === 'function') await reload()
+          if (typeof patchGame === 'function') {
+            patchGame((state) => applyDiscardFromZonePatch(state, me.player_id, zoneIndex, cardId))
+          }
+
+          // Suppress realtime reload for 4s
+          if (typeof suppressRealtimeReload === 'function') {
+            suppressRealtimeReload(4000)
+          }
+
           await publishGameSync(game.id, {
-            type: 'reload',
+            type: 'discard_from_zone',
             version: data.version,
             actorId: me.player_id,
+            playerId: me.player_id,
+            zoneIndex,
+            cardId,
+            rpcData: data,
           })
           return { success: true }
         }
@@ -66,14 +112,25 @@ export function useDiscardFromZone(game, _writeGameState, reload) {
 
       const err = zonesRes.error || playersRes.error
       if (err) return { error: `Сброс не сохранился: ${err.message || err}` }
-      if (typeof reload === 'function') await reload()
+
+      if (typeof patchGame === 'function') {
+        patchGame((state) => applyDiscardFromZonePatch(state, me.player_id, zoneIndex, cardId))
+      }
+
+      if (typeof suppressRealtimeReload === 'function') {
+        suppressRealtimeReload(4000)
+      }
+
       await publishGameSync(game.id, {
-        type: 'reload',
+        type: 'discard_from_zone',
         version: (game.version ?? 0) + 1,
         actorId: me.player_id,
+        playerId: me.player_id,
+        zoneIndex,
+        cardId,
       })
       return { success: true }
     },
-    [game, reload]
+    [game, reload, patchGame, suppressRealtimeReload]
   )
 }

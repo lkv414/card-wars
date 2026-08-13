@@ -1,14 +1,39 @@
-/**
- * useDiscardFromHand — сброс карты из руки в discard_pile.
- */
-
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
 import { publishGameSync } from '../../utils/gameSync'
+import { normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
+import { getGuestId } from '../../utils/guestId'
 
-export function useDiscardFromHand(game, reload) {
+/**
+ * applyDiscardFromHandPatch — remove card from hand and add to discard.
+ */
+function applyDiscardFromHandPatch(game, playerId, cardIndex) {
+  if (!game?.players) return game
+
+  return {
+    ...game,
+    version: (game.version ?? 0) + 1,
+    players: game.players.map((player) => {
+      if (player.player_id !== playerId) return player
+      
+      const hand = [...(player.hand || [])]
+      if (cardIndex < 0 || cardIndex >= hand.length) return player
+      
+      const [card] = hand.splice(cardIndex, 1)
+      const discard = [...(player.discard_pile || []), card]
+      
+      return {
+        ...player,
+        hand,
+        discard_pile: discard,
+      }
+    }),
+  }
+}
+
+export function useDiscardFromHand(game, reload, { patchGame, suppressRealtimeReload } = {}) {
   return useCallback(
     async (cardIndex) => {
       if (!game?.id) return { error: 'Игра не загружена' }
@@ -23,11 +48,21 @@ export function useDiscardFromHand(game, reload) {
       })
 
       if (!rpcErr && data?.success) {
-        if (typeof reload === 'function') await reload()
+        if (typeof patchGame === 'function') {
+          patchGame((state) => applyDiscardFromHandPatch(state, me.player_id, cardIndex))
+        }
+
+        // Suppress realtime reload for 3s to prevent flicker
+        if (typeof suppressRealtimeReload === 'function') {
+          suppressRealtimeReload(3000)
+        }
+
         await publishGameSync(game.id, {
-          type: 'reload',
+          type: 'discard_from_hand',
           version: data.version,
           actorId: me.player_id,
+          playerId: me.player_id,
+          rpcData: data,
         })
         return { success: true }
       }
@@ -57,9 +92,17 @@ export function useDiscardFromHand(game, reload) {
           .eq('player_id', me.player_id)
       )
       if (error) return { error: error.message }
-      if (typeof reload === 'function') await reload()
+
+      if (typeof patchGame === 'function') {
+        patchGame((state) => applyDiscardFromHandPatch(state, me.player_id, cardIndex))
+      }
+
+      if (typeof suppressRealtimeReload === 'function') {
+        suppressRealtimeReload(3000)
+      }
+
       return { success: true }
     },
-    [game, reload]
+    [game, reload, patchGame, suppressRealtimeReload]
   )
 }

@@ -35,9 +35,9 @@ export function useDrawCard(game, _reload, { patchGame, suppressRealtimeReload }
       patchGame((state) => applyDrawPatch(state, me.player_id, rpcData, getGuestId()))
     }
 
-    // Suppress realtime reload for 5s to avoid visual conflict with local patch
+    // Suppress realtime reload for 8s to avoid visual conflict with local patch
     if (typeof suppressRealtimeReload === 'function') {
-      suppressRealtimeReload(5000)
+      suppressRealtimeReload(8000)
     }
 
     await publishGameSync(game.id, {

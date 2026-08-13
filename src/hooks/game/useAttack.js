@@ -12,7 +12,7 @@ import { isRpcUnavailable } from './rpcUtils'
 import { applyAttackPatch } from '../../utils/gameStatePatch'
 import { publishGameSync } from '../../utils/gameSync'
 
-export function useAttack(game, { patchGame } = {}) {
+export function useAttack(game, { patchGame, suppressRealtimeReload } = {}) {
   return useCallback(
     async (fromZone, cardId, toOpponentZone, toPlayerId = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -68,6 +68,11 @@ export function useAttack(game, { patchGame } = {}) {
         patchGame((state) => applyAttackPatch(state, data))
       }
 
+      // Suppress realtime reload for 8s to avoid interrupting battle animations
+      if (typeof suppressRealtimeReload === 'function') {
+        suppressRealtimeReload(8000)
+      }
+
       await publishGameSync(game.id, {
         type: 'attack',
         version: data.version,
@@ -85,6 +90,6 @@ export function useAttack(game, { patchGame } = {}) {
         gameFinished: Boolean(data.game_finished),
       }
     },
-    [game, patchGame]
+    [game, patchGame, suppressRealtimeReload]
   )
 }

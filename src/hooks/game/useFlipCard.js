@@ -1,24 +1,12 @@
 /**
- * useFlipCard — хук для флюпа карт на поле.
- *
- * Флюп (flip) — это механика, при которой карта вместо атаки использует свою способность.
- * Флюпнутая карта поворачивается на 90 градусов и не может атаковать в этом ходу.
- *
- * БАГ-ФИКС: предыдущая версия правила players[].zones и передавала в writeGameState,
- * но writeGameState сохраняет только game_state / current_player_id / status и т.п.,
- * а НЕ players. Теперь сохраняем в game_zones явно, как usePlayCard / useAttack.
- *
- * БАГ-ФИКС #2 (01.08.2026): проверка флипа через card.abilities?.includes('Флюп')
- * НЕ работает — поля `abilities` в данных из БД нет. Используем hasFlipAbility
- * из ./cardAbilities.js (вынесено чтобы тесты могли импортировать без @supabase).
+ * useFlipCard — хук для флюпа карт на поле (RPC flip_card + outbox sync).
  */
-
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
-import { ensureGuestId, withGuestId } from '../../utils/guestSession'
-import { CARD_STATUSES } from '../../constants/gameMultiplayer'
+import { ensureGuestId } from '../../utils/guestSession'
 import { hasFlipAbility } from './cardAbilities.js'
 import { applyFlipCardPatch } from '../../utils/gameStatePatch'
+import { publishGameSync } from '../../utils/gameSync'
 
 export { hasFlipAbility } from './cardAbilities.js'
 
@@ -46,34 +34,39 @@ export function useFlipCard(game, { patchGame } = {}) {
         return { error: 'Карта не найдена' }
       }
 
-      // БАГ-ФИКС: проверяем флип через hasFlipAbility (см. cardAbilities.js),
-      // а не через card.abilities — этого поля в данных из БД нет.
       if (!hasFlipAbility(card)) {
         return { error: 'У карты нет способности Флюп' }
       }
 
-      const newCards = (zone.cards || []).map((c) =>
-        c.id === cardId || c.instanceId === cardId
-          ? { ...c, status: CARD_STATUSES.flipped, flipped: true }
-          : c
-      )
+      const { data, error: rpcErr } = await supabase.rpc('flip_card', {
+        p_game_id: game.id,
+        p_player_id: player.player_id,
+        p_zone_position: zoneIndex + 1,
+        p_card_id: String(cardId),
+      })
 
-      // Сохраняем зону; log не пишем в games — RPC/end_turn уже bump'ят version.
-      const zoneRes = await withGuestId(() =>
-        supabase
-          .from('game_zones')
-          .update({ cards: newCards })
-          .eq('game_id', game.id)
-          .eq('player_id', player.player_id)
-          .eq('zone_position', zoneIndex + 1)
-      )
-
-      if (zoneRes.error) {
-        return { error: `Флюп не сохранился: ${zoneRes.error.message || zoneRes.error}` }
+      if (rpcErr) {
+        return { error: rpcErr.message }
       }
+      if (data?.error) {
+        return { error: data.error }
+      }
+
       if (typeof patchGame === 'function') {
-        patchGame((state) => applyFlipCardPatch(state, player.player_id, zoneIndex, cardId))
+        patchGame((state) =>
+          applyFlipCardPatch(state, player.player_id, zoneIndex, cardId, data.version)
+        )
       }
+
+      await publishGameSync(game.id, {
+        type: 'flip_card',
+        version: data.version,
+        actorId: player.player_id,
+        playerId: player.player_id,
+        zoneIndex,
+        cardId,
+      })
+
       return { success: true }
     },
     [game, patchGame]

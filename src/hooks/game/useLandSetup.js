@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
 import { ensureGuestId } from '../../utils/guestSession'
+import { publishGameSync } from '../../utils/gameSync'
 
 export function useLandSetup(game, reload) {
   const reorderLands = useCallback(
@@ -14,9 +15,13 @@ export function useLandSetup(game, reload) {
         p_land_ids: landIds,
       })
       if (error) throw new Error(error.message)
-      // Realtime обновит состояние; лишний reload здесь забивал пул соединений.
+      await publishGameSync(game.id, {
+        type: 'reload',
+        version: (game.version ?? 0) + 1,
+        actorId: getGuestId(),
+      })
     },
-    [game?.id]
+    [game?.id, game?.version]
   )
 
   const confirmLandSetup = useCallback(async () => {
@@ -27,8 +32,13 @@ export function useLandSetup(game, reload) {
       p_player_id: getGuestId(),
     })
     if (error) throw new Error(error.message)
+    await publishGameSync(game.id, {
+      type: 'reload',
+      version: (game.version ?? 0) + 1,
+      actorId: getGuestId(),
+    })
     await reload?.()
-  }, [game?.id, reload])
+  }, [game?.id, game?.version, reload])
 
   return { reorderLands, confirmLandSetup }
 }

@@ -29,9 +29,9 @@ import { useDiscardFromHand } from './useDiscardFromHand'
 export function useGameAction(game, reload, { patchGame, cardCatalog } = {}) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
   const playCard = usePlayCard(game, writeGameState, reload, { patchGame, cardCatalog })
-  const attack = useAttack(game, reload)
-  const drawCard = useDrawCard(game, reload)
-  const drawFreeCard = useDrawFreeCard(game, reload)
+  const attack = useAttack(game, { patchGame })
+  const drawCard = useDrawCard(game, reload, { patchGame })
+  const drawFreeCard = useDrawFreeCard(game, reload, { patchGame })
   const shuffleDeck = useShuffleDeck(game, reload)
   const discardFromHand = useDiscardFromHand(game, reload)
   const discardFromZone = useDiscardFromZone(game, writeGameState, reload)

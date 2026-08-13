@@ -12,6 +12,7 @@ import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
 import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { applyEndTurnPatch } from '../../utils/gameStatePatch'
+import { publishGameSync } from '../../utils/gameSync'
 
 export function useTurnControl(game, writeGameState, reload, { patchGame } = {}) {
   /**
@@ -35,6 +36,12 @@ export function useTurnControl(game, writeGameState, reload, { patchGame } = {})
           if (typeof patchGame === 'function') {
             patchGame((state) => applyEndTurnPatch(state, data))
           }
+          await publishGameSync(game.id, {
+            type: 'end_turn',
+            version: data.version,
+            actorId: game.current_player_id,
+            rpcData: data,
+          })
           return {
             success: true,
             battleEvents: data.battle_events || [],
@@ -114,7 +121,12 @@ export function useTurnControl(game, writeGameState, reload, { patchGame } = {})
           p_game_id: game.id,
         })
         if (!rpcErr && data?.success) {
-          if (writeGameState && typeof reload === 'function') await reload()
+          if (typeof reload === 'function') await reload()
+          await publishGameSync(game.id, {
+            type: 'reload',
+            version: data.version,
+            actorId: me.player_id,
+          })
           return { success: true, finished: data.finished, winnerId: data.winner_id }
         }
         // RPC не сработал — fallback если функция просто не существует

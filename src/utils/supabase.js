@@ -45,11 +45,6 @@ const clientOptions = {
   global: {
     fetch: fetchWithTimeout,
   },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
 }
 
 let supabaseClient = null

@@ -6,6 +6,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { clampZones } from './format'
+import { publishGameSync } from '../../utils/gameSync'
 
 export function useDiscardFromZone(game, _writeGameState, reload) {
   return useCallback(
@@ -24,6 +25,11 @@ export function useDiscardFromZone(game, _writeGameState, reload) {
         })
         if (!rpcErr && data?.success) {
           if (typeof reload === 'function') await reload()
+          await publishGameSync(game.id, {
+            type: 'reload',
+            version: data.version,
+            actorId: me.player_id,
+          })
           return { success: true }
         }
         if (rpcErr && !/function .* does not exist/i.test(rpcErr.message || '')) {
@@ -61,6 +67,11 @@ export function useDiscardFromZone(game, _writeGameState, reload) {
       const err = zonesRes.error || playersRes.error
       if (err) return { error: `Сброс не сохранился: ${err.message || err}` }
       if (typeof reload === 'function') await reload()
+      await publishGameSync(game.id, {
+        type: 'reload',
+        version: (game.version ?? 0) + 1,
+        actorId: me.player_id,
+      })
       return { success: true }
     },
     [game, reload]

@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getGuestNickname, setGuestNickname, getGuestId } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
 import { supabase } from '../../utils/supabase'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
-import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
+import { publishLobbySync } from '../../utils/lobbySync'
 import { LobbyRoom } from './LobbyRoom'
 import './Lobby.css'
 
@@ -16,25 +16,15 @@ export function LobbyScreen({ toast }) {
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
   const [submitting, setSubmitting] = useState(false)
 
-  const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
+  const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, pendingGameId, connectionStatus, onlinePlayerIds, createLobby, joinLobby, setReady, leaveLobby } = useLobby()
   const { getSelectedDeck, selectedDeckId } = useDecks()
   const selectedDeck = getSelectedDeck()
-  
-  // Realtime status для баннера reconnect
-  const realtimeStatus = useRealtimeChannel({
-    channelName: lobbyId ? `lobby:${lobbyId}` : null,
-    subscriptions: useMemo(() => {
-      if (!lobbyId) return []
-      return [
-        { table: 'lobbies', filter: `id=eq.${lobbyId}`, callback: () => {} },
-        { table: 'lobby_players', filter: `lobby_id=eq.${lobbyId}`, callback: () => {} },
-      ]
-    }, [lobbyId]),
-  })
-  // Когда статус 'in_game' — найти gameId для этого лобби и перейти.
-  // Realtime может прийти раньше, чем INSERT в games зафиксируется для SELECT.
-  // Стратегия: 1 retry через 300мс — обычно хватает (RPC быстрый).
+
   useEffect(() => {
+    if (pendingGameId) {
+      navigate(`/game/${pendingGameId}`)
+      return
+    }
     if (status !== 'in_game' || !lobbyId) return
     let cancelled = false
     const findGameAndGo = async () => {
@@ -76,12 +66,10 @@ export function LobbyScreen({ toast }) {
     }
     findGameAndGo()
     return () => { cancelled = true }
-  }, [status, lobbyId, navigate, toast])
+  }, [status, lobbyId, pendingGameId, navigate, toast])
 
   const handleStartGame = async () => {
     if (!lobbyId) return
-    // RPC name/params must match SECURITY DEFINER in
-    // supabase/migrations/20260726050000_upsert_lobby_player_guest.sql
     const { data: gameId, error: startErr } = await supabase.rpc('start_game_for_lobby', {
       p_lobby_id: lobbyId,
       p_guest_id: getGuestId(),
@@ -91,6 +79,13 @@ export function LobbyScreen({ toast }) {
       toast?.('error', startErr?.message || 'Не удалось создать игру')
       return
     }
+
+    await publishLobbySync(lobbyId, {
+      type: 'game_started',
+      gameId,
+      status: 'in_game',
+      actorId: getGuestId(),
+    })
 
     navigate(`/game/${gameId}`)
   }
@@ -183,7 +178,7 @@ export function LobbyScreen({ toast }) {
   if (status === 'waiting' || status === 'in_game') {
     return (
       <>
-        {realtimeStatus === 'disconnected' && (
+        {(connectionStatus === 'disconnected') && (
           <div className="connection-banner" role="alert" aria-live="polite">
             <span className="connection-spinner" aria-hidden="true"></span>
             <span>Нет соединения. Пытаемся переподключиться...</span>
@@ -192,6 +187,7 @@ export function LobbyScreen({ toast }) {
         <LobbyRoom
           code={lobbyCode ?? ''}
           players={players}
+          onlinePlayerIds={onlinePlayerIds}
           status={status}
           isHost={isHost}
           hostId={hostId}
@@ -211,7 +207,7 @@ export function LobbyScreen({ toast }) {
 
   return (
     <main className="lobby-screen" role="main">
-      {realtimeStatus === 'disconnected' && (
+      {connectionStatus === 'disconnected' && (
         <div className="connection-banner" role="alert" aria-live="polite">
           <span className="connection-spinner" aria-hidden="true"></span>
           <span>Нет соединения. Пытаемся переподключиться...</span>

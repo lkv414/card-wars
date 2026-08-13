@@ -25,8 +25,8 @@ vi.mock('../../hooks/useLands', () => ({
   useLands: () => ({ lands: [] }),
 }))
 
-vi.mock('../../hooks/useRealtimeChannel', () => ({
-  useRealtimeChannel: () => ({ status: 'connected' }),
+vi.mock('../../hooks/useAblyChannel', () => ({
+  useAblyChannel: () => 'connected',
 }))
 
 vi.mock('../../hooks/game', () => ({

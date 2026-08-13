@@ -4,7 +4,7 @@ import { copyToClipboard } from '../../utils/clipboard'
 import { isLobbyDeckPlayable } from '../../utils/lobbyDeck'
 import './Lobby.css'
 
-export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLeave, onStartGame, toast }) {
+export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost, hostId, onReady, onLeave, onStartGame, toast }) {
   const [copied, setCopied] = useState(false)
   const guestId = getGuestId()
 
@@ -67,10 +67,16 @@ export function LobbyRoom({ code, players, status, isHost, hostId, onReady, onLe
               const hasDeck = isLobbyDeckPlayable(p.deck)
               const deckName = p.deck?.name
               const cardCount = p.deck?.cardCount ?? p.deck?.cards?.length
+              const isOnline = onlinePlayerIds.includes(p.player_id)
               return (
                 <li key={p.player_id} className="lobby-player">
                   <div className="lobby-player__info">
                     <span className="lobby-player__name">
+                      <span
+                        className={`lobby-player__online ${isOnline ? 'lobby-player__online--on' : ''}`}
+                        title={isOnline ? 'В сети' : 'Не в сети'}
+                        aria-hidden="true"
+                      />
                       {p.player_id === hostId && <span className="lobby-player__host" title="Хост">♛ </span>}
                       {p.nickname || `Игрок ${p.player_id.slice(0, 6).toUpperCase()}`}
                       {p.player_id === guestId && <span className="lobby-player__you"> (вы)</span>}

@@ -1,15 +1,7 @@
 /**
  * GameScreen
- * Загружает gameState из Supabase по gameId и передаёт в GameBoard.
- * Подписывается на изменения games/game_zones через Realtime.
- *
- * Структура `game` для GameBoard (см. GameBoard.jsx):
- *   game = {
- *     id, lobby_id, status, current_turn, current_player_id,
- *     game_state: { status, currentTurn, currentPlayerId, turnPhase, log },
- *     players: [{ id, player_id, nickname, position, health, hand, zones,
- *                deck_remaining, player_order }],
- *   }
+ * Загружает gameState из Supabase по gameId.
+ * Синхронизация между игроками — Ably pub/sub (без Supabase Realtime).
  */
 import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -21,7 +13,8 @@ import { useLandSetup } from '../../hooks/game/useLandSetup'
 import { useLands } from '../../hooks/useLands'
 import { useCards } from '../../hooks/useCards'
 import { buildCardCatalog, enrichGameStateAsync, collectMissingCardIds } from '../../utils/enrichGameCards'
-import { useRealtimeChannel } from '../../hooks/useRealtimeChannel'
+import { useAblyChannel } from '../../hooks/useAblyChannel'
+import { GAME_SYNC_EVENT, applyIncomingGameSync } from '../../utils/gameSync'
 import { useToasts } from '../../hooks/useToasts'
 import { Toasts } from '../Shared/Toasts'
 
@@ -52,20 +45,9 @@ export function GameScreen() {
   const loadInFlightRef = useRef(null)
   const pendingReloadRef = useRef(false)
   const hasLoadedOnceRef = useRef(false)
-  const realtimeSuppressUntilRef = useRef(0)
-  const reloadTimerRef = useRef(null)
-  const syncReloadTimerRef = useRef(null)
   const catalogEnrichKeyRef = useRef('')
   const gameVersionRef = useRef(0)
   const gameRef = useRef(null)
-
-  const suppressRealtimeReload = useCallback((ms = 2000) => {
-    realtimeSuppressUntilRef.current = Date.now() + ms
-    if (reloadTimerRef.current) {
-      clearTimeout(reloadTimerRef.current)
-      reloadTimerRef.current = null
-    }
-  }, [])
 
   const commitGameState = useCallback(
     (nextGame) => {
@@ -180,7 +162,6 @@ export function GameScreen() {
     }
   }, [gameId, guestId, cardCatalog, commitGameState])
 
-  // Пере-обогащение когда догрузился каталог (у второго клиента рука часто пустая до загрузки cards)
   useEffect(() => {
     if (catalogLoading || !game || cardCatalog.size === 0) return
 
@@ -208,19 +189,9 @@ export function GameScreen() {
     }
   }, [catalogLoading, cardCatalog, game, game?.id, game?.version, commitGameState])
 
-  /** Фоновая синхронизация — только для добора/сброса/атаки, не для розыгрыша и передачи хода. */
-  const scheduleSyncReload = useCallback(() => {
-    suppressRealtimeReload(5000)
-    if (syncReloadTimerRef.current) clearTimeout(syncReloadTimerRef.current)
-    syncReloadTimerRef.current = setTimeout(() => {
-      syncReloadTimerRef.current = null
-      loadGame()
-    }, 1500)
-  }, [loadGame, suppressRealtimeReload])
-
   const reloadAfterAction = useCallback(() => {
-    scheduleSyncReload()
-  }, [scheduleSyncReload])
+    loadGame()
+  }, [loadGame])
 
   const gameActions = useMemo(
     () => ({ patchGame, cardCatalog }),
@@ -238,50 +209,84 @@ export function GameScreen() {
     if (actionError) toast('error', actionError)
   }, [actionError, toast])
 
-  // Debounced reload: одна атака правит 3 таблицы → 3 realtime callback'а.
-  // Без debounce получается 3+ reload RPC подряд. С debounce (500мс) —
-  // несколько событий коалесцируются в один reload.
-  const debouncedLoad = useCallback(() => {
-    if (Date.now() < realtimeSuppressUntilRef.current) return
-    if (reloadTimerRef.current) clearTimeout(reloadTimerRef.current)
-    reloadTimerRef.current = setTimeout(() => {
-      reloadTimerRef.current = null
-      if (Date.now() < realtimeSuppressUntilRef.current) return
-      loadGame()
-    }, 500)
-  }, [loadGame])
+  const syncCommitGame = useCallback(
+    (nextGame) => {
+      if (!nextGame) return false
+      const nextVersion = nextGame.version ?? 0
+      const currentVersion = gameVersionRef.current ?? 0
+      if (nextVersion > 0 && nextVersion <= currentVersion && currentVersion > 0) return false
 
-  useEffect(() => {
-    return () => {
-      if (reloadTimerRef.current) clearTimeout(reloadTimerRef.current)
-      if (syncReloadTimerRef.current) clearTimeout(syncReloadTimerRef.current)
-    }
+      gameVersionRef.current = Math.max(currentVersion, nextVersion)
+      gameRef.current = nextGame
+      catalogEnrichKeyRef.current = `${nextGame.id}:${nextGame.version}:${cardCatalog.size}`
+      setGame(nextGame)
+      return true
+    },
+    [cardCatalog.size]
+  )
+
+  const syncCtxRef = useRef({
+    guestId,
+    cardCatalog,
+    getGame: () => gameRef.current,
+    commitGame: syncCommitGame,
+    loadGame,
+    gameVersionRef,
+  })
+  syncCtxRef.current = {
+    guestId,
+    cardCatalog,
+    getGame: () => gameRef.current,
+    commitGame: syncCommitGame,
+    loadGame,
+    gameVersionRef,
+  }
+
+  const handleAblySyncStable = useCallback((message) => {
+    applyIncomingGameSync(message.data, syncCtxRef.current)
   }, [])
 
-  // Initial load при монтировании если gameId есть
+  const handleAblySubscribed = useCallback(() => {
+    loadGame()
+  }, [loadGame])
+
+  const realtimeStatus = useAblyChannel({
+    channelName: gameId ? `game:${gameId}` : null,
+    eventName: GAME_SYNC_EVENT,
+    onMessage: handleAblySyncStable,
+    onSubscribed: handleAblySubscribed,
+  })
+
+  useEffect(() => {
+    if (!gameId || loading) return undefined
+
+    let cancelled = false
+    const pollVersion = async () => {
+      const { data } = await supabase.from('games').select('version').eq('id', gameId).maybeSingle()
+      if (cancelled || !data) return
+      const remoteVersion = data.version ?? 0
+      const localVersion = gameVersionRef.current ?? 0
+      if (remoteVersion > localVersion) {
+        loadGame()
+      }
+    }
+
+    pollVersion()
+    const timer = setInterval(pollVersion, 2500)
+    return () => {
+      cancelled = true
+      clearInterval(timer)
+    }
+  }, [gameId, loading, loadGame])
+
   useEffect(() => {
     if (gameId) {
-      // Используем requestAnimationFrame чтобы избежать синхронного setState в useEffect
       const frameId = requestAnimationFrame(() => {
         loadGame()
       })
       return () => cancelAnimationFrame(frameId)
     }
   }, [gameId, loadGame])
-
-  // Realtime subscription (с state machine + reconnect)
-  const realtimeStatus = useRealtimeChannel({
-    channelName: gameId ? `game:${gameId}` : null,
-    subscriptions: useMemo(() => {
-      if (!gameId) return []
-      const onChange = debouncedLoad
-      return [
-        { table: 'games', filter: `id=eq.${gameId}`, callback: onChange },
-        { table: 'game_players', filter: `game_id=eq.${gameId}`, callback: onChange },
-        { table: 'game_zones', filter: `game_id=eq.${gameId}`, callback: onChange },
-      ]
-    }, [gameId, debouncedLoad]),
-  })
 
   if (loading) {
     return <div className="game-loading" role="status" aria-live="polite">Загружаем игру...</div>
@@ -340,7 +345,6 @@ export function GameScreen() {
           onFlipCard={flipCard}
           onDiscardFromZone={discardFromZone}
           onEndTurn={endTurn}
-          onSuppressRealtimeReload={suppressRealtimeReload}
           onForfeit={forfeit}
           onReorderLands={reorderLands}
           onConfirmLandSetup={confirmLandSetup}

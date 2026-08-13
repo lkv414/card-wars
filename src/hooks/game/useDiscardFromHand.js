@@ -6,6 +6,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
+import { publishGameSync } from '../../utils/gameSync'
 
 export function useDiscardFromHand(game, reload) {
   return useCallback(
@@ -23,6 +24,11 @@ export function useDiscardFromHand(game, reload) {
 
       if (!rpcErr && data?.success) {
         if (typeof reload === 'function') await reload()
+        await publishGameSync(game.id, {
+          type: 'reload',
+          version: data.version,
+          actorId: me.player_id,
+        })
         return { success: true }
       }
 

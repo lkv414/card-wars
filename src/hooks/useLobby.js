@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { supabase } from '../utils/supabase'
 import { logError } from '../utils/errorLogger'
-import { getGuestId } from '../utils/guestId'
+import { getGuestId, getGuestNickname } from '../utils/guestId'
 import { ensureGuestId } from '../utils/guestSession'
 import {
-  saveLobbySession,
   loadLobbySession,
   clearLobbySession,
 } from '../utils/lobbySession'
 import { useLobbyChannel } from './lobby/useLobbyChannel'
 import { createLobbyAction } from './lobby/useCreateLobby'
 import { joinLobbyAction } from './lobby/useJoinLobby'
+import { publishLobbySync } from '../utils/lobbySync'
 
 export function useLobby() {
   // 'idle' | 'restoring' | 'loading' | 'waiting' | 'in_game' | 'error' | 'dismissed'
@@ -27,6 +27,7 @@ export function useLobby() {
   const [isHost, setIsHost] = useState(false)
   const [hostId, setHostId] = useState(null)
   const [dismissedMessage, setDismissedMessage] = useState(null)
+  const [pendingGameId, setPendingGameId] = useState(null)
 
   const lobbyIdRef = useRef(null)
   const isHostRef = useRef(false)
@@ -39,15 +40,68 @@ export function useLobby() {
     setHostId(null)
   }, [])
 
-  const { channelRef, subscribeToLobby } = useLobbyChannel({
+  const onGameStarted = useCallback((gameId) => {
+    setPendingGameId(gameId)
+    setStatus('in_game')
+  }, [])
+
+  const { unsubscribeRef, subscribeToLobby, connectionStatus, onlinePlayerIds } = useLobbyChannel({
     setPlayers,
     setStatus,
     setDismissedMessage,
     resetLobbyState,
+    onGameStarted,
   })
+
+  const subscribeRef = useRef(subscribeToLobby)
+  useEffect(() => {
+    subscribeRef.current = subscribeToLobby
+  }, [subscribeToLobby])
 
   useEffect(() => { lobbyIdRef.current = lobbyId }, [lobbyId])
   useEffect(() => { isHostRef.current = isHost }, [isHost])
+
+  // Fallback: пока Ably недоступен или сообщение потерялось — подтягиваем лобби из Postgres.
+  useEffect(() => {
+    if (!lobbyId || status !== 'waiting') return undefined
+
+    let cancelled = false
+    const poll = async () => {
+      const { data: lobby } = await supabase
+        .from('lobbies')
+        .select('status')
+        .eq('id', lobbyId)
+        .maybeSingle()
+      if (cancelled) return
+
+      if (lobby?.status === 'in_game') {
+        const { data: game } = await supabase
+          .from('games')
+          .select('id')
+          .eq('lobby_id', lobbyId)
+          .maybeSingle()
+        if (game?.id) {
+          onGameStarted(game.id)
+        } else {
+          setStatus('in_game')
+        }
+        return
+      }
+
+      const { data: playersList } = await supabase
+        .from('lobby_players')
+        .select('*')
+        .eq('lobby_id', lobbyId)
+      if (!cancelled && playersList) setPlayers(playersList)
+    }
+
+    poll()
+    const timer = setInterval(poll, 3000)
+    return () => {
+      cancelled = true
+      clearInterval(timer)
+    }
+  }, [lobbyId, status, onGameStarted])
 
   const lobbySetState = useMemo(
     () => ({
@@ -139,13 +193,13 @@ export function useLobby() {
         setPlayers(playersList ?? [])
         setStatus('waiting')
       })
-      subscribeToLobby(lobby.id)
+      subscribeRef.current(lobby.id, { nickname: getGuestNickname() })
     })()
 
     return () => {
       cancelled = true
     }
-  }, [subscribeToLobby])
+  }, [])
 
   useEffect(() => {
     const handleUnload = () => {
@@ -196,26 +250,46 @@ export function useLobby() {
       return
     }
 
-    setPlayers((current) => current.map((player) =>
-      player.player_id === guestId ? { ...player, ready: true, ...(data || {}) } : player
-    ))
+    setPlayers((current) =>
+      current.map((player) =>
+        player.player_id === guestId ? { ...player, ready: true, ...(data || {}) } : player
+      )
+    )
+
+    const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', id)
+    if (playersList) {
+      setPlayers(playersList)
+      await publishLobbySync(id, { type: 'players', players: playersList, actorId: guestId })
+    }
   }, [])
 
   const leaveLobby = useCallback(async () => {
     const guestId = getGuestId()
     const id = lobbyIdRef.current
 
-    if (channelRef.current) {
-      supabase.removeChannel(channelRef.current)
-      channelRef.current = null
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current()
+      unsubscribeRef.current = null
     }
 
     if (id) {
-      await supabase.from('lobby_players').delete().eq('lobby_id', id).eq('player_id', guestId)
-
       if (isHostRef.current) {
-        await supabase.from('lobbies').delete().eq('id', id)
+        await publishLobbySync(id, { type: 'closed', actorId: guestId })
+      } else {
+        const { data: playersList } = await supabase
+          .from('lobby_players')
+          .select('*')
+          .eq('lobby_id', id)
+        await publishLobbySync(id, {
+          type: 'players',
+          players: playersList ?? [],
+          actorId: guestId,
+        })
       }
+      await supabase.rpc('leave_lobby', {
+        p_guest_id: guestId,
+        p_lobby_id: id,
+      })
     }
 
     clearLobbySession()
@@ -231,9 +305,12 @@ export function useLobby() {
 
   useEffect(() => {
     return () => {
-      if (channelRef.current) supabase.removeChannel(channelRef.current)
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current()
+        unsubscribeRef.current = null
+      }
     }
-  }, [])
+  }, [unsubscribeRef])
 
   return {
     status,
@@ -244,6 +321,9 @@ export function useLobby() {
     isHost,
     hostId,
     dismissedMessage,
+    pendingGameId,
+    connectionStatus,
+    onlinePlayerIds,
     createLobby,
     joinLobby,
     setReady,

@@ -9,8 +9,10 @@ import { canAttack } from './zoneOpposition'
 import { canPlayerDealDamage } from './combat'
 import { safePlayers } from '../../utils/safePlayer'
 import { isRpcUnavailable } from './rpcUtils'
+import { applyAttackPatch } from '../../utils/gameStatePatch'
+import { publishGameSync } from '../../utils/gameSync'
 
-export function useAttack(game, reload) {
+export function useAttack(game, { patchGame } = {}) {
   return useCallback(
     async (fromZone, cardId, toOpponentZone, toPlayerId = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -62,7 +64,16 @@ export function useAttack(game, reload) {
       }
       if (data?.error) return { error: data.error }
 
-      if (typeof reload === 'function') await reload()
+      if (typeof patchGame === 'function') {
+        patchGame((state) => applyAttackPatch(state, data))
+      }
+
+      await publishGameSync(game.id, {
+        type: 'attack',
+        version: data.version,
+        actorId: me.player_id,
+        rpcData: data,
+      })
 
       return {
         success: true,
@@ -74,6 +85,6 @@ export function useAttack(game, reload) {
         gameFinished: Boolean(data.game_finished),
       }
     },
-    [game, reload]
+    [game, patchGame]
   )
 }

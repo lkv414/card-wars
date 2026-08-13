@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   applyPlayCardPatch,
+  applyPlayCardZoneSnapshot,
   applyEndTurnPatch,
   applyBattleEventPatch,
 } from './gameStatePatch.js'
@@ -110,4 +111,37 @@ test('applyBattleEventPatch applies face damage', () => {
 
   assert.equal(next.players[1].health, 22)
   assert.equal(next.players[0].zones[0].cards[0].tapped, true)
+})
+
+test('applyPlayCardZoneSnapshot updates zone for observer with hidden hand', () => {
+  const game = {
+    id: 'g1',
+    version: 5,
+    current_player_id: 'p1',
+    players: [
+      {
+        player_id: 'p1',
+        hand: [],
+        hand_count: 3,
+        zones: [
+          { zone_position: 1, cards: [] },
+          { zone_position: 2, cards: [] },
+          { zone_position: 3, cards: [] },
+          { zone_position: 4, cards: [] },
+        ],
+      },
+    ],
+  }
+
+  const zoneCards = [{ id: 'c1', name: 'Slime', card_type: 'creature', attack: 2, health: 3 }]
+  const next = applyPlayCardZoneSnapshot(game, 'p1', 1, zoneCards, {
+    version: 6,
+    hand_count: 2,
+    actions_remaining: 1,
+  })
+
+  assert.equal(next.version, 6)
+  assert.equal(next.players[0].zones[1].cards.length, 1)
+  assert.equal(next.players[0].zones[1].cards[0].name, 'Slime')
+  assert.equal(next.players[0].hand_count, 2)
 })

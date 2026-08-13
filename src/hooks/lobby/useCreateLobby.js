@@ -2,6 +2,7 @@ import { supabase } from '../../utils/supabase'
 import { generateLobbyCode } from '../../utils/lobbyCode'
 import { saveLobbySession } from '../../utils/lobbySession'
 import { cleanupOldLobbies } from '../../utils/lobbySession'
+import { publishLobbySync } from '../../utils/lobbySync'
 
 export async function createLobbyAction(guestId, nickname, deckPayload, { subscribeToLobby, setState }) {
   const {
@@ -58,10 +59,11 @@ export async function createLobbyAction(guestId, nickname, deckPayload, { subscr
   setLobbyCode(code)
   setIsHost(true)
   setHostId(guestId)
-  subscribeToLobby(lobby.id)
+  subscribeToLobby(lobby.id, { nickname: nickname.trim() || 'Игрок' })
 
   const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', lobby.id)
   setPlayers(playersList ?? [])
+  await publishLobbySync(lobby.id, { type: 'players', players: playersList ?? [], actorId: guestId })
   setStatus('waiting')
   saveLobbySession(lobby.id, code, guestId, true)
   return code

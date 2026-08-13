@@ -184,11 +184,13 @@ export function applyEndTurnPatch(game, rpcData = {}) {
   }
 }
 
-export function applyFlipCardPatch(game, playerId, zoneIndex, cardId) {
+export function applyFlipCardPatch(game, playerId, zoneIndex, cardId, version) {
   if (!game?.players) return game
+  const nextVersion = version ?? game.version ?? 0
 
   return {
     ...game,
+    version: nextVersion,
     players: game.players.map((player) => {
       if (player.player_id !== playerId) return player
       const zoneRows = normalizePlayerZoneRows(player.zones)
@@ -210,6 +212,68 @@ export function applyFlipCardPatch(game, playerId, zoneIndex, cardId) {
 /**
  * Локально применяет результат play_card — сразу убирает карту из руки и кладёт на землю.
  */
+/** Локальный patch после perform_attack — без повторного RPC. */
+export function applyAttackPatch(game, rpcData = {}) {
+  if (!game?.players || !rpcData?.success) return game
+
+  let next = applyBattleEventPatch(game, rpcData)
+  const version = rpcData.version ?? (game.version ?? 0) + 1
+
+  next = {
+    ...next,
+    version,
+    players: next.players.map((player) => {
+      if (player.player_id !== rpcData.to_player_id) return player
+      if (rpcData.defender_health == null) return player
+      return { ...player, health: rpcData.defender_health }
+    }),
+  }
+
+  if (rpcData.game_finished) {
+    next = {
+      ...next,
+      status: 'finished',
+      winner_id: rpcData.from_player_id ?? null,
+    }
+  }
+
+  return next
+}
+
+/**
+ * Patch после draw_card / draw_free_card — для наблюдателей (своя рука всё равно через reload при необходимости).
+ */
+export function applyDrawPatch(game, playerId, rpcData = {}, guestId) {
+  if (!game?.players) return game
+  const version = rpcData.version ?? (game.version ?? 0) + 1
+
+  return {
+    ...game,
+    version,
+    actions_remaining:
+      playerId === game.current_player_id && rpcData.actions_remaining != null
+        ? rpcData.actions_remaining
+        : game.actions_remaining,
+    players: game.players.map((player) => {
+      if (player.player_id !== playerId) return player
+      const patch = {
+        ...player,
+        actions_remaining: rpcData.actions_remaining ?? player.actions_remaining,
+        deck_remaining: rpcData.deck_remaining ?? player.deck_remaining,
+        free_draw_used: rpcData.free_draw_used ?? player.free_draw_used,
+        paid_draw_used: rpcData.paid_draw_used ?? player.paid_draw_used,
+      }
+      // Полная рука приходит только актору; наблюдатель видит счётчик
+      if (playerId === guestId && Array.isArray(rpcData.hand)) {
+        patch.hand = rpcData.hand
+      } else if (rpcData.hand_count != null) {
+        patch.hand_count = rpcData.hand_count
+      }
+      return patch
+    }),
+  }
+}
+
 export function applyPlayCardPatch(game, playerId, cardIndex, zoneIndex, slotType, rpcData = {}, catalog) {
   if (!game?.players) return game
 
@@ -231,16 +295,22 @@ export function applyPlayCardPatch(game, playerId, cardIndex, zoneIndex, slotTyp
     players: game.players.map((player) => {
       if (player.player_id !== playerId) return player
 
+      const rawCard = rpcData.card
       const hand = [...(player.hand || [])]
-      if (cardIndex < 0 || cardIndex >= hand.length) return player
+      const hasVisibleHand = hand.length > 0
+      let cardSource = rawCard
 
-      const removed = hand[cardIndex]
-      hand.splice(cardIndex, 1)
-      const rawCard = rpcData.card || removed
+      if (hasVisibleHand && cardIndex >= 0 && cardIndex < hand.length) {
+        cardSource = cardSource || hand[cardIndex]
+        hand.splice(cardIndex, 1)
+      } else if (!cardSource) {
+        return player
+      }
+
       const placed = catalog
         ? enrichCard(
             {
-              ...rawCard,
+              ...cardSource,
               tapped: false,
               flipped: false,
               slot_type: slotType,
@@ -249,7 +319,7 @@ export function applyPlayCardPatch(game, playerId, cardIndex, zoneIndex, slotTyp
             catalog
           )
         : {
-            ...rawCard,
+            ...cardSource,
             tapped: false,
             flipped: false,
             slot_type: slotType,
@@ -258,14 +328,53 @@ export function applyPlayCardPatch(game, playerId, cardIndex, zoneIndex, slotTyp
 
       const zoneRows = normalizePlayerZoneRows(player.zones)
       const row = zoneRows[zoneIndex] || { zone_position: zoneIndex + 1, cards: [] }
-      const cards = [...normalizeZoneCards(row), placed]
-      zoneRows[zoneIndex] = { ...row, cards }
+      zoneRows[zoneIndex] = { ...row, cards: [...normalizeZoneCards(row), placed] }
 
       return {
         ...player,
-        hand,
+        hand: hasVisibleHand ? hand : player.hand,
+        hand_count: rpcData.hand_count ?? player.hand_count,
         zones: zoneRows,
         actions_remaining: actionsRemaining,
+      }
+    }),
+  }
+}
+
+/**
+ * Прямая установка карт зоны — для наблюдателей (рука оппонента скрыта).
+ */
+export function applyPlayCardZoneSnapshot(
+  game,
+  playerId,
+  zoneIndex,
+  zoneCards,
+  rpcData = {},
+  catalog
+) {
+  if (!game?.players) return game
+  const newVersion = rpcData.version ?? (game.version ?? 0) + 1
+  const cards = normalizeZoneCards(zoneCards).map((card) =>
+    catalog?.size ? enrichCard(card, catalog) : card
+  )
+
+  return {
+    ...game,
+    version: newVersion,
+    actions_remaining:
+      game.current_player_id === playerId && rpcData.actions_remaining != null
+        ? rpcData.actions_remaining
+        : game.actions_remaining,
+    players: game.players.map((player) => {
+      if (player.player_id !== playerId) return player
+      const zoneRows = normalizePlayerZoneRows(player.zones)
+      const row = zoneRows[zoneIndex] || { zone_position: zoneIndex + 1, cards: [] }
+      zoneRows[zoneIndex] = { ...row, cards }
+      return {
+        ...player,
+        hand_count: rpcData.hand_count ?? player.hand_count,
+        actions_remaining: rpcData.actions_remaining ?? player.actions_remaining,
+        zones: zoneRows,
       }
     }),
   }

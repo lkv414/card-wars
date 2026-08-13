@@ -305,6 +305,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lobby-player__online {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #bbb;
+  flex-shrink: 0;
+}
+
+.lobby-player__online--on {
+  background: #3d9a5f;
+  box-shadow: 0 0 0 2px rgba(61, 154, 95, 0.25);
 }
 
 .lobby-player__deck {

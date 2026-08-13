@@ -304,8 +304,8 @@ export function GameScreen() {
   )
 
   const gameActions = useMemo(
-    () => ({ patchGame, cardCatalog }),
-    [patchGame, cardCatalog]
+    () => ({ patchGame, cardCatalog, suppressRealtimeReload }),
+    [patchGame, cardCatalog, suppressRealtimeReload]
   )
 
   const {

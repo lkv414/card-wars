@@ -6,10 +6,11 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
-import { normalizeDrawRpcData } from '../../utils/gameStatePatch'
+import { applyDrawPatch, normalizeDrawRpcData, sanitizeDrawRpcDataForSync } from '../../utils/gameStatePatch'
 import { publishGameSync } from '../../utils/gameSync'
+import { getGuestId } from '../../utils/guestId'
 
-export function useDrawCard(game, reload) {
+export function useDrawCard(game, _reload, { patchGame, suppressRealtimeReload } = {}) {
   return useCallback(async () => {
     if (!game?.id) return { error: 'Игра не загружена' }
     await ensureGuestId()
@@ -29,8 +30,14 @@ export function useDrawCard(game, reload) {
     }
     if (data?.error) return { error: data.error }
 
-    if (typeof reload === 'function') {
-      await reload('draw-paid', { force: true })
+    const rpcData = normalizeDrawRpcData(data)
+    if (typeof patchGame === 'function') {
+      patchGame((state) => applyDrawPatch(state, me.player_id, rpcData, getGuestId()))
+    }
+
+    // Suppress realtime reload for 5s to avoid visual conflict with local patch
+    if (typeof suppressRealtimeReload === 'function') {
+      suppressRealtimeReload(5000)
     }
 
     await publishGameSync(game.id, {
@@ -38,7 +45,7 @@ export function useDrawCard(game, reload) {
       version: data.version,
       actorId: me.player_id,
       playerId: me.player_id,
-      rpcData: normalizeDrawRpcData(data),
+      rpcData: sanitizeDrawRpcDataForSync(rpcData),
     })
 
     return {
@@ -46,5 +53,5 @@ export function useDrawCard(game, reload) {
       actions_remaining: data.actions_remaining,
       hand_count: data.hand_count,
     }
-  }, [game, reload])
+  }, [game, patchGame, suppressRealtimeReload])
 }

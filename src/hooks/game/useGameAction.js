@@ -26,12 +26,12 @@ import { useDrawFreeCard } from './useDrawFreeCard'
 import { useShuffleDeck } from './useShuffleDeck'
 import { useDiscardFromHand } from './useDiscardFromHand'
 
-export function useGameAction(game, reload, { patchGame, cardCatalog } = {}) {
+export function useGameAction(game, reload, { patchGame, cardCatalog, suppressRealtimeReload } = {}) {
   const { writeGameState, isApplying, error } = useGameState(game, reload)
   const playCard = usePlayCard(game, writeGameState, reload, { patchGame, cardCatalog })
   const attack = useAttack(game, { patchGame })
-  const drawCard = useDrawCard(game, reload, { patchGame })
-  const drawFreeCard = useDrawFreeCard(game, reload, { patchGame })
+  const drawCard = useDrawCard(game, reload, { patchGame, suppressRealtimeReload })
+  const drawFreeCard = useDrawFreeCard(game, reload, { patchGame, suppressRealtimeReload })
   const shuffleDeck = useShuffleDeck(game, reload)
   const discardFromHand = useDiscardFromHand(game, reload)
   const discardFromZone = useDiscardFromZone(game, writeGameState, reload)

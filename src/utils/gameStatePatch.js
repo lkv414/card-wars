@@ -1,6 +1,6 @@
-import { normalizePlayerZoneRows, normalizeZoneCards } from '../hooks/game/format'
+import { normalizePlayerZoneRows, normalizeZoneCards } from '../hooks/game/format.js'
 import { getCardType } from './cardFields.ts'
-import { enrichCard } from './enrichGameCards'
+import { enrichCard } from './enrichGameCards.js'
 
 function zoneIndex(raw) {
   const z = Number(raw ?? 0)
@@ -252,9 +252,16 @@ export function normalizeDrawRpcData(rpcData = {}) {
   }
 }
 
+/** Не транслируем руку атора через Ably — только счётчики и флаги. */
+export function sanitizeDrawRpcDataForSync(rpcData = {}) {
+  const normalized = normalizeDrawRpcData(rpcData)
+  const { hand: _hand, deck_pile: _deck, ...rest } = normalized
+  return rest
+}
+
 /**
- * Patch после draw_card / draw_free_card.
- * Полная рука в RPC не приходит — актор обновляет UI через reload после RPC.
+ * Patch после draw_card / draw_free_card (без full reload).
+ * RPC актору отдаёт hand; наблюдатели получают hand_count через Ably sync.
  */
 export function applyDrawPatch(game, playerId, rpcData = {}, guestId) {
   if (!game?.players) return game

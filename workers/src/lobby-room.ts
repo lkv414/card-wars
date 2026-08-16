@@ -148,6 +148,22 @@ export class LobbyRoom extends DurableObject<Env> {
           p_lobby_id: lobbyId,
         })
         return
+      case 'reorder_lands':
+        await callRpc(this.env, 'reorder_player_lands', {
+          p_guest_id: clientId,
+          p_lobby_id: lobbyId,
+          p_land_ids: payload.landIds ?? payload.p_land_ids ?? [],
+        })
+        return
+      case 'confirm_land_setup':
+        await callRpc(this.env, 'confirm_land_setup', {
+          p_guest_id: clientId,
+          p_lobby_id: lobbyId,
+          // Если игрок отправил пустой массив земель — bypass и считаем готовым
+          // сразу. Это позволяет начать матч, даже если в колоде < 4 земель.
+          p_bypass: payload.bypass === true || (Array.isArray(payload.landIds) && payload.landIds.length === 0),
+        })
+        return
       default:
         throw new Error(`Unknown lobby action: ${action}`)
     }
@@ -156,7 +172,7 @@ export class LobbyRoom extends DurableObject<Env> {
   private async fetchLobbySnapshot(): Promise<unknown> {
     const { url, key } = this.requireSupabase()
     const res = await fetch(
-      `${url}/rest/v1/lobbies?id=eq.${this.resolveLobbyId()}&select=*,lobby_players(*)`,
+      `${url}/rest/v1/lobbies?id=eq.${this.resolveLobbyId()}&select=*,lobby_players(*,deck)`,
       {
         headers: {
           apikey: key,

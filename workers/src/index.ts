@@ -8,6 +8,38 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Upgrade, Connection',
 }
 
+/**
+ * Обогащает произвольный Response заголовками CORS — нужно для browser fetch из фронта.
+ * Если response содержит webSocket (101 Switching Protocols), нужно скопировать его тоже,
+ * иначе WebSocket-handshake сломается — новый Response без webSocket теряет апгрейд.
+ */
+function withCors(response: Response): Response {
+  // Если response содержит WebSocket (WS upgrade) — копируем напрямую через конструктор
+  // с webSocket property (поддерживается в Cloudflare Workers runtime, см. types).
+  if ((response as Response & { webSocket?: WebSocket | null }).webSocket) {
+    const headers = new Headers(response.headers)
+    for (const [key, value] of Object.entries(CORS_HEADERS)) {
+      headers.set(key, value)
+    }
+    const init: ResponseInit & { webSocket?: WebSocket | null } = {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+      webSocket: (response as Response & { webSocket?: WebSocket | null }).webSocket,
+    }
+    return new Response(null, init)
+  }
+  const headers = new Headers(response.headers)
+  for (const [key, value] of Object.entries(CORS_HEADERS)) {
+    headers.set(key, value)
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') {
@@ -25,9 +57,11 @@ export default {
       const gameId = gameMatch[1]
       const id = env.GAME_ROOM.idFromName(gameId)
       const stub = env.GAME_ROOM.get(id)
+      // Cloudflare Workers: для DO stub требуется внутренний URL — клонируем request
+      // с новым URL, сохраняя заголовки (включая Upgrade) и body.
       const roomUrl = new URL(request.url)
       roomUrl.searchParams.set('gameId', gameId)
-      return stub.fetch(new Request(roomUrl.toString(), request))
+      return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
     }
 
     const lobbyMatch = url.pathname.match(/^\/lobby\/([^/]+)\/ws$/)
@@ -37,7 +71,7 @@ export default {
       const stub = env.LOBBY_ROOM.get(id)
       const roomUrl = new URL(request.url)
       roomUrl.searchParams.set('lobbyId', lobbyId)
-      return stub.fetch(new Request(roomUrl.toString(), request))
+      return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
     }
 
     const lobbyNotifyMatch = url.pathname.match(/^\/lobby\/([^/]+)\/notify$/)
@@ -45,18 +79,23 @@ export default {
       const lobbyId = lobbyNotifyMatch[1]
       const id = env.LOBBY_ROOM.idFromName(lobbyId)
       const stub = env.LOBBY_ROOM.get(id)
+      // Internal broadcast — НЕ upgrade, можно конструировать напрямую.
       const roomUrl = new URL(request.url)
       roomUrl.pathname = '/internal/broadcast'
       roomUrl.searchParams.set('lobbyId', lobbyId)
-      return stub.fetch(new Request(roomUrl.toString(), { method: 'POST' }))
+      return withCors(
+        await stub.fetch(new Request(roomUrl.toString(), { method: 'POST' })),
+      )
     }
 
-    return json(
-      {
-        service: 'card-wars-game',
-        routes: ['/health', '/game/:gameId/ws', '/lobby/:lobbyId/ws', '/lobby/:lobbyId/notify'],
-      },
-      404
+    return withCors(
+      json(
+        {
+          service: 'card-wars-game',
+          routes: ['/health', '/game/:gameId/ws', '/lobby/:lobbyId/ws', '/lobby/:lobbyId/notify'],
+        },
+        404,
+      ),
     )
   },
 }
@@ -66,7 +105,6 @@ function json(body: unknown, status = 200): Response {
     status,
     headers: {
       'Content-Type': 'application/json',
-      ...CORS_HEADERS,
     },
   })
 }

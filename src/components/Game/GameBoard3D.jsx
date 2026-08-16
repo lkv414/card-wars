@@ -1,21 +1,90 @@
 /**
- * GameBoard3D — 3D-сцена игрового стола (Three.js + react-three-fiber).
+ * GameBoard3D — корневой компонент игровой 3D-сцены.
+ *
+ * По паттерну testing_3d: один owner стейта (useState здесь), чистая обёртка:
+ *
+ *   <div game-board-3d>
+ *     <GameCanvas>
+ *       <GameExperience>
+ *         <OrbitControls> + зоны (GameLand + GameObject для карт)
+ *       </GameExperience>
+ *     </GameCanvas>
+ *     <DamageFlashOverlay />
+ *     <LandSetupOverlay />   ← если game.status === 'setup'
+ *     <GamePanel />          ← HUDOverlay (hand, top bar, banners) ВНЕ Canvas
+ *   </div>
+ *
+ * Вся 3D-логика вынесена в scene/*; домен (game, players, WS, RPC) приходит
+ * сверху как пропы и не меняется.
  */
-import { Suspense, useMemo, useState, useCallback, useRef, useEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
-import * as THREE from 'three'
-import { HUDOverlay } from './HUDOverlay'
-import { GameScene } from './gameBoard3D/GameScene'
-import { AdaptiveBoardCamera, CAMERA_FOV, PLAY_FIELD_Y } from './gameBoard3D/AdaptiveBoardCamera'
-import { getBoardLookAtTarget } from './gameBoard3D/layout'
-import { safePlayers, safePlayer } from '../../utils/safePlayer'
+import { useMemo, useState, useCallback, useRef, useEffect, memo } from 'react'
+
+import { GameCanvas } from './scene/GameCanvas'
+import { GameExperience } from './scene/GameExperience'
+import { GameObject } from './scene/GameObject'
+import { GameLand } from './scene/GameLand'
+import { GamePanel } from './scene/GamePanel'
+import { PlayerNameLabels } from './scene/PlayerNameLabels'
 
 import { DamageFlashOverlay } from './DamageFlashOverlay'
 import { LandSetupOverlay } from './LandSetupOverlay'
+
 import { canPlayerDealDamage } from '../../hooks/game/combat'
 import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
 import { useGraphicsSettings } from '../../hooks/useGraphicsSettings'
+import { safePlayers, safePlayer } from '../../utils/safePlayer'
+
+import {
+  CARD_OBJECT_TYPES,
+} from '../../utils/cardSceneHelpers'
+import {
+  calculateTwoPlayerBoard,
+  calculatePlayerSlotPositions,
+  PLAY_FIELD_Y,
+  computeFieldCardScale,
+  getLandSlotLayout,
+} from '../../utils/gameObjectPlacement'
+
+import { normalizePlayerZoneRows, normalizeZoneCards } from '../../hooks/game/format'
+import { splitZoneCards } from '../../hooks/game/zoneCards'
+
+const FIELD_CARD_SCALE = computeFieldCardScale(0.88)
+
+/**
+ * Собирает список зон на поле с координатами и владельцами.
+ */
+function buildBoardZones(players, myIndex) {
+  const playerCount = players.length
+  if (playerCount === 2) {
+    const sharedLanes = calculateTwoPlayerBoard(myIndex)
+    return sharedLanes.flatMap((lane) => {
+      const nearPlayer = players[lane.near.playerIndex]
+      const farPlayer = players[lane.far.playerIndex]
+      return [
+        { ...lane.near, player: nearPlayer, isOwnerMe: true },
+        { ...lane.far, player: farPlayer, isOwnerMe: false },
+      ].filter((z) => z.player && (z.player.health ?? 0) > 0)
+    })
+  }
+  const zones = []
+  for (let i = 0; i < playerCount; i++) {
+    if (i === myIndex) continue
+    const opp = players[i]
+    if (!opp || (opp.health ?? 0) <= 0) continue
+    const positions = calculatePlayerSlotPositions(i, playerCount)
+    for (const p of positions) {
+      zones.push({ ...p, player: opp, isOwnerMe: false })
+    }
+  }
+  const me = players[myIndex]
+  if (me && (me.health ?? 0) > 0) {
+    const myPositions = calculatePlayerSlotPositions(myIndex, playerCount)
+    for (const p of myPositions) {
+      zones.push({ ...p, player: me, isOwnerMe: true })
+    }
+  }
+  return zones
+}
 
 export function GameBoard3D({
   game,
@@ -23,7 +92,6 @@ export function GameBoard3D({
   landCatalog = {},
   onGameEnd,
   onPlayCard,
-  onAttack,
   onDrawFreeCard,
   onDrawPaidCard,
   onShuffleDeck,
@@ -31,65 +99,98 @@ export function GameBoard3D({
   onEndTurn,
   onSuppressRealtimeReload,
   onForfeit,
-  onFlipCard,
-  onDiscardFromZone,
   onReorderLands,
   onConfirmLandSetup,
+  onSkipLandSetup,
   realtimeStatus = 'connecting',
   isApplying = false,
   actionError = null,
   toast = () => {},
 }) {
   const { shadowsEnabled } = useGraphicsSettings()
+
+  // === Visual state (testing_3d pattern: один owner) ===
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
   const [selectedZoneIndex, setSelectedZoneIndex] = useState(null)
   const [draggingCardIndex, setDraggingCardIndex] = useState(null)
   const [damageFlash, setDamageFlash] = useState(false)
-  const [damageMarkers, setDamageMarkers] = useState([])
   const [battleEvents, setBattleEvents] = useState([])
-  const [cardActionMenu, setCardActionMenu] = useState(null)
-  const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null)
 
+  // === Refs ===
   const boardRef = useRef(null)
   const pointerRef = useRef({ x: 0, y: 0 })
-  const rayTargetRef = useRef(null)
   const placingLockRef = useRef(false)
   const cardIndexRef = useRef(null)
+  const controlsRef = useRef(null)
 
   useEffect(() => {
     cardIndexRef.current = draggingCardIndex ?? selectedCardIndex
   }, [draggingCardIndex, selectedCardIndex])
 
+  // === Derived state ===
   const players = useMemo(() => safePlayers(game.players), [game.players])
   const playerCount = players.length
-  const myIndex = players.findIndex((p) => p.player_id === playerId)
-  const controlsRef = useRef(null)
-  const boardTarget = useMemo(() => getBoardLookAtTarget(), [])
+  const myIndex = useMemo(() => {
+    const idx = players.findIndex((p) => p.player_id === playerId)
+    return idx === -1 && players.length > 0 ? 0 : idx
+  }, [players, playerId])
 
-  const isPlayer1 = playerId === players[0]?.player_id
-  const fallbackPlayer = isPlayer1 ? players[0] : players[1]
-  const me = safePlayer(players, players[myIndex]?.player_id || fallbackPlayer?.player_id)
-  const opp = safePlayer(
-    players,
-    players.find((p) => p.player_id !== (players[myIndex]?.player_id || playerId))?.player_id
+  const me = useMemo(
+    () => (myIndex >= 0 ? safePlayer(players, players[myIndex]?.player_id) : safePlayer([], null)),
+    [players, myIndex],
   )
+
+  // Dedup handCards по instanceId/id — чтобы не было ghost-карт и duplicate keys
+  // когда WS-push и локальный optimistic reload временно дают два вхождения.
+  const handCards = useMemo(() => {
+    const raw = Array.isArray(me?.hand) ? me.hand : []
+    const seen = new Set()
+    const out = []
+    for (const c of raw) {
+      if (!c) continue
+      const id = c.instanceId || c.id
+      if (id && seen.has(id)) continue
+      if (id) seen.add(id)
+      out.push(c)
+    }
+    return out
+  }, [me])
   const isYourTurn = game.current_player_id === playerId
   const isFinished = game.status === 'finished'
   const inSetup = game.status === 'setup'
-  const handCards = me?.hand || []
+
   const actionsRemaining = isYourTurn
     ? (me?.actions_remaining ?? game.actions_remaining ?? 2)
     : 0
-  const aliveCount = players.filter((p) => (p.health ?? 0) > 0).length
+  const aliveCount = useMemo(
+    () => players.filter((p) => (p.health ?? 0) > 0).length,
+    [players],
+  )
   const canDealDamage = canPlayerDealDamage(
     me?.player_order,
     aliveCount,
-    game.current_turn ?? 0
+    game.current_turn ?? 0,
   )
 
-  const isPlacementActive =
-    isYourTurn && !isFinished && !inSetup && (selectedCardIndex !== null || draggingCardIndex !== null)
+  const activeCard = useMemo(() => {
+    const idx = draggingCardIndex ?? selectedCardIndex
+    return idx !== null ? handCards[idx] ?? null : null
+  }, [draggingCardIndex, selectedCardIndex, handCards])
 
+  // === Position calculations ===
+  const zones = useMemo(() => buildBoardZones(players, myIndex), [players, myIndex])
+
+  const resolveLandType = useCallback(
+    (zoneRow) => {
+      if (zoneRow?.land_type) return zoneRow.land_type
+      const id = zoneRow?.land_id
+      if (id && landCatalog[id]?.land_type) return landCatalog[id].land_type
+      return null
+    },
+    [landCatalog],
+  )
+
+  // === Pointer tracking ===
   const updatePointer = useCallback((clientX, clientY) => {
     const el = boardRef.current
     if (!el) return
@@ -107,10 +208,45 @@ export function GameBoard3D({
     return () => window.removeEventListener('pointermove', onMove)
   }, [updatePointer])
 
-  const onPlayCardRef = useRef(onPlayCard)
-  useEffect(() => {
-    onPlayCardRef.current = onPlayCard
-  }, [onPlayCard])
+  // === Actions ===
+  const handlePointerMissed = useCallback(() => {
+    setSelectedZoneIndex(null)
+  }, [])
+
+  const handleLandClick = useCallback(
+    (zone) => {
+      if (!zone.isOwnerMe || activeCard) return
+      setSelectedZoneIndex(zone.zoneIndex === selectedZoneIndex ? null : zone.zoneIndex)
+    },
+    [activeCard, selectedZoneIndex],
+  )
+
+  const handleZoneCardClick = useCallback(
+    (zone, card) => {
+      if (inSetup || !isYourTurn || isFinished || !zone.isOwnerMe) return
+      toast('info', `Действие с картой: ${card?.name ?? '?'}`)
+    },
+    [inSetup, isYourTurn, isFinished, toast],
+  )
+
+  const handleConfirmLandSetup = useCallback(
+    async ({ landIds = [], bypass = false } = {}) => {
+      try {
+        await onConfirmLandSetup?.({ landIds, bypass })
+      } catch (e) {
+        toast('error', e?.message || 'Не удалось подтвердить расстановку')
+      }
+    },
+    [onConfirmLandSetup, toast],
+  )
+
+  const handleSkipLandSetup = useCallback(async () => {
+    try {
+      await onSkipLandSetup?.()
+    } catch (e) {
+      toast('error', e?.message || 'Не удалось пропустить расстановку')
+    }
+  }, [onSkipLandSetup, toast])
 
   const handleRayRelease = useCallback(
     async (cardIdx, target) => {
@@ -122,20 +258,19 @@ export function GameBoard3D({
       setDraggingCardIndex(null)
       onSuppressRealtimeReload?.(5000)
       try {
-        const result = await onPlayCardRef.current?.(cardIdx, target.zoneIndex, 1, target.slotType)
+        const result = await onPlayCard?.(cardIdx, target.zoneIndex, 1, target.slotType)
         if (result?.error) {
           toast('error', result.error)
           return
         }
         setSelectedCardIndex(null)
-        rayTargetRef.current = null
       } catch (err) {
         toast('error', err?.message || 'Не удалось сыграть карту')
       } finally {
         placingLockRef.current = false
       }
     },
-    [handCards, toast, setDraggingCardIndex, onSuppressRealtimeReload]
+    [handCards, toast, onSuppressRealtimeReload, onPlayCard],
   )
 
   const handleEndTurn = useCallback(async () => {
@@ -145,7 +280,6 @@ export function GameBoard3D({
       toast('error', result.error)
       return result
     }
-
     setSelectedCardIndex(null)
     setSelectedZoneIndex(null)
     setDraggingCardIndex(null)
@@ -153,151 +287,166 @@ export function GameBoard3D({
     const events = result?.battleEvents
     if (Array.isArray(events) && events.length > 0) {
       setBattleEvents((prev) => [...prev, ...events])
-      const { markers, flashMe } = battleEventsToVisuals(events, playerId)
-      if (markers.length > 0) {
-        setDamageMarkers((prev) => [...prev, ...markers])
-        for (const m of markers) {
-          setTimeout(() => {
-            setDamageMarkers((prev) => prev.filter((x) => x.key !== m.key))
-          }, 1400)
-        }
-      }
+      const { flashMe } = battleEventsToVisuals(events, playerId)
       if (flashMe) {
         setDamageFlash(true)
         setTimeout(() => setDamageFlash(false), 550)
       }
-      await new Promise((r) => setTimeout(r, 900))
     }
-
     return result
   }, [onEndTurn, onSuppressRealtimeReload, playerId, toast])
-
-  const handleFlipCard = useCallback(
-    async (playerIndex, zoneIndex, cardId) => {
-      const result = await onFlipCard?.(playerIndex, zoneIndex, cardId)
-      if (result?.error) toast('error', result.error)
-    },
-    [onFlipCard, toast]
-  )
-
-  const handleRequestZoneAction = useCallback(
-    ({ zoneIndex, card, canFlip }) => {
-      const cardId = card.id || card.instanceId
-      setZoneCardActionMenu({
-        card,
-        onFlip: canFlip
-          ? () => handleFlipCard(myIndex, zoneIndex, cardId)
-          : undefined,
-        onDiscard: () => onDiscardFromZone?.(zoneIndex, cardId).then((r) => {
-          if (r?.error) toast('error', r.error)
-        }),
-      })
-    },
-    [handleFlipCard, myIndex, onDiscardFromZone, toast]
-  )
-
-  const handleBoardPointerDown = useCallback(
-    (e) => {
-      updatePointer(e.clientX, e.clientY)
-    },
-    [updatePointer]
-  )
 
   return (
     <div
       ref={boardRef}
-      className={`game-board-3d${isPlacementActive ? ' game-board-3d--placing' : ''}`}
-      onPointerDown={handleBoardPointerDown}
+      className="game-board-3d"
+      onPointerDown={(e) => updatePointer(e.clientX, e.clientY)}
     >
-      <Canvas
+      <GameCanvas
         shadows={shadowsEnabled}
-        camera={{
-          fov: CAMERA_FOV,
-          near: 0.1,
-          far: 100,
-          position: [0, PLAY_FIELD_Y + 12, 12],
-        }}
-        gl={{ antialias: true, powerPreference: 'high-performance' }}
-        style={{ background: 'linear-gradient(180deg, #5a6a75 0%, #3d4a52 100%)' }}
-        onCreated={({ gl }) => {
-          gl.domElement.style.touchAction = 'none'
-          gl.toneMapping = THREE.ACESFilmicToneMapping
-          gl.toneMappingExposure = 1.08
-          if (shadowsEnabled) gl.shadowMap.type = THREE.PCFShadowMap
-          const canvas = gl.domElement
-          canvas.addEventListener('webglcontextlost', (e) => {
-            e.preventDefault()
-            toast('error', 'WebGL контекст потерян — перезагрузите страницу')
-          })
-        }}
+        onPointerMissed={handlePointerMissed}
+        onToastError={(msg) => toast('error', msg)}
       >
-        <AdaptiveBoardCamera
-          playerIndex={myIndex}
+        <GameExperience
+          playerIndex={myIndex >= 0 ? myIndex : 0}
           playerCount={playerCount}
           controlsRef={controlsRef}
-        />
-        <Suspense fallback={null}>
-          <GameScene
-            game={game}
-            playerId={playerId}
-            landCatalog={landCatalog}
-            onPlayCard={onPlayCard}
-            onFlipCard={handleFlipCard}
-            onDiscardFromZone={onDiscardFromZone}
-            onRequestZoneAction={handleRequestZoneAction}
-            damageMarkers={damageMarkers}
-            selectedCardIndex={selectedCardIndex}
-            setSelectedCardIndex={setSelectedCardIndex}
-            selectedZoneIndex={selectedZoneIndex}
-            setSelectedZoneIndex={setSelectedZoneIndex}
-            draggingCardIndex={draggingCardIndex}
-            setDraggingCardIndex={setDraggingCardIndex}
-            handCards={handCards}
-            pointerRef={pointerRef}
-            rayTargetRef={rayTargetRef}
-            placingLockRef={placingLockRef}
-            isPlacementActive={isPlacementActive}
-            boardRectRef={boardRef}
-            cardIndexRef={cardIndexRef}
-            onRayRelease={handleRayRelease}
+        >
+          {zones.map((zone) => {
+            const zoneRows = normalizePlayerZoneRows(zone.player.zones)
+            const row = zoneRows[zone.zoneIndex] || {}
+            const cards = normalizeZoneCards(row)
+            const { creatureCard, buildingCard } = splitZoneCards(cards)
+            const isSelectedZone =
+              zone.isOwnerMe && selectedZoneIndex === zone.zoneIndex
+            const slots = getLandSlotLayout()
+
+            return (
+              <group
+                key={`zone-${zone.player.player_id}-${zone.zoneIndex}`}
+                position={zone.center}
+                rotation={[0, zone.rotationY, 0]}
+              >
+                <GameLand
+                  landType={resolveLandType(row)}
+                  selected={isSelectedZone}
+                  onClick={() => handleLandClick(zone)}
+                  creaturePlayable={
+                    zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
+                  }
+                  buildingPlayable={
+                    zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
+                  }
+                  onCreatureClick={() => {
+                    if (zone.isOwnerMe && activeCard) {
+                      handleRayRelease(cardIndexRef.current ?? 0, {
+                        zoneIndex: zone.zoneIndex,
+                        slotType: 'creature',
+                      })
+                    }
+                  }}
+                  onBuildingClick={() => {
+                    if (zone.isOwnerMe && activeCard) {
+                      handleRayRelease(cardIndexRef.current ?? 0, {
+                        zoneIndex: zone.zoneIndex,
+                        slotType: 'building',
+                      })
+                    }
+                  }}
+                />
+
+                {/* Существо лежит в creature-слоте (z<0, дальняя половина) */}
+                {creatureCard && (
+                  <GameObject
+                    key={`creature-${creatureCard.id ?? creatureCard.instanceId}`}
+                    card={creatureCard}
+                    type={CARD_OBJECT_TYPES.CREATURE}
+                    position={[slots.creature.x, PLAY_FIELD_Y + 0.004, slots.creature.z]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    flatOnTable
+                    tableScale={FIELD_CARD_SCALE}
+                    isSelected={isSelectedZone}
+                    isFaceUp
+                    showStats
+                    showFlipOption={Boolean(zone.isOwnerMe && isYourTurn)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleZoneCardClick(zone, creatureCard)
+                    }}
+                  />
+                )}
+
+                {/* Строение лежит в building-слоте (z>0, ближняя половина) */}
+                {buildingCard && (
+                  <GameObject
+                    key={`building-${buildingCard.id ?? buildingCard.instanceId}`}
+                    card={buildingCard}
+                    type={CARD_OBJECT_TYPES.BUILDING}
+                    position={[slots.building.x, PLAY_FIELD_Y + 0.004, slots.building.z]}
+                    rotation={[-Math.PI / 2, 0, 0]}
+                    flatOnTable
+                    tableScale={FIELD_CARD_SCALE}
+                    isSelected={false}
+                    isFaceUp
+                    showStats
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleZoneCardClick(zone, buildingCard)
+                    }}
+                  />
+                )}
+              </group>
+            )
+          })}
+
+          {/* Ники игроков над зонами */}
+          <PlayerNameLabels
+            players={players}
+            playerCount={playerCount}
+            currentPlayerId={game.current_player_id}
           />
-        </Suspense>
-        <OrbitControls
-          ref={controlsRef}
-          target={boardTarget}
-          enablePan={false}
-          minPolarAngle={Math.PI / 4}
-          maxPolarAngle={Math.PI / 2.05}
-          enabled={!draggingCardIndex}
-        />
-      </Canvas>
+
+          {handCards.map((card, idx) => {
+            if (idx !== selectedCardIndex && idx !== draggingCardIndex) return null
+            return (
+              <GameObject
+                key={`hand-${card.id ?? idx}`}
+                card={card}
+                type={CARD_OBJECT_TYPES.HAND}
+                position={[0, 5, 0]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                scale={0.5}
+                selected
+                onClick={() =>
+                  setSelectedCardIndex(idx === selectedCardIndex ? null : idx)
+                }
+              />
+            )
+          })}
+        </GameExperience>
+      </GameCanvas>
 
       {game.status === 'setup' && (
         <LandSetupOverlay
           game={game}
           playerId={playerId}
           landCatalog={landCatalog}
-          onReorder={async (...args) => {
+          onReorder={async (landIds) => {
             try {
-              await onReorderLands?.(...args)
+              await onReorderLands?.(landIds)
             } catch (e) {
               toast('error', e?.message || 'Не удалось переставить земли')
             }
           }}
-          onConfirm={async () => {
-            try {
-              await onConfirmLandSetup?.()
-            } catch (e) {
-              toast('error', e?.message || 'Не удалось подтвердить расстановку')
-            }
-          }}
+          onConfirm={handleConfirmLandSetup}
+          onSkip={handleSkipLandSetup}
           isApplying={isApplying}
         />
       )}
 
       <DamageFlashOverlay active={damageFlash} />
 
-      <HUDOverlay
+      <GamePanel
         playerId={playerId}
         isYourTurn={isYourTurn && game.status !== 'setup'}
         isFinished={isFinished}
@@ -326,13 +475,52 @@ export function GameBoard3D({
         draggingCardIndex={draggingCardIndex}
         setDraggingCardIndex={setDraggingCardIndex}
         updatePointer={updatePointer}
-        cardActionMenu={cardActionMenu}
-        zoneCardActionMenu={zoneCardActionMenu}
-        onCloseCardActionMenu={() => setCardActionMenu(null)}
-        onCloseZoneCardActionMenu={() => setZoneCardActionMenu(null)}
       />
     </div>
   )
 }
 
-export default GameBoard3D
+/**
+ * GameBoard3D с memo: предотвращает полный ремонт 3D-сцены когда меняются
+ * пропсы которые не влияют на 3D (toast, realtimeStatus, isApplying и т.п.).
+ * Memo пропускает ре-рендер если game.version не изменился.
+ */
+function gamesEqual(a, b) {
+  if (a === b) return true
+  if (!a || !b) return false
+  if (a.version !== b.version) return false
+  if (a.status !== b.status) return false
+  if (a.current_player_id !== b.current_player_id) return false
+  if (a.current_turn !== b.current_turn) return false
+  if (a.winner_id !== b.winner_id) return false
+  if (a.actions_remaining !== b.actions_remaining) return false
+  const aPlayers = Array.isArray(a.players) ? a.players : []
+  const bPlayers = Array.isArray(b.players) ? b.players : []
+  if (aPlayers.length !== bPlayers.length) return false
+  for (let i = 0; i < aPlayers.length; i++) {
+    const ap = aPlayers[i] || {}
+    const bp = bPlayers[i] || {}
+    if (ap.player_id !== bp.player_id) return false
+    if (ap.health !== bp.health) return false
+    if (ap.actions_remaining !== bp.actions_remaining) return false
+    if (ap.hand_count !== bp.hand_count) return false
+    // hand: пересоздаётся каждый раз — проверяем только длину
+    const ah = Array.isArray(ap.hand) ? ap.hand.length : 0
+    const bh = Array.isArray(bp.hand) ? bp.hand.length : 0
+    if (ah !== bh) return false
+  }
+  return true
+}
+
+function gameBoard3DAreEqual(prev, next) {
+  return (
+    gamesEqual(prev.game, next.game) &&
+    prev.playerId === next.playerId &&
+    prev.landCatalog === next.landCatalog &&
+    prev.realtimeStatus === next.realtimeStatus &&
+    prev.isApplying === next.isApplying &&
+    prev.actionError === next.actionError
+  )
+}
+
+export default memo(GameBoard3D, gameBoard3DAreEqual)

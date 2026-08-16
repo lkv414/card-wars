@@ -1,7 +1,12 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { getLandCardBorder } from '../../../constants/landColors'
 import { getCardCost } from '../../../utils/cardFields.ts'
 
+/**
+ * HUDHand — карты в руке игрока (внизу экрана, вне Canvas).
+ * Дедупликация по instanceId/id защищает от duplicate-key warnings
+ * когда WS-push и после-оптимистичный reload временно дублируют карту.
+ */
 export function HUDHand({
   handCards,
   isYourTurn,
@@ -18,19 +23,36 @@ export function HUDHand({
 }) {
   const dragMovedRef = useRef(false)
 
+  // Дедупликация: у каждой карты в руке должен быть уникальный instanceId.
+  // Если Supabase WS-push принёс дубль — оставляем только первое вхождение.
+  const uniqueHand = useMemo(() => {
+    if (!Array.isArray(handCards)) return []
+    const seen = new Set()
+    const out = []
+    for (const c of handCards) {
+      if (!c) continue
+      const id = c.instanceId || c.id
+      if (id && seen.has(id)) continue
+      if (id) seen.add(id)
+      out.push(c)
+    }
+    return out
+  }, [handCards])
+
   return (
     <div className="hud-hand-row">
       <div className="hud-hand" role="list" aria-label="Ваша рука">
-        {Array.isArray(handCards) && handCards.length > 0 ? (
-          handCards.map((c, idx) => {
+        {uniqueHand.length > 0 ? (
+          uniqueHand.map((c, idx) => {
             const isSel = selectedCardIndex === idx
             const isDragging = draggingCardIndex === idx
             const landBorder = getLandCardBorder(c?.land_type)
             const cost = getCardCost(c)
+            const key = c?.instanceId || c?.id || `hand-${idx}`
             return (
               <button
                 type="button"
-                key={c?.id || c?.instanceId || idx}
+                key={key}
                 className={`hud-hand-card${isSel ? ' selected' : ''}${isDragging ? ' dragging' : ''}${isYourTurn ? '' : ' disabled'}`}
                 style={{ '--card-land-border': landBorder }}
                 disabled={!isYourTurn || isFinished}

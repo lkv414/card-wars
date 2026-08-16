@@ -255,6 +255,7 @@ export function normalizeDrawRpcData(rpcData = {}) {
 /** Не транслируем руку атора через Ably — только счётчики и флаги. */
 export function sanitizeDrawRpcDataForSync(rpcData = {}) {
   const normalized = normalizeDrawRpcData(rpcData)
+  // eslint-disable-next-line no-unused-vars -- _hand/_deck намеренно исключены
   const { hand: _hand, deck_pile: _deck, ...rest } = normalized
   return rest
 }
@@ -313,6 +314,21 @@ export function applyPlayCardPatch(game, playerId, cardIndex, zoneIndex, slotTyp
         2) - (rpcData.action_cost ?? 1)
     )
 
+  // Дедупликация helper: убираем дубли по instanceId/id
+  const dedup = (cards) => {
+    if (!Array.isArray(cards)) return cards
+    const seen = new Set()
+    const out = []
+    for (const c of cards) {
+      if (!c) continue
+      const id = c.instanceId || c.id
+      if (id && seen.has(id)) continue
+      if (id) seen.add(id)
+      out.push(c)
+    }
+    return out
+  }
+
   return {
     ...game,
     version: newVersion,
@@ -333,32 +349,35 @@ export function applyPlayCardPatch(game, playerId, cardIndex, zoneIndex, slotTyp
         return player
       }
 
-      const placed = catalog
-        ? enrichCard(
-            {
-              ...cardSource,
-              tapped: false,
-              flipped: false,
-              slot_type: slotType,
-              zone_position: zoneIndex + 1,
-            },
-            catalog
-          )
-        : {
-            ...cardSource,
-            tapped: false,
-            flipped: false,
-            slot_type: slotType,
-            zone_position: zoneIndex + 1,
-          }
+      const placed = (catalog && catalog.size ? enrichCard : (c) => c)(
+        {
+          ...cardSource,
+          tapped: false,
+          flipped: false,
+          slot_type: slotType,
+          zone_position: zoneIndex + 1,
+        },
+        catalog
+      )
 
       const zoneRows = normalizePlayerZoneRows(player.zones)
       const row = zoneRows[zoneIndex] || { zone_position: zoneIndex + 1, cards: [] }
-      zoneRows[zoneIndex] = { ...row, cards: [...normalizeZoneCards(row), placed] }
+      const existingCards = normalizeZoneCards(row)
+      const placedId = placed.instanceId || placed.id
+      const zoneHasSameCard = placedId
+        ? existingCards.some((c) => (c.instanceId || c.id) === placedId)
+        : false
+      const newZoneCards = zoneHasSameCard ? existingCards : [...existingCards, placed]
+      zoneRows[zoneIndex] = { ...row, cards: newZoneCards }
+
+      // Dedup hand + убираем placed из руки (если он остался по ошибке)
+      const newHand = placedId
+        ? dedup(hand).filter((c) => (c.instanceId || c.id) !== placedId)
+        : dedup(hand)
 
       return {
         ...player,
-        hand: hasVisibleHand ? hand : player.hand,
+        hand: hasVisibleHand ? newHand : player.hand,
         hand_count: rpcData.hand_count ?? player.hand_count,
         zones: zoneRows,
         actions_remaining: actionsRemaining,

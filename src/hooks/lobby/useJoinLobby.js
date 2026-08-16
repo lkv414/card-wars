@@ -83,7 +83,7 @@ export async function joinLobbyAction(guestId, code, nickname, deckPayload, { su
   setIsHost(lobby.host_id === guestId)
   setHostId(lobby.host_id)
   setStatus(lobby.status === 'waiting' ? 'waiting' : lobby.status)
-  subscribeToLobby(lobby.id, { nickname: nickname.trim() || 'Игрок' })
+  subscribeToLobby(lobby.id)
 
   const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', lobby.id)
   setPlayers(playersList ?? [])

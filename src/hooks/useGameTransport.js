@@ -19,9 +19,12 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
   const onStateRef = useRef(onState)
   const onErrorRef = useRef(onError)
   const onPresenceRef = useRef(onPresence)
-  onStateRef.current = onState
-  onErrorRef.current = onError
-  onPresenceRef.current = onPresence
+
+  useEffect(() => {
+    onStateRef.current = onState
+    onErrorRef.current = onError
+    onPresenceRef.current = onPresence
+  }, [onState, onError, onPresence])
 
   const settlePending = useCallback((requestId, fn) => {
     if (!requestId) return
@@ -36,7 +39,7 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
       if (msg?.type === 'error') {
         if (msg.requestId) {
           settlePending(msg.requestId, ({ reject }) =>
-            reject(new Error(msg.message || 'WebSocket action failed'))
+            reject(new Error(msg.message || 'WebSocket action failed')),
           )
         } else {
           onErrorRef.current?.(msg.message || 'WebSocket error')
@@ -56,7 +59,7 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
         settlePending(msg.requestId, ({ resolve }) => resolve(msg.game))
       }
     },
-    [settlePending]
+    [settlePending],
   )
 
   useEffect(() => {
@@ -87,19 +90,30 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
     socketRef.current = socket
 
     return () => {
-      for (const [, entry] of pendingRef.current) {
+      // pendingRef.current может быть переписан между эффектом и его cleanup,
+      // но мы хотим отменить **актуальный** набор промисов в момент закрытия.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const pending = pendingRef.current
+      for (const [, entry] of pending) {
         entry.reject(new Error('WebSocket closed'))
       }
-      pendingRef.current.clear()
+      pending.clear()
       socket.close()
       socketRef.current = null
     }
   }, [gameId, clientId, handleMessage])
 
-  const sendActionAsync = useCallback((action, payload = {}) => {
+  const sendActionAsync = useCallback(async (action, payload = {}) => {
     const socket = socketRef.current
     if (!socket) {
       return Promise.reject(new Error('WebSocket not connected'))
+    }
+
+    // Дождаться реального OPEN — send() буферизует, но сервер ждёт `join` первым.
+    try {
+      await socket.whenReady()
+    } catch (err) {
+      return Promise.reject(err)
     }
 
     return new Promise((resolve, reject) => {
@@ -127,7 +141,7 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
       status,
       sendActionAsync,
     }),
-    [status, sendActionAsync]
+    [status, sendActionAsync],
   )
 }
 

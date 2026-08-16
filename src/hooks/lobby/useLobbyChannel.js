@@ -26,7 +26,7 @@ export function useLobbyChannel({ resetLobbyState, lobbyTransport }) {
         unsubscribeRef.current = () => lobbyTransport.disconnect()
       }
     },
-    [lobbyTransport]
+    [lobbyTransport],
   )
 
   useEffect(
@@ -36,12 +36,15 @@ export function useLobbyChannel({ resetLobbyState, lobbyTransport }) {
         unsubscribeRef.current = null
       }
     },
-    []
+    [],
   )
 
   useEffect(() => {
     const wsStatus = lobbyTransport?.status
-    if (!wsStatus || wsStatus === 'idle') return
+    if (!wsStatus || wsStatus === 'idle' || wsStatus === 'disabled') {
+      setConnectionStatus('none')
+      return
+    }
     if (wsStatus === 'connected') setConnectionStatus('connected')
     else if (wsStatus === 'connecting') setConnectionStatus('connecting')
     else if (wsStatus === 'reconnecting') setConnectionStatus('reconnecting')

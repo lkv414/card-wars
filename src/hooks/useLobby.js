@@ -12,6 +12,7 @@ import { createLobbyAction } from './lobby/useCreateLobby'
 import { joinLobbyAction } from './lobby/useJoinLobby'
 import { useLobbyWebSocketTransport } from './useLobbyWebSocketTransport'
 import { mapLobbyPlayers, lobbyStatus } from '../utils/mapGameState'
+import { getGameWsBaseUrl } from '../utils/gameWebSocket'
 
 export function useLobby() {
   const [status, setStatus] = useState('restoring')
@@ -229,17 +230,40 @@ export function useLobby() {
     const id = lobbyIdRef.current
     if (!id) return
     try {
-      await lobbyTransport.sendActionAsync('set_ready', { ready: true })
+      if (lobbyTransport?.enabled && typeof lobbyTransport.sendActionAsync === 'function') {
+        await lobbyTransport.sendActionAsync('set_ready', { ready: true })
+        return
+      }
     } catch (err) {
-      setError(`Не удалось отметить готовность: ${err.message}`)
+      console.warn('[setReady] WS failed, falling back to RPC', err)
     }
+    // REST fallback: если WS не подключён или action провалился — отправляем
+    // напрямую в Supabase, потом notify чтобы второй клиент получил push.
+    const { error: rpcErr } = await supabase.rpc('set_lobby_player_ready', {
+      p_guest_id: getGuestId(),
+      p_lobby_id: id,
+      p_ready: true,
+    })
+    if (rpcErr) {
+      setError(`Не удалось отметить готовность: ${rpcErr.message}`)
+      return
+    }
+    await fetch(`${getGameWsBaseUrl()}/lobby/${id}/notify`, { method: 'POST' }).catch(() => {})
   }, [lobbyTransport])
 
   const startGame = useCallback(async () => {
     const id = lobbyIdRef.current
     if (!id) return { error: 'Лобби не найдено' }
     try {
-      await lobbyTransport.sendActionAsync('start_game', {})
+      if (lobbyTransport?.enabled && typeof lobbyTransport.sendActionAsync === 'function') {
+        await lobbyTransport.sendActionAsync('start_game', {})
+      } else {
+        const { error: rpcErr } = await supabase.rpc('start_game_for_lobby', {
+          p_guest_id: getGuestId(),
+          p_lobby_id: id,
+        })
+        if (rpcErr) throw new Error(rpcErr.message)
+      }
       const { data: game } = await supabase
         .from('games')
         .select('id')

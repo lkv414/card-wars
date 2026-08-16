@@ -88,6 +88,11 @@ function createReconnectingSocket({
   let retryAttempt = 0
   /** @type {ReturnType<typeof setTimeout> | null} */
   let retryTimer = null
+  /** @type {Array<{ data: string }>} */
+  const sendQueue = []
+  /** @type {Array<{ resolve: () => void, reject: (err: Error) => void }>} */
+  const readyWaiters = []
+  let readyResolved = false
 
   const clearRetry = () => {
     if (retryTimer) {
@@ -96,14 +101,44 @@ function createReconnectingSocket({
     }
   }
 
+  const flushQueue = () => {
+    while (sendQueue.length > 0 && ws && ws.readyState === WebSocket.OPEN) {
+      const { data } = sendQueue.shift()
+      try {
+        ws.send(data)
+      } catch (err) {
+        // best-effort: если send упал в OPEN, прокинем ошибку наружу через onError
+        onError?.(err)
+      }
+    }
+  }
+
+  const resolveReady = () => {
+    if (readyResolved) return
+    readyResolved = true
+    flushQueue()
+    for (const waiter of readyWaiters) waiter.resolve()
+    readyWaiters.length = 0
+  }
+
+  const rejectReady = (reason) => {
+    for (const waiter of readyWaiters.splice(0)) waiter.reject(reason)
+  }
+
   const connect = () => {
     if (intentionalClose) return
     onStatusChange?.('connecting')
+    readyResolved = false
     ws = new WebSocket(url)
 
     ws.addEventListener('open', () => {
       retryAttempt = 0
-      ws.send(JSON.stringify({ type: 'join', clientId }))
+      try {
+        ws.send(JSON.stringify({ type: 'join', clientId }))
+      } catch (err) {
+        onError?.(err)
+      }
+      resolveReady()
     })
 
     ws.addEventListener('message', (event) => {
@@ -118,8 +153,12 @@ function createReconnectingSocket({
 
     ws.addEventListener('close', () => {
       ws = null
+      readyResolved = false
       onClose?.()
-      if (intentionalClose) return
+      if (intentionalClose) {
+        rejectReady(new Error('WebSocket closed'))
+        return
+      }
       onStatusChange?.('reconnecting')
       const delay = Math.min(1000 * 2 ** retryAttempt, MAX_RECONNECT_DELAY_MS)
       retryAttempt += 1
@@ -134,14 +173,37 @@ function createReconnectingSocket({
     close() {
       intentionalClose = true
       clearRetry()
+      rejectReady(new Error('WebSocket closed'))
       ws?.close()
       ws = null
     },
+    /** Promise, который резолвится когда сокет OPEN (или уже был OPEN). */
+    whenReady() {
+      if (ws && ws.readyState === WebSocket.OPEN) return Promise.resolve()
+      return new Promise((resolve, reject) => {
+        readyWaiters.push({ resolve, reject })
+      })
+    },
     send(data) {
-      if (!ws || ws.readyState !== WebSocket.OPEN) {
-        throw new Error('WebSocket not connected')
+      if (!ws) {
+        // Буферизуем до reconnect — но только до retry-лимита, чтобы не утекала память.
+        if (sendQueue.length < 64) sendQueue.push({ data })
+        else throw new Error('WebSocket not connected (queue full)')
+        return
       }
-      ws.send(data)
+      if (ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(data)
+        } catch (err) {
+          // Сокет мог закрыться прямо сейчас — буферизуем для следующего open.
+          if (sendQueue.length < 64) sendQueue.push({ data })
+          throw err
+        }
+        return
+      }
+      // CONNECTING / CLOSING — буферизуем и ждём open.
+      if (sendQueue.length >= 64) throw new Error('WebSocket send queue full')
+      sendQueue.push({ data })
     },
     get raw() {
       return ws

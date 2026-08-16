@@ -59,7 +59,7 @@ export async function createLobbyAction(guestId, nickname, deckPayload, { subscr
   setLobbyCode(code)
   setIsHost(true)
   setHostId(guestId)
-  subscribeToLobby(lobby.id, { nickname: nickname.trim() || 'Игрок' })
+  subscribeToLobby(lobby.id)
 
   const { data: playersList } = await supabase.from('lobby_players').select('*').eq('lobby_id', lobby.id)
   setPlayers(playersList ?? [])

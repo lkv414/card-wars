@@ -19,9 +19,12 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
   const onLobbyUpdateRef = useRef(onLobbyUpdate)
   const onClosedRef = useRef(onClosed)
   const onPresenceRef = useRef(onPresence)
-  onLobbyUpdateRef.current = onLobbyUpdate
-  onClosedRef.current = onClosed
-  onPresenceRef.current = onPresence
+
+  useEffect(() => {
+    onLobbyUpdateRef.current = onLobbyUpdate
+    onClosedRef.current = onClosed
+    onPresenceRef.current = onPresence
+  }, [onLobbyUpdate, onClosed, onPresence])
 
   const settlePending = useCallback((requestId, fn) => {
     if (!requestId) return
@@ -35,7 +38,7 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
     (msg) => {
       if (msg?.type === 'error') {
         settlePending(msg.requestId, ({ reject }) =>
-          reject(new Error(msg.message || 'Lobby action failed'))
+          reject(new Error(msg.message || 'Lobby action failed')),
         )
         return
       }
@@ -56,12 +59,20 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
         onLobbyUpdateRef.current?.(msg.lobby, msg)
       }
     },
-    [settlePending]
+    [settlePending],
   )
 
   const connect = useCallback(
     (id) => {
-      if (!isGameWsConfigured() || !id || !clientId) return
+      if (!isGameWsConfigured()) {
+        // WS не сконфигурирован — оставляем status='disabled', сокет не создаём.
+        return
+      }
+      if (!id || !clientId) {
+        // Недостаточно данных для подключения — не выходим в 'error',
+        // это может быть просто ещё не успели восстановить сессию.
+        return
+      }
 
       if (socketRef.current) {
         socketRef.current.close()
@@ -87,7 +98,7 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
       })
       socketRef.current = socket
     },
-    [clientId, handleMessage]
+    [clientId, handleMessage],
   )
 
   const disconnect = useCallback(() => {
@@ -98,21 +109,26 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
     setStatus('idle')
   }, [])
 
-  useEffect(
-    () => () => {
-      disconnect()
-      for (const [, entry] of pendingRef.current) {
-        entry.reject(new Error('Lobby WebSocket closed'))
-      }
-      pendingRef.current.clear()
-    },
-    [disconnect]
-  )
+  useEffect(() => () => {
+    disconnect()
+    const pending = pendingRef.current
+    for (const [, entry] of pending) {
+      entry.reject(new Error('Lobby WebSocket closed'))
+    }
+    pending.clear()
+  }, [disconnect])
 
-  const sendActionAsync = useCallback((action, payload = {}) => {
+  const sendActionAsync = useCallback(async (action, payload = {}) => {
     const socket = socketRef.current
     if (!socket) {
       return Promise.reject(new Error('Lobby WebSocket not connected'))
+    }
+
+    // Дождаться реального OPEN — send() буферизует, но сервер ждёт `join` первым.
+    try {
+      await socket.whenReady()
+    } catch (err) {
+      return Promise.reject(err)
     }
 
     return new Promise((resolve, reject) => {
@@ -142,6 +158,6 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
       disconnect,
       sendActionAsync,
     }),
-    [status, connect, disconnect, sendActionAsync]
+    [status, connect, disconnect, sendActionAsync],
   )
 }

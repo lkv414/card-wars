@@ -124,8 +124,14 @@ export function LobbyScreen({ toast }) {
       const deckPayload = await resolveDeckPayload()
       if (!deckPayload) return
       setGuestNickname(nickname)
-      await createLobby(nickname, deckPayload)
-      toast?.('success', `Колода «${deckPayload.name}» прикреплена (${deckPayload.cardCount} карт)`)
+      const code = await createLobby(nickname, deckPayload)
+      if (!code) {
+        toast?.('error', 'Не удалось создать лобби')
+        return
+      }
+      toast?.('success', `Лобби создано: код ${code}`)
+    } catch (err) {
+      toast?.('error', err?.message || 'Не удалось создать лобби')
     } finally {
       setSubmitting(false)
     }
@@ -146,7 +152,9 @@ export function LobbyScreen({ toast }) {
       if (!deckPayload) return
       setGuestNickname(nickname)
       await joinLobby(joinCode, nickname, deckPayload)
-      toast?.('success', `Колода «${deckPayload.name}» прикреплена (${deckPayload.cardCount} карт)`)
+      toast?.('success', `Подключение к лобби ${joinCode}…`)
+    } catch (err) {
+      toast?.('error', err?.message || 'Не удалось войти в лобби')
     } finally {
       setSubmitting(false)
     }
@@ -172,7 +180,7 @@ export function LobbyScreen({ toast }) {
   if (status === 'waiting' || status === 'in_game') {
     return (
       <>
-        {(connectionStatus === 'disconnected') && (
+        {(connectionStatus === 'disconnected' || connectionStatus === 'reconnecting') && (
           <div className="connection-banner" role="alert" aria-live="polite">
             <span className="connection-spinner" aria-hidden="true"></span>
             <span>Нет соединения. Пытаемся переподключиться...</span>
@@ -201,7 +209,7 @@ export function LobbyScreen({ toast }) {
 
   return (
     <main className="lobby-screen" role="main">
-      {connectionStatus === 'disconnected' && (
+      {(connectionStatus === 'disconnected' || connectionStatus === 'reconnecting') && (
         <div className="connection-banner" role="alert" aria-live="polite">
           <span className="connection-spinner" aria-hidden="true"></span>
           <span>Нет соединения. Пытаемся переподключиться...</span>

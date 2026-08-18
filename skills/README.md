@@ -36,6 +36,26 @@ Source: [affaan-m/ECC](https://github.com/affaan-m/ECC) (Everything Claude Code)
 | [verification-loop](verification-loop/SKILL.md) | Full verification before marking done |
 | [coding-standards](coding-standards/SKILL.md) | Naming, readability, review baseline |
 | [git-workflow](git-workflow/SKILL.md) | Branching, commits, PRs |
+| [web-design-guidelines](web-design-guidelines/SKILL.md) | Vercel web UI/design baseline |
+| [3d-web-experience](3d-web-experience/SKILL.md) | 3D web app patterns (R3F, scenes, perf) |
+| [threejs-dev-setup](threejs-dev-setup/SKILL.md) | three.js project setup & tooling |
+| [threejs-scenes](threejs-scenes/SKILL.md) | Scene graph, world, hierarchy |
+| [threejs-camera](threejs-camera/SKILL.md) | Perspective/ortho cameras, FOV |
+| [threejs-controls](threejs-controls/SKILL.md) | OrbitControls, camera input |
+| [threejs-lights](threejs-lights/SKILL.md) | Ambient/directional/point lights |
+| [threejs-geometries](threejs-geometries/SKILL.md) | Box/sphere/cone/torus + custom |
+| [threejs-materials](threejs-materials/SKILL.md) | Standard/physical materials, textures |
+| [threejs-textures](threejs-textures/SKILL.md) | Texture loading & caching |
+| [threejs-loaders](threejs-loaders/SKILL.md) | GLTFLoader, asset pipelines |
+| [threejs-objects](threejs-objects/SKILL.md) | Mesh / Light / Group composition |
+| [threejs-renderers](threejs-renderers/SKILL.md) | WebGLRenderer, dpr, antialias |
+| [threejs-postprocessing](threejs-postprocessing/SKILL.md) | Bloom, outlines, effects |
+| [threejs-math](threejs-math/SKILL.md) | Vector3, matrices, raycasting |
+| [threejs-helpers](threejs-helpers/SKILL.md) | Grid, Axes, debug helpers |
+| [threejs-animation](threejs-animation/SKILL.md) | Tween / keyframe animation |
+| [threejs-audio](threejs-audio/SKILL.md) | Spatial audio for cards / combat |
+| [threejs-webxr](threejs-webxr/SKILL.md) | VR/AR (future) |
+| [threejs-node-tsl](threejs-node-tsl/SKILL.md) | Three Shading Language (advanced) |
 
 ## Task → skill bundles
 
@@ -46,6 +66,11 @@ Source: [affaan-m/ECC](https://github.com/affaan-m/ECC) (Everything Claude Code)
 | Performance / bundle | `react-performance` → `vite-patterns` |
 | New DB migration | `database-migrations` → `postgres-patterns` → `security-review` |
 | Bug fix | `search-first` → relevant domain skill → `verification-loop` |
+| 3D scene / mesh / material | `threejs-scenes` → `threejs-geometries` → `threejs-materials` → `threejs-lights` → `threejs-camera` |
+| 3D controls & camera | `threejs-controls` → `threejs-camera` |
+| 3D textures / loading | `threejs-textures` → `threejs-loaders` |
+| 3D post-effects (bloom, outlines) | `threejs-postprocessing` |
+| 3D placement / raycast | `threejs-math` → `threejs-helpers` |
 | Before PR / done | `verification-loop` → run `npm test && npm run lint && npm run build` |
 
 ## Local vs committed

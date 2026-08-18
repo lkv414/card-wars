@@ -11,10 +11,9 @@
  *
  * Текстуры лениво через TextureLoader с кэшированием (через getPlaceholderTextureUrl).
  */
-import { memo, useRef, useEffect, useState, useMemo } from 'react'
-import { useLoader, useFrame } from '@react-three/fiber'
+import { memo, useRef, useEffect, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { Text, Outlines } from '@react-three/drei'
-import { TextureLoader } from 'three'
 import * as THREE from 'three'
 
 import {
@@ -25,10 +24,8 @@ import {
 } from '../../../utils/cardFields.ts'
 import { hasFlipAbility } from '../../../hooks/game/cardAbilities.js'
 import { resolveCardImageUrl } from '../../../utils/enrichGameCards.js'
-import {
-  getPlaceholderTextureUrl,
-  loadCachedTexture,
-} from '../../../utils/textureCache.js'
+import { getPlaceholderTextureUrl } from '../../../utils/textureCache.js'
+import { useCardTexture } from '../../../utils/useCardTexture.js'
 
 // Размер карты в мировых координатах
 const CARD_WIDTH = 0.7
@@ -47,15 +44,6 @@ const LAND_TYPE_ICONS = {
 
 // Placeholder-цвет, пока текстура грузится / не задана
 const PLACEHOLDER_COLOR = '#5d4e8a'
-
-class CachedTextureLoader extends TextureLoader {
-  load(url, onLoad, onProgress, onError) {
-    loadCachedTexture(url || getPlaceholderTextureUrl(), { crossOrigin: 'anonymous' })
-      .then(onLoad)
-      .catch(onError)
-    return this
-  }
-}
 
 function CardBackdrop({ color = PLACEHOLDER_COLOR }) {
   return (
@@ -223,8 +211,10 @@ export const GameObject = memo(function GameObject({
 
   const canFlip = hasFlipAbility(card)
   const textureUrl = resolveCardImageUrl(card) || getPlaceholderTextureUrl()
-  const texture = useLoader(CachedTextureLoader, textureUrl)
-  const memoTexture = useMemo(() => texture, [texture])
+  // Без Suspense: текстура либо готова, либо null (покажем placeholder-цвет).
+  // Это убирает RC1: Suspense в GameCanvas больше не срабатывает на каждой
+  // новой карте и при каждой смене URL, поэтому 3D-сцена не перезагружается.
+  const texture = useCardTexture(textureUrl)
 
   // Позиция с учётом hover (только если не flatOnTable)
   const targetY = flatOnTable
@@ -355,7 +345,8 @@ export const GameObject = memo(function GameObject({
         <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
         <meshStandardMaterial
           ref={matRef}
-          map={memoTexture}
+          map={texture || undefined}
+          color={texture ? '#ffffff' : PLACEHOLDER_COLOR}
           roughness={0.7}
           metalness={0.1}
           side={THREE.DoubleSide}

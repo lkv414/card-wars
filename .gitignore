@@ -54,3 +54,6 @@ response.txt
 # Local debug artifacts (DB dumps, identifier sqlite) — never commit
 dumps/
 identifier.sqlite
+
+# Agent runtime metadata (created by desktop agent runs)
+.reasonix/

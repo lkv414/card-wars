@@ -46,9 +46,51 @@ import {
   computeFieldCardScale,
   getLandSlotLayout,
 } from '../../utils/gameObjectPlacement'
+import { makeCardKey } from '../../utils/cardKey'
 
 import { normalizePlayerZoneRows, normalizeZoneCards } from '../../hooks/game/format'
 import { splitZoneCards } from '../../hooks/game/zoneCards'
+
+/**
+ * Стабилизировать {creature, building} для каждой зоны.
+ *
+ * RC3/R4 из docs/BUG_RELOAD_DIAGNOSIS.md:
+ *   splitZoneCards() возвращает свежие объекты при каждом вызове.
+ *   Если вызывать его прямо в render — creatureCard всегда новая identity,
+ *   даже когда контент идентичен → memo() в GameObject промахивается →
+ *   меш пересоздаётся. Здесь кэшируем по identity входного массива карт.
+ *
+ * Алгоритм: собираем массив всех cards-массивов (по порядку player/zone),
+ * мемоизируем результат по его identity. Если ничего не поменялось —
+ * возвращаем тот же Map. Если хоть один cards-массив сменил identity —
+ * пересобираем Map.
+ */
+function useStableZoneCards(players) {
+  // Сначала собираем массив (zoneKey, cardsArray) — это всё, что нам
+  // нужно для стабильности. Не используем ref в render (eslint
+  // react-hooks/refs правило).
+  const cardsByZoneKey = useMemo(() => {
+    const out = []
+    for (const player of players || []) {
+      const zoneRows = normalizePlayerZoneRows(player.zones)
+      for (let zi = 0; zi < zoneRows.length; zi++) {
+        const row = zoneRows[zi]
+        if (!row) continue
+        const cards = normalizeZoneCards(row)
+        out.push([`${player.player_id}:${zi}`, cards])
+      }
+    }
+    return out
+  }, [players])
+
+  return useMemo(() => {
+    const map = new Map()
+    for (const [key, cards] of cardsByZoneKey) {
+      map.set(key, splitZoneCards(cards))
+    }
+    return map
+  }, [cardsByZoneKey])
+}
 
 const FIELD_CARD_SCALE = computeFieldCardScale(0.88)
 
@@ -189,6 +231,13 @@ export function GameBoard3D({
 
   // === Position calculations ===
   const zones = useMemo(() => buildBoardZones(players, myIndex), [players, myIndex])
+  const zoneCards = useStableZoneCards(players)
+  const getZoneSplit = useCallback(
+    (playerId, zoneIndex) => {
+      return zoneCards.get(`${playerId}:${zoneIndex}`) ?? { creatureCard: null, buildingCard: null }
+    },
+    [zoneCards],
+  )
 
   const resolveLandType = useCallback(
     (zoneRow) => {
@@ -353,8 +402,10 @@ export function GameBoard3D({
           {zones.map((zone) => {
             const zoneRows = normalizePlayerZoneRows(zone.player.zones)
             const row = zoneRows[zone.zoneIndex] || {}
-            const cards = normalizeZoneCards(row)
-            const { creatureCard, buildingCard } = splitZoneCards(cards)
+            const { creatureCard, buildingCard } = getZoneSplit(
+              zone.player.player_id,
+              zone.zoneIndex,
+            )
             const isSelectedZone =
               zone.isOwnerMe && selectedZoneIndex === zone.zoneIndex
             const slots = getLandSlotLayout()
@@ -396,7 +447,7 @@ export function GameBoard3D({
                 {/* Существо лежит в creature-слоте (z<0, дальняя половина) */}
                 {creatureCard && (
                   <GameObject
-                    key={`creature-${creatureCard.id ?? creatureCard.instanceId}-${zone.player.player_id}`}
+                    key={makeCardKey(creatureCard, { slot: 'creature', zoneIndex: zone.zoneIndex })}
                     card={creatureCard}
                     type={CARD_OBJECT_TYPES.CREATURE}
                     position={[slots.creature.x, PLAY_FIELD_Y + 0.004, slots.creature.z]}
@@ -426,7 +477,7 @@ export function GameBoard3D({
                 {/* Строение лежит в building-слоте (z>0, ближняя половина) */}
                 {buildingCard && (
                   <GameObject
-                    key={`building-${buildingCard.id ?? buildingCard.instanceId}-${zone.player.player_id}`}
+                    key={makeCardKey(buildingCard, { slot: 'building', zoneIndex: zone.zoneIndex })}
                     card={buildingCard}
                     type={CARD_OBJECT_TYPES.BUILDING}
                     position={[slots.building.x, PLAY_FIELD_Y + 0.004, slots.building.z]}

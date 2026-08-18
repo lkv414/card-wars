@@ -25,9 +25,11 @@ import { GameObject } from './scene/GameObject'
 import { GameLand } from './scene/GameLand'
 import { GamePanel } from './scene/GamePanel'
 import { PlayerNameLabels } from './scene/PlayerNameLabels'
+import { GameDamageFloater } from './scene/GameDamageFloater'
 
 import { DamageFlashOverlay } from './DamageFlashOverlay'
 import { LandSetupOverlay } from './LandSetupOverlay'
+import { ZoneCardActionMenu } from './hud/ZoneCardActionMenu'
 
 import { canPlayerDealDamage } from '../../hooks/game/combat'
 import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
@@ -102,6 +104,8 @@ export function GameBoard3D({
   onReorderLands,
   onConfirmLandSetup,
   onSkipLandSetup,
+  onFlipCard,
+  onDiscardFromZone,
   realtimeStatus = 'connecting',
   isApplying = false,
   actionError = null,
@@ -115,6 +119,12 @@ export function GameBoard3D({
   const [draggingCardIndex, setDraggingCardIndex] = useState(null)
   const [damageFlash, setDamageFlash] = useState(false)
   const [battleEvents, setBattleEvents] = useState([])
+  // Список активных damage-маркеров (над картами)
+  const [damageMarkers, setDamageMarkers] = useState([])
+  // Список «мигающих» карточек (для эмиссии красного цвета)
+  const [damageFlashCards, setDamageFlashCards] = useState({})
+  // Состояние модалки действий над картой на земле
+  const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null) // { playerId, zoneIndex, card }
 
   // === Refs ===
   const boardRef = useRef(null)
@@ -273,6 +283,33 @@ export function GameBoard3D({
     [handCards, toast, onSuppressRealtimeReload, onPlayCard],
   )
 
+  /**
+   * Запустить визуальный эффект «урона» по карте на поле:
+   * - число урона всплывает над зоной
+   * - карточка вспыхивает красным (damageFlash=true через GameObject)
+   * - через 1.5с всё очищается
+   */
+  const triggerDamageVisual = useCallback(({ markers, flashedCards = {} }) => {
+    if (Array.isArray(markers) && markers.length > 0) {
+      setDamageMarkers((prev) => [...prev, ...markers])
+      // чистка через 1.5с
+      setTimeout(() => {
+        setDamageMarkers((prev) => prev.filter((m) => !markers.some((nm) => nm.key === m.key)))
+      }, 1500)
+    }
+    if (Object.keys(flashedCards).length > 0) {
+      setDamageFlashCards((prev) => ({ ...prev, ...flashedCards }))
+      // снимаем флэш через 0.6с
+      setTimeout(() => {
+        setDamageFlashCards((prev) => {
+          const next = { ...prev }
+          for (const k of Object.keys(flashedCards)) delete next[k]
+          return next
+        })
+      }, 650)
+    }
+  }, [])
+
   const handleEndTurn = useCallback(async () => {
     onSuppressRealtimeReload?.(8000)
     const result = await onEndTurn?.()
@@ -287,14 +324,15 @@ export function GameBoard3D({
     const events = result?.battleEvents
     if (Array.isArray(events) && events.length > 0) {
       setBattleEvents((prev) => [...prev, ...events])
-      const { flashMe } = battleEventsToVisuals(events, playerId)
+      const { markers, flashMe } = battleEventsToVisuals(events, playerId)
+      triggerDamageVisual({ markers })
       if (flashMe) {
         setDamageFlash(true)
         setTimeout(() => setDamageFlash(false), 550)
       }
     }
     return result
-  }, [onEndTurn, onSuppressRealtimeReload, playerId, toast])
+  }, [onEndTurn, onSuppressRealtimeReload, playerId, toast, triggerDamageVisual])
 
   return (
     <div
@@ -358,7 +396,7 @@ export function GameBoard3D({
                 {/* Существо лежит в creature-слоте (z<0, дальняя половина) */}
                 {creatureCard && (
                   <GameObject
-                    key={`creature-${creatureCard.id ?? creatureCard.instanceId}`}
+                    key={`creature-${creatureCard.id ?? creatureCard.instanceId}-${zone.player.player_id}`}
                     card={creatureCard}
                     type={CARD_OBJECT_TYPES.CREATURE}
                     position={[slots.creature.x, PLAY_FIELD_Y + 0.004, slots.creature.z]}
@@ -368,10 +406,19 @@ export function GameBoard3D({
                     isSelected={isSelectedZone}
                     isFaceUp
                     showStats
+                    damageFlash={Boolean(damageFlashCards[`${zone.player.player_id}-${zone.zoneIndex}`])}
                     showFlipOption={Boolean(zone.isOwnerMe && isYourTurn)}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleZoneCardClick(zone, creatureCard)
+                    onClick={() => {
+                      if (zone.isOwnerMe && isYourTurn) {
+                        setZoneCardActionMenu({
+                          playerId: zone.player.player_id,
+                          zoneIndex: zone.zoneIndex,
+                          card: creatureCard,
+                          slotType: 'creature',
+                        })
+                      } else {
+                        handleZoneCardClick(zone, creatureCard)
+                      }
                     }}
                   />
                 )}
@@ -379,7 +426,7 @@ export function GameBoard3D({
                 {/* Строение лежит в building-слоте (z>0, ближняя половина) */}
                 {buildingCard && (
                   <GameObject
-                    key={`building-${buildingCard.id ?? buildingCard.instanceId}`}
+                    key={`building-${buildingCard.id ?? buildingCard.instanceId}-${zone.player.player_id}`}
                     card={buildingCard}
                     type={CARD_OBJECT_TYPES.BUILDING}
                     position={[slots.building.x, PLAY_FIELD_Y + 0.004, slots.building.z]}
@@ -389,9 +436,18 @@ export function GameBoard3D({
                     isSelected={false}
                     isFaceUp
                     showStats
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleZoneCardClick(zone, buildingCard)
+                    damageFlash={Boolean(damageFlashCards[`${zone.player.player_id}-${zone.zoneIndex}`])}
+                    onClick={() => {
+                      if (zone.isOwnerMe && isYourTurn) {
+                        setZoneCardActionMenu({
+                          playerId: zone.player.player_id,
+                          zoneIndex: zone.zoneIndex,
+                          card: buildingCard,
+                          slotType: 'building',
+                        })
+                      } else {
+                        handleZoneCardClick(zone, buildingCard)
+                      }
                     }}
                   />
                 )}
@@ -406,7 +462,27 @@ export function GameBoard3D({
             currentPlayerId={game.current_player_id}
           />
 
-          {handCards.map((card, idx) => {
+          {/* Числа урона над картами — всплывают и угасают */}
+          {damageMarkers.map((m) => {
+            const targetZone = zones.find(
+              (z) => z.player.player_id === m.playerId && z.zoneIndex === m.zoneIndex,
+            )
+            if (!targetZone) return null
+            const { center } = targetZone
+            return (
+              <GameDamageFloater
+                key={m.key}
+                markerKeys={[m.key]}
+                amount={m.amount}
+                position={[center[0], PLAY_FIELD_Y + 0.45, center[2]]}
+              />
+            )
+          })}
+
+          {/* Карта-«призрак» 3D НЕ рендерится при выборе — она уже отображается в HUDHand.
+             Поле визуально «перезагружалось» когда 3D-копия появлялась над полем
+             (GameBoard3D.jsx:482). Убрано: блок полностью закомментирован. */}
+          {false && handCards.map((card, idx) => {
             if (idx !== selectedCardIndex && idx !== draggingCardIndex) return null
             return (
               <GameObject
@@ -417,9 +493,14 @@ export function GameBoard3D({
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={0.5}
                 selected
-                onClick={() =>
-                  setSelectedCardIndex(idx === selectedCardIndex ? null : idx)
-                }
+                onClick={() => {
+                  if (idx === selectedCardIndex) {
+                    setSelectedCardIndex(null)
+                  } else {
+                    setSelectedCardIndex(idx)
+                    setDraggingCardIndex(idx)
+                  }
+                }}
               />
             )
           })}
@@ -445,6 +526,23 @@ export function GameBoard3D({
       )}
 
       <DamageFlashOverlay active={damageFlash} />
+
+      {zoneCardActionMenu && (
+        <ZoneCardActionMenu
+          card={zoneCardActionMenu.card}
+          onFlip={async () => {
+            const cardId = zoneCardActionMenu.card?.id ?? zoneCardActionMenu.card?.instanceId
+            await onFlipCard?.(zoneCardActionMenu.playerId, zoneCardActionMenu.zoneIndex, cardId)
+            setZoneCardActionMenu(null)
+          }}
+          onDiscard={async () => {
+            const cardId = zoneCardActionMenu.card?.id ?? zoneCardActionMenu.card?.instanceId
+            await onDiscardFromZone?.(zoneCardActionMenu.zoneIndex, cardId)
+            setZoneCardActionMenu(null)
+          }}
+          onClose={() => setZoneCardActionMenu(null)}
+        />
+      )}
 
       <GamePanel
         playerId={playerId}

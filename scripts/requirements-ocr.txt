@@ -1,7 +1,0 @@
-# PaddleOCR 3.x + eslav model (ru). On Windows CPU use enable_mkldnn=False (set in script).
-paddleocr>=3.0.0
-paddlepaddle>=3.2.2
-requests>=2.31.0
-Pillow>=10.0.0
-numpy>=1.24.0
-# optional fallback: easyocr

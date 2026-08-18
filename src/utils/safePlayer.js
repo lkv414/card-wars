@@ -62,14 +62,17 @@ export function safePlayer(players, target) {
     return makeFallback()
   }
 
+  // Если health валиден — возвращаем найденный объект как есть (preserve reference).
+  // Раньше мы всегда делали {...DEFAULT_PLAYER, ...found, ...}, что давало новую
+  // ссылку и ломало React reconciliation на поле.
+  if (typeof found.health === 'number' && Number.isFinite(found.health)) {
+    return found
+  }
+
   return {
     ...DEFAULT_PLAYER,
     ...found,
-    // гарантируем валидный health
-    health:
-      typeof found.health === 'number' && Number.isFinite(found.health)
-        ? found.health
-        : DEFAULT_PLAYER.health,
+    health: DEFAULT_PLAYER.health,
   }
 }
 
@@ -77,17 +80,30 @@ export function safePlayer(players, target) {
  * Нормализует весь массив игроков: фильтрует null/undefined, фиксит health.
  * @param {Array|null|undefined} players
  * @returns {Array} гарантированно массив (может быть пустым)
+ *
+ * Возвращает prev ссылку если каждый player уже валиден — это критично
+ * для useMemo([game.players]) чтобы GameBoard3D не пересоздавал зоны
+ * при каждом WS push.
  */
 export function safePlayers(players) {
   if (!Array.isArray(players)) return []
-  return players
-    .filter(Boolean)
-    .map((p) => ({
-      ...DEFAULT_PLAYER,
-      ...p,
-      health:
-        typeof p.health === 'number' && Number.isFinite(p.health)
-          ? p.health
-          : DEFAULT_PLAYER.health,
-    }))
+  let needsMap = false
+  const out = new Array(players.length)
+  for (let i = 0; i < players.length; i++) {
+    const p = players[i]
+    if (!p) {
+      needsMap = true
+      out[i] = null
+      continue
+    }
+    const healthOk = typeof p.health === 'number' && Number.isFinite(p.health)
+    if (!healthOk) {
+      needsMap = true
+      out[i] = { ...DEFAULT_PLAYER, ...p, health: DEFAULT_PLAYER.health }
+    } else {
+      out[i] = p
+    }
+  }
+  if (!needsMap) return players
+  return out.filter(Boolean)
 }

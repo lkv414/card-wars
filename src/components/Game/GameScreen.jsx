@@ -1,39 +1,30 @@
 /**
  * GameScreen
- * Server-authoritative sync via Cloudflare Workers WebSocket (GameRoom DO).
- * State updates in-place via React — no page reloads.
+ * Server-authoritative sync через Cloudflare Workers WebSocket (GameRoom DO).
+ * State ownership: Zustand gameStore (src/store/gameStore.js).
+ * WS-push идут через FIFO-очередь → gameStore.applyServerState.
  */
-import { lazy, Suspense, useEffect, useState, useCallback, useMemo, useRef } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
-import { ensureGuestId } from '../../utils/guestSession'
 import { useGameAction } from '../../hooks/game'
 import { useLandSetup } from '../../hooks/game/useLandSetup'
 import { useLands } from '../../hooks/useLands'
 import { useCards } from '../../hooks/useCards'
-import {
-  buildCardCatalog,
-  enrichGameState,
-  enrichGameStateAsync,
-  collectMissingCardIds,
-} from '../../utils/enrichGameCards'
-import { mapRpcGameState } from '../../utils/mapGameState'
-import { stabilizeGameState } from '../../utils/stabilizeGameState'
-import {
-  forgetGameSession,
-  peekGameSession,
-  rememberGameSession,
-} from '../../utils/gameSessionCache'
+import { buildCardCatalog } from '../../utils/enrichGameCards'
 import { isGameWsConfigured } from '../../utils/gameWebSocket'
-import { useGameTransport, wsConnectionLabel } from '../../hooks/useGameTransport'
-import { gameDebugLog, gameDebugSnapshot } from '../../utils/gameDebug'
+import { gameDebugLog } from '../../utils/gameDebug'
+import { useGameStore, selectGame, selectIsApplying, selectError } from '../../store/gameStore'
 import { useToasts } from '../../hooks/useToasts'
 import { Toasts } from '../Shared/Toasts'
 
+import { useGameSessionCache } from '../../hooks/game/useGameSessionCache'
+import { useGameEnrichment } from '../../hooks/game/useGameEnrichment'
+import { useGameLoader } from '../../hooks/game/useGameLoader'
+import { useGameWsHandler } from '../../hooks/game/useGameWsHandler'
+
 const GameBoard3D = lazy(() => import('./GameBoard3D'))
 
-const DUPLICATE_LOAD_MS = 600
 const WS_FALLBACK_LOAD_MS = 12_000
 
 export function GameScreen() {
@@ -42,17 +33,20 @@ export function GameScreen() {
   const guestId = getGuestId()
   const wsConfigured = isGameWsConfigured()
 
-  const [game, setGame] = useState(null)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(true)
+  // === State (lifted to Zustand store) ===
+  const game = useGameStore(selectGame)
+  const isApplying = useGameStore(selectIsApplying)
+  const storeError = useGameStore(selectError)
 
+  // === Local effects state ===
   const { lands } = useLands()
   const { cards: catalogCards, loading: catalogLoading } = useCards()
   const cardCatalog = useMemo(() => buildCardCatalog(catalogCards), [catalogCards])
   const cardCatalogRef = useRef(cardCatalog)
-  cardCatalogRef.current = cardCatalog
-
-  const { toasts, toast, dismissToast } = useToasts()
+  // Обновляем ref в эффекте — не во время рендера (правило react-hooks/refs).
+  useEffect(() => {
+    cardCatalogRef.current = cardCatalog
+  }, [cardCatalog])
 
   const landCatalog = useMemo(() => {
     const map = {}
@@ -62,301 +56,45 @@ export function GameScreen() {
     return map
   }, [lands])
 
-  const loadInFlightRef = useRef(null)
-  const pendingReloadRef = useRef(null)
-  const hasLoadedOnceRef = useRef(false)
-  const catalogEnrichKeyRef = useRef('')
-  const gameVersionRef = useRef(0)
-  const gameRef = useRef(null)
-  const suppressReloadUntilRef = useRef(0)
-  const lastLoadMetaRef = useRef({ source: '', at: 0, version: 0 })
-  const prevGameIdRef = useRef(null)
-  const applyStateQueueRef = useRef(Promise.resolve())
+  const { toasts, toast, dismissToast } = useToasts()
 
-  const commitGameState = useCallback(
-    (nextGame, source = 'commit') => {
-      if (!nextGame) return false
-      const nextVersion = nextGame.version ?? 0
-      const currentVersion = gameVersionRef.current ?? 0
-      if (nextVersion < currentVersion && currentVersion > 0) {
-        gameDebugLog('skip', 'commit rejected (stale)', {
-          source,
-          nextVersion,
-          currentVersion,
-        })
-        return false
-      }
+  // === Hooks (extracted from original monolithic component) ===
+  const { requestLoadGame, suppressRealtimeReload } = useGameLoader({ gameId, cardCatalogRef })
+  useGameEnrichment({ game, cardCatalog, catalogLoading })
 
-      const prev = gameRef.current
-      const merged = prev ? stabilizeGameState(prev, nextGame) : nextGame
-      if (merged === prev && hasLoadedOnceRef.current) {
-        gameVersionRef.current = Math.max(currentVersion, nextVersion)
-        gameDebugLog('skip', 'commit unchanged (stable refs)', { source, version: nextVersion })
-        return true
-      }
-
-      gameVersionRef.current = nextVersion
-      gameRef.current = merged
-      rememberGameSession(merged.id, merged)
-      catalogEnrichKeyRef.current = `${merged.id}:${merged.version}:${cardCatalogRef.current.size}`
-
-      gameDebugLog('patch', 'commitGameState', {
-        source,
-        from: currentVersion,
-        to: nextVersion,
-        snapshot: gameDebugSnapshot(merged, gameVersionRef),
-      })
-
-      if (!hasLoadedOnceRef.current) {
-        setGame(merged)
-        setLoading(false)
-        hasLoadedOnceRef.current = true
-      } else if (merged !== prev) {
-        setGame(merged)
-      }
-      return true
-    },
-    []
-  )
-
-  const patchGame = useCallback((patcher, source = 'patchGame') => {
-    setGame((prev) => {
-      if (!prev) return prev
-      const next = typeof patcher === 'function' ? patcher(prev) : { ...prev, ...patcher }
-      if (!next || next === prev) return prev
-      const v = next.version ?? prev.version ?? 0
-      if (v <= (gameVersionRef.current ?? 0) && (gameVersionRef.current ?? 0) > 0) {
-        gameDebugLog('skip', 'patchGame stale', { source, v, ref: gameVersionRef.current })
-        return prev
-      }
-      gameVersionRef.current = Math.max(gameVersionRef.current ?? 0, v)
-      gameRef.current = next
-      catalogEnrichKeyRef.current = `${next.id}:${next.version}:${cardCatalogRef.current.size}`
-      gameDebugLog('patch', source, {
-        version: v,
-        snapshot: gameDebugSnapshot(next, gameVersionRef),
-      })
-      return next
-    })
-  }, [])
-
-  const loadGameInternal = useCallback(
-    async (source = 'unknown') => {
-      if (!gameId) return gameRef.current
-
-      const startedAt = performance.now()
-      gameDebugLog('load', 'start', {
-        source,
-        gameId,
-        before: gameDebugSnapshot(gameRef.current, gameVersionRef),
-      })
-
-      await ensureGuestId()
-      setError(null)
-
-      const { data: state, error: rpcErr } = await supabase.rpc('get_player_game_state', {
-        p_game_id: gameId,
-        p_player_id: guestId,
-      })
-
-      if (rpcErr) throw new Error(rpcErr.message)
-      if (!state) throw new Error('Игра не найдена или доступ запрещён')
-
-      const mapped = mapRpcGameState(state)
-
-      const catalog = cardCatalogRef.current
-      const nextGame = catalog.size > 0
-        ? await enrichGameStateAsync(mapped, catalog, supabase)
-        : mapped
-
-      const prevVersion = gameVersionRef.current ?? 0
-      const committed = commitGameState(nextGame, `load:${source}`)
-      const ms = Math.round(performance.now() - startedAt)
-
-      gameDebugLog('load', committed ? 'done' : 'skipped (stale)', {
-        source,
-        ms,
-        rpcVersion: state.version,
-        prevVersion,
-        nextVersion: nextGame.version,
-        after: gameDebugSnapshot(gameRef.current, gameVersionRef),
-      })
-
-      return nextGame
-    },
-    [gameId, guestId, commitGameState]
-  )
-
-  const requestLoadGame = useCallback(
-    async (source = 'unknown', { force = false } = {}) => {
-      if (!gameId) return gameRef.current
-
-      const now = Date.now()
-      if (!force && now < suppressReloadUntilRef.current) {
-        gameDebugLog('skip', 'load suppressed', {
-          source,
-          until: new Date(suppressReloadUntilRef.current).toISOString(),
-        })
-        return gameRef.current
-      }
-
-      const last = lastLoadMetaRef.current
-      if (
-        !force &&
-        source === last.source &&
-        now - last.at < DUPLICATE_LOAD_MS &&
-        (gameVersionRef.current ?? 0) === last.version
-      ) {
-        gameDebugLog('skip', 'load duplicate', { source, ageMs: now - last.at })
-        return gameRef.current
-      }
-
-      if (loadInFlightRef.current) {
-        gameDebugLog('load', 'queue (in flight)', { source, pending: pendingReloadRef.current })
-        pendingReloadRef.current = source
-        await loadInFlightRef.current
-        const pending = pendingReloadRef.current
-        pendingReloadRef.current = null
-        if (pending) {
-          return requestLoadGame(pending, { force })
-        }
-        return gameRef.current
-      }
-
-      lastLoadMetaRef.current = {
-        source,
-        at: now,
-        version: gameVersionRef.current ?? 0,
-      }
-
-      const run = async () => {
-        try {
-          return await loadGameInternal(source)
-        } catch (err) {
-          gameDebugLog('load', 'error', { source, error: err?.message || String(err) })
-          setError(err.message || 'Не удалось загрузить игру')
-          setLoading(false)
-          return null
-        }
-      }
-
-      loadInFlightRef.current = run()
-      try {
-        return await loadInFlightRef.current
-      } finally {
-        loadInFlightRef.current = null
-      }
-    },
-    [gameId, loadGameInternal]
-  )
-
-  const suppressRealtimeReload = useCallback((ms = 8000) => {
-    suppressReloadUntilRef.current = Date.now() + ms
-    gameDebugLog('suppress', `reload paused ${ms}ms`, {
-      until: new Date(suppressReloadUntilRef.current).toISOString(),
-    })
-  }, [])
-
+  const cache = useGameSessionCache()
   useEffect(() => {
-    if (catalogLoading || !game || cardCatalog.size === 0) return
+    cache.onGameIdChange(gameId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId])
 
-    const enrichKey = `${game.id}:${game.version}:${cardCatalog.size}`
-    const missing = collectMissingCardIds(game, cardCatalog)
-    if (missing.length === 0) {
-      catalogEnrichKeyRef.current = enrichKey
-      return
-    }
-    if (catalogEnrichKeyRef.current === enrichKey) return
-
-    let cancelled = false
-    const baseVersion = game.version
-    gameDebugLog('enrich', 'start', { enrichKey, missing: missing.length })
-
-    ;(async () => {
-      const next = await enrichGameStateAsync(game, cardCatalog, supabase)
-      if (cancelled) return
-      if ((gameRef.current?.version ?? 0) > (baseVersion ?? 0)) {
-        gameDebugLog('enrich', 'skip (newer version loaded)', { baseVersion })
-        return
-      }
-      if ((next.version ?? 0) < (gameVersionRef.current ?? 0)) {
-        gameDebugLog('enrich', 'skip (stale)', { nextVersion: next.version })
-        return
-      }
-      catalogEnrichKeyRef.current = enrichKey
-      commitGameState(next, 'enrich:cards')
-      gameDebugLog('enrich', 'done', { version: next.version })
-    })()
-
-    return () => {
-      cancelled = true
-    }
-  }, [catalogLoading, cardCatalog, game, game?.id, game?.version, commitGameState])
-
-  const reloadAfterAction = useCallback(
-    async (source = 'action', opts = {}) => {
-      if (wsConfigured) return gameRef.current
-      return requestLoadGame(`action:${source}`, opts)
-    },
-    [wsConfigured, requestLoadGame]
-  )
-
-  const applyIncomingRpcState = useCallback(
-    (rawState, source = 'ws:state') => {
-      if (!rawState) return Promise.resolve()
-
-      applyStateQueueRef.current = applyStateQueueRef.current
-        .then(async () => {
-          const incomingVersion = Number(rawState.version ?? 0)
-          const currentVersion = gameVersionRef.current ?? 0
-          if (incomingVersion < currentVersion && currentVersion > 0) {
-            gameDebugLog('skip', 'ws state stale', { source, incomingVersion, currentVersion })
-            return
-          }
-
-          const mapped = mapRpcGameState(rawState)
-          const catalog = cardCatalogRef.current
-          let nextGame = mapped
-
-          if (catalog.size > 0) {
-            const missing = collectMissingCardIds(mapped, catalog)
-            nextGame =
-              missing.length === 0
-                ? enrichGameState(mapped, catalog)
-                : await enrichGameStateAsync(mapped, catalog, supabase)
-          }
-
-          if (Number(nextGame.version ?? 0) < (gameVersionRef.current ?? 0)) return
-          commitGameState(nextGame, source)
-        })
-        .catch((err) => {
-          gameDebugLog('ws', 'apply state failed', { source, error: err?.message || String(err) })
-        })
-
-      return applyStateQueueRef.current
-    },
-    [commitGameState]
-  )
-
-  const transport = useGameTransport(gameId, guestId, {
-    onState: (raw, msg) => {
-      gameDebugLog('ws', 'state', { source: msg?.requestId ? 'action' : 'push', version: raw?.version })
-      applyIncomingRpcState(raw, msg?.requestId ? 'ws:action' : 'ws:push')
-    },
-    onError: (message) => toast('error', message),
+  const { transport, statusLabel: connectionStatus } = useGameWsHandler({
+    gameId,
+    clientId: guestId,
+    onError: (msg) => toast('error', msg),
   })
 
-  const connectionStatus = wsConnectionLabel(transport.status)
-
+  // === Game actions ===
   const gameActions = useMemo(
     () => ({
-      patchGame,
+      // patchGame — единая точка для optimistic UI.
+      // Делегирует в useGameStore.applyOptimistic, который генерирует
+      // requestId, применяет патч и ставит rollback по таймауту.
+      patchGame: (patcher) => {
+        const store = useGameStore.getState()
+        if (!store.game) return store.game
+        store.applyOptimistic((prev) => {
+          if (typeof patcher === 'function') return patcher(prev)
+          return { ...prev, ...patcher }
+        })
+        return useGameStore.getState().game
+      },
       cardCatalog,
       transport,
       suppressRealtimeReload,
       reloadEnabled: !wsConfigured,
     }),
-    [patchGame, cardCatalog, transport, suppressRealtimeReload, wsConfigured]
+    [cardCatalog, transport, suppressRealtimeReload, wsConfigured],
   )
 
   const {
@@ -370,60 +108,63 @@ export function GameScreen() {
     forfeit,
     flipCard,
     discardFromZone,
-    isApplying,
+    isApplying: actionApplying,
     error: actionError,
-  } = useGameAction(game, reloadAfterAction, gameActions)
+  } = useGameAction(game, requestLoadGame, gameActions)
 
-  const { reorderLands, confirmLandSetup } = useLandSetup(game, reloadAfterAction, { transport })
+  const { reorderLands, confirmLandSetup } = useLandSetup(game, requestLoadGame, { transport })
+
+  const combinedIsApplying = isApplying || actionApplying
+  const combinedError = actionError || storeError
 
   useEffect(() => {
-    if (actionError) toast('error', actionError)
-  }, [actionError, toast])
+    if (combinedError) toast('error', combinedError)
+  }, [combinedError, toast])
 
+  // === GameId change handling (cache + load) ===
+  // Храним стабильные refs для requestLoadGame и cache, чтобы не
+  // триггерить повторный эффект при изменении их внутренних зависимостей.
+  const requestLoadGameRef = useRef(requestLoadGame)
+  useEffect(() => {
+    requestLoadGameRef.current = requestLoadGame
+  }, [requestLoadGame])
+
+  useEffect(() => {
+    if (!gameId) return
+    const cached = cache.loadFromCache(gameId)
+    if (cached) {
+      useGameStore.getState().applyServerState(cached, 'cache:hydrate')
+      gameDebugLog('cache', 'hydrated', { gameId, version: cached?.version })
+    } else {
+      useGameStore.getState().clear()
+      if (!wsConfigured) {
+        requestLoadGameRef.current?.('mount:gameId', { force: true })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId, wsConfigured])
+
+  // === Persist game state to cache on update ===
+  useEffect(() => {
+    if (game?.id) cache.saveToCache(game.id, game)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game])
+
+  // === WS fallback load: если за 12 сек нет ни одного state — load через RPC ===
   useEffect(() => {
     if (!wsConfigured || !gameId) return undefined
     const timer = setTimeout(() => {
-      if (!hasLoadedOnceRef.current) {
+      const v = useGameStore.getState().serverVersion
+      if (v === 0) {
         gameDebugLog('ws', 'fallback load (no state yet)')
-        requestLoadGame('ws:fallback', { force: true })
+        requestLoadGameRef.current?.('ws:fallback', { force: true })
       }
     }, WS_FALLBACK_LOAD_MS)
     return () => clearTimeout(timer)
-  }, [wsConfigured, gameId, requestLoadGame])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wsConfigured, gameId])
 
-  useEffect(() => {
-    if (!gameId) return undefined
-
-    if (prevGameIdRef.current && prevGameIdRef.current !== gameId) {
-      forgetGameSession(prevGameIdRef.current)
-    }
-    prevGameIdRef.current = gameId
-
-    const cached = peekGameSession(gameId)
-    if (cached) {
-      hasLoadedOnceRef.current = true
-      gameVersionRef.current = cached.version ?? 0
-      gameRef.current = cached
-      setGame(cached)
-      setLoading(false)
-      setError(null)
-      return undefined
-    }
-
-    hasLoadedOnceRef.current = false
-    gameVersionRef.current = 0
-    gameRef.current = null
-    setLoading(true)
-    setGame(null)
-    setError(null)
-
-    if (!wsConfigured) {
-      requestLoadGame('mount:gameId', { force: true })
-    }
-
-    return undefined
-  }, [gameId, wsConfigured, requestLoadGame])
-
+  // === Render ===
   if (!wsConfigured) {
     return (
       <main className="game-error" role="alert">
@@ -436,22 +177,22 @@ export function GameScreen() {
     )
   }
 
-  if (loading && !game) {
-    return <div className="game-loading" role="status" aria-live="polite">Загружаем игру...</div>
-  }
-
-  if (error) {
+  if (storeError) {
     return (
       <main className="game-error" role="main" aria-live="assertive">
         <h1>Ошибка</h1>
-        <p>{error}</p>
+        <p>{storeError}</p>
         <button onClick={() => navigate('/lobby')}>← Назад в лобби</button>
       </main>
     )
   }
 
   if (!game) {
-    return <div className="game-loading" role="status" aria-live="polite">Игра не найдена</div>
+    return (
+      <div className="game-loading" role="status" aria-live="polite">
+        Загружаем игру...
+      </div>
+    )
   }
 
   return (
@@ -498,8 +239,8 @@ export function GameScreen() {
           onConfirmLandSetup={confirmLandSetup}
           onSuppressRealtimeReload={suppressRealtimeReload}
           realtimeStatus={connectionStatus}
-          isApplying={isApplying}
-          actionError={actionError}
+          isApplying={combinedIsApplying}
+          actionError={combinedError}
           toast={toast}
         />
       </Suspense>

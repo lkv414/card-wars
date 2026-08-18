@@ -3,11 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.18 <23"
+  },
+  "packageManager": "npm@10.x",
   "scripts": {
     "dev": "vite",
     "test": "node --test src/**/*.test.js",
     "test:smoke": "vitest run",
     "test:supabase": "vitest run --config vitest.supabase.config.js",
+    "test:store": "vitest run src/store",
     "db:schema": "node scripts/generate-db-schema.mjs",
     "db:push": "node scripts/db-push.mjs",
     "build": "vite build",
@@ -24,7 +29,8 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.18.1",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260813.1",

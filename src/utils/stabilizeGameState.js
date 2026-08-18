@@ -56,41 +56,138 @@ function playerRuntimeEquivalent(prev, next) {
 function stabilizeZones(prevZones, nextZones) {
   if (!Array.isArray(nextZones)) return nextZones
   if (zonesEquivalent(prevZones, nextZones)) return prevZones
-  return nextZones.map((nz, zi) => {
+
+  let changed = false
+  const out = new Array(nextZones.length)
+  for (let zi = 0; zi < nextZones.length; zi++) {
+    const nz = nextZones[zi]
     const pz = prevZones?.[zi]
-    if (!pz) return nz
+    if (!pz) {
+      out[zi] = nz
+      changed = true
+      continue
+    }
     if (
       (pz.zone_position ?? zi + 1) === (nz.zone_position ?? zi + 1) &&
       (pz.land_id ?? null) === (nz.land_id ?? null) &&
       cardsEquivalent(pz.cards, nz.cards)
     ) {
-      return pz
+      out[zi] = pz
+    } else {
+      out[zi] = nz
+      changed = true
     }
-    return nz
-  })
+  }
+
+  // Если все зоны идентичны по ссылке — вернуть prev ссылку целиком
+  if (!changed && prevZones) {
+    let same = true
+    for (let i = 0; i < out.length; i++) {
+      if (out[i] !== prevZones[i]) {
+        same = false
+        break
+      }
+    }
+    if (same) return prevZones
+  }
+
+  return changed ? out : nextZones
 }
 
 function stabilizePlayer(prev, next) {
   if (!prev) return next
   if (playerRuntimeEquivalent(prev, next)) {
-    return {
-      ...next,
-      hand: prev.hand,
-      deck_pile: prev.deck_pile,
-      discard_pile: prev.discard_pile,
-      zones: prev.zones,
-    }
+    return prev
   }
 
-  return {
-    ...next,
-    hand: cardsEquivalent(prev.hand, next.hand) ? prev.hand : next.hand,
-    deck_pile: cardsEquivalent(prev.deck_pile, next.deck_pile) ? prev.deck_pile : next.deck_pile,
-    discard_pile: cardsEquivalent(prev.discard_pile, next.discard_pile)
-      ? prev.discard_pile
-      : next.discard_pile,
-    zones: stabilizeZones(prev.zones, next.zones),
+  const hand = cardsEquivalent(prev.hand, next.hand) ? prev.hand : next.hand
+  const deck_pile = cardsEquivalent(prev.deck_pile, next.deck_pile)
+    ? prev.deck_pile
+    : next.deck_pile
+  const discard_pile = cardsEquivalent(prev.discard_pile, next.discard_pile)
+    ? prev.discard_pile
+    : next.discard_pile
+  const zones = stabilizeZones(prev.zones, next.zones)
+
+  // Если ничего не изменилось на уровне ссылок — вернуть prev целиком
+  if (
+    hand === prev.hand &&
+    deck_pile === prev.deck_pile &&
+    discard_pile === prev.discard_pile &&
+    zones === prev.zones
+  ) {
+    return prev
   }
+
+  return { ...next, hand, deck_pile, discard_pile, zones }
+}
+
+/**
+ * Дедупликация карт по instanceId || id.
+ * Защита от "карт-призраков": когда WS-push и локальный optimistic reload
+ * временно дают два вхождения одной карты в hand/deck/discard.
+ *
+ * Возвращает prev ссылку если дубликатов не было — это критично для
+ * React reconciliation (не размонтирует mesh-объекты на поле).
+ */
+export function dedupCardsById(cards) {
+  if (!Array.isArray(cards)) return cards
+  const seen = new Set()
+  const out = []
+  let hasDup = false
+  let hasInvalid = false
+  for (const c of cards) {
+    if (c == null || typeof c !== 'object') {
+      // null/undefined/non-object — отбрасываем (защитный слой)
+      hasInvalid = true
+      continue
+    }
+    const id = c.instanceId ?? c.id
+    if (id && seen.has(id)) {
+      hasDup = true
+      continue
+    }
+    if (id != null) seen.add(id)
+    out.push(c)
+  }
+  return hasDup || hasInvalid ? out : cards
+}
+
+/**
+ * Стабилизировать массив players: вернуть prev ссылку если каждый
+ * player идентичен по ссылке или по структуре. Иначе — новый массив
+ * с стабилизированными player'ами.
+ */
+function stabilizePlayers(prevPlayers, nextPlayers) {
+  if (!Array.isArray(nextPlayers)) return nextPlayers
+  if (prevPlayers === nextPlayers) return prevPlayers
+
+  const prevById = new Map((prevPlayers || []).map((p) => [p?.player_id, p]))
+  let changed = false
+  const out = new Array(nextPlayers.length)
+
+  for (let i = 0; i < nextPlayers.length; i++) {
+    const np = nextPlayers[i]
+    const pp = prevById.get(np?.player_id)
+    const stabilized = stabilizePlayer(pp, np)
+    // Сравниваем с pp (а не np): если stabilized === pp, ничего не изменилось
+    if (stabilized !== pp) changed = true
+    out[i] = stabilized
+  }
+
+  // Если ничего не изменилось (все элементы идентичны pp) — вернуть prev ссылку
+  if (!changed && prevPlayers && prevPlayers.length === out.length) {
+    let same = true
+    for (let i = 0; i < out.length; i++) {
+      if (out[i] !== prevPlayers[i]) {
+        same = false
+        break
+      }
+    }
+    if (same) return prevPlayers
+  }
+
+  return changed ? out : nextPlayers
 }
 
 /** @param {object | null | undefined} prev @param {object | null | undefined} next */
@@ -102,8 +199,21 @@ export function stabilizeGameState(prev, next) {
   const prevVersion = prev.version ?? 0
   if (nextVersion <= prevVersion) return prev
 
-  const prevById = new Map((prev.players || []).map((p) => [p.player_id, p]))
-  const players = (next.players || []).map((np) => stabilizePlayer(prevById.get(np.player_id), np))
+  const prevPlayers = prev.players || []
+  const players = stabilizePlayers(prevPlayers, next.players)
+
+  // Если players — те же ссылки (stabilize вернул prev) — вернуть prev целиком.
+  // Это критично для useMemo([game]) чтобы GameBoard3D не пересоздавал зоны.
+  if (players === prevPlayers && players === (prev.players || [])) {
+    // Но version может быть другой — обновим version в корне state
+    if ((prev.version ?? 0) === nextVersion) return prev
+    return { ...prev, version: nextVersion }
+  }
+
+  // Если players — те же что в next, и мы не нашли изменений — отдаём prev
+  if (players === next.players) {
+    return prev
+  }
 
   return { ...next, players }
 }

@@ -18,17 +18,26 @@ jobs:
 
       - run: npm ci
 
+      - name: Typecheck (TypeScript noEmit)
+        run: npx tsc --noEmit
+
       - name: Unit tests (node:test)
         run: npm test
 
       - name: Smoke tests (Vitest + RTL)
         run: npm run test:smoke
 
+      - name: Store tests (Zustand + wsQueue)
+        run: npx vitest run --config vitest.store.config.js
+
       - name: Lint
         run: npm run lint
 
       - name: Build
         run: npm run build
+
+      - name: Workers dry-run
+        run: npm run workers:check
 
   supabase-contracts:
     runs-on: ubuntu-latest
@@ -48,6 +57,9 @@ jobs:
 
       - name: Start local Supabase
         run: supabase start
+
+      - name: DB lint
+        run: npx supabase db lint
 
       - name: RPC contract checks
         run: npm run test:supabase

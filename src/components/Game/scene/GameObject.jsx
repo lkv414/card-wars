@@ -185,41 +185,6 @@ function FlipIndicator({ position }) {
   )
 }
 
-function CardFaceMesh({ card, memoTexture }) {
-  const resolvedUrl = resolveCardImageUrl(card)
-  if (!resolvedUrl) {
-    return (
-      <>
-        <CardBackdrop />
-        {card?.name && (
-          <Text
-            color="#ffffff"
-            fontSize={0.11}
-            maxWidth={CARD_WIDTH * 0.85}
-            textAlign="center"
-            anchorX="center"
-            anchorY="middle"
-            position={[0, 0, 0.01]}
-          >
-            {card.name}
-          </Text>
-        )}
-      </>
-    )
-  }
-  return (
-    <mesh>
-      <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
-      <meshStandardMaterial
-        map={memoTexture}
-        roughness={0.7}
-        metalness={0.1}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  )
-}
-
 /**
  * GameObject — единая 3D-карта.
  *
@@ -234,6 +199,7 @@ function CardFaceMesh({ card, memoTexture }) {
  * @param {boolean} [props.isFlipped] поворот на 90° (флипнутые карты)
  * @param {boolean} [props.showStats] показывать cost/atk/hp индикаторы
  * @param {boolean} [props.showFlipOption] показывать flip-индикатор (если есть flip ability)
+ * @param {boolean} [props.damageFlash] включить анимацию урона (красная вспышка + шевеление)
  * @param {(e:any) => void} [props.onClick]
  */
 export const GameObject = memo(function GameObject({
@@ -247,10 +213,13 @@ export const GameObject = memo(function GameObject({
   isFlipped = false,
   showStats = false,
   showFlipOption = false,
+  damageFlash = false,
   onClick,
 }) {
   const [hovered, setHovered] = useState(false)
   const groupRef = useRef(null)
+  const matRef = useRef(null)
+  const damageStartRef = useRef(0)
 
   const canFlip = hasFlipAbility(card)
   const textureUrl = resolveCardImageUrl(card) || getPlaceholderTextureUrl()
@@ -273,11 +242,31 @@ export const GameObject = memo(function GameObject({
     }
   }, [position, rotation, isFlipped, isSelected, tableScale, flatOnTable])
 
+  useEffect(() => {
+    if (damageFlash) damageStartRef.current = performance.now()
+  }, [damageFlash])
+
   useFrame(() => {
     const g = groupRef.current
     if (!g) return
     if (flatOnTable) {
       // position/scale уже выставлены в useEffect
+      // Но damageFlash покачивает карту
+      if (damageFlash) {
+        const elapsed = performance.now() - damageStartRef.current
+        const t = Math.min(elapsed / 600, 1)
+        const shake = Math.sin(t * Math.PI * 4) * 0.05 * (1 - t)
+        g.position.x = position[0] + shake
+        g.position.z = position[2] + shake * 0.5
+      }
+      // Эмиссия — красная, фейдит за 0.6с
+      if (matRef.current) {
+        const dt = damageFlash
+          ? Math.min((performance.now() - damageStartRef.current) / 600, 1)
+          : 1
+        const intensity = damageFlash ? (1 - dt) * 1.4 : 0
+        matRef.current.emissive.setRGB(intensity, 0, 0)
+      }
       return
     }
 
@@ -303,8 +292,9 @@ export const GameObject = memo(function GameObject({
   })
 
   const handleClick = (e) => {
-    e.stopPropagation()
-    onClick?.(card)
+    // R3F автоматически останавливает пропагацию к <Canvas onPointerMissed>,
+    // когда есть <group onClick>. Поэтому stopPropagation вручную не нужен.
+    onClick?.(card, e)
   }
 
   const handlePointerOver = (e) => {
@@ -361,7 +351,16 @@ export const GameObject = memo(function GameObject({
       onPointerOut={handlePointerOut}
       onClick={handleClick}
     >
-      <CardFaceMesh card={card} memoTexture={memoTexture} />
+      <mesh>
+        <planeGeometry args={[CARD_WIDTH, CARD_HEIGHT]} />
+        <meshStandardMaterial
+          ref={matRef}
+          map={memoTexture}
+          roughness={0.7}
+          metalness={0.1}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
       {isSelected && <Outlines thickness={0.04} color="#fbbf24" />}
 
       {showStats && (

@@ -38,25 +38,26 @@ export function CardForm({
   )
   const [jsonError, setJsonError] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  // imageFailed сбрасывается при смене URL (через set('image_url', ...) и
+  // через onChange), не нужен useEffect.
   const [imageFailed, setImageFailed] = useState(false)
   const submitRef = useRef(() => {})
-
-  useEffect(() => {
-    setImageFailed(false)
-  }, [form.image_url])
 
   const imageWarning =
     form.image_url && !/^https?:\/\//.test(form.image_url)
       ? 'URL должен начинаться с http:// или https://'
       : ''
 
-  const set = (key, value) =>
+  const set = (key, value) => {
     setForm((prev) => ({
       ...prev,
       [key]: value,
       ...(key === 'cost' && Number(value) === 0 ? { is_rainbow: true, land_type: 'any' } : {}),
       ...(key === 'is_rainbow' && value ? { land_type: 'any' } : {}),
     }))
+    // Сбрасываем флаг ошибки загрузки при смене URL — заменяет useEffect.
+    if (key === 'image_url') setImageFailed(false)
+  }
 
   const submit = useCallback(async (force = false) => {
     let mechanics

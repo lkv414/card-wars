@@ -63,6 +63,10 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
   )
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect --
+       setStatus() внутри эффекта — это sync с внешней системой
+       (WebSocket lifecycle): «не сконфигурировано → disabled»,
+       «нет URL → disabled», «перед коннектом → connecting». */
     if (!isGameWsConfigured() || !gameId || !clientId) {
       setStatus('disabled')
       return undefined
@@ -75,6 +79,7 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
     }
 
     setStatus('connecting')
+    /* eslint-enable react-hooks/set-state-in-effect */
     const socket = connectGameSocket({
       url,
       clientId,

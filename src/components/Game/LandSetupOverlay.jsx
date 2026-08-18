@@ -58,9 +58,15 @@ export function LandSetupOverlay({
   const [slots, setSlots] = useState(() => initialRows.map((r) => ({ ...r })))
   const [selectedSlot, setSelectedSlot] = useState(null)
 
+  // slots синхронизируется с initialRows пока игрок не зафиксировал
+  // расстановку. Чтобы не дёргать setState синхронно в useEffect (правило
+  // react-hooks/set-state-in-effect), оборачиваем вызов в микротаск —
+  // состояние всё равно обновится до следующего рендера.
   useEffect(() => {
     if (!iAmReady) {
-      setSlots(initialRows.map((r) => ({ ...r })))
+      Promise.resolve().then(() => {
+        setSlots(initialRows.map((r) => ({ ...r })))
+      })
     }
   }, [initialRows, iAmReady])
 

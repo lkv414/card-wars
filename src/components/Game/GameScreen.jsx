@@ -161,7 +161,6 @@ export function GameScreen() {
       }
     }, WS_FALLBACK_LOAD_MS)
     return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wsConfigured, gameId])
 
   // === Render ===

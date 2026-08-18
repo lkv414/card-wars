@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export function AdminBulkEdit({ selectedIds, cards, onApply, onClear }) {
+export function AdminBulkEdit({ selectedIds, onApply, onClear }) {
   const [landType, setLandType] = useState('')
   const [cost, setCost] = useState('')
   const [applying, setApplying] = useState(false)

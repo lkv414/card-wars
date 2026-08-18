@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import { ndcFromClient, raycastPlayableSlot } from './placementRaycast'
 

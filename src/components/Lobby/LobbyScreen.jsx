@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getGuestNickname, setGuestNickname, getGuestId } from '../../utils/guestId'
+import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
 import { supabase } from '../../utils/supabase'

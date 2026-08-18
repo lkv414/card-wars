@@ -101,7 +101,7 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, transp
         current_turn: (game.current_turn || 0) + 1,
         game_state: { log: newLog },
       })
-    }, [game, writeGameState, reload, patchGame, transport, suppressRealtimeReload])
+    }, [game, writeGameState, patchGame, transport, suppressRealtimeReload])
 
   /**
      * Forfeit — сдаться. Текущий игрок выбывает (health=0). Игра продолжается
@@ -206,7 +206,7 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, transp
       }
 
       return writeGameState(patch)
-    }, [game, writeGameState, reload, patchGame, transport])
+    }, [game, writeGameState, reload, transport])
 
   return { endTurn, forfeit }
 }

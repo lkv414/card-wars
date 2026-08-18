@@ -22,7 +22,7 @@ export function useLandSetup(game, reload, { transport } = {}) {
       })
       if (error) throw new Error(error.message)
     },
-    [game?.id, game?.version, transport],
+    [game?.id, transport],
   )
 
   const confirmLandSetup = useCallback(
@@ -43,7 +43,7 @@ export function useLandSetup(game, reload, { transport } = {}) {
       if (error) throw new Error(error.message)
       await reload?.()
     },
-    [game?.id, game?.version, reload, transport],
+    [game?.id, reload, transport],
   )
 
   return { reorderLands, confirmLandSetup }

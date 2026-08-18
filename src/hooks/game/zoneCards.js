@@ -44,6 +44,7 @@ export function isSlotEmpty(cards, slotType) {
   return !creatureCard
 }
 
+// eslint-disable-next-line no-unused-vars
 export function canPlayCardToSlot(cards, card, _zoneLandType = null) {
   const slot = getCardSlotType(card)
   if (!isSlotEmpty(cards, slot)) return false

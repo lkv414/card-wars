@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
-import { normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 /**
@@ -100,6 +99,6 @@ export function useDiscardFromHand(game, reload, { patchGame, transport, suppres
 
       return { success: true }
     },
-    [game, reload, patchGame, transport, suppressRealtimeReload]
+    [game, patchGame, transport, suppressRealtimeReload]
   )
 }

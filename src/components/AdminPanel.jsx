@@ -11,7 +11,7 @@ import {
   parseCatalogImport,
   downloadTextFile,
 } from '../utils/adminCatalogExport'
-import { useAdminAuth } from '../context/AdminAuthContext'
+import { useAdminAuth } from '../context/useAdminAuth'
 import {
   DEFAULT_ADMIN_FILTERS,
   buildAnomalyMap,
@@ -219,7 +219,6 @@ export function AdminPanel({
 
           <AdminBulkEdit
             selectedIds={selectedIds}
-            cards={cards}
             onApply={applyBulk}
             onClear={() => setSelectedIds(new Set())}
           />

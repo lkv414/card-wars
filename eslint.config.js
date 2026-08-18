@@ -26,5 +26,12 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // react-hooks/preserve-manual-memoization — слишком агрессивное правило
+      // React Compiler (требует мемоизации deps из пропсов); в существующем коде
+      // массово требует рефакторинга вызывающих компонентов. Отключено до тех
+      // пор, пока команда не выработает стратегию мемоизации callbacks.
+      'react-hooks/preserve-manual-memoization': 'off',
+    },
   },
 ])

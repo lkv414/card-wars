@@ -529,32 +529,6 @@ export function GameBoard3D({
               />
             )
           })}
-
-          {/* Карта-«призрак» 3D НЕ рендерится при выборе — она уже отображается в HUDHand.
-             Поле визуально «перезагружалось» когда 3D-копия появлялась над полем
-             (GameBoard3D.jsx:482). Убрано: блок полностью закомментирован. */}
-          {false && handCards.map((card, idx) => {
-            if (idx !== selectedCardIndex && idx !== draggingCardIndex) return null
-            return (
-              <GameObject
-                key={`hand-${card.id ?? idx}`}
-                card={card}
-                type={CARD_OBJECT_TYPES.HAND}
-                position={[0, 5, 0]}
-                rotation={[-Math.PI / 2, 0, 0]}
-                scale={0.5}
-                selected
-                onClick={() => {
-                  if (idx === selectedCardIndex) {
-                    setSelectedCardIndex(null)
-                  } else {
-                    setSelectedCardIndex(idx)
-                    setDraggingCardIndex(idx)
-                  }
-                }}
-              />
-            )
-          })}
         </GameExperience>
       </GameCanvas>
 

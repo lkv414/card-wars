@@ -123,6 +123,6 @@ export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, t
 
       return { success: true }
     },
-    [game, reload, patchGame, transport, suppressRealtimeReload]
+    [game, patchGame, transport, suppressRealtimeReload]
   )
 }

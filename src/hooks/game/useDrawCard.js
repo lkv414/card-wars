@@ -6,7 +6,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
-import { applyDrawPatch, normalizeDrawRpcData, sanitizeDrawRpcDataForSync } from '../../utils/gameStatePatch'
+import { applyDrawPatch, normalizeDrawRpcData } from '../../utils/gameStatePatch'
 import { getGuestId } from '../../utils/guestId'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'

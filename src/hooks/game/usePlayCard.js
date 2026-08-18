@@ -23,7 +23,6 @@ import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { getCardCost } from '../../utils/cardFields.ts'
 
 import { applyPlayCardPatch } from '../../utils/gameStatePatch'
-import { enrichZoneCardsForSync } from '../../utils/enrichGameCards'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 
@@ -32,6 +31,7 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
 
   return useCallback(
 
+    // eslint-disable-next-line no-unused-vars
     async (cardIndex, zoneIndex, _actionCost = 1, slotType = null) => {
 
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -169,11 +169,6 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
 
           }
 
-          const playerAfter = nextState.players.find((p) => p.player_id === me.player_id)
-          const zoneSnapshot = enrichZoneCardsForSync(
-            playerAfter?.zones?.[zoneIndex]?.cards ?? [],
-            cardCatalog
-          )
           return { success: true }
 
         }

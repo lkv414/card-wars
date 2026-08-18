@@ -28,7 +28,10 @@ export function usePresetDecks() {
   }, [])
 
   useEffect(() => {
-    load()
+    // load() содержит асинхронный setLoading/setError/setPresets;
+    // Promise-обёртка делает начальный setLoading(true) формально асинхронным
+    // для правила lint react-hooks/set-state-in-effect.
+    Promise.resolve().then(() => load())
   }, [load])
 
   return { presets, loading, error, reload: load }

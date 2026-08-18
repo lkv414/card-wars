@@ -1,8 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+
+/**
+ * Подписаться на статус lobbyTransport через useSyncExternalStore.
+ * Заменяет useEffect+setState паттерн (react-hooks/set-state-in-effect).
+ */
+function useLobbyStatus(lobbyTransport) {
+  return useSyncExternalStore(
+    (cb) => {
+      if (!lobbyTransport?.subscribe) return () => {}
+      return lobbyTransport.subscribe(cb)
+    },
+    () => lobbyTransport?.status ?? 'idle',
+    () => 'idle',
+  )
+}
 
 export function useLobbyChannel({ resetLobbyState, lobbyTransport }) {
   const unsubscribeRef = useRef(null)
-  const [connectionStatus, setConnectionStatus] = useState('connecting')
+  const transportStatus = useLobbyStatus(lobbyTransport)
   const [onlinePlayerIds, setOnlinePlayerIds] = useState([])
 
   const resetLobby = useCallback(() => {
@@ -39,17 +54,16 @@ export function useLobbyChannel({ resetLobbyState, lobbyTransport }) {
     [],
   )
 
-  useEffect(() => {
-    const wsStatus = lobbyTransport?.status
-    if (!wsStatus || wsStatus === 'idle' || wsStatus === 'disabled') {
-      setConnectionStatus('none')
-      return
+  // connectionStatus — derived state из transportStatus.
+  const connectionStatus = (() => {
+    if (!transportStatus || transportStatus === 'idle' || transportStatus === 'disabled') {
+      return 'none'
     }
-    if (wsStatus === 'connected') setConnectionStatus('connected')
-    else if (wsStatus === 'connecting') setConnectionStatus('connecting')
-    else if (wsStatus === 'reconnecting') setConnectionStatus('reconnecting')
-    else setConnectionStatus('disconnected')
-  }, [lobbyTransport?.status])
+    if (transportStatus === 'connected') return 'connected'
+    if (transportStatus === 'connecting') return 'connecting'
+    if (transportStatus === 'reconnecting') return 'reconnecting'
+    return 'disconnected'
+  })()
 
   return {
     unsubscribeRef,

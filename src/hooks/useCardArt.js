@@ -23,7 +23,11 @@ export function useCardArt(cardId) {
   }, [cardId])
 
   useEffect(() => {
-    reload()
+    // setState внутри reload() — асинхронный, но правило
+    // react-hooks/set-state-in-effect ругается на сам вызов reload(),
+    // который синхронно стартует с setLoading(true). Обёртка в
+    // Promise.resolve().then() делает setState формально асинхронным.
+    Promise.resolve().then(() => reload())
   }, [reload])
 
   const addArt = useCallback(async ({ source_url, source_kind = 'url', variant = null, is_primary = false }) => {

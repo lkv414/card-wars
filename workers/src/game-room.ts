@@ -65,6 +65,7 @@ export class GameRoom extends DurableObject<Env> {
           throw new Error('clientId required')
         }
         const gameId = this.resolveGameId()
+        console.log('[GameRoom] ws join', { clientId, gameId, requestId: msg.requestId })
         await assertPlayerInGame(this.env, gameId, clientId)
         ws.serializeAttachment({ clientId } satisfies SessionMeta)
         ws.send(
@@ -116,13 +117,22 @@ export class GameRoom extends DurableObject<Env> {
   }
 
   async webSocketClose(ws: WebSocket): Promise<void> {
-    ws.close()
-    this.broadcastPresence()
+    // Не вызываем ws.close() — Durable Object hibernation уже закрыл сокет.
+    // Просто уведомляем остальных о новом составе presence.
+    try {
+      this.broadcastPresence()
+    } catch (err) {
+      console.error('[GameRoom] broadcastPresence on close failed:', err)
+    }
   }
 
-  async webSocketError(ws: WebSocket): Promise<void> {
-    ws.close(1011, 'WebSocket error')
-    this.broadcastPresence()
+  async webSocketError(ws: WebSocket, error?: unknown): Promise<void> {
+    // Аналогично: сокет уже закрыт hibernation'ом, не вызываем ws.close().
+    try {
+      this.broadcastPresence()
+    } catch (err) {
+      console.error('[GameRoom] broadcastPresence on error failed:', err)
+    }
   }
 
   private getSession(ws: WebSocket): SessionMeta | null {
@@ -131,15 +141,54 @@ export class GameRoom extends DurableObject<Env> {
     return null
   }
 
+  /**
+   * Safe-send: отправляет payload только в живые сокеты.
+   * Если сокет уже закрыт (CLOSED/CLOSING) или send() падает,
+   * ошибка тихо проглатывается — иначе один упавший клиент
+   * роняет broadcastStates/broadcastPresence для всех.
+   */
+  private safeSend(ws: WebSocket, payload: string | ArrayBuffer): boolean {
+    try {
+      // WebSocket.OPEN === 1, CLOSING === 2, CLOSED === 3
+      if (ws.readyState !== 1) return false
+      ws.send(payload)
+      return true
+    } catch {
+      return false
+    }
+  }
+
   private async sendStateTo(ws: WebSocket, clientId: string, requestId?: string): Promise<void> {
-    const game = await getPlayerGameState(this.env, this.resolveGameId(), clientId)
-    const version = Number(game.version ?? 0)
-    ws.send(serverMsg({ type: 'state', version, game, requestId }))
+    try {
+      const game = await getPlayerGameState(this.env, this.resolveGameId(), clientId)
+      const version = Number(game.version ?? 0)
+      // Диагностика: видны ли руки и зоны для этого клиента.
+      const playersArr = Array.isArray(game?.players) ? game.players : []
+      const visibility = playersArr.map((p) => ({
+        id: p?.player_id,
+        isSelf: p?.player_id === clientId,
+        handLen: Array.isArray(p?.hand) ? p.hand.length : -1,
+        zoneCount: Array.isArray(p?.zones) ? p.zones.length : 0,
+        zoneCards: Array.isArray(p?.zones)
+          ? p.zones.reduce((sum, z) => sum + (Array.isArray(z?.cards) ? z.cards.length : 0), 0)
+          : 0,
+      }))
+      console.log('[GameRoom] sendStateTo', {
+        clientId,
+        version,
+        requestId,
+        players: visibility,
+      })
+      this.safeSend(ws, serverMsg({ type: 'state', version, game, requestId }))
+    } catch (err) {
+      console.error('[GameRoom] sendStateTo failed for', clientId, err)
+    }
   }
 
   private onlineClientIds(): string[] {
     const ids = new Set<string>()
     for (const ws of this.ctx.getWebSockets()) {
+      if (ws.readyState !== 1) continue
       const session = this.getSession(ws)
       if (session?.clientId) ids.add(session.clientId)
     }
@@ -149,17 +198,23 @@ export class GameRoom extends DurableObject<Env> {
   private broadcastPresence(): void {
     const payload = serverMsg({ type: 'presence', onlineIds: this.onlineClientIds() })
     for (const ws of this.ctx.getWebSockets()) {
-      ws.send(payload)
+      this.safeSend(ws, payload)
     }
   }
 
   private async broadcastStates(requestId?: string): Promise<void> {
-    const sockets = this.ctx.getWebSockets()
+    // Собираем список живых сокетов с привязанным clientId один раз —
+    // иначе при ошибке в одном send() состояние гонки может вернуть
+    // сокет, который уже closed.
+    const liveSockets = []
+    for (const ws of this.ctx.getWebSockets()) {
+      if (ws.readyState !== 1) continue
+      const session = this.getSession(ws)
+      if (session?.clientId) liveSockets.push({ ws, clientId: session.clientId })
+    }
     await Promise.all(
-      sockets.map(async (ws) => {
-        const session = this.getSession(ws)
-        if (!session?.clientId) return
-        await this.sendStateTo(ws, session.clientId, requestId)
+      liveSockets.map(async ({ ws, clientId }) => {
+        await this.sendStateTo(ws, clientId, requestId)
       })
     )
   }

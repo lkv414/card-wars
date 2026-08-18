@@ -112,13 +112,20 @@ export class LobbyRoom extends DurableObject<Env> {
   }
 
   async webSocketClose(ws: WebSocket): Promise<void> {
-    ws.close()
-    this.broadcastPresence()
+    // Durable Object hibernation уже закрыл сокет — не вызываем ws.close().
+    try {
+      this.broadcastPresence()
+    } catch (err) {
+      console.error('[LobbyRoom] broadcastPresence on close failed:', err)
+    }
   }
 
-  async webSocketError(ws: WebSocket): Promise<void> {
-    ws.close(1011, 'WebSocket error')
-    this.broadcastPresence()
+  async webSocketError(ws: WebSocket, error?: unknown): Promise<void> {
+    try {
+      this.broadcastPresence()
+    } catch (err) {
+      console.error('[LobbyRoom] broadcastPresence on error failed:', err)
+    }
   }
 
   private async runLobbyAction(
@@ -199,6 +206,7 @@ export class LobbyRoom extends DurableObject<Env> {
   private onlineClientIds(): string[] {
     const ids = new Set<string>()
     for (const ws of this.ctx.getWebSockets()) {
+      if (ws.readyState !== 1) continue
       const session = ws.deserializeAttachment() as SessionMeta | null
       if (session?.clientId) ids.add(session.clientId)
     }
@@ -208,7 +216,12 @@ export class LobbyRoom extends DurableObject<Env> {
   private broadcastPresence(): void {
     const payload = serverMsg({ type: 'presence', onlineIds: this.onlineClientIds() })
     for (const ws of this.ctx.getWebSockets()) {
-      ws.send(payload)
+      try {
+        if (ws.readyState !== 1) continue
+        ws.send(payload)
+      } catch {
+        // сокет мог закрыться между проверкой и send() — игнорируем
+      }
     }
   }
 

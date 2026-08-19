@@ -57,3 +57,5 @@ identifier.sqlite
 
 # Agent runtime metadata (created by desktop agent runs)
 .reasonix/
+reasonix.toml
+remote-mcp-server-authless/

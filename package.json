@@ -15,6 +15,7 @@
     "test:store": "vitest run src/store",
     "db:schema": "node scripts/generate-db-schema.mjs",
     "db:push": "node scripts/db-push.mjs",
+    "ocr": "node scripts/ocr-cards.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

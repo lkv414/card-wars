@@ -216,6 +216,23 @@ export const CardTile = memo(function CardTile({
           {legacyControls}
         </div>
       )}
+
+      {/* Всплывающая информация: стоимость, описание, урон, защита (если есть) */}
+      <div className="card-tile-info" aria-hidden="true">
+        <div className="card-tile-info__head">
+          <span className="card-tile-info__name">{item.name}</span>
+          {!isLandCard && (
+            <span className="card-tile-info__cost">💧 {item.cost ?? '—'}</span>
+          )}
+        </div>
+        {item.description && <p className="card-tile-info__desc">{item.description}</p>}
+        {!isLandCard && item.card_type === 'creature' && (
+          <div className="card-tile-info__stats">
+            <span>⚔️ {item.attack ?? '—'}</span>
+            <span>❤️ {item.health ?? '—'}</span>
+          </div>
+        )}
+      </div>
     </article>
   )
 })

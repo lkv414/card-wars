@@ -60,5 +60,12 @@ export function presetToDeckSelection(preset) {
     }
   }
 
-  return { selectedCards, selectedLands, name: preset.name }
+  // Hero (если у пресета задан — ищем в heroes по hero_slug; иначе вернём null)
+  return {
+    selectedCards,
+    selectedLands,
+    name: preset.name,
+    heroId: null,
+    heroSlug: preset.hero_slug || null,
+  }
 }

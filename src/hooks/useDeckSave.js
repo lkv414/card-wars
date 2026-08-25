@@ -1,14 +1,25 @@
 import { useState, useCallback } from 'react'
 import { copyToClipboard } from '../utils/clipboard'
+import { generateDeckCode } from '../utils/deckCode.js'
 
+/**
+ * useDeckSave — логика диалога сохранения колоды.
+ *
+ * Пункт 4.5: если редактируется уже существующая колода (editingDeck),
+ * сохранение по умолчанию заменяет исходную колоду вместо создания дубля.
+ * В диалоге можно снять галочку «Обновить...» и сохранить как новую.
+ */
 export function useDeckSave({
   cardTotal,
   landTotal,
   errors,
   selectedCards,
   selectedLands,
-  getSelectedDeck,
+  heroId = null,
+  editingDeck = null,
   addDeck,
+  updateDeckContents,
+  clearEditingDeck,
   toast,
 }) {
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
@@ -16,6 +27,7 @@ export function useDeckSave({
   const [saveName, setSaveName] = useState('')
   const [savedDeck, setSavedDeck] = useState(null)
   const [codeCopied, setCodeCopied] = useState(false)
+  const [updateExisting, setUpdateExisting] = useState(true)
 
   const closeSaveDialog = useCallback(() => {
     setSaveDialogOpen(false)
@@ -34,19 +46,41 @@ export function useDeckSave({
       toast?.('error', 'Исправьте ошибки в колоде перед сохранением')
       return
     }
-    setSaveName(getSelectedDeck()?.name || '')
+    setSaveName(editingDeck?.name || '')
+    setUpdateExisting(Boolean(editingDeck))
     setSaveStep('form')
     setSavedDeck(null)
     setCodeCopied(false)
     setSaveDialogOpen(true)
-  }, [cardTotal, landTotal, errors, getSelectedDeck, toast])
+  }, [cardTotal, landTotal, errors, editingDeck, toast])
 
   const handleConfirmSave = useCallback(() => {
     const name = saveName.trim() || `Колода ${new Date().toLocaleDateString('ru-RU')}`
-    const newDeck = addDeck({ name, selectedCards, selectedLands })
-    setSavedDeck({ name: newDeck.name, code: newDeck.code })
+    if (updateExisting && editingDeck) {
+      updateDeckContents(editingDeck.id, {
+        name,
+        selectedCards,
+        selectedLands,
+        heroId,
+      })
+      clearEditingDeck?.()
+      setSavedDeck({ name, code: generateDeckCode(selectedCards, selectedLands), updated: true })
+    } else {
+      const newDeck = addDeck({ name, selectedCards, selectedLands, heroId })
+      setSavedDeck({ name: newDeck.name, code: newDeck.code, updated: false })
+    }
     setSaveStep('success')
-  }, [saveName, addDeck, selectedCards, selectedLands])
+  }, [
+    saveName,
+    updateExisting,
+    editingDeck,
+    addDeck,
+    updateDeckContents,
+    clearEditingDeck,
+    selectedCards,
+    selectedLands,
+    heroId,
+  ])
 
   const handleCopySavedCode = useCallback(async () => {
     if (!savedDeck?.code) return
@@ -64,6 +98,8 @@ export function useDeckSave({
     setSaveName,
     savedDeck,
     codeCopied,
+    updateExisting,
+    setUpdateExisting,
     closeSaveDialog,
     handleSaveDeck,
     handleConfirmSave,

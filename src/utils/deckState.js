@@ -7,22 +7,43 @@ export const DECK_SELECTION_STORAGE_KEY = 'deckSelection'
 export function loadDeckSelection() {
   try {
     const raw = localStorage.getItem(DECK_SELECTION_STORAGE_KEY)
-    if (!raw) return { selectedCards: {}, selectedLands: {} }
+    if (!raw) return { selectedCards: {}, selectedLands: {}, heroId: null, editingDeckId: null }
     const parsed = JSON.parse(raw)
     return {
       selectedCards: parsed.selectedCards || {},
       selectedLands: parsed.selectedLands || {},
+      heroId: parsed.heroId ?? null,
+      editingDeckId: parsed.editingDeckId ?? null,
     }
   } catch {
-    return { selectedCards: {}, selectedLands: {} }
+    return { selectedCards: {}, selectedLands: {}, heroId: null, editingDeckId: null }
   }
 }
 
-export function saveDeckSelection(selectedCards, selectedLands) {
+/**
+ * Сохраняет текущий выбор карт/земель + метаданные (герой, редактируемая колода).
+ * meta-поля при отсутствии в аргументах сохраняют прежние значения из хранилища.
+ */
+export function saveDeckSelection(selectedCards, selectedLands, meta = {}) {
+  const previous = readStoredSelection()
   localStorage.setItem(
     DECK_SELECTION_STORAGE_KEY,
-    JSON.stringify({ selectedCards, selectedLands })
+    JSON.stringify({
+      selectedCards,
+      selectedLands,
+      heroId: meta.heroId !== undefined ? meta.heroId : previous.heroId ?? null,
+      editingDeckId:
+        meta.editingDeckId !== undefined ? meta.editingDeckId : previous.editingDeckId ?? null,
+    })
   )
+}
+
+function readStoredSelection() {
+  try {
+    return JSON.parse(localStorage.getItem(DECK_SELECTION_STORAGE_KEY)) || {}
+  } catch {
+    return {}
+  }
 }
 
 export function sumDeckQuantities(entries) {

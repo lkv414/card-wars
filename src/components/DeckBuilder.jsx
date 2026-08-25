@@ -8,12 +8,14 @@ import { DeckActions } from './deck/DeckActions'
 import { SaveDeckDialog } from './deck/SaveDeckDialog'
 import { DeckCardList } from './deck/DeckCardList'
 import { LibraryToolbar } from './deck/LibraryToolbar'
+import { HeroPicker } from './DeckBuilder/HeroPicker'
 import { generateDeckCode, expandDeckCodeWithCardData } from '../utils/deckCode'
 import { normalizeDeckImportMap } from '../utils/deckImport'
 import { copyToClipboard } from '../utils/clipboard'
 import { useDeckSelection } from '../hooks/useDeckSelection'
 import { useDecks } from '../hooks/useDecks'
 import { useDeckSave } from '../hooks/useDeckSave'
+import { useHeroes } from '../hooks/useHeroes'
 import { useNavigate } from 'react-router-dom'
 import { DEFAULT_FILTERS, filterCards, filterLands } from '../utils/cardSort'
 
@@ -38,9 +40,20 @@ export function DeckBuilder({
     landTotal,
     errors,
     warnings,
+    heroId: selectionHeroId,
+    setHeroId,
+    editingDeckId,
+    clearEditingDeck,
   } = useDeckSelection()
-  const { addDeck, getSelectedDeck } = useDecks()
+  const { addDeck, updateDeckContents, getDeckById } = useDecks()
+  const { heroes, loading: heroesLoading } = useHeroes()
   const navigate = useNavigate()
+
+  const editingDeck = useMemo(
+    () => (editingDeckId ? getDeckById(editingDeckId) : null),
+    [editingDeckId, getDeckById]
+  )
+
   const {
     saveDialogOpen,
     saveStep,
@@ -48,6 +61,8 @@ export function DeckBuilder({
     setSaveName,
     savedDeck,
     codeCopied,
+    updateExisting,
+    setUpdateExisting,
     closeSaveDialog,
     handleSaveDeck,
     handleConfirmSave,
@@ -58,8 +73,11 @@ export function DeckBuilder({
     errors,
     selectedCards,
     selectedLands,
-    getSelectedDeck,
+    heroId: selectionHeroId,
+    editingDeck,
     addDeck,
+    updateDeckContents,
+    clearEditingDeck,
     toast,
   })
 
@@ -68,6 +86,17 @@ export function DeckBuilder({
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [deckModalOpen, setDeckModalOpen] = useState(false)
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false)
+
+  // По клику на «Герой» в TopBar переключаем на вкладку heroes.
+  const handleOpenHeroes = () => {
+    setFiltersOpen(false)
+    setMode('heroes')
+  }
+
+  const selectedHero = useMemo(() => {
+    if (!selectionHeroId || !heroes?.length) return null
+    return heroes.find((h) => h.id === selectionHeroId) || null
+  }, [selectionHeroId, heroes])
 
   const deckCode = useMemo(
     () => generateDeckCode(selectedCards, selectedLands),
@@ -123,6 +152,10 @@ export function DeckBuilder({
         deckCode={deckCode}
         cardTotal={cardTotal}
         landTotal={landTotal}
+        heroLabel={selectedHero?.name}
+        heroMissing={!selectionHeroId}
+        heroProgress={Math.min(1, (cardTotal + landTotal) / 44)}
+        onOpenHeroes={handleOpenHeroes}
         errors={errors}
         warnings={warnings}
         importDeck={importDeck}
@@ -163,6 +196,9 @@ export function DeckBuilder({
         landTotal={landTotal}
         savedDeck={savedDeck}
         codeCopied={codeCopied}
+        editingDeckName={editingDeck?.name ?? null}
+        updateExisting={updateExisting}
+        onUpdateExistingChange={setUpdateExisting}
         onClose={closeSaveDialog}
         onConfirm={handleConfirmSave}
         onCopyCode={handleCopySavedCode}
@@ -176,6 +212,11 @@ export function DeckBuilder({
         selectedLands={selectedLands}
         cards={cards}
         lands={lands}
+        hero={selectedHero}
+        onOpenHeroes={() => {
+          setDeckModalOpen(false)
+          handleOpenHeroes()
+        }}
         addCard={addCard}
         removeCard={removeCard}
         addLand={addLand}
@@ -197,29 +238,44 @@ export function DeckBuilder({
           <LibraryToolbar
             mode={mode}
             setMode={setMode}
-            resultCount={mode === 'cards' ? filteredCards.length : filteredLands.length}
+            resultCount={
+              mode === 'cards'
+                ? filteredCards.length
+                : mode === 'lands'
+                  ? filteredLands.length
+                  : heroes.length
+            }
             filters={filters}
             onResetFilters={resetFilters}
           />
-          <DeckCardList
-            loadingLibrary={loadingLibrary}
-            libraryError={libraryError}
-            mode={mode}
-            filteredCards={filteredCards}
-            filteredLands={filteredLands}
-            selectedCards={selectedCards}
-            selectedLands={selectedLands}
-            cardTotal={cardTotal}
-            landTotal={landTotal}
-            filters={filters}
-            onBlockedAdd={handleBlockedAdd}
-            onAddCard={addCard}
-            onRemoveCard={removeCard}
-            onAddLand={addLand}
-            onRemoveLand={removeLand}
-            onResetFilters={resetFilters}
-            onClearSearch={() => setFilters((p) => ({ ...p, search: '' }))}
-          />
+          {mode === 'heroes' ? (
+            <HeroPicker
+              heroes={heroes}
+              selectedHeroId={selectionHeroId}
+              onChange={setHeroId}
+              loading={heroesLoading}
+            />
+          ) : (
+            <DeckCardList
+              loadingLibrary={loadingLibrary}
+              libraryError={libraryError}
+              mode={mode}
+              filteredCards={filteredCards}
+              filteredLands={filteredLands}
+              selectedCards={selectedCards}
+              selectedLands={selectedLands}
+              cardTotal={cardTotal}
+              landTotal={landTotal}
+              filters={filters}
+              onBlockedAdd={handleBlockedAdd}
+              onAddCard={addCard}
+              onRemoveCard={removeCard}
+              onAddLand={addLand}
+              onRemoveLand={removeLand}
+              onResetFilters={resetFilters}
+              onClearSearch={() => setFilters((p) => ({ ...p, search: '' }))}
+            />
+          )}
         </section>
       </div>
     </main>

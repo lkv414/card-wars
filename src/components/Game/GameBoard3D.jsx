@@ -38,7 +38,7 @@ import { GameExperience } from './scene/GameExperience'
 import { GamePanel } from './scene/GamePanel'
 import { PlayerNameLabels } from './scene/PlayerNameLabels'
 import { GameDamageFloater } from './scene/GameDamageFloater'
-import { BoardOutlines } from './scene/BoardOutlines'
+import { PlayerPiles } from './scene/PlayerPiles'
 
 import { DamageFlashOverlay } from './DamageFlashOverlay'
 import { LandSetupOverlay } from './LandSetupOverlay'
@@ -316,72 +316,52 @@ export function GameBoard3D({
     [handCards, me, landCatalog, game.game_state?.landPlacementRule, onPlayCard, onSuppressRealtimeReload, toast],
   )
 
-  const handleCreatureSlotClick = useCallback((zone) => {
-    if (!activeCardRef.current) return
-    handleRayRelease(cardIndexRef.current ?? 0, {
-      zoneIndex: zone.zoneIndex,
-      slotType: 'creature',
-    })
-  }, [handleRayRelease])
+  /**
+   * Сброс выбранной карты из руки в кучу сброса (клик по своему сбросу, 5.3).
+   */
+  const handleDiscardRelease = useCallback(
+    async (cardIdx) => {
+      if (placingLockRef.current) return
+      if (!handCards[cardIdx]) return
 
-  const handleBuildingSlotClick = useCallback((zone) => {
-    if (!activeCardRef.current) return
-    handleRayRelease(cardIndexRef.current ?? 0, {
-      zoneIndex: zone.zoneIndex,
-      slotType: 'building',
-    })
-  }, [handleRayRelease])
-
-  const handleCreatureCardClick = useCallback((zone, card) => {
-    if (zone.isOwnerMe && game.current_player_id === playerId && game.status !== 'finished') {
-      setZoneCardActionMenu({
-        playerId: zone.player.player_id,
-        zoneIndex: zone.zoneIndex,
-        card,
-        slotType: 'creature',
-      })
-    } else {
-      handleZoneCardClick(zone, card)
-    }
-  }, [game.status, game.current_player_id, playerId, handleZoneCardClick])
-
-  const handleBuildingCardClick = useCallback((zone, card) => {
-    if (zone.isOwnerMe && game.current_player_id === playerId && game.status !== 'finished') {
-      setZoneCardActionMenu({
-        playerId: zone.player.player_id,
-        zoneIndex: zone.zoneIndex,
-        card,
-        slotType: 'building',
-      })
-    } else {
-      handleZoneCardClick(zone, card)
-    }
-  }, [game.status, game.current_player_id, playerId, handleZoneCardClick])
-
-  // === handleRayRelease (определён выше, перед slot-click колбэками) ===
-
-  const handleConfirmLandSetup = useCallback(
-    async ({ landIds = [], bypass = false } = {}) => {
+      placingLockRef.current = true
+      setDraggingCardIndex(null)
+      setSelectedCardIndex(null)
+      onSuppressRealtimeReload?.(5000)
       try {
-        await onConfirmLandSetup?.({ landIds, bypass })
-      } catch (e) {
-        toast('error', e?.message || 'Не удалось подтвердить расстановку')
+        await onDiscardFromHand?.(cardIdx)
+      } catch (err) {
+        toast('error', err?.message || 'Не удалось отправить карту в сброс')
+      } finally {
+        placingLockRef.current = false
       }
     },
-    [onConfirmLandSetup, toast],
+    [handCards, onDiscardFromHand, onSuppressRealtimeReload, toast],
   )
 
-  const handleSkipLandSetup = useCallback(async () => {
+  /** Бесплатная карта кликом по своей колоде (5.2) — 1 раз за свой ход. */
+  const handleDeckPileClick = useCallback(async () => {
+    if (placingLockRef.current) return
+    placingLockRef.current = true
+    onSuppressRealtimeReload?.(5000)
     try {
-      await onSkipLandSetup?.()
-    } catch (e) {
-      toast('error', e?.message || 'Не удалось пропустить расстановку')
+      const result = await onDrawFreeCard?.()
+      if (!result?.error) {
+        toast('success', 'Взята бесплатная карта')
+      }
+    } catch (err) {
+      toast('error', err?.message || 'Не удалось взять карту')
+    } finally {
+      placingLockRef.current = false
     }
-  }, [onSkipLandSetup, toast])
+  }, [onDrawFreeCard, onSuppressRealtimeReload, toast])
 
-  // Cleanup-рефы для таймеров урона
-  const damageTimersRef = useRef([])
-
+  /**
+   * Запустить визуальный эффект «урона» по карте на поле:
+   * - число урона всплывает над зоной
+   * - карточка вспыхивает красным (damageFlash=true через GameObject)
+   * - через 1.5с всё очищается
+   */
   const triggerDamageVisual = useCallback(({ markers, flashedCards = {} }) => {
     if (Array.isArray(markers) && markers.length > 0) {
       setDamageMarkers((prev) => [...prev, ...markers])
@@ -523,6 +503,17 @@ export function GameBoard3D({
             labelY={PLAYER_LABEL_Y}
           />
 
+          {/* Зоны колоды и сброса у каждого игрока (5.1–5.3) */}
+          <PlayerPiles
+            players={players}
+            myIndex={myIndex >= 0 ? myIndex : 0}
+            canFreeDraw={isYourTurn && !inSetup && !isFinished && !isApplying && !me?.free_draw_used}
+            hasActiveCard={Boolean(activeCard)}
+            onDeckClick={handleDeckPileClick}
+            onDiscardClick={() => handleDiscardRelease(cardIndexRef.current ?? 0)}
+          />
+
+          {/* Числа урона над картами — всплывают и угасают */}
           {damageMarkers.map((m) => {
             const targetZone = zones.find(
               (z) => z.player.player_id === m.playerId && z.zoneIndex === m.zoneIndex,

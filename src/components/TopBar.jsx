@@ -9,6 +9,10 @@ export function TopBar({
   deckCode,
   cardTotal,
   landTotal,
+  heroLabel,
+  heroMissing,
+  heroProgress,
+  onOpenHeroes,
   errors,
   warnings,
   importDeck,
@@ -61,6 +65,13 @@ export function TopBar({
             max={LAND_LIMITS.maxTotal}
             ok={landsOk}
             warn={!landsOk && (landTotal > 0 || errors.length > 0)}
+          />
+          <DeckStat
+            label="Герой"
+            text={heroLabel || 'Выберите Героя'}
+            onClick={onOpenHeroes}
+            missing={heroMissing}
+            progress={heroProgress}
           />
         </div>
 

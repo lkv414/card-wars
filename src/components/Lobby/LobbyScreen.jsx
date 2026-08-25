@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
+import { useHeroes } from '../../hooks/useHeroes'
 import { supabase } from '../../utils/supabase'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
 import { LobbyRoom } from './LobbyRoom'
+import { HeroDisplay } from '../HeroDisplay'
 import './Lobby.css'
 
 /**
@@ -39,7 +41,12 @@ export function LobbyScreen({ toast }) {
 
   const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, pendingGameId, connectionStatus, onlinePlayerIds, createLobby, joinLobby, setReady, startGame, leaveLobby } = useLobby()
   const { getSelectedDeck, selectedDeckId } = useDecks()
+  const { heroes } = useHeroes()
   const selectedDeck = getSelectedDeck()
+  const selectedHero = useMemo(() => {
+    if (!selectedDeck?.heroId || !heroes?.length) return null
+    return heroes.find((h) => h.id === selectedDeck.heroId) || null
+  }, [selectedDeck?.heroId, heroes])
 
   useEffect(() => {
     if (pendingGameId) {
@@ -261,13 +268,22 @@ export function LobbyScreen({ toast }) {
             <div className="lobby-deck-picker__label">Ваша колода</div>
             {selectedDeck && deckCardCount > 0 ? (
               <div className="lobby-deck-picker__active">
-                <strong>{selectedDeck.name}</strong>
-                <span>
-                  {deckCardCount} карт
-                  {selectedDeck.code
-                    ? ` · ${String(selectedDeck.code).slice(0, 12)}…`
-                    : ''}
-                </span>
+                <div className="lobby-deck-picker__row">
+                  <div className="lobby-deck-picker__name">
+                    <strong>{selectedDeck.name}</strong>
+                    <span>
+                      {deckCardCount} карт
+                      {selectedDeck.code
+                        ? ` · ${String(selectedDeck.code).slice(0, 12)}…`
+                        : ''}
+                    </span>
+                  </div>
+                  {selectedHero && (
+                    <div className="lobby-deck-picker__hero">
+                      <HeroDisplay hero={selectedHero} align="right" />
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="lobby-deck-picker__empty">

@@ -295,3 +295,80 @@
   font-weight: 700;
   min-width: 28px;
 }
+
+/* === Всплывающая информация о карте при наведении (стоимость / описание / урон / защита) === */
+.cards-grid > [role='listitem']:has(.card-tile:hover) {
+  z-index: 70;
+}
+
+.card-tile-info {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 10px);
+  z-index: 80;
+  width: 210px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(12, 16, 28, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-6px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.card-tile:hover .card-tile-info,
+.card-tile:focus-within .card-tile-info {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-tile-info {
+    transition: none;
+    transform: none;
+  }
+}
+
+.card-tile-info__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-tile-info__name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffe082;
+}
+
+.card-tile-info__cost {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(64, 140, 255, 0.25);
+  border: 1px solid rgba(64, 140, 255, 0.55);
+}
+
+.card-tile-info__desc {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.card-tile-info__stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+}

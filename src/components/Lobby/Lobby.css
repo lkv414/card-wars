@@ -396,6 +396,25 @@
   min-width: 0;
 }
 
+.lobby-deck-picker__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lobby-deck-picker__name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lobby-deck-picker__hero {
+  flex-shrink: 0;
+}
+
 .lobby-deck-picker__active strong {
   font-size: 16px;
   color: var(--text-heading, #2b1c12);
@@ -469,4 +488,154 @@
   background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
   border-color: #ffb74d;
   color: #1a1a2e;
+
+/* === Hero display === */
+/* Имя героя — простой белый текст; hover/focus → краткое описание; клик → панель героя */
+.hero-display {
+  position: relative;
+  display: inline-flex;
+}
+
+.hero-display__btn {
+  background: transparent;
+  color: #fff;
+  border: none;
+  padding: 2px 4px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+.hero-display__btn:hover {
+  color: #ffe082;
+  text-decoration: underline;
+}
+.hero-display__btn:focus-visible {
+  outline: 2px solid #ffe082;
+  outline-offset: 2px;
+}
+
+/* Краткое описание — всплывает при наведении/фокусе на имя героя */
+.hero-display__tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  width: max-content;
+  max-width: 240px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(8, 12, 24, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  white-space: normal;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease;
+}
+.hero-display:hover .hero-display__tip,
+.hero-display:focus-within .hero-display__tip {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* === Hero panel (own modal — вне Shared/Modal из-за бага путей) === */
+.hero-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  animation: hero-panel-fade 0.15s ease;
+}
+@keyframes hero-panel-fade { from { opacity: 0; } }
+
+.hero-panel {
+  width: min(560px, 96vw);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 22px 22px 16px;
+  border-radius: 18px;
+  background: #fff8ee;
+  color: #2b1c12;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: hero-panel-pop 0.18s ease;
+}
+.hero-panel__title,
+.hero-panel__desc,
+.hero-panel__placeholder {
+  color: #2b1c12 !important;
+}
+.hero-panel__art {
+  background: rgba(0, 0, 0, 0.06);
+}
+@keyframes hero-panel-pop {
+  from { transform: translateY(8px) scale(0.98); opacity: 0; }
+}
+.hero-panel__title {
+  margin: 0;
+  font-size: 22px;
+  text-align: center;
+}
+.hero-panel__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+.hero-panel__art {
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  min-height: 200px;
+  overflow: hidden;
+}
+.hero-panel__art img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+.hero-panel__placeholder {
+  font-weight: 700;
+  font-size: 18px;
+  padding: 24px;
+  text-align: center;
+}
+.hero-panel__desc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4a3a2c;
+}
+.hero-panel__close {
+  align-self: center;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent, #f5a623);
+  color: #fff;
+  cursor: pointer;
+}
+.hero-panel__close:hover { background: var(--accent-hover, #e59200); }
+
+@media (max-width: 540px) {
+  .hero-panel__body { grid-template-columns: 1fr; }
 }

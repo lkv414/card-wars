@@ -14,6 +14,9 @@ export function SaveDeckDialog({
   landTotal,
   savedDeck,
   codeCopied,
+  editingDeckName = null,
+  updateExisting = false,
+  onUpdateExistingChange,
   onClose,
   onConfirm,
   onCopyCode,
@@ -70,6 +73,17 @@ export function SaveDeckDialog({
                 onKeyDown={handleKeyDown}
               />
             </label>
+            {editingDeckName && (
+              <label className="save-dialog-update-toggle" htmlFor="save-deck-update">
+                <input
+                  id="save-deck-update"
+                  type="checkbox"
+                  checked={updateExisting}
+                  onChange={(e) => onUpdateExistingChange?.(e.target.checked)}
+                />
+                Обновить колоду «{editingDeckName}» вместо создания новой
+              </label>
+            )}
             <div className="save-dialog-actions">
               <button type="button" className="cancel-btn" onClick={onClose}>
                 Отмена
@@ -81,7 +95,7 @@ export function SaveDeckDialog({
           </>
         ) : (
           <>
-            <h2 id="save-dialog-title">Колода сохранена</h2>
+            <h2 id="save-dialog-title">{savedDeck?.updated ? 'Колода обновлена' : 'Колода сохранена'}</h2>
             <p className="save-dialog-hint">
               «{savedDeck?.name}» · {cardTotal} карт, {landTotal} земель
             </p>

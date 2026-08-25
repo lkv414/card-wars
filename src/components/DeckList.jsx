@@ -2,12 +2,14 @@
  * DeckList
  * Экран «Мои колоды» — список сохранённых локально колод.
  */
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { copyToClipboard } from '../utils/clipboard'
 import { saveDeckSelection, sumDeckQuantities } from '../utils/deckState'
 import { useDecks } from '../hooks/useDecks'
 import { usePresetDecks, presetToDeckSelection } from '../hooks/usePresetDecks'
+import { useHeroes } from '../hooks/useHeroes'
+import { HeroDisplay } from './HeroDisplay'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
 import './DeckList.css'
 
@@ -15,6 +17,7 @@ export function DeckList() {
   const navigate = useNavigate()
   const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck, addDeck } = useDecks()
   const { presets, loading: presetsLoading, error: presetsError } = usePresetDecks()
+  const { heroes } = useHeroes()
   const [copiedId, setCopiedId] = useState(null)
   const [renamingId, setRenamingId] = useState(null)
   const [draftName, setDraftName] = useState('')
@@ -55,15 +58,41 @@ export function DeckList() {
 
   const handleEdit = (deck) => {
     selectDeck(deck.id)
-    saveDeckSelection(deck.selectedCards || {}, deck.selectedLands || {})
+    saveDeckSelection(deck.selectedCards || {}, deck.selectedLands || {}, {
+      heroId: deck.heroId ?? null,
+      editingDeckId: deck.id,
+    })
     navigate('/deck')
   }
 
   const handleImportPreset = (preset) => {
-    const { selectedCards, selectedLands, name } = presetToDeckSelection(preset)
-    const deck = addDeck({ name, selectedCards, selectedLands })
-    saveDeckSelection(deck.selectedCards, deck.selectedLands)
+    const { selectedCards, selectedLands, name, heroId } = presetToDeckSelection(preset)
+    const deck = addDeck({
+      name,
+      selectedCards,
+      selectedLands,
+      heroId,
+      description: preset.description || null,
+    })
+    saveDeckSelection(deck.selectedCards, deck.selectedLands, {
+      heroId: deck.heroId ?? null,
+      editingDeckId: deck.id,
+    })
     navigate('/deck')
+  }
+
+  const heroById = useMemo(() => {
+    const map = new Map()
+    if (!Array.isArray(heroes)) return map
+    for (const h of heroes) {
+      if (h?.id) map.set(h.id, h)
+    }
+    return map
+  }, [heroes])
+
+  const resolveHero = (deck) => {
+    if (!deck?.heroId) return null
+    return heroById.get(deck.heroId) || null
   }
 
   return (
@@ -100,6 +129,7 @@ export function DeckList() {
           const cardCount = sumDeckQuantities(deck.selectedCards)
           const landCount = sumDeckQuantities(deck.selectedLands)
           const isActive = deck.id === selectedDeckId
+          const hero = resolveHero(deck)
 
           return (
             <div
@@ -138,25 +168,35 @@ export function DeckList() {
               </div>
 
               <div className="deck-stats">
-                <span>🃏 {cardCount} / 40</span>
-                <span>🌍 {landCount} / 4</span>
-              </div>
-
-              <div className="deck-code-row">
-                <code className="deck-code" title={deck.code || 'Код колоды'}>
-                  {deck.code || '—'}
-                </code>
+                <span className="deck-stat" title="Карты">🃏 {cardCount} / 40</span>
+                <span className="deck-stat" title="Земли">🌍 {landCount} / 4</span>
+                {hero ? (
+                  <span className="deck-stat deck-stat--hero" title="Герой">
+                    <HeroDisplay hero={hero} align="right" />
+                  </span>
+                ) : (
+                  <span className="deck-stat deck-stat--hero deck-stat--empty" title="Герой не выбран">
+                    🦸 Без героя
+                  </span>
+                )}
                 <button
                   type="button"
-                  className="copy-btn"
+                  className="copy-btn copy-btn--inline"
                   onClick={() => handleCopy(deck.code, deck.id)}
-                  title="Скопировать полный код"
+                  title="Скопировать код колоды"
                   aria-label={copiedId === deck.id ? 'Код скопирован' : 'Скопировать код колоды'}
                   disabled={!deck.code}
                 >
-                  {copiedId === deck.id ? '✓' : '📋'}
+                  {copiedId === deck.id ? '✓ Скопировано' : '📋 Скопировать'}
                 </button>
               </div>
+
+              <p className="deck-card-desc">
+                {deck.description ||
+                  (hero
+                    ? `Колода героя «${hero.name}»`
+                    : 'Герой не выбран — откройте редактор, чтобы назначить героя')}
+              </p>
 
               <div className="deck-actions">
                 {!isActive && (
@@ -212,17 +252,28 @@ export function DeckList() {
             const landCount = sumDeckQuantities(selectedLands)
             const landscapes = Array.isArray(preset.landscapes) ? preset.landscapes : []
             const winrate = preset.winrate != null ? Number(preset.winrate) : null
+            const presetHeroId = preset.heroId || preset.hero_id
+            const presetHero = presetHeroId ? heroById.get(presetHeroId) || null : null
             return (
               <article key={preset.id} className="deck-card deck-card--preset">
                 <h3>{preset.name}</h3>
-                {preset.description && <p className="deck-preset-desc">{preset.description}</p>}
+                <div className="deck-stats">
+                  <span className="deck-stat" title="Карты">🃏 {cardCount} / 40</span>
+                  <span className="deck-stat" title="Земли">🌍 {landCount} / 4</span>
+                  {presetHero ? (
+                    <span className="deck-stat deck-stat--hero" title="Герой">
+                      <HeroDisplay hero={presetHero} align="right" />
+                    </span>
+                  ) : (
+                    <span className="deck-stat deck-stat--hero deck-stat--empty" title="Герой не выбран">
+                      🦸 Без героя
+                    </span>
+                  )}
+                </div>
+                {preset.description && <p className="deck-card-desc">{preset.description}</p>}
                 {winrate != null && !Number.isNaN(winrate) && (
                   <p className="deck-preset-winrate">📊 Винрейт: {winrate.toFixed(1)}%</p>
                 )}
-                <div className="deck-stats">
-                  <span>🃏 {cardCount} / 40</span>
-                  <span>🌍 {landCount} / 4</span>
-                </div>
                 {landscapes.length > 0 && (
                   <ul className="deck-preset-lands" aria-label="Земли колоды">
                     {landscapes.map((land, i) => (

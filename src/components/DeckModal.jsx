@@ -14,6 +14,8 @@ export function DeckModal({
   selectedLands,
   cards,
   lands,
+  hero = null,
+  onOpenHeroes,
   addCard,
   removeCard,
   addLand,
@@ -70,10 +72,11 @@ export function DeckModal({
   )
   const missingDeckLands = useMemo(() => deckLands.filter((entry) => !entry.found), [deckLands])
 
-  const cardGroups = useMemo(
-    () => (groupMode === 'cost' ? groupCardsByCost(foundDeckCards) : groupCardsByType(foundDeckCards)),
-    [groupMode, foundDeckCards]
-  )
+  const cardGroups = useMemo(() => {
+    if (groupMode === 'cost') return groupCardsByCost(foundDeckCards)
+    if (groupMode === 'plain') return null
+    return groupCardsByType(foundDeckCards)
+  }, [groupMode, foundDeckCards])
 
   if (!open) return null
 
@@ -100,6 +103,22 @@ export function DeckModal({
               <span className={landsOk ? 'tally-ok' : 'tally-bad'}>
                 {landTotal} / {LAND_LIMITS.maxTotal} земли
               </span>
+              <span className="tally-sep" aria-hidden="true">
+                ·
+              </span>
+              <button
+                type="button"
+                className={`deck-modal-tally-hero ${hero ? '' : 'deck-modal-tally-hero--missing'}`}
+                onClick={() => onOpenHeroes?.()}
+                title={hero ? `Герой: ${hero.name}` : 'Выберите Героя'}
+                aria-label={
+                  hero
+                    ? `Герой колоды: ${hero.name}. Открыть выбор героя`
+                    : 'Герой не выбран. Открыть выбор героя'
+                }
+              >
+                Герой: {hero ? hero.name : 'Выберите Героя'}
+              </button>
             </div>
             <div className="deck-progress deck-progress-modal" aria-hidden="true">
               <div className="deck-progress-track">
@@ -138,10 +157,44 @@ export function DeckModal({
             >
               По стоимости
             </button>
+            <button
+              type="button"
+              className={groupMode === 'plain' ? 'active' : ''}
+              onClick={() => setGroupMode('plain')}
+            >
+              Постой
+            </button>
           </div>
         </div>
 
         <div className="deck-modal-content">
+          <section className="deck-modal-section deck-modal-section--hero" aria-label="Панель Героя">
+            {hero ? (
+              <div className="deck-hero-panel">
+                <div className="deck-hero-panel__art">
+                  {hero.image_url ? (
+                    <img src={hero.image_url} alt={hero.name} draggable={false} />
+                  ) : (
+                    <span className="deck-hero-panel__placeholder" aria-hidden="true">
+                      Нет изображения
+                    </span>
+                  )}
+                </div>
+                <div className="deck-hero-panel__info">
+                  <h4 className="deck-hero-panel__name">{hero.name}</h4>
+                  <p className="deck-hero-panel__desc">{hero.description || 'Описание не указано.'}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="deck-hero-panel deck-hero-panel--empty">
+                <span className="deck-hero-panel__missing">Герой не выбран</span>
+                <button type="button" className="empty-cta" onClick={() => onOpenHeroes?.()}>
+                  Выбрать героя
+                </button>
+              </div>
+            )}
+          </section>
+
           <section className="deck-modal-section">
             <h3>
               Карты ({cardTotal} / {CARD_LIMITS.maxTotal})
@@ -154,6 +207,16 @@ export function DeckModal({
                   К библиотеке
                 </button>
               </div>
+            ) : groupMode === 'plain' ? (
+              <CardGrid
+                cards={foundDeckCards}
+                selectedCards={selectedCards}
+                addCard={addCard}
+                removeCard={removeCard}
+                selectionTotal={cardTotal}
+                onBlockedAdd={onBlockedAdd}
+                compact
+              />
             ) : (
               cardGroups.map((group) => (
                 <div key={group.key} className="deck-group">

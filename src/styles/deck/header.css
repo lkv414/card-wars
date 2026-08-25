@@ -218,3 +218,25 @@
   background: none;
   color: var(--accent-hover);
 }
+
+
+/* === Кликабельный текстовый показатель (Герой) === */
+.deck-stat.deck-stat--clickable {
+  flex: 1 1 160px;
+  min-width: 160px;
+  max-width: 240px;
+  cursor: pointer;
+}
+.deck-stat.deck-stat--clickable .deck-stat-value {
+  font-size: 12px;
+  font-weight: 700;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-heading);
+}
+
+@media (max-width: 720px) {
+  .deck-stat.deck-stat--clickable { flex: 1 1 0; min-width: 0; }
+}

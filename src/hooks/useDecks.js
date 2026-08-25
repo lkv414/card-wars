@@ -62,13 +62,15 @@ export function useDecks() {
   }, [decks, selectedDeckId])
 
   /** Добавить новую колоду и сделать её активной */
-  const addDeck = useCallback(({ name, selectedCards = {}, selectedLands = {} }) => {
+  const addDeck = useCallback(({ name, selectedCards = {}, selectedLands = {}, heroId = null, description = null }) => {
     const newDeck = {
       id: makeId(),
       name: name?.trim() || 'Без названия',
       code: generateDeckCode(selectedCards, selectedLands),
       selectedCards: { ...selectedCards },
       selectedLands: { ...selectedLands },
+      heroId: heroId ?? null,
+      description: description ?? null,
       selected: true,
       createdAt: Date.now(),
     }
@@ -99,19 +101,23 @@ export function useDecks() {
     )
   }, [])
 
-  /** Обновить содержимое колоды (карты + земли) и пересчитать код */
-  const updateDeckContents = useCallback((id, { selectedCards, selectedLands }) => {
+  /** Обновить колоду целиком (имя, состав, герой, описание) и пересчитать код */
+  const updateDeckContents = useCallback((id, { name, selectedCards, selectedLands, heroId, description }) => {
     setDecks((prev) =>
-      prev.map((d) =>
-        d.id === id
-          ? {
-              ...d,
-              selectedCards: { ...selectedCards },
-              selectedLands: { ...selectedLands },
-              code: generateDeckCode(selectedCards, selectedLands),
-            }
-          : d
-      )
+      prev.map((d) => {
+        if (d.id !== id) return d
+        const nextCards = selectedCards ? { ...selectedCards } : d.selectedCards
+        const nextLands = selectedLands ? { ...selectedLands } : d.selectedLands
+        return {
+          ...d,
+          name: typeof name === 'string' && name.trim() ? name.trim() : d.name,
+          selectedCards: nextCards,
+          selectedLands: nextLands,
+          code: generateDeckCode(nextCards, nextLands),
+          heroId: heroId !== undefined ? heroId : d.heroId ?? null,
+          description: description !== undefined ? description : d.description ?? null,
+        }
+      })
     )
   }, [])
 

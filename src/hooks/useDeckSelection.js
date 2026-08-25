@@ -24,10 +24,17 @@ export function useDeckSelection() {
   const initial = useMemo(() => loadDeckSelection(), [])
   const [selectedCards, setSelectedCards] = useState(initial.selectedCards)
   const [selectedLands, setSelectedLands] = useState(initial.selectedLands)
+  const [heroId, setHeroId] = useState(initial.heroId)
+  const [editingDeckId, setEditingDeckId] = useState(initial.editingDeckId)
 
   useEffect(() => {
-    saveDeckSelection(selectedCards, selectedLands)
-  }, [selectedCards, selectedLands])
+    saveDeckSelection(selectedCards, selectedLands, { heroId, editingDeckId })
+  }, [selectedCards, selectedLands, heroId, editingDeckId])
+
+  /** Сбросить признак «редактируем существующую колоду» (после сохранения) */
+  const clearEditingDeck = useCallback(() => {
+    setEditingDeckId(null)
+  }, [])
 
   const { cardTotal, landTotal, errors, warnings } = useMemo(
     () => validateDeck(selectedCards, selectedLands),
@@ -69,6 +76,10 @@ export function useDeckSelection() {
     removeLand,
     clearDeck,
     loadSelection,
+    heroId,
+    setHeroId,
+    editingDeckId,
+    clearEditingDeck,
     cardTotal,
     landTotal,
     errors,

@@ -370,6 +370,20 @@
   font-size: 0.9rem;
 }
 
+/* Чекбокс «Обновить колоду ... вместо создания новой» (пункт 4.5) */
+.save-dialog-update-toggle {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.save-dialog-update-toggle input[type='checkbox'] {
+  display: inline-block;
+  width: auto;
+  accent-color: var(--accent);
+}
+
 .save-dialog label {
   display: block;
   margin-bottom: 1rem;
@@ -616,6 +630,26 @@
   color: var(--danger-text);
 }
 
+/* Показатель «Герой» в шапке модалки (пункт 4.1) */
+.deck-modal-tally-hero {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-weight: 800;
+  color: var(--text-heading);
+  cursor: pointer;
+  text-decoration: underline dotted rgba(0, 0, 0, 0.35);
+  text-underline-offset: 3px;
+}
+.deck-modal-tally-hero:hover {
+  color: var(--accent-hover, #b06e00);
+}
+.deck-modal-tally-hero--missing {
+  color: var(--danger-text);
+  font-style: italic;
+}
+
 .deck-progress {
   display: flex;
   flex-direction: column;
@@ -711,7 +745,8 @@
 }
 
 .deck-group-tabs {
-  width: min(280px, 100%);
+  width: min(320px, 100%);
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .deck-modal-content {
@@ -735,6 +770,85 @@
   color: var(--text-heading);
   font-size: 18px;
   font-weight: 700;
+}
+
+/* === Панель Героя — первые позиции состава колоды (пункт 4.2) === */
+.deck-modal-section--hero {
+  gap: 8px;
+}
+
+.deck-hero-panel {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) 1fr;
+  gap: 16px;
+  align-items: stretch;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-elevated);
+}
+
+.deck-hero-panel__art {
+  display: grid;
+  place-items: center;
+  min-height: 140px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.deck-hero-panel__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.deck-hero-panel__placeholder {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.deck-hero-panel__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  min-width: 0;
+}
+
+.deck-hero-panel__name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-heading);
+  text-align: center;
+}
+
+.deck-hero-panel__desc {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted, #4a3a2c);
+}
+
+.deck-hero-panel--empty {
+  grid-template-columns: 1fr;
+  place-items: center;
+  gap: 10px;
+  padding: 20px;
+}
+
+.deck-hero-panel__missing {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .deck-hero-panel {
+    grid-template-columns: 1fr;
+  }
 }
 
 .deck-group {

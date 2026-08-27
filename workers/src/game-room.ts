@@ -14,6 +14,7 @@ import { applyAction, isError as isEngineError } from './game-engine/engine'
 import type {
   Action,
   ApplyResult,
+  Card,
   GameState,
   PlayerState,
 } from './game-engine/types.js'
@@ -21,6 +22,9 @@ import { buildBroadcastState } from './state-broadcast.js'
 
 interface SessionMeta {
   clientId: string
+  /** Captured at WS handshake (header or subprotocol). Read in
+   *  webSocketMessage via ws.deserializeAttachment(). */
+  bypassAuth: boolean
 }
 
 /**
@@ -62,6 +66,16 @@ export class GameRoom extends DurableObject<Env> {
   /** Per-player join status — maps clientId → true. Cleared on close. */
   private joined = new Set<string>()
 
+  /**
+   * Dev-only flag. Set on the first join that arrives with the
+   * `x-dev-bypass-auth` handshake flag. When true the room never touches
+   * Supabase — it creates an in-memory game so two WS clients can exercise
+   * the sync/broadcast path without a database. Never enabled in prod
+   * because the bypass header is only honored here, not in assertPlayerInGame
+   * callers outside this file.
+   */
+  private devMode = false
+
   private resolveGameId(): string {
     if (this.gameId) return this.gameId
     const fromName = this.ctx.id.name
@@ -82,9 +96,28 @@ export class GameRoom extends DurableObject<Env> {
       return new Response('Expected WebSocket', { status: 426 })
     }
 
+    // Capture WS-handshake headers / subprotocol ONCE so the rest of the
+    // session can use them. The webSocketMessage handler doesn't receive
+    // the original Request, and trying to read it from there is a
+    // ReferenceError waiting to happen (a previous bug: `request` was
+    // used in webSocketMessage and crashed with "request is not defined"
+    // on every join, which is why sync between clients was broken).
+    const upgradeHeaders = {
+      bypassAuth:
+        request.headers.get('x-dev-bypass-auth') === '1' ||
+        request.headers.get('sec-websocket-protocol') === 'x-dev-bypass',
+    }
+
     const pair = new WebSocketPair()
     const [client, server] = Object.values(pair)
     this.ctx.acceptWebSocket(server)
+
+    // Stash handshake metadata on the WS attachment so webSocketMessage
+    // and webSocketClose can read it without an explicit Request object.
+    server.serializeAttachment({
+      clientId: '',
+      bypassAuth: upgradeHeaders.bypassAuth,
+    } satisfies SessionMeta)
 
     return new Response(null, { status: 101, webSocket: client })
   }
@@ -112,10 +145,26 @@ export class GameRoom extends DurableObject<Env> {
         }
         const gameId = this.resolveGameId()
         console.log('[GameRoom] ws join', { clientId, gameId, requestId: msg.requestId })
-        await assertPlayerInGame(this.env, gameId, clientId)
-        await this.loadGame()
+        // Read dev-bypass flag from the WS attachment (captured at
+        // handshake in fetch()). The previous code referenced `request`
+        // here which is a ReferenceError — every join used to crash.
+        const meta = this.getSession(ws) ?? { clientId: '', bypassAuth: false }
+        if (!meta.bypassAuth) {
+          await assertPlayerInGame(this.env, gameId, clientId)
+          await this.loadGame()
+        } else {
+          // Dev-only: no Supabase. Spin up an in-memory game so we can test
+          // broadcast/sync between two connected clients.
+          this.devMode = true
+          await this.ensureDevGame(clientId)
+        }
         this.joined.add(clientId)
-        ws.serializeAttachment({ clientId } satisfies SessionMeta)
+        // Persist clientId back into the attachment so subsequent
+        // webSocketMessage calls can read it.
+        ws.serializeAttachment({
+          clientId,
+          bypassAuth: meta.bypassAuth,
+        } satisfies SessionMeta)
         ws.send(
           serverMsg({
             type: 'joined',
@@ -140,7 +189,11 @@ export class GameRoom extends DurableObject<Env> {
         // a known-authoritative state.
         if (!this.currentGame) {
           try {
-            await this.loadGame()
+            if (this.devMode) {
+              await this.ensureDevGame(session.clientId)
+            } else {
+              await this.loadGame()
+            }
             // Catch the actor up to where the rest of the room already is.
             await this.sendStateTo(ws, session.clientId)
           } catch (e) {
@@ -195,7 +248,7 @@ export class GameRoom extends DurableObject<Env> {
 
   private getSession(ws: WebSocket): SessionMeta | null {
     const data = ws.deserializeAttachment() as SessionMeta | null
-    if (data?.clientId) return data
+    if (data && typeof data === 'object' && 'clientId' in data) return data
     return null
   }
 
@@ -225,6 +278,40 @@ export class GameRoom extends DurableObject<Env> {
     }
     this.currentGame = rawToGameState(raw)
     this.actionsSinceSnapshot = 0
+  }
+
+  /**
+   * Dev-only: build (or extend) an in-memory game so the sync path can be
+   * exercised without Supabase. The first joining client seeds the game;
+   * a second distinct clientId is added as player 2 and the game flips to
+   * `active`. Each player gets a small hand + deck of placeholder creatures
+   * so `play_card` / `end_turn` run through the real engine.
+   */
+  private async ensureDevGame(clientId: string): Promise<void> {
+    if (!this.currentGame) {
+      this.currentGame = {
+        id: this.resolveGameId(),
+        status: 'setup',
+        current_turn: 0,
+        current_player_id: null,
+        version: 1,
+        started_at: null,
+        ended_at: null,
+        turn_started_at: null,
+        game_state: {},
+        players: [],
+      }
+    }
+    if (!this.currentGame.players.some((p) => p.player_id === clientId)) {
+      this.currentGame.players.push(makeDevPlayer(clientId, this.currentGame.players.length + 1))
+    }
+    if (this.currentGame.players.length >= 2 && this.currentGame.status === 'setup') {
+      this.currentGame.status = 'active'
+      this.currentGame.current_turn = 1
+      this.currentGame.current_player_id = this.currentGame.players[0].player_id
+      this.currentGame.started_at = new Date().toISOString()
+      this.currentGame.turn_started_at = this.currentGame.started_at
+    }
   }
 
   /**
@@ -426,6 +513,51 @@ function asStringOrNull(value: unknown): string | null {
 
 function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : []
+}
+
+/* -------------------------------------------------------------------- *
+ * Dev-only in-memory game factory (no Supabase)                        *
+ * -------------------------------------------------------------------- */
+
+let devCardSeq = 0
+
+function devCard(i: number): Card {
+  return {
+    id: `DEV_C${i}`,
+    instanceId: `DEV_I${i}`,
+    card_type: 'creature',
+    name: `Dev Creature ${i}`,
+    attack: 2,
+    health: 3,
+    defense: 0,
+    cost: 1,
+    slot_type: 'creature',
+  }
+}
+
+function makeDevPlayer(playerId: string, order: number): PlayerState {
+  const hand: Card[] = []
+  const deck: Card[] = []
+  for (let i = 0; i < 20; i++) {
+    const c = devCard(devCardSeq++)
+    if (i < 5) hand.push(c)
+    else deck.push(c)
+  }
+  return {
+    player_id: playerId,
+    nickname: playerId,
+    position: null,
+    health: 25,
+    player_order: order,
+    hand,
+    deck_pile: deck,
+    deck_remaining: deck.length,
+    discard_pile: [],
+    actions_remaining: 2,
+    free_draw_used: false,
+    paid_draw_used: false,
+    zones: [1, 2, 3, 4].map((z) => ({ zone_position: z, cards: [], land_id: null })),
+  }
 }
 
 function rawZone(raw: unknown): { zone_position: number; cards: any[]; land_id?: string | null } {

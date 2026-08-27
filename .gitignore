@@ -26,6 +26,11 @@ dist-ssr
 # Supabase CLI secrets (local-only, never commit)
 .env
 .env.secure
+# NOTE: .env.example and .env.production are COMMITTED to the repo on
+# purpose. .env.production holds the Supabase anon publishable key
+# (which is client-safe by design) plus the Cloudflare Workers URL
+# so `npm install && npm run build` produces a working bundle with
+# zero setup. See BUILD_ENV.md for the full rationale.
 workers/.dev.vars
 .dev.vars
 supabase/.temp

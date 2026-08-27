@@ -24,6 +24,29 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, transp
       if (!game?.players) return { error: 'Игра не загружена' }
       await ensureGuestId()
 
+      // === Optimistic patch: мгновенно переключаем current_player_id
+      // локально, чтобы UI не ждал WS round-trip. WS broadcast потом
+      // подтвердит (или откатит, если applyAction на сервере не принял).
+      if (typeof patchGame === 'function') {
+        const players = safePlayers(game.players)
+        const currentIdx = players.findIndex((p) => p.player_id === game.current_player_id)
+        if (currentIdx !== -1) {
+          const nextIdx = (currentIdx + 1) % players.length
+          const nextPlayer = players[nextIdx]
+          // 2-player игры в Worker'е endTurn ротируют current_player_id,
+          // но battle_events приходят отдельным WS push'ом. Чтобы UI не
+          // показывал «прежний» ход пока WS ещё в пути, ставим active
+          // player сразу.
+          if (nextPlayer) {
+            patchGame((state) => ({
+              ...state,
+              current_player_id: nextPlayer.player_id,
+              current_turn: (state?.current_turn ?? 0) + 1,
+            }))
+          }
+        }
+      }
+
       const ws = await runViaTransport(transport, 'end_turn', {})
       const wsErr = transportError(ws)
       if (wsErr) return wsErr

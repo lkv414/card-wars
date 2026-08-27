@@ -133,6 +133,21 @@ export class GameRoom extends DurableObject<Env> {
         if (!session?.clientId) {
           throw new Error('Send join before action')
         }
+        // DO may have been evicted (idle timeout) between join and action.
+        // Without a rehydrate, handleAction would throw 'Game not loaded'
+        // and the actor gets an error — silently failing for the other
+        // connected clients. Hydrate eagerly so every action runs against
+        // a known-authoritative state.
+        if (!this.currentGame) {
+          try {
+            await this.loadGame()
+            // Catch the actor up to where the rest of the room already is.
+            await this.sendStateTo(ws, session.clientId)
+          } catch (e) {
+            console.error('[GameRoom] rehydrate before action failed:', e)
+            throw new Error('Game not loaded and rehydrate failed')
+          }
+        }
         await this.handleAction(msg.action as GameActionName, msg.payload ?? {}, session.clientId, msg.requestId)
         return
       }

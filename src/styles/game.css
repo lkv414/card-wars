@@ -211,6 +211,96 @@
   margin-top: 16px;
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
+}
+
+.land-setup-warning {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(241, 196, 15, 0.12);
+  border: 1px solid rgba(241, 196, 15, 0.35);
+  color: #f1c40f;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.land-setup-hand {
+  margin-top: 18px;
+  padding: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.land-setup-hand-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.land-setup-hand-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 60px;
+}
+
+.land-setup-hand-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  min-width: 86px;
+  border: 2px solid var(--land-border, #e67e22);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--land-fill, #5d4e37) 55%, #1a1a2e);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
+}
+
+.land-setup-hand-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.land-setup-hand-card:active,
+.land-setup-hand-card.is-dragging {
+  cursor: grabbing;
+  transform: translateY(-2px) scale(0.98);
+  opacity: 0.6;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+}
+
+.land-setup-hand-card.is-used {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+
+.land-setup-slot.is-drop-target {
+  background: rgba(243, 156, 18, 0.18);
+  outline: 3px dashed #f39c12;
+  outline-offset: -3px;
+}
+
+.land-setup-slot.is-dragging {
+  opacity: 0.55;
+}
+
+.land-setup-chip--empty {
+  opacity: 0.5;
+  border-style: dashed;
+  filter: grayscale(0.5);
 }
 
 .land-setup-confirm {

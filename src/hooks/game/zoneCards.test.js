@@ -49,9 +49,16 @@ test('isSlotEmpty and canPlayCardToSlot enforce one per slot', () => {
   assert.equal(canPlayCardToSlot([], { card_type: 'spell' }), true)
 })
 
-test('canPlayCardToSlot ignores zone land type', () => {
-  assert.equal(canPlayCardToSlot([], { card_type: 'creature', land_type: 'corn' }, 'swamp'), true)
-  assert.equal(canPlayCardToSlot([], { card_type: 'building', land_type: 'ice' }, 'corn'), true)
+test('canPlayCardToSlot enforces matching land type (Card Wars rule)', () => {
+  assert.equal(canPlayCardToSlot([], { card_type: 'creature', land_type: 'corn' }, 'swamp'), false)
+  assert.equal(canPlayCardToSlot([], { card_type: 'building', land_type: 'ice' }, 'corn'), false)
+  assert.equal(canPlayCardToSlot([], { card_type: 'creature', land_type: 'corn' }, 'corn'), true)
+  // universal `any` fits any land
+  assert.equal(canPlayCardToSlot([], { card_type: 'creature', land_type: 'any' }, 'swamp'), true)
+  // zone without land accepts everything
+  assert.equal(canPlayCardToSlot([], { card_type: 'creature', land_type: 'corn' }, null), true)
+  // spells ignore land
+  assert.equal(canPlayCardToSlot([], { card_type: 'spell', land_type: 'corn' }, 'swamp'), true)
 })
 
 test('findPlayableZone picks first land with free matching slot', () => {

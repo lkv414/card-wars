@@ -1,6 +1,6 @@
 /** Слоты на земле: одно существо + одно строение. */
 
-import { getCardType } from '../../utils/cardFields.ts'
+import { getCardType, getCardLandType, isLandCompatible } from '../../utils/cardFields.ts'
 
 export const SLOT_CREATURE = 'creature'
 export const SLOT_BUILDING = 'building'
@@ -44,13 +44,16 @@ export function isSlotEmpty(cards, slotType) {
   return !creatureCard
 }
 
-// eslint-disable-next-line no-unused-vars
-export function canPlayCardToSlot(cards, card, _zoneLandType = null) {
+export function canPlayCardToSlot(cards, card, zoneLandType = null) {
   const slot = getCardSlotType(card)
   if (!isSlotEmpty(cards, slot)) return false
   if (slot === SLOT_BUILDING && getCardType(card) !== 'building') return false
   if (slot === SLOT_CREATURE && getCardType(card) === 'building') return false
-  // Тип земли зоны не ограничивает постановку карты (в отличие от оригинальных правил CW).
+  // Card Wars rule: карта ложится только на зону с совпадающей землёй
+  // (универсальные `any`/rainbow и зоны без земли принимают всё).
+  if (getCardType(card) !== 'spell' && !isLandCompatible(getCardLandType(card), zoneLandType)) {
+    return false
+  }
   return true
 }
 

@@ -30,9 +30,12 @@ import {
 const LAND_SURFACE_Y = 0.002
 
 /** Плоская земля — ровно LANE_WIDTH × HALF_LANE_DEPTH, без налезания на соседей. */
-function LandMat({ landType, isSelected }) {
+function LandMat({ landType, isSelected, dropState }) {
   const palette = getLandPalette(landType)
   const fill = useMemo(() => new THREE.Color(palette.fill), [palette.fill])
+
+  const dropColor =
+    dropState === 'invalid' ? '#ff5252' : dropState === 'valid' ? '#fff3c4' : null
 
   return (
     <mesh
@@ -42,11 +45,12 @@ function LandMat({ landType, isSelected }) {
     >
       <planeGeometry args={[LANE_WIDTH, HALF_LANE_DEPTH]} />
       <meshStandardMaterial
-        color={isSelected ? '#fff8e1' : fill}
+        color={isSelected ? '#fff8e1' : dropState === 'valid' ? palette.fill : fill}
         roughness={0.92}
         metalness={0}
       />
       {isSelected && <Outlines thickness={0.05} color="#fbbf24" />}
+      {dropColor && <Outlines thickness={dropState === 'invalid' ? 0.07 : 0.05} color={dropColor} />}
     </mesh>
   )
 }
@@ -81,8 +85,9 @@ function LandOutline() {
  * Hit-area = ровно половина земли.
  * position.z > 0 = creature-слот (ближе к игроку), position.z < 0 = building.
  */
-function SlotPad({ slot, playable, rayHovered, tint, onClick }) {
-  const show = playable || rayHovered
+function SlotPad({ slot, playable, rayHovered, tint, dropState, onClick }) {
+  const show = playable || rayHovered || Boolean(dropState)
+  const color = dropState === 'invalid' ? '#ff5252' : dropState === 'valid' ? tint : show ? tint : '#000000'
 
   return (
     <mesh
@@ -92,9 +97,19 @@ function SlotPad({ slot, playable, rayHovered, tint, onClick }) {
     >
       <planeGeometry args={[slot.width, slot.depth]} />
       <meshStandardMaterial
-        color={show ? tint : '#000000'}
+        color={color}
         transparent
-        opacity={show ? (rayHovered ? 0.38 : 0.18) : 0.03}
+        opacity={
+          dropState === 'invalid'
+            ? 0.4
+            : dropState === 'valid'
+              ? 0.3
+              : show
+                ? rayHovered
+                  ? 0.38
+                  : 0.18
+                : 0.03
+        }
         roughness={1}
         depthWrite={false}
       />
@@ -117,6 +132,8 @@ function SlotPad({ slot, playable, rayHovered, tint, onClick }) {
  * @param {boolean} [props.buildingPlayable] слот строения принимает карту
  * @param {boolean} [props.creatureRayHover] наведение на creature-слот
  * @param {boolean} [props.buildingRayHover] наведение на building-слот
+ * @param {'valid'|'invalid'|null} [props.dropState] подсветка при перетаскивании
+ *   карты: valid — земля совпадает (цвет земли), invalid — не совпадает (красный).
  * @param {(e: any) => void} [props.onLandClick]
  * @param {(e: any) => void} [props.onCreatureClick]
  * @param {(e: any) => void} [props.onBuildingClick]
@@ -130,6 +147,7 @@ export const GameLand = memo(function GameLand({
   buildingPlayable = false,
   creatureRayHover = false,
   buildingRayHover = false,
+  dropState = null,
   onLandClick,
   onCreatureClick,
   onBuildingClick,
@@ -139,7 +157,7 @@ export const GameLand = memo(function GameLand({
 
   return (
     <group>
-      <LandMat landType={landType} isSelected={selected} onClick={onLandClick} />
+      <LandMat landType={landType} isSelected={selected} dropState={dropState} onClick={onLandClick} />
       <LandOutline />
 
       {/* Красная подсветка для attack-target */}
@@ -163,6 +181,7 @@ export const GameLand = memo(function GameLand({
         playable={creaturePlayable}
         rayHovered={creatureRayHover}
         tint={CREATURE_SLOT_COLOR}
+        dropState={dropState}
         onClick={(e) => {
           e.stopPropagation()
           if (creaturePlayable) onCreatureClick?.()
@@ -175,6 +194,7 @@ export const GameLand = memo(function GameLand({
         playable={buildingPlayable}
         rayHovered={buildingRayHover}
         tint={BUILDING_SLOT_COLOR}
+        dropState={dropState}
         onClick={(e) => {
           e.stopPropagation()
           if (buildingPlayable) onBuildingClick?.()

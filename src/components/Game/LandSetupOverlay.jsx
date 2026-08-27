@@ -2,28 +2,16 @@
  * LandSetupOverlay — расстановка 4 земель в стиле Card Wars.
  *
  * UX (как в shishkabob27/CardWars Unity):
- *   ┌──────────────────────────────────────────────────────────┐
- *   │   Расставьте земли                                            │
- *   │   Перетащите карту в слот 1..4 или поменяйте слоты местами    │
- *   │                                                            │
- *   │   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐             │
- *   │   │   1    │ │   2    │ │   3    │ │   4    │   ← drop targets│
- *   │   │ Plains │ │ Forest │ │  ---   │ │  ---   │             │
- *   │   └────────┘ └────────┘ └────────┘ └────────┘             │
- *   │                                                            │
- *   │   Рука (drag source):                                       │
- *   │   ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐                      │
- *   │   │ Plains│ │ Corn │ │ Dough │ │  ?  │                      │
- *   │   └──────┘ └──────┘ └──────┘ └──────┘                      │
- *   │                                                            │
- *   │                          [Готов] [Без земель]              │
- *   └──────────────────────────────────────────────────────────┘
+ *   1. Карты в руке — перетаскиваются на touch и мышью (pointer events).
+ *   2. Слоты 1..4 — drop targets + перетаскиваются (обмен местами).
+ *   3. Пустой слот + дроп карты — карта встаёт туда.
+ *   4. Занятый слот + дроп карты из другого слота — слоты меняются местами.
+ *   5. Дроп мимо слотов — snap-back (карта возвращается).
+ *   6. Подсветка слота под курсором цветом земли.
  *
- * 1. Карты в руке — draggable на touch и мышью.
- * 2. Слоты 1..4 — drop targets + draggable (для обмена местами).
- * 3. Когда слот пуст и в него дропнули — карта ставится туда.
- * 4. Когда слот занят и в него дропнули — карты обмениваются.
- * 5. Перед подтверждением — сначала reorder_lands (если все 4 земли), затем confirm.
+ * Отличие от предыдущей версии: вместо HTML5 DnD (который не работает на
+ * тач-экранах) используется pointer-events + «призрачная» карта за курсором,
+ * как в HUDHand игрового поля.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { LAND_TYPES } from '../../constants/game'
@@ -60,37 +48,6 @@ function LandChip({ landType, landName, isEmpty }) {
   )
 }
 
-/**
- * Compact hand chip — used in the bottom "hand" row. Smaller than the
- * slot chip; serves as the drag source.
- */
-function HandChip({ landType, landName, index, onDragStart, onDragEnd, isUsed, isDragging }) {
-  const palette = getLandPalette(landType)
-  return (
-    <div
-      className={`land-setup-hand-card${isDragging ? ' is-dragging' : ''}${isUsed ? ' is-used' : ''}`}
-      style={{
-        '--land-fill': palette.fill,
-        '--land-border': LAND_BORDER_COLOR,
-      }}
-      draggable={!isUsed}
-      onDragStart={(e) => {
-        e.dataTransfer.effectAllowed = 'move'
-        e.dataTransfer.setData('text/land-hand-index', String(index))
-        onDragStart?.(index)
-      }}
-      onDragEnd={onDragEnd}
-      aria-grabbed={isDragging}
-      role="button"
-      tabIndex={isUsed ? -1 : 0}
-      aria-label={`${landName || palette.label} (перетащите на слот)`}
-    >
-      <span className="land-setup-chip-icon" aria-hidden>{LAND_TYPES[landType]?.icon || '🌍'}</span>
-      <span className="land-setup-chip-label">{landName || palette.label}</span>
-    </div>
-  )
-}
-
 export function LandSetupOverlay({
   game,
   playerId,
@@ -108,13 +65,12 @@ export function LandSetupOverlay({
   const initialRows = useMemo(() => normalizePlayerZoneRows(me?.zones), [me?.zones])
   const iAmReady = Boolean(me?.land_setup_ready)
   const [slots, setSlots] = useState(() => initialRows.map((r) => ({ ...r })))
-  const [draggingHandIndex, setDraggingHandIndex] = useState(null)
-  const [draggingSlotIndex, setDraggingSlotIndex] = useState(null)
-  const [hoverSlotIndex, setHoverSlotIndex] = useState(null)
 
-  // Синхронизируем с сервером, пока игрок не подтвердил. Оборачиваем
-  // setState в microtask чтобы не триггерить его синхронно в useEffect
-  // (правило react-hooks/set-state-in-effect).
+  // Состояние перетаскивания (pointer events, touch-friendly).
+  const [dragItem, setDragItem] = useState(null) // { source:'hand'|'slot', index, land }
+  const [ghost, setGhost] = useState(null) // { x, y, land }
+  const [hoverSlot, setHoverSlot] = useState(null)
+
   useEffect(() => {
     if (!iAmReady) {
       Promise.resolve().then(() => {
@@ -138,17 +94,8 @@ export function LandSetupOverlay({
     [landCatalog],
   )
 
-  // ===== Hand (source) — все доступные земли из deck.deck (decks) + то,
-  // что уже стоит в слотах. Игрок может перетащить любую. =====
-  // Источник: мы берём «land_deck» из player-конфига колоды; если нет —
-  // показываем только то, что уже в слотах.
   const handLands = useMemo(() => {
-    const placed = new Set(
-      slots
-        .map((s) => s.land_id)
-        .filter(Boolean),
-    )
-    // Резервируем deck.land_deck или land_cards — посмотрим что у нас есть
+    const placed = new Set(slots.map((s) => s.land_id).filter(Boolean))
     const candidates = []
     if (me?.deck?.land_deck && Array.isArray(me.deck.land_deck)) {
       candidates.push(...me.deck.land_deck)
@@ -156,7 +103,6 @@ export function LandSetupOverlay({
     if (me?.deck?.land_cards && Array.isArray(me.deck.land_cards)) {
       candidates.push(...me.deck.land_cards)
     }
-    // Если нет «land_deck» — попробуем найти в каталоге первые 4 земли
     if (candidates.length === 0) {
       const catalogEntries = Object.values(landCatalog || {})
       candidates.push(...catalogEntries.slice(0, SLOT_COUNT))
@@ -175,47 +121,78 @@ export function LandSetupOverlay({
       .filter((l) => l.land_id && !placed.has(l.land_id))
   }, [me, slots, landCatalog])
 
-  // ===== Drag/drop handlers =====
-  const handleHandDragStart = useCallback((idx) => {
-    setDraggingHandIndex(idx)
-  }, [])
-  const handleHandDragEnd = useCallback(() => {
-    setDraggingHandIndex(null)
-    setDraggingSlotIndex(null)
-    setHoverSlotIndex(null)
-  }, [])
-  const handleSlotDragStart = useCallback((idx) => {
-    setDraggingSlotIndex(idx)
-  }, [])
-  const handleSlotDragEnd = useCallback(() => {
-    setDraggingSlotIndex(null)
-    setHoverSlotIndex(null)
-  }, [])
+  // ===== Pointer-based drag (touch + mouse) =====
+  const applyDrag = useCallback(
+    (targetIndex) => {
+      if (dragItem == null || targetIndex == null) return
+      if (dragItem.source === 'hand') {
+        const land = dragItem.land
+        setSlots((prev) => {
+          const next = prev.map((r) => ({ ...r }))
+          next[targetIndex] = {
+            zone_position: targetIndex + 1,
+            land_id: land.land_id,
+            land_type: land.land_type,
+            land_name: land.name,
+          }
+          return next
+        })
+      } else {
+        const from = dragItem.index
+        if (from === targetIndex) return
+        setSlots((prev) => {
+          const next = prev.map((r) => ({ ...r }))
+          const tmp = next[targetIndex]
+          next[targetIndex] = next[from]
+          next[from] = tmp
+          return next
+        })
+      }
+    },
+    [dragItem],
+  )
 
-  // Когда дропнули карту из руки — обновляем slot. ВАЖНО: чтобы не
-  // нарушать правило react-hooks/set-state-in-effect, используем ref
-  // для отслеживания (draggingHandIndex, hoverSlotIndex уже в state).
-  // Применяем эффект в микротаске после изменения hoverSlotIndex.
+  const startHandDrag = useCallback((land, index, e) => {
+    if (iAmReady) return
+    e.preventDefault()
+    setDragItem({ source: 'hand', index, land })
+    setGhost({ x: e.clientX, y: e.clientY, land })
+  }, [iAmReady])
+
+  const startSlotDrag = useCallback((land, index, e) => {
+    if (iAmReady) return
+    e.preventDefault()
+    setDragItem({ source: 'slot', index, land })
+    setGhost({ x: e.clientX, y: e.clientY, land })
+  }, [iAmReady])
+
   useEffect(() => {
-    if (draggingHandIndex === null) return
-    if (hoverSlotIndex === null) return
-    if (hoverSlotIndex < 0 || hoverSlotIndex >= SLOT_COUNT) return
-    const card = handLands[draggingHandIndex]
-    if (!card) return
-    // Wrap setState in microtask to satisfy react-hooks/set-state-in-effect.
-    Promise.resolve().then(() => {
-      setSlots((prev) => {
-        const next = prev.map((r) => ({ ...r }))
-        next[hoverSlotIndex] = {
-          zone_position: hoverSlotIndex + 1,
-          land_id: card.land_id,
-          land_type: card.land_type,
-          land_name: card.name,
-        }
-        return next
-      })
-    })
-  }, [draggingHandIndex, hoverSlotIndex, handLands])
+    if (!dragItem) return undefined
+    const move = (e) => {
+      const el = document.elementFromPoint(e.clientX, e.clientY)
+      const slotEl = el?.closest?.('[data-slot-index]')
+      const idx = slotEl ? Number(slotEl.getAttribute('data-slot-index')) : null
+      setHoverSlot(idx)
+      setGhost((g) => (g ? { ...g, x: e.clientX, y: e.clientY } : g))
+    }
+    const up = (e) => {
+      const el = document.elementFromPoint(e.clientX, e.clientY)
+      const slotEl = el?.closest?.('[data-slot-index]')
+      const idx = slotEl ? Number(slotEl.getAttribute('data-slot-index')) : null
+      if (idx != null) applyDrag(idx)
+      setDragItem(null)
+      setGhost(null)
+      setHoverSlot(null)
+    }
+    window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerup', up, { passive: true })
+    window.addEventListener('pointercancel', up, { passive: true })
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
+    }
+  }, [dragItem, applyDrag])
 
   // ===== Submit =====
   const handleConfirm = async () => {
@@ -224,7 +201,6 @@ export function LandSetupOverlay({
       await onReorder?.(landIds)
       await onConfirm?.({ landIds })
     } else {
-      // Меньше 4 земель — bypass
       await onConfirm?.({ landIds, bypass: true })
     }
   }
@@ -239,12 +215,7 @@ export function LandSetupOverlay({
   const canConfirm = !iAmReady && !isApplying
 
   return (
-    <div
-      className="land-setup-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="land-setup-title"
-    >
+    <div className="land-setup-overlay" role="dialog" aria-modal="true" aria-labelledby="land-setup-title">
       <div className="land-setup-panel">
         <h2 id="land-setup-title">Расставьте земли</h2>
         <p className="land-setup-hint">
@@ -260,97 +231,69 @@ export function LandSetupOverlay({
           </p>
         )}
 
-        <div
-          className="land-setup-slots"
-          role="group"
-          aria-label="Позиции земель"
-        >
+        <div className="land-setup-slots" role="group" aria-label="Позиции земель">
           {slots.map((row, index) => {
             const { land_type, land_name } = resolveLand(row)
-            const isHover = hoverSlotIndex === index && draggingHandIndex !== null
             const isOccupied = Boolean(row.land_id)
+            const isHover = hoverSlot === index && dragItem != null
             return (
-              <button
+              <div
                 key={`slot-${index}`}
-                type="button"
+                data-slot-index={index}
                 className={`land-setup-slot${isOccupied ? ' is-occupied' : ' is-empty'}${
                   isHover ? ' is-drop-target' : ''
                 }${iAmReady ? ' is-locked' : ''}${
-                  draggingSlotIndex === index ? ' is-dragging' : ''
+                  dragItem?.source === 'slot' && dragItem.index === index ? ' is-dragging' : ''
                 }`}
-                disabled={iAmReady}
-                draggable={isOccupied && !iAmReady}
-                onDragStart={(e) => {
-                  if (!isOccupied) {
-                    e.preventDefault()
-                    return
-                  }
-                  e.dataTransfer.effectAllowed = 'move'
-                  e.dataTransfer.setData('text/land-slot-index', String(index))
-                  handleSlotDragStart(index)
-                }}
-                onDragEnd={handleSlotDragEnd}
-                onDragOver={(e) => {
-                  e.preventDefault()
-                  e.dataTransfer.dropEffect = 'move'
-                  if (hoverSlotIndex !== index) setHoverSlotIndex(index)
-                }}
-                onDragLeave={() => {
-                  if (hoverSlotIndex === index) setHoverSlotIndex(null)
-                }}
-                onDrop={(e) => {
-                  e.preventDefault()
-                  const handIdx = e.dataTransfer.getData('text/land-hand-index')
-                  const slotIdx = e.dataTransfer.getData('text/land-slot-index')
-                  if (handIdx) {
-                    // hand → slot: place via effect (avoids setState in
-                    // event handler side effect warnings).
-                    setDraggingHandIndex(Number(handIdx))
-                    setHoverSlotIndex(index)
-                    return
-                  }
-                  if (slotIdx) {
-                    const from = Number(slotIdx)
-                    if (Number.isNaN(from) || from === index) return
-                    setSlots((prev) => {
-                      const next = prev.map((r) => ({ ...r }))
-                      ;[next[from], next[index]] = [next[index], next[from]]
-                      return next
-                    })
-                  }
-                }}
                 aria-label={`Позиция ${index + 1}${row.land_id ? `: ${land_name || row.land_id}` : ' — пусто'}`}
               >
                 <span className="land-setup-slot-num">{index + 1}</span>
-                <LandChip
-                  landType={land_type}
-                  landName={land_name}
-                  isEmpty={!row.land_id}
-                />
+                <LandChip landType={land_type} landName={land_name} isEmpty={!row.land_id} />
                 <span className="land-setup-slot-zones">
                   <span className="land-setup-creature">С</span>
                   <span className="land-setup-building">Стр</span>
                 </span>
-              </button>
+                {isOccupied && !iAmReady && (
+                  <div
+                    className="land-setup-slot-drag"
+                    style={{ touchAction: 'none', cursor: 'grab' }}
+                    onPointerDown={(e) =>
+                      startSlotDrag(
+                        { land_id: row.land_id, land_type, name: land_name },
+                        index,
+                        e,
+                      )
+                    }
+                    aria-hidden
+                  />
+                )}
+              </div>
             )
           })}
         </div>
 
-        {/* Hand — drag source. Только те земли, которые ещё не на поле. */}
         {handLands.length > 0 && !iAmReady && (
           <div className="land-setup-hand" aria-label="Доступные земли">
             <p className="land-setup-hand-label">Рука:</p>
             <div className="land-setup-hand-row">
               {handLands.map((land, idx) => (
-                <HandChip
+                <div
                   key={`hand-${land.land_id}-${idx}`}
-                  landType={land.land_type}
-                  landName={land.name}
-                  index={idx}
-                  isDragging={draggingHandIndex === idx}
-                  onDragStart={handleHandDragStart}
-                  onDragEnd={handleHandDragEnd}
-                />
+                  className="land-setup-hand-card"
+                  style={{
+                    '--land-fill': getLandPalette(land.land_type).fill,
+                    '--land-border': LAND_BORDER_COLOR,
+                    touchAction: 'none',
+                    cursor: 'grab',
+                  }}
+                  onPointerDown={(e) => startHandDrag(land, idx, e)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${land.name || getLandPalette(land.land_type).label} (перетащите на слот)`}
+                >
+                  <span className="land-setup-chip-icon">{LAND_TYPES[land.land_type]?.icon || '🌍'}</span>
+                  <span className="land-setup-chip-label">{land.name}</span>
+                </div>
               ))}
             </div>
           </div>
@@ -395,6 +338,18 @@ export function LandSetupOverlay({
           )}
         </div>
       </div>
+
+      {ghost && (
+        <div
+          className="land-setup-ghost"
+          style={{ left: ghost.x, top: ghost.y, pointerEvents: 'none' }}
+          aria-hidden
+        >
+          <LandChip landType={ghost.land.land_type} landName={ghost.land.name} isEmpty={false} />
+        </div>
+      )}
     </div>
   )
 }
+
+export default LandSetupOverlay

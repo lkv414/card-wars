@@ -30,11 +30,14 @@ import { GameDamageFloater } from './scene/GameDamageFloater'
 import { DamageFlashOverlay } from './DamageFlashOverlay'
 import { LandSetupOverlay } from './LandSetupOverlay'
 import { ZoneCardActionMenu } from './hud/ZoneCardActionMenu'
+import { PlacementPointerRelease } from './gameBoard3D/PlacementPointerRelease'
 
 import { canPlayerDealDamage } from '../../hooks/game/combat'
 import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
 import { useGraphicsSettings } from '../../hooks/useGraphicsSettings'
 import { safePlayers, safePlayer } from '../../utils/safePlayer'
+import { getCardLandType, isLandCompatible } from '../../utils/cardFields'
+import { getCardSlotType, isSlotEmpty } from '../../hooks/game/zoneCards'
 
 import {
   CARD_OBJECT_TYPES,
@@ -313,6 +316,16 @@ export function GameBoard3D({
       const card = handCards[cardIdx]
       if (!card || !target) return
 
+      // Card Wars rule: карта only на зону с совпадающей землёй (snap-back).
+      const myZoneRows = normalizePlayerZoneRows(me?.zones)
+      const row = myZoneRows[target.zoneIndex] || {}
+      const zoneLand = resolveLandType(row)
+      if (!isLandCompatible(getCardLandType(card), zoneLand)) {
+        toast('error', 'Карта не подходит к этой земле')
+        setDraggingCardIndex(null)
+        return
+      }
+
       placingLockRef.current = true
       setDraggingCardIndex(null)
       onSuppressRealtimeReload?.(5000)
@@ -329,7 +342,7 @@ export function GameBoard3D({
         placingLockRef.current = false
       }
     },
-    [handCards, toast, onSuppressRealtimeReload, onPlayCard],
+    [handCards, me, resolveLandType, toast, onSuppressRealtimeReload, onPlayCard],
   )
 
   /**
@@ -410,6 +423,20 @@ export function GameBoard3D({
               zone.isOwnerMe && selectedZoneIndex === zone.zoneIndex
             const slots = getLandSlotLayout()
 
+            // Card Wars: во время перетаскивания/выбора карты подсвечиваем
+            // свои зоны — цветом земли (valid) или красным (invalid), если
+            // земля карты не совпадает с землёй зоны.
+            let dropState = null
+            if (activeCard && zone.isOwnerMe && isYourTurn && !inSetup && !isFinished) {
+              const cardLand = getCardLandType(activeCard)
+              const zoneLand = resolveLandType(row)
+              if (!isLandCompatible(cardLand, zoneLand)) {
+                dropState = 'invalid'
+              } else if (isSlotEmpty(normalizeZoneCards(row), getCardSlotType(activeCard))) {
+                dropState = 'valid'
+              }
+            }
+
             return (
               <group
                 key={`zone-${zone.player.player_id}-${zone.zoneIndex}`}
@@ -419,6 +446,7 @@ export function GameBoard3D({
                 <GameLand
                   landType={resolveLandType(row)}
                   selected={isSelectedZone}
+                  dropState={dropState}
                   onClick={() => handleLandClick(zone)}
                   creaturePlayable={
                     zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
@@ -598,6 +626,15 @@ export function GameBoard3D({
         draggingCardIndex={draggingCardIndex}
         setDraggingCardIndex={setDraggingCardIndex}
         updatePointer={updatePointer}
+      />
+
+      {/* Raycast-drop карты прямо на 3D-доску (как в Card Wars) */}
+      <PlacementPointerRelease
+        active={draggingCardIndex !== null}
+        pointerRef={pointerRef}
+        boardRectRef={boardRef}
+        cardIndexRef={cardIndexRef}
+        onRelease={handleRayRelease}
       />
     </div>
   )

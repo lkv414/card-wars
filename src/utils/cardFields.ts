@@ -43,3 +43,27 @@ export function getCardCost(card: CardLike & { cost?: number | string | null }):
   const n = Number(card.cost)
   return Number.isFinite(n) ? Math.max(0, n) : 1
 }
+
+/**
+ * Земля/фракция карты (в терминах Card Wars — «landscape type» карты).
+ * Совпадает с `land_type` зоны, на которую карту можно сыграть.
+ */
+export function getCardLandType(
+  card: (CardLike & { land_type?: string | null }) | null | undefined,
+): string | null {
+  return card?.land_type || null
+}
+
+/**
+ * Card Wars rule: карта ложится только на зону с совпадающей землёй.
+ * `any` (и rainbow) карты — универсальные, подходят на любую землю.
+ * Зона без земли (land_type === null/'any') принимает всё.
+ */
+export function isLandCompatible(
+  cardLandType: string | null | undefined,
+  zoneLandType: string | null | undefined,
+): boolean {
+  if (!cardLandType || cardLandType === 'any') return true
+  if (!zoneLandType || zoneLandType === 'any') return true
+  return cardLandType === zoneLandType
+}

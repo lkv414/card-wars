@@ -240,7 +240,7 @@ export function applyAttackPatch(game, rpcData = {}) {
   return next
 }
 
-/** RPC draw_* не всегда отдаёт флаги — дополняем из draw_type для Ably sync. */
+/** RPC draw_* не всегда отдаёт флаги — дополняем из draw_type для WS-broadcast. */
 export function normalizeDrawRpcData(rpcData = {}) {
   const drawType = rpcData.draw_type
   return {
@@ -252,7 +252,7 @@ export function normalizeDrawRpcData(rpcData = {}) {
   }
 }
 
-/** Не транслируем руку атора через Ably — только счётчики и флаги. */
+/** Не транслируем руку атора через WS — только счётчики и флаги. */
 export function sanitizeDrawRpcDataForSync(rpcData = {}) {
   const normalized = normalizeDrawRpcData(rpcData)
   // eslint-disable-next-line no-unused-vars -- _hand/_deck намеренно исключены
@@ -262,7 +262,7 @@ export function sanitizeDrawRpcDataForSync(rpcData = {}) {
 
 /**
  * Patch после draw_card / draw_free_card (без full reload).
- * RPC актору отдаёт hand; наблюдатели получают hand_count через Ably sync.
+ * RPC актору отдаёт hand; наблюдатели получают hand_count через WS-broadcast.
  */
 export function applyDrawPatch(game, playerId, rpcData = {}, guestId) {
   if (!game?.players) return game

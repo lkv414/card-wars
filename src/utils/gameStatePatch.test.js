@@ -164,7 +164,7 @@ test('normalizeDrawRpcData sets draw flags from draw_type', () => {
   })
 })
 
-test('sanitizeDrawRpcDataForSync strips hand for Ably observers', () => {
+test('sanitizeDrawRpcDataForSync strips hand for non-actor observers', () => {
   const payload = sanitizeDrawRpcDataForSync({
     version: 7,
     draw_type: 'free',

@@ -9,6 +9,27 @@ export type ServerMessage =
   | { type: 'joined'; roomId: string; clientId: string; requestId?: string }
   | { type: 'pong'; requestId?: string }
   | { type: 'state'; version: number; game: unknown; requestId?: string }
+  | {
+      /**
+       * Authoritative battle events emitted right after a turn ends or a
+       * single-attack action resolves. Clients drive lane-by-lane
+       * animations from this stream. `state` follows in the same flush.
+       */
+      type: 'battle_events'
+      events: Array<{
+        attacker_id: string
+        from_zone: number
+        defender_id: string
+        to_zone: number
+        damage: number
+        face_damage: number
+        creature_killed: boolean
+        creature_damaged: boolean
+      }>
+      gameFinished: boolean
+      winnerId: string | null
+      requestId?: string
+    }
   | { type: 'lobby'; lobby: unknown; requestId?: string }
   | { type: 'presence'; onlineIds: string[]; requestId?: string }
   | { type: 'closed'; reason?: string; requestId?: string }

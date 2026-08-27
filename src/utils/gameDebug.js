@@ -24,7 +24,7 @@ export function isGameDebugEnabled() {
 }
 
 /**
- * @param {'load'|'sync'|'patch'|'poll'|'ably'|'suppress'|'skip'|'enrich'} category
+ * @param {'load'|'sync'|'patch'|'poll'|'suppress'|'skip'|'enrich'} category
  * @param {string} message
  * @param {Record<string, unknown>} [detail]
  */

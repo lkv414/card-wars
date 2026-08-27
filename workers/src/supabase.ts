@@ -55,6 +55,56 @@ export async function getPlayerGameState(
   return data
 }
 
+/**
+ * Full (unredacted) snapshot for the Worker's in-memory GameRoom.
+ * Reads every player's full hand/deck/discard so the engine can mutate
+ * state without going back to Supabase.
+ *
+ * This is a NEW RPC that needs to be added to Supabase (see the
+ * accompanying migration in `supabase/migrations/`). For now we degrade
+ * gracefully: if the RPC is missing, callers fall back to per-player
+ * reads via `getPlayerGameState`.
+ */
+export async function getFullGameState(
+  env: Env,
+  gameId: string
+): Promise<Record<string, unknown> | null> {
+  try {
+    const data = await callRpc(env, 'get_full_game_state', {
+      p_game_id: gameId,
+    })
+    if (data.error) return null
+    return data
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Persist the full game state back to Supabase. Called periodically
+ * by GameRoom to keep the database as a snapshot of the latest version
+ * the Worker has seen.
+ */
+export async function saveFullGameState(
+  env: Env,
+  gameId: string,
+  state: Record<string, unknown>
+): Promise<void> {
+  const { url, key } = requireSupabase(env)
+  const res = await fetch(`${url}/rest/v1/games?id=eq.${encodeURIComponent(gameId)}`, {
+    method: 'PATCH',
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(state),
+  })
+  if (!res.ok) {
+    throw new Error(`saveFullGameState failed: ${res.status} ${await res.text()}`)
+  }
+}
+
 /** Verify guest is a participant before accepting WS join. */
 export async function assertPlayerInGame(
   env: Env,

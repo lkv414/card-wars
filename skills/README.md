@@ -6,11 +6,9 @@ Source: [affaan-m/ECC](https://github.com/affaan-m/ECC) (Everything Claude Code)
 
 ## How to use (mandatory for agents)
 
-1. Read [llms.txt](../llms.txt) first — project context, conventions, and file map.
-2. Pick skills from the table below based on the task.
-3. Open and follow `skills/<name>/SKILL.md` **before writing code**.
-4. After changes: `npm test` → `npm run lint` → `npm run build`.
-5. If you changed architecture or workflows, update `llms.txt`.
+1. Pick skills from the table below based on the task.
+2. Open and follow `skills/<name>/SKILL.md` **before writing code**.
+3. After changes: `npm test` → `npm run lint` → `npm run build`.
 
 ## Skill index
 

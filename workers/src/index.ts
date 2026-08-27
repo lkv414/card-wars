@@ -1,6 +1,7 @@
 import type { Env } from './env'
 export { GameRoom } from './game-room'
 export { LobbyRoom } from './lobby-room'
+import { getCards, getLands, isCatalogKey } from './catalog'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -52,6 +53,23 @@ export default {
       return json({ ok: true, service: 'card-wars-game' })
     }
 
+    // Read-only catalog endpoint — served from Cloudflare KV, no Supabase RPC.
+    // Workers without a configured CATALOG binding will return 503.
+    const catalogMatch = url.pathname.match(/^\/catalog\/(cards|lands)$/)
+    if (catalogMatch && request.method === 'GET') {
+      const key = catalogMatch[1]
+      if (!isCatalogKey(key)) {
+        return withCors(json({ error: 'unknown catalog key' }, 400))
+      }
+      if (!env.CATALOG) {
+        return withCors(
+          json({ error: 'catalog binding not configured' }, 503),
+        )
+      }
+      const data = key === 'cards' ? await getCards(env) : await getLands(env)
+      return withCors(json({ key, count: data.length, data }))
+    }
+
     const gameMatch = url.pathname.match(/^\/game\/([^/]+)\/ws$/)
     if (gameMatch) {
       const gameId = gameMatch[1]
@@ -92,7 +110,14 @@ export default {
       json(
         {
           service: 'card-wars-game',
-          routes: ['/health', '/game/:gameId/ws', '/lobby/:lobbyId/ws', '/lobby/:lobbyId/notify'],
+          routes: [
+            '/health',
+            '/game/:gameId/ws',
+            '/lobby/:lobbyId/ws',
+            '/lobby/:lobbyId/notify',
+            '/catalog/cards',
+            '/catalog/lands',
+          ],
         },
         404,
       ),

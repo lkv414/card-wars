@@ -25,7 +25,7 @@
  *     принудительно дёргает `set_guest_id` чтобы соединение в пуле
  *     увидело свежий guest_id.
  */
-import { supabase } from './supabase.js'
+import { supabase, isSupabaseConfigured } from './supabase.js'
 import { getGuestId } from './guestId.js'
 
 let lastSentId = null
@@ -39,8 +39,14 @@ const SET_GUEST_TIMEOUT_MS = 10_000
  * Гонки: если несколько вызовов стартуют параллельно до того, как
  * первый успеет присвоить lastSentId, inflight Promise разделяется
  * между ними — set_guest_id летит ровно один раз.
+ *
+ * Если Supabase не сконфигурирован (нет VITE_SUPABASE_URL / PUBLISHABLE_KEY
+ * в env, например в локальной разработке без .env), функция сразу
+ * завершается без сетевых вызовов и без warning'ов. В проде env
+ * всегда заполнен (через .env.production или Cloudflare Pages vars).
  */
 export async function ensureGuestId() {
+  if (!isSupabaseConfigured) return
   const id = getGuestId()
   if (lastSentId === id) return
   if (inflight) return inflight
@@ -79,11 +85,15 @@ export function resetGuestIdCache() {
  * запрос. На каждый вызов — новый RPC, потому что PostgREST может
  * перебросить соединение.
  *
+ * Если Supabase не сконфигурирован, обёртка просто выполняет fn()
+ * без вызова RPC.
+ *
  * @template T
  * @param {() => Promise<T>} fn — функция, выполняющая supabase.from(...).update/insert
  * @returns {Promise<T>}
  */
 export async function withGuestId(fn) {
+  if (!isSupabaseConfigured) return fn()
   resetGuestIdCache()
   await ensureGuestId()
   return fn()

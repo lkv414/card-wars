@@ -30,9 +30,16 @@ export const isLocalSupabase = Boolean(
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey)
 
 if (!isSupabaseConfigured) {
-  console.error(
-    '[CardWars] Supabase не настроен: задайте VITE_SUPABASE_URL и VITE_SUPABASE_PUBLISHABLE_KEY в .env или .env.local',
-  )
+  // Не сбрасываем dev-консоль ошибкой: когда env не заполнен (например,
+  // локально без .env), приложение всё равно работает в offline-режиме
+  // (multiplayer через Worker, каталог через KV с fallback на Supabase).
+  // Подавляем сообщение в dev и показываем warning один раз в проде,
+  // чтобы заметить случайную регрессию при следующем деплое.
+  if (!import.meta.env.DEV) {
+    console.warn(
+      '[CardWars] Supabase не сконфигурирован: VITE_SUPABASE_URL или VITE_SUPABASE_PUBLISHABLE_KEY отсутствуют.',
+    )
+  }
 } else if (import.meta.env.DEV) {
   console.info(`[CardWars] Supabase → ${supabaseUrl}`)
 }

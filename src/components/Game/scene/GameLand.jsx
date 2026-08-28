@@ -85,7 +85,7 @@ function LandOutline() {
  * Hit-area = ровно половина земли.
  * position.z > 0 = creature-слот (ближе к игроку), position.z < 0 = building.
  */
-function SlotPad({ slot, playable, rayHovered, tint, dropState, onClick }) {
+function SlotPad({ slot, slotType, zoneIndex, playable, rayHovered, tint, dropState, onClick }) {
   const show = playable || rayHovered || Boolean(dropState)
   const color = dropState === 'invalid' ? '#ff5252' : dropState === 'valid' ? tint : show ? tint : '#000000'
 
@@ -93,6 +93,12 @@ function SlotPad({ slot, playable, rayHovered, tint, dropState, onClick }) {
     <mesh
       rotation={[-Math.PI / 2, 0, 0]}
       position={[slot.x, LAND_SURFACE_Y + 0.001, slot.z]}
+      userData={{
+        slotTarget: true,
+        playable,
+        zoneIndex,
+        slotType,
+      }}
       onClick={onClick}
     >
       <planeGeometry args={[slot.width, slot.depth]} />
@@ -134,6 +140,7 @@ function SlotPad({ slot, playable, rayHovered, tint, dropState, onClick }) {
  * @param {boolean} [props.buildingRayHover] наведение на building-слот
  * @param {'valid'|'invalid'|null} [props.dropState] подсветка при перетаскивании
  *   карты: valid — земля совпадает (цвет земли), invalid — не совпадает (красный).
+ * @param {number|null} [props.zoneIndex] индекс зоны (для raycast-drop).
  * @param {(e: any) => void} [props.onLandClick]
  * @param {(e: any) => void} [props.onCreatureClick]
  * @param {(e: any) => void} [props.onBuildingClick]
@@ -148,6 +155,7 @@ export const GameLand = memo(function GameLand({
   creatureRayHover = false,
   buildingRayHover = false,
   dropState = null,
+  zoneIndex = null,
   onLandClick,
   onCreatureClick,
   onBuildingClick,
@@ -178,6 +186,8 @@ export const GameLand = memo(function GameLand({
       {/* Creature slot (z<0) — существа */}
       <SlotPad
         slot={slots.creature}
+        slotType="creature"
+        zoneIndex={zoneIndex}
         playable={creaturePlayable}
         rayHovered={creatureRayHover}
         tint={CREATURE_SLOT_COLOR}
@@ -191,6 +201,8 @@ export const GameLand = memo(function GameLand({
       {/* Building slot (z>0) — строения */}
       <SlotPad
         slot={slots.building}
+        slotType="building"
+        zoneIndex={zoneIndex}
         playable={buildingPlayable}
         rayHovered={buildingRayHover}
         tint={BUILDING_SLOT_COLOR}

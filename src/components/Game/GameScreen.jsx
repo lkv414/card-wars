@@ -241,6 +241,7 @@ export function GameScreen() {
           isApplying={combinedIsApplying}
           actionError={combinedError}
           toast={toast}
+          cardCatalog={cardCatalog}
         />
       </Suspense>
       <Toasts toasts={toasts} onDismiss={dismissToast} />

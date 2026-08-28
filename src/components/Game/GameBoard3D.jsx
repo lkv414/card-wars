@@ -133,6 +133,23 @@ function buildBoardZones(players, myIndex) {
   return zones
 }
 
+/**
+ * Догружает визуал карты (image_url/name/land_type) из каталога по id.
+ * Сервер/in-memory могут не хранить image_url — тогда берём из cardCatalog,
+ * чтобы картинка всегда отображалась (и после перезагрузки страницы).
+ */
+function resolveCardVisual(card, catalog) {
+  if (!card) return card
+  const cat = catalog?.get ? catalog.get(card.id) : catalog?.[card.id]
+  if (!cat) return card
+  return {
+    ...card,
+    image_url: card.image_url || cat.image_url,
+    name: card.name || cat.name,
+    land_type: card.land_type || cat.land_type,
+  }
+}
+
 export function GameBoard3D({
   game,
   playerId,
@@ -155,6 +172,7 @@ export function GameBoard3D({
   isApplying = false,
   actionError = null,
   toast = () => {},
+  cardCatalog = null,
 }) {
   const { shadowsEnabled } = useGraphicsSettings()
 
@@ -208,7 +226,7 @@ export function GameBoard3D({
       const id = c.instanceId || c.id
       if (id && seen.has(id)) continue
       if (id) seen.add(id)
-      out.push(c)
+      out.push(resolveCardVisual(c, cardCatalog))
     }
     return out
   }, [me])
@@ -430,10 +448,12 @@ export function GameBoard3D({
           {zones.map((zone) => {
             const zoneRows = normalizePlayerZoneRows(zone.player.zones)
             const row = zoneRows[zone.zoneIndex] || {}
-            const { creatureCard, buildingCard } = getZoneSplit(
+            const { creatureCard: rawCreature, buildingCard: rawBuilding } = getZoneSplit(
               zone.player.player_id,
               zone.zoneIndex,
             )
+            const creatureCard = resolveCardVisual(rawCreature, cardCatalog)
+            const buildingCard = resolveCardVisual(rawBuilding, cardCatalog)
             const isSelectedZone =
               zone.isOwnerMe && selectedZoneIndex === zone.zoneIndex
             const slots = getLandSlotLayout()
@@ -462,6 +482,7 @@ export function GameBoard3D({
                   landType={resolveLandType(row)}
                   selected={isSelectedZone}
                   dropState={dropState}
+                  zoneIndex={zone.zoneIndex}
                   onClick={() => handleLandClick(zone)}
                   creaturePlayable={
                     zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)

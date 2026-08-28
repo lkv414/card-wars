@@ -29,3 +29,18 @@ export function hasFlipAbility(card) {
   }
   return false
 }
+
+/**
+ * Стоимость флипа в действиях (action_points / MP).
+ *   - Из mechanics[].cost_actions если есть
+ *   - Иначе 0 (бесплатно) — так flop работает в оригинале по умолчанию.
+ *
+ * @param {object} card
+ * @returns {number}
+ */
+export function getFlipCost(card) {
+  if (!card) return 0
+  if (!Array.isArray(card.mechanics)) return 0
+  const mech = card.mechanics.find((m) => m && m.type === 'flip_ability')
+  return mech && typeof mech.cost_actions === 'number' ? mech.cost_actions : 0
+}

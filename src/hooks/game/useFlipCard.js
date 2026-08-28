@@ -4,9 +4,9 @@
 import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
-import { hasFlipAbility } from './cardAbilities.js'
+import { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 import { applyFlipCardPatch } from '../../utils/gameStatePatch'
-export { hasFlipAbility } from './cardAbilities.js'
+export { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -36,6 +36,18 @@ export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload
 
       if (!hasFlipAbility(card)) {
         return { error: 'У карты нет способности Флюп' }
+      }
+
+      // Клиентская проверка стоимости до отправки (быстрый UX)
+      const cost = getFlipCost(card)
+      const actionsLeft = player.actions_remaining ?? game.actions_remaining ?? 2
+      if (cost > 0 && actionsLeft < cost) {
+        return { error: `Недостаточно действий (нужно ${cost}, осталось ${actionsLeft})` }
+      }
+
+      // Уже перевёрнута в этом ходу?
+      if (card.flipped_this_turn) {
+        return { error: 'Карта уже перевёрнута в этом ходу' }
       }
 
       const ws = await runViaTransport(transport, 'flip_card', {

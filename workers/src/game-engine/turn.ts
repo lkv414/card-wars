@@ -19,6 +19,7 @@
 import { bumpVersion, getActivePlayer, getAlivePlayers } from './utils'
 import { canPlayerDealDamage, resolveAttack } from './combat'
 import { drawTopCard, reshuffleIfNeeded } from './utils'
+import { clearFlipMarks } from './cards'
 import type { ApplyResult, Card, EngineError, GameState, PlayerState } from './types'
 
 function err(msg: string): EngineError {
@@ -95,7 +96,12 @@ export function endTurn(state: GameState): ApplyResult | EngineError {
   const attacker = getActivePlayer(state)
   if (!attacker) return err('Сейчас не ваш ход')
 
-  const alivePlayers = getAlivePlayers(state)
+  // Сбрасываем flipped_this_turn у атакующего (чтобы в следующий ход снова можно было флипнуть)
+  const cleaned = clearFlipMarks(state)
+  const attackerFromCleaned = getActivePlayer(cleaned)
+  if (!attackerFromCleaned) return err('Сейчас не ваш ход')
+
+  const alivePlayers = getAlivePlayers(cleaned)
   if (alivePlayers.length < 1) return err('Нет живых игроков')
   if (alivePlayers.length === 1 && alivePlayers[0].player_id === attacker.player_id) {
     return err('Вы единственный живой — игра окончена')

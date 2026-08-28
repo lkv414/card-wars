@@ -265,7 +265,59 @@ export function discardFromZone(
   return { state: bumpVersion(withPlayer(state, me.player_id, () => updated)) }
 }
 
-/** flip_card — toggle face-up/face-down. Mirrors the SQL: flipped = !flipped. */
+/**
+ * canFlipCard — проверка возможности флипнуть карту.
+ * Учитывает:
+ *   - has_flip / flip_ability в mechanics[]
+ *   - cost_actions из mechanics[].cost_actions (0 = бесплатно, 1+ = списать N MP)
+ *   - actions_remaining у игрока
+ *   - уже перевёрнута ли в этом ходу (flipped_this_turn)
+ *   - заблокирована ли карта через flipped (уже лежит лицом вниз) или FloopDisabled
+ */
+export function canFlipCard(
+  state: GameState,
+  playerId: string,
+  zonePosition: number,
+  cardId: string,
+): { ok: boolean; reason?: string; cost?: number } {
+  const me = getPlayer(state, playerId)
+  if (!me) return { ok: false, reason: 'Игрок не найден' }
+
+  const zone = getZone(me, zonePosition)
+  if (!zone) return { ok: false, reason: 'Зона не найдена' }
+
+  const card = zone.cards.find((c) => (c.instanceId ?? c.id) === cardId)
+  if (!card) return { ok: false, reason: 'Карта не найдена' }
+
+  // Проверка наличия flip-способности
+  const hasFlip =
+    card.has_flip === true ||
+    (typeof card.flip_description === 'string' && card.flip_description.trim() !== '') ||
+    (Array.isArray(card.mechanics) && card.mechanics.some((m) => m && m.type === 'flip_ability'))
+  if (!hasFlip) return { ok: false, reason: 'У карты нет способности Флюп' }
+
+  // Уже перевёрнута в этом ходу?
+  if (card.flipped_this_turn) {
+    return { ok: false, reason: 'Карта уже перевёрнута в этом ходу' }
+  }
+
+  // Получаем стоимость из mechanics
+  const flipMech = Array.isArray(card.mechanics)
+    ? card.mechanics.find((m) => m && m.type === 'flip_ability')
+    : null
+  const cost = flipMech && typeof flipMech.cost_actions === 'number' ? flipMech.cost_actions : 0
+
+  if (cost > 0) {
+    const actionsLeft = (me as any).actions_remaining ?? (state as any).actions_remaining ?? 2
+    if (actionsLeft < cost) {
+      return { ok: false, reason: `Недостаточно действий (нужно ${cost}, осталось ${actionsLeft})`, cost }
+    }
+  }
+
+  return { ok: true, cost }
+}
+
+/** flip_card — переключить лицом вниз + списать стоимость + пометить flipped_this_turn. */
 export function flipCard(
   state: GameState,
   payload: Extract<Action, { type: 'flip_card' }>,
@@ -278,16 +330,42 @@ export function flipCard(
   const zone = getZone(me, zonePosition)
   if (!zone) return err('Зона не найдена')
 
+  const card = zone.cards.find((c) => (c.instanceId ?? c.id) === cardId)
+  if (!card) return err('Карта не найдена')
+
+  // Проверяем возможность флипа
+  const check = canFlipCard(state, me.player_id, zonePosition, cardId)
+  if (!check.ok) return err(check.reason || 'Флип невозможен')
+
   const newCards = zone.cards.map((c) => {
     if ((c.instanceId ?? c.id) !== cardId) return c
     const flipped = !c.flipped
-    return { ...c, flipped, isFlipped: flipped }
+    return { ...c, flipped, isFlipped: flipped, flipped_this_turn: flipped ? false : c.flipped_this_turn }
   })
-  const withZone: PlayerState = {
-    ...me,
-    zones: me.zones.map((z) => (z.zone_position === zonePosition ? { ...z, cards: newCards } : z)),
+
+  // Списание стоимости: actions_remaining уменьшаем на cost (если > 0)
+  let updatedMe: PlayerState = { ...me, zones: me.zones.map((z) => (z.zone_position === zonePosition ? { ...z, cards: newCards } : z)) }
+  const cost = check.cost ?? 0
+  if (cost > 0) {
+    const actionsLeft = (me as any).actions_remaining ?? (state as any).actions_remaining ?? 2
+    updatedMe = { ...updatedMe, actions_remaining: actionsLeft - cost } as PlayerState
   }
-  return { state: bumpVersion(withPlayer(state, me.player_id, () => withZone)) }
+
+  return { state: bumpVersion(withPlayer(state, me.player_id, () => updatedMe)) }
+}
+
+/** endTurn — сбросить все flipped_this_turn у текущего игрока. */
+export function clearFlipMarks(state: GameState): GameState {
+  const me = getActivePlayer(state)
+  if (!me) return state
+  const updated: PlayerState = {
+    ...me,
+    zones: me.zones.map((z) => ({
+      ...z,
+      cards: z.cards.map((c) => (c.flipped_this_turn ? { ...c, flipped_this_turn: false } : c)),
+    })),
+  }
+  return bumpVersion(withPlayer(state, me.player_id, () => updated))
 }
 
 /** Engine-side helper used by the lobby's land setup. Not gated by active state. */

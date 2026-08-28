@@ -54,6 +54,11 @@ const productionEnvDevPlugin = {
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), productionEnvDevPlugin],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
   // For `npm run build`: bake the same values into the bundle via define.
   define: toDefine(envFromProduction),
   build: {

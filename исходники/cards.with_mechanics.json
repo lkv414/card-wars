@@ -292,6 +292,11 @@
         "actions": [
           {
             "type": "destroy",
+            "target": "none",
+            "count": 1
+          },
+          {
+            "type": "destroy",
             "target": "chosen_creature",
             "count": 1
           }
@@ -2005,6 +2010,11 @@
         "trigger": "manual",
         "actions": [
           {
+            "type": "destroy",
+            "target": "none",
+            "count": 1
+          },
+          {
             "type": "deal_damage",
             "target": "each_creature_opponent",
             "amount": 3,
@@ -2624,7 +2634,7 @@
             "type": "play_for_free",
             "target": "any",
             "cost_filter": null,
-            "source_text": "можешь найти Подмогу и сыграть ее бесплатно"
+            "source_text": "сыграть ее бесплатно"
           }
         ],
         "conditions": [],
@@ -3146,6 +3156,11 @@
       {
         "trigger": "manual",
         "actions": [
+          {
+            "type": "destroy",
+            "target": "chosen_creature",
+            "count": 1
+          },
           {
             "type": "destroy",
             "target": "chosen_opponent_creature",
@@ -4441,6 +4456,13 @@
             "target": "none",
             "count": 1,
             "source": "deck"
+          },
+          {
+            "type": "discard_cards",
+            "target": "none",
+            "count": 1,
+            "source": "hand",
+            "random": false
           }
         ],
         "conditions": [
@@ -4822,9 +4844,9 @@
         "trigger": "on_enters_play",
         "actions": [
           {
-            "type": "move",
-            "target": "chosen_creature",
-            "destination": "this_lane"
+            "type": "passive",
+            "target": "none",
+            "effect": "Существо противника на этой линии и Волшебник-гастролер меняются местами"
           }
         ],
         "conditions": [],
@@ -7653,6 +7675,10 @@
         "trigger": "manual",
         "actions": [
           {
+            "type": "freeze_landscape",
+            "target": "chosen_landscape"
+          },
+          {
             "type": "draw_cards",
             "target": "none",
             "count": 1,
@@ -8095,11 +8121,10 @@
         "trigger": "manual",
         "actions": [
           {
-            "type": "discard_cards",
+            "type": "imperative",
+            "verb": "Сбрось",
             "target": "none",
-            "count": 1,
-            "source": "hand",
-            "random": false
+            "effect": "Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно"
           }
         ],
         "conditions": [
@@ -8134,7 +8159,7 @@
             "type": "mill",
             "count": 1,
             "source": "deck",
-            "source_text": "Если эта земля пустая, то открывай карты с верху своей колоды до тех пор, пока н"
+            "source_text": "то открывай карты с верху своей колоды до тех пор"
           }
         ],
         "conditions": [
@@ -8153,7 +8178,7 @@
             "type": "mill",
             "count": 1,
             "source": "deck",
-            "source_text": "открывай карты с верху своей колоды до тех пор, пока не найдешь Существо, сыграй"
+            "source_text": "открывай карты с верху своей колоды до тех пор"
           }
         ],
         "conditions": [
@@ -8452,11 +8477,10 @@
         "trigger": "manual",
         "actions": [
           {
-            "type": "discard_cards",
+            "type": "imperative",
+            "verb": "Открой",
             "target": "none",
-            "count": 1,
-            "source": "hand",
-            "random": false
+            "effect": "3 верхние карты своей колоды, вытяни одну, остальные сбрось"
           }
         ],
         "conditions": [
@@ -9209,6 +9233,11 @@
       {
         "trigger": "manual",
         "actions": [
+          {
+            "type": "destroy",
+            "target": "none",
+            "count": 1
+          },
           {
             "type": "draw_cards",
             "target": "none",
@@ -10866,7 +10895,7 @@
             "type": "play_for_free",
             "target": "creature",
             "cost_filter": null,
-            "source_text": "если ты партнёр не сыграл существо в этом ходе, другой партнёр может бесплатно с"
+            "source_text": "другой партнёр может бесплатно сыграть существо стоимостью 1 или менее"
           }
         ],
         "conditions": [
@@ -12351,6 +12380,11 @@
             "type": "move",
             "target": "chosen_creature",
             "destination": "this_lane"
+          },
+          {
+            "type": "flip_landscape",
+            "target": "this_landscape",
+            "face": "down"
           }
         ],
         "conditions": [],
@@ -12639,6 +12673,11 @@
             "count": 1,
             "source": "hand",
             "random": false
+          },
+          {
+            "type": "flip_landscape",
+            "target": "chosen_landscape",
+            "face": "down"
           }
         ],
         "conditions": [
@@ -12829,7 +12868,7 @@
             "type": "cost_reduction",
             "amount": 1,
             "target": "self",
-            "source_text": "Ска-пион стоит на 1 меньше, чтобы сыграть его"
+            "source_text": "Ска-пион стоит на 1 меньше"
           }
         ],
         "conditions": [
@@ -13428,7 +13467,7 @@
         "actions": [
           {
             "type": "destroy",
-            "target": "discard_pile",
+            "target": "none",
             "count": 1
           }
         ],
@@ -13563,11 +13602,10 @@
         "trigger": "manual",
         "actions": [
           {
-            "type": "discard_cards",
+            "type": "imperative",
+            "verb": "Положи",
             "target": "none",
-            "count": 1,
-            "source": "hand",
-            "random": false
+            "effect": "эту карту под него, сбрось все при смерти"
           }
         ],
         "conditions": [
@@ -14134,6 +14172,12 @@
             "type": "move",
             "target": "chosen_creature",
             "destination": "this_lane"
+          },
+          {
+            "type": "draw_cards",
+            "target": "none",
+            "count": 1,
+            "source": "deck"
           }
         ],
         "conditions": [
@@ -15560,6 +15604,12 @@
         "trigger": "start_of_turn",
         "actions": [
           {
+            "type": "draw_cards",
+            "target": "none",
+            "count": 1,
+            "source": "deck"
+          },
+          {
             "type": "discard_cards",
             "target": "none",
             "count": 1,
@@ -16172,7 +16222,7 @@
             "type": "play_for_free",
             "target": "any",
             "cost_filter": null,
-            "source_text": "отдав партнер не отдал заклиная в этом ход, отдай партнер может бесплатно сыграт"
+            "source_text": "отдай партнер может бесплатно сыграть заклинанце отомостью 1 или менее"
           }
         ],
         "conditions": [

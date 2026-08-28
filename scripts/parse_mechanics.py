@@ -487,7 +487,7 @@ def resolve_target(text: str) -> str:
     if "выбранн" in t and "стопк" in t:
         return Target.CHOSEN_DISCARD
     if "земл" in t and ("лицом" in t or "переверни" in t):
-        return Target.CHOOSEN_LANDSCAPE if False else Target.CHOSEN_LANDSCAPE
+        return Target.CHOSEN_LANDSCAPE
     if "эт" in t and "существ" in t:  # «это существо» → self
         return Target.THIS_CREATURE
     if "колод" in t and "верх" in t:
@@ -501,8 +501,8 @@ def resolve_target(text: str) -> str:
 
 # ───────── ОСНОВНОЙ ПАРСЕР: actions[] из effect-строки ─────────
 
-def parse_actions_from_text(effect_text: str, base_target: str = None) -> list:
-    """Извлекает массив Action[] из свободного текста эффекта.
+def _parse_single(effect_text: str, base_target: str = None) -> list:
+    """Извлекает массив Action[] из ОДНОГО фрагмента текста эффекта.
 
     Используется для парсинга:
       • effect от activated/imperative механик
@@ -988,7 +988,7 @@ def parse_actions_from_text(effect_text: str, base_target: str = None) -> list:
         if m:
             threshold = int(m.group(2))
             op = m.group(1).replace("=", "")
-            bonus = parse_actions_from_text(eff_low[m.end():])
+            bonus = _parse_single(eff_low[m.end():])
             if bonus:
                 actions.append(ConditionalBonus(
                     condition_stat="health",
@@ -998,6 +998,60 @@ def parse_actions_from_text(effect_text: str, base_target: str = None) -> list:
                 ))
 
     return actions
+
+
+# ───────── СБОР НЕСКОЛЬКИХ ЭФФЕКТОВ ИЗ ОДНОЙ ФРАЗЫ ─────────
+
+def _split_effects(text: str) -> list:
+    """Разбивает фразу на отдельные эффекты по союзам-связкам.
+
+    Карты Card Wars часто описывают 2–4 эффекта в одной фразе
+    («нанеси 1 урон и восстанови 2 HP»). Парсим каждый фрагмент отдельно,
+    чтобы не терять эффекты (раньше функция возвращала только первый).
+    """
+    parts = re.split(
+        r"\s*,\s*|\s+и\s+|\s+а\s+также\s+|\s+затем\s+|\s+потом\s+|\s*;\s*|\s+также\s+|"
+        r"\s+к\s+тому\s+же\s+|\s+плюс\s+",
+        text,
+    )
+    return [p.strip() for p in parts if p and p.strip()]
+
+
+def _action_sig(a) -> str:
+    if isinstance(a, Action):
+        return json.dumps(a.to_dict(), sort_keys=True, ensure_ascii=False)
+    return json.dumps(a, sort_keys=True, ensure_ascii=False)
+
+
+def _dedupe_actions(actions: list) -> list:
+    seen = set()
+    out = []
+    for a in actions:
+        sig = _action_sig(a)
+        if sig in seen:
+            continue
+        seen.add(sig)
+        out.append(a)
+    return out
+
+
+def parse_actions_from_text(effect_text: str, base_target: str = None) -> list:
+    """Извлекает ВСЕ действия из текста эффекта.
+
+    Делит многоэффектную фразу на фрагменты и парсит каждый через
+    _parse_single, затем убирает дубликаты. Возвращает список Action/словарей.
+    """
+    eff = (effect_text or "").strip()
+    if not eff:
+        return []
+    fragments = _split_effects(eff)
+    # Если разбиение дало только один фрагмент (или ни одного) — парсим как есть.
+    if len(fragments) <= 1:
+        return _parse_single(eff, base_target)
+    actions = []
+    for frag in fragments:
+        actions.extend(_parse_single(frag, base_target))
+    return _dedupe_actions(actions)
 
 
 # ───────── ПОСТРОЕНИЕ МЕХАНИКИ (trigger + actions + description) ─────────

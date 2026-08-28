@@ -24,7 +24,6 @@
     .card .fname { font-size:12px; color:var(--mut); display:flex; justify-content:space-between; align-items:center; }
     .badge { font-size:11px; padding:2px 8px; border-radius:999px; background:#243; color:var(--ok); }
     .status { font-size:12px; font-weight:700; }
-    .status[data-state="ok"] { color: var(--ok); }
     /* мини-полоса с эмодзи-статами (cost/attack/health) */
     .stats { display:flex; gap:6px; }
     .stat { flex:1; display:flex; align-items:center; gap:6px;
@@ -42,7 +41,6 @@
     .row textarea { resize:vertical; min-height:48px; }
     .ocr { background:#0b0d13; border:1px dashed #2a2e3c; border-radius:8px; padding:8px; font-size:12px; white-space:pre-wrap; color:#cdd3e0; max-height:140px; overflow:auto; }
     .actions { display:flex; gap:8px; }
-    .hint { color:var(--mut); font-size:12px; }
     .err { color:#ff6b6b; font-size:12px; }
   </style>
 </head>
@@ -189,7 +187,7 @@
       try {
         const r = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ filename }) });
         const data = await r.json();
-        if (!r.ok) throw new Error(data.error || "ошибка");
+        if (!r.ok) { err.textContent = data.error || "ошибка"; return false; }
         card.querySelector("[data-ocr]").textContent = data.ocrText || "(нет текста)";
         fillFields(card, data.fields || {});
         return true;
@@ -202,7 +200,7 @@
     }
 
     async function analyzeAllVisible() {
-      const btnAll = $("analyzeAll");
+      const btnAll = analyzeAllBtn;
       const cards = [...document.querySelectorAll(".card")];
       if (!cards.length) return;
       btnAll.disabled = true;
@@ -232,7 +230,12 @@
             body: JSON.stringify({ filename: fname }),
           });
           const data = await r.json();
-          if (!r.ok) throw new Error(data.error || "ошибка");
+          if (!r.ok) {
+            c.querySelector(".err").textContent = data.error || "ошибка";
+            c.querySelector(".status").textContent = "✗";
+            fail++;
+            return false;
+          }
           c.querySelector("[data-ocr]").textContent = data.ocrText || "(нет текста)";
           fillFields(c, data.fields || {});
           c.querySelector(".status").textContent = "✓";
@@ -302,9 +305,10 @@
       data.items.forEach(it => grid.appendChild(renderCard(it)));
     }
 
+    const analyzeAllBtn = $("analyzeAll");
     $("next").onclick = () => { offset += LIMIT; load(); window.scrollTo(0,0); };
     $("prev").onclick = () => { offset = Math.max(0, offset - LIMIT); load(); window.scrollTo(0,0); };
-    $("analyzeAll").onclick = analyzeAllVisible;
+    analyzeAllBtn.onclick = analyzeAllVisible;
     $("saveAll").onclick = async () => {
       for (const card of document.querySelectorAll(".card")) {
         await saveCard(card, card.dataset.filename);

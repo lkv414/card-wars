@@ -260,7 +260,6 @@ function detectCardType(text) {
   return "";
 }
 function numOnLine(text, kws) {
-  const t = text.toLowerCase();
   for (const line of text.split("\n")) {
     if (kws.some((k) => line.toLowerCase().includes(k))) {
       const m = line.match(/-?\d+/);
@@ -292,7 +291,7 @@ function parseCardText(text, filename) {
     attack: numOnLine(text, ["атака", "attack", "сила"]) ?? "",
     health: numOnLine(text, ["здоров", "health", "жизн"]) ?? "",
     land_type: detectLandType(text),
-    is_rainbow: /радуж|rainbow/.test(text.toLowerCase()) ? true : false,
+    is_rainbow: /радуж|rainbow/.test(text.toLowerCase()),
     has_flip: false,
     flip_description: "",
     mechanics: "",
@@ -320,7 +319,7 @@ const MINIMAX_PROMPT = `Ты распознаёшь карту из коллек
 }
 Если поля нет — null. Не выдумывай.`;
 
-async function minimaxAnalyze(buffer, filename) {
+async function minimaxAnalyze(buffer) {
   if (!MINIMAX_KEY) throw new Error("MINIMAX_API_KEY не задан");
   const b64 = buffer.toString("base64");
   const payload = {
@@ -384,7 +383,7 @@ function extractJson(text) {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
   const raw = fenced ? fenced[1] : text;
   // выдёргиваем первый { ... } блок
-  const m = raw.match(/\{[\s\S]*\}/);
+  const m = raw.match(/\{[\s\S]*}/);
   if (!m) return null;
   try { return JSON.parse(m[0]); } catch { return null; }
 }
@@ -562,7 +561,7 @@ const server = http.createServer(async (req, res) => {
       const tryMinimax = MINIMAX_KEY && (provider === "auto" || provider === "minimax" || provider === "minimax");
       if (tryMinimax) {
         try {
-          textOut = await minimaxAnalyze(buffer, safe);
+          textOut = await minimaxAnalyze(buffer);
           fieldsOut = parseJsonFields(textOut, safe);
           console.log(`[analyze] ✓ MiniMax: ${textOut.length} chars`);
         } catch (e) {

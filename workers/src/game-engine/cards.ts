@@ -15,7 +15,6 @@ import {
   getZone,
   pushDiscard,
   refillHand,
-  removeFromDiscard,
   reshuffleIfNeeded,
   shuffleDeck,
 } from './utils'
@@ -274,6 +273,23 @@ export function discardFromZone(
  *   - уже перевёрнута ли в этом ходу (flipped_this_turn)
  *   - заблокирована ли карта через flipped (уже лежит лицом вниз) или FloopDisabled
  */
+/** Ищет действие flip_ability, вложенное в actions[] механик карты. */
+function findFlipAbility(card: Card): Record<string, unknown> | null {
+  const mechs = (card as Record<string, unknown>).mechanics
+  if (!Array.isArray(mechs)) return null
+  for (const m of mechs) {
+    if (!m || typeof m !== 'object') continue
+    const actions = (m as Record<string, unknown>).actions
+    if (!Array.isArray(actions)) continue
+    for (const a of actions) {
+      if (a && typeof a === 'object' && (a as Record<string, unknown>).type === 'flip_ability') {
+        return a as Record<string, unknown>
+      }
+    }
+  }
+  return null
+}
+
 export function canFlipCard(
   state: GameState,
   playerId: string,
@@ -289,11 +305,14 @@ export function canFlipCard(
   const card = zone.cards.find((c) => (c.instanceId ?? c.id) === cardId)
   if (!card) return { ok: false, reason: 'Карта не найдена' }
 
-  // Проверка наличия flip-способности
+  // Проверка наличия flip-способности.
+  // flip_ability лежит ВЛОЖЕННО внутри m.actions[] механики (см. mechanics.ts),
+  // поэтому ищем и по флагу has_flip/flip_description, и по вложенному действию.
+  const flipAbility = findFlipAbility(card)
   const hasFlip =
     card.has_flip === true ||
     (typeof card.flip_description === 'string' && card.flip_description.trim() !== '') ||
-    (Array.isArray(card.mechanics) && card.mechanics.some((m) => m && m.type === 'flip_ability'))
+    flipAbility !== null
   if (!hasFlip) return { ok: false, reason: 'У карты нет способности Флюп' }
 
   // Уже перевёрнута в этом ходу?
@@ -301,11 +320,9 @@ export function canFlipCard(
     return { ok: false, reason: 'Карта уже перевёрнута в этом ходу' }
   }
 
-  // Получаем стоимость из mechanics
-  const flipMech = Array.isArray(card.mechanics)
-    ? card.mechanics.find((m) => m && m.type === 'flip_ability')
-    : null
-  const cost = flipMech && typeof flipMech.cost_actions === 'number' ? flipMech.cost_actions : 0
+  // FLOOP (флип лицом вниз) в Card Wars всегда бесплатный — это разовая
+  // способность переворота, которая не тратит действия. Стоимость явно 0.
+  const cost = 0
 
   if (cost > 0) {
     const actionsLeft = (me as any).actions_remaining ?? (state as any).actions_remaining ?? 2

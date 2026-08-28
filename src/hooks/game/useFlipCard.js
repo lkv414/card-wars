@@ -2,16 +2,16 @@
  * useFlipCard — хук для флюпа карт на поле (RPC flip_card + outbox sync).
  */
 import { useCallback } from 'react'
-import { supabase } from '../../utils/supabase'
-import { ensureGuestId } from '../../utils/guestSession'
+import { supabase } from '@/utils/supabase'
+import { ensureGuestId } from '@/utils/guestSession'
 import { hasFlipAbility, getFlipCost } from './cardAbilities.js'
-import { applyFlipCardPatch } from '../../utils/gameStatePatch'
+import { applyFlipCardPatch } from '@/utils/gameStatePatch'
 export { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload } = {}) {
-  const flipCard = useCallback(
+  return useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
 
@@ -88,6 +88,4 @@ export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload
     },
     [game, patchGame, transport, suppressRealtimeReload]
   )
-
-  return flipCard
 }

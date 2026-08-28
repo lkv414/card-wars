@@ -116,6 +116,30 @@ export abstract class Action {
 
   /** Дополнительные параметры конкретного подкласса (для сериализации). */
   protected abstract params(): Record<string, unknown>
+
+  /**
+   * Применение действия к игровому состоянию.
+   *
+   * Реальные правила (урон, баффы, сброс и т.п.) реализуются в движке —
+   * здесь базовый каркас, чтобы механики можно было исполнять единообразно.
+   * Конкретные подклассы переопределяют этот метод.
+   */
+  apply(_ctx: GameContext): ApplyResult {
+    return { applied: false, reason: `apply() not implemented for ${this.type}` }
+  }
+}
+
+/** Минимальный контекст исполнения (заполняется движком). */
+export interface GameContext {
+  state: unknown
+  owner: unknown
+}
+
+/** Результат применения действия к состоянию. */
+export interface ApplyResult {
+  applied: boolean
+  reason?: string
+  changes?: unknown[]
 }
 
 // ─── DMG / HEAL ───
@@ -432,12 +456,43 @@ export class Immunity extends Action {
 
 export class Imperative extends Action {
   readonly verb: string
-  constructor(opts: { verb: string; target?: TargetKey; source_text?: string }) {
+  /** Свободный текст эффекта (сохраняется при гидрации нераспознанных типов). */
+  readonly effect?: string
+  constructor(opts: { verb: string; target?: TargetKey; effect?: string; source_text?: string }) {
     super({ type: "imperative", target: opts.target ?? Target.NONE, source_text: opts.source_text })
     this.verb = opts.verb
+    this.effect = opts.effect
   }
   protected params(): Record<string, unknown> {
-    return { verb: this.verb }
+    const p: Record<string, unknown> = { verb: this.verb }
+    if (this.effect) p.effect = this.effect
+    return p
+  }
+}
+
+/** Активная способность (FLOOP / ПРИЕМ) — свободный текст эффекта. */
+export class Manual extends Action {
+  readonly effect: string
+  readonly cost_actions: number
+  constructor(opts: { effect?: string; cost_actions?: number; target?: TargetKey; source_text?: string }) {
+    super({ type: "manual", target: opts.target ?? Target.NONE, source_text: opts.source_text })
+    this.effect = opts.effect ?? ""
+    this.cost_actions = opts.cost_actions ?? 0
+  }
+  protected params(): Record<string, unknown> {
+    return { effect: this.effect, cost_actions: this.cost_actions }
+  }
+}
+
+/** Пассивный бонус (conditional/persistent) — свободный текст эффекта. */
+export class Passive extends Action {
+  readonly effect: string
+  constructor(opts: { effect?: string; target?: TargetKey; source_text?: string }) {
+    super({ type: "passive", target: opts.target ?? Target.NONE, source_text: opts.source_text })
+    this.effect = opts.effect ?? ""
+  }
+  protected params(): Record<string, unknown> {
+    return { effect: this.effect }
   }
 }
 
@@ -587,6 +642,16 @@ export function hydrateAction(json: Record<string, unknown>): Action {
   const source_text = typeof json.source_text === "string" ? json.source_text : ""
   const amount = typeof json.amount === "number" ? json.amount : Number(json.amount) || 0
 
+  // Контракт с Python: draw/discard/destroy/gain_actions/search/peek/mill
+  // сериализуются с ключом `count`. Читаем count, с fallback на amount.
+  const readCount = (def = 1): number => {
+    const c = json.count
+    if (typeof c === "number" && c > 0) return c
+    if (typeof json.amount === "number" && json.amount > 0) return json.amount
+    const n = Number(c ?? json.amount)
+    return Number.isFinite(n) && n > 0 ? n : def
+  }
+
   switch (type) {
     case "deal_damage":
       return new DealDamage({
@@ -611,7 +676,7 @@ export function hydrateAction(json: Record<string, unknown>): Action {
       })
     case "draw_cards":
       return new DrawCards({
-        count: amount,
+        count: readCount(1),
         target,
         source: typeof json.source === "string" ? json.source : "deck",
         filter: typeof json.filter === "string" ? json.filter : "",
@@ -619,7 +684,7 @@ export function hydrateAction(json: Record<string, unknown>): Action {
       })
     case "discard_cards":
       return new DiscardCards({
-        count: amount,
+        count: readCount(1),
         target,
         source: typeof json.source === "string" ? json.source : "hand",
         random: json.random === true,
@@ -628,13 +693,13 @@ export function hydrateAction(json: Record<string, unknown>): Action {
     case "search":
       return new Search({
         source: typeof json.source === "string" ? json.source : "deck",
-        count: amount || 1,
+        count: readCount(1),
         filter: typeof json.filter === "string" ? json.filter : "any",
         destination: target,
         source_text,
       })
     case "destroy":
-      return new Destroy({ target, count: amount || 1, source_text })
+      return new Destroy({ target, count: readCount(1), source_text })
     case "move":
       return new Move({
         target,
@@ -675,7 +740,20 @@ export function hydrateAction(json: Record<string, unknown>): Action {
       })
     }
     case "gain_actions":
-      return new GainActions({ count: amount, source_text })
+      return new GainActions({ count: readCount(1), source_text })
+    case "manual":
+      return new Manual({
+        effect: typeof json.effect === "string" ? json.effect : "",
+        cost_actions: typeof json.cost_actions === "number" ? json.cost_actions : 0,
+        target,
+        source_text,
+      })
+    case "passive":
+      return new Passive({
+        effect: typeof json.effect === "string" ? json.effect : "",
+        target,
+        source_text,
+      })
     case "flip_ability":
       return new FlipAbility({
         cost: typeof json.cost === "number" ? json.cost : 0,
@@ -716,19 +794,24 @@ export function hydrateAction(json: Record<string, unknown>): Action {
       })
     case "peek":
       return new Peek({
-        count: amount || 1,
+        count: readCount(1),
         source: typeof json.source === "string" ? json.source : "deck",
         source_text,
       })
     case "mill":
       return new Mill({
-        count: amount || 1,
+        count: readCount(1),
         source: typeof json.source === "string" ? json.source : "deck",
         source_text,
       })
     default:
-      // generic — храним как manual нераспознанное
-      return new Imperative({ verb: type, target, source_text })
+      // generic — храним как manual нераспознанное, но сохраняем эффект
+      return new Imperative({
+        verb: type,
+        target,
+        effect: typeof json.effect === "string" ? json.effect : undefined,
+        source_text,
+      })
   }
 }
 

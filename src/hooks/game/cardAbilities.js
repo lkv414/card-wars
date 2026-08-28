@@ -25,7 +25,10 @@ export function hasFlipAbility(card) {
     return true
   }
   if (Array.isArray(card.mechanics)) {
-    return card.mechanics.some((m) => m && m.type === 'flip_ability')
+    // flip_ability лежит ВЛОЖЕННО внутри m.actions[] (см. workers/.../mechanics.ts)
+    return card.mechanics.some((m) =>
+      m && Array.isArray(m.actions) && m.actions.some((a) => a && a.type === 'flip_ability')
+    )
   }
   return false
 }
@@ -41,6 +44,7 @@ export function hasFlipAbility(card) {
 export function getFlipCost(card) {
   if (!card) return 0
   if (!Array.isArray(card.mechanics)) return 0
-  const mech = card.mechanics.find((m) => m && m.type === 'flip_ability')
-  return mech && typeof mech.cost_actions === 'number' ? mech.cost_actions : 0
+  // FLOOP (флип лицом вниз) в Card Wars всегда бесплатный — разовая
+  // способность переворота, не тратит действия.
+  return 0
 }

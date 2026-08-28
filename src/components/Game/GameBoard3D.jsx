@@ -176,6 +176,8 @@ export function GameBoard3D({
   const pointerRef = useRef({ x: 0, y: 0 })
   const placingLockRef = useRef(false)
   const cardIndexRef = useRef(null)
+  const draggingRef = useRef(false)
+  const dragGhostRef = useRef(null)
   const controlsRef = useRef(null)
 
   useEffect(() => {
@@ -255,13 +257,26 @@ export function GameBoard3D({
   // === Pointer tracking ===
   const updatePointer = useCallback((clientX, clientY) => {
     const el = boardRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return
-    pointerRef.current = {
-      x: ((clientX - rect.left) / rect.width) * 2 - 1,
-      y: -((clientY - rect.top) / rect.height) * 2 + 1,
+    if (el) {
+      const rect = el.getBoundingClientRect()
+      if (rect.width > 0 && rect.height > 0) {
+        pointerRef.current = {
+          x: ((clientX - rect.left) / rect.width) * 2 - 1,
+          y: -((clientY - rect.top) / rect.height) * 2 + 1,
+        }
+      }
     }
+    // «Призрак» карты летит за курсором во время drag (как в Card Wars).
+    if (draggingRef.current && dragGhostRef.current) {
+      dragGhostRef.current.style.left = `${clientX}px`
+      dragGhostRef.current.style.top = `${clientY}px`
+    }
+  }, [])
+
+  /** Устанавливает/снимает dragging и держит draggingRef для позиции призрака. */
+  const setDragging = useCallback((idx) => {
+    draggingRef.current = idx != null
+    setDraggingCardIndex(idx)
   }, [])
 
   useEffect(() => {
@@ -634,9 +649,20 @@ export function GameBoard3D({
         isApplying={isApplying}
         actionError={actionError}
         draggingCardIndex={draggingCardIndex}
-        setDraggingCardIndex={setDraggingCardIndex}
+        setDraggingCardIndex={setDragging}
         updatePointer={updatePointer}
       />
+
+      {/* «Призрак» перетаскиваемой карты — летит за курсором (Card Wars style). */}
+      {draggingCardIndex != null && handCards[draggingCardIndex] && (
+        <div ref={dragGhostRef} className="game-drag-ghost" aria-hidden>
+          {handCards[draggingCardIndex]?.image_url ? (
+            <img src={handCards[draggingCardIndex].image_url} alt="" />
+          ) : (
+            <span>{handCards[draggingCardIndex]?.name || 'Карта'}</span>
+          )}
+        </div>
+      )}
     </div>
   )
 }

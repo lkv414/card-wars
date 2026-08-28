@@ -316,6 +316,35 @@
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.55));
 }
 
+/* Летящая за курсором карта из руки при перетаскивании на поле. */
+.game-drag-ghost {
+  position: fixed;
+  transform: translate(-50%, -50%) rotate(-3deg) scale(1.05);
+  z-index: 1000;
+  pointer-events: none;
+  width: 92px;
+  height: 128px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1a1a2e;
+  border: 2px solid var(--card-land-border, #e67e22);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.game-drag-ghost img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
 .land-setup-chip--empty {
   opacity: 0.5;
   border-style: dashed;

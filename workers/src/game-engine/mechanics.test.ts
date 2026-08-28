@@ -10,7 +10,6 @@ import {
   Imperative,
   hydrateAction,
   hydrateMechanics,
-  type Action,
 } from "./mechanics"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"

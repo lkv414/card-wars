@@ -52,7 +52,7 @@ const productionEnvDevPlugin = {
   },
 }
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   plugins: [react(), productionEnvDevPlugin],
   resolve: {
     alias: {

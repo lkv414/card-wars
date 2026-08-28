@@ -44,24 +44,25 @@ export function isSlotEmpty(cards, slotType) {
   return !creatureCard
 }
 
-export function canPlayCardToSlot(cards, card, zoneLandType = null) {
+export function canPlayCardToSlot(cards, card, zoneLandType = null, rule = 'strict') {
   const slot = getCardSlotType(card)
   if (!isSlotEmpty(cards, slot)) return false
   if (slot === SLOT_BUILDING && getCardType(card) !== 'building') return false
   if (slot === SLOT_CREATURE && getCardType(card) === 'building') return false
   // Card Wars rule: карта ложится только на зону с совпадающей землёй
   // (универсальные `any`/rainbow и зоны без земли принимают всё).
-  if (getCardType(card) !== 'spell' && !isLandCompatible(getCardLandType(card), zoneLandType)) {
+  // При правиле 'free' проверка земли отключается.
+  if (rule !== 'free' && getCardType(card) !== 'spell' && !isLandCompatible(getCardLandType(card), zoneLandType)) {
     return false
   }
   return true
 }
 
-export function findPlayableZone(cardsByZone, card) {
+export function findPlayableZone(cardsByZone, card, rule = 'strict') {
   if (!Array.isArray(cardsByZone)) return -1
   for (let i = 0; i < cardsByZone.length; i++) {
     const cards = Array.isArray(cardsByZone[i]) ? cardsByZone[i] : cardsByZone[i]?.cards || []
-    if (canPlayCardToSlot(cards, card)) return i
+    if (canPlayCardToSlot(cards, card, null, rule)) return i
   }
   return -1
 }

@@ -37,6 +37,7 @@ import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
 import { useGraphicsSettings } from '../../hooks/useGraphicsSettings'
 import { safePlayers, safePlayer } from '../../utils/safePlayer'
 import { getCardLandType, isLandCompatible } from '../../utils/cardFields'
+import { LAND_PLACEMENT_RULES, normalizeLandPlacementRule } from '../../constants/game'
 import { getCardSlotType, isSlotEmpty } from '../../hooks/game/zoneCards'
 
 import {
@@ -350,13 +351,17 @@ export function GameBoard3D({
       if (!card || !target) return
 
       // Card Wars rule: карта only на зону с совпадающей землёй (snap-back).
-      const myZoneRows = normalizePlayerZoneRows(me?.zones)
-      const row = myZoneRows[target.zoneIndex] || {}
-      const zoneLand = resolveLandType(row)
-      if (!isLandCompatible(getCardLandType(card), zoneLand)) {
-        toast('error', 'Карта не подходит к этой земле')
-        setDraggingCardIndex(null)
-        return
+      // Правило берётся из настроек лобби (game_state.landPlacementRule).
+      const landRule = normalizeLandPlacementRule(game.game_state?.landPlacementRule)
+      if (landRule === LAND_PLACEMENT_RULES.STRICT) {
+        const myZoneRows = normalizePlayerZoneRows(me?.zones)
+        const row = myZoneRows[target.zoneIndex] || {}
+        const zoneLand = resolveLandType(row)
+        if (!isLandCompatible(getCardLandType(card), zoneLand)) {
+          toast('error', 'Карта не подходит к этой земле')
+          setDraggingCardIndex(null)
+          return
+        }
       }
 
       placingLockRef.current = true
@@ -460,9 +465,11 @@ export function GameBoard3D({
 
             // Card Wars: во время перетаскивания/выбора карты подсвечиваем
             // свои зоны — цветом земли (valid) или красным (invalid), если
-            // земля карты не совпадает с землёй зоны.
+            // земля карты не совпадает с землёй зоны. При правиле 'free'
+            // подсветка негативная не показывается (ставить можно на любую).
             let dropState = null
-            if (activeCard && zone.isOwnerMe && isYourTurn && !inSetup && !isFinished) {
+            const landRule = normalizeLandPlacementRule(game.game_state?.landPlacementRule)
+            if (activeCard && zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && landRule === LAND_PLACEMENT_RULES.STRICT) {
               const cardLand = getCardLandType(activeCard)
               const zoneLand = resolveLandType(row)
               if (!isLandCompatible(cardLand, zoneLand)) {

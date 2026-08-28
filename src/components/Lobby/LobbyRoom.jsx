@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { getGuestId } from '../../utils/guestId'
 import { copyToClipboard } from '../../utils/clipboard'
 import { isLobbyDeckPlayable } from '../../utils/lobbyDeck'
+import { LAND_PLACEMENT_RULES, LAND_PLACEMENT_RULE_LABELS } from '../../constants/game'
 import './Lobby.css'
 
 export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost, hostId, onReady, onLeave, onStartGame, toast }) {
   const [copied, setCopied] = useState(false)
+  const [landPlacementRule, setLandPlacementRule] = useState(LAND_PLACEMENT_RULES.STRICT)
   const guestId = getGuestId()
 
   const myPlayer = players.find(p => p.player_id === guestId)
@@ -37,7 +39,7 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
       toast?.('error', `Ждём колоды: ${missingDeckNames.join(', ')}`)
       return
     }
-    onStartGame?.()
+    onStartGame?.(landPlacementRule)
   }
 
   return (
@@ -133,6 +135,25 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
             >
               {amReady ? '✓ Вы готовы' : 'Готов'}
             </button>
+
+            {isHost && players.length >= 2 && (
+              <div className="lobby-settings" role="group" aria-label="Правила земель">
+                <span className="lobby-settings__label">Типизация земель</span>
+                <div className="lobby-settings__options">
+                  {Object.values(LAND_PLACEMENT_RULES).map((rule) => (
+                    <button
+                      key={rule}
+                      type="button"
+                      className={`lobby-settings__opt ${landPlacementRule === rule ? 'is-active' : ''}`}
+                      aria-pressed={landPlacementRule === rule}
+                      onClick={() => setLandPlacementRule(rule)}
+                    >
+                      {LAND_PLACEMENT_RULE_LABELS[rule]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {isHost && players.length >= 2 && (
               <button

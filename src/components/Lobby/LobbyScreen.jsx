@@ -67,11 +67,11 @@ export function LobbyScreen({ toast }) {
     return () => { cancelled = true }
   }, [status, lobbyId, pendingGameId, navigate, toast])
 
-  const handleStartGame = async () => {
+  const handleStartGame = async (landPlacementRule) => {
     if (!lobbyId) return
     setSubmitting(true)
     try {
-      const result = await startGame()
+      const result = await startGame(landPlacementRule)
       if (result?.error) {
         toast?.('error', result.error)
         return

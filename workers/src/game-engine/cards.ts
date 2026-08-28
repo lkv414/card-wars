@@ -43,6 +43,23 @@ function withPlayer(state: GameState, playerId: string, fn: (p: PlayerState) => 
   }
 }
 
+/** Landscape type of a card — falls back to the catalog entry. */
+function getCardLandType(state: GameState, card: Card): string | null {
+  if (card.is_rainbow) return 'any'
+  const fromCard = typeof card.land_type === 'string' ? card.land_type : null
+  if (fromCard) return fromCard
+  const cat = state.catalog?.[card.id]
+  const catLand = cat?.land_type
+  return typeof catLand === 'string' ? catLand : null
+}
+
+/** Card Wars land rule: a card lands only on a matching landscape. */
+function isLandCompatible(cardLand: string | null, zoneLand: string | null): boolean {
+  if (!cardLand || cardLand === 'any') return true
+  if (!zoneLand || zoneLand === 'any') return true
+  return cardLand === zoneLand
+}
+
 function updateZones(player: PlayerState, zonePosition: number, cards: Card[]): PlayerState {
   const zones = player.zones.map((z) => (z.zone_position === zonePosition ? { ...z, cards } : z))
   return { ...player, zones }
@@ -94,6 +111,18 @@ export function playCard(
   const zone = getZone(me, zonePosition)
   if (!zone) return err('Зона не найдена')
   if (zone.cards.length >= ZONE_LIMIT) return err('Земля полная')
+
+  // Land-placement rule (lobby setting). 'strict' (default) requires the
+  // card's landscape to match the zone's landscape — universal/rainbow/spell
+  // cards are always allowed. 'free' skips the check entirely.
+  const rule = ((state.game_state?.landPlacementRule as string) || 'strict')
+  if (rule === 'strict' && card.card_type !== 'spell') {
+    const cardLand = getCardLandType(state, card)
+    const zoneLand = (zone.land_type as string) || null
+    if (!isLandCompatible(cardLand, zoneLand)) {
+      return err('Карта не подходит к этой земле')
+    }
+  }
 
   // Slot-specific guard — building cards can only go on the matching slot.
   if (slot === 'building') {

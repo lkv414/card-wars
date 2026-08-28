@@ -48,6 +48,8 @@ export interface Zone {
   cards: Card[]
   /** Optional land_id binding this slot to a landscape type. */
   land_id?: string | null
+  /** Landscape type of the bound land (corn/ice/good/swamp/sand/blue/any). */
+  land_type?: string | null
 }
 
 /** Per-player runtime state. */

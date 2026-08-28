@@ -177,6 +177,39 @@ describe('playCard', () => {
     expect(result.state.version).toBe(state.version + 1)
   })
 
+  it('enforces land matching when rule is strict (default)', () => {
+    const card = makeCard({ id: 'corn-creature', card_type: 'creature', land_type: 'corn', cost: 1 })
+    const state = makeTwoPlayerAttackReady()
+    state.players[0]!.hand = [card]
+    state.players[0]!.zones[1]!.land_type = 'swamp'
+    state.players[0]!.actions_remaining = 2
+    const result = applyAction(state, { type: 'play_card', cardIndex: 0, zonePosition: 2 }, 'p1')
+    expect(isError(result)).toBe(true)
+    if (!isError(result)) return
+    expect(result.error).toMatch(/не подходит/)
+  })
+
+  it('allows mismatched land when rule is free', () => {
+    const card = makeCard({ id: 'corn-creature', card_type: 'creature', land_type: 'corn', cost: 1 })
+    const state = makeTwoPlayerAttackReady()
+    state.players[0]!.hand = [card]
+    state.players[0]!.zones[1]!.land_type = 'swamp'
+    state.players[0]!.actions_remaining = 2
+    state.game_state = { ...(state.game_state ?? {}), landPlacementRule: 'free' }
+    const result = applyAction(state, { type: 'play_card', cardIndex: 0, zonePosition: 2 }, 'p1')
+    expect(isError(result)).toBe(false)
+  })
+
+  it('allows matching land under strict rule', () => {
+    const card = makeCard({ id: 'corn-creature', card_type: 'creature', land_type: 'corn', cost: 1 })
+    const state = makeTwoPlayerAttackReady()
+    state.players[0]!.hand = [card]
+    state.players[0]!.zones[1]!.land_type = 'corn'
+    state.players[0]!.actions_remaining = 2
+    const result = applyAction(state, { type: 'play_card', cardIndex: 0, zonePosition: 2 }, 'p1')
+    expect(isError(result)).toBe(false)
+  })
+
   it('rejects out-of-range cardIndex', () => {
     const state = makeTwoPlayerAttackReady()
     const result = applyAction(state, { type: 'play_card', cardIndex: 99, zonePosition: 1 }, 'p1')

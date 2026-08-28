@@ -1601,7 +1601,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.start_game_for_lobby(p_guest_id text, p_lobby_id uuid)
+CREATE OR REPLACE FUNCTION public.start_game_for_lobby(p_guest_id text, p_lobby_id uuid, p_land_placement_rule text DEFAULT 'strict')
  RETURNS uuid
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -1684,6 +1684,7 @@ BEGIN
       'currentTurn', 0,
       'turnPhase', 'setup',
       'firstPlayerId', v_first_player_id,
+      'landPlacementRule', coalesce(nullif(p_land_placement_rule, ''), 'strict'),
       'log', v_log
     ),
     1, now()

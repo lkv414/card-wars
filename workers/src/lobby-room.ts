@@ -153,6 +153,7 @@ export class LobbyRoom extends DurableObject<Env> {
         await callRpc(this.env, 'start_game_for_lobby', {
           p_guest_id: clientId,
           p_lobby_id: lobbyId,
+          p_land_placement_rule: payload.landPlacementRule ?? 'strict',
         })
         return
       case 'reorder_lands':

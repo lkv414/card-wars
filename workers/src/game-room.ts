@@ -560,12 +560,13 @@ function makeDevPlayer(playerId: string, order: number): PlayerState {
   }
 }
 
-function rawZone(raw: unknown): { zone_position: number; cards: any[]; land_id?: string | null } {
+function rawZone(raw: unknown): { zone_position: number; cards: any[]; land_id?: string | null; land_type?: string | null } {
   const obj = raw && typeof raw === 'object' ? (raw as any) : {}
   return {
     zone_position: asInt(obj.zone_position, 0),
     cards: asArray(obj.cards),
     land_id: obj.land_id ?? null,
+    land_type: obj.land_type ?? null,
   }
 }
 

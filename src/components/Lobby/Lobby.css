@@ -433,3 +433,40 @@
   .lobby-btn { transition: none; }
   .lobby-btn:hover:not(:disabled) { transform: none; }
 }
+
+/* Настройки правил в лобби (хост) */
+.lobby-settings {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.lobby-settings__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffd9a0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.lobby-settings__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.lobby-settings__opt {
+  flex: 1 1 auto;
+  padding: 0.5rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f4f4f4;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.lobby-settings__opt.is-active {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  border-color: #ffb74d;
+  color: #1a1a2e;
+}

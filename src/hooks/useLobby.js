@@ -251,16 +251,17 @@ export function useLobby() {
     await fetch(`${getGameWsBaseUrl()}/lobby/${id}/notify`, { method: 'POST' }).catch(() => {})
   }, [lobbyTransport])
 
-  const startGame = useCallback(async () => {
+  const startGame = useCallback(async (landPlacementRule = 'strict') => {
     const id = lobbyIdRef.current
     if (!id) return { error: 'Лобби не найдено' }
     try {
       if (lobbyTransport?.enabled && typeof lobbyTransport.sendActionAsync === 'function') {
-        await lobbyTransport.sendActionAsync('start_game', {})
+        await lobbyTransport.sendActionAsync('start_game', { landPlacementRule })
       } else {
         const { error: rpcErr } = await supabase.rpc('start_game_for_lobby', {
           p_guest_id: getGuestId(),
           p_lobby_id: id,
+          p_land_placement_rule: landPlacementRule,
         })
         if (rpcErr) throw new Error(rpcErr.message)
       }

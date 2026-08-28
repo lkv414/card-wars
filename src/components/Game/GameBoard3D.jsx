@@ -557,6 +557,16 @@ export function GameBoard3D({
               />
             )
           })}
+
+          {/* Raycast-drop карты прямо на 3D-доску (как в Card Wars).
+              Внутри Canvas — PlacementPointerRelease использует useThree(). */}
+          <PlacementPointerRelease
+            active={draggingCardIndex !== null}
+            pointerRef={pointerRef}
+            boardRectRef={boardRef}
+            cardIndexRef={cardIndexRef}
+            onRelease={handleRayRelease}
+          />
         </GameExperience>
       </GameCanvas>
 
@@ -626,15 +636,6 @@ export function GameBoard3D({
         draggingCardIndex={draggingCardIndex}
         setDraggingCardIndex={setDraggingCardIndex}
         updatePointer={updatePointer}
-      />
-
-      {/* Raycast-drop карты прямо на 3D-доску (как в Card Wars) */}
-      <PlacementPointerRelease
-        active={draggingCardIndex !== null}
-        pointerRef={pointerRef}
-        boardRectRef={boardRef}
-        cardIndexRef={cardIndexRef}
-        onRelease={handleRayRelease}
       />
     </div>
   )

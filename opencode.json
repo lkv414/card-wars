@@ -5,6 +5,11 @@
       "type": "remote",
       "url": "https://mcp.supabase.com/mcp?project_ref=<supabase-project>",
       "enabled": true
+    },
+    "docker": {
+      "type": "local",
+      "command": ["C:\\Users\\<redacted>\\AppData\\Local\\hermes\\bin\\uvx.exe", "docker-mcp-server"],
+      "enabled": true
     }
   }
 }

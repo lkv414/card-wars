@@ -5,10 +5,11 @@ DECLARE
 BEGIN
     RAISE NOTICE '=== TRIGGERS ON game_players ===';
     FOR rec IN
-        SELECT tgname, proname AS func_name
-        FROM pg_trigger
-        WHERE tgrelid = 'public.game_players'::regclass
-          AND NOT tgisinternal
+        SELECT tg.tgname, p.proname AS func_name
+        FROM pg_trigger tg
+        JOIN pg_proc p ON p.oid = tg.tgfoid
+        WHERE tg.tgrelid = 'public.game_players'::regclass
+          AND NOT tg.tgisinternal
     LOOP
         RAISE NOTICE 'Trigger: %, Function: %', rec.tgname, rec.func_name;
     END LOOP;

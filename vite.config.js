@@ -2,25 +2,63 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { readFileSync, existsSync } from 'node:fs'
+
+/* global process */
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(__dirname)
 
 /**
- * Reads `.env.production` once and exposes its values through Vite's
- * `define` for **build** runs, plus a tiny dev-server middleware that
- * injects the same keys into `import.meta.env.VITE_*` for `npm run dev`.
+ * Source of truth for VITE_* values per command:
+ *   - `npm run build` (NODE_ENV=production) → bake `.env.production` into
+ *     the bundle via `define`. `import.meta.env.VITE_X` references in
+ *     source become string literals.
+ *   - `npm run dev` → Vite auto-loads .env.development, .env, .env.local
+ *     (in that order) and exposes them at runtime via
+ *     `import.meta.env.VITE_*`. No transform needed — fresh checkouts
+ *     without any local env still get the committed `.env.production`
+ *     values via the plugin's dev transform below.
  *
- * Why: Vite by default only loads .env / .env.local / .env.development in
- * dev mode. Without this plugin, a fresh `npm install && npm run dev`
- * would print the "Supabase не настроен" warning and show the
- * SupabaseConfigMissing UI even though `.env.production` is committed.
- *
- * Local overrides: a developer can drop a `.env.local` (gitignored) and
- * any value defined there will win because Vite loads it after this
- * plugin runs.
+ *   Local override: drop a .env.local (gitignored) with VITE_* keys and
+ *   Vite will see them at runtime in the dev server, win for that run.
+ *   `productionEnvDevPlugin.transform` then re-checks: if a VITE_ value
+ *   is present in `.env.local`, it skips rewriting so the developer's
+ *   override sticks. Otherwise it falls back to `.env.production`.
  */
-const envFromProduction = loadEnv('production', projectRoot, 'VITE_')
+
+const loadVite = (mode) => loadEnv(mode, projectRoot, 'VITE_')
+const fromProduction = loadVite('production')
+
+/**
+ * Read .env.local directly (Vite won't expose it via loadEnv cleanly).
+ */
+function parseLocalEnv() {
+  try {
+    const file = resolve(projectRoot, '.env.local')
+    if (!existsSync(file)) return {}
+    const raw = readFileSync(file, 'utf-8')
+    const out = {}
+    for (const line of raw.split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Z][A-Z0-9_]*)\s*=\s*(.*)\s*$/i)
+      if (!m) continue
+      let v = m[2].trim()
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        v = v.slice(1, -1)
+      }
+      if (!m[1].startsWith('VITE_')) continue
+      out[m[1]] = v
+    }
+    return out
+  } catch {
+    return {}
+  }
+}
+
+const fromLocal = parseLocalEnv()
+const isDevBuild = process.env.NODE_ENV !== 'production'
+// Effective dev values: .env.local wins, then .env.production fallback.
+const envFromProduction = isDevBuild ? { ...fromProduction, ...fromLocal } : fromProduction
 
 /** Convert {VITE_X: "value"} → {`import.meta.env.VITE_X`: JSON.stringify(value)}. */
 function toDefine(env) {

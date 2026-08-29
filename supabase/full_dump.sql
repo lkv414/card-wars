@@ -1,4 +1,4 @@
-ёё-- Full data dump of public schema
+----- Full data dump of public schema
 -- Generated via Supabase MCP (execute_sql) on 2026-08-28.
 -- Load AFTER migrations (schema) is applied. Inserts are ordered parent -> child
 -- to satisfy foreign-key constraints.

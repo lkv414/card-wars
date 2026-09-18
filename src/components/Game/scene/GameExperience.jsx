@@ -1,14 +1,33 @@
 /**
- * GameExperience — слой «атмосферы» 3D-сцены.
+ * GameExperience — слой «атмосферы» 3D-сцены: свет, туман, стол, камера.
  *
- * По паттерну testing_3d (Experience): освещение + fog + бесконечный пол +
- * IBL Environment (обязательно из-за metalness) + OrbitControls + AdaptiveCamera
- * (подгоняет позицию камеры под viewport).
+ * Что изменилось по PERFORMANCE_AUDIT_3D.md (🔴 Критично):
+ *
+ *  1. Убран `<Environment preset="city" />`. Он тащил potsdamer_platz_1k.hdr
+ *     (~1.7 МБ) с внешнего CDN `raw.githack.com`, а так как внутри useLoader —
+ *     подвешивал Suspense, чей `fallback={null}` в GameCanvas размонтировал
+ *     ВСЮ сцену на время загрузки (в сетях без доступа к CDN — навсегда).
+ *     Сцена плоская и почти вся матовая (metalness ≤ 0.1), поэтому IBL давал
+ *     визуально мало. Заменён на связку ambient + hemisphere + directional,
+ *     которая не требует ни сети, ни PMREM.
+ *
+ *  2. Убран `castShadow` — в проекте нет ни одного объекта, отбрасывающего
+ *     тень, так что shadow pass был чистым расходом.
+ *
+ *  3. Туман сдвинут так, чтобы он реально работал: камера стоит в ~6.6 юнитах
+ *     от центра, игровое поле — в диапазоне 6.2–8.8, дальний край стола —
+ *     ~13.6. Прежние near=18/far=40 не затуманивали вообще ничего, но
+ *     компилировали USE_FOG во все материалы. Теперь near=10/far=24: поле
+ *     не тронуто, край стола мягко уходит в фон (skills/threejs-scenes:
+ *     «fog color should harmonize with background»).
+ *
+ *  4. AdaptiveCamera дёргает invalidate() — в frameloop="demand" прямая
+ *     мутация камеры минует R3F-реконсилятор и сама по себе не вызывает рендер.
  */
 /* eslint-disable react-hooks/immutability -- camera/controls mutations are standard R3F practice */
 import { useLayoutEffect } from 'react'
 import { useThree } from '@react-three/fiber'
-import { OrbitControls, Environment } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 
 import {
   computeBoardCameraDistance,
@@ -16,16 +35,20 @@ import {
 } from '../../../utils/gameObjectPlacement'
 import { TableDecor } from './TableDecor'
 
-const FOG_COLOR = '#4a5d6a'
-const FOG_NEAR = 18
-const FOG_FAR = 40
+const FOG_COLOR = '#3d4f5f'
+const FOG_NEAR = 10
+const FOG_FAR = 24
+
+/** Стабильная цель OrbitControls — новый массив в пропсах ломает memo. */
+const ORBIT_TARGET = getBoardCenter()
 
 /**
  * Подгоняет камеру под размер viewport — поле всегда по центру и в кадре.
- * По паттерну testing_3d: чистый useLayoutEffect с одной ответственностью.
  */
 function AdaptiveCamera({ playerIndex, playerCount, controlsRef }) {
-  const { camera, size } = useThree()
+  const camera = useThree((state) => state.camera)
+  const size = useThree((state) => state.size)
+  const invalidate = useThree((state) => state.invalidate)
 
   useLayoutEffect(() => {
     const aspect = size.width / Math.max(size.height, 1)
@@ -49,7 +72,7 @@ function AdaptiveCamera({ playerIndex, playerCount, controlsRef }) {
     }
 
     camera.lookAt(tx, ty, tz)
-    const newFar = Math.max(80, dist * 4)
+    const newFar = Math.max(60, dist * 4)
     if (camera.far !== newFar) camera.far = newFar
     camera.updateProjectionMatrix()
 
@@ -60,7 +83,10 @@ function AdaptiveCamera({ playerIndex, playerCount, controlsRef }) {
       controls.maxDistance = dist * 1.45
       controls.update()
     }
-  }, [camera, size.width, size.height, playerIndex, playerCount, controlsRef])
+
+    // Мутация камеры в обход реконсилятора — будим рендер вручную.
+    invalidate?.()
+  }, [camera, size.width, size.height, playerIndex, playerCount, controlsRef, invalidate])
 
   return null
 }
@@ -74,28 +100,13 @@ export function GameExperience({ playerIndex, playerCount, controlsRef, children
       <color attach="background" args={['#3d4f5f']} />
       <fog attach="fog" args={[FOG_COLOR, FOG_NEAR, FOG_FAR]} />
 
-      {/* IBL — обязателен из-за metalness на картах */}
-      <Environment preset="city" />
+      {/* Освещение без IBL: ambient + hemisphere как «заполняющий» свет,
+          один directional как ключевой. Никакой сети и никакого PMREM. */}
+      <ambientLight intensity={0.55} />
+      <hemisphereLight args={['#e8eef2', '#4a3728', 0.75]} />
+      <directionalLight position={[4, 6, 3]} intensity={1.6} />
+      <pointLight position={[0, 5, 2]} intensity={0.3} color="#fff5e6" distance={14} decay={2} />
 
-      <ambientLight intensity={0.35} />
-      <hemisphereLight args={['#e8eef2', '#4a3728', 0.5]} />
-      <directionalLight
-        position={[4, 6, 3]}
-        intensity={1.4}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-far={24}
-        shadow-camera-left={-7}
-        shadow-camera-right={7}
-        shadow-camera-top={7}
-        shadow-camera-bottom={-7}
-        shadow-bias={-0.0002}
-      />
-      <pointLight position={[0, 5, 2]} intensity={0.25} color="#fff5e6" distance={14} decay={2} />
-
-      {/* Бесконечный пол вместо кастомного PlayFieldGrid */}
-      {/* Круглый деревянный стол + сукно (вместо бесконечного Grid) */}
       <TableDecor playerCount={playerCount} />
 
       <AdaptiveCamera
@@ -106,7 +117,7 @@ export function GameExperience({ playerIndex, playerCount, controlsRef, children
 
       <OrbitControls
         ref={controlsRef}
-        target={getBoardCenter()}
+        target={ORBIT_TARGET}
         enablePan={false}
         minPolarAngle={Math.PI / 4}
         maxPolarAngle={Math.PI / 2.05}

@@ -1,78 +1,84 @@
 /**
  * GameBoard3D — корневой компонент игровой 3D-сцены.
  *
- * По паттерну testing_3d: один owner стейта (useState здесь), чистая обёртка:
+ * Что сделано по PERFORMANCE_AUDIT_3D.md (🔴 Критично):
  *
- *   <div game-board-3d>
- *     <GameCanvas>
- *       <GameExperience>
- *         <OrbitControls> + зоны (GameLand + GameObject для карт)
- *       </GameExperience>
- *     </GameCanvas>
- *     <DamageFlashOverlay />
- *     <LandSetupOverlay />   ← если game.status === 'setup'
- *     <GamePanel />          ← HUDOverlay (hand, top bar, banners) ВНЕ Canvas
- *   </div>
+ *  1. Вынесена чистая derivation-логика в `useBoardModel(game, playerId, landCatalog)`
+ *     (gameBoard3D/useBoardModel.js) → `zones` строятся ОДИН раз за рендер, без
+ *     промежуточных аллокаций.
  *
- * Вся 3D-логика вынесена в scene/*; домен (game, players, WS, RPC) приходит
- * сверху как пропы и не меняется.
+ *  2. Извлечён memo-компонент `<ZoneColumn>` (gameBoard3D/ZoneColumn.jsx):
+ *     рендер колонки стабилен при изменении только одной зоны. memo на нём
+ *     теперь реально работает, потому что:
+ *       - positions/rotations — модульные константы (sceneResources.js);
+ *       - все колбэки — useCallback в GameBoard3D с refs на `activeCard`,
+ *         `handCards`, `setDraggingCardIndex`;
+ *       - `resolveCardVisual` мемоизирован по карте + каталогу.
+ *
+ *  3. Убраны лишние баги:
+ *       - GameBoard3D передавал onClick, GameLand ждал onLandClick → клики
+ *         мёртвые. GameLand теперь принимает ОБА (GameBoard3D оставляет onClick).
+ *       - registerPlayableSlot подключён в SlotPad → placementRaycast больше
+ *         не делает scene.traverse() на каждый drop.
+ *       - useEffect при изменении damageFlash=false восстанавливает позицию
+ *         карты через общий сеттер (см. GameObject).
+ *       - getBoundingClientRect кэшируется на resize (а не вызывается на
+ *         каждый pointermove).
+ *       - таймеры triggerDamageVisual чистятся в cleanup.
+ *       - battleEvents ограничен N последними записями.
+ *
+ *  4. resolveCardVisual стабилизирован через мемоизированный helper.
+ *
+ *  5. Тени выключены полностью (Canvas без shadows, нет castShadow в сцене).
  */
 import { useMemo, useState, useCallback, useRef, useEffect, memo } from 'react'
 
 import { GameCanvas } from './scene/GameCanvas'
 import { GameExperience } from './scene/GameExperience'
-import { GameObject } from './scene/GameObject'
-import { GameLand } from './scene/GameLand'
 import { GamePanel } from './scene/GamePanel'
 import { PlayerNameLabels } from './scene/PlayerNameLabels'
 import { GameDamageFloater } from './scene/GameDamageFloater'
+import { BoardOutlines } from './scene/BoardOutlines'
 
 import { DamageFlashOverlay } from './DamageFlashOverlay'
 import { LandSetupOverlay } from './LandSetupOverlay'
 import { ZoneCardActionMenu } from './hud/ZoneCardActionMenu'
 import { PlacementPointerRelease } from './gameBoard3D/PlacementPointerRelease'
+import { useBoardModel } from './gameBoard3D/useBoardModel'
+import { ZoneColumn } from './gameBoard3D/ZoneColumn'
 
 import { canPlayerDealDamage } from '../../hooks/game/combat'
 import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
-import { useGraphicsSettings } from '../../hooks/useGraphicsSettings'
-import { safePlayers, safePlayer } from '../../utils/safePlayer'
+import {
+  LAND_PLACEMENT_RULES,
+  normalizeLandPlacementRule,
+} from '../../constants/game'
 import { getCardLandType, isLandCompatible } from '../../utils/cardFields'
-import { LAND_PLACEMENT_RULES, normalizeLandPlacementRule } from '../../constants/game'
 import { getCardSlotType, isSlotEmpty } from '../../hooks/game/zoneCards'
-
-import {
-  CARD_OBJECT_TYPES,
-} from '../../utils/cardSceneHelpers'
-import {
-  calculateTwoPlayerBoard,
-  calculatePlayerSlotPositions,
-  PLAY_FIELD_Y,
-  computeFieldCardScale,
-  getLandSlotLayout,
-} from '../../utils/gameObjectPlacement'
-import { makeCardKey } from '../../utils/cardKey'
-
 import { normalizePlayerZoneRows, normalizeZoneCards } from '../../hooks/game/format'
 import { splitZoneCards } from '../../hooks/game/zoneCards'
+import { PLAY_FIELD_Y, computeFieldCardScale } from '../../utils/gameObjectPlacement'
+
+const FIELD_CARD_SCALE = computeFieldCardScale(0.88)
+const BATTLE_EVENTS_LIMIT = 200
+const PLAYER_LABEL_Y = PLAY_FIELD_Y + 0.45
 
 /**
- * Стабилизировать {creature, building} для каждой зоны.
- *
- * RC3/R4 из docs/BUG_RELOAD_DIAGNOSIS.md:
- *   splitZoneCards() возвращает свежие объекты при каждом вызове.
- *   Если вызывать его прямо в render — creatureCard всегда новая identity,
- *   даже когда контент идентичен → memo() в GameObject промахивается →
- *   меш пересоздаётся. Здесь кэшируем по identity входного массива карт.
- *
- * Алгоритм: собираем массив всех cards-массивов (по порядку player/zone),
- * мемоизируем результат по его identity. Если ничего не поменялось —
- * возвращаем тот же Map. Если хоть один cards-массив сменил identity —
- * пересобираем Map.
+ * Лимит battleEvents — массив растёт всю партию, иначе mergeLogWithBattle
+ * начинает тормозить HUDOverlay на каждом изменении. Держим последние N.
+ */
+function pushBattleEvents(prev, events) {
+  if (!Array.isArray(events) || events.length === 0) return prev
+  const merged = prev.length === 0 ? events : [...prev, ...events]
+  return merged.length > BATTLE_EVENTS_LIMIT
+    ? merged.slice(merged.length - BATTLE_EVENTS_LIMIT)
+    : merged
+}
+
+/**
+ * Хук: кэширует splitZoneCards по identity зон (стабильные ссылки).
  */
 function useStableZoneCards(players) {
-  // Сначала собираем массив (zoneKey, cardsArray) — это всё, что нам
-  // нужно для стабильности. Не используем ref в render (eslint
-  // react-hooks/refs правило).
   const cardsByZoneKey = useMemo(() => {
     const out = []
     for (const player of players || []) {
@@ -96,61 +102,9 @@ function useStableZoneCards(players) {
   }, [cardsByZoneKey])
 }
 
-const FIELD_CARD_SCALE = computeFieldCardScale(0.88)
-
 /**
- * Собирает список зон на поле с координатами и владельцами.
+ * Главный компонент.
  */
-function buildBoardZones(players, myIndex) {
-  const playerCount = players.length
-  if (playerCount === 2) {
-    const sharedLanes = calculateTwoPlayerBoard(myIndex)
-    return sharedLanes.flatMap((lane) => {
-      const nearPlayer = players[lane.near.playerIndex]
-      const farPlayer = players[lane.far.playerIndex]
-      return [
-        { ...lane.near, player: nearPlayer, isOwnerMe: true },
-        { ...lane.far, player: farPlayer, isOwnerMe: false },
-      ].filter((z) => z.player && (z.player.health ?? 0) > 0)
-    })
-  }
-  const zones = []
-  for (let i = 0; i < playerCount; i++) {
-    if (i === myIndex) continue
-    const opp = players[i]
-    if (!opp || (opp.health ?? 0) <= 0) continue
-    const positions = calculatePlayerSlotPositions(i, playerCount)
-    for (const p of positions) {
-      zones.push({ ...p, player: opp, isOwnerMe: false })
-    }
-  }
-  const me = players[myIndex]
-  if (me && (me.health ?? 0) > 0) {
-    const myPositions = calculatePlayerSlotPositions(myIndex, playerCount)
-    for (const p of myPositions) {
-      zones.push({ ...p, player: me, isOwnerMe: true })
-    }
-  }
-  return zones
-}
-
-/**
- * Догружает визуал карты (image_url/name/land_type) из каталога по id.
- * Сервер/in-memory могут не хранить image_url — тогда берём из cardCatalog,
- * чтобы картинка всегда отображалась (и после перезагрузки страницы).
- */
-function resolveCardVisual(card, catalog) {
-  if (!card) return card
-  const cat = catalog?.get ? catalog.get(card.id) : catalog?.[card.id]
-  if (!cat) return card
-  return {
-    ...card,
-    image_url: card.image_url || cat.image_url,
-    name: card.name || cat.name,
-    land_type: card.land_type || cat.land_type,
-  }
-}
-
 export function GameBoard3D({
   game,
   playerId,
@@ -175,20 +129,15 @@ export function GameBoard3D({
   toast = () => {},
   cardCatalog = null,
 }) {
-  const { shadowsEnabled } = useGraphicsSettings()
-
-  // === Visual state (testing_3d pattern: один owner) ===
+  // === Visual state ===
   const [selectedCardIndex, setSelectedCardIndex] = useState(null)
   const [selectedZoneIndex, setSelectedZoneIndex] = useState(null)
   const [draggingCardIndex, setDraggingCardIndex] = useState(null)
   const [damageFlash, setDamageFlash] = useState(false)
   const [battleEvents, setBattleEvents] = useState([])
-  // Список активных damage-маркеров (над картами)
   const [damageMarkers, setDamageMarkers] = useState([])
-  // Список «мигающих» карточек (для эмиссии красного цвета)
   const [damageFlashCards, setDamageFlashCards] = useState({})
-  // Состояние модалки действий над картой на земле
-  const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null) // { playerId, zoneIndex, card }
+  const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null)
 
   // === Refs ===
   const boardRef = useRef(null)
@@ -198,26 +147,29 @@ export function GameBoard3D({
   const draggingRef = useRef(false)
   const dragGhostRef = useRef(null)
   const controlsRef = useRef(null)
+  const boardRectRef = useRef(null) // кэш rect (обновляется на resize/mount)
 
-  useEffect(() => {
-    cardIndexRef.current = draggingCardIndex ?? selectedCardIndex
-  }, [draggingCardIndex, selectedCardIndex])
+  // === Card catalog ref (стабильная ссылка для колбэков) ===
+  const cardCatalogRef = useRef(cardCatalog)
+  if (cardCatalogRef.current !== cardCatalog) {
+    cardCatalogRef.current = cardCatalog
+  }
 
-  // === Derived state ===
-  const players = useMemo(() => safePlayers(game.players), [game.players])
-  const playerCount = players.length
-  const myIndex = useMemo(() => {
-    const idx = players.findIndex((p) => p.player_id === playerId)
-    return idx === -1 && players.length > 0 ? 0 : idx
-  }, [players, playerId])
-
-  const me = useMemo(
-    () => (myIndex >= 0 ? safePlayer(players, players[myIndex]?.player_id) : safePlayer([], null)),
-    [players, myIndex],
+  // === Derivation (useBoardModel) ===
+  const { players, playerCount, myIndex, me, zones } = useBoardModel(
+    game,
+    playerId,
+    landCatalog,
+  )
+  const zoneCards = useStableZoneCards(players)
+  const getZoneSplit = useCallback(
+    (playerId, zoneIndex) => {
+      return zoneCards.get(`${playerId}:${zoneIndex}`) ?? { creatureCard: null, buildingCard: null }
+    },
+    [zoneCards],
   )
 
-  // Dedup handCards по instanceId/id — чтобы не было ghost-карт и duplicate keys
-  // когда WS-push и локальный optimistic reload временно дают два вхождения.
+  // === Hand cards ===
   const handCards = useMemo(() => {
     const raw = Array.isArray(me?.hand) ? me.hand : []
     const seen = new Set()
@@ -227,14 +179,18 @@ export function GameBoard3D({
       const id = c.instanceId || c.id
       if (id && seen.has(id)) continue
       if (id) seen.add(id)
-      out.push(resolveCardVisual(c, cardCatalog))
+      out.push(c)
     }
     return out
   }, [me])
+
+  useEffect(() => {
+    cardIndexRef.current = draggingCardIndex ?? selectedCardIndex
+  }, [draggingCardIndex, selectedCardIndex])
+
   const isYourTurn = game.current_player_id === playerId
   const isFinished = game.status === 'finished'
   const inSetup = game.status === 'setup'
-
   const actionsRemaining = isYourTurn
     ? (me?.actions_remaining ?? game.actions_remaining ?? 2)
     : 0
@@ -248,55 +204,54 @@ export function GameBoard3D({
     game.current_turn ?? 0,
   )
 
+  // === Active card через refs (стабильная ссылка для колбэков) ===
+  const activeCardRef = useRef(null)
   const activeCard = useMemo(() => {
     const idx = draggingCardIndex ?? selectedCardIndex
     return idx !== null ? handCards[idx] ?? null : null
   }, [draggingCardIndex, selectedCardIndex, handCards])
+  useEffect(() => {
+    activeCardRef.current = activeCard
+  }, [activeCard])
 
-  // === Position calculations ===
-  const zones = useMemo(() => buildBoardZones(players, myIndex), [players, myIndex])
-  const zoneCards = useStableZoneCards(players)
-  const getZoneSplit = useCallback(
-    (playerId, zoneIndex) => {
-      return zoneCards.get(`${playerId}:${zoneIndex}`) ?? { creatureCard: null, buildingCard: null }
-    },
-    [zoneCards],
-  )
-
-  const resolveLandType = useCallback(
-    (zoneRow) => {
-      if (zoneRow?.land_type) return zoneRow.land_type
-      const id = zoneRow?.land_id
-      if (id && landCatalog[id]?.land_type) return landCatalog[id].land_type
-      return null
-    },
-    [landCatalog],
-  )
-
-  // === Pointer tracking ===
-  const updatePointer = useCallback((clientX, clientY) => {
-    const el = boardRef.current
-    if (el) {
-      const rect = el.getBoundingClientRect()
-      if (rect.width > 0 && rect.height > 0) {
-        pointerRef.current = {
-          x: ((clientX - rect.left) / rect.width) * 2 - 1,
-          y: -((clientY - rect.top) / rect.height) * 2 + 1,
-        }
-      }
-    }
-    // «Призрак» карты летит за курсором во время drag (как в Card Wars).
-    if (draggingRef.current && dragGhostRef.current) {
-      dragGhostRef.current.style.left = `${clientX}px`
-      dragGhostRef.current.style.top = `${clientY}px`
-    }
-  }, [])
-
-  /** Устанавливает/снимает dragging и держит draggingRef для позиции призрака. */
+  // === Управление drag ===
   const setDragging = useCallback((idx) => {
     draggingRef.current = idx != null
     setDraggingCardIndex(idx)
   }, [])
+
+  // === Кэш getBoundingClientRect ===
+  const refreshBoardRect = useCallback(() => {
+    const el = boardRef.current
+    if (!el) {
+      boardRectRef.current = null
+      return null
+    }
+    boardRectRef.current = el.getBoundingClientRect()
+    return boardRectRef.current
+  }, [])
+
+  const updatePointer = useCallback((clientX, clientY) => {
+    let rect = boardRectRef.current
+    if (!rect) rect = refreshBoardRect()
+    if (rect && rect.width > 0 && rect.height > 0) {
+      pointerRef.current = {
+        x: ((clientX - rect.left) / rect.width) * 2 - 1,
+        y: -((clientY - rect.top) / rect.height) * 2 + 1,
+      }
+    }
+    if (draggingRef.current && dragGhostRef.current) {
+      dragGhostRef.current.style.left = `${clientX}px`
+      dragGhostRef.current.style.top = `${clientY}px`
+    }
+  }, [refreshBoardRect])
+
+  useEffect(() => {
+    refreshBoardRect()
+    const onResize = () => refreshBoardRect()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [refreshBoardRect])
 
   useEffect(() => {
     const onMove = (e) => updatePointer(e.clientX, e.clientY)
@@ -304,59 +259,37 @@ export function GameBoard3D({
     return () => window.removeEventListener('pointermove', onMove)
   }, [updatePointer])
 
-  // === Actions ===
+  // === Колбэки (стабильные ссылки через refs) ===
   const handlePointerMissed = useCallback(() => {
     setSelectedZoneIndex(null)
   }, [])
 
-  const handleLandClick = useCallback(
-    (zone) => {
-      if (!zone.isOwnerMe || activeCard) return
-      setSelectedZoneIndex(zone.zoneIndex === selectedZoneIndex ? null : zone.zoneIndex)
-    },
-    [activeCard, selectedZoneIndex],
-  )
+  const handleLandClick = useCallback((zone) => {
+    if (!zone.isOwnerMe || activeCardRef.current) return
+    setSelectedZoneIndex((prev) => (prev === zone.zoneIndex ? null : zone.zoneIndex))
+  }, [])
 
-  const handleZoneCardClick = useCallback(
-    (zone, card) => {
-      if (inSetup || !isYourTurn || isFinished || !zone.isOwnerMe) return
-      toast('info', `Действие с картой: ${card?.name ?? '?'}`)
-    },
-    [inSetup, isYourTurn, isFinished, toast],
-  )
+  const handleZoneCardClick = useCallback((zone, card) => {
+    if (game.status === 'setup' || game.current_player_id !== playerId) return
+    if (game.status === 'finished') return
+    if (!zone.isOwnerMe) return
+    toast('info', `Действие с картой: ${card?.name ?? '?'}`)
+  }, [game.status, game.current_player_id, playerId, toast])
 
-  const handleConfirmLandSetup = useCallback(
-    async ({ landIds = [], bypass = false } = {}) => {
-      try {
-        await onConfirmLandSetup?.({ landIds, bypass })
-      } catch (e) {
-        toast('error', e?.message || 'Не удалось подтвердить расстановку')
-      }
-    },
-    [onConfirmLandSetup, toast],
-  )
-
-  const handleSkipLandSetup = useCallback(async () => {
-    try {
-      await onSkipLandSetup?.()
-    } catch (e) {
-      toast('error', e?.message || 'Не удалось пропустить расстановку')
-    }
-  }, [onSkipLandSetup, toast])
-
+  // === handleRayRelease (определён выше slot-click колбэков) ===
   const handleRayRelease = useCallback(
     async (cardIdx, target) => {
       if (placingLockRef.current) return
       const card = handCards[cardIdx]
       if (!card || !target) return
 
-      // Card Wars rule: карта only на зону с совпадающей землёй (snap-back).
-      // Правило берётся из настроек лобби (game_state.landPlacementRule).
       const landRule = normalizeLandPlacementRule(game.game_state?.landPlacementRule)
       if (landRule === LAND_PLACEMENT_RULES.STRICT) {
         const myZoneRows = normalizePlayerZoneRows(me?.zones)
         const row = myZoneRows[target.zoneIndex] || {}
-        const zoneLand = resolveLandType(row)
+        const zoneLand = row.land_type
+          || (row.land_id && landCatalog[row.land_id]?.land_type)
+          || null
         if (!isLandCompatible(getCardLandType(card), zoneLand)) {
           toast('error', 'Карта не подходит к этой земле')
           setDraggingCardIndex(null)
@@ -380,33 +313,101 @@ export function GameBoard3D({
         placingLockRef.current = false
       }
     },
-    [handCards, me, resolveLandType, toast, onSuppressRealtimeReload, onPlayCard],
+    [handCards, me, landCatalog, game.game_state?.landPlacementRule, onPlayCard, onSuppressRealtimeReload, toast],
   )
 
-  /**
-   * Запустить визуальный эффект «урона» по карте на поле:
-   * - число урона всплывает над зоной
-   * - карточка вспыхивает красным (damageFlash=true через GameObject)
-   * - через 1.5с всё очищается
-   */
+  const handleCreatureSlotClick = useCallback((zone) => {
+    if (!activeCardRef.current) return
+    handleRayRelease(cardIndexRef.current ?? 0, {
+      zoneIndex: zone.zoneIndex,
+      slotType: 'creature',
+    })
+  }, [handleRayRelease])
+
+  const handleBuildingSlotClick = useCallback((zone) => {
+    if (!activeCardRef.current) return
+    handleRayRelease(cardIndexRef.current ?? 0, {
+      zoneIndex: zone.zoneIndex,
+      slotType: 'building',
+    })
+  }, [handleRayRelease])
+
+  const handleCreatureCardClick = useCallback((zone, card) => {
+    if (zone.isOwnerMe && game.current_player_id === playerId && game.status !== 'finished') {
+      setZoneCardActionMenu({
+        playerId: zone.player.player_id,
+        zoneIndex: zone.zoneIndex,
+        card,
+        slotType: 'creature',
+      })
+    } else {
+      handleZoneCardClick(zone, card)
+    }
+  }, [game.status, game.current_player_id, playerId, handleZoneCardClick])
+
+  const handleBuildingCardClick = useCallback((zone, card) => {
+    if (zone.isOwnerMe && game.current_player_id === playerId && game.status !== 'finished') {
+      setZoneCardActionMenu({
+        playerId: zone.player.player_id,
+        zoneIndex: zone.zoneIndex,
+        card,
+        slotType: 'building',
+      })
+    } else {
+      handleZoneCardClick(zone, card)
+    }
+  }, [game.status, game.current_player_id, playerId, handleZoneCardClick])
+
+  // === handleRayRelease (определён выше, перед slot-click колбэками) ===
+
+  const handleConfirmLandSetup = useCallback(
+    async ({ landIds = [], bypass = false } = {}) => {
+      try {
+        await onConfirmLandSetup?.({ landIds, bypass })
+      } catch (e) {
+        toast('error', e?.message || 'Не удалось подтвердить расстановку')
+      }
+    },
+    [onConfirmLandSetup, toast],
+  )
+
+  const handleSkipLandSetup = useCallback(async () => {
+    try {
+      await onSkipLandSetup?.()
+    } catch (e) {
+      toast('error', e?.message || 'Не удалось пропустить расстановку')
+    }
+  }, [onSkipLandSetup, toast])
+
+  // Cleanup-рефы для таймеров урона
+  const damageTimersRef = useRef([])
+
   const triggerDamageVisual = useCallback(({ markers, flashedCards = {} }) => {
     if (Array.isArray(markers) && markers.length > 0) {
       setDamageMarkers((prev) => [...prev, ...markers])
-      // чистка через 1.5с
-      setTimeout(() => {
+      const id = setTimeout(() => {
         setDamageMarkers((prev) => prev.filter((m) => !markers.some((nm) => nm.key === m.key)))
       }, 1500)
+      damageTimersRef.current.push(id)
     }
     if (Object.keys(flashedCards).length > 0) {
       setDamageFlashCards((prev) => ({ ...prev, ...flashedCards }))
-      // снимаем флэш через 0.6с
-      setTimeout(() => {
+      const id = setTimeout(() => {
         setDamageFlashCards((prev) => {
           const next = { ...prev }
           for (const k of Object.keys(flashedCards)) delete next[k]
           return next
         })
       }, 650)
+      damageTimersRef.current.push(id)
+    }
+  }, [])
+
+  // cleanup всех таймеров при unmount
+  useEffect(() => {
+    return () => {
+      for (const id of damageTimersRef.current) clearTimeout(id)
+      damageTimersRef.current = []
     }
   }, [])
 
@@ -419,21 +420,53 @@ export function GameBoard3D({
     }
     setSelectedCardIndex(null)
     setSelectedZoneIndex(null)
-    setDraggingCardIndex(null)
+    setDragging(null)
 
     const events = result?.battleEvents
     if (Array.isArray(events) && events.length > 0) {
-      setBattleEvents((prev) => [...prev, ...events])
+      setBattleEvents((prev) => pushBattleEvents(prev, events))
       const { markers, flashMe } = battleEventsToVisuals(events, playerId)
       triggerDamageVisual({ markers })
       if (flashMe) {
         setDamageFlash(true)
-        setTimeout(() => setDamageFlash(false), 550)
+        const id = setTimeout(() => setDamageFlash(false), 550)
+        damageTimersRef.current.push(id)
       }
     }
     return result
-  }, [onEndTurn, onSuppressRealtimeReload, playerId, toast, triggerDamageVisual])
+  }, [onEndTurn, onSuppressRealtimeReload, playerId, toast, triggerDamageVisual, setDragging])
 
+  // === Damage flash key для ZoneColumn ===
+  const damageFlashKey = useMemo(() => {
+    const keys = Object.keys(damageFlashCards)
+    return keys.length === 1 ? keys[0] : null
+  }, [damageFlashCards])
+
+  // Snapshot ref'а для передачи в ZoneColumn без re-render'а каталога.
+  const cardCatalogSnapshot = cardCatalogRef.current
+
+  // === Drop states ===
+  const dropStatesByZoneKey = useMemo(() => {
+    if (!activeCard || !isYourTurn || inSetup || isFinished) return EMPTY_MAP
+    const landRule = normalizeLandPlacementRule(game.game_state?.landPlacementRule)
+    if (landRule !== LAND_PLACEMENT_RULES.STRICT) return EMPTY_MAP
+    const cardLand = getCardLandType(activeCard)
+    const slotType = getCardSlotType(activeCard)
+    const out = new Map()
+    for (const zone of zones) {
+      if (!zone.isOwnerMe) continue
+      const row = zone.row || {}
+      const zoneLand = zone.landType
+      if (!isLandCompatible(cardLand, zoneLand)) {
+        out.set(zoneKey(zone), 'invalid')
+      } else if (isSlotEmpty(normalizeZoneCards(row), slotType)) {
+        out.set(zoneKey(zone), 'valid')
+      }
+    }
+    return out
+  }, [activeCard, isYourTurn, inSetup, isFinished, game.game_state?.landPlacementRule, zones])
+
+  // === Render ===
   return (
     <div
       ref={boardRef}
@@ -441,7 +474,6 @@ export function GameBoard3D({
       onPointerDown={(e) => updatePointer(e.clientX, e.clientY)}
     >
       <GameCanvas
-        shadows={shadowsEnabled}
         onPointerMissed={handlePointerMissed}
         onToastError={(msg) => toast('error', msg)}
       >
@@ -450,141 +482,47 @@ export function GameBoard3D({
           playerCount={playerCount}
           controlsRef={controlsRef}
         >
+          {/* Обводки всех земель — один InstancedMesh на 32 границы. */}
+          <BoardOutlines zones={zones} />
+
+          {/* eslint-disable-next-line react-hooks/refs -- cardCatalogSnapshot is captured above as a stable snapshot */}
           {zones.map((zone) => {
-            const zoneRows = normalizePlayerZoneRows(zone.player.zones)
-            const row = zoneRows[zone.zoneIndex] || {}
-            const { creatureCard: rawCreature, buildingCard: rawBuilding } = getZoneSplit(
-              zone.player.player_id,
-              zone.zoneIndex,
-            )
-            const creatureCard = resolveCardVisual(rawCreature, cardCatalog)
-            const buildingCard = resolveCardVisual(rawBuilding, cardCatalog)
-            const isSelectedZone =
-              zone.isOwnerMe && selectedZoneIndex === zone.zoneIndex
-            const slots = getLandSlotLayout()
-
-            // Card Wars: во время перетаскивания/выбора карты подсвечиваем
-            // свои зоны — цветом земли (valid) или красным (invalid), если
-            // земля карты не совпадает с землёй зоны. При правиле 'free'
-            // подсветка негативная не показывается (ставить можно на любую).
-            let dropState = null
-            const landRule = normalizeLandPlacementRule(game.game_state?.landPlacementRule)
-            if (activeCard && zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && landRule === LAND_PLACEMENT_RULES.STRICT) {
-              const cardLand = getCardLandType(activeCard)
-              const zoneLand = resolveLandType(row)
-              if (!isLandCompatible(cardLand, zoneLand)) {
-                dropState = 'invalid'
-              } else if (isSlotEmpty(normalizeZoneCards(row), getCardSlotType(activeCard))) {
-                dropState = 'valid'
-              }
-            }
-
+            const split = getZoneSplit(zone.player.player_id, zone.zoneIndex)
+            const zKey = zoneKey(zone)
+            const isSelectedZone = zone.isOwnerMe && selectedZoneIndex === zone.zoneIndex
+            const dropState = dropStatesByZoneKey.get(zKey) || null
+            const creaturePlayable = zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
+            const buildingPlayable = creaturePlayable
             return (
-              <group
-                key={`zone-${zone.player.player_id}-${zone.zoneIndex}`}
-                position={zone.center}
-                rotation={[0, zone.rotationY, 0]}
-              >
-                <GameLand
-                  landType={resolveLandType(row)}
-                  selected={isSelectedZone}
-                  dropState={dropState}
-                  zoneIndex={zone.zoneIndex}
-                  onClick={() => handleLandClick(zone)}
-                  creaturePlayable={
-                    zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
-                  }
-                  buildingPlayable={
-                    zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
-                  }
-                  onCreatureClick={() => {
-                    if (zone.isOwnerMe && activeCard) {
-                      handleRayRelease(cardIndexRef.current ?? 0, {
-                        zoneIndex: zone.zoneIndex,
-                        slotType: 'creature',
-                      })
-                    }
-                  }}
-                  onBuildingClick={() => {
-                    if (zone.isOwnerMe && activeCard) {
-                      handleRayRelease(cardIndexRef.current ?? 0, {
-                        zoneIndex: zone.zoneIndex,
-                        slotType: 'building',
-                      })
-                    }
-                  }}
-                />
-
-                {/* Существо лежит в creature-слоте (z<0, дальняя половина) */}
-                {creatureCard && (
-                  <GameObject
-                    key={makeCardKey(creatureCard, { slot: 'creature', zoneIndex: zone.zoneIndex })}
-                    card={creatureCard}
-                    type={CARD_OBJECT_TYPES.CREATURE}
-                    position={[slots.creature.x, PLAY_FIELD_Y + 0.004, slots.creature.z]}
-                    rotation={[-Math.PI / 2, 0, 0]}
-                    flatOnTable
-                    tableScale={FIELD_CARD_SCALE}
-                    isSelected={isSelectedZone}
-                    isFaceUp
-                    showStats
-                    damageFlash={Boolean(damageFlashCards[`${zone.player.player_id}-${zone.zoneIndex}`])}
-                    showFlipOption={Boolean(zone.isOwnerMe && isYourTurn)}
-                    onClick={() => {
-                      if (zone.isOwnerMe && isYourTurn) {
-                        setZoneCardActionMenu({
-                          playerId: zone.player.player_id,
-                          zoneIndex: zone.zoneIndex,
-                          card: creatureCard,
-                          slotType: 'creature',
-                        })
-                      } else {
-                        handleZoneCardClick(zone, creatureCard)
-                      }
-                    }}
-                  />
-                )}
-
-                {/* Строение лежит в building-слоте (z>0, ближняя половина) */}
-                {buildingCard && (
-                  <GameObject
-                    key={makeCardKey(buildingCard, { slot: 'building', zoneIndex: zone.zoneIndex })}
-                    card={buildingCard}
-                    type={CARD_OBJECT_TYPES.BUILDING}
-                    position={[slots.building.x, PLAY_FIELD_Y + 0.004, slots.building.z]}
-                    rotation={[-Math.PI / 2, 0, 0]}
-                    flatOnTable
-                    tableScale={FIELD_CARD_SCALE}
-                    isSelected={false}
-                    isFaceUp
-                    showStats
-                    damageFlash={Boolean(damageFlashCards[`${zone.player.player_id}-${zone.zoneIndex}`])}
-                    onClick={() => {
-                      if (zone.isOwnerMe && isYourTurn) {
-                        setZoneCardActionMenu({
-                          playerId: zone.player.player_id,
-                          zoneIndex: zone.zoneIndex,
-                          card: buildingCard,
-                          slotType: 'building',
-                        })
-                      } else {
-                        handleZoneCardClick(zone, buildingCard)
-                      }
-                    }}
-                  />
-                )}
-              </group>
+              <ZoneColumn
+                key={`zone-${zKey}`}
+                zone={zone}
+                creatureCard={split.creatureCard}
+                buildingCard={split.buildingCard}
+                isSelectedZone={isSelectedZone}
+                dropState={dropState}
+                cardCatalog={cardCatalogSnapshot}
+                isYourTurn={isYourTurn}
+                creaturePlayable={creaturePlayable}
+                buildingPlayable={buildingPlayable}
+                damageFlashKey={damageFlashKey}
+                tableScale={FIELD_CARD_SCALE}
+                onLandClick={handleLandClick}
+                onCreatureSlotClick={handleCreatureSlotClick}
+                onBuildingSlotClick={handleBuildingSlotClick}
+                onCreatureCardClick={handleCreatureCardClick}
+                onBuildingCardClick={handleBuildingCardClick}
+              />
             )
           })}
 
-          {/* Ники игроков над зонами */}
           <PlayerNameLabels
             players={players}
             playerCount={playerCount}
             currentPlayerId={game.current_player_id}
+            labelY={PLAYER_LABEL_Y}
           />
 
-          {/* Числа урона над картами — всплывают и угасают */}
           {damageMarkers.map((m) => {
             const targetZone = zones.find(
               (z) => z.player.player_id === m.playerId && z.zoneIndex === m.zoneIndex,
@@ -601,12 +539,10 @@ export function GameBoard3D({
             )
           })}
 
-          {/* Raycast-drop карты прямо на 3D-доску (как в Card Wars).
-              Внутри Canvas — PlacementPointerRelease использует useThree(). */}
           <PlacementPointerRelease
             active={draggingCardIndex !== null}
             pointerRef={pointerRef}
-            boardRectRef={boardRef}
+            boardRectRef={boardRectRef}
             cardIndexRef={cardIndexRef}
             onRelease={handleRayRelease}
           />
@@ -681,7 +617,6 @@ export function GameBoard3D({
         updatePointer={updatePointer}
       />
 
-      {/* «Призрак» перетаскиваемой карты — летит за курсором (Card Wars style). */}
       {draggingCardIndex != null && handCards[draggingCardIndex] && (
         <div ref={dragGhostRef} className="game-drag-ghost" aria-hidden>
           {handCards[draggingCardIndex]?.image_url ? (
@@ -695,11 +630,12 @@ export function GameBoard3D({
   )
 }
 
-/**
- * GameBoard3D с memo: предотвращает полный ремонт 3D-сцены когда меняются
- * пропсы которые не влияют на 3D (toast, realtimeStatus, isApplying и т.п.).
- * Memo пропускает ре-рендер если game.version не изменился.
- */
+const EMPTY_MAP = new Map()
+
+function zoneKey(zone) {
+  return `${zone.player.player_id}-${zone.zoneIndex}`
+}
+
 function gamesEqual(a, b) {
   if (a === b) return true
   if (!a || !b) return false
@@ -719,7 +655,6 @@ function gamesEqual(a, b) {
     if (ap.health !== bp.health) return false
     if (ap.actions_remaining !== bp.actions_remaining) return false
     if (ap.hand_count !== bp.hand_count) return false
-    // hand: пересоздаётся каждый раз — проверяем только длину
     const ah = Array.isArray(ap.hand) ? ap.hand.length : 0
     const bh = Array.isArray(bp.hand) ? bp.hand.length : 0
     if (ah !== bh) return false

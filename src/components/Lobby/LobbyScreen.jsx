@@ -8,12 +8,34 @@ import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
 import { LobbyRoom } from './LobbyRoom'
 import './Lobby.css'
 
+/**
+ * Preload hint для 3D-чанка (PERFORMANCE_AUDIT_3D D4).
+ * Когда пользователь попадает на лобби — самое время начать качать
+ * GameBoard3D (~56 КБ) и его зависимости (r3f, drei, three-core — 1 МБ+).
+ * Если пользователь всё-таки зайдёт в /game/:id, чанк уже в кеше.
+ *
+ * Делаем это тихо, без показа loading-UI — фоновый preload.
+ */
+function usePreload3DChunk() {
+  useEffect(() => {
+    // Idle-callback: даём браузеру отрисовать лобби до начала сетевой загрузки.
+    const id = window.setTimeout(() => {
+      import('../Game/GameBoard3D').catch(() => {
+        // Если chunk уже не нужен / упал — это фоновый preload, не критично.
+      })
+    }, 250)
+    return () => window.clearTimeout(id)
+  }, [])
+}
+
 export function LobbyScreen({ toast }) {
   const navigate = useNavigate()
   const { code: codeFromUrl } = useParams()
   const [nickname, setNickname] = useState(getGuestNickname)
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
   const [submitting, setSubmitting] = useState(false)
+
+  usePreload3DChunk()
 
   const { status, players, error, isHost, hostId, lobbyId, lobbyCode, dismissedMessage, pendingGameId, connectionStatus, onlinePlayerIds, createLobby, joinLobby, setReady, startGame, leaveLobby } = useLobby()
   const { getSelectedDeck, selectedDeckId } = useDecks()

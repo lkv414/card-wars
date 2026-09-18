@@ -28,6 +28,18 @@ export const LAND_GEOMETRY = Object.freeze({
   DEPTH: HALF_LANE_DEPTH,
 })
 
+/**
+ * Типы 3D-карт на поле — единственный источник правды для scene-graph.
+ * Вынесено из cardSceneHelpers (V3/D1: объединение дублей).
+ */
+export const CARD_OBJECT_TYPES = Object.freeze({
+  CREATURE: 'creature',
+  BUILDING: 'building',
+  SPELL: 'spell',
+  HAND: 'hand',
+  FACE_DOWN: 'face_down',
+})
+
 const PLAYER_ANGLES = {
   2: [180, 0],
   3: [180, 60, 300],

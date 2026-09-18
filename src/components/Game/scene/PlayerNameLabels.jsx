@@ -22,6 +22,7 @@ const LABEL_Y = PLAY_FIELD_Y + 0.55
 export const PlayerNameLabels = memo(function PlayerNameLabels({
   players,
   currentPlayerId,
+  labelY = LABEL_Y,
 }) {
   if (!Array.isArray(players)) return null
 
@@ -44,7 +45,7 @@ export const PlayerNameLabels = memo(function PlayerNameLabels({
         return (
           <Text
             key={player.player_id ?? idx}
-            position={[cx, LABEL_Y, cz]}
+            position={[cx, labelY, cz]}
             rotation={[0, 0, 0]}
             fontSize={0.18}
             color={color}

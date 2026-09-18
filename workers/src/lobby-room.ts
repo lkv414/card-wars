@@ -1,7 +1,7 @@
 import { DurableObject } from 'cloudflare:workers'
 import type { Env } from './env'
 import { parseClientMessage, serverMsg } from './protocol'
-import { assertPlayerInLobby, callRpc } from './supabase'
+import { assertPlayerInLobby, callRpc, fetchLobbyRow } from './supabase'
 
 interface SessionMeta {
   clientId: string
@@ -9,6 +9,16 @@ interface SessionMeta {
 
 export class LobbyRoom extends DurableObject<Env> {
   lobbyId = ''
+
+  /**
+   * In-memory cache lobby-snapshot'а (PERFORMANCE_AUDIT_WORKERS V3):
+   *   JOIN через PostgREST — медленный (~50-200 мс). Храним последний
+   *   успешный snapshot и инвалидируем при каждом action (action всегда
+   *   мутирует lobby, так что invalidate-by-write).
+   */
+  private cachedLobby: unknown = null
+  private lobbyCacheTs = 0
+  private static readonly LOBBY_CACHE_TTL_MS = 5_000
 
   private resolveLobbyId(): string {
     if (this.lobbyId) return this.lobbyId
@@ -134,6 +144,8 @@ export class LobbyRoom extends DurableObject<Env> {
     payload: Record<string, unknown>
   ): Promise<void> {
     const lobbyId = this.resolveLobbyId()
+    // Любой mutation-action инвалидирует snapshot-cache.
+    this.invalidateLobbyCache()
 
     switch (action) {
       case 'set_ready':
@@ -177,31 +189,35 @@ export class LobbyRoom extends DurableObject<Env> {
     }
   }
 
+  /**
+   * Fetch (or вернуть cached) lobby snapshot. TTL 5с — auth-данные лобби
+   * (player list, ready flags) меняются редко.
+   *
+   * Race fix (PERFORMANCE_AUDIT_WORKERS K5): `blockConcurrencyWhile` гарантирует,
+   * что два параллельных вызова не сделают оба RPC — только первый пройдёт,
+   * остальные подождут и получат его результат.
+   */
   private async fetchLobbySnapshot(): Promise<unknown> {
-    const { url, key } = this.requireSupabase()
-    const res = await fetch(
-      `${url}/rest/v1/lobbies?id=eq.${this.resolveLobbyId()}&select=*,lobby_players(*,deck)`,
-      {
-        headers: {
-          apikey: key,
-          Authorization: `Bearer ${key}`,
-        },
-      }
-    )
-    if (!res.ok) {
-      throw new Error(`Lobby fetch failed (${res.status})`)
+    const now = Date.now()
+    if (this.cachedLobby && now - this.lobbyCacheTs < LobbyRoom.LOBBY_CACHE_TTL_MS) {
+      return this.cachedLobby
     }
-    const rows = await res.json()
-    return Array.isArray(rows) ? rows[0] ?? null : rows
+    await this.ctx.blockConcurrencyWhile(async () => {
+      const ts = Date.now()
+      if (this.cachedLobby && ts - this.lobbyCacheTs < LobbyRoom.LOBBY_CACHE_TTL_MS) return
+      const fresh = await fetchLobbyRow(this.env, this.resolveLobbyId())
+      this.cachedLobby = fresh
+      this.lobbyCacheTs = ts
+    })
+    return this.cachedLobby
   }
 
-  private requireSupabase() {
-    const url = this.env.SUPABASE_URL?.trim()
-    const key = this.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
-    if (!url || !key) {
-      throw new Error('Supabase not configured on Worker')
-    }
-    return { url, key }
+  /**
+   * Инвалидировать cache — вызывается после каждого mutation action.
+   */
+  private invalidateLobbyCache(): void {
+    this.cachedLobby = null
+    this.lobbyCacheTs = 0
   }
 
   private onlineClientIds(): string[] {

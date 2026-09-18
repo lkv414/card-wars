@@ -57,6 +57,14 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
       if (msg?.type === 'state') {
         onStateRef.current?.(msg.game, msg)
         settlePending(msg.requestId, ({ resolve }) => resolve(msg.game))
+        return
+      }
+      // Объединённый frame (state + battle_events): теперь приходит в одном
+      // ws.send() вместо двух. Клиент обрабатывает оба поля.
+      if (msg?.type === 'state_with_battle') {
+        onStateRef.current?.(msg.game, msg)
+        settlePending(msg.requestId, ({ resolve }) => resolve(msg.game))
+        return
       }
     },
     [settlePending],

@@ -10,6 +10,26 @@
       "type": "local",
       "command": ["C:\\Users\\<redacted>\\AppData\\Local\\hermes\\bin\\uvx.exe", "docker-mcp-server"],
       "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": true
+    },
+    "duckduckgo-search": {
+      "type": "local",
+      "command": ["npx", "-y", "duckduckgo-mcp-server"],
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "enabled": true
+    },
+    "chrome-mcp-server": {
+      "type": "remote",
+      "url": "http://127.0.0.1:12306/mcp",
+      "enabled": true
     }
   }
 }

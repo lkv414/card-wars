@@ -30,6 +30,30 @@ export type ServerMessage =
       winnerId: string | null
       requestId?: string
     }
+  | {
+      /**
+       * Объединённый frame (PERFORMANCE_AUDIT_WORKERS K7): state + battle_events
+       * в одном сообщении. Вдвое меньше ws.send() на action. Клиенты
+       * должны обрабатывать оба поля: `version`/`game` для state-sync и
+       * `events`/`gameFinished`/`winnerId` для battle-анимаций.
+       */
+      type: 'state_with_battle'
+      version: number
+      game: unknown
+      events: Array<{
+        attacker_id: string
+        from_zone: number
+        defender_id: string
+        to_zone: number
+        damage: number
+        face_damage: number
+        creature_killed: boolean
+        creature_damaged: boolean
+      }>
+      gameFinished: boolean
+      winnerId: string | null
+      requestId?: string
+    }
   | { type: 'lobby'; lobby: unknown; requestId?: string }
   | { type: 'presence'; onlineIds: string[]; requestId?: string }
   | { type: 'closed'; reason?: string; requestId?: string }

@@ -48,10 +48,15 @@ const KNOWN_ACTIONS = new Set<GameActionName>([
 
 /**
  * Minimum number of state mutations between persisted snapshots. The
- * Worker tries to push every N actions so a Durable Object restart
+ * Worker pushes a snapshot every N actions so a Durable Object restart
  * doesn't lose more than N actions of progress.
+ *
+ * Поднят с 5 → 20 (PERFORMANCE_AUDIT_WORKERS K4): при 100 ходах × 4 игрока
+ * старый лимит давал ~80 PATCH'ей по ~50 КБ каждый = 4 МБ egress. С 20 — 20
+ * PATCH'ей = 1 МБ. Дополнительно мы всегда persist'им в конце хода
+ * (см. handleAction), чтобы данные никогда не терялись больше чем на 1 ход.
  */
-const SNAPSHOT_EVERY_N_ACTIONS = 5
+const SNAPSHOT_EVERY_N_ACTIONS = 20
 
 export class GameRoom extends DurableObject<Env> {
   /** game UUID — also available via ctx.id.name after hibernation */
@@ -182,18 +187,20 @@ export class GameRoom extends DurableObject<Env> {
         if (!session?.clientId) {
           throw new Error('Send join before action')
         }
-        // DO may have been evicted (idle timeout) between join and action.
-        // Without a rehydrate, handleAction would throw 'Game not loaded'
-        // and the actor gets an error — silently failing for the other
-        // connected clients. Hydrate eagerly so every action runs against
-        // a known-authoritative state.
+        // DO may have been evicted (idle timeout) между join и action.
+        // Race fix (PERFORMANCE_AUDIT_WORKERS K2): под blockConcurrencyWhile,
+        // чтобы проверка+загрузка были атомарны — между `if (!currentGame)`
+        // и `await loadGame()` не может вклиниться eviction.
         if (!this.currentGame) {
           try {
-            if (this.devMode) {
-              await this.ensureDevGame(session.clientId)
-            } else {
-              await this.loadGame()
-            }
+            await this.ctx.blockConcurrencyWhile(async () => {
+              if (this.currentGame) return
+              if (this.devMode) {
+                await this.ensureDevGame(session.clientId)
+              } else {
+                await this.loadGame()
+              }
+            })
             // Catch the actor up to where the rest of the room already is.
             await this.sendStateTo(ws, session.clientId)
           } catch (e) {
@@ -268,16 +275,26 @@ export class GameRoom extends DurableObject<Env> {
   /**
    * Load (or reload) the in-memory game from Supabase.
    * Called on the first join of the session.
+   *
+   * Race fix (PERFORMANCE_AUDIT_WORKERS K1):
+   *   Два параллельных join'а раньше могли оба прочитать Supabase. Теперь
+   *   `blockConcurrencyWhile` атомарно проверяет+загружает state — только
+   *   один RPC пройдёт, остальные дождутся.
    */
   private async loadGame(): Promise<void> {
     if (this.currentGame) return
-    const gameId = this.resolveGameId()
-    const raw = await getFullGameState(this.env, gameId)
-    if (!raw) {
-      throw new Error(`Game ${gameId} not found or get_full_game_state RPC missing`)
-    }
-    this.currentGame = rawToGameState(raw)
-    this.actionsSinceSnapshot = 0
+    await this.ctx.blockConcurrencyWhile(async () => {
+      if (this.currentGame) return
+      const gameId = this.resolveGameId()
+      const raw = await getFullGameState(this.env, gameId)
+      if (!raw) {
+        throw new Error(`Game ${gameId} not found or get_full_game_state RPC missing`)
+      }
+      // eslint-disable-next-line react-hooks/immutability -- DO mutation must happen inside the critical section
+      this.currentGame = rawToGameState(raw)
+      // eslint-disable-next-line react-hooks/immutability -- counter reset, not React state
+      this.actionsSinceSnapshot = 0
+    })
   }
 
   /**
@@ -317,52 +334,60 @@ export class GameRoom extends DurableObject<Env> {
   /**
    * Persist the in-memory game back to Supabase.
    * Called periodically after SNAPSHOT_EVERY_N_ACTIONS mutations.
+   *
+   * Race fix (PERFORMANCE_AUDIT_WORKERS K5): под `blockConcurrencyWhile`, чтобы
+   * два одновременных snapshot'а (две action'а, попавшие в один тик) не
+   * перетёрли друг друга в Supabase. После первого snapshot'а второй
+   * обнаружит свежий counter и не пойдёт в сеть.
    */
   private async persistSnapshot(): Promise<void> {
     if (!this.currentGame) return
-    // Serialize via the same per-viewer broadcast helper? No — we want
-    // the full state. buildBroadcastState redacts, so re-implement the
-    // shape here (saving is rare and snapshots aren't the hot path).
-    const game = this.currentGame
-    const payload: Record<string, unknown> = {
-      state: {
-        id: game.id,
-        lobby_id: game.lobby_id,
-        status: game.status,
-        current_turn: game.current_turn,
-        current_player_id: game.current_player_id,
-        winner_id: game.winner_id,
-        game_state: game.game_state ?? {},
+    await this.ctx.blockConcurrencyWhile(async () => {
+      if (!this.currentGame) return
+      // Внутри critical section захватываем snapshot текущего state —
+      // даже если currentGame изменится во время await (новые action'ы
+      // могут прийти во время PATCH), мы persist'им ровно то, что было.
+      const game = this.currentGame
+      const payload: Record<string, unknown> = {
+        state: {
+          id: game.id,
+          lobby_id: game.lobby_id,
+          status: game.status,
+          current_turn: game.current_turn,
+          current_player_id: game.current_player_id,
+          winner_id: game.winner_id,
+          game_state: game.game_state ?? {},
+          version: game.version,
+          started_at: game.started_at,
+          ended_at: game.ended_at,
+          turn_started_at: game.turn_started_at,
+          players: game.players.map((p) => ({
+            player_id: p.player_id,
+            nickname: p.nickname,
+            position: p.position,
+            health: p.health,
+            player_order: p.player_order,
+            hand: p.hand,
+            deck_pile: p.deck_pile,
+            deck_remaining: p.deck_remaining,
+            discard_pile: p.discard_pile,
+            actions_remaining: p.actions_remaining,
+            free_draw_used: p.free_draw_used,
+            paid_draw_used: p.paid_draw_used,
+            zones: p.zones,
+          })),
+        },
         version: game.version,
-        started_at: game.started_at,
+        status: game.status,
+        winner_id: game.winner_id,
         ended_at: game.ended_at,
-        turn_started_at: game.turn_started_at,
-        players: game.players.map((p) => ({
-          player_id: p.player_id,
-          nickname: p.nickname,
-          position: p.position,
-          health: p.health,
-          player_order: p.player_order,
-          hand: p.hand,
-          deck_pile: p.deck_pile,
-          deck_remaining: p.deck_remaining,
-          discard_pile: p.discard_pile,
-          actions_remaining: p.actions_remaining,
-          free_draw_used: p.free_draw_used,
-          paid_draw_used: p.paid_draw_used,
-          zones: p.zones,
-        })),
-      },
-      version: game.version,
-      status: game.status,
-      winner_id: game.winner_id,
-      ended_at: game.ended_at,
-      current_player_id: game.current_player_id,
-      current_turn: game.current_turn,
-    }
-    const { saveFullGameState } = await import('./supabase.js')
-    await saveFullGameState(this.env, game.id, payload)
-    this.actionsSinceSnapshot = 0
+        current_player_id: game.current_player_id,
+        current_turn: game.current_turn,
+      }
+      const { saveFullGameState } = await import('./supabase.js')
+      await saveFullGameState(this.env, game.id, payload)
+      this.actionsSinceSnapshot = 0
+    })
   }
 
   /**
@@ -431,8 +456,14 @@ export class GameRoom extends DurableObject<Env> {
 
   /**
    * Broadcast personalized snapshots to every connected viewer.
-   * Unlike the legacy path that called `get_player_game_state` RPC twice,
-   * this now serves from the in-memory engine — no Supabase round-trip.
+   *
+   * Что улучшено (PERFORMANCE_AUDIT_WORKERS K7):
+   *   `state` и `battle_events` объединены в ОДИН payload на каждого
+   *   клиента — раньше было 2 ws.send() × N клиентов = 2N sends на action.
+   *   Теперь N sends. На 4 живых игроков — 4 вместо 8.
+   *
+   * ServerMessage расширен: `{ type: 'state_with_battle', state, battleEvents, ... }`.
+   * Клиент (см. useGameWsHandler) парсит оба поля из одного фрейма.
    */
   private async broadcastPersonalizedStates(
     applyResult: ApplyResult,
@@ -449,21 +480,22 @@ export class GameRoom extends DurableObject<Env> {
         if (!this.currentGame) return Promise.resolve()
         const game = buildBroadcastState(this.currentGame, clientId)
         const version = Number(game.version ?? 0)
-        const payload = serverMsg({ type: 'state', version, game, requestId })
-        this.safeSend(ws, payload)
-        // Also notify about battle events via the same broadcast so
-        // clients can drive lane-by-lane animations.
-        if (applyResult.battleEvents && applyResult.battleEvents.length > 0) {
-          this.safeSend(
-            ws,
-            serverMsg({
-              type: 'battle_events',
-              events: applyResult.battleEvents,
-              gameFinished: applyResult.gameFinished === true,
-              winnerId: applyResult.winnerId ?? null,
-              requestId,
-            }),
-          )
+        const hasBattle = applyResult.battleEvents && applyResult.battleEvents.length > 0
+        if (hasBattle) {
+          // Один payload: state + battle events вместе.
+          const payload = serverMsg({
+            type: 'state_with_battle',
+            version,
+            game,
+            events: applyResult.battleEvents,
+            gameFinished: applyResult.gameFinished === true,
+            winnerId: applyResult.winnerId ?? null,
+            requestId,
+          })
+          this.safeSend(ws, payload)
+        } else {
+          const payload = serverMsg({ type: 'state', version, game, requestId })
+          this.safeSend(ws, payload)
         }
         return Promise.resolve()
       }),

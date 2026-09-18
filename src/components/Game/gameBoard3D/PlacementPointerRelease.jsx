@@ -12,7 +12,7 @@ export function PlacementPointerRelease({
   cardIndexRef,
   onRelease,
 }) {
-  const { camera, scene } = useThree()
+  const { camera } = useThree()
 
   useEffect(() => {
     if (!active) return undefined
@@ -28,7 +28,7 @@ export function PlacementPointerRelease({
       const ndc = ndcFromClient(e.clientX, e.clientY, rect)
       if (ndc && pointerRef) pointerRef.current = ndc
 
-      const target = raycastPlayableSlot(scene, camera, ndc || pointerRef?.current)
+      const target = raycastPlayableSlot(camera, ndc || pointerRef?.current)
       if (!target) return
 
       onRelease?.(cardIdx, target)
@@ -36,7 +36,7 @@ export function PlacementPointerRelease({
 
     window.addEventListener('pointerup', onUp, true)
     return () => window.removeEventListener('pointerup', onUp, true)
-  }, [active, camera, scene, pointerRef, boardRectRef, cardIndexRef, onRelease])
+  }, [active, camera, pointerRef, boardRectRef, cardIndexRef, onRelease])
 
   return null
 }

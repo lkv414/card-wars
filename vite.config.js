@@ -6,6 +6,8 @@ import { readFileSync, existsSync } from 'node:fs'
 
 /* global process */
 
+import { visualizer } from 'rollup-plugin-visualizer'
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const projectRoot = resolve(__dirname)
 
@@ -91,7 +93,18 @@ const productionEnvDevPlugin = {
 }
 
 export default defineConfig(() => ({
-  plugins: [react(), productionEnvDevPlugin],
+  plugins: [
+    react(),
+    productionEnvDevPlugin,
+    // Vite-patterns: bundle visualizer для CI — генерит dist/stats.html,
+    // помогает ловить регрессии размера чанков.
+    visualizer({
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: false,
+      template: 'treemap',
+    }),
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -100,16 +113,23 @@ export default defineConfig(() => ({
   // For `npm run build`: bake the same values into the bundle via define.
   define: toDefine(envFromProduction),
   build: {
+    // Большие чанки раздражают линтер Vite; 1 МБ — приемлемо для three-vendor.
+    chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          const norm = id.replace(/\\/g, '/')
+          // Только три категории — three + r3f + drei как один three-vendor,
+          // supabase отдельно (нужен только на лобби), и react-router отдельно.
           if (
-            id.includes('node_modules/three')
-            || id.includes('node_modules/@react-three/fiber')
-            || id.includes('node_modules/@react-three/drei')
+            /\/node_modules\/three(\/|$|\.js|\.mjs|\.cjs)/.test(norm) ||
+            /\/node_modules\/@react-three\//.test(norm)
           ) {
             return 'three-vendor'
           }
+          if (/\/node_modules\/@supabase\//.test(norm)) return 'supabase'
+          if (/\/node_modules\/react-router/.test(norm)) return 'react-router'
+          return undefined
         },
       },
     },

@@ -38,64 +38,6 @@
     "image_url": "images/0002-bmo_card_2.png"
   },
   {
-    "id": "card-0003-газы-огра",
-    "name": "Газы Огра",
-    "card_number": 4,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Открой 3 карты сверху своей колоды. Одну положи вниз своей колоды, остальные две сбрось.",
-    "mechanics": [
-      {
-        "type": "look_at_cards",
-        "count": 3
-      },
-      {
-        "type": "put_on_bottom",
-        "count": 1
-      },
-      {
-        "type": "discard",
-        "count": 2
-      }
-    ],
-    "image_url": "images/0003-bmo_card_4.png"
-  },
-  {
-    "id": "card-0004-газ-огра",
-    "name": "Газ Огра",
-    "card_number": 5,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Открой 3 карты сверху своей колоды. Одну положи вниз своей колоды, остальные две сбрось.",
-    "mechanics": [
-      {
-        "type": "look_at_cards",
-        "count": 3
-      },
-      {
-        "type": "put_on_bottom",
-        "count": 1
-      },
-      {
-        "type": "discard",
-        "count": 2
-      }
-    ],
-    "image_url": "images/0004-bmo_card_5.png"
-  },
-  {
     "id": "card-0005-крепость-крови",
     "name": "Крепость Крови",
     "card_number": 6,
@@ -117,29 +59,6 @@
       }
     ],
     "image_url": "images/0005-bmo_card_6.png"
-  },
-  {
-    "id": "card-0006-великолепный-замок",
-    "name": "Великолепный замок",
-    "card_number": 8,
-    "card_type": "building",
-    "cost": 0,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Твое существо получает +3 DEF на этой линии.",
-    "mechanics": [
-      {
-        "type": "stat_buff",
-        "target": "friendly_creature_on_lane",
-        "stat": "health",
-        "amount": 3
-      }
-    ],
-    "image_url": "images/0006-bmo_card_8.png"
   },
   {
     "id": "card-0007-лысый-бродяга",
@@ -411,28 +330,6 @@
     "image_url": "images/0019-bmo_card_29.png"
   },
   {
-    "id": "card-0020-бессмертный-ходок-маиса",
-    "name": "Бессмертный ходок маиса",
-    "card_number": 30,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 8,
-    "land_type": "swamp",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон.",
-    "mechanics": [
-      {
-        "type": "passive",
-        "while": "на Кукурузной земле",
-        "effect": "наносит тройной урон"
-      }
-    ],
-    "image_url": "images/0020-bmo_card_30.png"
-  },
-  {
     "id": "card-0021-дворец-костей",
     "name": "Дворец Костей",
     "card_number": 33,
@@ -565,30 +462,6 @@
     "image_url": "images/0026-bmo_card_39.png"
   },
   {
-    "id": "card-0027-пирогожторм",
-    "name": "Пирогожторм",
-    "card_number": 1,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждое твое существо без урона на нем получает +2 ATK в этом ход.",
-    "mechanics": [
-      {
-        "type": "stat_buff",
-        "target": "each_undamaged_friendly_creature",
-        "stat": "attack",
-        "amount": 2,
-        "duration": "this_turn"
-      }
-    ],
-    "image_url": "images/0027-bubblegum_card_1.png"
-  },
-  {
     "id": "card-0028-падающая-звезда",
     "name": "Падающая звезда",
     "card_number": 2,
@@ -676,52 +549,6 @@
     "image_url": "images/0031-bubblegum_card_6.png"
   },
   {
-    "id": "card-0032-мышь-альбинос",
-    "name": "Мышь альбинос",
-    "card_number": 7,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 2,
-    "health": 7,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока на Мыше альбиносе ровно 2 Урона, она получает +2 АТК.",
-    "mechanics": [
-      {
-        "type": "passive",
-        "while": "has_exactly_2_damage",
-        "effect": "+2 ATK"
-      }
-    ],
-    "image_url": "images/0032-bubblegum_card_7.png"
-  },
-  {
-    "id": "card-0033-радужная-мышь",
-    "name": "Радужная мышь",
-    "card_number": 8,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 4,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "В начале своего хода, восстанови 1 HP за каждый различный тип земли под твоим контролем (но не более 25).",
-    "mechanics": [
-      {
-        "type": "start_of_turn",
-        "action": "heal_friendly_creatures",
-        "amount": 1,
-        "per": "different_land_type",
-        "cap": 25
-      }
-    ],
-    "image_url": "images/0033-bubblegum_card_8.png"
-  },
-  {
     "id": "card-0034-пироклоп",
     "name": "Пироклоп",
     "card_number": 10,
@@ -789,30 +616,6 @@
       }
     ],
     "image_url": "images/0036-bubblegum_card_14.png"
-  },
-  {
-    "id": "card-0037-пирогошторм",
-    "name": "Пирогошторм",
-    "card_number": 16,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждое твое существо без урона на нем получает +2 ATK в этом ходу.",
-    "mechanics": [
-      {
-        "type": "stat_buff",
-        "target": "each_undamaged_friendly_creature",
-        "stat": "attack",
-        "amount": 2,
-        "duration": "this_turn"
-      }
-    ],
-    "image_url": "images/0037-bubblegum_card_16.png"
   },
   {
     "id": "card-0038-милозавр-рекс",
@@ -1658,24 +1461,6 @@
     "image_url": "images/0076-charlie_card_6.png"
   },
   {
-    "id": "card-0077-пиратская-бухта",
-    "name": "Пиратская бухта",
-    "card_number": 7,
-    "card_type": "building",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "blue",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Создай 1 Связку на этой линии.",
-    "mechanics": [
-      "create_connection"
-    ],
-    "image_url": "images/0077-charlie_card_7.png"
-  },
-  {
     "id": "card-0078-торжество-чар",
     "name": "Торжество чар",
     "card_number": 9,
@@ -1859,24 +1644,6 @@
     "image_url": "images/0087-charlie_card_23.png"
   },
   {
-    "id": "card-0088-опорный-домик",
-    "name": "Опорный домик",
-    "card_number": 24,
-    "card_type": "building",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "blue",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Твои существа на этой линии получают +1 DEF.",
-    "mechanics": [
-      "buff_lane_defense"
-    ],
-    "image_url": "images/0088-charlie_card_24.png"
-  },
-  {
     "id": "card-0089-сшитый-ленивец",
     "name": "Сшитый ленивец",
     "card_number": 25,
@@ -1931,42 +1698,6 @@
     "image_url": "images/0091-charlie_card_28.png"
   },
   {
-    "id": "card-0092-весёлый-жираф",
-    "name": "Весёлый жираф",
-    "card_number": 29,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 8,
-    "land_type": "good",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока у Весёлого жирафа 4 Урона или больше, он наносит урон напрямую противнику, а не существу.",
-    "mechanics": [
-      "damage_redirect_to_opponent"
-    ],
-    "image_url": "images/0092-charlie_card_29.png"
-  },
-  {
-    "id": "card-0093-очаровательный-кролик",
-    "name": "Очаровательный кролик",
-    "card_number": 31,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 0,
-    "health": 8,
-    "land_type": "good",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "В начале своего хода, если у Очаровательного кролика 4 Урона или больше, он наносит 3 Урона выбранному существу противника.",
-    "mechanics": [
-      "turn_start_deal_damage"
-    ],
-    "image_url": "images/0093-charlie_card_31.png"
-  },
-  {
     "id": "card-0094-вязаный-котик",
     "name": "Вязаный котик",
     "card_number": 33,
@@ -2001,24 +1732,6 @@
       "damage_immunity"
     ],
     "image_url": "images/0095-charlie_card_34.png"
-  },
-  {
-    "id": "card-0096-ласковый-слоненок",
-    "name": "Ласковый слоненок",
-    "card_number": 36,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 4,
-    "health": 4,
-    "land_type": "good",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждый раз, когда Ласковый слоненок становится целью заклинания противника, он наносит 2 Урона выбранному существу противника.",
-    "mechanics": [
-      "on_targeted_spell_deal_damage"
-    ],
-    "image_url": "images/0096-charlie_card_36.png"
   },
   {
     "id": "card-0097-обнимашки",
@@ -2374,24 +2087,6 @@
     "image_url": "images/0115-finn_card_25.png"
   },
   {
-    "id": "card-0116-ледяной-малыш",
-    "name": "Ледяной малыш",
-    "card_number": 27,
-    "card_type": "creature",
-    "cost": 0,
-    "attack": 1,
-    "health": 2,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока у противника нет существ на этой линии, Ледяной малыш получает +3 ATK.",
-    "mechanics": [
-      "conditional_attack_bonus"
-    ],
-    "image_url": "images/0116-finn_card_27.png"
-  },
-  {
     "id": "card-0117-телепорт",
     "name": "Телепорт",
     "card_number": 29,
@@ -2428,24 +2123,6 @@
     "image_url": "images/0118-finn_card_31.png"
   },
   {
-    "id": "card-0119-мозговой-кровавый-шторм",
-    "name": "Мозговой кровавый шторм",
-    "card_number": 32,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Нанеси 1 Урон каждому существу противника.",
-    "mechanics": [
-      "damage_all_enemy"
-    ],
-    "image_url": "images/0119-finn_card_32.png"
-  },
-  {
     "id": "card-0120-воадикский-талисман",
     "name": "Воадикский талисман",
     "card_number": 34,
@@ -2480,24 +2157,6 @@
       "buff_lane"
     ],
     "image_url": "images/0121-finn_card_36.png"
-  },
-  {
-    "id": "card-0122-небесный-замок",
-    "name": "Небесный замок",
-    "card_number": 37,
-    "card_type": "building",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Твое существо на этой линии получает +3 DEF.",
-    "mechanics": [
-      "buff_lane_defense"
-    ],
-    "image_url": "images/0122-finn_card_37.png"
   },
   {
     "id": "card-0123-сопли-гнома",
@@ -2718,42 +2377,6 @@
     "image_url": "images/0134-fiona_card_17.png"
   },
   {
-    "id": "card-0135-бизнес-пес",
-    "name": "Бизнес пес",
-    "card_number": 18,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 6,
-    "land_type": "blue",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Бизнес пес получает +2 ATK за каждую карту, сыгранную в этом ходу с \"пес\" или \"щенок\" в названии.",
-    "mechanics": [
-      "conditional_attack_bonus_name"
-    ],
-    "image_url": "images/0135-fiona_card_18.png"
-  },
-  {
-    "id": "card-0136-чокнутая-кошатница",
-    "name": "Чокнутая кошатница",
-    "card_number": 19,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 1,
-    "health": 10,
-    "land_type": "blue",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Твои Радужные существа получают +1 ATK.",
-    "mechanics": [
-      "buff_rainbow"
-    ],
-    "image_url": "images/0136-fiona_card_19.png"
-  },
-  {
     "id": "card-0137-золотой-ретривер",
     "name": "Золотой ретривер",
     "card_number": 21,
@@ -2955,71 +2578,6 @@
     "image_url": "images/0147-fiona_card_40.png"
   },
   {
-    "id": "card-0148-ледяной-лазутчик",
-    "name": "Ледяной лазутчик",
-    "card_number": 1,
-    "card_type": "creature",
-    "cost": 0,
-    "attack": 1,
-    "health": 5,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Когда Ледяной лазутчик вступает в игру, заморозь его землю.",
-    "mechanics": [
-      {
-        "trigger": "on_enters_play",
-        "actions": [
-          {
-            "type": "freeze_landscape",
-            "target": "chosen_landscape"
-          }
-        ],
-        "conditions": [],
-        "description": "заморозь его землю",
-        "source_text": "Когда Ледяной лазутчик вступает в игру, заморозь его землю"
-      }
-    ],
-    "image_url": "images/0148-grand_prix_card_1.png"
-  },
-  {
-    "id": "card-0149-дай-пять",
-    "name": "Дай пять!",
-    "card_number": 2,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнёру.",
-    "mechanics": [
-      {
-        "trigger": "manual",
-        "actions": [
-          {
-            "type": "deal_damage",
-            "target": "chosen_creature",
-            "amount": 1,
-            "pierce": false
-          }
-        ],
-        "conditions": [
-          {
-            "type": "verb",
-            "value": "Восстанови"
-          }
-        ],
-        "description": "или нанеси 1 урон выбранному существу",
-        "source_text": "Восстанови или нанеси 1 урон выбранному существу"
-      }
-    ],
-    "image_url": "images/0149-grand_prix_card_2.png"
-  },
-  {
     "id": "card-0150-дуэт",
     "name": "Дуэт",
     "card_number": 3,
@@ -3125,22 +2683,6 @@
       }
     ],
     "image_url": "images/0152-grand_prix_card_5.png"
-  },
-  {
-    "id": "card-0153-сотрудничество",
-    "name": "Сотрудничество",
-    "card_number": 6,
-    "card_type": "special",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "В первые раз когда ты или твой партнёр сыграете Радужное заклинание, во время своего хода, другой партнёр может сыграть Радужное заклинание той же стоимости, бесплатно.",
-    "mechanics": [],
-    "image_url": "images/0153-grand_prix_card_6.png"
   },
   {
     "id": "card-0154-бондарь",
@@ -3317,42 +2859,6 @@
       }
     ],
     "image_url": "images/0159-grand_prix_card_12.png"
-  },
-  {
-    "id": "card-0160-вафля-в-шоколаде",
-    "name": "Вафля в шоколаде",
-    "card_number": 13,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 7,
-    "land_type": "ice",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Если в начале твоей фазы сражения, на этой линии есть хотя бы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока.",
-    "mechanics": [
-      {
-        "trigger": "conditional",
-        "actions": [
-          {
-            "type": "deal_damage",
-            "target": "each_creature",
-            "amount": 1,
-            "pierce": false
-          }
-        ],
-        "conditions": [
-          {
-            "type": "if",
-            "description": "в начале твоей фазы сражения"
-          }
-        ],
-        "description": "на этой линии есть хотя бы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока",
-        "source_text": "Если в начале твоей фазы сражения, на этой линии есть хотя бы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока"
-      }
-    ],
-    "image_url": "images/0160-grand_prix_card_13.png"
   },
   {
     "id": "card-0161-банан-в-шоколаде",
@@ -3540,40 +3046,6 @@
       }
     ],
     "image_url": "images/0165-grand_prix_card_19.png"
-  },
-  {
-    "id": "card-0166-коктейль",
-    "name": "Коктейль",
-    "card_number": 21,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 8,
-    "land_type": "ice",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "ПРИЦЕП >>> Перенеси Ледяной жетон с одной земли на другую землю.",
-    "mechanics": [],
-    "image_url": "images/0166-grand_prix_card_21.png"
-  },
-  {
-    "id": "card-0167-кокмейль",
-    "name": "Кокмейль",
-    "card_number": 22,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 8,
-    "land_type": "ice",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "ПРИЦЕП >>> Перенеси Ледяной жетон с одной земли на другую землю.",
-    "mechanics": [
-      "move_ice_token"
-    ],
-    "image_url": "images/0167-grand_prix_card_22.png"
   },
   {
     "id": "card-0168-мягкий-рекрут",
@@ -3920,38 +3392,6 @@
     "image_url": "images/0180-grand_prix_card_40.png"
   },
   {
-    "id": "card-0181-крышесносяя-кола",
-    "name": "Крышесносяя кола",
-    "card_number": 1,
-    "card_type": "spell",
-    "cost": 0,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника).",
-    "mechanics": [
-      {
-        "trigger": "on_enters_play",
-        "actions": [
-          {
-            "type": "stat_buff",
-            "target": "this_creature",
-            "stat": "attack",
-            "amount": 1,
-            "duration": "this_turn"
-          }
-        ],
-        "conditions": [],
-        "description": "получает +1 ATK в этом ходу",
-        "source_text": "получает +1 ATK в этом ходу"
-      }
-    ],
-    "image_url": "images/0181-gunter_card_1.png"
-  },
-  {
     "id": "card-0182-магазин-для-отдыха",
     "name": "Магазин для отдыха",
     "card_number": 2,
@@ -4036,38 +3476,6 @@
     "description": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками.",
     "mechanics": [],
     "image_url": "images/0184-gunter_card_4.png"
-  },
-  {
-    "id": "card-0185-крышесносная-кола",
-    "name": "Крышесносная кола",
-    "card_number": 6,
-    "card_type": "spell",
-    "cost": 0,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника).",
-    "mechanics": [
-      {
-        "trigger": "on_enters_play",
-        "actions": [
-          {
-            "type": "stat_buff",
-            "target": "this_creature",
-            "stat": "attack",
-            "amount": 1,
-            "duration": "this_turn"
-          }
-        ],
-        "conditions": [],
-        "description": "получает +1 ATK в этом ходу",
-        "source_text": "получает +1 ATK в этом ходу"
-      }
-    ],
-    "image_url": "images/0185-gunter_card_6.png"
   },
   {
     "id": "card-0186-плавучий-дворец-льда",
@@ -5153,22 +4561,6 @@
     "image_url": "images/0225-ice_king_card_32.png"
   },
   {
-    "id": "card-0226-нежный-снежный-малыш",
-    "name": "Нежный Снежный Малыш",
-    "card_number": 33,
-    "card_type": "creature",
-    "cost": 0,
-    "attack": 1,
-    "health": 2,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "+3 ATK пока у противника нет существа на этой линии.",
-    "mechanics": [],
-    "image_url": "images/0226-ice_king_card_33.png"
-  },
-  {
     "id": "card-0227-острая-сосулька",
     "name": "Острая сосулька",
     "card_number": 35,
@@ -5311,24 +4703,6 @@
     "image_url": "images/0234-jake_card_7.png"
   },
   {
-    "id": "card-0235-кукурузные-рыцари",
-    "name": "Кукурузные рыцари",
-    "card_number": 9,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 1,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Кукурузные рыцари получают +1 ATK и +2 DEF за каждое Кукурузное поле под твоим контролем.",
-    "mechanics": [
-      "attack_and_defense_per_controlled_corn_field"
-    ],
-    "image_url": "images/0235-jake_card_9.png"
-  },
-  {
     "id": "card-0236-червь-шелухи",
     "name": "Червь шелухи",
     "card_number": 11,
@@ -5347,42 +4721,6 @@
     "image_url": "images/0236-jake_card_11.png"
   },
   {
-    "id": "card-0237-легион-уховерток",
-    "name": "Легион уховерток",
-    "card_number": 13,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 8,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
-    "mechanics": [
-      "return_lane_unit_on_enter"
-    ],
-    "image_url": "images/0237-jake_card_13.png"
-  },
-  {
-    "id": "card-0238-легион-уховёрток",
-    "name": "Легион уховёрток",
-    "card_number": 14,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 8,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Когда Легион уховёрток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
-    "mechanics": [
-      "return_lane_unit_on_enter"
-    ],
-    "image_url": "images/0238-jake_card_14.png"
-  },
-  {
     "id": "card-0239-разбойная-тыква",
     "name": "Разбойная тыква",
     "card_number": 15,
@@ -5399,24 +4737,6 @@
       "action_damage_per_controlled_corn_field"
     ],
     "image_url": "images/0239-jake_card_15.png"
-  },
-  {
-    "id": "card-0240-стрелец-дэн",
-    "name": "Стрелец Дэн",
-    "card_number": 17,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 6,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "ПРИЕМ >>> Уничтожь выбранное строение на линии Стрельца Дэна.",
-    "mechanics": [
-      "action_destroy_building"
-    ],
-    "image_url": "images/0240-jake_card_17.png"
   },
   {
     "id": "card-0241-царь-полей",
@@ -5630,42 +4950,6 @@
     "image_url": "images/0252-jake_card_39.png"
   },
   {
-    "id": "card-0253-ласковая-овечка",
-    "name": "Ласковая овечка",
-    "card_number": 1,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 2,
-    "health": 7,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Если в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии.",
-    "mechanics": [
-      "damaged_turn_damage"
-    ],
-    "image_url": "images/0253-jake_2v2_card_1.png"
-  },
-  {
-    "id": "card-0254-спящая-коала",
-    "name": "Спящая коала",
-    "card_number": 2,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 8,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока у Спящей коалы 4 урона и более, она получает +2 ATK.",
-    "mechanics": [
-      "damaged_attack_bonus"
-    ],
-    "image_url": "images/0254-jake_2v2_card_2.png"
-  },
-  {
     "id": "card-0255-щенок-в-заплатках",
     "name": "Щенок в заплатках",
     "card_number": 3,
@@ -5775,96 +5059,6 @@
     "image_url": "images/0260-jake_2v2_card_8.png"
   },
   {
-    "id": "card-0261-молодой-крылатый-зебрарог",
-    "name": "Молодой крылатый зебрарог",
-    "card_number": 9,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 2,
-    "health": 5,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Если Молодой крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его на верх своей колоды.",
-    "mechanics": [
-      "return_to_top_of_deck_on_leave"
-    ],
-    "image_url": "images/0261-jake_2v2_card_9.png"
-  },
-  {
-    "id": "card-0262-привлекательный-слон",
-    "name": "Привлекательный слон",
-    "card_number": 12,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 4,
-    "health": 4,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждый раз, когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника.",
-    "mechanics": [
-      "damage_when_targeted_by_spell"
-    ],
-    "image_url": "images/0262-jake_2v2_card_12.png"
-  },
-  {
-    "id": "card-0263-лёгкий-жираф",
-    "name": "Лёгкий жираф",
-    "card_number": 13,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 8,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока у Лёгкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
-    "mechanics": [
-      "damaged_direct_attack"
-    ],
-    "image_url": "images/0263-jake_2v2_card_13.png"
-  },
-  {
-    "id": "card-0264-обнимашный-ёж",
-    "name": "Обнимашный ёж",
-    "card_number": 15,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 3,
-    "health": 8,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока у Обнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
-    "mechanics": [
-      "damaged_direct_attack"
-    ],
-    "image_url": "images/0264-jake_2v2_card_15.png"
-  },
-  {
-    "id": "card-0265-обнимашный-еж",
-    "name": "Обнимашный еж",
-    "card_number": 16,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 3,
-    "health": 8,
-    "land_type": "cute",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока у Обнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
-    "mechanics": [
-      "damaged_direct_attack"
-    ],
-    "image_url": "images/0265-jake_2v2_card_16.png"
-  },
-  {
     "id": "card-0266-дикий-зебрарог",
     "name": "Дикий зебрарог",
     "card_number": 17,
@@ -5917,42 +5111,6 @@
       "action_damage_per_controlled_corn_field"
     ],
     "image_url": "images/0268-jake_2v2_card_19.png"
-  },
-  {
-    "id": "card-0269-защищенный-зебрарог",
-    "name": "Защищенный зебрарог",
-    "card_number": 20,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 2,
-    "health": 6,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Когда Защищенный зебрарог атакует, можешь восстановить 1 урон у соседнего существа.",
-    "mechanics": [
-      "restore_adjacent_unit_on_attack"
-    ],
-    "image_url": "images/0269-jake_2v2_card_20.png"
-  },
-  {
-    "id": "card-0270-защищенный-зебрагон",
-    "name": "Защищенный зебрагон",
-    "card_number": 21,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 2,
-    "health": 6,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Когда Защищенный зебрагон атакует, можешь восстановить 1 урон у соседнего существа.",
-    "mechanics": [
-      "restore_adjacent_unit_on_attack"
-    ],
-    "image_url": "images/0270-jake_2v2_card_21.png"
   },
   {
     "id": "card-0271-шипастый-зебрарог",
@@ -6010,43 +5168,6 @@
     "image_url": "images/0273-jake_2v2_card_25.png"
   },
   {
-    "id": "card-0274-амбар-с-сеном",
-    "name": "Амбар с сеном",
-    "card_number": 26,
-    "card_type": "building",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Потрать 1 Действие, ПРИЕМ >>> Если эта земля пустует, сыграй на нее Кормежника из стопки сброса бесплатно. Если Амбар с сеном покидает игру, уничтожь Кормежника на этой линии.",
-    "mechanics": [
-      "action_play_feeder_from_discard",
-      "destroy_feeder_on_leave"
-    ],
-    "image_url": "images/0274-jake_2v2_card_26.png"
-  },
-  {
-    "id": "card-0275-плакливый-зебрарог",
-    "name": "Плакливый зебрарог",
-    "card_number": 27,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 1,
-    "health": 6,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждый раз, когда Плакливый зебрарог атакует, нанеси 1 урон своему противнику.",
-    "mechanics": [
-      "damage_opponent_on_attack"
-    ],
-    "image_url": "images/0275-jake_2v2_card_27.png"
-  },
-  {
     "id": "card-0276-слинять",
     "name": "Слинять",
     "card_number": 28,
@@ -6101,42 +5222,6 @@
     "image_url": "images/0278-jake_2v2_card_30.png"
   },
   {
-    "id": "card-0279-крепость-зебрарога",
-    "name": "Крепость зебрарога",
-    "card_number": 33,
-    "card_type": "building",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Твое существо получает +1 ATK на этой линии.",
-    "mechanics": [
-      "lane_attack_bonus"
-    ],
-    "image_url": "images/0279-jake_2v2_card_33.png"
-  },
-  {
-    "id": "card-0280-клон",
-    "name": "Клон",
-    "card_number": 34,
-    "card_type": "spell",
-    "cost": 0,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Сыграй свое следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре.",
-    "mechanics": [
-      "play_next_same_name_free"
-    ],
-    "image_url": "images/0280-jake_2v2_card_34.png"
-  },
-  {
     "id": "card-0281-семейные-посиделки",
     "name": "Семейные посиделки",
     "card_number": 35,
@@ -6172,25 +5257,6 @@
       "share_card_with_partner"
     ],
     "image_url": "images/0282-jake_2v2_card_36.png"
-  },
-  {
-    "id": "card-0283-королевский-зебрарог",
-    "name": "Королевский зебрарог",
-    "card_number": 37,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 3,
-    "health": 7,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "+1 ATK за каждого Тимборн под контролем твоей команды. Если Королевский зебрарог покидает игру во время твоей фазы сражения, можешь положить его в свою руку.",
-    "mechanics": [
-      "attack_per_team_timbor",
-      "return_to_hand_on_leave"
-    ],
-    "image_url": "images/0283-jake_2v2_card_37.png"
   },
   {
     "id": "card-0284-овечка",
@@ -6497,24 +5563,6 @@
     "image_url": "images/0300-lady_rainicorn_card_25.png"
   },
   {
-    "id": "card-0301-заумный-шторм-крови",
-    "name": "Заумный Шторм Крови",
-    "card_number": 28,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Наноси 1 урон каждому существу противника.",
-    "mechanics": [
-      "damage_all_enemy_units"
-    ],
-    "image_url": "images/0301-lady_rainicorn_card_28.png"
-  },
-  {
     "id": "card-0302-песчаный-ангел",
     "name": "Песчаный ангел",
     "card_number": 33,
@@ -6810,22 +5858,6 @@
     "image_url": "images/0319-lemongrab_card_21.png"
   },
   {
-    "id": "card-0320-кукурузный-глазстик",
-    "name": "Кукурузный глазстик",
-    "card_number": 23,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 4,
-    "health": 1,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Получайте 1 дополнительную защиту за каждый различный тип земли под контролем.",
-    "mechanics": [],
-    "image_url": "images/0320-lemongrab_card_23.png"
-  },
-  {
     "id": "card-0321-зебрарог-на-подборе",
     "name": "Зебрарог на подборе",
     "card_number": 24,
@@ -6968,22 +6000,6 @@
     "description": "Верните эту карту в руку и поменяйте её местами с двумя другими существами.",
     "mechanics": [],
     "image_url": "images/0329-lemongrab_card_34.png"
-  },
-  {
-    "id": "card-0330-пескозавр-рекс",
-    "name": "Пескозавр Рекс",
-    "card_number": 35,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 0,
-    "health": 9,
-    "land_type": "desert",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Получайте 2 атаки за каждую пустую землю.",
-    "mechanics": [],
-    "image_url": "images/0330-lemongrab_card_35.png"
   },
   {
     "id": "card-0331-пескомаг",
@@ -7194,22 +6210,6 @@
     "image_url": "images/0343-lsp_card_14.png"
   },
   {
-    "id": "card-0344-стейкчоп",
-    "name": "Стейкчоп",
-    "card_number": 16,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 4,
-    "health": 4,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "В начале хода сбросьте 2 карты или уничтожьте эту карту.",
-    "mechanics": [],
-    "image_url": "images/0344-lsp_card_16.png"
-  },
-  {
     "id": "card-0345-пирамида",
     "name": "Пирамида",
     "card_number": 17,
@@ -7368,22 +6368,6 @@
     "description": "При входе замените выбранное существо; нанесите 3 урон соседнему существу.",
     "mechanics": [],
     "image_url": "images/0354-lsp_card_31.png"
-  },
-  {
-    "id": "card-0355-рубленый-стейк",
-    "name": "Рубленый стейк",
-    "card_number": 32,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 4,
-    "health": 4,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "",
-    "mechanics": [],
-    "image_url": "images/0355-lsp_card_32.png"
   },
   {
     "id": "card-0356-козёл",
@@ -8138,22 +7122,6 @@
     "image_url": "images/0402-marceline_card_23.png"
   },
   {
-    "id": "card-0403-большой-курятник",
-    "name": "Большой курятник",
-    "card_number": 24,
-    "card_type": "building",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока в игре, существа промывника не могут атаковать в ваш ход.",
-    "mechanics": [],
-    "image_url": "images/0403-marceline_card_24.png"
-  },
-  {
     "id": "card-0404-автоплут",
     "name": "Автоплут",
     "card_number": 25,
@@ -8264,22 +7232,6 @@
     "description": "Пока в игре, существа промывника не могут атаковать в ваш ход.",
     "mechanics": [],
     "image_url": "images/0410-marceline_card_35.png"
-  },
-  {
-    "id": "card-0411-свирепый-петух",
-    "name": "Свирепый петух",
-    "card_number": 38,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 0,
-    "health": 8,
-    "land_type": "any",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока в игре, существа промывника не могут атаковать в ваш ход.",
-    "mechanics": [],
-    "image_url": "images/0411-marceline_card_38.png"
   },
   {
     "id": "card-0412-голубой-король-вечерюк",
@@ -8822,24 +7774,6 @@
     "image_url": "images/0441-ftg_card_34.png"
   },
   {
-    "id": "card-0442-счастливая-монетка",
-    "name": "Счастливая монетка",
-    "card_number": 35,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Голубой равнине.",
-    "mechanics": [
-      "Каждое твоё существо, атакующее существо на Голубой равнине, получает +2 ATK в этом ходу."
-    ],
-    "image_url": "images/0442-ftg_card_35.png"
-  },
-  {
     "id": "card-0443-глаза-змеи",
     "name": "Глаза змеи",
     "card_number": 36,
@@ -8982,42 +7916,6 @@
       "Противоположные эффекты не могут изменить землю Хулигана-яблока."
     ],
     "image_url": "images/0450-ftg_card_43.png"
-  },
-  {
-    "id": "card-0451-лучник-дэн",
-    "name": "Лучник Дэн",
-    "card_number": 44,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 6,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "ПРИЁМ >>> Уничтожь выбранное строение на линии Лучника Дэна.",
-    "mechanics": [
-      "Приём уничтожает выбранное строение на линии Лучника Дэна."
-    ],
-    "image_url": "images/0451-ftg_card_44.png"
-  },
-  {
-    "id": "card-0452-рыцарь-хамскер",
-    "name": "Рыцарь Хамскер",
-    "card_number": 45,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "corn",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Рыцари Хамскер получают +1 ATK и +2 DEF за каждую землю типа Кукурузная под твоим контролем.",
-    "mechanics": [
-      "Каждый Рыцарь Хамскер получает +1 ATK и +2 DEF за каждую Кукурузную землю под контролем."
-    ],
-    "image_url": "images/0452-ftg_card_45.png"
   },
   {
     "id": "card-0453-воскресная-школа",
@@ -9632,24 +8530,6 @@
     "image_url": "images/0486-ftg_card_84.png"
   },
   {
-    "id": "card-0487-песокозавр-рекс",
-    "name": "Песокозавр Рекс",
-    "card_number": 85,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 0,
-    "health": 9,
-    "land_type": "plains",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Песокозавр Рекс получает +2 ATK за каждую пустую землю под твоим контролем.",
-    "mechanics": [
-      "+2 ATK за каждую пустую землю под твоим контролем."
-    ],
-    "image_url": "images/0487-ftg_card_85.png"
-  },
-  {
     "id": "card-0488-мозговой-смерч",
     "name": "Мозговой смерч",
     "card_number": 86,
@@ -9846,24 +8726,6 @@
       "При уходе из игры вытягивает нижнюю карту колоды."
     ],
     "image_url": "images/0498-ftg_card_102.png"
-  },
-  {
-    "id": "card-0499-бессмертный-ходок-мауса",
-    "name": "Бессмертный ходок мауса",
-    "card_number": 103,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 2,
-    "health": 8,
-    "land_type": "swamp",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Пока Бессмертный ходок мауса находится на Кукурузной земле и атакует существо, он наносит дополнительный урон.",
-    "mechanics": [
-      "На Кукурузной земле наносит дополнительный урон во время атаки существа."
-    ],
-    "image_url": "images/0499-ftg_card_103.png"
   },
   {
     "id": "card-0500-лейтенант-груб",
@@ -10100,24 +8962,6 @@
     "image_url": "images/0512-monika_card_2.png"
   },
   {
-    "id": "card-0513-никто-не-спорит",
-    "name": "Никто не спорит",
-    "card_number": 3,
-    "card_type": "spell",
-    "cost": 3,
-    "attack": null,
-    "health": null,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Нарисуй значение 5. Если оно равно или больше значения Домино, выбранный противник кладёт верхнюю карту из своей колоды на поле. Иначе выбранный противник берёт верхнюю карту из своей колоды в руку.",
-    "mechanics": [
-      "Нарисуй значение 5 и сравни с Домино."
-    ],
-    "image_url": "images/0513-monika_card_3.png"
-  },
-  {
     "id": "card-0514-домино-белый",
     "name": "Домино белый",
     "card_number": 4,
@@ -10134,24 +8978,6 @@
       "Нарисуй и сохрани значение 5."
     ],
     "image_url": "images/0514-monika_card_4.png"
-  },
-  {
-    "id": "card-0515-снежная-королева",
-    "name": "Снежная королева",
-    "card_number": 5,
-    "card_type": "creature",
-    "cost": 4,
-    "attack": 1,
-    "health": 7,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Приём: Снежная королева получает +2 АТК каждый ход.",
-    "mechanics": [
-      "Приём: +2 АТК каждый ход."
-    ],
-    "image_url": "images/0515-monika_card_5.png"
   },
   {
     "id": "card-0516-незаконные-артефакты",
@@ -10225,22 +9051,6 @@
     "image_url": "images/0519-monika_card_10.png"
   },
   {
-    "id": "card-0520-пончик",
-    "name": "Пончик",
-    "card_number": 15,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 1,
-    "health": 2,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "В конце хода сбрось 1 карту из руки.",
-    "mechanics": [],
-    "image_url": "images/0520-monika_card_15.png"
-  },
-  {
     "id": "card-0521-клубничка",
     "name": "Клубничка",
     "card_number": 22,
@@ -10311,42 +9121,6 @@
     "image_url": "images/0524-tree_trunks_card_1.png"
   },
   {
-    "id": "card-0525-мамуля-камнепух",
-    "name": "Мамуля камнепух",
-    "card_number": 2,
-    "card_type": "creature",
-    "cost": 2,
-    "attack": 3,
-    "health": 7,
-    "land_type": "cotton",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Если на поле присутствует Малыш камнепух под твоим контролем, Мамуля получает +1 АТК за каждого.",
-    "mechanics": [
-      "За каждый Малыш камнепух под твоим контролем: +1 АТК."
-    ],
-    "image_url": "images/0525-tree_trunks_card_2.png"
-  },
-  {
-    "id": "card-0526-зачатие-шабашиза",
-    "name": "Зачатие шабашиза",
-    "card_number": 3,
-    "card_type": "spell",
-    "cost": 0,
-    "attack": null,
-    "health": null,
-    "land_type": "cotton",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Выложи Шабашиза на поле.",
-    "mechanics": [
-      "Выложи Шабашиза на поле."
-    ],
-    "image_url": "images/0526-tree_trunks_card_3.png"
-  },
-  {
     "id": "card-0527-шабашиз",
     "name": "Шабашиз",
     "card_number": 4,
@@ -10365,44 +9139,6 @@
     "image_url": "images/0527-tree_trunks_card_4.png"
   },
   {
-    "id": "card-0528-пф",
-    "name": "Пф!",
-    "card_number": 5,
-    "card_type": "spell",
-    "cost": 1,
-    "attack": null,
-    "health": null,
-    "land_type": "cotton",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Выбранному существу промывка наносится урон, равный половине его максимальной DEF. Если показатель DEF нечётный, округляй вверх.",
-    "mechanics": [
-      "Урон, равный половине максимальной DEF выбранного существа; нечётное значение округляется вверх."
-    ],
-    "image_url": "images/0528-tree_trunks_card_5.png"
-  },
-  {
-    "id": "card-0529-все-или-ничего",
-    "name": "Все или ничего",
-    "card_number": 6,
-    "card_type": "spell",
-    "cost": 2,
-    "attack": null,
-    "health": null,
-    "land_type": "cotton",
-    "is_rainbow": false,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Ты сбрасываешь всех существ из игры и все карты с руки. После этого тяни 5 карт из колоды. У тебя есть 3 действия на то, чтобы сыграть существ, которые тебе выпали. Если существ не оказалось — готовься к худшему.",
-    "mechanics": [
-      "Сбрось всех существ и карты с руки.",
-      "Вытяни 5 карт.",
-      "Получи 3 действия для существ, выпавших после сброса."
-    ],
-    "image_url": "images/0529-tree_trunks_card_6.png"
-  },
-  {
     "id": "card-0530-хлопковая-аллея",
     "name": "Хлопковая аллея",
     "card_number": 7,
@@ -10419,42 +9155,6 @@
       "Приём: перемещение существ между линиями с аллеями."
     ],
     "image_url": "images/0530-tree_trunks_card_7.png"
-  },
-  {
-    "id": "card-0531-котячья-девятка",
-    "name": "Котячья Девятка",
-    "card_number": 8,
-    "card_type": "creature",
-    "cost": 1,
-    "attack": 2,
-    "health": 4,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Каждый раз после того, как существо промывка наносит Котячьей Девятке урон, можешь переместить её на пустую соседнюю землю.",
-    "mechanics": [
-      "После получения урона от промывки можешь переместиться на пустую соседнюю землю."
-    ],
-    "image_url": "images/0531-tree_trunks_card_8.png"
-  },
-  {
-    "id": "card-0532-хлопковая-няшка",
-    "name": "Хлопковая няшка",
-    "card_number": 9,
-    "card_type": "creature",
-    "cost": 0,
-    "attack": 1,
-    "health": 5,
-    "land_type": "rainbow",
-    "is_rainbow": true,
-    "has_flip": false,
-    "flip_description": "",
-    "description": "Считается одновременно милым и радужным существом.",
-    "mechanics": [
-      "Милое и радужное существо."
-    ],
-    "image_url": "images/0532-tree_trunks_card_9.png"
   },
   {
     "id": "card-0533-абрака-милиц",
@@ -10547,5 +9247,633 @@
       "Восстанови 2 жизни (не более 25) за каждое уничтоженное существо под твоим контролем на этой линии."
     ],
     "image_url": "images/0537-tree_trunks_card_40.png"
+  },
+  {
+    "id": "card-0003-газы-огра",
+    "name": "Газы Огра",
+    "card_number": 4,
+    "card_type": "spell",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Открой 3 карты сверху своей колоды. Одну положи вниз своей колоды, остальные две сбрось.",
+    "mechanics": [
+      {
+        "type": "look_at_cards",
+        "count": 3
+      },
+      {
+        "type": "put_on_bottom",
+        "count": 1
+      },
+      {
+        "type": "discard",
+        "count": 2
+      }
+    ],
+    "image_url": "images/0003-bmo_card_4.png"
+  },
+  {
+    "id": "card-0006-великолепный-замок",
+    "name": "Великолепный замок",
+    "card_number": 8,
+    "card_type": "building",
+    "cost": 0,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Твое существо получает +3 DEF на этой линии.",
+    "mechanics": [
+      {
+        "type": "stat_buff",
+        "target": "friendly_creature_on_lane",
+        "stat": "health",
+        "amount": 3
+      }
+    ],
+    "image_url": "images/0006-bmo_card_8.png"
+  },
+  {
+    "id": "card-0020-бессмертный-ходок-маиса",
+    "name": "Бессмертный ходок маиса",
+    "card_number": 30,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 2,
+    "health": 8,
+    "land_type": "swamp",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон.",
+    "mechanics": [
+      {
+        "type": "passive",
+        "while": "на Кукурузной земле",
+        "effect": "наносит тройной урон"
+      }
+    ],
+    "image_url": "images/0020-bmo_card_30.png"
+  },
+  {
+    "id": "card-0037-пирогошторм",
+    "name": "Пирогошторм",
+    "card_number": 16,
+    "card_type": "spell",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Каждое твое существо без урона на нем получает +2 ATK в этом ход.",
+    "mechanics": [
+      {
+        "type": "stat_buff",
+        "target": "each_undamaged_friendly_creature",
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      }
+    ],
+    "image_url": "images/0037-bubblegum_card_16.png"
+  },
+  {
+    "id": "card-0032-мышь-альбинос",
+    "name": "Мышь альбинос",
+    "card_number": 7,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "health": 7,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Пока на Мыше альбиносе ровно 2 Урона, она получает +2 ATK",
+    "mechanics": [
+      {
+        "type": "passive",
+        "while": "has_exactly_2_damage",
+        "effect": "+2 ATK"
+      }
+    ],
+    "image_url": "images/0032-bubblegum_card_7.png"
+  },
+  {
+    "id": "card-0077-пиратская-бухта",
+    "name": "Пиратская бухта",
+    "card_number": 7,
+    "card_type": "building",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "blue",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием промудника.",
+    "mechanics": [
+      "buff_lane_defense",
+      "prevent_spell_damage_to_lane_creature"
+    ],
+    "image_url": "images/0077-charlie_card_7.png"
+  },
+  {
+    "id": "card-0263-лёгкий-жираф",
+    "name": "Лёгкий жираф",
+    "card_number": 13,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 1,
+    "health": 8,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Пока у Лёгкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
+    "mechanics": [
+      "damaged_direct_attack"
+    ],
+    "image_url": "images/0263-jake_2v2_card_13.png"
+  },
+  {
+    "id": "card-0093-очаровательный-кролик",
+    "name": "Очаровательный кролик",
+    "card_number": 31,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 0,
+    "health": 8,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "В начале своего хода, если у Очаровательного кролика 4 Урона или больше, он наносит 3 Урона выбранному существу противника.",
+    "mechanics": [
+      "turn_start_deal_damage"
+    ],
+    "image_url": "images/0093-charlie_card_31.png"
+  },
+  {
+    "id": "card-0262-привлекательный-слон",
+    "name": "Привлекательный слон",
+    "card_number": 12,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 4,
+    "health": 4,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Каждый раз, когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника.",
+    "mechanics": [
+      "damage_when_targeted_by_spell"
+    ],
+    "image_url": "images/0262-jake_2v2_card_12.png"
+  },
+  {
+    "id": "card-0226-нежный-снежный-малыш",
+    "name": "Нежный Снежный Малыш",
+    "card_number": 33,
+    "card_type": "creature",
+    "cost": 0,
+    "attack": 1,
+    "health": 2,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "+3 ATK пока у противника нет существа на этой линии.",
+    "mechanics": [
+      "conditional_attack_bonus"
+    ],
+    "image_url": "images/0226-ice_king_card_33.png"
+  },
+  {
+    "id": "card-0301-заумный-шторм-крови",
+    "name": "Заумный Шторм Крови",
+    "card_number": 28,
+    "card_type": "spell",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Наноси 1 Урон каждому существу противника.",
+    "mechanics": [
+      "damage_all_enemy_units"
+    ],
+    "image_url": "images/0301-lady_rainicorn_card_28.png"
+  },
+  {
+    "id": "card-0136-чокнутая-кошатница",
+    "name": "Чокнутая кошатница",
+    "card_number": 19,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 1,
+    "health": 10,
+    "land_type": "blue",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Твои Радужные существа получают +1 ATK.",
+    "mechanics": [
+      "buff_rainbow"
+    ],
+    "image_url": "images/0136-fiona_card_19.png"
+  },
+  {
+    "id": "card-0148-ледяной-лазутчик",
+    "name": "Ледяной лазутчик",
+    "card_number": 1,
+    "card_type": "creature",
+    "cost": 0,
+    "attack": 1,
+    "health": 5,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Когда Ледяной лазутчик вступает в игру, заморозь его землю.",
+    "mechanics": [
+      "freeze_landscape_on_enter"
+    ],
+    "image_url": "images/0148-grand_prix_card_1.png"
+  },
+  {
+    "id": "card-0149-дай-пять",
+    "name": "Дай пять!",
+    "card_number": 2,
+    "card_type": "spell",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнёру.",
+    "mechanics": [
+      "heal_or_damage_and_share_with_partner"
+    ],
+    "image_url": "images/0149-grand_prix_card_2.png"
+  },
+  {
+    "id": "card-0153-сотрудничество",
+    "name": "Сотрудничество",
+    "card_number": 6,
+    "card_type": "special",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "В первый раз, когда ты или твой партнёр сыграете Радужное заклинание во время своего хода, другой партнёр может сыграть Радужное заклинание той же стоимости бесплатно.",
+    "mechanics": [
+      "partner_plays_matching_rainbow_spell_free"
+    ],
+    "image_url": "images/0153-grand_prix_card_6.png"
+  },
+  {
+    "id": "card-0160-вафля-в-шоколаде",
+    "name": "Вафля в шоколаде",
+    "card_number": 13,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 2,
+    "health": 7,
+    "land_type": "ice",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Если в начале твоей фазы сражения на этой линии есть хотя бы один Ледяный жетон, нанеси 1 урон каждому существу под контролем выбранного игрока.",
+    "mechanics": [
+      "damage_creatures_with_ice_token_conditional"
+    ],
+    "image_url": "images/0160-grand_prix_card_13.png"
+  },
+  {
+    "id": "card-0167-кокмейль",
+    "name": "Кокмейль",
+    "card_number": 22,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 1,
+    "health": 8,
+    "land_type": "ice",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую землю.",
+    "mechanics": [
+      "move_ice_token"
+    ],
+    "image_url": "images/0167-grand_prix_card_22.png"
+  },
+  {
+    "id": "card-0185-крышесносная-кола",
+    "name": "Крышесносная кола",
+    "card_number": 6,
+    "card_type": "spell",
+    "cost": 0,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника).",
+    "mechanics": [
+      "temporary_attack_bonus_all_creatures"
+    ],
+    "image_url": "images/0185-gunter_card_6.png"
+  },
+  {
+    "id": "card-0235-кукурузные-рыцари",
+    "name": "Кукурузные рыцари",
+    "card_number": 9,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "corn",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Кукурузные рыцари получают +1 ATK и +2 DEF за каждое Кукурузное поле под твоим контролем.",
+    "mechanics": [
+      "attack_and_defense_per_controlled_corn_field"
+    ],
+    "image_url": "images/0235-jake_card_9.png"
+  },
+  {
+    "id": "card-0237-легион-уховерток",
+    "name": "Легион уховерток",
+    "card_number": 13,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 2,
+    "health": 8,
+    "land_type": "corn",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
+    "mechanics": [
+      "return_lane_unit_on_enter"
+    ],
+    "image_url": "images/0237-jake_card_13.png"
+  },
+  {
+    "id": "card-0240-стрелец-дэн",
+    "name": "Стрелец Дэн",
+    "card_number": 17,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 2,
+    "health": 6,
+    "land_type": "corn",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "ПРИЕМ >>> Уничтожь выбранное строение на линии Стрельца Дэна.",
+    "mechanics": [
+      "action_destroy_building"
+    ],
+    "image_url": "images/0240-jake_card_17.png"
+  },
+  {
+    "id": "card-0253-ласковая-овечка",
+    "name": "Ласковая овечка",
+    "card_number": 1,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "health": 7,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Если в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии.",
+    "mechanics": [
+      "damaged_turn_damage"
+    ],
+    "image_url": "images/0253-jake_2v2_card_1.png"
+  },
+  {
+    "id": "card-0264-обнимашный-ёж",
+    "name": "Обнимашный ёж",
+    "card_number": 15,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 3,
+    "health": 8,
+    "land_type": "cute",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Пока у Обнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
+    "mechanics": [
+      "damaged_direct_attack"
+    ],
+    "image_url": "images/0264-jake_2v2_card_15.png"
+  },
+  {
+    "id": "card-0269-защищенный-зебрарог",
+    "name": "Защищенный зебрарог",
+    "card_number": 20,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "health": 6,
+    "land_type": "corn",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Когда Защищенный зебрарог атакует, можешь восстановить 1 урон у соседнего существа.",
+    "mechanics": [
+      "restore_adjacent_unit_on_attack"
+    ],
+    "image_url": "images/0269-jake_2v2_card_20.png"
+  },
+  {
+    "id": "card-0274-амбар-с-сеном",
+    "name": "Амбар с сеном",
+    "card_number": 26,
+    "card_type": "building",
+    "cost": 1,
+    "attack": null,
+    "health": null,
+    "land_type": "corn",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Потрать 1 Действие, ПРИЕМ >>> Если эта земля пустует, сыграй на нее Кормежника из стопки сброса бесплатно. Если Амбар с сеном покидает игру, уничтожь Кормежника на этой линии.",
+    "mechanics": [
+      "action_play_feeder_from_discard",
+      "destroy_feeder_on_leave"
+    ],
+    "image_url": "images/0274-jake_2v2_card_26.png"
+  },
+  {
+    "id": "card-0280-клон",
+    "name": "Клон",
+    "card_number": 34,
+    "card_type": "spell",
+    "cost": 0,
+    "attack": null,
+    "health": null,
+    "land_type": "rainbow",
+    "is_rainbow": true,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Сыграй своё следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре.",
+    "mechanics": [
+      "play_next_same_name_free"
+    ],
+    "image_url": "images/0280-jake_2v2_card_34.png"
+  },
+  {
+    "id": "card-0320-кукурузный-глазстик",
+    "name": "Кукурузный глазстик",
+    "card_number": 23,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 4,
+    "health": 1,
+    "land_type": "corn",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "+1 DEF за каждую различную землю под твоим контролем.",
+    "mechanics": [
+      "Получайте +1 DEF за каждый различный тип земли под вашим контролем."
+    ],
+    "image_url": "images/0320-lemongrab_card_23.png"
+  },
+  {
+    "id": "card-0330-пескозавр-рекс",
+    "name": "Пескозавр Рекс",
+    "card_number": 35,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 0,
+    "health": 9,
+    "land_type": "desert",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "+2 ATK за каждую твою пустую землю.",
+    "mechanics": [
+      "Получайте +2 ATK за каждую пустую землю под вашим контролем."
+    ],
+    "image_url": "images/0330-lemongrab_card_35.png"
+  },
+  {
+    "id": "card-0344-стейкчоп",
+    "name": "Стейкчоп",
+    "card_number": 16,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 4,
+    "health": 4,
+    "land_type": "any",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "В начале твоего хода сбрось 2 карты или уничтожь Рубленый стейк. (Сбрось после начального взятия карты.)",
+    "mechanics": [
+      "В начале твоего хода сбрось 2 карты или уничтожь Рубленый стейк.",
+      "Сброс после начального взятия карты."
+    ],
+    "image_url": "images/0344-lsp_card_16.png"
+  },
+  {
+    "id": "card-0403-большой-курятник",
+    "name": "Большой курятник",
+    "card_number": 24,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 0,
+    "health": 10,
+    "land_type": "any",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней.",
+    "mechanics": [
+      "Получайте +1 ATK за каждую единицу нанесённого этой картой урона."
+    ],
+    "image_url": "images/0403-marceline_card_24.png"
+  },
+  {
+    "id": "card-0525-мамуля-камнепух",
+    "name": "Мамуля камнепух",
+    "card_number": 2,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "health": 6,
+    "land_type": "cotton",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Укромитель: +1 ATK против существ со стойкостью ровно 2.",
+    "mechanics": [
+      "Укромитель: +1 ATK против существ со стойкостью ровно 2."
+    ],
+    "image_url": "images/0525-tree_trunks_card_2.png"
+  },
+  {
+    "id": "card-0528-пф",
+    "name": "Пф!",
+    "card_number": 5,
+    "card_type": "creature",
+    "cost": 2,
+    "attack": 2,
+    "health": 10,
+    "land_type": "cotton",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Бей её сильнее — ей всё равно. Подушка боли не может получать больше 4 урона за удар существа промывника, зато магия наносит ей на 2 единицы урона больше.",
+    "mechanics": [
+      "Подушка боли получает не более 4 урона от одного удара существа-промывника.",
+      "Магия наносит Подушке боли на 2 единицы урона больше."
+    ],
+    "image_url": "images/0528-tree_trunks_card_5.png"
+  },
+  {
+    "id": "card-0531-котячья-девятка",
+    "name": "Котячья Девятка",
+    "card_number": 8,
+    "card_type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "health": 7,
+    "land_type": "cotton",
+    "is_rainbow": false,
+    "has_flip": false,
+    "flip_description": "",
+    "description": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две.",
+    "mechanics": [
+      "Приём: тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две карты."
+    ],
+    "image_url": "images/0531-tree_trunks_card_8.png"
   }
 ]

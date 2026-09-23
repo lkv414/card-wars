@@ -2,7 +2,6 @@
  * Supabase integration smoke: requires `supabase start` and local stack.
  * Skips gracefully when Supabase is not reachable.
  */
-/* global process */
 import { describe, it, expect, beforeAll } from 'vitest'
 import { createClient } from '@supabase/supabase-js'
 

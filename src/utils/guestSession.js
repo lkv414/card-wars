@@ -26,6 +26,7 @@
  *     увидело свежий guest_id.
  */
 import { supabase, isSupabaseConfigured } from './supabase.js'
+import { isOfflineTestMode } from './offlineMode.js'
 import { getGuestId } from './guestId.js'
 
 let lastSentId = null
@@ -46,7 +47,7 @@ const SET_GUEST_TIMEOUT_MS = 10_000
  * всегда заполнен (через .env.production или Cloudflare Pages vars).
  */
 export async function ensureGuestId() {
-  if (!isSupabaseConfigured) return
+  if (isOfflineTestMode || !isSupabaseConfigured) return
   const id = getGuestId()
   if (lastSentId === id) return
   if (inflight) return inflight

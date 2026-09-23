@@ -1,7 +1,7 @@
 import { DurableObject } from 'cloudflare:workers'
 import type { Env } from './env'
 import { parseClientMessage, serverMsg } from './protocol'
-import { assertPlayerInLobby, callRpc, fetchLobbyRow } from './supabase'
+
 
 interface SessionMeta {
   clientId: string
@@ -10,15 +10,10 @@ interface SessionMeta {
 export class LobbyRoom extends DurableObject<Env> {
   lobbyId = ''
 
-  /**
-   * In-memory cache lobby-snapshot'а (PERFORMANCE_AUDIT_WORKERS V3):
-   *   JOIN через PostgREST — медленный (~50-200 мс). Храним последний
-   *   успешный snapshot и инвалидируем при каждом action (action всегда
-   *   мутирует lobby, так что invalidate-by-write).
-   */
-  private cachedLobby: unknown = null
-  private lobbyCacheTs = 0
-  private static readonly LOBBY_CACHE_TTL_MS = 5_000
+  /** Local-only lobby state. It is kept in the DO, never in Supabase. */
+  private localLobby: Record<string, unknown> | null = null
+  private localGameState: Record<string, unknown> | null = null
+  private localMode = false
 
   private resolveLobbyId(): string {
     if (this.lobbyId) return this.lobbyId
@@ -36,6 +31,64 @@ export class LobbyRoom extends DurableObject<Env> {
     if (fromQuery) this.lobbyId = fromQuery
     else this.resolveLobbyId()
 
+    if (!this.localLobby) {
+      const stored = await this.ctx.storage.get('localLobby') as Record<string, unknown> | null
+      const storedGame = await this.ctx.storage.get('localGameState') as Record<string, unknown> | null
+      if (stored) {
+        this.localLobby = stored
+        this.localMode = true
+      }
+      if (storedGame) this.localGameState = storedGame
+    }
+
+    if (request.method === 'POST' && url.pathname === '/internal/local/create') {
+      const body = await request.json() as Record<string, unknown>
+      const code = String(body.code ?? this.lobbyId)
+      this.lobbyId = code
+      this.localMode = true
+      this.localLobby = {
+        id: code,
+        code,
+        host_id: body.hostId,
+        status: 'waiting',
+        game_id: null,
+        lobby_players: [this.localPlayer(body.hostId, body.nickname, body.deck)],
+        updated_at: new Date().toISOString(),
+      }
+      await this.persistLocalLobby()
+      return this.json(this.localLobby)
+    }
+
+    if (request.method === 'POST' && url.pathname === '/internal/local/join') {
+      const body = await request.json() as Record<string, unknown>
+      if (!this.localLobby) return this.json({ error: 'Лобби не найдено' }, 404)
+      const players = Array.isArray(this.localLobby.lobby_players) ? this.localLobby.lobby_players : []
+      const existing = players.find((p) => (p as { player_id?: unknown }).player_id === body.playerId)
+      if (!existing && players.length >= 4) return this.json({ error: 'Лобби заполнено' }, 409)
+      if (!existing) players.push(this.localPlayer(body.playerId, body.nickname, body.deck))
+      this.localLobby = { ...this.localLobby, lobby_players: players, updated_at: new Date().toISOString() }
+      await this.persistLocalLobby()
+      await this.broadcastLobby()
+      return this.json(this.localLobby)
+    }
+
+    if (request.method === 'GET' && url.pathname === '/internal/local/get') {
+      return this.json(this.localLobby, this.localLobby ? 200 : 404)
+    }
+
+    if (request.method === 'GET' && url.pathname === '/internal/game-state') {
+      return this.json(this.localGameState, this.localGameState ? 200 : 404)
+    }
+
+    if (request.method === 'GET' && url.pathname === '/internal/membership') {
+      const playerId = url.searchParams.get('playerId')
+      const players = Array.isArray(this.localLobby?.lobby_players)
+        ? this.localLobby?.lobby_players as Array<Record<string, unknown>>
+        : []
+      const member = players.some((p) => p.player_id === playerId)
+      return this.json({ member }, member ? 200 : 404)
+    }
+
     if (request.method === 'POST' && url.pathname.endsWith('/internal/broadcast')) {
       await this.broadcastLobby()
       this.broadcastPresence()
@@ -52,7 +105,9 @@ export class LobbyRoom extends DurableObject<Env> {
     const [client, server] = Object.values(pair)
     this.ctx.acceptWebSocket(server)
 
-    return new Response(null, { status: 101, webSocket: client })
+    const protocol = request.headers.get('sec-websocket-protocol')
+    const headers = protocol ? { 'Sec-WebSocket-Protocol': protocol } : undefined
+    return new Response(null, { status: 101, webSocket: client, headers })
   }
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
@@ -63,9 +118,11 @@ export class LobbyRoom extends DurableObject<Env> {
       return
     }
 
+    const requestId = (msg as { requestId?: string }).requestId
+
     try {
       if (msg.type === 'ping') {
-        ws.send(serverMsg({ type: 'pong', requestId: msg.requestId }))
+        ws.send(serverMsg({ type: 'pong', requestId: requestId }))
         return
       }
 
@@ -75,17 +132,17 @@ export class LobbyRoom extends DurableObject<Env> {
         if (!clientId || !lobbyId) {
           throw new Error('clientId and lobbyId required')
         }
-        await assertPlayerInLobby(this.env, lobbyId, clientId)
+        if (!this.localMode) throw new Error('Лобби не инициализировано')
         ws.serializeAttachment({ clientId } satisfies SessionMeta)
         ws.send(
           serverMsg({
             type: 'joined',
             roomId: lobbyId,
             clientId,
-            requestId: msg.requestId,
+            requestId: requestId,
           })
         )
-        await this.sendLobbyTo(ws, msg.requestId)
+        await this.sendLobbyTo(ws, requestId)
         this.broadcastPresence()
         return
       }
@@ -96,7 +153,7 @@ export class LobbyRoom extends DurableObject<Env> {
           throw new Error('Send join before action')
         }
         await this.runLobbyAction(session.clientId, msg.action, msg.payload ?? {})
-        await this.broadcastLobby(msg.requestId)
+        await this.broadcastLobby(requestId)
         this.broadcastPresence()
         return
       }
@@ -106,7 +163,7 @@ export class LobbyRoom extends DurableObject<Env> {
           type: 'error',
           code: 'unknown_type',
           message: 'Unknown message type',
-          requestId: msg.requestId,
+          requestId: requestId,
         })
       )
     } catch (err) {
@@ -115,7 +172,7 @@ export class LobbyRoom extends DurableObject<Env> {
           type: 'error',
           code: 'lobby_failed',
           message: err instanceof Error ? err.message : String(err),
-          requestId: msg.requestId,
+          requestId: requestId,
         })
       )
     }
@@ -143,50 +200,44 @@ export class LobbyRoom extends DurableObject<Env> {
     action: string,
     payload: Record<string, unknown>
   ): Promise<void> {
-    const lobbyId = this.resolveLobbyId()
-    // Любой mutation-action инвалидирует snapshot-cache.
-    this.invalidateLobbyCache()
+    if (!this.localMode || !this.localLobby) throw new Error('Лобби не инициализировано')
+    const players = Array.isArray(this.localLobby.lobby_players)
+      ? [...(this.localLobby.lobby_players as Array<Record<string, unknown>>)]
+      : []
+    const player = players.find((p) => p.player_id === clientId)
+    if (!player) throw new Error('Игрок не найден в лобби')
 
-    switch (action) {
-      case 'set_ready':
-        await callRpc(this.env, 'set_lobby_player_ready', {
-          p_guest_id: clientId,
-          p_lobby_id: lobbyId,
-          p_ready: payload.ready ?? true,
-        })
-        return
-      case 'leave':
-        await callRpc(this.env, 'leave_lobby', {
-          p_guest_id: clientId,
-          p_lobby_id: lobbyId,
-        })
-        return
-      case 'start_game':
-        await callRpc(this.env, 'start_game_for_lobby', {
-          p_guest_id: clientId,
-          p_lobby_id: lobbyId,
-          p_land_placement_rule: payload.landPlacementRule ?? 'strict',
-        })
-        return
-      case 'reorder_lands':
-        await callRpc(this.env, 'reorder_player_lands', {
-          p_guest_id: clientId,
-          p_lobby_id: lobbyId,
-          p_land_ids: payload.landIds ?? payload.p_land_ids ?? [],
-        })
-        return
-      case 'confirm_land_setup':
-        await callRpc(this.env, 'confirm_land_setup', {
-          p_guest_id: clientId,
-          p_lobby_id: lobbyId,
-          // Если игрок отправил пустой массив земель — bypass и считаем готовым
-          // сразу. Это позволяет начать матч, даже если в колоде < 4 земель.
-          p_bypass: payload.bypass === true || (Array.isArray(payload.landIds) && payload.landIds.length === 0),
-        })
-        return
-      default:
-        throw new Error(`Unknown lobby action: ${action}`)
+    if (action === 'set_ready') {
+      player.ready = payload.ready === true
+    } else if (action === 'leave') {
+      this.localLobby = {
+        ...this.localLobby,
+        lobby_players: players.filter((p) => p.player_id !== clientId),
+        updated_at: new Date().toISOString(),
+      }
+      await this.persistLocalLobby()
+      return
+    } else if (action === 'start_game') {
+      if (this.localLobby.host_id !== clientId) throw new Error('Только хост может начать игру')
+      const gameId = this.resolveLobbyId()
+      this.localGameState = this.buildLocalGame(gameId, players)
+      await this.ctx.storage.put('localGameState', this.localGameState)
+      this.localLobby = {
+        ...this.localLobby,
+        status: 'in_game',
+        game_id: gameId,
+        updated_at: new Date().toISOString(),
+      }
+    } else {
+      throw new Error(`Unknown lobby action: ${action}`)
     }
+
+    this.localLobby = {
+      ...this.localLobby,
+      lobby_players: players,
+      updated_at: new Date().toISOString(),
+    }
+    await this.persistLocalLobby()
   }
 
   /**
@@ -198,26 +249,7 @@ export class LobbyRoom extends DurableObject<Env> {
    * остальные подождут и получат его результат.
    */
   private async fetchLobbySnapshot(): Promise<unknown> {
-    const now = Date.now()
-    if (this.cachedLobby && now - this.lobbyCacheTs < LobbyRoom.LOBBY_CACHE_TTL_MS) {
-      return this.cachedLobby
-    }
-    await this.ctx.blockConcurrencyWhile(async () => {
-      const ts = Date.now()
-      if (this.cachedLobby && ts - this.lobbyCacheTs < LobbyRoom.LOBBY_CACHE_TTL_MS) return
-      const fresh = await fetchLobbyRow(this.env, this.resolveLobbyId())
-      this.cachedLobby = fresh
-      this.lobbyCacheTs = ts
-    })
-    return this.cachedLobby
-  }
-
-  /**
-   * Инвалидировать cache — вызывается после каждого mutation action.
-   */
-  private invalidateLobbyCache(): void {
-    this.cachedLobby = null
-    this.lobbyCacheTs = 0
+    return this.localLobby
   }
 
   private onlineClientIds(): string[] {
@@ -264,5 +296,80 @@ export class LobbyRoom extends DurableObject<Env> {
     for (const ws of this.ctx.getWebSockets()) {
       ws.send(payload)
     }
+  }
+
+  private buildLocalGame(gameId: string, lobbyPlayers: Array<Record<string, unknown>>): Record<string, unknown> {
+    const players = lobbyPlayers.map((lobbyPlayer, order) => {
+      const deck = (lobbyPlayer.deck ?? {}) as Record<string, unknown>
+      const cards = Array.isArray(deck.cards) ? deck.cards as Array<Record<string, unknown>> : []
+      const hand = cards.slice(0, 5).map((card, index) => ({
+        ...card,
+        instanceId: String(card.instanceId ?? `${card.id ?? 'card'}-${order}-${index}`),
+      }))
+      const deckPile = cards.slice(5).map((card, index) => ({
+        ...card,
+        instanceId: String(card.instanceId ?? `${card.id ?? 'card'}-${order}-deck-${index}`),
+      }))
+      const lands = Array.isArray(deck.lands) ? deck.lands as Array<Record<string, unknown>> : []
+      return {
+        player_id: lobbyPlayer.player_id,
+        nickname: lobbyPlayer.nickname ?? 'Игрок',
+        position: null,
+        health: 25,
+        player_order: order + 1,
+        hand,
+        deck_pile: deckPile,
+        deck_remaining: deckPile.length,
+        discard_pile: [],
+        actions_remaining: 2,
+        free_draw_used: false,
+        paid_draw_used: false,
+        zones: [1, 2, 3, 4].map((position) => {
+          const land = lands[position - 1] ?? null
+          return {
+            zone_position: position,
+            cards: [],
+            land_id: land?.id ?? land?.land_id ?? null,
+            land_type: land?.land_type ?? 'any',
+          }
+        }),
+      }
+    })
+
+    return {
+      id: gameId,
+      lobby_id: gameId,
+      status: 'active',
+      current_turn: 1,
+      current_player_id: players[0]?.player_id ?? null,
+      winner_id: null,
+      version: 1,
+      started_at: new Date().toISOString(),
+      ended_at: null,
+      turn_started_at: new Date().toISOString(),
+      game_state: { firstPlayerId: players[0]?.player_id ?? null, turnPhase: 'main' },
+      players,
+    }
+  }
+
+  private async persistLocalLobby(): Promise<void> {
+    if (this.localLobby) await this.ctx.storage.put('localLobby', this.localLobby)
+  }
+
+  private localPlayer(playerId: unknown, nickname: unknown, deck: unknown): Record<string, unknown> {
+    return {
+      player_id: String(playerId ?? ''),
+      nickname: String(nickname || 'Игрок'),
+      ready: false,
+      deck: deck ?? {},
+      joined_at: new Date().toISOString(),
+    }
+  }
+
+  private json(body: unknown, status = 200): Response {
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 }

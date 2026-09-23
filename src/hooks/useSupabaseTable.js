@@ -19,9 +19,9 @@ function applyTableResponse(data, error, setRows, setError, setLoading, hookName
  * @param {string} table - table name
  * @param {{ orderBy: string, hookName: string }} options
  */
-export function useSupabaseTable(table, { orderBy, hookName }) {
+export function useSupabaseTable(table, { orderBy, hookName, enabled = true }) {
   const [rows, setRows] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!enabled)
   const [error, setError] = useState(null)
 
   const fetchQuery = useCallback(
@@ -30,6 +30,10 @@ export function useSupabaseTable(table, { orderBy, hookName }) {
   )
 
   const reload = useCallback(async () => {
+    if (!enabled) {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -38,9 +42,10 @@ export function useSupabaseTable(table, { orderBy, hookName }) {
     } catch (err) {
       applyTableResponse(null, err, setRows, setError, setLoading, hookName, `load${table}`)
     }
-  }, [fetchQuery, hookName, table])
+  }, [enabled, fetchQuery, hookName, table])
 
   useEffect(() => {
+    if (!enabled) return undefined
     let cancelled = false
     ;(async () => {
       setLoading(true)
@@ -57,7 +62,7 @@ export function useSupabaseTable(table, { orderBy, hookName }) {
     return () => {
       cancelled = true
     }
-  }, [fetchQuery, hookName, table])
+  }, [enabled, fetchQuery, hookName, table])
 
   return { rows, setRows, loading, error, reload }
 }

@@ -10,6 +10,7 @@ import {
   getFullGameState,
   getPlayerGameState,
 } from './supabase'
+import { getLands } from './catalog'
 import { applyAction, isError as isEngineError } from './game-engine/engine'
 import type {
   Action,
@@ -19,6 +20,7 @@ import type {
   PlayerState,
 } from './game-engine/types.js'
 import { buildBroadcastState } from './state-broadcast.js'
+import { testCard } from './dev-fixtures.js'
 
 interface SessionMeta {
   clientId: string
@@ -68,6 +70,9 @@ export class GameRoom extends DurableObject<Env> {
   /** Number of mutations since the last persisted snapshot. */
   private actionsSinceSnapshot = 0
 
+  /** Bounded idempotency window for reconnecting clients. */
+  private processedRequests = new Set<string>()
+
   /** Per-player join status — maps clientId → true. Cleared on close. */
   private joined = new Set<string>()
 
@@ -80,6 +85,7 @@ export class GameRoom extends DurableObject<Env> {
    * callers outside this file.
    */
   private devMode = false
+  private nativeGame = false
 
   private resolveGameId(): string {
     if (this.gameId) return this.gameId
@@ -107,10 +113,15 @@ export class GameRoom extends DurableObject<Env> {
     // ReferenceError waiting to happen (a previous bug: `request` was
     // used in webSocketMessage and crashed with "request is not defined"
     // on every join, which is why sync between clients was broken).
+    const devBypassAllowed =
+      this.env.ENVIRONMENT !== 'production' && this.env.ALLOW_DEV_BYPASS === '1'
     const upgradeHeaders = {
       bypassAuth:
-        request.headers.get('x-dev-bypass-auth') === '1' ||
-        request.headers.get('sec-websocket-protocol') === 'x-dev-bypass',
+        devBypassAllowed &&
+        (
+          request.headers.get('x-dev-bypass-auth') === '1' ||
+          request.headers.get('sec-websocket-protocol') === 'x-dev-bypass'
+        ),
     }
 
     const pair = new WebSocketPair()
@@ -124,7 +135,9 @@ export class GameRoom extends DurableObject<Env> {
       bypassAuth: upgradeHeaders.bypassAuth,
     } satisfies SessionMeta)
 
-    return new Response(null, { status: 101, webSocket: client })
+    const protocol = request.headers.get('sec-websocket-protocol')
+    const headers = protocol ? { 'Sec-WebSocket-Protocol': protocol } : undefined
+    return new Response(null, { status: 101, webSocket: client, headers })
   }
 
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
@@ -136,10 +149,11 @@ export class GameRoom extends DurableObject<Env> {
     }
 
     const session = this.getSession(ws)
+    const requestId = (msg as { requestId?: string }).requestId
 
     try {
       if (msg.type === 'ping') {
-        ws.send(serverMsg({ type: 'pong', requestId: msg.requestId }))
+        ws.send(serverMsg({ type: 'pong', requestId: requestId }))
         return
       }
 
@@ -149,13 +163,18 @@ export class GameRoom extends DurableObject<Env> {
           throw new Error('clientId required')
         }
         const gameId = this.resolveGameId()
-        console.log('[GameRoom] ws join', { clientId, gameId, requestId: msg.requestId })
+        console.log('[GameRoom] ws join', { clientId, gameId, requestId: requestId })
         // Read dev-bypass flag from the WS attachment (captured at
         // handshake in fetch()). The previous code referenced `request`
         // here which is a ReferenceError — every join used to crash.
         const meta = this.getSession(ws) ?? { clientId: '', bypassAuth: false }
-        if (!meta.bypassAuth) {
-          await assertPlayerInGame(this.env, gameId, clientId)
+        const localTestRoom =
+          this.env.ENVIRONMENT !== 'production' &&
+          this.env.ALLOW_DEV_BYPASS === '1' &&
+          gameId.startsWith('local-')
+        if (!meta.bypassAuth && !localTestRoom) {
+          const nativeMember = await this.isNativeLobbyMember(gameId, clientId)
+          if (!nativeMember) await assertPlayerInGame(this.env, gameId, clientId)
           await this.loadGame()
         } else {
           // Dev-only: no Supabase. Spin up an in-memory game so we can test
@@ -175,10 +194,10 @@ export class GameRoom extends DurableObject<Env> {
             type: 'joined',
             roomId: gameId,
             clientId,
-            requestId: msg.requestId,
+            requestId: requestId,
           }),
         )
-        await this.sendStateTo(ws, clientId, msg.requestId)
+        await this.sendStateTo(ws, clientId, requestId)
         this.broadcastPresence()
         return
       }
@@ -208,7 +227,7 @@ export class GameRoom extends DurableObject<Env> {
             throw new Error('Game not loaded and rehydrate failed')
           }
         }
-        await this.handleAction(msg.action as GameActionName, msg.payload ?? {}, session.clientId, msg.requestId)
+        await this.handleAction(ws, msg.action as GameActionName, msg.payload ?? {}, session.clientId, requestId)
         return
       }
 
@@ -217,7 +236,7 @@ export class GameRoom extends DurableObject<Env> {
           type: 'error',
           code: 'unknown_type',
           message: `Unknown message type`,
-          requestId: msg.requestId,
+          requestId: requestId,
         }),
       )
     } catch (err) {
@@ -226,7 +245,7 @@ export class GameRoom extends DurableObject<Env> {
           type: 'error',
           code: 'action_failed',
           message: err instanceof Error ? err.message : String(err),
-          requestId: msg.requestId,
+          requestId: requestId,
         }),
       )
     }
@@ -272,8 +291,39 @@ export class GameRoom extends DurableObject<Env> {
     }
   }
 
+  private async isNativeLobbyMember(gameId: string, playerId: string): Promise<boolean> {
+    try {
+      const id = this.env.LOBBY_ROOM.idFromName(gameId)
+      const stub = this.env.LOBBY_ROOM.get(id)
+      const url = new URL('https://lobby.internal/internal/membership')
+      url.searchParams.set('lobbyId', gameId)
+      url.searchParams.set('playerId', playerId)
+      const response = await stub.fetch(new Request(url.toString()))
+      if (!response.ok) return false
+      const body = await response.json() as { member?: boolean }
+      return body.member === true
+    } catch {
+      return false
+    }
+  }
+
+  private async getNativeGameState(gameId: string): Promise<Record<string, unknown> | null> {
+    try {
+      const id = this.env.LOBBY_ROOM.idFromName(gameId)
+      const stub = this.env.LOBBY_ROOM.get(id)
+      const url = new URL('https://lobby.internal/internal/game-state')
+      url.searchParams.set('lobbyId', gameId)
+      const response = await stub.fetch(new Request(url.toString()))
+      if (!response.ok) return null
+      return await response.json() as Record<string, unknown>
+    } catch {
+      return null
+    }
+  }
+
   /**
-   * Load (or reload) the in-memory game from Supabase.
+   * Load (or reload) the in-memory game from a Worker-native lobby first,
+   * then from Supabase for legacy games.
    * Called on the first join of the session.
    *
    * Race fix (PERFORMANCE_AUDIT_WORKERS K1):
@@ -286,12 +336,48 @@ export class GameRoom extends DurableObject<Env> {
     await this.ctx.blockConcurrencyWhile(async () => {
       if (this.currentGame) return
       const gameId = this.resolveGameId()
-      const raw = await getFullGameState(this.env, gameId)
+      const native = await this.getNativeGameState(gameId)
+      this.nativeGame = native !== null
+      const raw = native ?? await getFullGameState(this.env, gameId)
       if (!raw) {
-        throw new Error(`Game ${gameId} not found or get_full_game_state RPC missing`)
+        throw new Error(`Game ${gameId} not found or snapshot RPC missing`)
+      }
+      // Enrich zone metadata from the Worker catalog. The legacy SQL snapshot
+      // stores only land_id, while the engine needs land_type for strict play.
+      let hydrated = raw
+      try {
+        const lands = await getLands(this.env)
+        const landTypes = new Map<string, string>()
+        for (const land of lands) {
+          const row = land as { id?: unknown; land_type?: unknown }
+          const id = String(row.id ?? '')
+          const type = String(row.land_type ?? '')
+          if (id && type) landTypes.set(id, type)
+        }
+        const players = Array.isArray(raw.players)
+          ? (raw.players as Array<Record<string, unknown>>)
+          : []
+        hydrated = {
+          ...raw,
+          players: players.map((player) => ({
+            ...player,
+            zones: Array.isArray(player.zones)
+              ? (player.zones as unknown[]).map((zone) => {
+                  const row = zone as Record<string, unknown>
+                  const landId = row.land_id == null ? '' : String(row.land_id)
+                  return {
+                    ...row,
+                    land_type: row.land_type ?? landTypes.get(landId) ?? null,
+                  }
+                })
+              : [],
+          })),
+        }
+      } catch {
+        // Catalog hydration is best-effort; a game can still load without it.
       }
       // eslint-disable-next-line react-hooks/immutability -- DO mutation must happen inside the critical section
-      this.currentGame = rawToGameState(raw)
+      this.currentGame = rawToGameState(hydrated)
       // eslint-disable-next-line react-hooks/immutability -- counter reset, not React state
       this.actionsSinceSnapshot = 0
     })
@@ -322,6 +408,14 @@ export class GameRoom extends DurableObject<Env> {
     if (!this.currentGame.players.some((p) => p.player_id === clientId)) {
       this.currentGame.players.push(makeDevPlayer(clientId, this.currentGame.players.length + 1))
     }
+    // Local test rooms include a deterministic opponent so one browser can
+    // exercise the complete turn loop without a second participant.
+    if (
+      this.currentGame.players.length === 1 &&
+      !this.currentGame.players.some((p) => p.player_id === 'test-bot')
+    ) {
+      this.currentGame.players.push(makeDevPlayer('test-bot', 2))
+    }
     if (this.currentGame.players.length >= 2 && this.currentGame.status === 'setup') {
       this.currentGame.status = 'active'
       this.currentGame.current_turn = 1
@@ -341,7 +435,7 @@ export class GameRoom extends DurableObject<Env> {
    * обнаружит свежий counter и не пойдёт в сеть.
    */
   private async persistSnapshot(): Promise<void> {
-    if (!this.currentGame) return
+    if (!this.currentGame || this.nativeGame || this.devMode) return
     await this.ctx.blockConcurrencyWhile(async () => {
       if (!this.currentGame) return
       // Внутри critical section захватываем snapshot текущего state —
@@ -397,6 +491,7 @@ export class GameRoom extends DurableObject<Env> {
    *   3. If we've accumulated enough mutations, persist a snapshot.
    */
   private async handleAction(
+    ws: WebSocket,
     action: string,
     payload: Record<string, unknown>,
     actorId: string,
@@ -409,6 +504,14 @@ export class GameRoom extends DurableObject<Env> {
       throw new Error(`Unknown action: ${action}`)
     }
 
+    const requestKey = requestId ? `${actorId}:${requestId}` : null
+    if (requestKey && this.processedRequests.has(requestKey)) {
+      // The client already received the result; replay the current state for
+      // reconnect/idempotency safety without applying the action twice.
+      await this.sendStateTo(ws, actorId, requestId)
+      return
+    }
+
     const engineAction = payloadToEngineAction(action as GameActionName, payload)
     const result = applyAction(this.currentGame, engineAction, actorId)
 
@@ -419,11 +522,20 @@ export class GameRoom extends DurableObject<Env> {
     const applyResult = result as ApplyResult
     this.currentGame = applyResult.state
     this.actionsSinceSnapshot += 1
+    if (requestKey) {
+      this.processedRequests.add(requestKey)
+      while (this.processedRequests.size > 512) {
+        const oldest = this.processedRequests.values().next().value
+        if (!oldest) break
+        this.processedRequests.delete(oldest)
+      }
+    }
 
     await this.broadcastPersonalizedStates(applyResult, requestId)
 
     if (
       this.actionsSinceSnapshot >= SNAPSHOT_EVERY_N_ACTIONS ||
+      action === 'end_turn' ||
       applyResult.gameFinished === true
     ) {
       try {
@@ -487,7 +599,7 @@ export class GameRoom extends DurableObject<Env> {
             type: 'state_with_battle',
             version,
             game,
-            events: applyResult.battleEvents,
+            events: applyResult.battleEvents ?? [],
             gameFinished: applyResult.gameFinished === true,
             winnerId: applyResult.winnerId ?? null,
             requestId,
@@ -553,25 +665,15 @@ function asArray<T>(value: unknown): T[] {
 
 let devCardSeq = 0
 
-function devCard(i: number): Card {
-  return {
-    id: `DEV_C${i}`,
-    instanceId: `DEV_I${i}`,
-    card_type: 'creature',
-    name: `Dev Creature ${i}`,
-    attack: 2,
-    health: 3,
-    defense: 0,
-    cost: 1,
-    slot_type: 'creature',
-  }
+function devCard(): Card {
+  return testCard(devCardSeq++)
 }
 
 function makeDevPlayer(playerId: string, order: number): PlayerState {
   const hand: Card[] = []
   const deck: Card[] = []
   for (let i = 0; i < 20; i++) {
-    const c = devCard(devCardSeq++)
+    const c = devCard()
     if (i < 5) hand.push(c)
     else deck.push(c)
   }

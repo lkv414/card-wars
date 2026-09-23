@@ -190,6 +190,14 @@ function stabilizePlayers(prevPlayers, nextPlayers) {
   return changed ? out : nextPlayers
 }
 
+function topLevelEquivalent(a, b) {
+  const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})])
+  for (const key of keys) {
+    if (a?.[key] !== b?.[key]) return false
+  }
+  return true
+}
+
 /** @param {object | null | undefined} prev @param {object | null | undefined} next */
 export function stabilizeGameState(prev, next) {
   if (!next) return next
@@ -197,23 +205,17 @@ export function stabilizeGameState(prev, next) {
 
   const nextVersion = next.version ?? 0
   const prevVersion = prev.version ?? 0
-  if (nextVersion <= prevVersion) return prev
+  if (nextVersion < prevVersion) return prev
 
   const prevPlayers = prev.players || []
   const players = stabilizePlayers(prevPlayers, next.players)
 
-  // Если players — те же ссылки (stabilize вернул prev) — вернуть prev целиком.
-  // Это критично для useMemo([game]) чтобы GameBoard3D не пересоздавал зоны.
-  if (players === prevPlayers && players === (prev.players || [])) {
-    // Но version может быть другой — обновим version в корне state
-    if ((prev.version ?? 0) === nextVersion) return prev
-    return { ...prev, version: nextVersion }
-  }
-
-  // Если players — те же что в next, и мы не нашли изменений — отдаём prev
-  if (players === next.players) {
+  if (nextVersion === prevVersion && players === prevPlayers && topLevelEquivalent(prev, next)) {
     return prev
   }
 
+  // Always keep the authoritative top-level payload. Only nested players/zones
+  // may reuse previous references for 3D reconciliation; stale optimistic
+  // state must never hide status, turn, winner, or game_state changes.
   return { ...next, players }
 }

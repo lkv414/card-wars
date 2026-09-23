@@ -138,6 +138,31 @@ export async function getFullGameState(
   env: Env,
   gameId: string
 ): Promise<Record<string, unknown> | null> {
+  // The Worker snapshot is authoritative. Prefer games.state and only use the
+  // legacy normalized-table RPC for games created before the state column.
+  try {
+    const { url, key } = requireSupabase(env)
+    const res = await fetchWithTimeout(
+      `${url}/rest/v1/games?id=eq.${encodeURIComponent(gameId)}&select=state`,
+      {
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          Prefer: 'return=representation',
+        },
+      },
+    )
+    if (res.ok) {
+      const rows = (await res.json()) as Array<{ state?: unknown }>
+      const snapshot = rows[0]?.state
+      if (snapshot && typeof snapshot === 'object' && !Array.isArray(snapshot)) {
+        return snapshot as Record<string, unknown>
+      }
+    }
+  } catch {
+    // Fall through to the legacy RPC when the snapshot column is absent.
+  }
+
   try {
     const data = await callRpc(env, 'get_full_game_state', {
       p_game_id: gameId,

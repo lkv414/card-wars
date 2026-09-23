@@ -27,8 +27,3 @@ export function loadLobbySession() {
 export function clearLobbySession() {
   localStorage.removeItem(LOBBY_STORAGE_KEY)
 }
-
-export async function cleanupOldLobbies(supabase) {
-  const cutoff = new Date(Date.now() - LOBBY_MAX_AGE_HOURS * 3600 * 1000).toISOString()
-  await supabase.from('lobbies').delete().lt('created_at', cutoff)
-}

@@ -22,13 +22,19 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { generateDeckCode } from '../utils/deckCode.js'
+import { isOfflineTestMode } from '../utils/offlineMode'
+import { TEST_DECK } from '../fixtures/testDeck'
 
 const STORAGE_KEY = 'decks'
 
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { decks: [], selectedDeckId: null }
+    if (!raw) {
+      return isOfflineTestMode
+        ? { decks: [{ ...TEST_DECK, selected: true }], selectedDeckId: TEST_DECK.id }
+        : { decks: [], selectedDeckId: null }
+    }
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed.decks)) return { decks: [], selectedDeckId: null }
     return {

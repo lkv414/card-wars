@@ -52,6 +52,9 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, transp
       if (wsErr) return wsErr
       const wsOk = transportOk(ws, { battleEvents: [], gameFinished: false })
       if (wsOk) return wsOk
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Передача хода недоступна (обновите сервер)' }
+      }
 
       // Пробуем атомарный RPC end_turn
       // Если RPC не существует (например, миграция не применена) — fallback на клиентский
@@ -148,6 +151,9 @@ export function useTurnControl(game, writeGameState, reload, { patchGame, transp
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Сдача недоступна (обновите сервер)' }
+      }
 
       // === RPC-путь (атомарный) ===
       try {

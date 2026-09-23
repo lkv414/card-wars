@@ -53,6 +53,50 @@ export default {
       return json({ ok: true, service: 'card-wars-game' })
     }
 
+    // Lobby state is DO-owned in every environment. Supabase is no longer a
+    // lobby source of truth; the production config simply doesn't enable the
+    // unauthenticated test catalog/game bypass.
+    const localLobbyEnabled = true
+
+    // Local/offline lobby API — state lives in the LobbyRoom DO, not Supabase.
+    if (localLobbyEnabled && url.pathname === '/lobby' && request.method === 'POST') {
+      const body = (await request.clone().json().catch(() => ({}))) as { code?: string }
+      const lobbyId = String(body.code || 'local').toUpperCase()
+      const id = env.LOBBY_ROOM.idFromName(lobbyId)
+      const stub = env.LOBBY_ROOM.get(id)
+      const roomUrl = new URL(request.url)
+      roomUrl.pathname = '/internal/local/create'
+      roomUrl.searchParams.set('lobbyId', lobbyId)
+      return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
+    }
+
+    const localLobbyGet = url.pathname.match(/^\/lobby\/([^/]+)$/)
+    if (
+      localLobbyEnabled &&
+      localLobbyGet &&
+      request.method === 'GET' &&
+      request.headers.get('Upgrade') !== 'websocket'
+    ) {
+      const lobbyId = localLobbyGet[1]
+      const id = env.LOBBY_ROOM.idFromName(lobbyId)
+      const stub = env.LOBBY_ROOM.get(id)
+      const roomUrl = new URL(request.url)
+      roomUrl.pathname = '/internal/local/get'
+      roomUrl.searchParams.set('lobbyId', lobbyId)
+      return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
+    }
+
+    const localLobbyJoin = url.pathname.match(/^\/lobby\/([^/]+)\/join$/)
+    if (localLobbyEnabled && localLobbyJoin && request.method === 'POST') {
+      const lobbyId = localLobbyJoin[1]
+      const id = env.LOBBY_ROOM.idFromName(lobbyId)
+      const stub = env.LOBBY_ROOM.get(id)
+      const roomUrl = new URL(request.url)
+      roomUrl.pathname = '/internal/local/join'
+      roomUrl.searchParams.set('lobbyId', lobbyId)
+      return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
+    }
+
     // Read-only catalog endpoint — served from Cloudflare KV, no Supabase RPC.
     // Workers without a configured CATALOG binding will return 503.
     const catalogMatch = url.pathname.match(/^\/catalog\/(cards|lands)$/)
@@ -114,7 +158,10 @@ export default {
             '/health',
             '/game/:gameId/ws',
             '/lobby/:lobbyId/ws',
-            '/lobby/:lobbyId/notify',
+            '/lobby/:lobbyId/join',
+             '/lobby/:lobbyId',
+             '/lobby',
+             '/lobby/:lobbyId/notify',
             '/catalog/cards',
             '/catalog/lands',
           ],

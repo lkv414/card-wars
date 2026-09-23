@@ -5,6 +5,8 @@ import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
 import { useHeroes } from '../../hooks/useHeroes'
 import { supabase } from '../../utils/supabase'
+import { isOfflineTestMode } from '../../utils/offlineMode'
+import { getLocalTestDeckPayload } from '../../fixtures/testDeck'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
 import { LobbyRoom } from './LobbyRoom'
 import { HeroDisplay } from '../HeroDisplay'
@@ -53,48 +55,10 @@ export function LobbyScreen({ toast }) {
       navigate(`/game/${pendingGameId}`)
       return
     }
+    // Game creation is owned by LobbyRoom and delivered as `game_id` in the
+    // lobby snapshot. Never query Supabase for lobby/game linkage anymore.
     if (status !== 'in_game' || !lobbyId) return
-    let cancelled = false
-    const findGameAndGo = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('games')
-          .select('id')
-          .eq('lobby_id', lobbyId)
-          .maybeSingle()
-        if (cancelled) return
-        if (data?.id) {
-          navigate(`/game/${data.id}`)
-          return
-        }
-        // 1 retry через 300мс
-        await new Promise((r) => setTimeout(r, 300))
-        if (cancelled) return
-        const { data: data2, error: err2 } = await supabase
-          .from('games')
-          .select('id')
-          .eq('lobby_id', lobbyId)
-          .maybeSingle()
-        if (cancelled) return
-        if (data2?.id) {
-          navigate(`/game/${data2.id}`)
-          return
-        }
-        if (!cancelled) {
-          toast?.('error', 'Игра создаётся, но не найдена. Обновите страницу.')
-        }
-        if (error || err2) {
-          toast?.('error', 'Не удалось найти игру: ' + ((error || err2)?.message || ''))
-        }
-      } catch (err) {
-        if (!cancelled) {
-          toast?.('error', 'Не удалось найти игру: ' + (err?.message || err))
-        }
-      }
-    }
-    findGameAndGo()
-    return () => { cancelled = true }
-  }, [status, lobbyId, pendingGameId, navigate, toast])
+  }, [status, lobbyId, pendingGameId, navigate])
 
   const handleStartGame = async (landPlacementRule) => {
     if (!lobbyId) return
@@ -136,6 +100,7 @@ export function LobbyScreen({ toast }) {
       return null
     }
     try {
+      if (isOfflineTestMode) return getLocalTestDeckPayload()
       return await buildLobbyDeckPayload(deck, supabase)
     } catch (err) {
       toast?.('error', err?.message || 'Не удалось подготовить колоду')

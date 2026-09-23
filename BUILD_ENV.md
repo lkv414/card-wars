@@ -21,6 +21,8 @@ cp .env.example .env
 # 4. Поднимаем Worker realtime в отдельном терминале
 npm run workers:dev
 #   ⏳ ждём пока wrangler напишет "Ready on http://127.0.0.1:8787"
+#   Локально используется workers/wrangler.dev.jsonc,
+#   production deploy — workers/wrangler.jsonc.
 
 # 5. Запускаем фронт
 npm run dev
@@ -28,6 +30,19 @@ npm run dev
 ```
 
 **Готово.** Если ошибок нет — ты в игре.
+
+### Offline/local test mode
+
+Для проверки игры без Supabase добавь в `.env.local`:
+
+```env
+VITE_OFFLINE_TEST_MODE=true
+VITE_LOCAL_WORKER_URL=http://127.0.0.1:8787
+```
+
+В этом режиме используются локальные fixtures каталога и тестовая колода.
+Lobby хранится в Durable Object Storage, а не в Supabase. Кнопка тестовой
+игры находится в главном меню.
 
 ---
 
@@ -37,8 +52,8 @@ npm run dev
 
 | Бэкенд | Что делает | Где крутится |
 |---|---|---|
-| **Supabase** | Auth, Postgres (каталог карт, лобби, профили), Admin CRUD | Облако Supabase |
-| **Cloudflare Worker** | Realtime мультиплеер (GameRoom, LobbyRoom), KV-каталог, in-memory game engine | Cloudflare Edge |
+| **Supabase** | Auth, каталог, legacy game snapshot, Admin CRUD | Облако Supabase |
+| **Cloudflare Worker** | Realtime, GameRoom, LobbyRoom + DO storage, KV-каталог | Cloudflare Edge |
 
 Фронт должен знать, куда стучаться в каждом случае — это и есть env-переменные.
 

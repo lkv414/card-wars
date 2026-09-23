@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { isOfflineTestMode } from '../utils/offlineMode'
 import './MainMenu.css'
 
 export function MainMenu() {
@@ -17,6 +18,16 @@ export function MainMenu() {
           <button type="button" className="btn-editor" onClick={() => navigate('/decks')}>
             Мои колоды
           </button>
+
+          {isOfflineTestMode && (
+            <button
+              type="button"
+              className="btn-editor"
+              onClick={() => navigate('/test-game/local-test')}
+            >
+              Тестовая игра без Supabase
+            </button>
+          )}
         </div>
       </div>
     </main>

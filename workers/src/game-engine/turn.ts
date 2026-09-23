@@ -107,7 +107,7 @@ export function endTurn(state: GameState): ApplyResult | EngineError {
     return err('Вы единственный живой — игра окончена')
   }
 
-  let workingState = state
+  let workingState = cleaned
   let battleEvents: ApplyResult['battleEvents'] = []
   let gameFinished = false
   let winnerId: string | null | undefined = undefined

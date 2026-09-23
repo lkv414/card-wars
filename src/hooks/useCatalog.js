@@ -18,6 +18,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getGameWsBaseUrl, isGameWsConfigured } from '../utils/gameWebSocket'
 import { supabase } from '../utils/supabase'
 import { idbGet, idbSet, idbDelete } from '../utils/catalogIdb'
+import { isOfflineTestMode } from '../utils/offlineMode'
+import { TEST_CARDS, TEST_LANDS } from '../fixtures/testCatalog'
 
 const CATALOG_TTL_MS = 24 * 60 * 60 * 1000 // 24h
 const SUPABASE_TIMEOUT_MS = 8_000
@@ -91,7 +93,10 @@ export async function loadCatalog(key, { forceRefresh = false } = {}) {
 
   let data = null
   let source = null
-  if (isGameWsConfigured()) {
+  if (isOfflineTestMode) {
+    data = key === 'cards' ? TEST_CARDS : TEST_LANDS
+    source = 'local-fixture'
+  } else if (isGameWsConfigured()) {
     try {
       data = await fetchFromWorker(key)
       source = 'worker'

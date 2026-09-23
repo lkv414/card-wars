@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../utils/supabase'
+import { isOfflineTestMode } from '../utils/offlineMode'
 
 export function useHeroes() {
   const [heroes, setHeroes] = useState([])
@@ -17,6 +18,12 @@ export function useHeroes() {
   const [error, setError] = useState(null)
 
   const loadHeroes = useCallback(async () => {
+    if (isOfflineTestMode) {
+      setHeroes([])
+      setDeckHeroesMap({})
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(null)
     try {

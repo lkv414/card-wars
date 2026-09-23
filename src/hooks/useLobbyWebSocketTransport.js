@@ -8,6 +8,7 @@ import {
   isGameWsConfigured,
   lobbyWsUrl,
 } from '../utils/gameWebSocket'
+import { isOfflineTestMode } from '../utils/offlineMode'
 
 const ACTION_TIMEOUT_MS = 45_000
 
@@ -95,6 +96,7 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
           if (next === 'reconnecting') setStatus('reconnecting')
           else if (next === 'connecting') setStatus('connecting')
         },
+        protocols: isOfflineTestMode ? 'x-dev-bypass' : undefined,
       })
       socketRef.current = socket
     },

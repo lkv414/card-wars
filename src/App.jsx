@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { useToasts } from './hooks/useToasts'
 import { ensureGuestId } from './utils/guestSession'
 import { isSupabaseConfigured } from './utils/supabase'
+import { isOfflineTestMode } from './utils/offlineMode'
 import { LibraryProvider } from './context/LibraryContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
 import { DeckBuilderPage, AdminPanelPage } from './pages/LibraryPages'
@@ -61,7 +62,7 @@ function App() {
     ensureGuestId()
   }, [])
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured && !isOfflineTestMode) {
     return <SupabaseConfigMissing />
   }
 
@@ -94,6 +95,7 @@ function App() {
         <Route path="/lobby/:code" element={<LobbyScreen toast={toast} />} />
 
         <Route path="/game/:gameId" element={<GameRoute />} />
+        <Route path="/test-game/:gameId" element={<GameRoute />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

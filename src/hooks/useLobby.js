@@ -1,18 +1,15 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
-import { supabase } from '../utils/supabase'
-import { logError } from '../utils/errorLogger'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { getGuestId } from '../utils/guestId'
 import { ensureGuestId } from '../utils/guestSession'
 import {
   loadLobbySession,
   clearLobbySession,
+  saveLobbySession,
 } from '../utils/lobbySession'
 import { useLobbyChannel } from './lobby/useLobbyChannel'
-import { createLobbyAction } from './lobby/useCreateLobby'
-import { joinLobbyAction } from './lobby/useJoinLobby'
 import { useLobbyWebSocketTransport } from './useLobbyWebSocketTransport'
 import { mapLobbyPlayers, lobbyStatus } from '../utils/mapGameState'
-import { getGameWsBaseUrl } from '../utils/gameWebSocket'
+import { createLocalLobby, getLocalLobby, joinLocalLobby } from '../utils/localLobbyClient'
 
 export function useLobby() {
   const [status, setStatus] = useState('restoring')
@@ -27,7 +24,6 @@ export function useLobby() {
   const [onlinePlayerIds, setOnlinePlayerIds] = useState([])
 
   const lobbyIdRef = useRef(null)
-  const isHostRef = useRef(false)
 
   useEffect(() => {
     ensureGuestId()
@@ -63,17 +59,8 @@ export function useLobby() {
       const playersList = mapLobbyPlayers(lobbyRow)
       if (playersList) setPlayers(playersList)
       if (lobbyStatus(lobbyRow) === 'in_game') {
-        const id = lobbyRow.id ?? lobbyIdRef.current
-        const { data: game } = await supabase
-          .from('games')
-          .select('id')
-          .eq('lobby_id', id)
-          .maybeSingle()
-        if (game?.id) {
-          onGameStarted(game.id)
-        } else {
-          setStatus('in_game')
-        }
+        if (lobbyRow.game_id) onGameStarted(lobbyRow.game_id)
+        else setStatus('in_game')
       }
     },
     [onGameStarted, handleLobbyClosed]
@@ -96,21 +83,6 @@ export function useLobby() {
   }, [subscribeToLobby])
 
   useEffect(() => { lobbyIdRef.current = lobbyId }, [lobbyId])
-  useEffect(() => { isHostRef.current = isHost }, [isHost])
-
-  const lobbySetState = useMemo(
-    () => ({
-      setStatus,
-      setError,
-      setDismissedMessage,
-      setLobbyId,
-      setLobbyCode,
-      setIsHost,
-      setHostId,
-      setPlayers,
-    }),
-    []
-  )
 
   useEffect(() => {
     let cancelled = false
@@ -127,69 +99,23 @@ export function useLobby() {
 
     const guestId = getGuestId()
 
-    ;(async () => {
-      const { data: lobby, error: lobbyError } = await supabase
-        .from('lobbies')
-        .select('*')
-        .eq('id', session.lobbyId)
-        .maybeSingle()
-
-      if (cancelled) return
-      if (lobbyError) {
-        logError(lobbyError, { hook: 'useLobby', action: 'restoreLobby' })
-      }
-
-      if (!lobby) {
-        clearLobbySession()
+    getLocalLobby(session.lobbyId)
+      .then((lobby) => {
+        if (cancelled || !lobby || lobby.status === 'in_game') return
         requestAnimationFrame(() => {
-          if (!cancelled) setStatus('idle')
+          setLobbyId(lobby.id)
+          setLobbyCode(lobby.code)
+          setIsHost(lobby.host_id === guestId)
+          setHostId(lobby.host_id)
+          setPlayers(lobby.lobby_players || [])
+          setStatus('waiting')
         })
-        return
-      }
-
-      if (lobby.status === 'in_game') {
-        clearLobbySession()
-        requestAnimationFrame(() => {
-          if (!cancelled) setStatus('idle')
-        })
-        return
-      }
-
-      const { data: me } = await supabase
-        .from('lobby_players')
-        .select('player_id')
-        .eq('lobby_id', lobby.id)
-        .eq('player_id', guestId)
-        .maybeSingle()
-
-      if (cancelled) return
-
-      if (!me) {
-        clearLobbySession()
-        requestAnimationFrame(() => {
-          if (!cancelled) setStatus('idle')
-        })
-        return
-      }
-
-      const { data: playersList } = await supabase
-        .from('lobby_players')
-        .select('*')
-        .eq('lobby_id', lobby.id)
-
-      if (cancelled) return
-
-      requestAnimationFrame(() => {
-        if (cancelled) return
-        setLobbyId(lobby.id)
-        setLobbyCode(lobby.code)
-        setIsHost(lobby.host_id === guestId)
-        setHostId(lobby.host_id)
-        setPlayers(playersList ?? [])
-        setStatus('waiting')
+        subscribeRef.current(lobby.id)
       })
-      subscribeRef.current(lobby.id)
-    })()
+      .catch(() => {
+        clearLobbySession()
+        setStatus('idle')
+      })
 
     return () => {
       cancelled = true
@@ -207,78 +133,62 @@ export function useLobby() {
   const createLobby = useCallback(
     async (nickname, deckPayload = null) => {
       const guestId = getGuestId()
-      return createLobbyAction(guestId, nickname, deckPayload, {
-        subscribeToLobby,
-        setState: lobbySetState,
-      })
+      const lobby = await createLocalLobby(guestId, nickname, deckPayload)
+      setLobbyId(lobby.id)
+      setLobbyCode(lobby.code)
+      setIsHost(true)
+      setHostId(guestId)
+      setPlayers(lobby.lobby_players || [])
+      setStatus('waiting')
+      subscribeToLobby(lobby.id)
+      saveLobbySession(lobby.id, lobby.code, guestId, true)
+      return lobby.code
     },
-    [subscribeToLobby, lobbySetState]
+    [subscribeToLobby]
   )
 
   const joinLobby = useCallback(
     async (code, nickname, deckPayload = null) => {
       const guestId = getGuestId()
-      return joinLobbyAction(guestId, code, nickname, deckPayload, {
-        subscribeToLobby,
-        setState: lobbySetState,
-      })
+      const lobby = await joinLocalLobby(code.trim().toUpperCase(), guestId, nickname, deckPayload)
+      setLobbyId(lobby.id)
+      setLobbyCode(lobby.code)
+      setIsHost(lobby.host_id === guestId)
+      setHostId(lobby.host_id)
+      setPlayers(lobby.lobby_players || [])
+      setStatus(lobby.status === 'in_game' ? 'in_game' : 'waiting')
+      subscribeToLobby(lobby.id)
+      saveLobbySession(lobby.id, lobby.code, lobby.host_id, lobby.host_id === guestId)
+      return lobby
     },
-    [subscribeToLobby, lobbySetState]
+    [subscribeToLobby]
   )
 
   const setReady = useCallback(async () => {
-    const id = lobbyIdRef.current
-    if (!id) return
-    try {
-      if (lobbyTransport?.enabled && typeof lobbyTransport.sendActionAsync === 'function') {
-        await lobbyTransport.sendActionAsync('set_ready', { ready: true })
-        return
-      }
-    } catch (err) {
-      console.warn('[setReady] WS failed, falling back to RPC', err)
-    }
-    // REST fallback: если WS не подключён или action провалился — отправляем
-    // напрямую в Supabase, потом notify чтобы второй клиент получил push.
-    const { error: rpcErr } = await supabase.rpc('set_lobby_player_ready', {
-      p_guest_id: getGuestId(),
-      p_lobby_id: id,
-      p_ready: true,
-    })
-    if (rpcErr) {
-      setError(`Не удалось отметить готовность: ${rpcErr.message}`)
+    if (!lobbyIdRef.current) return
+    if (!lobbyTransport?.enabled || typeof lobbyTransport.sendActionAsync !== 'function') {
+      setError('Realtime лобби недоступно')
       return
     }
-    await fetch(`${getGameWsBaseUrl()}/lobby/${id}/notify`, { method: 'POST' }).catch(() => {})
+    try {
+      await lobbyTransport.sendActionAsync('set_ready', { ready: true })
+    } catch (err) {
+      setError(err?.message || 'Не удалось отметить готовность')
+    }
   }, [lobbyTransport])
 
   const startGame = useCallback(async (landPlacementRule = 'strict') => {
-    const id = lobbyIdRef.current
-    if (!id) return { error: 'Лобби не найдено' }
+    if (!lobbyIdRef.current) return { error: 'Лобби не найдено' }
+    if (!lobbyTransport?.enabled || typeof lobbyTransport.sendActionAsync !== 'function') {
+      return { error: 'Realtime лобби недоступно' }
+    }
     try {
-      if (lobbyTransport?.enabled && typeof lobbyTransport.sendActionAsync === 'function') {
-        await lobbyTransport.sendActionAsync('start_game', { landPlacementRule })
-      } else {
-        const { error: rpcErr } = await supabase.rpc('start_game_for_lobby', {
-          p_guest_id: getGuestId(),
-          p_lobby_id: id,
-          p_land_placement_rule: landPlacementRule,
-        })
-        if (rpcErr) throw new Error(rpcErr.message)
-      }
-      const { data: game } = await supabase
-        .from('games')
-        .select('id')
-        .eq('lobby_id', id)
-        .maybeSingle()
-      if (game?.id) {
-        onGameStarted(game.id)
-        return { gameId: game.id }
-      }
-      return { error: 'Игра создаётся…' }
+      await lobbyTransport.sendActionAsync('start_game', { landPlacementRule })
+      return { success: true }
     } catch (err) {
       return { error: err.message || 'Не удалось создать игру' }
     }
-  }, [lobbyTransport, onGameStarted])
+  }, [lobbyTransport])
 
   const leaveLobby = useCallback(async () => {
     const id = lobbyIdRef.current

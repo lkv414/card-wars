@@ -100,8 +100,9 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
-
-
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Розыгрыш недоступен (обновите сервер)' }
+      }
 
       try {
 

@@ -382,19 +382,20 @@ export function clearFlipMarks(state: GameState): GameState {
       cards: z.cards.map((c) => (c.flipped_this_turn ? { ...c, flipped_this_turn: false } : c)),
     })),
   }
-  return bumpVersion(withPlayer(state, me.player_id, () => updated))
+  return withPlayer(state, me.player_id, () => updated)
 }
 
 /** Engine-side helper used by the lobby's land setup. Not gated by active state. */
 export function reorderLands(
   state: GameState,
   payload: Extract<Action, { type: 'reorder_lands' }>,
+  actorId?: string,
 ): ApplyResult | EngineError {
   if (!state.current_player_id && state.status === 'finished') {
     return err('Игра уже завершена')
   }
-  const me = getActivePlayer(state)
-  if (!me) return err('Сейчас не ваш ход')
+  const me = (actorId ? getPlayer(state, actorId) : null) ?? getActivePlayer(state)
+  if (!me) return err('Игрок не найден')
 
   // Find each zone that has a land_id matching the payload, then reorder.
   const landById = new Map<string, Zone>()
@@ -430,9 +431,16 @@ export function confirmLandSetup(
   const playersReady = state.players.every((p) => payload.bypass || p.zones.some((z) => z.land_id))
   if (!playersReady) return err('Не у всех игроков выбраны земли')
 
+  const firstPlayerId =
+    typeof state.game_state?.firstPlayerId === 'string'
+      ? state.game_state.firstPlayerId
+      : state.players.find((p) => (p.health ?? 0) > 0)?.player_id ?? null
+  if (!firstPlayerId) return err('Не удалось определить первого игрока')
+
   const next: GameState = bumpVersion({
     ...state,
     status: 'active',
+    current_player_id: firstPlayerId,
     started_at: state.started_at ?? new Date().toISOString(),
     turn_started_at: new Date().toISOString(),
     game_state: { ...(state.game_state ?? {}), turnPhase: 'main' },

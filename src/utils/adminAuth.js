@@ -1,5 +1,5 @@
 export function isAdminUser(user) {
   if (!user) return false
-  const role = user.app_metadata?.role ?? user.user_metadata?.role
-  return role === 'admin'
+  // Never trust user_metadata for authorization; it is user-editable.
+  return user.app_metadata?.role === 'admin'
 }

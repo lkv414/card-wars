@@ -79,7 +79,10 @@ export const useGameStore = create(
         let pendingChanged = false
         if (pendingActions.size > 0) {
           for (const [id, entry] of pendingActions) {
-            if ((entry.serverVersionAtIssue ?? 0) < incomingVersion) {
+            // Optimistic patches may already have advanced the local version.
+            // A server snapshot at or beyond that version is authoritative,
+            // even when both versions are equal.
+            if (incomingVersion >= (entry.optimisticVersion ?? entry.serverVersionAtIssue + 1)) {
               if (entry.timeoutId && typeof window !== 'undefined') {
                 window.clearTimeout(entry.timeoutId)
               }
@@ -128,8 +131,10 @@ export const useGameStore = create(
         const pendingActions = new Map(s.pendingActions)
         pendingActions.set(requestId, {
           patcher,
+          base: s.game,
           ts: Date.now(),
           serverVersionAtIssue,
+          optimisticVersion: Number(next.version ?? serverVersionAtIssue),
           timeoutId: null,
         })
 
@@ -177,9 +182,14 @@ export const useGameStore = create(
         const pendingActions = new Map(s.pendingActions)
         pendingActions.delete(requestId)
 
-        // Re-stabilize чтобы откатить к последнему серверному состоянию
-        // (если сервер уже прислал свежее — оно в state.game, мы просто убираем оптимизм)
+        // Restore the exact state observed before the optimistic patch. The
+        // previous implementation only removed the pending marker, leaving
+        // rejected actions visible until the next unrelated snapshot.
+        const canRestore =
+          s.serverVersion <= (entry.serverVersionAtIssue ?? s.serverVersion) &&
+          entry.base
         return {
+          game: canRestore ? entry.base : s.game,
           pendingActions,
           isApplying: pendingActions.size > 0,
           _lastRollback: { requestId, reason, at: Date.now() },

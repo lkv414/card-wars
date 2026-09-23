@@ -25,5 +25,6 @@ export function validateBeforeSend(
   payload: Record<string, unknown>,
   clientId: string,
 ): ValidationResult {
-  return validateAction(game, action, payload as never, clientId)
+  const engineAction = { type: action, ...payload } as never
+  return validateAction(game, engineAction, clientId)
 }

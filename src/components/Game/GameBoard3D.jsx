@@ -39,6 +39,7 @@ import { GamePanel } from './scene/GamePanel'
 import { PlayerNameLabels } from './scene/PlayerNameLabels'
 import { GameDamageFloater } from './scene/GameDamageFloater'
 import { PlayerPiles } from './scene/PlayerPiles'
+import { BoardOutlines } from './scene/BoardOutlines'
 
 import { DamageFlashOverlay } from './DamageFlashOverlay'
 import { LandSetupOverlay } from './LandSetupOverlay'
@@ -148,6 +149,8 @@ export function GameBoard3D({
   const dragGhostRef = useRef(null)
   const controlsRef = useRef(null)
   const boardRectRef = useRef(null) // кэш rect (обновляется на resize/mount)
+  const damageTimersRef = useRef([])
+  const lastBattleVersionRef = useRef(-1)
 
   // === Card catalog ref (стабильная ссылка для колбэков) ===
   const cardCatalogRef = useRef(cardCatalog)
@@ -273,8 +276,35 @@ export function GameBoard3D({
     if (game.status === 'setup' || game.current_player_id !== playerId) return
     if (game.status === 'finished') return
     if (!zone.isOwnerMe) return
-    toast('info', `Действие с картой: ${card?.name ?? '?'}`)
-  }, [game.status, game.current_player_id, playerId, toast])
+    setZoneCardActionMenu({
+      playerId: zone.player.player_id,
+      zoneIndex: zone.zoneIndex,
+      card,
+    })
+  }, [game.status, game.current_player_id, playerId])
+
+  const handleCreatureSlotClick = useCallback((zone) => {
+    if (!zone.isOwnerMe) return
+    setSelectedZoneIndex(zone.zoneIndex)
+  }, [])
+
+  const handleBuildingSlotClick = useCallback((zone) => {
+    if (!zone.isOwnerMe) return
+    setSelectedZoneIndex(zone.zoneIndex)
+  }, [])
+
+  const handleCreatureCardClick = handleZoneCardClick
+  const handleBuildingCardClick = handleZoneCardClick
+
+  const handleConfirmLandSetup = useCallback(
+    (payload) => onConfirmLandSetup?.(payload),
+    [onConfirmLandSetup],
+  )
+
+  const handleSkipLandSetup = useCallback(
+    () => onSkipLandSetup?.(),
+    [onSkipLandSetup],
+  )
 
   // === handleRayRelease (определён выше slot-click колбэков) ===
   const handleRayRelease = useCallback(
@@ -382,6 +412,25 @@ export function GameBoard3D({
       damageTimersRef.current.push(id)
     }
   }, [])
+
+  // WebSocket-анимации боя приходят в authoritative game state. Локальный
+  // callback action тоже может вернуть events, поэтому обрабатываем оба пути,
+  // но не повторяем один и тот же state version.
+  useEffect(() => {
+    const events = game.battle_events
+    if (!Array.isArray(events) || events.length === 0) return
+    const version = Number(game.version ?? 0)
+    if (lastBattleVersionRef.current === version) return
+    lastBattleVersionRef.current = version
+    setBattleEvents((prev) => pushBattleEvents(prev, events))
+    const { markers, flashMe } = battleEventsToVisuals(events, playerId)
+    triggerDamageVisual({ markers })
+    if (flashMe) {
+      const startId = setTimeout(() => setDamageFlash(true), 0)
+      const endId = setTimeout(() => setDamageFlash(false), 550)
+      damageTimersRef.current.push(startId, endId)
+    }
+  }, [game.battle_events, game.version, playerId, triggerDamageVisual])
 
   // cleanup всех таймеров при unmount
   useEffect(() => {

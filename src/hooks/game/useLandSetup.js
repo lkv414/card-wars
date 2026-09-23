@@ -3,6 +3,7 @@ import { supabase } from '../../utils/supabase'
 import { getGuestId } from '../../utils/guestId'
 import { ensureGuestId } from '../../utils/guestSession'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
 export function useLandSetup(game, reload, { transport } = {}) {
   const reorderLands = useCallback(
@@ -14,6 +15,7 @@ export function useLandSetup(game, reload, { transport } = {}) {
       const wsErr = transportError(ws)
       if (wsErr) throw new Error(wsErr.error)
       if (transportOk(ws)) return
+      if (!ALLOW_CLIENT_FALLBACK) throw new Error('Перестановка земель недоступна (обновите сервер)')
 
       const { error } = await supabase.rpc('reorder_player_lands', {
         p_game_id: game.id,
@@ -34,6 +36,7 @@ export function useLandSetup(game, reload, { transport } = {}) {
       const wsErr = transportError(ws)
       if (wsErr) throw new Error(wsErr.error)
       if (transportOk(ws)) return
+      if (!ALLOW_CLIENT_FALLBACK) throw new Error('Подтверждение земель недоступно (обновите сервер)')
 
       const { error } = await supabase.rpc('confirm_land_setup', {
         p_game_id: game.id,

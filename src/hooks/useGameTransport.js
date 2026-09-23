@@ -8,6 +8,7 @@ import {
   getGameWsBaseUrl,
   isGameWsConfigured,
 } from '../utils/gameWebSocket'
+import { isOfflineTestMode } from '../utils/offlineMode'
 
 const ACTION_TIMEOUT_MS = 45_000
 
@@ -99,6 +100,7 @@ export function useGameTransport(gameId, clientId, { onState, onError, onPresenc
       onStatusChange: (next) => {
         setStatus(next === 'connected' ? 'connected' : next)
       },
+      protocols: isOfflineTestMode ? 'x-dev-bypass' : undefined,
     })
     socketRef.current = socket
 

@@ -9,9 +9,25 @@ React + Cloudflare Workers (Durable Objects) + Supabase.
 
 ```bash
 npm install
-npm run workers:dev      # в отдельном терминале
+npm run workers:dev      # в отдельном терминале, локальный Worker
 npm run dev              # фронт на http://localhost:5173
 ```
+
+### Локальный режим без Supabase
+
+Включён через `.env.local`:
+
+```env
+VITE_OFFLINE_TEST_MODE=true
+VITE_LOCAL_WORKER_URL=http://127.0.0.1:8787
+```
+
+В этом режиме каталог и тестовая колода берутся из локальных fixtures,
+лобби хранится в `LobbyRoom`, а игра — в локальном `GameRoom`.
+Кнопка «Тестовая игра без Supabase» доступна в главном меню.
+
+Production bypass не включается: `workers/wrangler.dev.jsonc` используется
+только для `npm run workers:dev`.
 
 Подробнее — **[BUILD_ENV.md](./BUILD_ENV.md)** (там и прод-деплой, и troubleshooting).
 
@@ -22,14 +38,14 @@ npm run dev              # фронт на http://localhost:5173
 ```
 Browser ──WebSocket──► Cloudflare Worker (GameRoom / LobbyRoom Durable Object)
                               │
-                              │ in-memory game-engine (TypeScript, pure)
-                              │
-                              └──► Supabase (Postgres + Auth)
-                                    - cards, lands, decks        (read-only каталог)
-                                    - lobbies, lobby_players     (multiplayer social)
-                                    - auth.users                  (login)
-                                    - match_history              (analytics)
-                                    - games.state jsonb           (snapshot каждые 5 действий)
+                              ├── GameRoom: authoritative in-memory game engine
+                              └── LobbyRoom: lobby state, players, ready/start
+                                    │
+                                    └──► Durable Object Storage
+                                         (lobby snapshot, no Supabase)
+
+Supabase is used for authentication/catalog/legacy game snapshots only.
+Lobby membership and game creation are no longer stored in Supabase.
 ```
 
 Ключевое: **game-engine живёт в Worker'е как чистая TypeScript-функция**.
@@ -54,14 +70,15 @@ workers/                       Cloudflare Worker
 ├── src/
 │   ├── game-engine/           pure TypeScript движок (cards, combat, turn, validation)
 │   ├── game-room.ts           Durable Object: GameRoom (WebSocket + in-memory state)
-│   ├── lobby-room.ts          Durable Object: LobbyRoom
+│   ├── lobby-room.ts          Durable Object: LobbyRoom + local/DO lobby snapshot
 │   ├── catalog.ts             KV-кэш каталога
 │   ├── state-broadcast.ts     fog-of-war broadcast
-│   ├── action-router.ts       (legacy) — Supabase RPC
+│   ├── supabase.ts            только game snapshot/auth adapter
 │   └── protocol.ts            WebSocket-протокол
-└── wrangler.jsonc             Cloudflare bindings (GameRoom, LobbyRoom, CATALOG KV)
+├── wrangler.jsonc             production bindings
+└── wrangler.dev.jsonc         local bindings + explicit dev bypass
 
-supabase/migrations/           plpgsql-миграции (каталог + legacy RPC + новые state-функции)
+supabase/migrations/           только каталог/аутентификация/legacy совместимость
 scripts/                       утилиты миграции (catalog → KV и т.д.)
 skills/                        AI-agent skills (см. skills/README.md)
 ```
@@ -74,7 +91,7 @@ skills/                        AI-agent skills (см. skills/README.md)
 npm run test:smoke           # Фронт smoke (29 тестов)
 npm run lint                 # ESLint
 npm run build                # Production build
-cd workers && npx vitest run --config vitest.engine.config.ts  # engine (32 теста)
+cd workers && npx vitest run --config vitest.engine.config.ts  # engine (46 тестов)
 ```
 
 Все тесты должны проходить перед push'ем.
@@ -91,7 +108,8 @@ cd workers && npx vitest run --config vitest.engine.config.ts  # engine (32 те
 
 - **Supabase publishable key** (`VITE_SUPABASE_PUBLISHABLE_KEY`) — публичный по дизайну, безопасен для браузера.
 - **Supabase service role key** (`SUPABASE_SERVICE_ROLE_KEY` для Worker) — секретный, хранится в Wrangler secrets, **никогда** не попадает в бандл.
-- **RLS** на Supabase таблицах — отложено (см. примечание ниже).
+- **RLS** на каталог и legacy game tables — отдельная задача; lobby больше не хранится в Supabase.
+- **GameRoom** в production не принимает `x-dev-bypass`; bypass включается только через `wrangler.dev.jsonc`.
 
 > ⚠️ **TODO**: включить RLS на всех таблицах для защиты direct table access (см. `_rules_full.txt`).
 

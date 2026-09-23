@@ -6,9 +6,10 @@
  */
 
 const MAX_RECONNECT_DELAY_MS = 15_000
+import { isOfflineTestMode, localWorkerBaseUrl } from './offlineMode'
 
 export function isGameWsConfigured() {
-  return Boolean(import.meta.env.VITE_GAME_WS_URL?.trim())
+  return isOfflineTestMode || Boolean(import.meta.env.VITE_GAME_WS_URL?.trim())
 }
 
 /** @deprecated use isGameWsConfigured */
@@ -17,7 +18,9 @@ export function isGameWsEnabled() {
 }
 
 export function getGameWsBaseUrl() {
-  const base = import.meta.env.VITE_GAME_WS_URL?.trim()
+  const base = isOfflineTestMode
+    ? localWorkerBaseUrl
+    : import.meta.env.VITE_GAME_WS_URL?.trim()
   if (!base) {
     throw new Error('VITE_GAME_WS_URL не задан — realtime через Cloudflare Workers недоступен')
   }
@@ -81,6 +84,7 @@ function createReconnectingSocket({
   onError,
   onClose,
   onStatusChange,
+  protocols,
 }) {
   /** @type {WebSocket | null} */
   let ws = null
@@ -129,7 +133,7 @@ function createReconnectingSocket({
     if (intentionalClose) return
     onStatusChange?.('connecting')
     readyResolved = false
-    ws = new WebSocket(url)
+    ws = new WebSocket(url, protocols)
 
     ws.addEventListener('open', () => {
       retryAttempt = 0
@@ -138,12 +142,15 @@ function createReconnectingSocket({
       } catch (err) {
         onError?.(err)
       }
-      resolveReady()
+      // Do not resolve readiness here: the Worker completes async auth and
+      // state load before sending `joined`.
     })
 
     ws.addEventListener('message', (event) => {
       try {
-        onMessage?.(JSON.parse(String(event.data)))
+        const message = JSON.parse(String(event.data))
+        if (message?.type === 'joined') resolveReady()
+        onMessage?.(message)
       } catch {
         /* ignore malformed */
       }

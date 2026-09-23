@@ -4,8 +4,6 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { readFileSync, existsSync } from 'node:fs'
 
-/* global process */
-
 import { visualizer } from 'rollup-plugin-visualizer'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -113,6 +111,9 @@ export default defineConfig(() => ({
   // For `npm run build`: bake the same values into the bundle via define.
   define: toDefine(envFromProduction),
   build: {
+    // lightningcss in the current Vite/Rolldown toolchain rejects the valid
+    // keyframes used by the lobby stylesheet; esbuild preserves the CSS.
+    cssMinify: 'esbuild',
     // Большие чанки раздражают линтер Vite; 1 МБ — приемлемо для three-vendor.
     chunkSizeWarningLimit: 1500,
     rollupOptions: {

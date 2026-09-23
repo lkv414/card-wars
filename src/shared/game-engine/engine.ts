@@ -61,7 +61,7 @@ export function applyAction(
     case 'forfeit':
       return forfeitGame(state, actorId)
     case 'reorder_lands':
-      return reorderLands(state, action)
+      return reorderLands(state, action, actorId)
     case 'confirm_land_setup':
       return confirmLandSetup(state, action)
     default: {

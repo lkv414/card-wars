@@ -303,6 +303,7 @@ describe('flipCard / discardFromZone / discardFromHand', () => {
   it('flipCard toggles the flipped flag', () => {
     const state = makeTwoPlayerAttackReady()
     const card = state.players[0]!.zones[0]!.cards[0]!
+    card.has_flip = true
     const result = applyAction(
       state,
       { type: 'flip_card', zonePosition: 1, cardId: card.instanceId! },

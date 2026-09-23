@@ -9,6 +9,7 @@ import { canAttack } from './zoneOpposition'
 import { canPlayerDealDamage } from './combat'
 import { safePlayers } from '../../utils/safePlayer'
 import { isRpcUnavailable } from './rpcUtils'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { applyAttackPatch } from '../../utils/gameStatePatch'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -57,6 +58,9 @@ export function useAttack(game, { patchGame, transport, suppressRealtimeReload }
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Атака недоступна (обновите сервер)' }
+      }
 
       const { data, error: rpcErr } = await supabase.rpc('perform_attack', {
         p_game_id: game.id,

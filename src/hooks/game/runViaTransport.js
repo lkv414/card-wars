@@ -8,7 +8,7 @@
  */
 export async function runViaTransport(transport, action, payload = {}) {
   if (!transport?.enabled || typeof transport.sendActionAsync !== 'function') {
-    return { viaWs: false }
+    return { viaWs: true, error: 'Realtime transport unavailable' }
   }
   try {
     const state = await transport.sendActionAsync(action, payload)

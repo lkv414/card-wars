@@ -56,6 +56,8 @@ function normalizeRecord(input) {
     land_type: cleanText(input.land_type) ?? 'any',
     description: cleanText(input.description) ?? '',
     mechanics: Array.isArray(input.mechanics) ? input.mechanics : [],
+    mechanics_version: Number(input.mechanics_version ?? 1),
+    mechanics_status: input.mechanics_status ?? 'text_only',
     has_flip: Boolean(input.has_flip ?? input.mechanics?.some?.((m) => m?.type === 'flip_ability' || m?.type === 'flip')),
     flip_description: cleanText(input.flip_description) ?? '',
     image_urls: [`исходники/карты/${filename}`],

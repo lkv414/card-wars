@@ -48,5 +48,9 @@
     "search",
     "stat_buff"
   ],
-  "note": "Generic actions preserve unresolved rules as text; they are not executable by the current engine."
+  "note": "Generic actions preserve unresolved rules as text; they are not executable by the current engine.",
+  "mechanics_status_counts": {
+    "text_only": 415,
+    "implemented": 89
+  }
 }

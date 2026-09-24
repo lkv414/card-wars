@@ -65,6 +65,8 @@ for (const [index, record] of records.entries()) {
     flip_description: record.flip_description ?? '',
     description: record.description ?? '',
     mechanics: Array.isArray(record.mechanics) ? record.mechanics : [],
+    mechanics_version: Number(record.mechanics_version ?? 1),
+    mechanics_status: record.mechanics_status ?? 'text_only',
     image_url: `images/${targetName}`,
   })
 }

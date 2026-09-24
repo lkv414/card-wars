@@ -28,7 +28,9 @@
         "source_text": "Играй только если под твоим контролем есть существо болотных земель. Выбранный противник сбрасывает карту."
       }
     ],
-    "image_url": "images/0001-bmo_card_1.png"
+    "image_url": "images/0001-bmo_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0002-кольцо-змееглаза",
@@ -63,7 +65,9 @@
         "source_text": "Верни случайное болотное существо из своей стопки сброса себе в руку"
       }
     ],
-    "image_url": "images/0002-bmo_card_2.png"
+    "image_url": "images/0002-bmo_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0005-крепость-крови",
@@ -94,7 +98,9 @@
         "source_text": "Твое существо получает +1 ATK на этой линии."
       }
     ],
-    "image_url": "images/0005-bmo_card_6.png"
+    "image_url": "images/0005-bmo_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0007-лысый-бродяга",
@@ -126,7 +132,9 @@
         "source_text": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса"
       }
     ],
-    "image_url": "images/0007-bmo_card_10.png"
+    "image_url": "images/0007-bmo_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0008-желтая-сирена",
@@ -142,7 +150,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0008-bmo_card_12.png"
+    "image_url": "images/0008-bmo_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0009-зеленая-сирена",
@@ -178,7 +188,9 @@
         "source_text": "Уничтожь Зеленую сирену >>> Нанеси 1 урон каждому существу противника"
       }
     ],
-    "image_url": "images/0009-bmo_card_13.png"
+    "image_url": "images/0009-bmo_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0010-зеленый-тритон",
@@ -215,7 +227,9 @@
         "source_text": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса"
       }
     ],
-    "image_url": "images/0010-bmo_card_14.png"
+    "image_url": "images/0010-bmo_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0011-пламенная-мышь",
@@ -246,7 +260,9 @@
         "source_text": "Играй Пламенную мышь только если у тебя 10 или более карт в стопке сброса."
       }
     ],
-    "image_url": "images/0011-bmo_card_15.png"
+    "image_url": "images/0011-bmo_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0012-мумук",
@@ -277,7 +293,9 @@
         "source_text": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке"
       }
     ],
-    "image_url": "images/0012-bmo_card_17.png"
+    "image_url": "images/0012-bmo_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0013-темный-ангел",
@@ -307,7 +325,9 @@
         "source_text": "+1 ATK за каждые 5 карт в твоей стопке сброса."
       }
     ],
-    "image_url": "images/0013-bmo_card_18.png"
+    "image_url": "images/0013-bmo_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0014-док-смерть",
@@ -365,7 +385,9 @@
         "source_text": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии"
       }
     ],
-    "image_url": "images/0014-bmo_card_19.png"
+    "image_url": "images/0014-bmo_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0015-мамб-паук",
@@ -396,7 +418,9 @@
         "source_text": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса"
       }
     ],
-    "image_url": "images/0015-bmo_card_20.png"
+    "image_url": "images/0015-bmo_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0016-серая-мышь",
@@ -427,7 +451,9 @@
         "source_text": "Потрать 1 действие >>> Верни случайное болотное существо из своей стопки сброса себе в руку."
       }
     ],
-    "image_url": "images/0016-bmo_card_22.png"
+    "image_url": "images/0016-bmo_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0017-зубастик",
@@ -457,7 +483,9 @@
         "source_text": "+2 DEF за каждые 5 карт в твоей стопке сброса."
       }
     ],
-    "image_url": "images/0017-bmo_card_25.png"
+    "image_url": "images/0017-bmo_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0018-дьявольский-глазстик",
@@ -492,7 +520,9 @@
         "source_text": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в ру"
       }
     ],
-    "image_url": "images/0018-bmo_card_27.png"
+    "image_url": "images/0018-bmo_card_27.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0019-остролист",
@@ -527,7 +557,9 @@
         "source_text": "Если в твоей стопке сброса 10 карт или более, потрать на 2 действия меньше чтобы сыграть Остролиста"
       }
     ],
-    "image_url": "images/0019-bmo_card_29.png"
+    "image_url": "images/0019-bmo_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0021-дворец-костей",
@@ -558,7 +590,9 @@
         "source_text": "У существ противника на этой линии не срабатывают эффекты вступления в игру и покидания игры."
       }
     ],
-    "image_url": "images/0021-bmo_card_33.png"
+    "image_url": "images/0021-bmo_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0022-башня-духа",
@@ -611,7 +645,9 @@
         "source_text": "Если ты не контролируешь существ на этой линии, то перемести выбранное существо на свою сторону и подгомовь его"
       }
     ],
-    "image_url": "images/0022-bmo_card_34.png"
+    "image_url": "images/0022-bmo_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0023-абрака-амадеус",
@@ -642,7 +678,9 @@
         "source_text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса."
       }
     ],
-    "image_url": "images/0023-bmo_card_35.png"
+    "image_url": "images/0023-bmo_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0024-звон-магических-колец",
@@ -674,7 +712,9 @@
         "source_text": "Каждое твое существо получает +1 ATK"
       }
     ],
-    "image_url": "images/0024-bmo_card_36.png"
+    "image_url": "images/0024-bmo_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0025-древо-нежить",
@@ -709,7 +749,9 @@
         "source_text": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в ру"
       }
     ],
-    "image_url": "images/0025-bmo_card_38.png"
+    "image_url": "images/0025-bmo_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0026-пень-с-булавой",
@@ -746,7 +788,9 @@
         "source_text": "Уничтожь Пень с булавой >>> Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса"
       }
     ],
-    "image_url": "images/0026-bmo_card_39.png"
+    "image_url": "images/0026-bmo_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0028-падающая-звезда",
@@ -777,7 +821,9 @@
         "source_text": "Существа под твоим контролем не получают урон от существ противника в этом ход."
       }
     ],
-    "image_url": "images/0028-bubblegum_card_2.png"
+    "image_url": "images/0028-bubblegum_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0029-голубая-сахарная-вата",
@@ -813,7 +859,9 @@
         "source_text": "Восстанови до 3 Урона с выбранного существа под твоим контролем"
       }
     ],
-    "image_url": "images/0029-bubblegum_card_3.png"
+    "image_url": "images/0029-bubblegum_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0030-мельница-процветания",
@@ -848,7 +896,9 @@
         "source_text": "Пока на твоем существе на этой линии нет урона, оно получает +2 АТК"
       }
     ],
-    "image_url": "images/0030-bubblegum_card_5.png"
+    "image_url": "images/0030-bubblegum_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0031-пещера-одиночества",
@@ -885,7 +935,9 @@
         "source_text": "Сбрось карту >>> Твое существо на этой линии не может быть атаковано или выбрано до начала твоего следующего хода"
       }
     ],
-    "image_url": "images/0031-bubblegum_card_6.png"
+    "image_url": "images/0031-bubblegum_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0034-пироклоп",
@@ -916,7 +968,9 @@
         "source_text": "Когда Пироклоп вступает в игру, восстанови 1 урон с каждого соседнего существа"
       }
     ],
-    "image_url": "images/0034-bubblegum_card_10.png"
+    "image_url": "images/0034-bubblegum_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0035-стена-шоколада",
@@ -951,7 +1005,9 @@
         "source_text": "Пока на Стене шоколада нет урона, она получает +3 ATK"
       }
     ],
-    "image_url": "images/0035-bubblegum_card_12.png"
+    "image_url": "images/0035-bubblegum_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0036-кольцо-пушистости",
@@ -983,7 +1039,9 @@
         "source_text": "Выбранное существо под твоим контролем получает +X ATK в этот ход, где X это число урона на нем."
       }
     ],
-    "image_url": "images/0036-bubblegum_card_14.png"
+    "image_url": "images/0036-bubblegum_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0038-милозавр-рекс",
@@ -1033,7 +1091,9 @@
         "source_text": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту"
       }
     ],
-    "image_url": "images/0038-bubblegum_card_17.png"
+    "image_url": "images/0038-bubblegum_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0039-мисс-пушинка",
@@ -1068,7 +1128,9 @@
         "source_text": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 ATK"
       }
     ],
-    "image_url": "images/0039-bubblegum_card_18.png"
+    "image_url": "images/0039-bubblegum_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0040-фея-шепард",
@@ -1099,7 +1161,9 @@
         "source_text": "Каждое соседнее cute существо получает +2 DEF."
       }
     ],
-    "image_url": "images/0040-bubblegum_card_19.png"
+    "image_url": "images/0040-bubblegum_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0041-милашка",
@@ -1134,7 +1198,9 @@
         "source_text": "ПРИЕМ >>> Восстанови себе 1 HP. (Но не более 25.)"
       }
     ],
-    "image_url": "images/0041-bubblegum_card_20.png"
+    "image_url": "images/0041-bubblegum_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0042-мятный-змей",
@@ -1165,7 +1231,9 @@
         "source_text": "Когда Мятный змей наносит урон противнику, можешь восстановить столько же HP (но не более 25)."
       }
     ],
-    "image_url": "images/0042-bubblegum_card_22.png"
+    "image_url": "images/0042-bubblegum_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0043-шоколадный-ангел",
@@ -1196,7 +1264,9 @@
         "source_text": "Потрать 1 Действие >>> Восстанови весь урон с Ангела шоколада."
       }
     ],
-    "image_url": "images/0043-bubblegum_card_25.png"
+    "image_url": "images/0043-bubblegum_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0044-майонезный-ангел",
@@ -1227,7 +1297,9 @@
         "source_text": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела."
       }
     ],
-    "image_url": "images/0044-bubblegum_card_26.png"
+    "image_url": "images/0044-bubblegum_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0045-яблочный-пироклоп",
@@ -1257,7 +1329,9 @@
         "source_text": "В начале твоего хода можешь восстановить или нанести 1 урон с каждого существа под твоим контролем"
       }
     ],
-    "image_url": "images/0045-bubblegum_card_28.png"
+    "image_url": "images/0045-bubblegum_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0046-хлопковая-мышь",
@@ -1292,7 +1366,9 @@
         "source_text": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 АТК"
       }
     ],
-    "image_url": "images/0046-bubblegum_card_30.png"
+    "image_url": "images/0046-bubblegum_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0047-ангельское-сердце",
@@ -1327,7 +1403,9 @@
         "source_text": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 АТК"
       }
     ],
-    "image_url": "images/0047-bubblegum_card_33.png"
+    "image_url": "images/0047-bubblegum_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0048-корова",
@@ -1358,7 +1436,9 @@
         "source_text": "Муу."
       }
     ],
-    "image_url": "images/0048-bubblegum_card_35.png"
+    "image_url": "images/0048-bubblegum_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0049-зеленая-сахарная-вата",
@@ -1394,7 +1474,9 @@
         "source_text": "Восстанови или нанеси 1 Урон выбранному существу"
       }
     ],
-    "image_url": "images/0049-bubblegum_card_39.png"
+    "image_url": "images/0049-bubblegum_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0050-рука-помощи",
@@ -1429,7 +1511,9 @@
         "source_text": "ПРИЕМ >>> Верни строение из стопки сброса себе в ру"
       }
     ],
-    "image_url": "images/0050-cake_card_1.png"
+    "image_url": "images/0050-cake_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0051-хэнклоп",
@@ -1445,7 +1529,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0051-cake_card_3.png"
+    "image_url": "images/0051-cake_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0052-замок-крови",
@@ -1476,7 +1562,9 @@
         "source_text": "Каждый раз когда существо противника на этой линии получает урон, прибавь к значению 1."
       }
     ],
-    "image_url": "images/0052-cake_card_5.png"
+    "image_url": "images/0052-cake_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0053-великолепная-крепость",
@@ -1507,7 +1595,9 @@
         "source_text": "Существо противника на этой линии получает -2 DEF."
       }
     ],
-    "image_url": "images/0053-cake_card_7.png"
+    "image_url": "images/0053-cake_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0054-яростный-гнев",
@@ -1539,7 +1629,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0054-cake_card_9.png"
+    "image_url": "images/0054-cake_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0055-лунный-урожай",
@@ -1574,7 +1666,9 @@
         "source_text": "Верни строение из стопки сброса в игру"
       }
     ],
-    "image_url": "images/0055-cake_card_11.png"
+    "image_url": "images/0055-cake_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0056-деревянный-ритм",
@@ -1606,7 +1700,9 @@
         "source_text": "получает +2 АТК в этом ходу"
       }
     ],
-    "image_url": "images/0056-cake_card_12.png"
+    "image_url": "images/0056-cake_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0057-домик-из-разного-дерева",
@@ -1651,7 +1747,9 @@
         "source_text": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем. Твое существо на этой линии получает +5 DEF."
       }
     ],
-    "image_url": "images/0057-cake_card_14.png"
+    "image_url": "images/0057-cake_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0058-ферма",
@@ -1682,7 +1780,9 @@
         "source_text": "Ферма считается за дополнительную Кукурузную землю под твоим контролем."
       }
     ],
-    "image_url": "images/0058-cake_card_15.png"
+    "image_url": "images/0058-cake_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0059-космонаперсток",
@@ -1712,7 +1812,9 @@
         "source_text": "Потеряй 2 здоровья, получи 1 действие."
       }
     ],
-    "image_url": "images/0059-cake_card_16.png"
+    "image_url": "images/0059-cake_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0060-стрелец-дэника",
@@ -1772,7 +1874,9 @@
         "source_text": "Уничтожь Строение под твоим контролем, ПРИЕМ >>> Нанеси 3 урона каждому существу противника"
       }
     ],
-    "image_url": "images/0060-cake_card_17.png"
+    "image_url": "images/0060-cake_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0061-крепкий-лесоруб",
@@ -1803,7 +1907,9 @@
         "source_text": "Можешь сыграть дополнительное строение на этой земле."
       }
     ],
-    "image_url": "images/0061-cake_card_18.png"
+    "image_url": "images/0061-cake_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0062-кукурузный-тамплиер",
@@ -1839,7 +1945,9 @@
         "source_text": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплие"
       }
     ],
-    "image_url": "images/0062-cake_card_20.png"
+    "image_url": "images/0062-cake_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0063-друид-початка",
@@ -1870,7 +1978,9 @@
         "source_text": "Примененное существо под твоим контролем получает +1 АТК."
       }
     ],
-    "image_url": "images/0063-cake_card_22.png"
+    "image_url": "images/0063-cake_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0064-кукурузный-чемпион",
@@ -1901,7 +2011,9 @@
         "source_text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
       }
     ],
-    "image_url": "images/0064-cake_card_24.png"
+    "image_url": "images/0064-cake_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0065-кукурузная-валькирия",
@@ -1932,7 +2044,9 @@
         "source_text": "Кукурузная валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
       }
     ],
-    "image_url": "images/0065-cake_card_26.png"
+    "image_url": "images/0065-cake_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0066-царица-полей",
@@ -1962,7 +2076,9 @@
         "source_text": "Царица полей получает +1 ATK за каждое применённое существо под твоим контролем."
       }
     ],
-    "image_url": "images/0066-cake_card_28.png"
+    "image_url": "images/0066-cake_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0067-помощник-лесоруба",
@@ -1997,7 +2113,9 @@
         "source_text": "ПРИЕМ >>> Перемести выбранное строение под твоим контролем на любую землю без строен"
       }
     ],
-    "image_url": "images/0067-cake_card_29.png"
+    "image_url": "images/0067-cake_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0068-попкорн-бабочка",
@@ -2033,7 +2151,9 @@
         "source_text": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контрол"
       }
     ],
-    "image_url": "images/0068-cake_card_31.png"
+    "image_url": "images/0068-cake_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0069-крысолов",
@@ -2063,7 +2183,9 @@
         "source_text": "Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него"
       }
     ],
-    "image_url": "images/0069-cake_card_33.png"
+    "image_url": "images/0069-cake_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0070-острый-парень",
@@ -2099,7 +2221,9 @@
         "source_text": "ПРИЕМ >>> Нанеси 2 урона выбранному существу противника на этой лин"
       }
     ],
-    "image_url": "images/0070-cake_card_35.png"
+    "image_url": "images/0070-cake_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0071-огненное-торнадо",
@@ -2134,7 +2258,9 @@
         "source_text": "ПРИЕМ >>> Огненное торнадо получает +3 АТК пока примене"
       }
     ],
-    "image_url": "images/0071-cake_card_36.png"
+    "image_url": "images/0071-cake_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0072-баба-лесоруб",
@@ -2165,7 +2291,9 @@
         "source_text": "Когда лесоруб вступает в игру, нанеси 1 урон противнику за каждое строение под твоим контролем"
       }
     ],
-    "image_url": "images/0072-cake_card_38.png"
+    "image_url": "images/0072-cake_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0073-вырубка-леса",
@@ -2209,7 +2337,9 @@
         "source_text": "Дополнительная стоимость: примени существо под твоим контролем. Просмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду."
       }
     ],
-    "image_url": "images/0073-cake_card_40.png"
+    "image_url": "images/0073-cake_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0074-фирменное-рукопожатие",
@@ -2240,7 +2370,9 @@
         "source_text": "Предыграй Радужное существо."
       }
     ],
-    "image_url": "images/0074-charlie_card_1.png"
+    "image_url": "images/0074-charlie_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0075-бочка",
@@ -2256,7 +2388,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0075-charlie_card_2.png"
+    "image_url": "images/0075-charlie_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0076-связь",
@@ -2287,7 +2421,9 @@
         "source_text": "Добавь карту из своей колоды на руку."
       }
     ],
-    "image_url": "images/0076-charlie_card_6.png"
+    "image_url": "images/0076-charlie_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0078-торжество-чар",
@@ -2318,7 +2454,9 @@
         "source_text": "Нанеси 1 урон выбранному существу."
       }
     ],
-    "image_url": "images/0078-charlie_card_9.png"
+    "image_url": "images/0078-charlie_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0079-робомансер",
@@ -2349,7 +2487,9 @@
         "source_text": "+1 ATK за каждое существо, которое сменило линию в этом ходу."
       }
     ],
-    "image_url": "images/0079-charlie_card_11.png"
+    "image_url": "images/0079-charlie_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0080-пиромансер",
@@ -2384,7 +2524,9 @@
         "source_text": "Пока Пиромансер на земле, можешь нанести 3 Урона выбранному существу на этой линии"
       }
     ],
-    "image_url": "images/0080-charlie_card_13.png"
+    "image_url": "images/0080-charlie_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0081-некромансер",
@@ -2415,7 +2557,9 @@
         "source_text": "Когда существо под твоим контролем покидает игру, ты можешь переместить его на одну из пустых земель."
       }
     ],
-    "image_url": "images/0081-charlie_card_15.png"
+    "image_url": "images/0081-charlie_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0082-гидромансер",
@@ -2446,7 +2590,9 @@
         "source_text": "Когда Гидромансер вступает в игру, можешь найти Подмогу и сыграть ее бесплатно"
       }
     ],
-    "image_url": "images/0082-charlie_card_17.png"
+    "image_url": "images/0082-charlie_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0083-хрономансер",
@@ -2477,7 +2623,9 @@
         "source_text": "Каждый раз, когда Хрономансер меняет линию, ты получаешь 1 действие."
       }
     ],
-    "image_url": "images/0083-charlie_card_18.png"
+    "image_url": "images/0083-charlie_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0084-аеромансер",
@@ -2507,7 +2655,9 @@
         "source_text": "Когда Аеромансер вступает в игру, ты можешь поменяться местами с 2 существами на выбранной линии"
       }
     ],
-    "image_url": "images/0084-charlie_card_19.png"
+    "image_url": "images/0084-charlie_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0085-биомансер",
@@ -2538,7 +2688,9 @@
         "source_text": "Каждый раз, когда твое существо меняет линию, восстанови 2 Урона Биомансеру."
       }
     ],
-    "image_url": "images/0085-charlie_card_20.png"
+    "image_url": "images/0085-charlie_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0086-просвещение",
@@ -2569,7 +2721,9 @@
         "source_text": "Возьми верхнюю карту из своей колоды и посмотри на нее, затем положи на место или сбрось."
       }
     ],
-    "image_url": "images/0086-charlie_card_22.png"
+    "image_url": "images/0086-charlie_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0087-перенаправление-опасности",
@@ -2604,7 +2758,9 @@
         "source_text": "Если оно погибло, выбери другое существо и нанеси ему 2 Урона"
       }
     ],
-    "image_url": "images/0087-charlie_card_23.png"
+    "image_url": "images/0087-charlie_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0089-сшитый-ленивец",
@@ -2654,7 +2810,9 @@
         "source_text": "Каждое соседнее существо получает +1 ATK"
       }
     ],
-    "image_url": "images/0089-charlie_card_25.png"
+    "image_url": "images/0089-charlie_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0090-перекормленный-орангутан",
@@ -2689,7 +2847,9 @@
         "source_text": "Пока у Перекормленного орангутана 4 Урона или больше, он получает +1 ATK за каждые 2 Урона"
       }
     ],
-    "image_url": "images/0090-charlie_card_27.png"
+    "image_url": "images/0090-charlie_card_27.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0091-милое-партнерство",
@@ -2720,7 +2880,9 @@
         "source_text": "Во время фазы сражения твоей и твоего партнера, первый раз когда нанесен урон противнику, другой партнер может нанести 1 урон выбранному существу на 1 из своих линий."
       }
     ],
-    "image_url": "images/0091-charlie_card_28.png"
+    "image_url": "images/0091-charlie_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0094-вязаный-котик",
@@ -2751,7 +2913,9 @@
         "source_text": "На Вязаного котика действуют строения соседних земель."
       }
     ],
-    "image_url": "images/0094-charlie_card_33.png"
+    "image_url": "images/0094-charlie_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0095-пушистая-лиса",
@@ -2786,7 +2950,9 @@
         "source_text": "Пока у Пушистой лисы 4 Урона или больше, первые 2 Урона, нанесенные ей существами противника, игнорируются"
       }
     ],
-    "image_url": "images/0095-charlie_card_34.png"
+    "image_url": "images/0095-charlie_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0097-обнимашки",
@@ -2821,7 +2987,9 @@
         "source_text": "Уничтожь выбранное свое существо и выбранное существо противника на этой линии"
       }
     ],
-    "image_url": "images/0097-charlie_card_37.png"
+    "image_url": "images/0097-charlie_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0098-набивной-друг",
@@ -2857,7 +3025,9 @@
         "source_text": "Выбери свое существо, нанеси ему столько Урона, сколько у него ATK, и удвой его ATK до конца хода"
       }
     ],
-    "image_url": "images/0098-charlie_card_38.png"
+    "image_url": "images/0098-charlie_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0099-бомба-фасольчатая",
@@ -2892,7 +3062,9 @@
         "source_text": "ПРИЕМ >>> Восстанови силы, нанеси урон своему существу на этой земле, если у него 4 Уро"
       }
     ],
-    "image_url": "images/0099-charlie_card_39.png"
+    "image_url": "images/0099-charlie_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0100-любимый-ягненок",
@@ -2942,7 +3114,9 @@
         "source_text": "если у Любимого ягненка 4 Урона или больше, он наносит 2 Урона выбранному существу противника на этой линии"
       }
     ],
-    "image_url": "images/0100-charlie_card_40.png"
+    "image_url": "images/0100-charlie_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0101-древний-ученый",
@@ -2995,7 +3169,9 @@
         "source_text": "если на этой линии есть строение, получи 1 действие"
       }
     ],
-    "image_url": "images/0101-finn_card_1.png"
+    "image_url": "images/0101-finn_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0102-крутой-пес",
@@ -3026,7 +3202,9 @@
         "source_text": "Соседние существа не могут Безумить."
       }
     ],
-    "image_url": "images/0102-finn_card_3.png"
+    "image_url": "images/0102-finn_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0103-когтистый-дракон",
@@ -3061,7 +3239,9 @@
         "source_text": "ПРИЕМ >>> Отправь свое существо на одну из пустых лин"
       }
     ],
-    "image_url": "images/0103-finn_card_5.png"
+    "image_url": "images/0103-finn_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0104-смущающий-бард",
@@ -3096,7 +3276,9 @@
         "source_text": "ПРИЕМ >>> Возьми столько карт, сколько существ под твоим контролем, включая Смущающего бар"
       }
     ],
-    "image_url": "images/0104-finn_card_7.png"
+    "image_url": "images/0104-finn_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0105-небесный-наблюдатель",
@@ -3131,7 +3313,9 @@
         "source_text": "ПРИЕМ >>> Выложи заклинание из сброса на верх своей коло"
       }
     ],
-    "image_url": "images/0105-finn_card_9.png"
+    "image_url": "images/0105-finn_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0106-пси-архитектор",
@@ -3161,7 +3345,9 @@
         "source_text": "Когда Пси-архитектор вступает в игру, можешь перевернуть примененное свое существо"
       }
     ],
-    "image_url": "images/0106-finn_card_10.png"
+    "image_url": "images/0106-finn_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0107-панк-котик",
@@ -3192,7 +3378,9 @@
         "source_text": "Каждое существо, которое сменило линию в этом ходу, получает +2 ATK."
       }
     ],
-    "image_url": "images/0107-finn_card_12.png"
+    "image_url": "images/0107-finn_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0108-стружанский-джинн",
@@ -3223,7 +3411,9 @@
         "source_text": "Стружанский джинн получает +2 ATK за каждое примененное твое существо."
       }
     ],
-    "image_url": "images/0108-finn_card_14.png"
+    "image_url": "images/0108-finn_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0109-вождь-воадик",
@@ -3254,7 +3444,9 @@
         "source_text": "Вождь Воадик получает +2 ATK за каждое заклинание, сыгранное в этом ходу."
       }
     ],
-    "image_url": "images/0109-finn_card_16.png"
+    "image_url": "images/0109-finn_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0110-воадикский-мародер",
@@ -3285,7 +3477,9 @@
         "source_text": "Каждый раз, когда Воадикский мародер меняет линию, возьми карту."
       }
     ],
-    "image_url": "images/0110-finn_card_17.png"
+    "image_url": "images/0110-finn_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0111-большой-дух-воина",
@@ -3317,7 +3511,9 @@
         "source_text": "Каждое соседнее существо получает +1 ATK"
       }
     ],
-    "image_url": "images/0111-finn_card_19.png"
+    "image_url": "images/0111-finn_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0112-уни-рыцарь",
@@ -3348,7 +3544,9 @@
         "source_text": "Трать 1 действие: выбери существо на этой линии и уменьши его ATK на 10 до конца хода."
       }
     ],
-    "image_url": "images/0112-finn_card_21.png"
+    "image_url": "images/0112-finn_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0113-школа",
@@ -3383,7 +3581,9 @@
         "source_text": "ПРИЕМ >>> Существо на этой линии теряет все способности и получает перевернутую случайную свою карту из сброса до конца хо"
       }
     ],
-    "image_url": "images/0113-finn_card_22.png"
+    "image_url": "images/0113-finn_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0114-шалаш-вайда",
@@ -3418,7 +3618,9 @@
         "source_text": "ПРИЕМ >>> Перемести свое существо на соседнюю линию, если она пус"
       }
     ],
-    "image_url": "images/0114-finn_card_23.png"
+    "image_url": "images/0114-finn_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0115-поросенок",
@@ -3453,7 +3655,9 @@
         "source_text": "ПРИЕМ >>> Выбери и поверни одну из своих земель с типом Земли вн"
       }
     ],
-    "image_url": "images/0115-finn_card_25.png"
+    "image_url": "images/0115-finn_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0117-телепорт",
@@ -3488,7 +3692,9 @@
         "source_text": "Перемести одно свое существо на одну из своих пустых линий"
       }
     ],
-    "image_url": "images/0117-finn_card_29.png"
+    "image_url": "images/0117-finn_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0118-вуадикская-кровь",
@@ -3519,7 +3725,9 @@
         "source_text": "Каждое существо, которое сменило линию в этом ходу, получает +2 ATK."
       }
     ],
-    "image_url": "images/0118-finn_card_31.png"
+    "image_url": "images/0118-finn_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0120-воадикский-талисман",
@@ -3555,7 +3763,9 @@
         "source_text": "Выбери свое существо с типом Равнинное существо, оно получает +2 ATK до конца хода"
       }
     ],
-    "image_url": "images/0120-finn_card_34.png"
+    "image_url": "images/0120-finn_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0121-кровавая-крепость",
@@ -3586,7 +3796,9 @@
         "source_text": "Твое существо на этой линии получает +1 ATK."
       }
     ],
-    "image_url": "images/0121-finn_card_36.png"
+    "image_url": "images/0121-finn_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0123-сопли-гнома",
@@ -3621,7 +3833,9 @@
         "source_text": "Уничтожь 3 карты"
       }
     ],
-    "image_url": "images/0123-finn_card_39.png"
+    "image_url": "images/0123-finn_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0124-нефтяная-вышка",
@@ -3652,7 +3866,9 @@
         "source_text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
       }
     ],
-    "image_url": "images/0124-fiona_card_1.png"
+    "image_url": "images/0124-fiona_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0125-великолепный-грамофон",
@@ -3697,7 +3913,9 @@
         "source_text": "Возьми 4 карты, затем сбрось 2 карты."
       }
     ],
-    "image_url": "images/0125-fiona_card_2.png"
+    "image_url": "images/0125-fiona_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0126-парад-щенков",
@@ -3733,7 +3951,9 @@
         "source_text": "Восстанови 2 Урона каждому своему существу; каждое свое существо меняет тип на Радужное существо до конца хода"
       }
     ],
-    "image_url": "images/0126-fiona_card_4.png"
+    "image_url": "images/0126-fiona_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0127-меч-сноп",
@@ -3764,7 +3984,9 @@
         "source_text": "Нанеси 1 Урон выбранному существу за каждые 2 Урона, полученные картами в твоей руке в этом ходу."
       }
     ],
-    "image_url": "images/0127-fiona_card_6.png"
+    "image_url": "images/0127-fiona_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0128-браслет-дружбы",
@@ -3795,7 +4017,9 @@
         "source_text": "Поменяй местами любое количество Урона между двумя своими существами."
       }
     ],
-    "image_url": "images/0128-fiona_card_8.png"
+    "image_url": "images/0128-fiona_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0129-детский-ученый",
@@ -3830,7 +4054,9 @@
         "source_text": "Если в этом ходу ты сыграл Радужную карту, Детский ученый получает +3 ATK до конца хода"
       }
     ],
-    "image_url": "images/0129-fiona_card_10.png"
+    "image_url": "images/0129-fiona_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0130-одинокая-панда",
@@ -3860,7 +4086,9 @@
         "source_text": "Когда Одинокая панда вступает в игру и под твоим контролем нет других существ, возьми карту"
       }
     ],
-    "image_url": "images/0130-fiona_card_11.png"
+    "image_url": "images/0130-fiona_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0131-пси-фехтовальщик",
@@ -3890,7 +4118,9 @@
         "source_text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу"
       }
     ],
-    "image_url": "images/0131-fiona_card_13.png"
+    "image_url": "images/0131-fiona_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0132-кроха-слон",
@@ -3921,7 +4151,9 @@
         "source_text": "Когда Кроха слон покидает игру, ты можешь убрать еще одно Радужное существо (в дополнение к Равнинному существу)."
       }
     ],
-    "image_url": "images/0132-fiona_card_15.png"
+    "image_url": "images/0132-fiona_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0133-чародейка-вайда",
@@ -3952,7 +4184,9 @@
         "source_text": "Существа на этой линии не могут использовать Приемы."
       }
     ],
-    "image_url": "images/0133-fiona_card_16.png"
+    "image_url": "images/0133-fiona_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0134-матриарх-вайда",
@@ -3983,7 +4217,9 @@
         "source_text": "Матриарх Вайда получает +1 ATK за каждое Радужное существо под твоим контролем."
       }
     ],
-    "image_url": "images/0134-fiona_card_17.png"
+    "image_url": "images/0134-fiona_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0137-золотой-ретривер",
@@ -4013,7 +4249,9 @@
         "source_text": "когда Золотой ретривер атакует, можешь поменять карты"
       }
     ],
-    "image_url": "images/0137-fiona_card_21.png"
+    "image_url": "images/0137-fiona_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0138-хитрый-хорек",
@@ -4074,7 +4312,9 @@
         "source_text": "Если ты сбросил Радужную карту, получи 1 Действие"
       }
     ],
-    "image_url": "images/0138-fiona_card_22.png"
+    "image_url": "images/0138-fiona_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0139-невероятный-опоссум",
@@ -4105,7 +4345,9 @@
         "source_text": "Когда эта карта оказывается в твоем сбросе, можешь сбросить карту с руки, чтобы вернуть Невероятного опоссума себе в руку."
       }
     ],
-    "image_url": "images/0139-fiona_card_23.png"
+    "image_url": "images/0139-fiona_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0140-чудук-вайда",
@@ -4140,7 +4382,9 @@
         "source_text": "ПРИЕМ >>> Покажи карту с руки"
       }
     ],
-    "image_url": "images/0140-fiona_card_27.png"
+    "image_url": "images/0140-fiona_card_27.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0141-очаровательный-город",
@@ -4171,7 +4415,9 @@
         "source_text": "Все существа на этой линии меняют свой тип Земли и становятся Радужными существами."
       }
     ],
-    "image_url": "images/0141-fiona_card_30.png"
+    "image_url": "images/0141-fiona_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0142-центр-знаний",
@@ -4202,7 +4448,9 @@
         "source_text": "Центр знаний получает игровой текст строений под твоим контролем на соседних линиях (но не их имена)."
       }
     ],
-    "image_url": "images/0142-fiona_card_31.png"
+    "image_url": "images/0142-fiona_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0143-пони",
@@ -4218,7 +4466,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0143-fiona_card_33.png"
+    "image_url": "images/0143-fiona_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0144-пес",
@@ -4253,7 +4503,9 @@
         "source_text": "ПРИЕМ >>> Строения промывника в этой линии без текста пока Пес примен"
       }
     ],
-    "image_url": "images/0144-fiona_card_35.png"
+    "image_url": "images/0144-fiona_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0145-лорд-вампиров",
@@ -4284,7 +4536,9 @@
         "source_text": "Когда Лорд Вампиров наносит урон, он восстанавливает то же количество Урона у себя."
       }
     ],
-    "image_url": "images/0145-fiona_card_37.png"
+    "image_url": "images/0145-fiona_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0146-меч-певунец",
@@ -4315,7 +4569,9 @@
         "source_text": "Выбранное существо получает +1 ATK за каждые 2 вытянутые тобой карты в этом ходу."
       }
     ],
-    "image_url": "images/0146-fiona_card_38.png"
+    "image_url": "images/0146-fiona_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0147-река-мечей",
@@ -4362,7 +4618,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0147-fiona_card_40.png"
+    "image_url": "images/0147-fiona_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0150-дуэт",
@@ -4398,7 +4656,9 @@
         "source_text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем"
       }
     ],
-    "image_url": "images/0150-grand_prix_card_3.png"
+    "image_url": "images/0150-grand_prix_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0151-пляжная-вечеринка",
@@ -4434,7 +4694,9 @@
         "source_text": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось"
       }
     ],
-    "image_url": "images/0151-grand_prix_card_4.png"
+    "image_url": "images/0151-grand_prix_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0152-близняшки",
@@ -4469,7 +4731,9 @@
         "source_text": "Если стоимость карт совпадает, выбранный игрок берет ее себе на руку"
       }
     ],
-    "image_url": "images/0152-grand_prix_card_5.png"
+    "image_url": "images/0152-grand_prix_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0154-бондарь",
@@ -4504,7 +4768,9 @@
         "source_text": "ПРИЕМ >>> Выбранное существо получает столько +ATK сколько стоят все карты партнерства под контролем твоей коман"
       }
     ],
-    "image_url": "images/0154-grand_prix_card_7.png"
+    "image_url": "images/0154-grand_prix_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0155-подмога",
@@ -4539,7 +4805,9 @@
         "source_text": "если ты или партнёр сыграл существо стоимостью 2 и более в этот ход, другой партнёр может тянуть карту"
       }
     ],
-    "image_url": "images/0155-grand_prix_card_8.png"
+    "image_url": "images/0155-grand_prix_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0156-ледяной-банк",
@@ -4570,7 +4838,9 @@
         "source_text": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику."
       }
     ],
-    "image_url": "images/0156-grand_prix_card_9.png"
+    "image_url": "images/0156-grand_prix_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0157-ледящее-пение",
@@ -4610,7 +4880,9 @@
         "source_text": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту"
       }
     ],
-    "image_url": "images/0157-grand_prix_card_10.png"
+    "image_url": "images/0157-grand_prix_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0158-ледяной-лимонад",
@@ -4641,7 +4913,9 @@
         "source_text": "Сосчитай количество земель с ледяными жетонами. Восстанови 1 урон с такого же количества дружественных существ."
       }
     ],
-    "image_url": "images/0158-grand_prix_card_11.png"
+    "image_url": "images/0158-grand_prix_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0159-ультра-пес",
@@ -4675,7 +4949,9 @@
         "source_text": "ПРИЕМ >>> Заморозь выбранную землю и существо на н"
       }
     ],
-    "image_url": "images/0159-grand_prix_card_12.png"
+    "image_url": "images/0159-grand_prix_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0161-банан-в-шоколаде",
@@ -4711,7 +4987,9 @@
         "source_text": "Если в начале твоей фазы сражения, на этой линии есть хотя бы один Ледяной жетон, нанеси 2 урона выбранному противнику"
       }
     ],
-    "image_url": "images/0161-grand_prix_card_14.png"
+    "image_url": "images/0161-grand_prix_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0162-сэндвич-с-мороженым",
@@ -4745,7 +5023,9 @@
         "source_text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на н"
       }
     ],
-    "image_url": "images/0162-grand_prix_card_15.png"
+    "image_url": "images/0162-grand_prix_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0163-мятная-мороженка",
@@ -4781,7 +5061,9 @@
         "source_text": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ"
       }
     ],
-    "image_url": "images/0163-grand_prix_card_16.png"
+    "image_url": "images/0163-grand_prix_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0164-mokkomem",
@@ -4834,7 +5116,9 @@
         "source_text": "Если это существо погибло, заморозь землю под ним"
       }
     ],
-    "image_url": "images/0164-grand_prix_card_18.png"
+    "image_url": "images/0164-grand_prix_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0165-замороженный-патриот",
@@ -4863,7 +5147,9 @@
         "source_text": "Когда Замороженный патриот вступает в игру, можешь Заморозить Землю на этой линии"
       }
     ],
-    "image_url": "images/0165-grand_prix_card_19.png"
+    "image_url": "images/0165-grand_prix_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0168-мягкий-рекрут",
@@ -4894,7 +5180,9 @@
         "source_text": "Когда Мягкий рекрут вступает на игру и у противника на этой линии нет существа под его контролем, получи 1 Действие."
       }
     ],
-    "image_url": "images/0168-grand_prix_card_23.png"
+    "image_url": "images/0168-grand_prix_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0169-товарищество",
@@ -4925,7 +5213,9 @@
         "source_text": "Каждый раз, когда существо противника наносит урон твоей команде, нанеси 1 урон команде противника."
       }
     ],
-    "image_url": "images/0169-grand_prix_card_24.png"
+    "image_url": "images/0169-grand_prix_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0170-песочный-замок",
@@ -4961,7 +5251,9 @@
         "source_text": "Сбрось Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно"
       }
     ],
-    "image_url": "images/0170-grand_prix_card_25.png"
+    "image_url": "images/0170-grand_prix_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0171-остров-голово-краба",
@@ -5036,7 +5328,9 @@
         "source_text": "пока не найдешь Существо, сыграй его бесплатно на эту землю и замешай открытые карты обратно в свою колоду"
       }
     ],
-    "image_url": "images/0171-grand_prix_card_26.png"
+    "image_url": "images/0171-grand_prix_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0172-горячая-подача",
@@ -5071,7 +5365,9 @@
         "source_text": "Уничтожь выбранное существо противника"
       }
     ],
-    "image_url": "images/0172-grand_prix_card_27.png"
+    "image_url": "images/0172-grand_prix_card_27.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0173-спасайся-кто-может",
@@ -5102,7 +5398,9 @@
         "source_text": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно."
       }
     ],
-    "image_url": "images/0173-grand_prix_card_29.png"
+    "image_url": "images/0173-grand_prix_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0174-лобстер-спасатель",
@@ -5132,7 +5430,9 @@
         "source_text": "когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа"
       }
     ],
-    "image_url": "images/0174-grand_prix_card_30.png"
+    "image_url": "images/0174-grand_prix_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0175-сёрф-лобстер",
@@ -5163,7 +5463,9 @@
         "source_text": "+1 ATK за каждую землю Бесполезных болот в игре."
       }
     ],
-    "image_url": "images/0175-grand_prix_card_32.png"
+    "image_url": "images/0175-grand_prix_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0176-отражающий-камнекраб",
@@ -5194,7 +5496,9 @@
         "source_text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, он наносит столько же урона этому же существу."
       }
     ],
-    "image_url": "images/0176-grand_prix_card_33.png"
+    "image_url": "images/0176-grand_prix_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0177-камнекраб-регулировщик",
@@ -5225,7 +5529,9 @@
         "source_text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию."
       }
     ],
-    "image_url": "images/0177-grand_prix_card_34.png"
+    "image_url": "images/0177-grand_prix_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0178-песочный-краб-пират",
@@ -5256,7 +5562,9 @@
         "source_text": "Когда песочный краб пират вступает в игру, можешь бесплатно сыграть существо стоимостью 1"
       }
     ],
-    "image_url": "images/0178-grand_prix_card_36.png"
+    "image_url": "images/0178-grand_prix_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0179-ловкий-песочный-краб",
@@ -5286,7 +5594,9 @@
         "source_text": "когда во время твоего хода существо вступает в игру, можешь поменять их местами с Ловким песочным крабом"
       }
     ],
-    "image_url": "images/0179-grand_prix_card_38.png"
+    "image_url": "images/0179-grand_prix_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0180-песочный-краб-рубака",
@@ -5317,7 +5627,9 @@
         "source_text": "когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии"
       }
     ],
-    "image_url": "images/0180-grand_prix_card_40.png"
+    "image_url": "images/0180-grand_prix_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0182-магазин-для-отдыха",
@@ -5352,7 +5664,9 @@
         "source_text": "ПРИЕМ >>> Перемести неактивное существо под твоим контролем на эту землю (если она пуст"
       }
     ],
-    "image_url": "images/0182-gunter_card_2.png"
+    "image_url": "images/0182-gunter_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0183-милый-оверлорг",
@@ -5387,7 +5701,9 @@
         "source_text": "Уничтожь любое число существ под твоим контролем"
       }
     ],
-    "image_url": "images/0183-gunter_card_3.png"
+    "image_url": "images/0183-gunter_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0184-снежная-лавина",
@@ -5418,7 +5734,9 @@
         "source_text": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками."
       }
     ],
-    "image_url": "images/0184-gunter_card_4.png"
+    "image_url": "images/0184-gunter_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0186-плавучий-дворец-льда",
@@ -5449,7 +5767,9 @@
         "source_text": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном."
       }
     ],
-    "image_url": "images/0186-gunter_card_9.png"
+    "image_url": "images/0186-gunter_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0187-пурга",
@@ -5483,7 +5803,9 @@
         "source_text": "Выбери линию и заморозь обе земли на ней"
       }
     ],
-    "image_url": "images/0187-gunter_card_10.png"
+    "image_url": "images/0187-gunter_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0188-снегопад",
@@ -5517,7 +5839,9 @@
         "source_text": "Выбери линию и заморозь обе земли на ней"
       }
     ],
-    "image_url": "images/0188-gunter_card_11.png"
+    "image_url": "images/0188-gunter_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0189-ледяной-душегуб",
@@ -5548,7 +5872,9 @@
         "source_text": "Ледяной душегуб вступает в игру только на земли с ледяным жетоном."
       }
     ],
-    "image_url": "images/0189-gunter_card_12.png"
+    "image_url": "images/0189-gunter_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0190-ледяная-снегобаба",
@@ -5577,7 +5903,9 @@
         "source_text": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии"
       }
     ],
-    "image_url": "images/0190-gunter_card_14.png"
+    "image_url": "images/0190-gunter_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0191-ледяной-гонщик",
@@ -5608,7 +5936,9 @@
         "source_text": "+4 ATK, если обе земли на этой линии имеют Ледяные жетоны."
       }
     ],
-    "image_url": "images/0191-gunter_card_15.png"
+    "image_url": "images/0191-gunter_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0192-ледяной-диверсант",
@@ -5639,7 +5969,9 @@
         "source_text": "Ледяной диверсант получает +1 АТК за каждую землю с Ледяным жетоном."
       }
     ],
-    "image_url": "images/0192-gunter_card_16.png"
+    "image_url": "images/0192-gunter_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0193-ледяной-штурмовик",
@@ -5674,7 +6006,9 @@
         "source_text": "Потрать 1 действие, ПРИЕМ >>> Заморозь выбранную зем"
       }
     ],
-    "image_url": "images/0193-gunter_card_18.png"
+    "image_url": "images/0193-gunter_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0194-снежок",
@@ -5705,7 +6039,9 @@
         "source_text": "Удали Ледяной жетон с земли Снежка >>> Нанеси 3 урона выбранному существу."
       }
     ],
-    "image_url": "images/0194-gunter_card_20.png"
+    "image_url": "images/0194-gunter_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0195-морозильник",
@@ -5736,7 +6072,9 @@
         "source_text": "Когда Морозильник покидает игру, заморозь его землю."
       }
     ],
-    "image_url": "images/0195-gunter_card_22.png"
+    "image_url": "images/0195-gunter_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0196-заманчивое-спа",
@@ -5771,7 +6109,9 @@
         "source_text": "Если в начале твоей фазы Сражения, у тебя под контролем есть неактивное существо на этой земле, вытащи карту"
       }
     ],
-    "image_url": "images/0196-gunter_card_23.png"
+    "image_url": "images/0196-gunter_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0197-с-добрым-утром",
@@ -5807,7 +6147,9 @@
         "source_text": "Подготовь каждое существо под твоим контролем"
       }
     ],
-    "image_url": "images/0197-gunter_card_24.png"
+    "image_url": "images/0197-gunter_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0198-мазокрака",
@@ -5843,7 +6185,9 @@
         "source_text": "Сыграй только, если под твоим контролем не более 1 существа и у тебя не более 15 HP"
       }
     ],
-    "image_url": "images/0198-gunter_card_25.png"
+    "image_url": "images/0198-gunter_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0199-последний-раунд",
@@ -5874,7 +6218,9 @@
         "source_text": "Выбранное существо под твоим контролем получает +2 АТК за каждое неактивное существо под твоим контролем (на момент вступления в игру)."
       }
     ],
-    "image_url": "images/0199-gunter_card_26.png"
+    "image_url": "images/0199-gunter_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0200-тонущий-клирик",
@@ -5924,7 +6270,9 @@
         "source_text": "Если не смог, то сбрось его"
       }
     ],
-    "image_url": "images/0200-gunter_card_28.png"
+    "image_url": "images/0200-gunter_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0201-усталый-библиотекарь",
@@ -5954,7 +6302,9 @@
         "source_text": "в начале твоего хода"
       }
     ],
-    "image_url": "images/0201-gunter_card_30.png"
+    "image_url": "images/0201-gunter_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0202-заводской-убийца",
@@ -6013,7 +6363,9 @@
         "source_text": "Уничтожь существо под твоим контролем, ПРИЕМ >>> Вытяни карту"
       }
     ],
-    "image_url": "images/0202-gunter_card_32.png"
+    "image_url": "images/0202-gunter_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0203-усталый-вомбат",
@@ -6061,7 +6413,9 @@
         "source_text": "Если не смог, то перемести на пустую землю твоего противника"
       }
     ],
-    "image_url": "images/0203-gunter_card_34.png"
+    "image_url": "images/0203-gunter_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0204-усталый-воин",
@@ -6091,7 +6445,9 @@
         "source_text": "в начале твоего хода"
       }
     ],
-    "image_url": "images/0204-gunter_card_36.png"
+    "image_url": "images/0204-gunter_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0205-предводитель-вайда",
@@ -6141,7 +6497,9 @@
         "source_text": "Если не смог, то сбрось его"
       }
     ],
-    "image_url": "images/0205-gunter_card_38.png"
+    "image_url": "images/0205-gunter_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0206-снежная-полоса-препятствий",
@@ -6175,7 +6533,9 @@
         "source_text": "ПРИЕМ >>> Заморозь обе земли на этой линии"
       }
     ],
-    "image_url": "images/0206-gunter_card_40.png"
+    "image_url": "images/0206-gunter_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0207-альфа-йети",
@@ -6206,7 +6566,9 @@
         "source_text": "+3 ATK пока твой противник не контролирует существо на этой линии."
       }
     ],
-    "image_url": "images/0207-ice_king_card_1.png"
+    "image_url": "images/0207-ice_king_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0208-бордер-колли",
@@ -6259,7 +6621,9 @@
         "source_text": "Если эта земля заморожена, получи 1 Действие"
       }
     ],
-    "image_url": "images/0208-ice_king_card_3.png"
+    "image_url": "images/0208-ice_king_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0209-зимний-солдат",
@@ -6290,7 +6654,9 @@
         "source_text": "+3 ATK пока твой противник не контролирует существо на этой линии."
       }
     ],
-    "image_url": "images/0209-ice_king_card_4.png"
+    "image_url": "images/0209-ice_king_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0210-ледяной-дракон",
@@ -6321,7 +6687,9 @@
         "source_text": "Потрать 1 Действие >>> Заморозь землю на этой линии."
       }
     ],
-    "image_url": "images/0210-ice_king_card_6.png"
+    "image_url": "images/0210-ice_king_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0211-императорский-пингвин",
@@ -6352,7 +6720,9 @@
         "source_text": "Существа на землях с ледяным жетоном получают -1 ATK."
       }
     ],
-    "image_url": "images/0211-ice_king_card_8.png"
+    "image_url": "images/0211-ice_king_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0212-мороженник",
@@ -6383,7 +6753,9 @@
         "source_text": "В начале своего хода нанеси 1 урон каждому существу на земле с ледяным жетоном"
       }
     ],
-    "image_url": "images/0212-ice_king_card_10.png"
+    "image_url": "images/0212-ice_king_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0213-мороженная-рыба",
@@ -6414,7 +6786,9 @@
         "source_text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
       }
     ],
-    "image_url": "images/0213-ice_king_card_12.png"
+    "image_url": "images/0213-ice_king_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0214-зашибенный-водила",
@@ -6450,7 +6824,9 @@
         "source_text": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетон"
       }
     ],
-    "image_url": "images/0214-ice_king_card_14.png"
+    "image_url": "images/0214-ice_king_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0215-царственный-олень",
@@ -6486,7 +6862,9 @@
         "source_text": "ПРИЕМ >>> Тяни карту за каждую землю с ледяным жетоном под контролем царебс"
       }
     ],
-    "image_url": "images/0215-ice_king_card_16.png"
+    "image_url": "images/0215-ice_king_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0216-снежный-кролик",
@@ -6521,7 +6899,9 @@
         "source_text": "Уничтожь Снежного Кролика >>> Заморозь выбранную землю"
       }
     ],
-    "image_url": "images/0216-ice_king_card_18.png"
+    "image_url": "images/0216-ice_king_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0217-снежный-ангел",
@@ -6557,7 +6937,9 @@
         "source_text": "ПРИЕМ >>> Восстанови 1 Урон с каждого своего существа за каждую землю с ледяным жетоном под контролем игрок"
       }
     ],
-    "image_url": "images/0217-ice_king_card_20.png"
+    "image_url": "images/0217-ice_king_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0218-снежный-пес",
@@ -6607,7 +6989,9 @@
         "source_text": "Каждое соседнее существо получает +2 АТК"
       }
     ],
-    "image_url": "images/0218-ice_king_card_21.png"
+    "image_url": "images/0218-ice_king_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0219-ослепительная-люси",
@@ -6638,7 +7022,9 @@
         "source_text": "Ослепительная Люси получает +1 АТК за каждую землю с ледяным жетоном под контролем игроков."
       }
     ],
-    "image_url": "images/0219-ice_king_card_23.png"
+    "image_url": "images/0219-ice_king_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0220-полюс-холода",
@@ -6669,7 +7055,9 @@
         "source_text": "Заморозь каждую землю твоего противника."
       }
     ],
-    "image_url": "images/0220-ice_king_card_24.png"
+    "image_url": "images/0220-ice_king_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0221-замораживающий-луч",
@@ -6700,7 +7088,9 @@
         "source_text": "Заморозь выбранную землю, затем тяни карту."
       }
     ],
-    "image_url": "images/0221-ice_king_card_26.png"
+    "image_url": "images/0221-ice_king_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0222-дорога-снега",
@@ -6731,7 +7121,9 @@
         "source_text": "Заморозь две выбранные земли."
       }
     ],
-    "image_url": "images/0222-ice_king_card_28.png"
+    "image_url": "images/0222-ice_king_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0223-ледяная-леди",
@@ -6762,7 +7154,9 @@
         "source_text": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем."
       }
     ],
-    "image_url": "images/0223-ice_king_card_29.png"
+    "image_url": "images/0223-ice_king_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0224-кристальный-дворец",
@@ -6793,7 +7187,9 @@
         "source_text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу."
       }
     ],
-    "image_url": "images/0224-ice_king_card_31.png"
+    "image_url": "images/0224-ice_king_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0225-морозильная-камера",
@@ -6824,7 +7220,9 @@
         "source_text": "Существа на землях с ледяными жетонами на этой линии, не могут атаковать или использовать способности."
       }
     ],
-    "image_url": "images/0225-ice_king_card_32.png"
+    "image_url": "images/0225-ice_king_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0227-острая-сосулька",
@@ -6855,7 +7253,9 @@
         "source_text": "Поберегись!"
       }
     ],
-    "image_url": "images/0227-ice_king_card_35.png"
+    "image_url": "images/0227-ice_king_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0228-замороженное-сердце",
@@ -6891,7 +7291,9 @@
         "source_text": "Если это существо на земле с Ледяным жетоном, то вместо 1 нанеси 3 Урона"
       }
     ],
-    "image_url": "images/0228-ice_king_card_37.png"
+    "image_url": "images/0228-ice_king_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0229-снежный-бизнес",
@@ -6922,7 +7324,9 @@
         "source_text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии."
       }
     ],
-    "image_url": "images/0229-ice_king_card_40.png"
+    "image_url": "images/0229-ice_king_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0230-фермер-кочевник",
@@ -6953,7 +7357,9 @@
         "source_text": "Когда Фермер-кочевник покидает игру, нанеси 1 урон противнику за каждую карту в его руке."
       }
     ],
-    "image_url": "images/0230-jake_card_1.png"
+    "image_url": "images/0230-jake_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0231-стена-початков",
@@ -6984,7 +7390,9 @@
         "source_text": "Стена початков получает +1 DEF за каждое Кукурузное поле в игре (у всех игроков)."
       }
     ],
-    "image_url": "images/0231-jake_card_3.png"
+    "image_url": "images/0231-jake_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0232-кукурузный-пес",
@@ -7019,7 +7427,9 @@
         "source_text": "Если их 3 или меньше, то также +1 ATK"
       }
     ],
-    "image_url": "images/0232-jake_card_5.png"
+    "image_url": "images/0232-jake_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0233-жнец",
@@ -7049,7 +7459,9 @@
         "source_text": "Когда Жнец вступает в игру, перемести существо на этой линии на пустую соседнюю линию (на своей стороне)"
       }
     ],
-    "image_url": "images/0233-jake_card_6.png"
+    "image_url": "images/0233-jake_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0234-поля-кошмаров",
@@ -7080,7 +7492,9 @@
         "source_text": "Наноси 1 урон противнику за каждую карту в его руке."
       }
     ],
-    "image_url": "images/0234-jake_card_7.png"
+    "image_url": "images/0234-jake_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0236-червь-шелухи",
@@ -7110,7 +7524,9 @@
         "source_text": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз"
       }
     ],
-    "image_url": "images/0236-jake_card_11.png"
+    "image_url": "images/0236-jake_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0239-разбойная-тыква",
@@ -7146,7 +7562,9 @@
         "source_text": "ПРИЕМ >>> Наносит 1 урон выбранному существу"
       }
     ],
-    "image_url": "images/0239-jake_card_15.png"
+    "image_url": "images/0239-jake_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0241-царь-полей",
@@ -7177,7 +7595,9 @@
         "source_text": "Царь полей получает +1 ATK за каждое другое Кукурузное существо под твоим контролем."
       }
     ],
-    "image_url": "images/0241-jake_card_18.png"
+    "image_url": "images/0241-jake_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0242-кукурузный-ронин",
@@ -7208,7 +7628,9 @@
         "source_text": "+1 ATK за каждое соседнее Кукурузное поле."
       }
     ],
-    "image_url": "images/0242-jake_card_19.png"
+    "image_url": "images/0242-jake_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0243-зернотавр",
@@ -7239,7 +7661,9 @@
         "source_text": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем"
       }
     ],
-    "image_url": "images/0243-jake_card_21.png"
+    "image_url": "images/0243-jake_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0244-призрак-полей",
@@ -7270,7 +7694,9 @@
         "source_text": "В начале твоего хода каждый игрок тянет карту"
       }
     ],
-    "image_url": "images/0244-jake_card_23.png"
+    "image_url": "images/0244-jake_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0245-башня-правды",
@@ -7301,7 +7727,9 @@
         "source_text": "Потрать 2 действия >>> Укради случайную карту с руки противника и сыграй ее бесплатно."
       }
     ],
-    "image_url": "images/0245-jake_card_25.png"
+    "image_url": "images/0245-jake_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0246-перекрестное-опыление",
@@ -7333,7 +7761,9 @@
         "source_text": "получает +1 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0246-jake_card_28.png"
+    "image_url": "images/0246-jake_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0247-восстановление-ландшафта",
@@ -7378,7 +7808,9 @@
         "source_text": "Можешь перевернуть одну свою землю лицом вверх. Можешь переместить одно свое строение на свою линию без строений."
       }
     ],
-    "image_url": "images/0247-jake_card_29.png"
+    "image_url": "images/0247-jake_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0248-кукурузный-скипетр",
@@ -7409,7 +7841,9 @@
         "source_text": "Наноси 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем."
       }
     ],
-    "image_url": "images/0248-jake_card_31.png"
+    "image_url": "images/0248-jake_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0249-злое-око",
@@ -7440,7 +7874,9 @@
         "source_text": "Зло таится в глазах смотрящего."
       }
     ],
-    "image_url": "images/0249-jake_card_36.png"
+    "image_url": "images/0249-jake_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0250-филлис",
@@ -7471,7 +7907,9 @@
         "source_text": "Она отвлекает тебя клинком, чтобы отдубасить тебя сумкой."
       }
     ],
-    "image_url": "images/0250-jake_card_37.png"
+    "image_url": "images/0250-jake_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0251-слюнявый-чел",
@@ -7502,7 +7940,9 @@
         "source_text": "Девушки в калошах любят его."
       }
     ],
-    "image_url": "images/0251-jake_card_38.png"
+    "image_url": "images/0251-jake_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0252-бигфут",
@@ -7537,7 +7977,9 @@
         "source_text": "ПРИЕМ >>> Переверни выбранную землю под твоим контролем лицом вве"
       }
     ],
-    "image_url": "images/0252-jake_card_39.png"
+    "image_url": "images/0252-jake_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0255-щенок-в-заплатках",
@@ -7568,7 +8010,9 @@
         "source_text": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 ATK в этот ход."
       }
     ],
-    "image_url": "images/0255-jake_2v2_card_3.png"
+    "image_url": "images/0255-jake_2v2_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0256-сшитая-белка",
@@ -7616,7 +8060,9 @@
         "source_text": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии"
       }
     ],
-    "image_url": "images/0256-jake_2v2_card_4.png"
+    "image_url": "images/0256-jake_2v2_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0257-куча-мала",
@@ -7661,7 +8107,9 @@
         "source_text": "Дружественные существа получают +1 ATK до начала следующей фазы сражения. Затем каждое существо наносит урон равный его ATK существу противника на этой линии."
       }
     ],
-    "image_url": "images/0257-jake_2v2_card_5.png"
+    "image_url": "images/0257-jake_2v2_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0258-заплатка",
@@ -7692,7 +8140,9 @@
         "source_text": "Перераспредели урон на существах под твоим контролем (сделай это так, чтобы урона было не больше DEF)."
       }
     ],
-    "image_url": "images/0258-jake_2v2_card_6.png"
+    "image_url": "images/0258-jake_2v2_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0259-сплочённость",
@@ -7723,7 +8173,9 @@
         "source_text": "Первое существо, которое атакует другое существо в течение хода твоей команды, получает +1 АТК в этот ход."
       }
     ],
-    "image_url": "images/0259-jake_2v2_card_7.png"
+    "image_url": "images/0259-jake_2v2_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0260-крепость-из-подушек",
@@ -7759,7 +8211,9 @@
         "source_text": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле"
       }
     ],
-    "image_url": "images/0260-jake_2v2_card_8.png"
+    "image_url": "images/0260-jake_2v2_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0266-дикий-зебрарог",
@@ -7790,7 +8244,9 @@
         "source_text": "Когда Дикий зебрарог атакует, нанеси 1 урон выбранному противнику"
       }
     ],
-    "image_url": "images/0266-jake_2v2_card_17.png"
+    "image_url": "images/0266-jake_2v2_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0267-бывалый-зебрарог",
@@ -7821,7 +8277,9 @@
         "source_text": "Когда Бывалый зебрарог атакует, нанеси 2 урона выбранному противнику"
       }
     ],
-    "image_url": "images/0267-jake_2v2_card_18.png"
+    "image_url": "images/0267-jake_2v2_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0268-королевский-малыш",
@@ -7857,7 +8315,9 @@
         "source_text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контрол"
       }
     ],
-    "image_url": "images/0268-jake_2v2_card_19.png"
+    "image_url": "images/0268-jake_2v2_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0271-шипастый-зебрарог",
@@ -7888,7 +8348,9 @@
         "source_text": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии"
       }
     ],
-    "image_url": "images/0271-jake_2v2_card_22.png"
+    "image_url": "images/0271-jake_2v2_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0272-тренированный-крылатый-зебрарог",
@@ -7925,7 +8387,9 @@
         "source_text": "Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его в свою руку"
       }
     ],
-    "image_url": "images/0272-jake_2v2_card_23.png"
+    "image_url": "images/0272-jake_2v2_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0273-кукурузный-гарнизон",
@@ -7956,7 +8420,9 @@
         "source_text": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем."
       }
     ],
-    "image_url": "images/0273-jake_2v2_card_25.png"
+    "image_url": "images/0273-jake_2v2_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0276-слинять",
@@ -7986,7 +8452,9 @@
         "source_text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед фазой сражения, сняв весь урон с него за это"
       }
     ],
-    "image_url": "images/0276-jake_2v2_card_28.png"
+    "image_url": "images/0276-jake_2v2_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0277-бесконечный-комбайн",
@@ -8021,7 +8489,9 @@
         "source_text": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо"
       }
     ],
-    "image_url": "images/0277-jake_2v2_card_29.png"
+    "image_url": "images/0277-jake_2v2_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0278-кормежник",
@@ -8052,7 +8522,9 @@
         "source_text": "Когда Кормежник вступает в игру, следующее существо, введенное в игру в этом ходу, будет стоить на 1 меньше"
       }
     ],
-    "image_url": "images/0278-jake_2v2_card_30.png"
+    "image_url": "images/0278-jake_2v2_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0281-семейные-посиделки",
@@ -8088,7 +8560,9 @@
         "source_text": "Выбери другого игрока и землю под твоим контролем"
       }
     ],
-    "image_url": "images/0281-jake_2v2_card_35.png"
+    "image_url": "images/0281-jake_2v2_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0282-королевский-тур",
@@ -8124,7 +8598,9 @@
         "source_text": "Если выбранное существо под твоим контролем наносит 1 и более урона противнику в этот ход, то нанеси 2 урона этому же противнику"
       }
     ],
-    "image_url": "images/0282-jake_2v2_card_36.png"
+    "image_url": "images/0282-jake_2v2_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0284-овечка",
@@ -8155,7 +8631,9 @@
         "source_text": "Радужное существо."
       }
     ],
-    "image_url": "images/0284-jake_2v2_card_38.png"
+    "image_url": "images/0284-jake_2v2_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0285-содействие",
@@ -8191,7 +8669,9 @@
         "source_text": "если ты партнёр и твой партнёр не сыграл существо в этом ходу, ты можешь бесплатно сыграть существо стоимостью 1 или менее"
       }
     ],
-    "image_url": "images/0285-jake_2v2_card_40.png"
+    "image_url": "images/0285-jake_2v2_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0286-песчаный-сфинкс",
@@ -8226,7 +8706,9 @@
         "source_text": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владель"
       }
     ],
-    "image_url": "images/0286-lady_rainicorn_card_1.png"
+    "image_url": "images/0286-lady_rainicorn_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0287-фолианкх",
@@ -8257,7 +8739,9 @@
         "source_text": "Тяни карту за каждую свою пустую линию."
       }
     ],
-    "image_url": "images/0287-lady_rainicorn_card_3.png"
+    "image_url": "images/0287-lady_rainicorn_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0288-пляжная-мумия",
@@ -8292,7 +8776,9 @@
         "source_text": "ПРИЕМ >>> Верни существо на соседней линии в руку владель"
       }
     ],
-    "image_url": "images/0288-lady_rainicorn_card_4.png"
+    "image_url": "images/0288-lady_rainicorn_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0289-стена-песка",
@@ -8327,7 +8813,9 @@
         "source_text": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 ATK в этот ход"
       }
     ],
-    "image_url": "images/0289-lady_rainicorn_card_6.png"
+    "image_url": "images/0289-lady_rainicorn_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0290-сэндвич",
@@ -8358,7 +8846,9 @@
         "source_text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику"
       }
     ],
-    "image_url": "images/0290-lady_rainicorn_card_8.png"
+    "image_url": "images/0290-lady_rainicorn_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0291-акула",
@@ -8403,7 +8893,9 @@
         "source_text": "получает +1 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0291-lady_rainicorn_card_10.png"
+    "image_url": "images/0291-lady_rainicorn_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0292-мариачи",
@@ -8439,7 +8931,9 @@
         "source_text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо, вступившее в игру в этот х"
       }
     ],
-    "image_url": "images/0292-lady_rainicorn_card_12.png"
+    "image_url": "images/0292-lady_rainicorn_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0293-песчаный-змей",
@@ -8470,7 +8964,9 @@
         "source_text": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии"
       }
     ],
-    "image_url": "images/0293-lady_rainicorn_card_14.png"
+    "image_url": "images/0293-lady_rainicorn_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0294-муми-тролль",
@@ -8505,7 +9001,9 @@
         "source_text": "ПРИЕМ >>> Получи 1 Действие в этом хо"
       }
     ],
-    "image_url": "images/0294-lady_rainicorn_card_16.png"
+    "image_url": "images/0294-lady_rainicorn_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0295-домашний-кактус",
@@ -8536,7 +9034,9 @@
         "source_text": "+2 ATK за каждый Домашний кактус под твоим контролем."
       }
     ],
-    "image_url": "images/0295-lady_rainicorn_card_17.png"
+    "image_url": "images/0295-lady_rainicorn_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0296-затерянный-голем",
@@ -8567,7 +9067,9 @@
         "source_text": "Затерянный голем стоит на 1 меньше за каждое другое существо, сыгранное в этом ходу."
       }
     ],
-    "image_url": "images/0296-lady_rainicorn_card_19.png"
+    "image_url": "images/0296-lady_rainicorn_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0297-песчаная-мышь",
@@ -8598,7 +9100,9 @@
         "source_text": "Песчаная мышь получает 1 DEF за каждое другое существо, вступившее в игру под твоим контролем."
       }
     ],
-    "image_url": "images/0297-lady_rainicorn_card_20.png"
+    "image_url": "images/0297-lady_rainicorn_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0298-песчаные-рыцари",
@@ -8629,7 +9133,9 @@
         "source_text": "+2 ATK, если под твоим контролем Голубые равнины."
       }
     ],
-    "image_url": "images/0298-lady_rainicorn_card_22.png"
+    "image_url": "images/0298-lady_rainicorn_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0299-песчаный-глазастик",
@@ -8660,7 +9166,9 @@
         "source_text": "Когда Песчаный глазастик вступает в игру, нанеси 1 урон каждому существу в игре, включая каждое твое существо"
       }
     ],
-    "image_url": "images/0299-lady_rainicorn_card_23.png"
+    "image_url": "images/0299-lady_rainicorn_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0300-волшебные-семена-зазо",
@@ -8692,7 +9200,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0300-lady_rainicorn_card_25.png"
+    "image_url": "images/0300-lady_rainicorn_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0302-песчаный-ангел",
@@ -8723,7 +9233,9 @@
         "source_text": "Ложись на песок, подвигай руками и ногами, и она придёт к тебе."
       }
     ],
-    "image_url": "images/0302-lady_rainicorn_card_33.png"
+    "image_url": "images/0302-lady_rainicorn_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0303-мисс-муми",
@@ -8771,7 +9283,9 @@
         "source_text": "Если сделаешь это, выбранное Песчаное Существо под твоим контролем получает +1 DEF"
       }
     ],
-    "image_url": "images/0303-lady_rainicorn_card_35.png"
+    "image_url": "images/0303-lady_rainicorn_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0304-персиковая-джинни",
@@ -8816,7 +9330,9 @@
         "source_text": "получает +1 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0304-lady_rainicorn_card_36.png"
+    "image_url": "images/0304-lady_rainicorn_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0305-непустой-гроб",
@@ -8847,7 +9363,9 @@
         "source_text": "Следующее существо, сыгранное тобой в этот ход, стоит на 2 действия меньше."
       }
     ],
-    "image_url": "images/0305-lady_rainicorn_card_38.png"
+    "image_url": "images/0305-lady_rainicorn_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0306-драконий-поп-десят",
@@ -8878,7 +9396,9 @@
         "source_text": "При входе на поле переместите его на пустую землю; соседние существа теряют 1 атаку."
       }
     ],
-    "image_url": "images/0306-lemongrab_card_1.png"
+    "image_url": "images/0306-lemongrab_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0307-мясистый-поп-десят",
@@ -8909,7 +9429,9 @@
         "source_text": "При входе переместите на пустую землю, затем переверните эту землю."
       }
     ],
-    "image_url": "images/0307-lemongrab_card_2.png"
+    "image_url": "images/0307-lemongrab_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0308-небезумный-поп-десят",
@@ -8940,7 +9462,9 @@
         "source_text": "При входе переместите на пустую землю; не может быть выбран противником."
       }
     ],
-    "image_url": "images/0308-lemongrab_card_3.png"
+    "image_url": "images/0308-lemongrab_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0309-стампичный-поп-десят",
@@ -8971,7 +9495,9 @@
         "source_text": "При входе переместите на пустую землю; не может быть выбран противником."
       }
     ],
-    "image_url": "images/0309-lemongrab_card_5.png"
+    "image_url": "images/0309-lemongrab_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0310-бабах",
@@ -9002,7 +9528,9 @@
         "source_text": "При входе нанесите 1 урон каждому соседнему существу."
       }
     ],
-    "image_url": "images/0310-lemongrab_card_7.png"
+    "image_url": "images/0310-lemongrab_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0311-зона-высадки",
@@ -9033,7 +9561,9 @@
         "source_text": "Выберите одного из своих существ и верните его в руку."
       }
     ],
-    "image_url": "images/0311-lemongrab_card_9.png"
+    "image_url": "images/0311-lemongrab_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0312-мясной-кулак",
@@ -9064,7 +9594,9 @@
         "source_text": "Выбранное существо под вашим контролем теряет 5 атаки в этом ходу."
       }
     ],
-    "image_url": "images/0312-lemongrab_card_11.png"
+    "image_url": "images/0312-lemongrab_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0313-ты-жкошь",
@@ -9095,7 +9627,9 @@
         "source_text": "Переверните выбранную землю."
       }
     ],
-    "image_url": "images/0313-lemongrab_card_12.png"
+    "image_url": "images/0313-lemongrab_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0314-аванпост-попугаев",
@@ -9126,7 +9660,9 @@
         "source_text": "Каждое существо на этой линии получает -1 атаку (не ниже 0)."
       }
     ],
-    "image_url": "images/0314-lemongrab_card_14.png"
+    "image_url": "images/0314-lemongrab_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0315-тёплый-приём",
@@ -9157,7 +9693,9 @@
         "source_text": "Верните существо в руку его владельца и получите столько действий, сколько стоила карта."
       }
     ],
-    "image_url": "images/0315-lemongrab_card_15.png"
+    "image_url": "images/0315-lemongrab_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0316-закусочная",
@@ -9188,7 +9726,9 @@
         "source_text": "Получите действие за каждого попавшего на поле существа в этом ходу."
       }
     ],
-    "image_url": "images/0316-lemongrab_card_16.png"
+    "image_url": "images/0316-lemongrab_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0317-помпезный-зебрарог",
@@ -9219,7 +9759,9 @@
         "source_text": "Получайте 1 дополнительную защиту за каждый различный тип земли под вашим контролем."
       }
     ],
-    "image_url": "images/0317-lemongrab_card_17.png"
+    "image_url": "images/0317-lemongrab_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0318-крушитель-земли",
@@ -9250,7 +9792,9 @@
         "source_text": "При входе переверните землю; при уходе откройте её."
       }
     ],
-    "image_url": "images/0318-lemongrab_card_19.png"
+    "image_url": "images/0318-lemongrab_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0319-дрожь-земли",
@@ -9281,7 +9825,9 @@
         "source_text": "Получайте 2 атаки за каждую перевёрнутую землю в игре."
       }
     ],
-    "image_url": "images/0319-lemongrab_card_21.png"
+    "image_url": "images/0319-lemongrab_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0321-зебрарог-на-подборе",
@@ -9312,7 +9858,9 @@
         "source_text": "Получайте 1 атаку за каждый различный тип земли под контролем."
       }
     ],
-    "image_url": "images/0321-lemongrab_card_24.png"
+    "image_url": "images/0321-lemongrab_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0322-rock-n-roller",
@@ -9343,7 +9891,9 @@
         "source_text": "При входе переверните землю, а при уходе откройте её."
       }
     ],
-    "image_url": "images/0322-lemongrab_card_26.png"
+    "image_url": "images/0322-lemongrab_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0323-лавина-маисы",
@@ -9374,7 +9924,9 @@
         "source_text": "Каждое существо получает 1 атаку за каждую перевёрнутую землю в игре."
       }
     ],
-    "image_url": "images/0323-lemongrab_card_28.png"
+    "image_url": "images/0323-lemongrab_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0324-башня-свободы",
@@ -9405,7 +9957,9 @@
         "source_text": "Сбросьте карту, выберите свою землю и измените её тип до следующего хода."
       }
     ],
-    "image_url": "images/0324-lemongrab_card_29.png"
+    "image_url": "images/0324-lemongrab_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0325-воронка",
@@ -9436,7 +9990,9 @@
         "source_text": "Сбросьте карту и переверните выбранную землю."
       }
     ],
-    "image_url": "images/0325-lemongrab_card_30.png"
+    "image_url": "images/0325-lemongrab_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0326-скачущий-зебрарог",
@@ -9467,7 +10023,9 @@
         "source_text": "Получайте 1 атаку за каждый различный тип земли под контролем."
       }
     ],
-    "image_url": "images/0326-lemongrab_card_31.png"
+    "image_url": "images/0326-lemongrab_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0327-смещатель-земли",
@@ -9498,7 +10056,9 @@
         "source_text": "Получайте 2 атаки за каждую перевёрнутую землю в игре."
       }
     ],
-    "image_url": "images/0327-lemongrab_card_32.png"
+    "image_url": "images/0327-lemongrab_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0328-каракум",
@@ -9529,7 +10089,9 @@
         "source_text": "Получайте по 1 атаке и защите за каждую карту под этим существом; помещайте карты под него и сбрасывайте при уходе."
       }
     ],
-    "image_url": "images/0328-lemongrab_card_33.png"
+    "image_url": "images/0328-lemongrab_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0329-мути-ба",
@@ -9560,7 +10122,9 @@
         "source_text": "Верните эту карту в руку и поменяйте её местами с двумя другими существами."
       }
     ],
-    "image_url": "images/0329-lemongrab_card_34.png"
+    "image_url": "images/0329-lemongrab_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0331-пескомаг",
@@ -9591,7 +10155,9 @@
         "source_text": "Верните эту карту в руку; существа под контролем получают по 1 дополнительной атаке и защите."
       }
     ],
-    "image_url": "images/0331-lemongrab_card_36.png"
+    "image_url": "images/0331-lemongrab_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0332-ска-пион",
@@ -9626,7 +10192,9 @@
         "source_text": "Пока контролирует противник, стоимость уменьшена на 1"
       }
     ],
-    "image_url": "images/0332-lemongrab_card_37.png"
+    "image_url": "images/0332-lemongrab_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0333-свободное-падение",
@@ -9657,7 +10225,9 @@
         "source_text": "Каждое существо получает 1 атаку за каждое существо, попавшее на поле в этом ходу."
       }
     ],
-    "image_url": "images/0333-lemongrab_card_39.png"
+    "image_url": "images/0333-lemongrab_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0334-мавзолей",
@@ -9688,7 +10258,9 @@
         "source_text": "Получайте 1 дополнительную защиту за каждые 5 сброшенных карт."
       }
     ],
-    "image_url": "images/0334-lsp_card_1.png"
+    "image_url": "images/0334-lsp_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0335-ночная-башня",
@@ -9725,7 +10297,9 @@
         "source_text": "Если у противника нет существ на линии, сбросьте карту"
       }
     ],
-    "image_url": "images/0335-lsp_card_2.png"
+    "image_url": "images/0335-lsp_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0336-туалет-судьбы",
@@ -9756,7 +10330,9 @@
         "source_text": "Выбранное существо под контролем получает 1 атаку в этом ходу за каждые 5 сброшенных карт."
       }
     ],
-    "image_url": "images/0336-lsp_card_3.png"
+    "image_url": "images/0336-lsp_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0337-драконья-нога",
@@ -9787,7 +10363,9 @@
         "source_text": "При сбросе карты эта карта получает 1 атаку в этом ходу (до 5)."
       }
     ],
-    "image_url": "images/0337-lsp_card_4.png"
+    "image_url": "images/0337-lsp_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0338-гусеница",
@@ -9818,7 +10396,9 @@
         "source_text": "За каждые 5 сброшенных карт получайте 2 атаки."
       }
     ],
-    "image_url": "images/0338-lsp_card_6.png"
+    "image_url": "images/0338-lsp_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0339-геркулес",
@@ -9849,7 +10429,9 @@
         "source_text": "Сбросьте карту, чтобы получить 4 атаки один раз за ход."
       }
     ],
-    "image_url": "images/0339-lsp_card_8.png"
+    "image_url": "images/0339-lsp_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0340-фигурка-бесконечности",
@@ -9880,7 +10462,9 @@
         "source_text": "Сбросьте карту, чтобы 1 урон другому существу; можно использовать любое число раз."
       }
     ],
-    "image_url": "images/0340-lsp_card_10.png"
+    "image_url": "images/0340-lsp_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0341-розовая-ведьма",
@@ -9911,7 +10495,9 @@
         "source_text": "Сбросьте карту, чтобы нанести 1 урон каждому вражескому существу один раз за ход."
       }
     ],
-    "image_url": "images/0341-lsp_card_12.png"
+    "image_url": "images/0341-lsp_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0342-скелетная-рука",
@@ -9942,7 +10528,9 @@
         "source_text": "Возьмите 3 верхние карты сброса; заклинания, сброшенные таким образом, стоят на 3 меньше."
       }
     ],
-    "image_url": "images/0342-lsp_card_13.png"
+    "image_url": "images/0342-lsp_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0343-лысый-присед",
@@ -9973,7 +10561,9 @@
         "source_text": "Сбросьте карту, чтобы восстановить 1 урон, один раз за ход."
       }
     ],
-    "image_url": "images/0343-lsp_card_14.png"
+    "image_url": "images/0343-lsp_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0345-пирамида",
@@ -9989,7 +10579,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0345-lsp_card_17.png"
+    "image_url": "images/0345-lsp_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0346-кристаллы",
@@ -10005,7 +10597,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0346-lsp_card_18.png"
+    "image_url": "images/0346-lsp_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0347-сублиминальная-сила",
@@ -10021,7 +10615,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0347-lsp_card_19.png"
+    "image_url": "images/0347-lsp_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0348-официальные-штаны",
@@ -10052,7 +10648,9 @@
         "source_text": "Замените выбранное существо пустой синей линией."
       }
     ],
-    "image_url": "images/0348-lsp_card_21.png"
+    "image_url": "images/0348-lsp_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0349-скелет-гастропер",
@@ -10083,7 +10681,9 @@
         "source_text": "Поменяйте линии местами с другим существом."
       }
     ],
-    "image_url": "images/0349-lsp_card_22.png"
+    "image_url": "images/0349-lsp_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0350-черничная-джинни",
@@ -10114,7 +10714,9 @@
         "source_text": "При входе замените выбранное существо; поменяйте обе карты местами."
       }
     ],
-    "image_url": "images/0350-lsp_card_23.png"
+    "image_url": "images/0350-lsp_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0351-виноградная-джинни",
@@ -10145,7 +10747,9 @@
         "source_text": "При входе замените выбранное существо и положите верхнюю карту сброса в замену ему."
       }
     ],
-    "image_url": "images/0351-lsp_card_25.png"
+    "image_url": "images/0351-lsp_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0352-лункий-мозг",
@@ -10176,7 +10780,9 @@
         "source_text": "При входе замените выбранное существо и получите 2 атаки в этом ходу."
       }
     ],
-    "image_url": "images/0352-lsp_card_27.png"
+    "image_url": "images/0352-lsp_card_27.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0353-школяр-будущего",
@@ -10207,7 +10813,9 @@
         "source_text": "При входе замените выбранное существо и получите действие."
       }
     ],
-    "image_url": "images/0353-lsp_card_29.png"
+    "image_url": "images/0353-lsp_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0354-тупица-в-наушниках",
@@ -10238,7 +10846,9 @@
         "source_text": "При входе замените выбранное существо; нанесите 3 урон соседнему существу."
       }
     ],
-    "image_url": "images/0354-lsp_card_31.png"
+    "image_url": "images/0354-lsp_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0356-козёл",
@@ -10269,7 +10879,9 @@
         "source_text": "При входе замените выбранное существо и поменяйте карты местами."
       }
     ],
-    "image_url": "images/0356-lsp_card_34.png"
+    "image_url": "images/0356-lsp_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0357-хороший-песик",
@@ -10300,7 +10912,9 @@
         "source_text": "Сбросьте карту, чтобы получить 2 атаки в этом ходу, один раз за ход."
       }
     ],
-    "image_url": "images/0357-lsp_card_36.png"
+    "image_url": "images/0357-lsp_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0358-сила-трусов",
@@ -10331,7 +10945,9 @@
         "source_text": "Выбранное существо получает 2 атаки в этом ходу."
       }
     ],
-    "image_url": "images/0358-lsp_card_38.png"
+    "image_url": "images/0358-lsp_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0359-вулкан",
@@ -10347,7 +10963,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0359-lsp_card_39.png"
+    "image_url": "images/0359-lsp_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0360-призрак-джинни",
@@ -10378,7 +10996,9 @@
         "source_text": "Следующее заклинание в этом ходу стоит на 1 меньше."
       }
     ],
-    "image_url": "images/0360-lich_card_1.png"
+    "image_url": "images/0360-lich_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0361-прозрачный-вышибала",
@@ -10409,7 +11029,9 @@
         "source_text": "Получайте 1 атаку за каждое соседнее призрачное существо."
       }
     ],
-    "image_url": "images/0361-lich_card_3.png"
+    "image_url": "images/0361-lich_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0362-проклятый-древний-дуб",
@@ -10439,7 +11061,9 @@
         "source_text": "В начале следующего хода увеличивайте защиту на 1; вражеские существа на линии без урона уходят, паникуют и теряют 1 ата"
       }
     ],
-    "image_url": "images/0362-lich_card_5.png"
+    "image_url": "images/0362-lich_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0363-частичка-души",
@@ -10470,7 +11094,9 @@
         "source_text": "Сбросьте карту, чтобы взять любое проклятие из колоды; иначе уйдите и возьмите карту."
       }
     ],
-    "image_url": "images/0363-lich_card_6.png"
+    "image_url": "images/0363-lich_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0364-призрачный-ниндзя",
@@ -10501,7 +11127,9 @@
         "source_text": "При атаке существом можете уклониться; бросьте 4+ и избежите атаки."
       }
     ],
-    "image_url": "images/0364-lich_card_8.png"
+    "image_url": "images/0364-lich_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0365-дух-воплекура",
@@ -10532,7 +11160,9 @@
         "source_text": "Когда герой паладина входит, нанесите 1 урон всем врагам или 3 урону существу перед паладином."
       }
     ],
-    "image_url": "images/0365-lich_card_10.png"
+    "image_url": "images/0365-lich_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0366-призрак-карги",
@@ -10567,7 +11197,9 @@
         "source_text": "если призрак убивает существо, демон получает урон, равный его силе"
       }
     ],
-    "image_url": "images/0366-lich_card_11.png"
+    "image_url": "images/0366-lich_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0367-бесмелесный-обжора",
@@ -10598,7 +11230,9 @@
         "source_text": "Пожирает души; при гибели союзника кладёт карту под себя и получает 1 атаку и 2 защиты."
       }
     ],
-    "image_url": "images/0367-lich_card_13.png"
+    "image_url": "images/0367-lich_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0368-призрак-тэдди-крюка",
@@ -10629,7 +11263,9 @@
         "source_text": "При атаке врага получите 1 атаку за каждого соседнего врага."
       }
     ],
-    "image_url": "images/0368-lich_card_15.png"
+    "image_url": "images/0368-lich_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0369-некромама",
@@ -10664,7 +11300,9 @@
         "source_text": "если места нет, не берите карты"
       }
     ],
-    "image_url": "images/0369-lich_card_16.png"
+    "image_url": "images/0369-lich_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0370-прямой-скелем",
@@ -10695,7 +11333,9 @@
         "source_text": "Получает 1 дополнительную защиту, если на поле есть другой прямой скелем."
       }
     ],
-    "image_url": "images/0370-lich_card_17.png"
+    "image_url": "images/0370-lich_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0371-коричневый-зомби",
@@ -10726,7 +11366,9 @@
         "source_text": "Не мамой уж и сладкий."
       }
     ],
-    "image_url": "images/0371-lich_card_19.png"
+    "image_url": "images/0371-lich_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0372-духо-муха",
@@ -10757,7 +11399,9 @@
         "source_text": "Перед смертью бросает кости в существо промывника и получает 1 дополнительный урон; касается только убившего муху существа."
       }
     ],
-    "image_url": "images/0372-lich_card_21.png"
+    "image_url": "images/0372-lich_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0373-призрачные-бро",
@@ -10788,7 +11432,9 @@
         "source_text": "Не получают урон при атаке на существо промывника."
       }
     ],
-    "image_url": "images/0373-lich_card_24.png"
+    "image_url": "images/0373-lich_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0374-зомбахан",
@@ -10823,7 +11469,9 @@
         "source_text": "Если у промывника под контролем 2 или меньше существ, получите 1 атаку"
       }
     ],
-    "image_url": "images/0374-lich_card_26.png"
+    "image_url": "images/0374-lich_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0375-уземающая-пирамида",
@@ -10854,7 +11502,9 @@
         "source_text": "Существо промывника на этой линии получает -2 защиты; защита не может стать меньше 1."
       }
     ],
-    "image_url": "images/0375-lich_card_28.png"
+    "image_url": "images/0375-lich_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0376-преобразователь-скелетов",
@@ -10885,7 +11535,9 @@
         "source_text": "За каждое попавшее на линию существо восстанавливает 1 урон всем своим существам."
       }
     ],
-    "image_url": "images/0376-lich_card_29.png"
+    "image_url": "images/0376-lich_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0377-призрачный-шмак",
@@ -10916,7 +11568,9 @@
         "source_text": "Уничтожьте выбранное строение промывника."
       }
     ],
-    "image_url": "images/0377-lich_card_30.png"
+    "image_url": "images/0377-lich_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0378-корова-нежить",
@@ -10932,7 +11586,9 @@
     "flip_description": "",
     "description": "Радужное существо \"Му?\"",
     "mechanics": [],
-    "image_url": "images/0378-lich_card_32.png"
+    "image_url": "images/0378-lich_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0379-му-бык",
@@ -10963,7 +11619,9 @@
         "source_text": "Получает 1 атаку, когда атакует существо с железным цветом."
       }
     ],
-    "image_url": "images/0379-lich_card_34.png"
+    "image_url": "images/0379-lich_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0380-вместе-навсегда",
@@ -10994,7 +11652,9 @@
         "source_text": "Распределите урон между двумя существами под вашим контролем как угодно; урон одного существа не может превышать его защиту."
       }
     ],
-    "image_url": "images/0380-lich_card_36.png"
+    "image_url": "images/0380-lich_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0381-последний-шанс",
@@ -11025,7 +11685,9 @@
         "source_text": "Уничтожьте своё существо без урона, затем возьмите и бесплатно сбросьте любое существо из сброса или колоды промывника."
       }
     ],
-    "image_url": "images/0381-lich_card_37.png"
+    "image_url": "images/0381-lich_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0382-убей-молния",
@@ -11056,7 +11718,9 @@
         "source_text": "Нанесите урон по цепочке трём существам промывника на соседних землях: 3, 2 и 1."
       }
     ],
-    "image_url": "images/0382-lich_card_39.png"
+    "image_url": "images/0382-lich_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0383-мозг-щи",
@@ -11087,7 +11751,9 @@
         "source_text": "+2 атаки в этом ходу выбранному существу с наибольшей атакой среди существ под вашим контролем в игре."
       }
     ],
-    "image_url": "images/0383-lich_card_42.png"
+    "image_url": "images/0383-lich_card_42.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0384-неразборчивый-гладиатор",
@@ -11122,7 +11788,9 @@
         "source_text": "если рядом есть союзные существа, нанесите 2 урона одному из них"
       }
     ],
-    "image_url": "images/0384-lich_card_43.png"
+    "image_url": "images/0384-lich_card_43.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0385-очаровательный-трупоедик",
@@ -11153,7 +11821,9 @@
         "source_text": "Питается павшими. Приём >>>: уничтожьте верхнюю карту сброса промывника и получите постоянно 1 атаку; поместите карту под него, сбросьте всё при смерти."
       }
     ],
-    "image_url": "images/0385-lich_card_44.png"
+    "image_url": "images/0385-lich_card_44.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0386-чудесная-жерва",
@@ -11188,7 +11858,9 @@
         "source_text": "если у него меньше половины защиты, сначала уменьшите его защиту, иначе получите 2 карты"
       }
     ],
-    "image_url": "images/0386-lich_card_46.png"
+    "image_url": "images/0386-lich_card_46.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0387-мурррузрак",
@@ -11219,7 +11891,9 @@
         "source_text": "Снимается призрачным и мыльным существом одновременно; после уничтожения может воскреснуть с полными жизнями один раз по желанию; после этого нельзя вернуть из сброса."
       }
     ],
-    "image_url": "images/0387-lich_card_48.png"
+    "image_url": "images/0387-lich_card_48.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0388-похоронный-дом",
@@ -11254,7 +11928,9 @@
         "source_text": "если оно умирает, нанесите 1 урон соседнему существу и получите карту"
       }
     ],
-    "image_url": "images/0388-marceline_card_1.png"
+    "image_url": "images/0388-marceline_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0389-картонный-особняк",
@@ -11291,7 +11967,9 @@
         "source_text": "если у него нет существ на поле, он сбрасывает карту"
       }
     ],
-    "image_url": "images/0389-marceline_card_2.png"
+    "image_url": "images/0389-marceline_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0390-кровавая-купальня",
@@ -11322,7 +12000,9 @@
         "source_text": "Нанесите 1 урон всем существам промывника и выбранному существу промывника ещё 3 урона."
       }
     ],
-    "image_url": "images/0390-marceline_card_3.png"
+    "image_url": "images/0390-marceline_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0391-бабло-прочь",
@@ -11353,7 +12033,9 @@
         "source_text": "Выбранное существо может вернуться в руку; получите столько действий, сколько оно стоило."
       }
     ],
-    "image_url": "images/0391-marceline_card_5.png"
+    "image_url": "images/0391-marceline_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0392-одноколесный-велосипед",
@@ -11384,7 +12066,9 @@
         "source_text": "В начале хода соперника нанесите 2 урона соседнему существу."
       }
     ],
-    "image_url": "images/0392-marceline_card_7.png"
+    "image_url": "images/0392-marceline_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0393-мушкаловка",
@@ -11415,7 +12099,9 @@
         "source_text": "Нанесите 1 урон выбранному существу соперника."
       }
     ],
-    "image_url": "images/0393-marceline_card_9.png"
+    "image_url": "images/0393-marceline_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0394-принцесса-бэнши",
@@ -11445,7 +12131,9 @@
         "source_text": "когда умирает существо соперника, вы получаете карту"
       }
     ],
-    "image_url": "images/0394-marceline_card_11.png"
+    "image_url": "images/0394-marceline_card_11.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0395-королева",
@@ -11476,7 +12164,9 @@
         "source_text": "Каждый раз, когда промывник сбрасывает карту, каждый раз, когда вы наносите урон, и каждый раз, когда вы получаете урон, можете нанести 1 урон выбранному существу соперника."
       }
     ],
-    "image_url": "images/0395-marceline_card_13.png"
+    "image_url": "images/0395-marceline_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0396-ангел-болот",
@@ -11507,7 +12197,9 @@
         "source_text": "Нанесите 1 урон выбранному существу; разместите эту карту сбоку от него как усиление. В конце хода соперника нанесите 1 урон этому существу."
       }
     ],
-    "image_url": "images/0396-marceline_card_14.png"
+    "image_url": "images/0396-marceline_card_14.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0397-ведьмак",
@@ -11538,7 +12230,9 @@
         "source_text": "В начале хода сбросьте 2 карты или получите 2 урона."
       }
     ],
-    "image_url": "images/0397-marceline_card_15.png"
+    "image_url": "images/0397-marceline_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0398-болотный-бум",
@@ -11573,7 +12267,9 @@
         "source_text": "если оно умирает, вы получаете 2 действия"
       }
     ],
-    "image_url": "images/0398-marceline_card_17.png"
+    "image_url": "images/0398-marceline_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0399-болотная-лягушка-бомба",
@@ -11603,7 +12299,9 @@
         "source_text": "когда умирает существо, можете повторить"
       }
     ],
-    "image_url": "images/0399-marceline_card_19.png"
+    "image_url": "images/0399-marceline_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0400-доктор-ерунда",
@@ -11640,7 +12338,9 @@
         "source_text": "если это существо промывника, сбросьте случайную карту промывника, в противном случае получите урон"
       }
     ],
-    "image_url": "images/0400-marceline_card_20.png"
+    "image_url": "images/0400-marceline_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0401-хлопушка",
@@ -11671,7 +12371,9 @@
         "source_text": "Получайте 1 дополнительную защиту за каждое существо под вами."
       }
     ],
-    "image_url": "images/0401-marceline_card_21.png"
+    "image_url": "images/0401-marceline_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0402-свирепая-курица",
@@ -11706,7 +12408,9 @@
         "source_text": "Пока в игре, существа промывника не могут атаковать в ваш ход"
       }
     ],
-    "image_url": "images/0402-marceline_card_23.png"
+    "image_url": "images/0402-marceline_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0404-автоплут",
@@ -11741,7 +12445,9 @@
         "source_text": "если на поле нет существ промывника, получите действие; выберите существо соперника для замены этой картой"
       }
     ],
-    "image_url": "images/0404-marceline_card_25.png"
+    "image_url": "images/0404-marceline_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0405-пентакутия",
@@ -11776,7 +12482,9 @@
         "source_text": "если оно умирает, возьмите карту"
       }
     ],
-    "image_url": "images/0405-marceline_card_26.png"
+    "image_url": "images/0405-marceline_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0406-музыкальная-утка",
@@ -11829,7 +12537,9 @@
         "source_text": "пока вы атакуете, затем верните его на место"
       }
     ],
-    "image_url": "images/0406-marceline_card_28.png"
+    "image_url": "images/0406-marceline_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0407-бумажный-тигр",
@@ -11859,7 +12569,9 @@
         "source_text": "Когда существо промывника атакует вас, нанесите 2 урона атакующему существу и поместите эту карту под ним"
       }
     ],
-    "image_url": "images/0407-marceline_card_30.png"
+    "image_url": "images/0407-marceline_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0408-чёрная-кулон",
@@ -11890,7 +12602,9 @@
         "source_text": "Выбранное существо получает 4 атаки и 4 защиты в этом ходу."
       }
     ],
-    "image_url": "images/0408-marceline_card_32.png"
+    "image_url": "images/0408-marceline_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0409-переливание-крови",
@@ -11921,7 +12635,9 @@
         "source_text": "Выбранное существо получает 4 атаки и 4 защиты в этом ходу."
       }
     ],
-    "image_url": "images/0409-marceline_card_34.png"
+    "image_url": "images/0409-marceline_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0410-свирепый-цыплёнок",
@@ -11956,7 +12672,9 @@
         "source_text": "Пока в игре, существа промывника не могут атаковать в ваш ход"
       }
     ],
-    "image_url": "images/0410-marceline_card_35.png"
+    "image_url": "images/0410-marceline_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0412-голубой-король-вечерюк",
@@ -12001,7 +12719,9 @@
         "source_text": "получает +1 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0412-ftg_card_1.png"
+    "image_url": "images/0412-ftg_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0413-голубой-гном",
@@ -12032,7 +12752,9 @@
         "source_text": "ПРИЁМ >>> Нанеси 1 урон каждому существу промывника на Бесполезных болотах."
       }
     ],
-    "image_url": "images/0413-ftg_card_2.png"
+    "image_url": "images/0413-ftg_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0414-черничное-желе",
@@ -12062,7 +12784,9 @@
         "source_text": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу"
       }
     ],
-    "image_url": "images/0414-ftg_card_3.png"
+    "image_url": "images/0414-ftg_card_3.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0415-призрак-джонни",
@@ -12093,7 +12817,9 @@
         "source_text": "ПРИЁМ >>> Твое следующее заклинание в этом ходу стоит на 2 меньше."
       }
     ],
-    "image_url": "images/0415-ftg_card_4.png"
+    "image_url": "images/0415-ftg_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0416-дух-ниндзя",
@@ -12124,7 +12850,9 @@
         "source_text": "Когда Дух ниндзя наносит урон промывнику, этот промывник не может играть заклинания во время своего следующего хода."
       }
     ],
-    "image_url": "images/0416-ftg_card_5.png"
+    "image_url": "images/0416-ftg_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0417-паладин",
@@ -12156,7 +12884,9 @@
         "source_text": "получает +3 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0417-ftg_card_6.png"
+    "image_url": "images/0417-ftg_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0418-няш-мяш",
@@ -12187,7 +12917,9 @@
         "source_text": "Промывники не могут играть карты стоимостью 0."
       }
     ],
-    "image_url": "images/0418-ftg_card_7.png"
+    "image_url": "images/0418-ftg_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0419-черничный-пирогклон",
@@ -12218,7 +12950,9 @@
         "source_text": "Черничный пирогклон стоит на 1 меньше за каждое сыгранное заклинание в этом ходу."
       }
     ],
-    "image_url": "images/0419-ftg_card_8.png"
+    "image_url": "images/0419-ftg_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0420-ледяной-глазастик",
@@ -12249,7 +12983,9 @@
         "source_text": "+1 DEF за каждый различный тип земли под твоим контролем."
       }
     ],
-    "image_url": "images/0420-ftg_card_9.png"
+    "image_url": "images/0420-ftg_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0421-волшебник-гастролер",
@@ -12279,7 +13015,9 @@
         "source_text": "Когда Волшебник-гастролер вступает в игру, Существо промывника на этой линии и Волшебник-гастролер меняются местами"
       }
     ],
-    "image_url": "images/0421-ftg_card_10.png"
+    "image_url": "images/0421-ftg_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0422-лапа-пумы",
@@ -12311,7 +13049,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0422-ftg_card_12.png"
+    "image_url": "images/0422-ftg_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0423-кукурузный-волк",
@@ -12358,7 +13098,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0423-ftg_card_13.png"
+    "image_url": "images/0423-ftg_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0424-книга-кунз-фу",
@@ -12389,7 +13131,9 @@
         "source_text": "Подзамовь по одному существу каждого типа, которое у тебя есть в игре (например, существо Равнинное, Кукурузное, Милое и т. д.)."
       }
     ],
-    "image_url": "images/0424-ftg_card_15.png"
+    "image_url": "images/0424-ftg_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0425-носки-стойкости",
@@ -12421,7 +13165,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0425-ftg_card_16.png"
+    "image_url": "images/0425-ftg_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0426-снижение-налогов",
@@ -12452,7 +13198,9 @@
         "source_text": "Ты можешь обменять местами 2 своих строения в разных линиях под твоим контролем. Выбранный противник может обменять местами 2 своих строения в разных линиях под его контролем."
       }
     ],
-    "image_url": "images/0426-ftg_card_17.png"
+    "image_url": "images/0426-ftg_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0427-искажение-пространства",
@@ -12483,7 +13231,9 @@
         "source_text": "Обменяй местами 2 существа под твоим контролем, они одновременно меняются линиями."
       }
     ],
-    "image_url": "images/0427-ftg_card_18.png"
+    "image_url": "images/0427-ftg_card_18.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0428-домкрат",
@@ -12515,7 +13265,9 @@
         "source_text": "получает +3 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0428-ftg_card_19.png"
+    "image_url": "images/0428-ftg_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0429-сиропоузел",
@@ -12546,7 +13298,9 @@
         "source_text": "ПРОМЫТЬ 1 ДЕЙСТВИЕ, вытяни карту за каждое существо в этой линии."
       }
     ],
-    "image_url": "images/0429-ftg_card_20.png"
+    "image_url": "images/0429-ftg_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0430-безумный-дротик",
@@ -12577,7 +13331,9 @@
         "source_text": "ПРИЁМ >>> Твоё существо на этой линии теряет все способности и получает способность ПРИЁМ случайного существа (со способностью) из твоей стопки сброса до конца хода."
       }
     ],
-    "image_url": "images/0430-ftg_card_21.png"
+    "image_url": "images/0430-ftg_card_21.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0431-камнеструм",
@@ -12608,7 +13364,9 @@
         "source_text": "Камнеструм получает +1 ATK, пока атакует существо на Песчаной земле."
       }
     ],
-    "image_url": "images/0431-ftg_card_24.png"
+    "image_url": "images/0431-ftg_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0432-силос",
@@ -12639,7 +13397,9 @@
         "source_text": "ПРОМЫТЬ 1 ДЕЙСТВИЕ, Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу."
       }
     ],
-    "image_url": "images/0432-ftg_card_25.png"
+    "image_url": "images/0432-ftg_card_25.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0433-маяк",
@@ -12669,7 +13429,9 @@
         "source_text": "В начале своего хода каждое твое существо атакует сменяется с картой"
       }
     ],
-    "image_url": "images/0433-ftg_card_26.png"
+    "image_url": "images/0433-ftg_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0434-колдовской-путь",
@@ -12701,7 +13463,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0434-ftg_card_27.png"
+    "image_url": "images/0434-ftg_card_27.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0435-сила-попкорна",
@@ -12748,7 +13512,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0435-ftg_card_28.png"
+    "image_url": "images/0435-ftg_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0436-амулет-шелухи-кукурузы",
@@ -12795,7 +13561,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0436-ftg_card_29.png"
+    "image_url": "images/0436-ftg_card_29.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0437-кукурузное-ухо",
@@ -12826,7 +13594,9 @@
         "source_text": "+1 DEF за каждый различный тип земли под твоим контролем."
       }
     ],
-    "image_url": "images/0437-ftg_card_30.png"
+    "image_url": "images/0437-ftg_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0438-апельсиновое-желе",
@@ -12876,7 +13646,9 @@
         "source_text": "Если ты контролируешь 3 или более различных типов земли, когда Апельсиновое желе вступает в игру, восстанови 4 урона каждому своему существу"
       }
     ],
-    "image_url": "images/0438-ftg_card_31.png"
+    "image_url": "images/0438-ftg_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0439-жёлтый-гном",
@@ -12907,7 +13679,9 @@
         "source_text": "ПРИЁМ >>> Нанеси 1 урон каждому существу противника на Кукурузной земле."
       }
     ],
-    "image_url": "images/0439-ftg_card_32.png"
+    "image_url": "images/0439-ftg_card_32.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0440-солнечный-король",
@@ -12938,7 +13712,9 @@
         "source_text": "Солнечный король считается дополнительной Кукурузной землей под твоим контролем."
       }
     ],
-    "image_url": "images/0440-ftg_card_33.png"
+    "image_url": "images/0440-ftg_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0441-пиратский-медведь",
@@ -12969,7 +13745,9 @@
         "source_text": "Когда Пиратский медведь на бесполезных болотах, он наносит тройной урон."
       }
     ],
-    "image_url": "images/0441-ftg_card_34.png"
+    "image_url": "images/0441-ftg_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0443-глаза-змеи",
@@ -13016,7 +13794,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0443-ftg_card_36.png"
+    "image_url": "images/0443-ftg_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0444-кукурузная-мышь",
@@ -13047,7 +13827,9 @@
         "source_text": "Помрачь 1 Действие >>> Нанеси 1 урон выбранному существу на этой линии за каждый различный тип земли под твоим контролем."
       }
     ],
-    "image_url": "images/0444-ftg_card_37.png"
+    "image_url": "images/0444-ftg_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0445-золотой-шакал",
@@ -13078,7 +13860,9 @@
         "source_text": "ПРИЁМ >>> Сбрось Песчаную карту, затем нанеси 1 урон каждому существу противника на этой линии."
       }
     ],
-    "image_url": "images/0445-ftg_card_38.png"
+    "image_url": "images/0445-ftg_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0446-золотой-ниндзя",
@@ -13109,7 +13893,9 @@
         "source_text": "Когда Золотой ниндзя вступает в игру, Нанеси 1 урон выбранному существу за каждый различный тип земли под твоим контролем"
       }
     ],
-    "image_url": "images/0446-ftg_card_39.png"
+    "image_url": "images/0446-ftg_card_39.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0447-итан-олфайер",
@@ -13140,7 +13926,9 @@
         "source_text": "Когда Итан Олфайер вступает в игру, вытяни карту за каждую землю типа Кукурузная под твоим контролем"
       }
     ],
-    "image_url": "images/0447-ftg_card_40.png"
+    "image_url": "images/0447-ftg_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0448-копитер",
@@ -13171,7 +13959,9 @@
         "source_text": "Каждое соседнее Кукурузное существо получает +1 DEF."
       }
     ],
-    "image_url": "images/0448-ftg_card_41.png"
+    "image_url": "images/0448-ftg_card_41.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0449-капитан-тако",
@@ -13202,7 +13992,9 @@
         "source_text": "Когда Капитан Тако вступает в игру, нанеси 1 урон каждому существу, которое не находится на Кукурузной земле"
       }
     ],
-    "image_url": "images/0449-ftg_card_42.png"
+    "image_url": "images/0449-ftg_card_42.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0450-хулиган-яблоко",
@@ -13233,7 +14025,9 @@
         "source_text": "Земля Хулигана-яблока не может быть изменена эффектами противника."
       }
     ],
-    "image_url": "images/0450-ftg_card_43.png"
+    "image_url": "images/0450-ftg_card_43.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0453-воскресная-школа",
@@ -13268,7 +14062,9 @@
         "source_text": "Пока у меня чётное количество HP, твои существа на этой земле получают +2 ATK"
       }
     ],
-    "image_url": "images/0453-ftg_card_48.png"
+    "image_url": "images/0453-ftg_card_48.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0454-победительный-гном",
@@ -13299,7 +14095,9 @@
         "source_text": "ПРИЁМ >>> Нанеси 1 урон каждому существу противника на Песчаной земле."
       }
     ],
-    "image_url": "images/0454-ftg_card_49.png"
+    "image_url": "images/0454-ftg_card_49.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0455-клубничное-желе",
@@ -13349,7 +14147,9 @@
         "source_text": "Если ты контролируешь 3 или более различных типов земли, когда Клубничное желе вступает в игру, восстанови 4 урона каждому своему существу"
       }
     ],
-    "image_url": "images/0455-ftg_card_50.png"
+    "image_url": "images/0455-ftg_card_50.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0456-хлопковый-глазастик",
@@ -13380,7 +14180,9 @@
         "source_text": "+1 DEF за каждый различный тип земли под твоим контролем."
       }
     ],
-    "image_url": "images/0456-ftg_card_51.png"
+    "image_url": "images/0456-ftg_card_51.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0457-подушка-боли",
@@ -13415,7 +14217,9 @@
         "source_text": "Пока урона на Подушке боли ровно 6, он получает +6 ATK"
       }
     ],
-    "image_url": "images/0457-ftg_card_52.png"
+    "image_url": "images/0457-ftg_card_52.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0458-свиток-свежего-дыхания",
@@ -13462,7 +14266,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0458-ftg_card_53.png"
+    "image_url": "images/0458-ftg_card_53.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0459-кондитерское-колечко",
@@ -13509,7 +14315,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0459-ftg_card_54.png"
+    "image_url": "images/0459-ftg_card_54.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0460-милая-мельница",
@@ -13540,7 +14348,9 @@
         "source_text": "Помрачь 1 действие >>> Восстанови или нанеси 2 урона своему существу на этой линии."
       }
     ],
-    "image_url": "images/0460-ftg_card_55.png"
+    "image_url": "images/0460-ftg_card_55.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0461-привидение",
@@ -13571,7 +14381,9 @@
         "source_text": "Привидение получает +2 ATK, пока обороняется от существ на бесполезных болотах."
       }
     ],
-    "image_url": "images/0461-ftg_card_57.png"
+    "image_url": "images/0461-ftg_card_57.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0462-дух-ведьмы",
@@ -13602,7 +14414,9 @@
         "source_text": "Дух ведьмы получает +2 ATK, пока обороняется от существ на Золотой равнине."
       }
     ],
-    "image_url": "images/0462-ftg_card_58.png"
+    "image_url": "images/0462-ftg_card_58.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0463-дух-дерева",
@@ -13633,7 +14447,9 @@
         "source_text": "Дух дерева получает +2 ATK, пока обороняется от существ на Кукурузной земле."
       }
     ],
-    "image_url": "images/0463-ftg_card_59.png"
+    "image_url": "images/0463-ftg_card_59.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0464-морская-ведьма",
@@ -13664,7 +14480,9 @@
         "source_text": "Морская ведьма получает +1 ATK, пока атакует существо на бесполезных болотах."
       }
     ],
-    "image_url": "images/0464-ftg_card_60.png"
+    "image_url": "images/0464-ftg_card_60.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0465-костюмный-волк",
@@ -13695,7 +14513,9 @@
         "source_text": "Костюмный волк получает +1 ATK, пока атакует существо на Кукурузной земле."
       }
     ],
-    "image_url": "images/0465-ftg_card_61.png"
+    "image_url": "images/0465-ftg_card_61.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0466-красавчик-тимми",
@@ -13726,7 +14546,9 @@
         "source_text": "Красавчик Тимми получает +1 ATK, пока атакует существо на Песчаной земле."
       }
     ],
-    "image_url": "images/0466-ftg_card_62.png"
+    "image_url": "images/0466-ftg_card_62.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0467-квагурай",
@@ -13756,7 +14578,9 @@
         "source_text": "В начале своего хода можешь нанести 2 урона промывнику с 4 или более картами в руке"
       }
     ],
-    "image_url": "images/0467-ftg_card_64.png"
+    "image_url": "images/0467-ftg_card_64.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0468-пощёчина-ведьмы",
@@ -13787,7 +14611,9 @@
         "source_text": "Выбранный промывник сбрасывает до 5 карт, затем получает 1 урон за каждую сброшенную любым способом карту."
       }
     ],
-    "image_url": "images/0468-ftg_card_65.png"
+    "image_url": "images/0468-ftg_card_65.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0469-кольцо-нокаута",
@@ -13834,7 +14660,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0469-ftg_card_66.png"
+    "image_url": "images/0469-ftg_card_66.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0470-музыкальный-трон",
@@ -13865,7 +14693,9 @@
         "source_text": "Ты можешь обменять местами до 2 земель под твоим контролем с землями, чья камера не в игре."
       }
     ],
-    "image_url": "images/0470-ftg_card_67.png"
+    "image_url": "images/0470-ftg_card_67.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0471-мастер-маскировки",
@@ -13896,7 +14726,9 @@
         "source_text": "Каждое существо промывника получает -1 ATK в этом ходу."
       }
     ],
-    "image_url": "images/0471-ftg_card_68.png"
+    "image_url": "images/0471-ftg_card_68.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0472-невероятное-яйцо",
@@ -13933,7 +14765,9 @@
         "source_text": "Открой 2 верхние карты своей колоды и посмотри на них"
       }
     ],
-    "image_url": "images/0472-ftg_card_69.png"
+    "image_url": "images/0472-ftg_card_69.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0473-цельнометаллическая-ракетка",
@@ -13964,7 +14798,9 @@
         "source_text": "Нанеси 2 урона выбранному существу."
       }
     ],
-    "image_url": "images/0473-ftg_card_70.png"
+    "image_url": "images/0473-ftg_card_70.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0474-фонтан-слез",
@@ -13999,7 +14835,9 @@
         "source_text": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 ATK"
       }
     ],
-    "image_url": "images/0474-ftg_card_71.png"
+    "image_url": "images/0474-ftg_card_71.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0475-дейви-бонз",
@@ -14030,7 +14868,9 @@
         "source_text": "Дейви Бонз получает +2 ATK, пока обороняется от существ на Песчаной земле."
       }
     ],
-    "image_url": "images/0475-ftg_card_72.png"
+    "image_url": "images/0475-ftg_card_72.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0476-пень-колюга",
@@ -14061,7 +14901,9 @@
         "source_text": "Каждое существо промывника вытягивает карту и получает 1 урон."
       }
     ],
-    "image_url": "images/0476-ftg_card_73.png"
+    "image_url": "images/0476-ftg_card_73.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0477-жучья-госпожа",
@@ -14109,7 +14951,9 @@
         "source_text": "Если в начале твоего хода под твоим контролем не более 2 существ, ты можешь вернуть эту карту на руку её владельцу"
       }
     ],
-    "image_url": "images/0477-ftg_card_74.png"
+    "image_url": "images/0477-ftg_card_74.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0478-зелёный-гном",
@@ -14140,7 +14984,9 @@
         "source_text": "ПРИЁМ >>> Нанеси 1 урон каждому существу промывника на Золотой равнине."
       }
     ],
-    "image_url": "images/0478-ftg_card_75.png"
+    "image_url": "images/0478-ftg_card_75.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0479-лаймовое-желе",
@@ -14190,7 +15036,9 @@
         "source_text": "Если ты контролируешь 3 или более различных типов земли, когда Лаймовое желе вступает в игру, вытяни 2 карты"
       }
     ],
-    "image_url": "images/0479-ftg_card_76.png"
+    "image_url": "images/0479-ftg_card_76.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0480-большая-рука-мумии",
@@ -14221,7 +15069,9 @@
         "source_text": "ПРИЁМ >>> Нанеси 1 урон каждому соседнему выбранному существу на Кукурузной земле."
       }
     ],
-    "image_url": "images/0480-ftg_card_78.png"
+    "image_url": "images/0480-ftg_card_78.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0481-песочный-шакал",
@@ -14252,7 +15102,9 @@
         "source_text": "Когда Песочный шакал атакует существо промывника на Милое, восстанови 3 урона Песочному шакалу"
       }
     ],
-    "image_url": "images/0481-ftg_card_79.png"
+    "image_url": "images/0481-ftg_card_79.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0482-призрачный-главастук",
@@ -14283,7 +15135,9 @@
         "source_text": "+1 DEF за каждый различный тип земли под твоим контролем."
       }
     ],
-    "image_url": "images/0482-ftg_card_80.png"
+    "image_url": "images/0482-ftg_card_80.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0483-зелёная-змейка",
@@ -14314,7 +15168,9 @@
         "source_text": "Когда Зелёная змейка побеждена, нанеси 1 урон выбранному существу на этой линии."
       }
     ],
-    "image_url": "images/0483-ftg_card_81.png"
+    "image_url": "images/0483-ftg_card_81.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0484-зелёный-король-вечерюк",
@@ -14345,7 +15201,9 @@
         "source_text": "Когда Зелёный король Вечерюк выигрывает шар, восстанови 1 урона Зелёному королю Вечерюку."
       }
     ],
-    "image_url": "images/0484-ftg_card_82.png"
+    "image_url": "images/0484-ftg_card_82.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0485-кактус-бангун",
@@ -14376,7 +15234,9 @@
         "source_text": "Каждое соседнее Кукурузное существо получает +1 ATK."
       }
     ],
-    "image_url": "images/0485-ftg_card_83.png"
+    "image_url": "images/0485-ftg_card_83.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0486-бриллиантовый-дэн",
@@ -14407,7 +15267,9 @@
         "source_text": "Когда Бриллиантовый Дэн побежден на Милое, верни его на руку его владельцу."
       }
     ],
-    "image_url": "images/0486-ftg_card_84.png"
+    "image_url": "images/0486-ftg_card_84.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0488-мозговой-смерч",
@@ -14443,7 +15305,9 @@
         "source_text": "Верни все свои существа, включая украденных, на руку их владельцев"
       }
     ],
-    "image_url": "images/0488-ftg_card_86.png"
+    "image_url": "images/0488-ftg_card_86.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0489-портал-в-никуда",
@@ -14478,7 +15342,9 @@
         "source_text": "Перемести выбранное существо промывника на соседнюю пустую линию на другую сторону"
       }
     ],
-    "image_url": "images/0489-ftg_card_87.png"
+    "image_url": "images/0489-ftg_card_87.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0490-портал-антипризыва",
@@ -14514,7 +15380,9 @@
         "source_text": "Верни выбранное существо на руку его владельцу"
       }
     ],
-    "image_url": "images/0490-ftg_card_88.png"
+    "image_url": "images/0490-ftg_card_88.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0491-песчаная-пирамида",
@@ -14545,7 +15413,9 @@
         "source_text": "Помрачь 2 действия >>> Верни каждое существо на этой линии на руку его владельца."
       }
     ],
-    "image_url": "images/0491-ftg_card_91.png"
+    "image_url": "images/0491-ftg_card_91.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0492-храм-солнца",
@@ -14575,7 +15445,9 @@
         "source_text": "Когда на этой линии вступает в игру Песчаное существо под твоим контролем стоимостью 1 и более, ты можешь вернуть его на руку владельцу"
       }
     ],
-    "image_url": "images/0492-ftg_card_92.png"
+    "image_url": "images/0492-ftg_card_92.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0493-чёрный-паладин",
@@ -14606,7 +15478,9 @@
         "source_text": "Чёрный паладин получает +1 ATK за каждую карту, уничтоженную заклинаниями (включая задевшие карты) в этом ходу."
       }
     ],
-    "image_url": "images/0493-ftg_card_97.png"
+    "image_url": "images/0493-ftg_card_97.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0494-голубой-тритон",
@@ -14637,7 +15511,9 @@
         "source_text": "ПРИЁМ >>> Вытяни карту, затем сбрось карту."
       }
     ],
-    "image_url": "images/0494-ftg_card_98.png"
+    "image_url": "images/0494-ftg_card_98.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0495-любопытный-чучвачок",
@@ -14669,7 +15545,9 @@
         "source_text": "В начале своего хода можешь посмотреть на верхнюю карту своей колоды и положить её вниз"
       }
     ],
-    "image_url": "images/0495-ftg_card_99.png"
+    "image_url": "images/0495-ftg_card_99.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0496-гном-в-стильных-штанах",
@@ -14700,7 +15578,9 @@
         "source_text": "ПРИЁМ >>> Нанеси 1 урон каждому существу промывника на Кукурузной земле."
       }
     ],
-    "image_url": "images/0496-ftg_card_100.png"
+    "image_url": "images/0496-ftg_card_100.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0497-рыболов",
@@ -14736,7 +15616,9 @@
         "source_text": "Если Рыболов вступает в игру на Голубой равнине, нанеси 2 урона каждому существу промывника"
       }
     ],
-    "image_url": "images/0497-ftg_card_101.png"
+    "image_url": "images/0497-ftg_card_101.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0498-призрачный-мимик",
@@ -14767,7 +15649,9 @@
         "source_text": "Когда Призрачный мимик покидает игру, вытяни нижнюю карту своей колоды."
       }
     ],
-    "image_url": "images/0498-ftg_card_102.png"
+    "image_url": "images/0498-ftg_card_102.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0500-лейтенант-груб",
@@ -14798,7 +15682,9 @@
         "source_text": "Когда Лейтенант Груб покидает игру в этом ходу, каждый промывник сбрасывает 3 карты."
       }
     ],
-    "image_url": "images/0500-ftg_card_104.png"
+    "image_url": "images/0500-ftg_card_104.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0501-корнишон",
@@ -14834,7 +15720,9 @@
         "source_text": "Уничтожь Корнишон >>> Нанеси 3 урона выбранному существу"
       }
     ],
-    "image_url": "images/0501-ftg_card_106.png"
+    "image_url": "images/0501-ftg_card_106.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0502-старик-разбойник",
@@ -14866,7 +15754,9 @@
         "source_text": "Когда Старик-разбойник вступает в игру, каждый игрок сбрасывает 2 карты"
       }
     ],
-    "image_url": "images/0502-ftg_card_107.png"
+    "image_url": "images/0502-ftg_card_107.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0503-болотный-глазастик",
@@ -14897,7 +15787,9 @@
         "source_text": "+1 DEF за каждый различный тип земли под твоим контролем."
       }
     ],
-    "image_url": "images/0503-ftg_card_108.png"
+    "image_url": "images/0503-ftg_card_108.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0504-громыла",
@@ -14928,7 +15820,9 @@
         "source_text": "ПРИЁМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока."
       }
     ],
-    "image_url": "images/0504-ftg_card_109.png"
+    "image_url": "images/0504-ftg_card_109.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0505-брекеты-озера",
@@ -14964,7 +15858,9 @@
         "source_text": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса"
       }
     ],
-    "image_url": "images/0505-ftg_card_110.png"
+    "image_url": "images/0505-ftg_card_110.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0506-погняемые-мёртвых",
@@ -14999,7 +15895,9 @@
         "source_text": "Верни существо стоимостью 2 или менее из стопки сброса в игру"
       }
     ],
-    "image_url": "images/0506-ftg_card_111.png"
+    "image_url": "images/0506-ftg_card_111.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0507-волшебная-лампа",
@@ -15046,7 +15944,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0507-ftg_card_112.png"
+    "image_url": "images/0507-ftg_card_112.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0508-свиток-плохого-дыхания",
@@ -15093,7 +15993,9 @@
         "source_text": "получает +2 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0508-ftg_card_113.png"
+    "image_url": "images/0508-ftg_card_113.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0509-призрачный-маяк",
@@ -15125,7 +16027,9 @@
         "source_text": "получает +1 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0509-ftg_card_114.png"
+    "image_url": "images/0509-ftg_card_114.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0510-теневая-пирамида",
@@ -15162,7 +16066,9 @@
         "source_text": "Если ты контролируешь существо на этой линии, сбрось карту"
       }
     ],
-    "image_url": "images/0510-ftg_card_116.png"
+    "image_url": "images/0510-ftg_card_116.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0511-сладкий-затос",
@@ -15193,7 +16099,9 @@
         "source_text": "В конце хода вытяни 2 карты."
       }
     ],
-    "image_url": "images/0511-monika_card_1.png"
+    "image_url": "images/0511-monika_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0512-эспрессо-любви",
@@ -15224,7 +16132,9 @@
         "source_text": "В конце хода каждый игрок берёт 2 карты."
       }
     ],
-    "image_url": "images/0512-monika_card_2.png"
+    "image_url": "images/0512-monika_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0514-домино-белый",
@@ -15255,7 +16165,9 @@
         "source_text": "Нарисуй значение 5 и сохрани его на этом строении."
       }
     ],
-    "image_url": "images/0514-monika_card_4.png"
+    "image_url": "images/0514-monika_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0516-незаконные-артефакты",
@@ -15271,7 +16183,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0516-monika_card_6.png"
+    "image_url": "images/0516-monika_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0517-эспрессо-счастья",
@@ -15302,7 +16216,9 @@
         "source_text": "В конце хода каждый игрок берёт 2 карты."
       }
     ],
-    "image_url": "images/0517-monika_card_7.png"
+    "image_url": "images/0517-monika_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0518-кофе-с-корицей",
@@ -15339,7 +16255,9 @@
         "source_text": "Сбрось 2 карты из руки"
       }
     ],
-    "image_url": "images/0518-monika_card_9.png"
+    "image_url": "images/0518-monika_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0519-стандарт",
@@ -15370,7 +16288,9 @@
         "source_text": "В конце хода сбрось 1 карту из руки."
       }
     ],
-    "image_url": "images/0519-monika_card_10.png"
+    "image_url": "images/0519-monika_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0521-клубничка",
@@ -15386,7 +16306,9 @@
     "flip_description": "",
     "description": "",
     "mechanics": [],
-    "image_url": "images/0521-monika_card_22.png"
+    "image_url": "images/0521-monika_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0522-моча-счастья",
@@ -15417,7 +16339,9 @@
         "source_text": "Выбранный противник кладёт верхнюю карту из своей колоды на поле."
       }
     ],
-    "image_url": "images/0522-monika_card_33.png"
+    "image_url": "images/0522-monika_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0523-моча-любви",
@@ -15448,7 +16372,9 @@
         "source_text": "Выбранный противник отбрасывает две верхние карты из своей колоды."
       }
     ],
-    "image_url": "images/0523-monika_card_37.png"
+    "image_url": "images/0523-monika_card_37.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0524-малыш-камнепух",
@@ -15483,7 +16409,9 @@
         "source_text": "Если на поле присутствует Мамуля камнепух под твоим контролем, при защите Малыш получает +2 АТК"
       }
     ],
-    "image_url": "images/0524-tree_trunks_card_1.png"
+    "image_url": "images/0524-tree_trunks_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0527-шабашиз",
@@ -15513,7 +16441,9 @@
         "source_text": "В начале твоего хода выбери существо под контролем соперника"
       }
     ],
-    "image_url": "images/0527-tree_trunks_card_4.png"
+    "image_url": "images/0527-tree_trunks_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0530-хлопковая-аллея",
@@ -15566,7 +16496,9 @@
         "source_text": "Если две, можешь также переместиться ко второй аллее или поменять местами существ, находящихся на землях с аллеей"
       }
     ],
-    "image_url": "images/0530-tree_trunks_card_7.png"
+    "image_url": "images/0530-tree_trunks_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0533-абрака-милиц",
@@ -15602,7 +16534,9 @@
         "source_text": "Восстанови себе до 3 жизней, после чего распредели то же количество урона на своих существах на твой выбор"
       }
     ],
-    "image_url": "images/0533-tree_trunks_card_10.png"
+    "image_url": "images/0533-tree_trunks_card_10.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0534-сладкий-пирожок",
@@ -15647,7 +16581,9 @@
         "source_text": "Стоит на 1 действия меньше за каждое другое существо в игре под твоим контролем. Приём >>> Пирожок: нанеси 2 урона существу, у которого осталось меньше всего DEF, и ещё 1 — тому, у которого больше всего."
       }
     ],
-    "image_url": "images/0534-tree_trunks_card_34.png"
+    "image_url": "images/0534-tree_trunks_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0535-коровушка",
@@ -15678,7 +16614,9 @@
         "source_text": "Ей просто норм. +2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем."
       }
     ],
-    "image_url": "images/0535-tree_trunks_card_36.png"
+    "image_url": "images/0535-tree_trunks_card_36.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0536-хлопковый-форт",
@@ -15709,7 +16647,9 @@
         "source_text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
       }
     ],
-    "image_url": "images/0536-tree_trunks_card_38.png"
+    "image_url": "images/0536-tree_trunks_card_38.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0537-фонтан-милашности",
@@ -15745,7 +16685,9 @@
         "source_text": "Восстанови себе 2 жизни (но не более 25) за каждое уничтоженное существо под твоим контролем на этой линии"
       }
     ],
-    "image_url": "images/0537-tree_trunks_card_40.png"
+    "image_url": "images/0537-tree_trunks_card_40.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0003-газы-огра",
@@ -15781,7 +16723,9 @@
         "source_text": "Открой 3 карты сверху своей колоды"
       }
     ],
-    "image_url": "images/0003-bmo_card_4.png"
+    "image_url": "images/0003-bmo_card_4.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0006-великолепный-замок",
@@ -15812,7 +16756,9 @@
         "source_text": "Твое существо получает +3 DEF на этой линии."
       }
     ],
-    "image_url": "images/0006-bmo_card_8.png"
+    "image_url": "images/0006-bmo_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0020-бессмертный-ходок-маиса",
@@ -15847,7 +16793,9 @@
         "source_text": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон"
       }
     ],
-    "image_url": "images/0020-bmo_card_30.png"
+    "image_url": "images/0020-bmo_card_30.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0037-пирогошторм",
@@ -15879,7 +16827,9 @@
         "source_text": "Каждое твое существо без урона на нем получает +2 ATK"
       }
     ],
-    "image_url": "images/0037-bubblegum_card_16.png"
+    "image_url": "images/0037-bubblegum_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0032-мышь-альбинос",
@@ -15914,7 +16864,9 @@
         "source_text": "Пока на Мыше альбиносе ровно 2 Урона, она получает +2 ATK"
       }
     ],
-    "image_url": "images/0032-bubblegum_card_7.png"
+    "image_url": "images/0032-bubblegum_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0077-пиратская-бухта",
@@ -15959,7 +16911,9 @@
         "source_text": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием промудника."
       }
     ],
-    "image_url": "images/0077-charlie_card_7.png"
+    "image_url": "images/0077-charlie_card_7.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0263-лёгкий-жираф",
@@ -15994,7 +16948,9 @@
         "source_text": "Пока у Лёгкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника"
       }
     ],
-    "image_url": "images/0263-jake_2v2_card_13.png"
+    "image_url": "images/0263-jake_2v2_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0093-очаровательный-кролик",
@@ -16044,7 +17000,9 @@
         "source_text": "если у Очаровательного кролика 4 Урона или больше, он наносит 3 Урона выбранному существу противника"
       }
     ],
-    "image_url": "images/0093-charlie_card_31.png"
+    "image_url": "images/0093-charlie_card_31.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0262-привлекательный-слон",
@@ -16075,7 +17033,9 @@
         "source_text": "Каждый раз, когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника."
       }
     ],
-    "image_url": "images/0262-jake_2v2_card_12.png"
+    "image_url": "images/0262-jake_2v2_card_12.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0226-нежный-снежный-малыш",
@@ -16106,7 +17066,9 @@
         "source_text": "+3 ATK пока у противника нет существа на этой линии."
       }
     ],
-    "image_url": "images/0226-ice_king_card_33.png"
+    "image_url": "images/0226-ice_king_card_33.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0301-заумный-шторм-крови",
@@ -16137,7 +17099,9 @@
         "source_text": "Наноси 1 Урон каждому существу противника."
       }
     ],
-    "image_url": "images/0301-lady_rainicorn_card_28.png"
+    "image_url": "images/0301-lady_rainicorn_card_28.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0136-чокнутая-кошатница",
@@ -16168,7 +17132,9 @@
         "source_text": "Твои Радужные существа получают +1 ATK."
       }
     ],
-    "image_url": "images/0136-fiona_card_19.png"
+    "image_url": "images/0136-fiona_card_19.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0148-ледяной-лазутчик",
@@ -16197,7 +17163,9 @@
         "source_text": "Когда Ледяной лазутчик вступает в игру, заморозь его землю"
       }
     ],
-    "image_url": "images/0148-grand_prix_card_1.png"
+    "image_url": "images/0148-grand_prix_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0149-дай-пять",
@@ -16233,7 +17201,9 @@
         "source_text": "Восстанови или нанеси 1 урон выбранному существу"
       }
     ],
-    "image_url": "images/0149-grand_prix_card_2.png"
+    "image_url": "images/0149-grand_prix_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0153-сотрудничество",
@@ -16264,7 +17234,9 @@
         "source_text": "В первый раз, когда ты или твой партнёр сыграете Радужное заклинание во время своего хода, другой партнёр может сыграть Радужное заклинание той же стоимости бесплатно."
       }
     ],
-    "image_url": "images/0153-grand_prix_card_6.png"
+    "image_url": "images/0153-grand_prix_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0160-вафля-в-шоколаде",
@@ -16300,7 +17272,9 @@
         "source_text": "Если в начале твоей фазы сражения на этой линии есть хотя бы один Ледяный жетон, нанеси 1 урон каждому существу под контролем выбранного игрока"
       }
     ],
-    "image_url": "images/0160-grand_prix_card_13.png"
+    "image_url": "images/0160-grand_prix_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0167-кокмейль",
@@ -16335,7 +17309,9 @@
         "source_text": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую зем"
       }
     ],
-    "image_url": "images/0167-grand_prix_card_22.png"
+    "image_url": "images/0167-grand_prix_card_22.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0185-крышесносная-кола",
@@ -16367,7 +17343,9 @@
         "source_text": "получает +1 ATK в этом ходу"
       }
     ],
-    "image_url": "images/0185-gunter_card_6.png"
+    "image_url": "images/0185-gunter_card_6.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0235-кукурузные-рыцари",
@@ -16398,7 +17376,9 @@
         "source_text": "Кукурузные рыцари получают +1 ATK и +2 DEF за каждое Кукурузное поле под твоим контролем."
       }
     ],
-    "image_url": "images/0235-jake_card_9.png"
+    "image_url": "images/0235-jake_card_9.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0237-легион-уховерток",
@@ -16428,7 +17408,9 @@
         "source_text": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу"
       }
     ],
-    "image_url": "images/0237-jake_card_13.png"
+    "image_url": "images/0237-jake_card_13.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0240-стрелец-дэн",
@@ -16463,7 +17445,9 @@
         "source_text": "ПРИЕМ >>> Уничтожь выбранное строение на линии Стрельца Дэ"
       }
     ],
-    "image_url": "images/0240-jake_card_17.png"
+    "image_url": "images/0240-jake_card_17.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0253-ласковая-овечка",
@@ -16513,7 +17497,9 @@
         "source_text": "Если в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии"
       }
     ],
-    "image_url": "images/0253-jake_2v2_card_1.png"
+    "image_url": "images/0253-jake_2v2_card_1.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0264-обнимашный-ёж",
@@ -16548,7 +17534,9 @@
         "source_text": "Пока у Обнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника"
       }
     ],
-    "image_url": "images/0264-jake_2v2_card_15.png"
+    "image_url": "images/0264-jake_2v2_card_15.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0269-защищенный-зебрарог",
@@ -16578,7 +17566,9 @@
         "source_text": "Когда Защищенный зебрарог атакует, можешь восстановить 1 урон у соседнего существа"
       }
     ],
-    "image_url": "images/0269-jake_2v2_card_20.png"
+    "image_url": "images/0269-jake_2v2_card_20.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0274-амбар-с-сеном",
@@ -16649,7 +17639,9 @@
         "source_text": "Если Амбар с сеном покидает игру, уничтожь Кормежника на этой линии"
       }
     ],
-    "image_url": "images/0274-jake_2v2_card_26.png"
+    "image_url": "images/0274-jake_2v2_card_26.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0280-клон",
@@ -16685,7 +17677,9 @@
         "source_text": "Сыграй своё следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре"
       }
     ],
-    "image_url": "images/0280-jake_2v2_card_34.png"
+    "image_url": "images/0280-jake_2v2_card_34.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0320-кукурузный-глазстик",
@@ -16716,7 +17710,9 @@
         "source_text": "+1 DEF за каждую различную землю под твоим контролем."
       }
     ],
-    "image_url": "images/0320-lemongrab_card_23.png"
+    "image_url": "images/0320-lemongrab_card_23.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0330-пескозавр-рекс",
@@ -16747,7 +17743,9 @@
         "source_text": "+2 ATK за каждую твою пустую землю."
       }
     ],
-    "image_url": "images/0330-lemongrab_card_35.png"
+    "image_url": "images/0330-lemongrab_card_35.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0344-стейкчоп",
@@ -16779,7 +17777,9 @@
         "source_text": "В начале твоего хода сбрось 2 карты или уничтожь Рубленый стейк"
       }
     ],
-    "image_url": "images/0344-lsp_card_16.png"
+    "image_url": "images/0344-lsp_card_16.png",
+    "mechanics_version": 1,
+    "mechanics_status": "implemented"
   },
   {
     "id": "card-0403-большой-курятник",
@@ -16810,7 +17810,9 @@
         "source_text": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней."
       }
     ],
-    "image_url": "images/0403-marceline_card_24.png"
+    "image_url": "images/0403-marceline_card_24.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0525-мамуля-камнепух",
@@ -16841,7 +17843,9 @@
         "source_text": "Укромитель: +1 ATK против существ со стойкостью ровно 2."
       }
     ],
-    "image_url": "images/0525-tree_trunks_card_2.png"
+    "image_url": "images/0525-tree_trunks_card_2.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0528-пф",
@@ -16886,7 +17890,9 @@
         "source_text": "Бей её сильнее — ей всё равно. Подушка боли не может получать больше 4 урона за удар существа промывника, зато магия наносит ей на 2 единицы урона больше."
       }
     ],
-    "image_url": "images/0528-tree_trunks_card_5.png"
+    "image_url": "images/0528-tree_trunks_card_5.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   },
   {
     "id": "card-0531-котячья-девятка",
@@ -16921,6 +17927,8 @@
         "source_text": "Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две"
       }
     ],
-    "image_url": "images/0531-tree_trunks_card_8.png"
+    "image_url": "images/0531-tree_trunks_card_8.png",
+    "mechanics_version": 1,
+    "mechanics_status": "text_only"
   }
 ]

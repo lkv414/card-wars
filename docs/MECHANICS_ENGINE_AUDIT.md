@@ -3,6 +3,23 @@
 Дата проверки: 24 сентября 2026
 Ветка: `tester_00005`
 
+## Начатый переход
+
+После аудита начат жёсткий переход на authoritative runtime:
+
+- `supabase/migrations/20260924120000_cards_mechanics_runtime_metadata.sql` добавляет `mechanics_version` и `mechanics_status`;
+- `GameRoom` загружает `CATALOG/cards` из KV и передаёт карты в `GameState.catalog`;
+- `workers/src/game-engine/mechanics-runtime.ts` dispatch'ит поддерживаемые действия;
+- добавлено серверное действие `use_ability`;
+- spell-карты разрешаются и уходят в discard;
+- ручная атака использует выбранные attacker/target;
+- добавлен counterattack;
+- исправлен flip mark и catalog lookup;
+- native snapshot сохраняется обратно в LobbyRoom;
+- текстовые способности получают `mechanics_status=text_only` и не исполняются.
+
+Это первый runtime-каркас, а не полная ручная реализация всех 504 текстовых способностей. В каталоге сейчас 89 карт помечены `implemented`, 415 — `text_only`.
+
 ## Итог
 
 Формат каталога после нормализации пригоден для хранения, но текущий игровой движок **ещё не исполняет механики карт**. `individual_cards/cards_supabase.sql` является seed-файлом каталога, а не гарантией корректной игровой логики.

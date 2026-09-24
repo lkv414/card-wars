@@ -20,8 +20,10 @@ import {
   reorderLands,
   shuffleDeckAction,
 } from './cards'
+import { activateAbility, dispatchMechanicEvent } from './mechanics-runtime'
 import { endTurn, forfeitGame } from './turn'
 import { validateAction } from './validation'
+import { bumpVersion } from './utils'
 
 export { validateAction } from './validation'
 export { isEngineError } from './types'
@@ -50,6 +52,17 @@ export function applyAction(
       return discardFromZone(state, action)
     case 'flip_card':
       return flipCard(state, action)
+    case 'use_ability': {
+      const result = activateAbility(state, {
+        actorId,
+        zonePosition: action.zonePosition,
+        cardId: action.cardId,
+        mechanicIndex: action.mechanicIndex,
+        targetCardIds: action.targetCardIds,
+      })
+      if (result.error) return { error: result.error }
+      return { state: bumpVersion(result.state) }
+    }
     case 'attack':
       // Attack goes through the same path that endTurn uses internally —
       // resolveAttack — but we expose a single-call wrapper here for the
@@ -84,7 +97,17 @@ function applySingleAttack(
   action: Extract<Action, { type: 'attack' }>,
   actorId: string,
 ): ApplyResult | EngineError {
-  const { state: next, event } = resolveAttack(state, actorId, action.fromZone)
+  const { state: resolved, event } = resolveAttack(state, actorId, action.fromZone, {
+    attackerCardId: action.attackerCardId,
+    defenderId: action.toPlayerId,
+    toZone: action.toZone,
+  })
+  const next = dispatchMechanicEvent(resolved, {
+    type: 'on_creature_attacks',
+    actorId,
+    cardId: event.attacker_instance_id || undefined,
+    targetCardIds: [],
+  })
   // If face damage killed the last opponent, finish the game.
   let gameFinished = false
   let winnerId: string | null = null

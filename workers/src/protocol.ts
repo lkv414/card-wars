@@ -69,6 +69,7 @@ export const GAME_ACTION_RPC: Record<string, string> = {
   discard_from_zone: 'discard_from_zone',
   attack: 'perform_attack',
   flip_card: 'flip_card',
+  use_ability: 'use_ability',
   end_turn: 'end_turn',
   forfeit: 'forfeit_game',
   reorder_lands: 'reorder_player_lands',

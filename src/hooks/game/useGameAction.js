@@ -10,7 +10,7 @@
  * Обратная совместимость со старым API: { playCard, attack, endTurn, isApplying, error }.
  * Новое: добавили forfeit (Этап 3).
  *
- * Фаза 4: refill и draw-фаза встроены в playCard и endTurn.
+ * Фаза 4: draw остаётся отдельным действием; скрытый auto-refill удалён.
  * Фаза 5: optimistic lock + триггеры защищают данные.
  * Фаза 6: ensureGuestId() в каждом мутирующем действии.
  */
@@ -25,6 +25,7 @@ import { useDrawCard } from './useDrawCard'
 import { useDrawFreeCard } from './useDrawFreeCard'
 import { useShuffleDeck } from './useShuffleDeck'
 import { useDiscardFromHand } from './useDiscardFromHand'
+import { useAbility } from './useAbility'
 
 export function useGameAction(game, reload, { patchGame, cardCatalog, transport, suppressRealtimeReload, reloadEnabled = true } = {}) {
   const { writeGameState, isApplying, error } = useGameState(game, reload, { reloadEnabled })
@@ -41,6 +42,7 @@ export function useGameAction(game, reload, { patchGame, cardCatalog, transport,
     suppressRealtimeReload,
   })
   const flipCard = useFlipCard(game, { patchGame, transport, suppressRealtimeReload })
+  const useAbilityAction = useAbility(game, { transport, suppressRealtimeReload })
 
   return {
     playCard,
@@ -53,6 +55,7 @@ export function useGameAction(game, reload, { patchGame, cardCatalog, transport,
     endTurn,
     forfeit,
     flipCard,
+    useAbility: useAbilityAction,
     isApplying,
     error,
   }

@@ -10,7 +10,8 @@
 
 import type { Action, Card, GameState, PlayerState } from './types'
 import { getActivePlayer, getAlivePlayers, getPlayer, getZone } from './utils'
-import { canPlayerDealDamage } from './combat'
+import { canPlayerDealDamage, pickBattleTarget } from './combat'
+import { effectiveAttackForCombat } from './mechanics-runtime'
 
 const ZONE_LIMIT = 10
 
@@ -25,9 +26,10 @@ function fail(msg: string): ValidationResult {
 
 function getCardCost(state: GameState, card: Card): number {
   const cat = state.catalog?.[card.id]
-  if (cat?.cost !== undefined) return cat.cost
-  if (typeof card.cost === 'number') return card.cost
-  return 1
+  const base = cat?.cost ?? (typeof card.cost === 'number' ? card.cost : 1)
+  const me = getActivePlayer(state)
+  const reduced = Math.max(0, base - Number(me?.cost_reduction ?? 0))
+  return me?.free_play_next ? 0 : reduced
 }
 
 export function validateAction(state: GameState, action: Action, actorId: string): ValidationResult {
@@ -50,11 +52,25 @@ export function validateAction(state: GameState, action: Action, actorId: string
       if (!me) return fail('Сейчас не ваш ход')
       const card = me.hand[action.cardIndex]
       if (!card) return fail('Неверный индекс карты')
+      if (action.slotType) {
+        const expected = state.catalog?.[card.id]?.card_type === 'building' || card.card_type === 'building' ? 'building' : 'creature'
+        if (action.slotType !== expected) return fail('Недопустимый тип слота для этой карты')
+      }
       if (action.zonePosition < 1 || action.zonePosition > 4) return fail('Неверная позиция зоны (1-4)')
       const zone = getZone(me, action.zonePosition)
       if (!zone) return fail('Зона не найдена')
       if (zone.cards.length >= ZONE_LIMIT) return fail('Земля полная')
       if ((me.actions_remaining ?? 0) < getCardCost(state, card)) return fail('Недостаточно действий')
+      return ok()
+    }
+    case 'use_ability': {
+      if (!isCurrentTurn) return fail('Сейчас не ваш ход')
+      if (!me) return fail('Сейчас не ваш ход')
+      const zone = getZone(me, action.zonePosition)
+      if (!zone) return fail('Зона не найдена')
+      const card = zone.cards.find((c) => (c.instanceId ?? c.id) === action.cardId || c.id === action.cardId)
+      if (!card) return fail('Карта не найдена в зоне')
+      if (action.mechanicIndex < 0) return fail('Неверный индекс механики')
       return ok()
     }
     case 'draw_free': {
@@ -91,7 +107,7 @@ export function validateAction(state: GameState, action: Action, actorId: string
       if (!me) return fail('Сейчас не ваш ход')
       const zone = getZone(me, action.zonePosition)
       if (!zone) return fail('Зона не найдена')
-      const found = zone.cards.some((c) => (c.instanceId ?? c.id) === action.cardId)
+      const found = zone.cards.some((c) => c.instanceId === action.cardId || c.id === action.cardId)
       if (!found) return fail('Карта не найдена в зоне')
       return ok()
     }
@@ -100,7 +116,7 @@ export function validateAction(state: GameState, action: Action, actorId: string
       if (!me) return fail('Сейчас не ваш ход')
       const zone = getZone(me, action.zonePosition)
       if (!zone) return fail('Зона не найдена')
-      const found = zone.cards.some((c) => (c.instanceId ?? c.id) === action.cardId)
+      const found = zone.cards.some((c) => c.instanceId === action.cardId || c.id === action.cardId)
       if (!found) return fail('Карта не найдена в зоне')
       return ok()
     }
@@ -116,14 +132,18 @@ export function validateAction(state: GameState, action: Action, actorId: string
       if (!canPlayerDealDamage(me.player_order, aliveCount, state.current_turn ?? 0)) {
         return fail('Урон ещё недоступен (первый ход)')
       }
+      const legalTarget = pickBattleTarget(me.player_id, action.fromZone, getAlivePlayers(state))
+      if (!legalTarget || legalTarget.defenderId !== action.toPlayerId || legalTarget.toZone !== action.toZone) {
+        return fail('Недопустимая цель атаки для этой линии')
+      }
 
       const myZone = getZone(me, action.fromZone)
       if (!myZone) return fail('Зона не найдена')
-      const attacker = myZone.cards.find((c) => (c.instanceId ?? c.id) === action.attackerCardId)
+      const attacker = myZone.cards.find((c) => c.instanceId === action.attackerCardId || c.id === action.attackerCardId)
       if (!attacker) return fail('Карта не найдена в зоне')
       if (attacker.tapped) return fail('Существо уже атаковало в этом ходу')
       if (attacker.flipped || attacker.isFlipped) return fail('Перевёрнутое существо не может атаковать')
-      if ((attacker.attack ?? 0) <= 0) return fail('Эта карта не может атаковать')
+      if (effectiveAttackForCombat(attacker) <= 0) return fail('Эта карта не может атаковать')
       return ok()
     }
     case 'end_turn': {

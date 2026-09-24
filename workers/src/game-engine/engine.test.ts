@@ -154,7 +154,7 @@ describe('validateAction', () => {
  * -------------------------------------------------------------------- */
 
 describe('playCard', () => {
-  it('moves card from hand to zone, refills hand up to 5, decrements actions', () => {
+  it('moves card from hand to zone without hidden draw, decrements actions', () => {
     const card = makeCard({ id: 'c1', cost: 1 })
     const deck = [makeCard({ id: 'd1' }), makeCard({ id: 'd2' })]
     const state = makeTwoPlayerAttackReady()
@@ -167,10 +167,9 @@ describe('playCard', () => {
     expect(isError(result)).toBe(false)
     if (isError(result)) return
     const p1 = result.state.players[0]!
-    // hand was [c1] → after play []. Refill from [d1, d2] up to 5 → [d2, d1].
-    expect(p1.hand.length).toBe(2)
-    expect(p1.hand[0]!.id).toBe('d2') // top of deck drawn first
-    expect(p1.hand[1]!.id).toBe('d1')
+    // Drawing is explicit; playing a card does not refill the hand.
+    expect(p1.hand.length).toBe(0)
+    expect(p1.deck_pile.length).toBe(2)
     expect(p1.zones[0]!.cards.length).toBe(2) // 1 defender + 1 played
     expect(p1.zones[0]!.cards[1]!.id).toBe('c1')
     expect(p1.actions_remaining).toBe(1)
@@ -345,17 +344,18 @@ describe('flipCard / discardFromZone / discardFromHand', () => {
  * -------------------------------------------------------------------- */
 
 describe('canPlayerDealDamage', () => {
-  it('2 players: order=1 deals only on turn >= 1', () => {
+  it('2 players: the second player starts; attacks open on turn 1', () => {
     expect(canPlayerDealDamage(1, 2, 0)).toBe(false)
     expect(canPlayerDealDamage(1, 2, 1)).toBe(true)
-    expect(canPlayerDealDamage(2, 2, 0)).toBe(false)
+    expect(canPlayerDealDamage(2, 2, 0)).toBe(true)
   })
 
-  it('3 players: order=N deals only on turn 0; everyone from turn 1', () => {
+  it('3 players: the last player starts; everyone attacks from turn 2', () => {
     expect(canPlayerDealDamage(1, 3, 0)).toBe(false)
     expect(canPlayerDealDamage(2, 3, 0)).toBe(false)
     expect(canPlayerDealDamage(3, 3, 0)).toBe(true)
-    expect(canPlayerDealDamage(1, 3, 1)).toBe(true)
+    expect(canPlayerDealDamage(1, 3, 1)).toBe(false)
+    expect(canPlayerDealDamage(1, 3, 2)).toBe(true)
   })
 })
 

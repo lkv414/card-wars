@@ -80,6 +80,15 @@ export class LobbyRoom extends DurableObject<Env> {
       return this.json(this.localGameState, this.localGameState ? 200 : 404)
     }
 
+    if (request.method === 'POST' && url.pathname === '/internal/game-state') {
+      const body = await request.json() as Record<string, unknown>
+      const state = body.state && typeof body.state === 'object' ? body.state as Record<string, unknown> : body
+      this.localGameState = state
+      this.localMode = true
+      await this.ctx.storage.put('localGameState', this.localGameState)
+      return this.json({ ok: true, version: state.version ?? null })
+    }
+
     if (request.method === 'GET' && url.pathname === '/internal/membership') {
       const playerId = url.searchParams.get('playerId')
       const players = Array.isArray(this.localLobby?.lobby_players)

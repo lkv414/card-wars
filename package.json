@@ -16,6 +16,7 @@
     "db:push": "node scripts/db-push.mjs",
     "db:schema": "node scripts/generate-db-schema.mjs",
     "catalog:migrate": "node scripts/migrate-catalog-to-kv.mjs",
+    "catalog:mechanics": "node scripts/assign-mechanics-status.mjs && node scripts/build-individual-supabase-sql.mjs",
     "ocr": "node scripts/ocr-cards.mjs",
     "build": "vite build",
     "lint": "eslint .",

@@ -8,6 +8,7 @@
 
 import type { BattleEvent, Card, GameState, PlayerState, Zone } from './types'
 import { cardMatchesId, findCardInZone, replaceCardInZone } from './cards'
+import { effectiveAttackForCombat, effectiveHealthForCombat } from './mechanics-runtime'
 
 /**
  * Mirrors `can_player_deal_damage(attacker_order, alive_count, turn)`.
@@ -25,15 +26,11 @@ export function canPlayerDealDamage(
   turn: number,
 ): boolean {
   if (aliveCount <= 2) {
-    return attackerOrder === 1 && turn >= 1
+    return attackerOrder >= aliveCount || turn >= aliveCount - 1
   }
-  // 3 or 4 players
-  if (turn === 0) {
-    if (aliveCount === 3) return attackerOrder === aliveCount
-    // 4 players: only second-to-last deals on turn 0
-    return attackerOrder === aliveCount - 1
-  }
-  return true
+  // The canonical SQL rule starts the last player, then opens attacks to
+  // everyone from the penultimate turn onward.
+  return attackerOrder >= aliveCount || turn >= aliveCount - 1
 }
 
 /**
@@ -82,6 +79,7 @@ export function resolveAttack(
   state: GameState,
   attackerId: string,
   fromZone: number,
+  selection: { attackerCardId?: string; defenderId?: string; toZone?: number } = {},
 ): { state: GameState; event: BattleEvent } {
   const attacker = state.players.find((p) => p.player_id === attackerId)
   const attackerZone = attacker?.zones.find((z) => z.zone_position === fromZone)
@@ -93,7 +91,9 @@ export function resolveAttack(
     }
   }
 
-  const attackerCard = pickAttackerCard(attackerZone)
+  const attackerCard = selection.attackerCardId
+    ? attackerZone.cards.find((c) => (c.instanceId === selection.attackerCardId || c.id === selection.attackerCardId) && !c.tapped && !c.flipped && !c.isFlipped && effectiveAttackForCombat(c) > 0) ?? null
+    : pickAttackerCard(attackerZone)
   if (!attackerCard) {
     return {
       state,
@@ -105,7 +105,9 @@ export function resolveAttack(
     .filter((p) => (p.health ?? 0) > 0)
     .sort((a, b) => (a.player_order ?? 0) - (b.player_order ?? 0))
 
-  const target = pickBattleTarget(attackerId, fromZone, alivePlayers)
+  const target = selection.defenderId && selection.toZone
+    ? { defenderId: selection.defenderId, toZone: selection.toZone }
+    : pickBattleTarget(attackerId, fromZone, alivePlayers)
   if (!target) {
     return {
       state,
@@ -117,19 +119,24 @@ export function resolveAttack(
   const defenderZone = defender?.zones.find((z) => z.zone_position === target.toZone)
   const defenderCreature = pickDefenderCreature(defenderZone)
 
-  const attack = attackerCard.attack ?? 0
+  const attack = effectiveAttackForCombat(attackerCard)
+  const counterDamage = defenderCreature ? effectiveAttackForCombat(defenderCreature) : 0
   const damage = attack
+  const attackerHp = effectiveHealthForCombat(attackerCard)
+  const defenderHp = defenderCreature ? effectiveHealthForCombat(defenderCreature) : 0
+  const attackerDies = counterDamage >= attackerHp && attackerHp > 0
+  const defenderDies = defenderCreature ? attack >= defenderHp && defenderHp > 0 : false
 
   let nextState = state
   let creatureKilled = false
   let creatureDamaged = false
   let faceDamage = 0
+  let attackerDamaged = false
 
   if (defenderCreature) {
-    const hp = defenderCreature.health ?? defenderCreature.defense ?? 0
-    if (attack > hp) {
-      creatureKilled = true
-      // Drop the killed creature from the defender's zone; push to discard.
+    creatureKilled = defenderDies
+    creatureDamaged = !defenderDies
+    if (defenderDies) {
       nextState = applyZoneMutation(nextState, target.defenderId, target.toZone, (zone) => ({
         ...zone,
         cards: zone.cards.filter((c) => (c.instanceId ?? c.id) !== (defenderCreature.instanceId ?? defenderCreature.id)),
@@ -139,11 +146,26 @@ export function resolveAttack(
         discard_pile: [...(p.discard_pile ?? []), defenderCreature],
       }))
     } else {
-      creatureDamaged = true
-      const newHp = Math.max(0, hp - attack)
       nextState = applyZoneMutation(nextState, target.defenderId, target.toZone, (zone) =>
-        replaceCardInZone(zone, defenderCreature.instanceId ?? defenderCreature.id, (c) => ({ ...c, health: newHp })),
+        replaceCardInZone(zone, defenderCreature.instanceId ?? defenderCreature.id, (c) => ({ ...c, health: defenderHp - attack })),
       )
+    }
+    if (counterDamage > 0) {
+      attackerDamaged = !attackerDies
+      if (attackerDies) {
+        nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) => ({
+          ...zone,
+          cards: zone.cards.filter((c) => (c.instanceId ?? c.id) !== (attackerCard.instanceId ?? attackerCard.id)),
+        }))
+        nextState = applyPlayerMutation(nextState, attackerId, (p) => ({
+          ...p,
+          discard_pile: [...(p.discard_pile ?? []), attackerCard],
+        }))
+      } else {
+        nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) =>
+          replaceCardInZone(zone, attackerCard.instanceId ?? attackerCard.id, (c) => ({ ...c, health: attackerHp - counterDamage })),
+        )
+      }
     }
   } else {
     faceDamage = attack
@@ -153,20 +175,27 @@ export function resolveAttack(
     }))
   }
 
-  // Tap the attacker regardless.
-  nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) =>
-    replaceCardInZone(zone, attackerCard.instanceId ?? attackerCard.id, (c) => ({ ...c, tapped: true })),
-  )
+  // Tap the attacker if it survived counterattack.
+  if (!attackerDies) {
+    nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) =>
+      replaceCardInZone(zone, attackerCard.instanceId ?? attackerCard.id, (c) => ({ ...c, tapped: true })),
+    )
+  }
 
   return {
     state: nextState,
     event: {
       attacker_id: attackerId,
+      attacker_card_id: attackerCard.id,
+      attacker_instance_id: attackerCard.instanceId ?? attackerCard.id,
       from_zone: fromZone,
       defender_id: target.defenderId,
       to_zone: target.toZone,
       damage,
       face_damage: faceDamage,
+      counter_damage: counterDamage,
+      attacker_killed: attackerDies,
+      attacker_damaged: attackerDamaged,
       creature_killed: creatureKilled,
       creature_damaged: creatureDamaged,
     },
@@ -183,7 +212,7 @@ function pickAttackerCard(zone: Zone): Card | null {
         !c.tapped &&
         !c.flipped &&
         !c.isFlipped &&
-        (c.attack ?? 0) > 0,
+        effectiveAttackForCombat(c) > 0,
     ) ?? null
   )
 }
@@ -234,11 +263,16 @@ function emptyEvent(
 ): BattleEvent {
   return {
     attacker_id: attackerId,
+    attacker_card_id: '',
+    attacker_instance_id: '',
     from_zone: fromZone,
     defender_id: defenderId,
     to_zone: toZone,
     damage: 0,
     face_damage: 0,
+    counter_damage: 0,
+    attacker_killed: false,
+    attacker_damaged: false,
     creature_killed: false,
     creature_damaged: false,
   }

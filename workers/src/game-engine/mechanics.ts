@@ -790,6 +790,7 @@ export function hydrateAction(json: Record<string, unknown>): Action {
       return new Imperative({
         verb: typeof json.verb === "string" ? json.verb : "",
         target,
+        effect: typeof json.effect === "string" ? json.effect : "",
         source_text,
       })
     case "peek":

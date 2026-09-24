@@ -10,12 +10,13 @@ import {
   getFullGameState,
   getPlayerGameState,
 } from './supabase'
-import { getLands } from './catalog'
+import { getCardIndex, getLands } from './catalog'
 import { applyAction, isError as isEngineError } from './game-engine/engine'
 import type {
   Action,
   ApplyResult,
   Card,
+  CardCatalogEntry,
   GameState,
   PlayerState,
 } from './game-engine/types.js'
@@ -37,6 +38,7 @@ const KNOWN_ACTIONS = new Set<GameActionName>([
   'play_card',
   'attack',
   'flip_card',
+  'use_ability',
   'draw_free',
   'draw_paid',
   'shuffle_deck',
@@ -53,12 +55,11 @@ const KNOWN_ACTIONS = new Set<GameActionName>([
  * Worker pushes a snapshot every N actions so a Durable Object restart
  * doesn't lose more than N actions of progress.
  *
- * Поднят с 5 → 20 (PERFORMANCE_AUDIT_WORKERS K4): при 100 ходах × 4 игрока
- * старый лимит давал ~80 PATCH'ей по ~50 КБ каждый = 4 МБ egress. С 20 — 20
- * PATCH'ей = 1 МБ. Дополнительно мы всегда persist'им в конце хода
- * (см. handleAction), чтобы данные никогда не терялись больше чем на 1 ход.
+ * Authoritative state is persisted after every action. This is intentionally
+ * conservative while the mechanics runtime is being introduced: correctness and
+ * restart safety take priority over snapshot batching.
  */
-const SNAPSHOT_EVERY_N_ACTIONS = 20
+const SNAPSHOT_EVERY_N_ACTIONS = 1
 
 export class GameRoom extends DurableObject<Env> {
   /** game UUID — also available via ctx.id.name after hibernation */
@@ -342,11 +343,12 @@ export class GameRoom extends DurableObject<Env> {
       if (!raw) {
         throw new Error(`Game ${gameId} not found or snapshot RPC missing`)
       }
-      // Enrich zone metadata from the Worker catalog. The legacy SQL snapshot
-      // stores only land_id, while the engine needs land_type for strict play.
+      // Enrich zone metadata and load the authoritative card catalog from KV.
+      // This is the DB -> KV -> Worker link used by the mechanics runtime.
       let hydrated = raw
+      let cardCatalog: Record<string, CardCatalogEntry> = {}
       try {
-        const lands = await getLands(this.env)
+        const [lands, cards] = await Promise.all([getLands(this.env), getCardIndex(this.env)])
         const landTypes = new Map<string, string>()
         for (const land of lands) {
           const row = land as { id?: unknown; land_type?: unknown }
@@ -354,6 +356,7 @@ export class GameRoom extends DurableObject<Env> {
           const type = String(row.land_type ?? '')
           if (id && type) landTypes.set(id, type)
         }
+        cardCatalog = Object.fromEntries(cards) as Record<string, CardCatalogEntry>
         const players = Array.isArray(raw.players)
           ? (raw.players as Array<Record<string, unknown>>)
           : []
@@ -373,11 +376,13 @@ export class GameRoom extends DurableObject<Env> {
               : [],
           })),
         }
-      } catch {
-        // Catalog hydration is best-effort; a game can still load without it.
+      } catch (error) {
+        console.error('[GameRoom] catalog hydration failed', error)
+        // Mechanics are authoritative, but a missing KV catalog must be visible.
+        cardCatalog = {}
       }
       // eslint-disable-next-line react-hooks/immutability -- DO mutation must happen inside the critical section
-      this.currentGame = rawToGameState(hydrated)
+      this.currentGame = rawToGameState(hydrated, cardCatalog)
       // eslint-disable-next-line react-hooks/immutability -- counter reset, not React state
       this.actionsSinceSnapshot = 0
     })
@@ -435,7 +440,7 @@ export class GameRoom extends DurableObject<Env> {
    * обнаружит свежий counter и не пойдёт в сеть.
    */
   private async persistSnapshot(): Promise<void> {
-    if (!this.currentGame || this.nativeGame || this.devMode) return
+    if (!this.currentGame || this.devMode) return
     await this.ctx.blockConcurrencyWhile(async () => {
       if (!this.currentGame) return
       // Внутри critical section захватываем snapshot текущего state —
@@ -468,6 +473,8 @@ export class GameRoom extends DurableObject<Env> {
             actions_remaining: p.actions_remaining,
             free_draw_used: p.free_draw_used,
             paid_draw_used: p.paid_draw_used,
+            cost_reduction: p.cost_reduction ?? 0,
+            free_play_next: p.free_play_next ?? false,
             zones: p.zones,
           })),
         },
@@ -478,6 +485,20 @@ export class GameRoom extends DurableObject<Env> {
         current_player_id: game.current_player_id,
         current_turn: game.current_turn,
       }
+      if (this.nativeGame) {
+        const targetLobbyId = String(game.lobby_id ?? this.resolveGameId())
+        const lobbyId = this.env.LOBBY_ROOM.idFromName(targetLobbyId)
+        const lobby = this.env.LOBBY_ROOM.get(lobbyId)
+        const response = await lobby.fetch(new Request('https://lobby.internal/internal/game-state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }))
+        if (!response.ok) throw new Error(`Native snapshot save failed: HTTP ${response.status}`)
+        this.actionsSinceSnapshot = 0
+        return
+      }
+
       const { saveFullGameState } = await import('./supabase.js')
       await saveFullGameState(this.env, game.id, payload)
       this.actionsSinceSnapshot = 0
@@ -723,11 +744,16 @@ function rawPlayer(raw: unknown): PlayerState {
     actions_remaining: asInt(obj.actions_remaining, 2),
     free_draw_used: asBool(obj.free_draw_used, false),
     paid_draw_used: asBool(obj.paid_draw_used, false),
+    cost_reduction: asInt(obj.cost_reduction, 0),
+    free_play_next: asBool(obj.free_play_next, false),
     zones: zones as PlayerState['zones'],
   }
 }
 
-function rawToGameState(raw: Record<string, unknown>): GameState {
+function rawToGameState(
+  raw: Record<string, unknown>,
+  catalog: Record<string, CardCatalogEntry> = {},
+): GameState {
   const players = asArray(raw.players).map(rawPlayer)
   return {
     id: asString(raw.id, ''),
@@ -742,6 +768,7 @@ function rawToGameState(raw: Record<string, unknown>): GameState {
     ended_at: asStringOrNull(raw.ended_at),
     turn_started_at: asStringOrNull(raw.turn_started_at),
     players,
+    catalog,
   }
 }
 
@@ -756,6 +783,7 @@ function payloadToEngineAction(
         cardIndex: asInt(payload.cardIndex ?? payload.p_card_index, 0),
         zonePosition: asInt(payload.zonePosition ?? payload.p_zone_position, 1),
         slotType: asStringOrNull(payload.slotType ?? payload.p_slot_type),
+        targetCardIds: asArray<string>(payload.targetCardIds ?? payload.p_target_card_ids),
       }
     case 'attack':
       return {
@@ -770,6 +798,14 @@ function payloadToEngineAction(
         type: 'flip_card',
         zonePosition: asInt(payload.zonePosition ?? payload.p_zone_position, 1),
         cardId: asString(payload.cardId ?? payload.p_card_id, ''),
+      }
+    case 'use_ability':
+      return {
+        type: 'use_ability',
+        zonePosition: asInt(payload.zonePosition ?? payload.p_zone_position, 1),
+        cardId: asString(payload.cardId ?? payload.p_card_id, ''),
+        mechanicIndex: asInt(payload.mechanicIndex ?? payload.p_mechanic_index, 0),
+        targetCardIds: asArray<string>(payload.targetCardIds ?? payload.p_target_card_ids),
       }
     case 'draw_free':
       return { type: 'draw_free' }

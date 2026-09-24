@@ -14,10 +14,10 @@ import {
   getPlayer,
   getZone,
   pushDiscard,
-  refillHand,
   reshuffleIfNeeded,
   shuffleDeck,
 } from './utils'
+import { dispatchMechanicEvent, resolveSpell } from './mechanics-runtime'
 import type {
   Action,
   ApplyResult,
@@ -28,8 +28,11 @@ import type {
   Zone,
 } from './types'
 
-const STARTING_HAND_SIZE = 5
 const ZONE_LIMIT = 10
+
+function cardKeyForRuntime(card: Card): string {
+  return String(card.instanceId ?? card.id)
+}
 
 function err(msg: string): EngineError {
   return { error: msg }
@@ -44,12 +47,11 @@ function withPlayer(state: GameState, playerId: string, fn: (p: PlayerState) => 
 
 /** Landscape type of a card — falls back to the catalog entry. */
 function getCardLandType(state: GameState, card: Card): string | null {
-  if (card.is_rainbow) return 'any'
+  const cat = state.catalog?.[card.id]
+  if (cat?.is_rainbow === true || card.is_rainbow) return 'any'
   const fromCard = typeof card.land_type === 'string' ? card.land_type : null
   if (fromCard) return fromCard
-  const cat = state.catalog?.[card.id]
-  const catLand = cat?.land_type
-  return typeof catLand === 'string' ? catLand : null
+  return typeof cat?.land_type === 'string' ? cat.land_type : null
 }
 
 /** Card Wars land rule: a card lands only on a matching landscape. */
@@ -67,15 +69,18 @@ function updateZones(player: PlayerState, zonePosition: number, cards: Card[]): 
 /** Cost lookup — falls back to card.cost if catalog missing the entry. */
 function getCardCost(state: GameState, card: Card): number {
   const cat = state.catalog?.[card.id]
-  if (cat?.cost !== undefined) return cat.cost
-  if (typeof card.cost === 'number') return card.cost
-  return 1
+  const base = cat?.cost ?? (typeof card.cost === 'number' ? card.cost : 1)
+  const player = getActivePlayer(state)
+  const reduced = Math.max(0, base - Number(player?.cost_reduction ?? 0))
+  return player?.free_play_next ? 0 : reduced
 }
 
 /** Card slot lookup — building or creature. */
 function getCardSlot(state: GameState, card: Card): 'creature' | 'building' {
   const cat = state.catalog?.[card.id]
-  return cat?.slot_type ?? card.slot_type ?? 'creature'
+  if (cat?.card_type === 'building') return 'building'
+  if (card.card_type === 'building') return 'building'
+  return 'creature'
 }
 
 /**
@@ -91,16 +96,16 @@ export function playCard(
   if (!me) return err('Сейчас не ваш ход')
 
   const { cardIndex, zonePosition, slotType } = payload
-
   if (cardIndex < 0 || cardIndex >= me.hand.length) return err('Неверный индекс карты')
   if (zonePosition < 1 || zonePosition > 4) return err('Неверная позиция зоны (1-4)')
 
   const card = me.hand[cardIndex]
-  // Narrow `slot` from the union (`'creature' | 'building' | undefined`)
-  // by picking the first matching value. Unknown strings fall back to
-  // `undefined` so `Card.slot_type` stays strictly typed.
-  const rawSlot = slotType ?? getCardSlot(state, card)
-  const slot: 'creature' | 'building' = rawSlot === 'building' ? 'building' : 'creature'
+  const catalogType = state.catalog?.[card.id]?.card_type ?? card.card_type
+  const isSpell = catalogType === 'spell' || card.card_type === 'spell'
+  const expectedSlot = getCardSlot(state, card)
+  if (!isSpell && slotType && slotType !== expectedSlot) {
+    return err('Недопустимый тип слота для этой карты')
+  }
 
   const cost = getCardCost(state, card)
   if ((me.actions_remaining ?? 0) < cost) {
@@ -109,13 +114,11 @@ export function playCard(
 
   const zone = getZone(me, zonePosition)
   if (!zone) return err('Зона не найдена')
-  if (zone.cards.length >= ZONE_LIMIT) return err('Земля полная')
+  if (!isSpell && zone.cards.length >= ZONE_LIMIT) return err('Земля полная')
 
-  // Land-placement rule (lobby setting). 'strict' (default) requires the
-  // card's landscape to match the zone's landscape — universal/rainbow/spell
-  // cards are always allowed. 'free' skips the check entirely.
+  // Land-placement rule (lobby setting). Spells are not placed on a lane.
   const rule = ((state.game_state?.landPlacementRule as string) || 'strict')
-  if (rule === 'strict' && card.card_type !== 'spell') {
+  if (rule === 'strict' && !isSpell) {
     const cardLand = getCardLandType(state, card)
     const zoneLand = (zone.land_type as string) || null
     if (!isLandCompatible(cardLand, zoneLand)) {
@@ -123,31 +126,54 @@ export function playCard(
     }
   }
 
-  // Slot-specific guard — building cards can only go on the matching slot.
-  if (slot === 'building') {
-    const nonBuilding = zone.cards.find((c) => c.card_type !== 'building' && c.card_type !== 'spell')
-    if (nonBuilding) return err('Слот строения занят существом')
-  } else {
-    const blocked = zone.cards.some((c) => c.slot_type === 'creature' || c.card_type === 'building')
-    if (blocked) return err('Слот существа занят строением')
+  // Slot-specific guard — slot is derived from the trusted catalog/card type.
+  if (!isSpell) {
+    if (expectedSlot === 'building') {
+      const nonBuilding = zone.cards.find((c) => c.card_type !== 'building' && c.card_type !== 'spell')
+      if (nonBuilding) return err('Слот строения занят существом')
+    } else {
+      const blocked = zone.cards.some((c) => c.slot_type === 'creature' || c.card_type === 'building')
+      if (blocked) return err('Слот существа занят строением')
+    }
   }
 
-  // Mutate: take card out of hand, push to zone, untap, refill hand.
+  // Mutate: take card out of hand. There is no hidden refill; draw is a
+  // separate explicit action. Spells are temporarily present for on-play
+  // dispatch and then moved to discard.
   const newHand = [...me.hand.slice(0, cardIndex), ...me.hand.slice(cardIndex + 1)]
-  const placedCard: Card = { ...card, tapped: false, flipped: false, zone_position: zonePosition, slot_type: slot }
-  const newZoneCards = [...zone.cards, placedCard]
-
-  const { hand: filledHand, deck: newDeck } = refillHand(newHand, me.deck_pile, STARTING_HAND_SIZE)
-
+  const placedCard: Card = {
+    ...card,
+    card_type: isSpell ? 'spell' : card.card_type,
+    tapped: false,
+    flipped: false,
+    zone_position: zonePosition,
+    slot_type: isSpell ? undefined : expectedSlot,
+  }
   const updated: PlayerState = {
     ...me,
-    hand: filledHand,
-    deck_pile: newDeck,
-    deck_remaining: newDeck.length,
+    hand: newHand,
     actions_remaining: Math.max(0, (me.actions_remaining ?? 0) - cost),
+    free_play_next: cost === 0 ? false : me.free_play_next,
   }
-  const withZone = updateZones(updated, zonePosition, newZoneCards)
-  const next = withPlayer(state, me.player_id, () => withZone)
+  let next = withPlayer(state, me.player_id, () => updateZones(updated, zonePosition, [...zone.cards, placedCard]))
+  next = isSpell
+    ? resolveSpell(next, me.player_id, placedCard.instanceId ?? placedCard.id, payload.targetCardIds)
+    : dispatchMechanicEvent(next, {
+        type: 'on_enters_play',
+        actorId: me.player_id,
+        cardId: placedCard.instanceId ?? placedCard.id,
+      })
+
+  if (isSpell) {
+    next = withPlayer(next, me.player_id, (p) => {
+      const rebuilt = p.zones.map((z) => ({
+        ...z,
+        cards: z.cards.filter((c) => cardKeyForRuntime(c) !== (placedCard.instanceId ?? placedCard.id)),
+      }))
+      return { ...p, zones: rebuilt, discard_pile: [...p.discard_pile, placedCard] }
+    })
+  }
+
   return { state: bumpVersion(next) }
 }
 
@@ -170,7 +196,12 @@ export function drawFree(state: GameState): ApplyResult | EngineError {
     discard_pile: discard,
     free_draw_used: true,
   }
-  return { state: bumpVersion(withPlayer(state, me.player_id, () => updated)) }
+  const next = dispatchMechanicEvent(withPlayer(state, me.player_id, () => updated), {
+    type: 'on_draw',
+    actorId: me.player_id,
+    cardId: drawn.instanceId ?? drawn.id,
+  })
+  return { state: bumpVersion(next) }
 }
 
 /** draw_card_for_action — paid draw, costs 1 action point. */
@@ -194,7 +225,12 @@ export function drawPaid(state: GameState): ApplyResult | EngineError {
     actions_remaining: (me.actions_remaining ?? 0) - 1,
     paid_draw_used: true,
   }
-  return { state: bumpVersion(withPlayer(state, me.player_id, () => updated)) }
+  const next = dispatchMechanicEvent(withPlayer(state, me.player_id, () => updated), {
+    type: 'on_draw',
+    actorId: me.player_id,
+    cardId: drawn.instanceId ?? drawn.id,
+  })
+  return { state: bumpVersion(next) }
 }
 
 /** shuffle_deck — RNG-driven reshuffle of deck + discard. */
@@ -273,9 +309,10 @@ export function discardFromZone(
  *   - уже перевёрнута ли в этом ходу (flipped_this_turn)
  *   - заблокирована ли карта через flipped (уже лежит лицом вниз) или FloopDisabled
  */
-/** Ищет действие flip_ability, вложенное в actions[] механик карты. */
-function findFlipAbility(card: Card): Record<string, unknown> | null {
-  const mechs = (card as Record<string, unknown>).mechanics
+/** Ищет действие flip_ability во встроенном или KV-каталоге карты. */
+function findFlipAbility(state: GameState, card: Card): Record<string, unknown> | null {
+  const catalog = state.catalog?.[card.id]
+  const mechs = (catalog?.mechanics ?? (card as Record<string, unknown>).mechanics)
   if (!Array.isArray(mechs)) return null
   for (const m of mechs) {
     if (!m || typeof m !== 'object') continue
@@ -302,15 +339,17 @@ export function canFlipCard(
   const zone = getZone(me, zonePosition)
   if (!zone) return { ok: false, reason: 'Зона не найдена' }
 
-  const card = zone.cards.find((c) => (c.instanceId ?? c.id) === cardId)
+  const card = zone.cards.find((c) => c.instanceId === cardId || c.id === cardId)
   if (!card) return { ok: false, reason: 'Карта не найдена' }
 
   // Проверка наличия flip-способности.
   // flip_ability лежит ВЛОЖЕННО внутри m.actions[] механики (см. mechanics.ts),
   // поэтому ищем и по флагу has_flip/flip_description, и по вложенному действию.
-  const flipAbility = findFlipAbility(card)
+  const flipAbility = findFlipAbility(state, card)
+  const catalog = state.catalog?.[card.id]
   const hasFlip =
-    card.has_flip === true ||
+    catalog?.has_flip === true || card.has_flip === true ||
+    (typeof catalog?.flip_description === 'string' && catalog.flip_description.trim() !== '') ||
     (typeof card.flip_description === 'string' && card.flip_description.trim() !== '') ||
     flipAbility !== null
   if (!hasFlip) return { ok: false, reason: 'У карты нет способности Флюп' }
@@ -320,9 +359,8 @@ export function canFlipCard(
     return { ok: false, reason: 'Карта уже перевёрнута в этом ходу' }
   }
 
-  // FLOOP (флип лицом вниз) в Card Wars всегда бесплатный — это разовая
-  // способность переворота, которая не тратит действия. Стоимость явно 0.
-  const cost = 0
+  const cost = Number(flipAbility?.cost ?? 0)
+  if (!Number.isFinite(cost) || cost < 0) return { ok: false, reason: 'Некорректная стоимость флипа', cost }
 
   if (cost > 0) {
     const actionsLeft = (me as any).actions_remaining ?? (state as any).actions_remaining ?? 2
@@ -347,7 +385,7 @@ export function flipCard(
   const zone = getZone(me, zonePosition)
   if (!zone) return err('Зона не найдена')
 
-  const card = zone.cards.find((c) => (c.instanceId ?? c.id) === cardId)
+  const card = zone.cards.find((c) => c.instanceId === cardId || c.id === cardId)
   if (!card) return err('Карта не найдена')
 
   // Проверяем возможность флипа
@@ -356,19 +394,25 @@ export function flipCard(
 
   const newCards = zone.cards.map((c) => {
     if ((c.instanceId ?? c.id) !== cardId) return c
-    const flipped = !c.flipped
-    return { ...c, flipped, isFlipped: flipped, flipped_this_turn: flipped ? false : c.flipped_this_turn }
+    const wasFlipped = Boolean(c.flipped ?? c.isFlipped)
+    const flipped = !wasFlipped
+    return {
+      ...c,
+      flipped,
+      isFlipped: flipped,
+      flipped_this_turn: flipped ? true : c.flipped_this_turn,
+    }
   })
 
   // Списание стоимости: actions_remaining уменьшаем на cost (если > 0)
   let updatedMe: PlayerState = { ...me, zones: me.zones.map((z) => (z.zone_position === zonePosition ? { ...z, cards: newCards } : z)) }
   const cost = check.cost ?? 0
-  if (cost > 0) {
-    const actionsLeft = (me as any).actions_remaining ?? (state as any).actions_remaining ?? 2
-    updatedMe = { ...updatedMe, actions_remaining: actionsLeft - cost } as PlayerState
-  }
+  if (cost > 0) updatedMe = { ...updatedMe, actions_remaining: updatedMe.actions_remaining - cost }
 
-  return { state: bumpVersion(withPlayer(state, me.player_id, () => updatedMe)) }
+  const flippedCard = newCards.find((c) => (c.instanceId ?? c.id) === cardId)
+  let next = withPlayer(state, me.player_id, () => updatedMe)
+  if (flippedCard) next = dispatchMechanicEvent(next, { type: 'on_flip', actorId: me.player_id, cardId: cardId })
+  return { state: bumpVersion(next) }
 }
 
 /** endTurn — сбросить все flipped_this_turn у текущего игрока. */

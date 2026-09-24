@@ -63,6 +63,9 @@ const lines = [
   '-- current DB CHECK constraint accepts only creature/building/spell.',
   '--',
   '-- Mechanics were normalized to { trigger, actions[], conditions[], ... }.',
+  '-- Requires migration 20260924120000_cards_mechanics_runtime_metadata.sql.',
+  '-- All rows are contract v1; only cards with fully supported runtime actions',
+  '-- are marked implemented. The rest are text_only and are not executable.',
   '-- Generic imperative/passive actions preserve text-only rules but are not',
   '-- executable by the current game engine until handlers are implemented.',
   '',
@@ -73,7 +76,8 @@ const lines = [
   '',
   'INSERT INTO public.cards',
   '  (id, card_number, name, description, card_type, cost, attack, health,',
-  '   has_flip, flip_description, mechanics, image_url, land_type, is_rainbow)',
+  '   has_flip, flip_description, mechanics, mechanics_version, mechanics_status,',
+  '   image_url, land_type, is_rainbow)',
   'VALUES',
 ]
 
@@ -92,6 +96,8 @@ const values = cards.map((card, index) => {
     quote(Boolean(card.has_flip)),
     quote(card.flip_description || ''),
     jsonLiteral(card.mechanics),
+    '1',
+    quote(card.mechanics_status ?? 'text_only'),
     quote(card.image_url),
     quote(card.land_type || 'any'),
     quote(Boolean(card.is_rainbow)),

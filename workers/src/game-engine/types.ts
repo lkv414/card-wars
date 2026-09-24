@@ -75,6 +75,10 @@ export interface PlayerState {
   free_draw_used: boolean
   /** True field — true if the paid draw was already used this turn. */
   paid_draw_used: boolean
+  /** Temporary cost reduction granted by an active card ability. */
+  cost_reduction?: number
+  /** The next playable card is free due to a resolved ability. */
+  free_play_next?: boolean
   /** 4 board slots. */
   zones: Zone[]
   /** Convenience flag — only the active viewer has is_self=true. */
@@ -88,6 +92,10 @@ export interface CardCatalogEntry {
   cost?: number
   /** If defined, engine treats the card as a "building" (one per slot). */
   slot_type?: 'creature' | 'building'
+  /** Structured runtime mechanics loaded from Supabase -> KV. */
+  mechanics?: unknown
+  mechanics_version?: number
+  mechanics_status?: 'unreviewed' | 'text_only' | 'implemented' | 'disabled'
   [extra: string]: unknown
 }
 
@@ -124,11 +132,16 @@ export interface ApplyResult {
 /** One lane fight, used by `end_turn` to drive animations. */
 export interface BattleEvent {
   attacker_id: string
+  attacker_card_id: string
+  attacker_instance_id: string
   from_zone: number
   defender_id: string
   to_zone: number
   damage: number
   face_damage: number
+  counter_damage: number
+  attacker_killed: boolean
+  attacker_damaged: boolean
   creature_killed: boolean
   creature_damaged: boolean
 }
@@ -140,9 +153,16 @@ export interface EngineError {
 
 /** Tagged union of all client actions. Mirrors `GAME_ACTION_RPC` in protocol.ts. */
 export type Action =
-  | { type: 'play_card'; cardIndex: number; zonePosition: number; slotType?: string | null }
+  | { type: 'play_card'; cardIndex: number; zonePosition: number; slotType?: string | null; targetCardIds?: string[] }
   | { type: 'attack'; fromZone: number; attackerCardId: string; toPlayerId: string; toZone: number }
   | { type: 'flip_card'; zonePosition: number; cardId: string }
+  | {
+      type: 'use_ability'
+      zonePosition: number
+      cardId: string
+      mechanicIndex: number
+      targetCardIds?: string[]
+    }
   | { type: 'draw_free' }
   | { type: 'draw_paid' }
   | { type: 'shuffle_deck' }

@@ -20,6 +20,7 @@ import { bumpVersion, getActivePlayer, getAlivePlayers } from './utils'
 import { canPlayerDealDamage, resolveAttack } from './combat'
 import { drawTopCard, reshuffleIfNeeded } from './utils'
 import { clearFlipMarks } from './cards'
+import { cleanupTemporaryEffects, dispatchMechanicEvent } from './mechanics-runtime'
 import type { ApplyResult, Card, EngineError, GameState, PlayerState } from './types'
 
 function err(msg: string): EngineError {
@@ -88,6 +89,8 @@ function resetTurnCounters(player: PlayerState): PlayerState {
     actions_remaining: 2,
     free_draw_used: false,
     paid_draw_used: false,
+    cost_reduction: 0,
+    free_play_next: false,
   }
 }
 
@@ -107,7 +110,8 @@ export function endTurn(state: GameState): ApplyResult | EngineError {
     return err('Вы единственный живой — игра окончена')
   }
 
-  let workingState = cleaned
+  let workingState = cleanupTemporaryEffects(cleaned)
+  workingState = dispatchMechanicEvent(workingState, { type: 'end_of_turn', actorId: attacker.player_id })
   let battleEvents: ApplyResult['battleEvents'] = []
   let gameFinished = false
   let winnerId: string | null | undefined = undefined
@@ -115,7 +119,12 @@ export function endTurn(state: GameState): ApplyResult | EngineError {
   if (canPlayerDealDamage(attacker.player_order, alivePlayers.length, state.current_turn ?? 0)) {
     for (let lane = 1; lane <= 4; lane += 1) {
       const { state: after, event } = resolveAttack(workingState, attacker.player_id, lane)
-      workingState = after
+      workingState = dispatchMechanicEvent(after, {
+        type: 'on_creature_attacks',
+        actorId: attacker.player_id,
+        cardId: event.attacker_instance_id || undefined,
+        targetCardIds: [],
+      })
       battleEvents = [...(battleEvents ?? []), event]
 
       if (event.face_damage > 0) {
@@ -182,16 +191,23 @@ export function endTurn(state: GameState): ApplyResult | EngineError {
     p.player_id === advancedNext.player_id ? advancedNext : p,
   )
 
+  let nextTurnState: GameState = {
+    ...workingState,
+    current_player_id: advancedNext.player_id,
+    current_turn: (workingState.current_turn ?? 0) + 1,
+    players,
+    game_state: { ...(workingState.game_state ?? {}), turnPhase: 'main' },
+  }
+  nextTurnState = dispatchMechanicEvent(nextTurnState, { type: 'start_of_next_turn', actorId: advancedNext.player_id })
+  nextTurnState = dispatchMechanicEvent(nextTurnState, { type: 'start_of_turn', actorId: advancedNext.player_id })
+
   const logEntry = drewCard
     ? `Ход: ${advancedNext.nickname ?? advancedNext.player_id} · +1 карта · 2 действия`
     : `Ход: ${advancedNext.nickname ?? advancedNext.player_id} · колода пуста · 2 действия`
 
   const final = bumpVersion({
-    ...workingState,
-    current_player_id: advancedNext.player_id,
-    current_turn: (workingState.current_turn ?? 0) + 1,
-    players,
-    game_state: { ...(workingState.game_state ?? {}), turnPhase: 'main', log: appendLog(workingState, logEntry) },
+    ...nextTurnState,
+    game_state: { ...(nextTurnState.game_state ?? {}), log: appendLog(nextTurnState, logEntry) },
   })
 
   return {

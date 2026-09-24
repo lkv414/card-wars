@@ -1,35 +1,51 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "supabase": {
-      "type": "remote",
-      "url": "https://mcp.supabase.com/mcp?project_ref=<supabase-project>",
-      "enabled": true
-    },
-    "docker": {
-      "type": "local",
-      "command": ["C:\\Users\\<redacted>\\AppData\\Local\\hermes\\bin\\uvx.exe", "docker-mcp-server"],
-      "enabled": true
-    },
-    "chrome-devtools": {
-      "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
-      "enabled": true
-    },
-    "duckduckgo-search": {
-      "type": "local",
-      "command": ["npx", "-y", "duckduckgo-mcp-server"],
-      "enabled": true
-    },
-    "github": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
-      "enabled": true
-    },
-    "chrome-mcp-server": {
-      "type": "remote",
-      "url": "http://127.0.0.1:12306/mcp",
-      "enabled": true
+    "servers": {
+      "supabase": {
+        "type": "remote",
+        "url": "https://mcp.supabase.com/mcp?project_ref=<supabase-project>",
+        "timeout": {
+          "startup": 45000,
+          "catalog": 30000,
+          "execution": 600000
+        }
+      },
+      "docker": {
+        "type": "local",
+        "command": [
+          "C:\\Users\\<redacted>\\AppData\\Local\\hermes\\bin\\uvx.exe",
+          "docker-mcp-server"
+        ]
+      },
+      "chrome-devtools": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "chrome-devtools-mcp@latest"
+        ]
+      },
+      "duckduckgo-search": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "duckduckgo-mcp-server"
+        ]
+      },
+      "github": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "@modelcontextprotocol/server-github"
+        ]
+      },
+      "chrome-mcp-server": {
+        "type": "remote",
+        "url": "http://127.0.0.1:12306/mcp"
+      }
     }
   }
 }

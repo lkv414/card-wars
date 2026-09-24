@@ -1,0 +1,52 @@
+{
+  "cards": 504,
+  "cards_with_description": 494,
+  "cards_with_mechanics": 493,
+  "cards_with_empty_mechanics": 11,
+  "counts": {
+    "empty_description": 10,
+    "generic_description": 259,
+    "kept_structured": 38,
+    "mechanic_generic": 253,
+    "mechanic_supported": 290,
+    "reparsed_description": 196
+  },
+  "generic_source_types": {
+    "unparsed_description": 241,
+    "aura": 3,
+    "trigger": 2,
+    "conditional": 2,
+    "suppress": 1,
+    "prevent_damage": 1,
+    "on_deal_damage": 1,
+    "on_applied": 1,
+    "additional_cost": 1
+  },
+  "engine_supported_action_types": [
+    "aoe_damage",
+    "cost_reduction",
+    "deal_damage",
+    "destroy",
+    "discard_cards",
+    "draw_cards",
+    "face_attack",
+    "flip_ability",
+    "flip_landscape",
+    "freeze_landscape",
+    "gain_actions",
+    "heal",
+    "ignore_damage",
+    "immunity",
+    "imperative",
+    "manual",
+    "mill",
+    "move",
+    "passive",
+    "peek",
+    "play_for_free",
+    "return_from_discard",
+    "search",
+    "stat_buff"
+  ],
+  "note": "Generic actions preserve unresolved rules as text; they are not executable by the current engine."
+}

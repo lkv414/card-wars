@@ -43,10 +43,11 @@ export function TopBar({
     <header className="deck-header">
       <div className="deck-header-row">
         <div className="deck-header-start">
-          <button type="button" className="deck-icon-btn" onClick={() => navigate('/')} aria-label="Назад">
+          <button type="button" className="deck-icon-btn" onClick={() => navigate('/decks')} aria-label="Назад к колодам">
             ←
           </button>
           <div className="deck-header-brand">
+            <span className="deck-header-eyebrow">Колода</span>
             <h1>Редактор колод</h1>
           </div>
         </div>
@@ -68,7 +69,7 @@ export function TopBar({
           />
           <DeckStat
             label="Герой"
-            text={heroLabel || 'Выберите Героя'}
+            text={heroLabel || 'Выберите героя'}
             onClick={onOpenHeroes}
             missing={heroMissing}
             progress={heroProgress}

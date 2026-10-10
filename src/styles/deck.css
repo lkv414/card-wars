@@ -1,40 +1,8 @@
 /**
- * deck.css — Стили для работы с колодами
+ * deck.css — стили редактора колод и списка колод.
  *
- * Содержит стили для DeckList, DeckBuilder, CardTile и связанных компонентов.
+ * Редактор: deck/builder.css (единый файл, цвета из variables.css).
+ * Список колод: стили в components/DeckList.css.
  */
 
-@import url('./deck/shell.css');
-@import url('./deck/header.css');
-@import url('./deck/layout.css');
-@import url('./deck/filters.css');
-@import url('./deck/dock.css');
-@import url('./deck/card-tile.css');
-@import url('./deck/responsive.css');
-
-
-/* === Кликабельный показатель героя — как у Карт/Земель, но тянется по тексту === */
-.deck-stat--clickable {
-  border: none;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.deck-stat--clickable .deck-stat-value {
-  font-size: 13px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  text-transform: none;
-  letter-spacing: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
+@import url('./deck/builder.css');

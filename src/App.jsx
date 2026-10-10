@@ -23,7 +23,7 @@ const GameScreen = lazy(() =>
 
 function GameLoadingFallback({ message = 'Загружаем игру...' }) {
   return (
-    <div className="game-loading" role="status" aria-live="polite">
+    <div className="app-status" role="status" aria-live="polite">
       {message}
     </div>
   )
@@ -31,7 +31,7 @@ function GameLoadingFallback({ message = 'Загружаем игру...' }) {
 
 function SupabaseConfigMissing() {
   return (
-    <div className="game-loading" role="alert">
+    <div className="app-status" role="alert">
       <h1>Card Wars</h1>
       <p>
         Не заданы переменные <code>VITE_SUPABASE_URL</code> и{' '}

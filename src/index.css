@@ -34,6 +34,7 @@ code {
   border-radius: 4px;
 }
 
+.app-status,
 .error-boundary {
   display: flex;
   flex-direction: column;
@@ -43,16 +44,27 @@ code {
   padding: 24px;
   text-align: center;
   gap: 16px;
+  background: var(--bg);
+  color: var(--text);
 }
 
+.app-status h1,
 .error-boundary h1 {
   margin: 0;
   font-size: 28px;
+  color: var(--text-heading);
+  font-weight: 900;
 }
 
+.app-status p,
 .error-boundary p {
   max-width: 480px;
-  color: #666;
+  color: var(--text-muted);
+}
+
+.app-status code {
+  background: var(--bg-muted);
+  color: var(--text);
 }
 
 .error-boundary button {
@@ -65,9 +77,10 @@ code {
   max-width: 640px;
   overflow: auto;
   text-align: left;
-  background: #f5f5f5;
+  background: var(--bg-muted);
+  color: var(--text);
   padding: 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .visually-hidden {

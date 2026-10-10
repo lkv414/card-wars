@@ -54,6 +54,11 @@ Source: [affaan-m/ECC](https://github.com/affaan-m/ECC) (Everything Claude Code)
 | [threejs-audio](threejs-audio/SKILL.md) | Spatial audio for cards / combat |
 | [threejs-webxr](threejs-webxr/SKILL.md) | VR/AR (future) |
 | [threejs-node-tsl](threejs-node-tsl/SKILL.md) | Three Shading Language (advanced) |
+| [card-wars-rules](card-wars-rules/SKILL.md) | **Project.** Mechanics runtime, `implemented` only, lands |
+| [r3f-board-3d](r3f-board-3d/SKILL.md) | **Project.** 3D board: CardFace, memo, clicks, attack targets |
+| [supabase-migrations](supabase-migrations/SKILL.md) | **Project.** Idempotent migrations, reseed from `individual_cards` |
+| [worker-durable-objects](worker-durable-objects/SKILL.md) | **Project.** Authoritative game room in Worker, no SQL RPC |
+| [project-gate](project-gate/SKILL.md) | **Project.** Full test/build gate before commit |
 
 ## Task → skill bundles
 

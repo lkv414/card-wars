@@ -162,7 +162,6 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
                 disabled={!allHaveDecks}
                 aria-disabled={!allHaveDecks}
                 aria-label={allHaveDecks ? 'Начать игру' : `Нужно выбрать колоды: ${missingDeckNames.join(', ')}`}
-                style={{ marginTop: '0.5rem', background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)' }}
               >
                 ▶ Начать игру
               </button>

@@ -1,11 +1,10 @@
 /**
- * variables.css — CSS-переменные для темы приложения
- * 
- * Содержит цветовую палитру, размеры и другие переменные дизайн-системы.
- * 
- * Использование:
- * - по умолчанию: система переключается автоматически через @media (prefers-color-scheme)
- * - с useTheme: можно явно задать тему через классы .theme-light / .theme-dark
+ * variables.css — дизайн-токены Card Wars.
+ *
+ * Один источник правды для цветов, радиусов, теней, отступов и типографики.
+ * Светлая тема (по умолчанию) — тёплая, «бумажная», с янтарным акцентом.
+ * Тёмная тема — через .theme-dark или автоматически по prefers-color-scheme.
+ * Имена токенов сохранены, чтобы существующие классы не ломались.
  */
 
 :root {
@@ -13,44 +12,52 @@
   --card-width: 140px;
   --card-aspect: 5 / 7;
 
-  /* Цвета светлой темы */
-  --bg: #f5efe4;
-  --bg-elevated: #fffaf1;
-  --bg-surface: #fff7e8ee;
-  --bg-muted: #f3ebe0;
-  --border: #e5d7bf;
-  --border-strong: #e0d2bd;
-  --text: #3c3026;
-  --text-heading: #2b1c12;
-  --text-muted: #7a6550;
-  --accent: #f5a623;
-  --accent-hover: #e59200;
-  --accent-soft: #fff1d6;
-  --accent-text: #8a5200;
-  --success: #189653;
-  --success-soft: #e8f8dd;
-  --success-text: #267a22;
-  --danger: #f87171;
-  --danger-hover: #ef4444;
-  --danger-soft: #fee2e2;
-  --danger-text: #b83221;
-  --warn-soft: #fff2c7;
-  --warn-text: #9b6500;
-  --info-soft: #d9e9ff;
-  --info-text: #1d4ed8;
-  --shadow: 0 14px 40px #6b44221a;
-  --shadow-sm: 0 2px 8px #6b44221f;
-  --focus-ring: #f5a623;
-  --primary: #22a95f;
-  --primary-hover: #1b8a4d;
+  /* Поверхности и текст (светлая тема) */
+  --bg: #f7f1e6;
+  --bg-elevated: #fffdf8;
+  --bg-surface: #fffaf0f2;
+  --bg-muted: #f1e8d8;
+  --border: #e8dccb;
+  --border-strong: #d9c9b0;
+  --text: #3d2f22;
+  --text-heading: #24170c;
+  --text-muted: #7d6a57;
+
+  /* Акцент: янтарь */
+  --accent: #e8921a;
+  --accent-hover: #cf7d0a;
+  --accent-soft: #fcebd0;
+  --accent-text: #8a4f00;
+
+  /* Статусы */
+  --success: #1f9d5c;
+  --success-soft: #e2f5ea;
+  --success-text: #1b7a47;
+  --danger: #e5484d;
+  --danger-hover: #c93a3f;
+  --danger-soft: #fde4e4;
+  --danger-text: #b3262b;
+  --warn-soft: #fdf1c9;
+  --warn-text: #8a5a00;
+  --info-soft: #e0ebfb;
+  --info-text: #1f54b8;
+
+  /* Тени */
+  --shadow: 0 16px 40px #5a3a1a1f;
+  --shadow-sm: 0 2px 6px #5a3a1a1a;
+  --focus-ring: #e8921a;
+
+  /* Основное действие (зелёный) */
+  --primary: #1f9d5c;
+  --primary-hover: #188449;
   --primary-text: #ffffff;
-  
+
   /* Радиусы */
   --radius: 12px;
-  --radius-lg: 22px;
+  --radius-lg: 20px;
   --radius-sm: 8px;
 
-  /* Шкала отступов */
+  /* Шкала отступов (4px-сетка) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -59,10 +66,13 @@
   --space-8: 32px;
 
   /* Типографика */
+  --font-sans: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-mono: ui-monospace, Consolas, monospace;
+  --font-size-xs: 12px;
   --font-size-sm: 14px;
   --font-size-md: 16px;
   --font-size-lg: 20px;
-  --font-size-xl: 32px;
+  --font-size-xl: 30px;
   --font-weight-strong: 800;
 
   /* Safe area для мобильных */
@@ -70,7 +80,7 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
 
-  /* Игровые цвета */
+  /* Игровые цвета (поле боя, не UI) */
   --game-bg: #3d4f5f;
   --game-fog: #3d4f5f;
   --game-felt: #2e5a28;
@@ -80,68 +90,70 @@
   --game-success: #4caf50;
   --game-info: #2196f3;
 
-  /* Цветовая схема */
   color-scheme: light;
 }
 
-/* Явная светлая тема (через .theme-light класс) */
 .theme-light {
-  --bg: #f5efe4;
-  --bg-elevated: #fffaf1;
-  --bg-surface: #fff7e8ee;
-  --bg-muted: #f3ebe0;
-  --border: #e5d7bf;
-  --border-strong: #e0d2bd;
-  --text: #3c3026;
-  --text-heading: #2b1c12;
-  --text-muted: #7a6550;
-  --accent: #f5a623;
-  --accent-hover: #e59200;
-  --accent-soft: #fff1d6;
-  --accent-text: #8a5200;
-  --success: #189653;
-  --success-soft: #e8f8dd;
-  --success-text: #267a22;
-  --danger: #f87171;
-  --danger-hover: #ef4444;
-  --danger-soft: #fee2e2;
-  --danger-text: #b83221;
-  --warn-soft: #fff2c7;
-  --warn-text: #9b6500;
-  --info-soft: #d9e9ff;
-  --info-text: #1d4ed8;
-  --shadow: 0 14px 40px #6b44221a;
+  --bg: #f7f1e6;
+  --bg-elevated: #fffdf8;
+  --bg-surface: #fffaf0f2;
+  --bg-muted: #f1e8d8;
+  --border: #e8dccb;
+  --border-strong: #d9c9b0;
+  --text: #3d2f22;
+  --text-heading: #24170c;
+  --text-muted: #7d6a57;
+  --accent: #e8921a;
+  --accent-hover: #cf7d0a;
+  --accent-soft: #fcebd0;
+  --accent-text: #8a4f00;
+  --success: #1f9d5c;
+  --success-soft: #e2f5ea;
+  --success-text: #1b7a47;
+  --danger: #e5484d;
+  --danger-hover: #c93a3f;
+  --danger-soft: #fde4e4;
+  --danger-text: #b3262b;
+  --warn-soft: #fdf1c9;
+  --warn-text: #8a5a00;
+  --info-soft: #e0ebfb;
+  --info-text: #1f54b8;
+  --shadow: 0 16px 40px #5a3a1a1f;
+  --shadow-sm: 0 2px 6px #5a3a1a1a;
+  --focus-ring: #e8921a;
+  --primary: #1f9d5c;
+  --primary-hover: #188449;
+  --primary-text: #ffffff;
   color-scheme: light;
 }
 
-/* Явная темная тема (через .theme-dark класс) */
 .theme-dark {
-  --bg: #1a1612;
-  --bg-elevated: #242018;
-  --bg-surface: #2a241ce0;
-  --bg-muted: #322b22;
-  --border: #3d3428;
-  --border-strong: #4a3f32;
-  --text: #e8dfd2;
-  --text-heading: #f5efe4;
-  --text-muted: #b5a48e;
+  --bg: #17130f;
+  --bg-elevated: #211b15;
+  --bg-surface: #2a221ce6;
+  --bg-muted: #2d251c;
+  --border: #3a3026;
+  --border-strong: #4d4032;
+  --text: #e9e0d3;
+  --text-heading: #faf4ea;
+  --text-muted: #a99880;
   --accent: #f5a623;
   --accent-hover: #ffb83d;
-  --accent-soft: #4a3514;
+  --accent-soft: #3f2e12;
   --accent-text: #ffc96b;
   --success: #2fbf71;
-  --success-soft: #1a3d28;
+  --success-soft: #173524;
   --success-text: #7ddea3;
   --danger: #f87171;
   --danger-hover: #fb9a9a;
-  --danger-soft: #4a2222;
+  --danger-soft: #3f1f1f;
   --danger-text: #fca5a5;
-  --warn-soft: #4a3a12;
+  --warn-soft: #3d3010;
   --warn-text: #fbbf24;
-  --info-soft: #1e2a44;
+  --info-soft: #1b2740;
   --info-text: #93c5fd;
-  --shadow: 0 14px 40px #00000055;
-  --shadow-sm: 0 2px 8px #00000055;
+  --shadow: 0 16px 40px #00000066;
+  --shadow-sm: 0 2px 6px #00000066;
   --focus-ring: #ffc96b;
   --primary: #2fbf71;
   --primary-hover: #26a862;
@@ -149,35 +161,34 @@
   color-scheme: dark;
 }
 
-/* Автоматическая темная тема (через @media) */
 @media (prefers-color-scheme: dark) {
   :root:not(.theme-light) {
-    --bg: #1a1612;
-    --bg-elevated: #242018;
-    --bg-surface: #2a241ce0;
-    --bg-muted: #322b22;
-    --border: #3d3428;
-    --border-strong: #4a3f32;
-    --text: #e8dfd2;
-    --text-heading: #f5efe4;
-    --text-muted: #b5a48e;
+    --bg: #17130f;
+    --bg-elevated: #211b15;
+    --bg-surface: #2a221ce6;
+    --bg-muted: #2d251c;
+    --border: #3a3026;
+    --border-strong: #4d4032;
+    --text: #e9e0d3;
+    --text-heading: #faf4ea;
+    --text-muted: #a99880;
     --accent: #f5a623;
     --accent-hover: #ffb83d;
-    --accent-soft: #4a3514;
+    --accent-soft: #3f2e12;
     --accent-text: #ffc96b;
     --success: #2fbf71;
-    --success-soft: #1a3d28;
+    --success-soft: #173524;
     --success-text: #7ddea3;
     --danger: #f87171;
     --danger-hover: #fb9a9a;
-    --danger-soft: #4a2222;
+    --danger-soft: #3f1f1f;
     --danger-text: #fca5a5;
-    --warn-soft: #4a3a12;
+    --warn-soft: #3d3010;
     --warn-text: #fbbf24;
-    --info-soft: #1e2a44;
+    --info-soft: #1b2740;
     --info-text: #93c5fd;
-    --shadow: 0 14px 40px #00000055;
-    --shadow-sm: 0 2px 8px #00000055;
+    --shadow: 0 16px 40px #00000066;
+    --shadow-sm: 0 2px 6px #00000066;
     --focus-ring: #ffc96b;
     --primary: #2fbf71;
     --primary-hover: #26a862;

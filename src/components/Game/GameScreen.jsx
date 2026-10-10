@@ -171,7 +171,10 @@ export function GameScreen() {
         <p>
           Задайте <code>VITE_GAME_WS_URL</code> (Cloudflare Workers) для multiplayer.
         </p>
-        <button type="button" onClick={() => navigate('/lobby')}>← Назад в лобби</button>
+        <div className="game-error-actions">
+          <button type="button" onClick={() => navigate('/lobby')}>← Назад в лобби</button>
+          <button type="button" className="secondary" onClick={() => navigate('/')}>В меню</button>
+        </div>
       </main>
     )
   }
@@ -181,7 +184,10 @@ export function GameScreen() {
       <main className="game-error" role="main" aria-live="assertive">
         <h1>Ошибка</h1>
         <p>{storeError}</p>
-        <button onClick={() => navigate('/lobby')}>← Назад в лобби</button>
+        <div className="game-error-actions">
+          <button onClick={() => navigate('/lobby')}>← Назад в лобби</button>
+          <button className="secondary" onClick={() => navigate('/')}>В меню</button>
+        </div>
       </main>
     )
   }
@@ -189,6 +195,7 @@ export function GameScreen() {
   if (!game) {
     return (
       <div className="game-loading" role="status" aria-live="polite">
+        <span className="game-loading-spinner" aria-hidden="true" />
         Загружаем игру...
       </div>
     )

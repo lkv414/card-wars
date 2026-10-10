@@ -8,7 +8,8 @@ export function MainMenu() {
   return (
     <main className="main-menu">
       <div className="main-menu-content">
-        <h1>Card Game</h1>
+        <h1>Card Wars</h1>
+        <p className="main-menu-subtitle">Собирайте колоду и сражайтесь онлайн</p>
 
         <div className="main-menu-form">
           <button type="button" className="btn-join" onClick={() => navigate('/lobby')}>

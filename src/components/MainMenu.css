@@ -16,14 +16,22 @@
 
 .main-menu-content h1 {
   font-size: 48px;
-  margin-bottom: 40px;
+  margin-bottom: 8px;
   color: var(--text-heading, #2b1c12);
+  font-weight: 900;
+}
+
+.main-menu-subtitle {
+  margin: 0 0 var(--space-8, 32px);
+  color: var(--text-muted);
+  font-size: var(--font-size-md, 16px);
+  font-weight: 600;
 }
 
 .main-menu-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--space-4, 16px);
 }
 
 .btn-join,
@@ -32,23 +40,23 @@
   font-size: 18px;
   font-weight: 900;
   border-radius: 14px;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .btn-join {
-  background: #35b86b;
-  color: white;
+  background: var(--primary, #22a95f);
+  color: var(--primary-text, #ffffff);
 }
 
 .btn-join:hover:not(:disabled) {
-  background: #2d9b5a;
+  background: var(--primary-hover, #1b8a4d);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(53, 184, 107, 0.3);
+  box-shadow: 0 12px 30px rgba(34, 169, 95, 0.3);
 }
 
 .btn-editor {
   background: var(--accent, #f5a623);
-  color: white;
+  color: var(--accent-text, #3c2300);
 }
 
 .btn-editor:hover:not(:disabled) {

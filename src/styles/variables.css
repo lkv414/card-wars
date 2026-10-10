@@ -39,10 +39,31 @@
   --info-soft: #d9e9ff;
   --info-text: #1d4ed8;
   --shadow: 0 14px 40px #6b44221a;
+  --shadow-sm: 0 2px 8px #6b44221f;
+  --focus-ring: #f5a623;
+  --primary: #22a95f;
+  --primary-hover: #1b8a4d;
+  --primary-text: #ffffff;
   
   /* Радиусы */
   --radius: 12px;
   --radius-lg: 22px;
+  --radius-sm: 8px;
+
+  /* Шкала отступов */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Типографика */
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 32px;
+  --font-weight-strong: 800;
 
   /* Safe area для мобильных */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -120,6 +141,11 @@
   --info-soft: #1e2a44;
   --info-text: #93c5fd;
   --shadow: 0 14px 40px #00000055;
+  --shadow-sm: 0 2px 8px #00000055;
+  --focus-ring: #ffc96b;
+  --primary: #2fbf71;
+  --primary-hover: #26a862;
+  --primary-text: #0b1f14;
   color-scheme: dark;
 }
 
@@ -151,6 +177,11 @@
     --info-soft: #1e2a44;
     --info-text: #93c5fd;
     --shadow: 0 14px 40px #00000055;
+    --shadow-sm: 0 2px 8px #00000055;
+    --focus-ring: #ffc96b;
+    --primary: #2fbf71;
+    --primary-hover: #26a862;
+    --primary-text: #0b1f14;
     color-scheme: dark;
   }
 }

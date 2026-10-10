@@ -84,8 +84,9 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
+a:focus-visible,
 .card-tile:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus-ring, var(--accent));
   outline-offset: 2px;
 }
 
@@ -315,15 +316,24 @@ h3 {
 /* Основные кнопки */
 .primary,
 .modal-actions button:first-child {
-  background: #22a95f;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-text);
   font-weight: 900;
 }
 
+.primary:hover:not(:disabled),
+.modal-actions button:first-child:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
 .delete-btn {
-  background: #f87171;
-  color: white;
+  background: var(--danger);
+  color: #fff;
   font-weight: 900;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: var(--danger-hover);
 }
 
 .admin-btn {

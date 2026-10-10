@@ -1,6 +1,5 @@
 import { memo } from 'react'
-import { CardDisplay } from '../Shared/CardDisplay'
-import '../Shared/CardDisplay.css'
+import { CardFace } from '../Shared/CardFace'
 import { getIssueSeverity } from '../../utils/adminCardValidation'
 
 /**
@@ -31,7 +30,8 @@ export const AdminCardTile = memo(function AdminCardTile({ card, issues = [], on
       role="button"
       aria-label={`${card.name || 'Без названия'}, №${card.card_number ?? '?'}. ${issues.length ? `${issues.length} замечаний` : 'OK'}`}
     >
-      <CardDisplay card={card} mode="tile" showDescription />
+      {/* Тип земли, не найденный в справочнике, помечается самим CardFace. */}
+      <CardFace card={card} mode="tile" showDescription cardNumber={null} />
       <div className="admin-card-tile-num">#{card.card_number ?? '?'}</div>
       {severity && (
         <span className={`admin-card-tile-severity admin-card-tile-severity--${severity}`}>

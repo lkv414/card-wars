@@ -168,8 +168,15 @@
   box-shadow: 0 0 0 2px #f5a62355, 0 12px 28px #7a4b1f1f;
 }
 
+/* Компактный режим сужает плитку. Токен --card-width переопределяется
+   локально намеренно (grid считает колонки), но сама карта внутри
+   задаётся CardFace, который берёт --card-width из variables.css. */
 .card-tile-compact {
-  --card-width: 120px;
+  --card-tile-width: 120px;
+}
+
+.card-tile-compact .card-face {
+  width: var(--card-tile-width);
 }
 
 /* Оверлей карточки */

@@ -1,9 +1,7 @@
 import { useMemo, useRef } from 'react'
-import { getLandCardBorder } from '../../../constants/landColors'
 import { getCardCost } from '../../../utils/cardFields.ts'
-import { CardDisplay } from '../../Shared/CardDisplay'
-import '../../Shared/CardDisplay.css'
-// Убеждаемся что стили подключены один раз
+import { CardFace } from '../../Shared/CardFace'
+// Стили карты подключаются один раз самим CardFace.
 
 /**
  * HUDHand — карты в руке игрока (внизу экрана, вне Canvas).
@@ -48,14 +46,14 @@ export function HUDHand({
           uniqueHand.map((c, idx) => {
             const isSel = selectedCardIndex === idx
             const isDragging = draggingCardIndex === idx
-            const landBorder = getLandCardBorder(c?.land_type)
+            // Рамку по земле ставит CardFace (из landColors) — раньше
+            // HUDHand вычислял её сам, отдельно от остальных рендеров.
             const cost = getCardCost(c)
             const key = c?.instanceId || c?.id || `hand-${idx}`
             return (
               <div
                 key={key}
                 className={`hud-hand-card${isSel ? ' selected' : ''}${isDragging ? ' dragging' : ''}${isYourTurn ? '' : ' disabled'}`}
-                style={{ '--card-land-border': landBorder }}
                 onClick={(e) => {
                   e.stopPropagation()
                   if (dragMovedRef.current) {
@@ -94,7 +92,7 @@ export function HUDHand({
                 aria-label={`${c?.name ?? `Карта ${idx + 1}`}, стоимость ${cost}`}
                 title={`${c?.name || `Карта ${idx + 1}`} · ⚡${cost} · двойной клик — описание`}
               >
-                <CardDisplay card={c} mode="hand" />
+                <CardFace card={c} mode="hand" />
               </div>
             )
           })

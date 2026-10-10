@@ -3,7 +3,9 @@ import { useArtTileZoom } from '../../hooks/useArtTileZoom'
 import { CARD_ZOOM_SCALE, CARD_ZOOM_SCALE_COMPACT } from '../../utils/cardZoom'
 import { getDeckTileBlockReason } from '../../utils/deckTileLimits'
 import { normalizeDeckEntryId } from '../../utils/deckState'
-import { CardDisplay } from './CardDisplay'
+import { getCardType, getCardImageUrl, getCardCost, getCardAttack, getCardHealth } from '../../utils/cardFields.ts'
+import { STAT_ICONS } from '../../utils/cardFaceModel.js'
+import { CardFace } from './CardFace'
 
 const ZONE_RATIO = 0.30
 
@@ -30,9 +32,11 @@ export const CardTile = memo(function CardTile({
     ? selectedCards[item.id] || selectedCards[normalizedId] || 0
     : 0
 
-  const isLandCard = isLand || (!!item.name && !item.card_type)
-  const imageUrl = item.card_url || item.image_url
-  const hasImage = imageUrl && !imageFailed
+  // Тип карты, арт и статы — только через нормализацию (cardFields), иначе
+  // плитка колоды отличалась бы от той же карты в руке и в админке.
+  const isLandCard = isLand || (!!item.name && !getCardType(item))
+  const imageUrl = getCardImageUrl(item)
+  const hasImage = Boolean(imageUrl) && !imageFailed
   const artOnly = hasImage && !isLandCard
   const zoomScale = compact ? CARD_ZOOM_SCALE_COMPACT : CARD_ZOOM_SCALE
 
@@ -175,7 +179,14 @@ export const CardTile = memo(function CardTile({
           )}
         </div>
       ) : (
-        <CardDisplay card={item} mode="tile" imageFailed={imageFailed} />
+        // Единый рендер карты: имя, стоимость, атака и здоровье берутся
+        // из resolveCardFace, а не из сырых полей item (аудит §2.2).
+        <CardFace
+          card={item}
+          mode="tile"
+          cardNumber={item.card_number ?? null}
+          showDescription={false}
+        />
       )}
 
       {!artOnly && (
@@ -187,38 +198,25 @@ export const CardTile = memo(function CardTile({
             else if (addCard) tryAdd()
           }}
         >
-          <div className="card-tile-top">
-            <h4 className="card-tile-name">{item.name}</h4>
-          </div>
-
-          {!isLandCard && (
-            <div className="card-tile-stats">
-              <span>💧 {item.cost}</span>
-              {item.card_type === 'creature' && (
-                <span>
-                  · ⚔️ {item.attack} · ❤️ {item.health}
-                </span>
-              )}
-            </div>
-          )}
-
           {legacyControls}
         </div>
       )}
 
-      {/* Всплывающая информация: стоимость, описание, урон, защита (если есть) */}
+      {/* Всплывающая подсказка: те же значения лица, тот же набор полей. */}
       <div className="card-tile-info" aria-hidden="true">
         <div className="card-tile-info__head">
           <span className="card-tile-info__name">{item.name}</span>
           {!isLandCard && (
-            <span className="card-tile-info__cost">💧 {item.cost ?? '—'}</span>
+            <span className="card-tile-info__cost">
+              {STAT_ICONS.cost} {getCardCost(item)}
+            </span>
           )}
         </div>
         {item.description && <p className="card-tile-info__desc">{item.description}</p>}
-        {!isLandCard && item.card_type === 'creature' && (
+        {!isLandCard && getCardType(item) === 'creature' && (
           <div className="card-tile-info__stats">
-            <span>⚔️ {item.attack ?? '—'}</span>
-            <span>❤️ {item.health ?? '—'}</span>
+            <span>{STAT_ICONS.attack} {getCardAttack(item) ?? '—'}</span>
+            <span>{STAT_ICONS.health} {getCardHealth(item) ?? '—'}</span>
           </div>
         )}
       </div>

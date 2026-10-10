@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Modal } from './Shared/Modal'
 import { CardArtEditor } from './admin/CardArtEditor'
 import { CARD_TYPES, LAND_TYPES } from '../constants/game'
+import { CardFace } from './Shared/CardFace'
 
 const emptyCard = {
   card_number: '',
@@ -38,9 +39,6 @@ export function CardForm({
   )
   const [jsonError, setJsonError] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  // imageFailed сбрасывается при смене URL (через set('image_url', ...) и
-  // через onChange), не нужен useEffect.
-  const [imageFailed, setImageFailed] = useState(false)
   const submitRef = useRef(() => {})
 
   const imageWarning =
@@ -55,8 +53,6 @@ export function CardForm({
       ...(key === 'cost' && Number(value) === 0 ? { is_rainbow: true, land_type: 'any' } : {}),
       ...(key === 'is_rainbow' && value ? { land_type: 'any' } : {}),
     }))
-    // Сбрасываем флаг ошибки загрузки при смене URL — заменяет useEffect.
-    if (key === 'image_url') setImageFailed(false)
   }
 
   const submit = useCallback(async (force = false) => {
@@ -139,66 +135,11 @@ export function CardForm({
 
         <div className="card-form-layout">
           <aside className="card-form-preview" aria-label="Превью карты">
-            <div className="card-form-preview-art">
-              {form.image_url && !imageFailed ? (
-                <img
-                  src={form.image_url}
-                  alt={form.name || 'Превью карты'}
-                  className="card-form-preview-img"
-                  onError={() => setImageFailed(true)}
-                />
-              ) : (
-                <div className="card-form-preview-fallback" aria-hidden="true">
-                  <span>{LAND_TYPES[form.land_type]?.icon || '🃏'}</span>
-                  <p>{form.image_url ? 'Не удалось загрузить art' : 'Нет изображения'}</p>
-                </div>
-              )}
-              <span className="card-form-preview-num">#{form.card_number || '?'}</span>
-            </div>
-
-            <div className="card-form-preview-meta">
-              <h3 className="card-form-preview-name">{form.name?.trim() || '— без названия —'}</h3>
-              <span className="card-form-preview-type">
-                {CARD_TYPES[form.card_type] || form.card_type || '?'}
-              </span>
-
-              <dl className="card-form-preview-stats">
-                <div>
-                  <dt>💧</dt>
-                  <dd>{form.cost !== '' ? form.cost : '—'}</dd>
-                </div>
-                {form.card_type === 'creature' && (
-                  <>
-                    <div>
-                      <dt>⚔️</dt>
-                      <dd>{form.attack !== '' && form.attack != null ? form.attack : '—'}</dd>
-                    </div>
-                    <div>
-                      <dt>❤️</dt>
-                      <dd>{form.health !== '' && form.health != null ? form.health : '—'}</dd>
-                    </div>
-                  </>
-                )}
-                <div>
-                  <dt>{LAND_TYPES[form.land_type]?.icon || '🌍'}</dt>
-                  <dd>{LAND_TYPES[form.land_type]?.shortLabel || form.land_type || '—'}</dd>
-                </div>
-              </dl>
-
-              <div className="card-form-preview-flags">
-                {form.is_rainbow && <span className="admin-flag admin-flag--rainbow">🌈 радуга</span>}
-                {form.has_flip && <span className="admin-flag admin-flag--flip">Флюп</span>}
-              </div>
-
-              {form.description?.trim() && (
-                <p className="card-form-preview-desc">{form.description}</p>
-              )}
-              {form.has_flip && form.flip_description?.trim() && (
-                <p className="card-form-preview-flip">
-                  <strong>Флюп:</strong> {form.flip_description}
-                </p>
-              )}
-            </div>
+            {/* Превью — тот же CardFace, что в колоде, руке и админке.
+                Раньше здесь была пятая копия разметки карты (аудит §2.1).
+                В mode='full' форма показывает все поля, включая описание,
+                флип, героя и предупреждение о неизвестном типе земли. */}
+            <CardFace card={form} mode="full" showDescription />
           </aside>
 
           <div className="card-form-fields">

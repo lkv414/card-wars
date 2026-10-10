@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useBackNavigation, useNavigateWithOrigin } from '../../hooks/useBackNavigation'
 import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
@@ -33,7 +34,8 @@ function usePreload3DChunk() {
 }
 
 export function LobbyScreen({ toast }) {
-  const navigate = useNavigate()
+  const navigate = useNavigateWithOrigin()
+  const goBack = useBackNavigation('/')
   const { code: codeFromUrl } = useParams()
   const [nickname, setNickname] = useState(getGuestNickname)
   const [joinCode, setJoinCode] = useState(codeFromUrl ?? '')
@@ -211,7 +213,7 @@ export function LobbyScreen({ toast }) {
         </div>
       )}
       <div className="lobby-screen__content">
-        <button className="lobby-back-btn" onClick={() => navigate('/')} aria-label="Назад в главное меню">
+        <button className="lobby-back-btn" onClick={goBack} aria-label="Назад">
           ← Назад
         </button>
 

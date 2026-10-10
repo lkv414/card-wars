@@ -16,7 +16,7 @@ import { useDeckSelection } from '../hooks/useDeckSelection'
 import { useDecks } from '../hooks/useDecks'
 import { useDeckSave } from '../hooks/useDeckSave'
 import { useHeroes } from '../hooks/useHeroes'
-import { useNavigate } from 'react-router-dom'
+import { useBackNavigation } from '../hooks/useBackNavigation'
 import { DEFAULT_FILTERS, filterCards, filterLands } from '../utils/cardSort'
 
 export function DeckBuilder({
@@ -47,7 +47,7 @@ export function DeckBuilder({
   } = useDeckSelection()
   const { addDeck, updateDeckContents, getDeckById } = useDecks()
   const { heroes, loading: heroesLoading } = useHeroes()
-  const navigate = useNavigate()
+  const goBack = useBackNavigation('/decks')
 
   const editingDeck = useMemo(
     () => (editingDeckId ? getDeckById(editingDeckId) : null),
@@ -149,6 +149,7 @@ export function DeckBuilder({
   return (
     <main className="deck-builder">
       <TopBar
+        onBack={goBack}
         deckCode={deckCode}
         cardTotal={cardTotal}
         landTotal={landTotal}
@@ -202,7 +203,7 @@ export function DeckBuilder({
         onClose={closeSaveDialog}
         onConfirm={handleConfirmSave}
         onCopyCode={handleCopySavedCode}
-        onGoToDecks={() => navigate('/decks')}
+        onGoToDecks={goBack}
       />
 
       <DeckModal

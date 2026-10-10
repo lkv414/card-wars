@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigateWithOrigin } from '../hooks/useBackNavigation'
 import { CardForm } from './CardForm'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
 import { AdminBulkEdit } from './admin/AdminBulkEdit'
@@ -28,7 +28,7 @@ export function AdminPanel({
   deleteCard,
   findSimilarCards,
 }) {
-  const navigate = useNavigate()
+  const navigate = useNavigateWithOrigin()
   const { signOut } = useAdminAuth()
   const [filters, setFilters] = useState({ ...DEFAULT_ADMIN_FILTERS })
   const [filtersOpen, setFiltersOpen] = useState(false)

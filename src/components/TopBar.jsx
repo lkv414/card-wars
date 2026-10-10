@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { DECK_LIMITS } from '../constants/game'
 import { DeckStat } from './deck/DeckStat'
 
 const { cards: CARD_LIMITS, lands: LAND_LIMITS } = DECK_LIMITS
 
 export function TopBar({
+  onBack,
   deckCode,
   cardTotal,
   landTotal,
@@ -20,7 +20,6 @@ export function TopBar({
   onToggleFilters,
   onCopyCode,
 }) {
-  const navigate = useNavigate()
   const [codeDraft, setCodeDraft] = useState('')
   const [isEditingCode, setIsEditingCode] = useState(false)
   const codeInputValue = isEditingCode ? codeDraft : deckCode
@@ -43,7 +42,7 @@ export function TopBar({
     <header className="deck-header">
       <div className="deck-header-row">
         <div className="deck-header-start">
-          <button type="button" className="deck-icon-btn" onClick={() => navigate('/decks')} aria-label="Назад к колодам">
+          <button type="button" className="deck-icon-btn" onClick={onBack} aria-label="Назад">
             ←
           </button>
           <div className="deck-header-brand">

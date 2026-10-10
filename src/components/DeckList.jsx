@@ -3,8 +3,8 @@
  * Экран «Мои колоды» — список сохранённых локально колод.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { copyToClipboard } from '../utils/clipboard'
+import { useBackNavigation, useNavigateWithOrigin } from '../hooks/useBackNavigation'
 import { saveDeckSelection, sumDeckQuantities } from '../utils/deckState'
 import { useDecks } from '../hooks/useDecks'
 import { usePresetDecks, presetToDeckSelection } from '../hooks/usePresetDecks'
@@ -14,7 +14,8 @@ import { ConfirmDialog } from './Shared/ConfirmDialog'
 import './DeckList.css'
 
 export function DeckList() {
-  const navigate = useNavigate()
+  const navigate = useNavigateWithOrigin()
+  const goBack = useBackNavigation('/')
   const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck, addDeck } = useDecks()
   const { presets, loading: presetsLoading, error: presetsError } = usePresetDecks()
   const { heroes } = useHeroes()
@@ -98,7 +99,7 @@ export function DeckList() {
   return (
     <main className="decks-page">
       <header className="decks-header">
-        <button className="back-btn" onClick={() => navigate('/')}>← Назад</button>
+        <button className="back-btn" onClick={goBack}>← Назад</button>
         <h1>Мои колоды</h1>
         <button className="create-btn" onClick={() => navigate('/deck')}>
           + Создать колоду

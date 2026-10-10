@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom'
 import { isOfflineTestMode } from '../utils/offlineMode'
+import { useNavigateWithOrigin } from '../hooks/useBackNavigation'
 import './MainMenu.css'
 
 export function MainMenu() {
-  const navigate = useNavigate()
+  const navigate = useNavigateWithOrigin()
 
   return (
     <main className="main-menu">

@@ -1,8 +1,9 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAdminAuth } from '../../context/useAdminAuth'
 
 export function AdminRoute() {
   const { loading, session, isAdmin } = useAdminAuth()
+  const location = useLocation()
 
   if (loading) {
     return (
@@ -13,7 +14,13 @@ export function AdminRoute() {
   }
 
   if (!session || !isAdmin) {
-    return <Navigate to="/admin/login" replace />
+    return (
+      <Navigate
+        to="/admin/login"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    )
   }
 
   return <Outlet />

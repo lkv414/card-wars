@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAdminAuth } from '../../context/useAdminAuth'
 
 export function AdminLogin() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { signIn } = useAdminAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,7 +21,7 @@ export function AdminLogin() {
       setError(result.error || 'Не удалось войти')
       return
     }
-    navigate('/admin', { replace: true })
+    navigate(location.state?.from || '/admin', { replace: true })
   }
 
   return (

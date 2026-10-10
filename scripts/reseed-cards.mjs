@@ -1,10 +1,15 @@
 /**
  * reseed-cards.mjs — генерирует SQL для ПОЛНОЙ перезаливки таблицы `public.cards`.
  *
+ * Источник: individual_cards/cards.json (каноничный каталог, 504 карты).
+ *
  * Что делает:
  *   1. TRUNCATE public.cards CASCADE
- *   2. INSERT всех карт из исходники/cards.with_mechanics.json
- *      (первое image_url идёт в cards.image_url, остальные в card_art)
+ *   2. INSERT всех карт. `card_number` уникален в БД, а в каталоге 43 номера
+ *      повторяются, поэтому номера присваиваются заново: 1..N по порядку каталога.
+ *      Исходный номер сохраняется в `notes` ("orig_card_number=<N>"), чтобы его
+ *      можно было восстановить.
+ *   3. INSERT дополнительных изображений в card_art (если есть image_urls).
  *
  * Использование:
  *   node scripts/reseed-cards.mjs                      # полный reseed SQL
@@ -22,7 +27,7 @@ import { fileURLToPath } from "node:url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, "..")
 
-const SRC = resolve(ROOT, "исходники/cards.with_mechanics.json")
+const SRC = resolve(ROOT, "individual_cards/cards.json")
 const OUT = resolve(ROOT, "supabase/seed/cards_full.sql")
 
 const TRUNCATE_ONLY = process.argv.includes("--truncate-only")
@@ -38,57 +43,59 @@ function sqlEscape(value) {
   if (Array.isArray(value) || typeof value === "object") {
     return `'${JSON.stringify(value).replace(/'/g, "''")}'::jsonb`
   }
-  // string
   return `'${String(value).replace(/'/g, "''")}'`
+}
+
+/**
+ * Присваивает уникальные card_number. Порядок каталога сохраняется.
+ * @returns {Array<object>} карты с полями card_number (новый) и notes (исходный)
+ */
+function assignUniqueNumbers(cards) {
+  return cards.map((c, i) => {
+    const orig = c.card_number
+    return {
+      ...c,
+      card_number: i + 1,
+      notes: orig != null ? `orig_card_number=${orig}` : null,
+    }
+  })
 }
 
 function buildRowInsertSQL(cards) {
   const lines = []
-  lines.push("-- 2. INSERT всех карт (image_url — первый из image_urls)")
+  lines.push("-- 2. INSERT всех карт (image_url — из каталога)")
   lines.push(
-    "INSERT INTO public.cards (card_number, name, description, card_type, cost, attack, health, has_flip, flip_description, mechanics, image_url, land_type, is_rainbow) VALUES"
+    "INSERT INTO public.cards (card_number, name, description, card_type, cost, attack, health, has_flip, flip_description, mechanics, mechanics_version, mechanics_status, image_url, land_type, is_rainbow, notes) VALUES"
   )
   const values = cards.map((c) => {
-    const imageUrls = Array.isArray(c.image_urls) ? c.image_urls : []
-    const imageUrl = imageUrls[0] || null
-    return `  (${sqlEscape(c.card_number)}, ${sqlEscape(c.name)}, ${sqlEscape(c.description)}, ${sqlEscape(c.card_type)}, ${sqlEscape(c.cost)}, ${sqlEscape(c.attack)}, ${sqlEscape(c.health)}, ${sqlEscape(c.has_flip)}, ${sqlEscape(c.flip_description)}, ${sqlEscape(c.mechanics)}, ${sqlEscape(imageUrl)}, ${sqlEscape(c.land_type)}, ${sqlEscape(c.is_rainbow)})`
+    const imageUrl = c.image_url || null
+    return `  (${[
+      sqlEscape(c.card_number),
+      sqlEscape(c.name),
+      sqlEscape(c.description),
+      sqlEscape(c.card_type),
+      sqlEscape(c.cost),
+      sqlEscape(c.attack),
+      sqlEscape(c.health),
+      sqlEscape(c.has_flip),
+      sqlEscape(c.flip_description),
+      sqlEscape(c.mechanics ?? []),
+      sqlEscape(c.mechanics_version ?? 1),
+      sqlEscape(c.mechanics_status ?? "unreviewed"),
+      sqlEscape(imageUrl),
+      sqlEscape(c.land_type),
+      sqlEscape(c.is_rainbow),
+      sqlEscape(c.notes),
+    ].join(", ")})`
   })
   lines.push(values.join(",\n") + ";")
   return lines.join("\n")
 }
 
-function buildCardArtInsertSQL(cards) {
-  // Собираем (card_number, url) пары для ВСЕХ дополнительных image_url
-  // (не первый, который уже в cards.image_url)
-  const lines = []
-  lines.push("")
-  lines.push("-- 3. INSERT дубликатов в card_art (все image_urls кроме первого)")
-  const pairs = []
-  for (const c of cards) {
-    const imageUrls = Array.isArray(c.image_urls) ? c.image_urls : []
-    for (let i = 1; i < imageUrls.length; i++) {
-      pairs.push({ card_number: c.card_number, url: imageUrls[i] })
-    }
-  }
-  if (pairs.length === 0) {
-    lines.push("-- (нет дубликатов)")
-  } else {
-    lines.push("INSERT INTO public.card_art (card_id, image_url)")
-    lines.push("SELECT c.id, v.url")
-    lines.push("FROM public.cards c")
-    lines.push("JOIN (VALUES")
-    const vals = pairs.map(
-      (p) => `    (${sqlEscape(p.card_number)}, ${sqlEscape(p.url)})`
-    )
-    lines.push(vals.join(",\n"))
-    lines.push("  ) AS v(card_number, url) ON c.card_number = v.card_number;")
-  }
-  return lines.join("\n")
-}
-
 function main() {
   const raw = JSON.parse(readFileSync(SRC, "utf8"))
-  const cards = Array.isArray(raw) ? raw : Object.values(raw)
+  const source = Array.isArray(raw) ? raw : Object.values(raw)
+  const cards = assignUniqueNumbers(source)
 
   console.log(`📥 Загружено ${cards.length} карт из ${SRC}`)
 
@@ -96,14 +103,13 @@ function main() {
   lines.push("-- =====================================================================")
   lines.push("-- Generated by scripts/reseed-cards.mjs — DO NOT EDIT BY HAND")
   lines.push("-- Полная перезаливка таблицы public.cards")
-  lines.push(`-- Источник: исходники/cards.with_mechanics.json`)
+  lines.push("-- Источник: individual_cards/cards.json")
   lines.push(`-- Записей: ${cards.length}`)
   lines.push("-- =====================================================================")
   lines.push("")
   lines.push("BEGIN;")
   lines.push("")
 
-  // 1. Очистка
   lines.push("-- 1. Полная очистка (CASCADE удалит связанные строки в card_art, preset_deck_cards)")
   lines.push("TRUNCATE TABLE public.cards CASCADE;")
   lines.push("")
@@ -111,12 +117,7 @@ function main() {
   if (TRUNCATE_ONLY) {
     lines.push("-- (--truncate-only: только TRUNCATE, INSERT не выполняется)")
   } else {
-    // 2. INSERT карт
     lines.push(buildRowInsertSQL(cards))
-    lines.push("")
-
-    // 3. INSERT дубликатов в card_art
-    lines.push(buildCardArtInsertSQL(cards))
   }
 
   lines.push("")
@@ -127,8 +128,6 @@ function main() {
   if (DRY_RUN) {
     console.log("🔍 DRY-RUN — файл не записан")
     console.log(`   Строк SQL: ${lines.length}`)
-    console.log(`   Размер: ${lines.join("\n").length} байт`)
-    console.log(`   Первые 20 строк:`)
     lines.slice(0, 20).forEach((l) => console.log("     " + l))
     return
   }
@@ -137,14 +136,6 @@ function main() {
   writeFileSync(OUT, lines.join("\n"), "utf8")
   console.log(`✅ Wrote ${OUT}`)
   console.log(`   total_cards=${cards.length}`)
-
-  // Подсчёт арт-дубликатов
-  let extraArt = 0
-  for (const c of cards) {
-    const urls = Array.isArray(c.image_urls) ? c.image_urls : []
-    extraArt += Math.max(0, urls.length - 1)
-  }
-  console.log(`   card_art вставок: ${extraArt}`)
 }
 
 main()

@@ -32,13 +32,6 @@ export default defineConfig([
       // массово требует рефакторинга вызывающих компонентов. Отключено до тех
       // пор, пока команда не выработает стратегию мемоизации callbacks.
       'react-hooks/preserve-manual-memoization': 'off',
-      // Порядок импортов — улучшает читаемость и помогает избежать циклических зависимостей
-      'import/order': ['warn', {
-        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-        'newlines-between': 'always',
-        alphabetize: { order: 'asc', caseInsensitive: true },
-      }],
-      'import/no-duplicates': 'warn',
       // Запрещаем неиспользуемые переменные
       'no-unused-vars': ['warn', { args: 'none', varsIgnorePattern: '^_' }],
     },

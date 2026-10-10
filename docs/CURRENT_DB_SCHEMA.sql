@@ -8,7 +8,7 @@ CREATE TABLE public.cards (
   card_number integer NOT NULL UNIQUE,
   name text NOT NULL,
   description text,
-  card_type text NOT NULL CHECK (card_type = ANY (ARRAY['creature'::text, 'building'::text, 'spell'::text])),
+  card_type text NOT NULL CHECK (card_type = ANY (ARRAY['creature'::text, 'building'::text, 'spell'::text, 'special'::text])),
   cost integer NOT NULL DEFAULT 1,
   attack integer,
   health integer,
@@ -22,6 +22,10 @@ CREATE TABLE public.cards (
   updated_at timestamp with time zone DEFAULT now(),
   land_type text DEFAULT 'any'::text,
   is_rainbow boolean DEFAULT false,
+  rarity text,
+  source text,
+  hero text,
+  notes text,
   CONSTRAINT cards_pkey PRIMARY KEY (id)
 );
 

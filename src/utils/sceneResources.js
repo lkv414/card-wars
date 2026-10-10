@@ -25,7 +25,7 @@ import {
   HALF_LANE_DEPTH,
   PLAY_FIELD_WIDTH,
   PLAY_FIELD_DEPTH,
-} from './gameObjectPlacement'
+} from './gameObjectPlacement.js'
 import { LAND_BORDER_COLOR } from '../constants/landColors'
 
 // ─────────────────────────────────────────────────────────────

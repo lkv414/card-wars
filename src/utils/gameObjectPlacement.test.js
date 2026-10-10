@@ -1,10 +1,21 @@
+/**
+ * Геометрия 3D-поля — тесты на gameObjectPlacement.js.
+ *
+ * Перенесён из src/components/Game/gameBoard3D/layout.test.js: тот импортировал
+ * удалённый ./layout.js и падал на импорте (docs/FULL_AUDIT_tester_00005.md, §0.2).
+ * Все ассерты из старого файла сохранены; два из них ссылались на API, которого
+ * больше нет (SLOT_GAP, columnSpacing). Они проверяли «нулевой зазор между
+ * колонками земель» — теперь это гарантировано конструкцией
+ * PLAY_FIELD_WIDTH = NUM_SLOTS * LANE_WIDTH и шагом calculateSharedLaneXs().
+ * Проверка переписана через calculateSharedLaneXs(), то есть проверяет то же
+ * свойство по актуальному API.
+ */
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
   calculatePlayerSlotPositions,
   calculateSharedLaneXs,
   calculateTwoPlayerBoard,
-  columnSpacing,
   computeFieldCardScale,
   getLandSlotLayout,
   COLUMN_WIDTH,
@@ -12,8 +23,7 @@ import {
   LANE_WIDTH,
   PLAY_FIELD_DEPTH,
   PLAY_FIELD_WIDTH,
-  SLOT_GAP,
-} from './layout.js'
+} from './gameObjectPlacement.js'
 
 function assertApprox(actual, expected, label = '') {
   assert.ok(Math.abs(actual - expected) < 1e-9, label || `expected ~${expected}, got ${actual}`)
@@ -35,11 +45,12 @@ test('field card scale fits inside slot half', () => {
 })
 
 test('lands have zero gap between columns', () => {
-  assert.equal(SLOT_GAP, 0)
-  const gaps2 = columnSpacing(2)
-  assert.equal(gaps2.length, 3)
-  for (const g of gaps2) {
-    assertApprox(g, LANE_WIDTH)
+  // Было: SLOT_GAP === 0 и columnSpacing(2) -> 3 зазора по LANE_WIDTH.
+  // Теперь зазор задан конструкцией: 4 lanes * LANE_WIDTH === PLAY_FIELD_WIDTH.
+  assert.equal(PLAY_FIELD_WIDTH, 4 * LANE_WIDTH)
+  const xs = calculateSharedLaneXs()
+  for (let i = 1; i < xs.length; i++) {
+    assertApprox(Math.abs(xs[i] - xs[i - 1]), LANE_WIDTH, `lane ${i}`)
   }
 })
 
@@ -66,7 +77,9 @@ test('2-player board: halves meet at z=0 in each lane', () => {
     assert.ok(Math.abs(nearZ + farZ) < 0.01, 'lane halves centered around z=0')
     assert.ok(Math.abs(nearZ - farZ - HALF_LANE_DEPTH) < 0.01, 'halves span full lane depth')
   }
+})
 
+test('2-player mirrored seat: near/far player index swapped', () => {
   const boardP1 = calculateTwoPlayerBoard(1)
   assert.equal(boardP1[0].near.playerIndex, 1)
   assert.equal(boardP1[0].far.playerIndex, 0)
@@ -84,13 +97,14 @@ test('2-player legacy row: same lane index (not mirrored)', () => {
   }
 })
 
-test('3-player layout: each player has 4 columns', () => {
+test('3-player layout: each player has 4 columns at COLUMN_WIDTH pitch', () => {
   for (let i = 0; i < 3; i++) {
     const cols = calculatePlayerSlotPositions(i, 3)
     assert.equal(cols.length, 4)
-    const gaps = columnSpacing(3)
-    for (const g of gaps) {
-      assertApprox(g, COLUMN_WIDTH)
+    for (let k = 1; k < cols.length; k++) {
+      const dx = cols[k].center[0] - cols[k - 1].center[0]
+      const dz = cols[k].center[2] - cols[k - 1].center[2]
+      assertApprox(Math.hypot(dx, dz), COLUMN_WIDTH, `player ${i} column ${k}`)
     }
   }
 })

@@ -2,7 +2,7 @@
  * wsQueue.test.js — тесты FIFO-очереди.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createFifoQueue } from './wsQueue'
+import { createFifoQueue } from './wsQueue.js'
 
 describe('createFifoQueue', () => {
   beforeEach(() => {

@@ -11,7 +11,7 @@
  */
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
-import { stabilizeGameState, dedupCardsById } from '../utils/stabilizeGameState'
+import { stabilizeGameState, dedupCardsById } from '../utils/stabilizeGameState.js'
 
 const DEFAULT_OPTIMISTIC_TIMEOUT_MS = 8_000
 

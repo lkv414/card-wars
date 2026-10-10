@@ -9,7 +9,7 @@
  * - clear: чистит state и таймеры
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { useGameStore } from './gameStore'
+import { useGameStore } from './gameStore.js'
 
 function makeState(overrides = {}) {
   return {

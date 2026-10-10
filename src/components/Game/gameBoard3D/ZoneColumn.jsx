@@ -40,6 +40,8 @@ export const ZoneColumn = memo(function ZoneColumn({
   damageFlashKey,
   tableScale,
   onLandClick,
+  isAttackTarget = false,
+  onZoneAttackClick,
   onCreatureSlotClick,
   onBuildingSlotClick,
   onCreatureCardClick,
@@ -52,6 +54,10 @@ export const ZoneColumn = memo(function ZoneColumn({
   const handleLandClick = useCallback(() => {
     onLandClick?.(zone)
   }, [onLandClick, zone])
+
+  const handleZoneAttack = useCallback(() => {
+    onZoneAttackClick?.(zone)
+  }, [onZoneAttackClick, zone])
 
   const handleCreatureSlot = useCallback(() => {
     onCreatureSlotClick?.(zone)
@@ -77,6 +83,8 @@ export const ZoneColumn = memo(function ZoneColumn({
         dropState={dropState}
         zoneIndex={zone.zoneIndex}
         onClick={handleLandClick}
+        isAttackTarget={isAttackTarget}
+        onZoneAttackClick={handleZoneAttack}
         creaturePlayable={creaturePlayable}
         buildingPlayable={buildingPlayable}
         onCreatureClick={handleCreatureSlot}

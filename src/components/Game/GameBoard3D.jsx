@@ -49,7 +49,8 @@ import { useBoardModel } from './gameBoard3D/useBoardModel'
 import { ZoneColumn } from './gameBoard3D/ZoneColumn'
 
 import { canPlayerDealDamage } from '../../hooks/game/combat'
-import { battleEventsToVisuals } from '../../hooks/game/battlePhase'
+import { battleEventsToVisuals, getManualAttackTargets } from '../../hooks/game/battlePhase'
+import { isCreatureCard } from '../../hooks/game/combat'
 import {
   LAND_PLACEMENT_RULES,
   normalizeLandPlacementRule,
@@ -112,6 +113,7 @@ export function GameBoard3D({
   landCatalog = {},
   onGameEnd,
   onPlayCard,
+  onAttack,
   onDrawFreeCard,
   onDrawPaidCard,
   onShuffleDeck,
@@ -139,6 +141,7 @@ export function GameBoard3D({
   const [damageMarkers, setDamageMarkers] = useState([])
   const [damageFlashCards, setDamageFlashCards] = useState({})
   const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null)
+  const [attackFrom, setAttackFrom] = useState(null)
 
   // === Refs ===
   const boardRef = useRef(null)
@@ -265,6 +268,7 @@ export function GameBoard3D({
   // === Колбэки (стабильные ссылки через refs) ===
   const handlePointerMissed = useCallback(() => {
     setSelectedZoneIndex(null)
+    setAttackFrom(null)
   }, [])
 
   const handleLandClick = useCallback((zone) => {
@@ -282,6 +286,23 @@ export function GameBoard3D({
       card,
     })
   }, [game.status, game.current_player_id, playerId])
+
+  const canManualAttack = isYourTurn && !inSetup && !isFinished && !isApplying && canDealDamage
+
+  const attackTargetKeys = useMemo(() => {
+    if (!attackFrom || !canManualAttack) return new Set()
+    const out = new Set()
+    for (const t of getManualAttackTargets(game, playerId, attackFrom.zoneIndex)) {
+      for (const z of t.zones) out.add(`${t.playerId}-${z}`)
+    }
+    return out
+  }, [attackFrom, canManualAttack, game, playerId])
+
+  const handleAttackStart = useCallback((zone, card) => {
+    if (!zone.isOwnerMe || !card) return
+    setAttackFrom({ zoneIndex: zone.zoneIndex, cardId: card.id || card.instanceId })
+    setZoneCardActionMenu(null)
+  }, [])
 
   const handleCreatureSlotClick = useCallback((zone) => {
     if (!zone.isOwnerMe) return
@@ -413,6 +434,37 @@ export function GameBoard3D({
     }
   }, [])
 
+  const handleAttackTargetClick = useCallback(async (zone) => {
+    if (!attackFrom || placingLockRef.current) return
+    const targetKey = `${zone.player.player_id}-${zone.zoneIndex}`
+    if (!attackTargetKeys.has(targetKey)) return
+    const from = attackFrom
+    setAttackFrom(null)
+    placingLockRef.current = true
+    onSuppressRealtimeReload?.(8000)
+    try {
+      const result = await onAttack?.(from.zoneIndex, from.cardId, zone.zoneIndex, zone.player.player_id)
+      if (result?.error) {
+        toast('error', result.error)
+        return
+      }
+      if (result?.success && result.faceDamage > 0) {
+        triggerDamageVisual({
+          markers: [{
+            key: `atk-face-${Date.now()}`,
+            playerId: zone.player.player_id,
+            zoneIndex: zone.zoneIndex,
+            amount: result.faceDamage,
+          }],
+        })
+      }
+    } catch (err) {
+      toast('error', err?.message || 'Не удалось атаковать')
+    } finally {
+      placingLockRef.current = false
+    }
+  }, [attackFrom, attackTargetKeys, onAttack, onSuppressRealtimeReload, toast, triggerDamageVisual])
+
   // WebSocket-анимации боя приходят в authoritative game state. Локальный
   // callback action тоже может вернуть events, поэтому обрабатываем оба пути,
   // но не повторяем один и тот же state version.
@@ -449,6 +501,7 @@ export function GameBoard3D({
     }
     setSelectedCardIndex(null)
     setSelectedZoneIndex(null)
+    setAttackFrom(null)
     setDragging(null)
 
     const events = result?.battleEvents
@@ -537,6 +590,8 @@ export function GameBoard3D({
                 damageFlashKey={damageFlashKey}
                 tableScale={FIELD_CARD_SCALE}
                 onLandClick={handleLandClick}
+                isAttackTarget={attackTargetKeys.has(zKey)}
+                onZoneAttackClick={handleAttackTargetClick}
                 onCreatureSlotClick={handleCreatureSlotClick}
                 onBuildingSlotClick={handleBuildingSlotClick}
                 onCreatureCardClick={handleCreatureCardClick}
@@ -612,6 +667,18 @@ export function GameBoard3D({
       {zoneCardActionMenu && (
         <ZoneCardActionMenu
           card={zoneCardActionMenu.card}
+          canAttack={
+            canManualAttack
+            && zoneCardActionMenu.playerId === playerId
+            && isCreatureCard(zoneCardActionMenu.card)
+            && !zoneCardActionMenu.card?.tapped
+            && Number(zoneCardActionMenu.card?.attack ?? 0) > 0
+            && getManualAttackTargets(game, playerId, zoneCardActionMenu.zoneIndex).length > 0
+          }
+          onAttack={() => handleAttackStart(
+            { isOwnerMe: true, zoneIndex: zoneCardActionMenu.zoneIndex },
+            zoneCardActionMenu.card,
+          )}
           onFlip={async () => {
             const cardId = zoneCardActionMenu.card?.id ?? zoneCardActionMenu.card?.instanceId
             await onFlipCard?.(zoneCardActionMenu.playerId, zoneCardActionMenu.zoneIndex, cardId)

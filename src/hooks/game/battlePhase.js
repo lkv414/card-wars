@@ -13,13 +13,26 @@ export function getBattleTargetZone(fromZone, playerCount) {
   return (z + 2) % 4
 }
 
-function pickAttacker(cards) {
+/** Существо зоны, которым можно атаковать (не повёрнуто, не перевёрнуто, attack > 0). */
+export function pickAttacker(cards) {
   const creature = getZoneCreature(cards)
   if (!creature || !isCreatureCard(creature)) return null
   if (creature.tapped || creature.flipped || creature.isFlipped) return null
   const attack = Number(creature.attack ?? 0)
   if (attack <= 0) return null
   return creature
+}
+
+/**
+ * Доступные цели ручной атаки из зоны fromZone (0-based), с учётом правила
+ * "зона против зоны" (getAttackTargets). Для 2 игроков — все 4 зоны, для 3-4 —
+ * только противостоящие.
+ * @returns {Array<{ playerId: string, zones: number[] }>}
+ */
+export function getManualAttackTargets(game, playerId, fromZone) {
+  if (!game?.players) return []
+  const players = safePlayers(game.players)
+  return getAttackTargets(playerId, players, fromZone)
 }
 
 /**

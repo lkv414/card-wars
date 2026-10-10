@@ -89,6 +89,19 @@
   --game-danger: #ff5252;
   --game-success: #4caf50;
   --game-info: #2196f3;
+  --hud-bg: #161a2a;
+  --hud-panel: #1c2238;
+  --hud-line: rgba(255, 255, 255, 0.22);
+  --hud-text: #ffffff;
+  --hud-text-soft: rgba(255, 255, 255, 0.85);
+  --hud-text-dim: rgba(255, 255, 255, 0.55);
+  --hud-your: #a5d6a7;
+  --hud-opp: #ffcc80;
+  --hud-gold: #ffe082;
+  --hud-blue: #90caf9;
+  --hud-red: #f44336;
+  --hud-green: #4caf50;
+  --hud-orange: #e67e22;
 
   color-scheme: light;
 }

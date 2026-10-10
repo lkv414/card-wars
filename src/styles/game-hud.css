@@ -10,10 +10,10 @@
   right: 0;
   bottom: 0;
   z-index: 60;
-  background: linear-gradient(180deg, rgba(10, 10, 30, 0) 0%, rgba(18, 22, 38, 0.88) 22%, rgba(12, 14, 28, 0.96) 100%);
+  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--hud-bg) 88%, transparent) 22%, color-mix(in srgb, var(--hud-bg) 96%, transparent) 100%);
   padding: 10px 16px 16px;
-  font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
-  color: white;
+  font-family: var(--font-sans);
+  color: var(--hud-text);
   pointer-events: auto;
 }
 
@@ -35,8 +35,8 @@
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.65);
 }
 
-.hud-bottom-status.your { color: #a5d6a7; }
-.hud-bottom-status.opponent { color: #ffcc80; }
+.hud-bottom-status.your { color: var(--hud-your); }
+.hud-bottom-status.opponent { color: var(--hud-opp); }
 .hud-bottom-status.finished { font-size: 22px; color: #ffd54f; }
 
 .hud-resource-stack {

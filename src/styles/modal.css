@@ -13,13 +13,14 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(29, 18, 8, 0.72);
+  background: color-mix(in srgb, #2b1c12 62%, transparent);
+  backdrop-filter: blur(3px);
   animation: fade 0.25s ease;
 }
 
 .modal-overlay-stacked {
   z-index: 11;
-  background: #1d1208bf;
+  background: color-mix(in srgb, #2b1c12 75%, transparent);
 }
 
 @keyframes fade {
@@ -32,9 +33,10 @@
   max-height: 90vh;
   overflow: auto;
   padding: 24px;
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
   background: var(--bg-elevated);
-  box-shadow: 0 24px 80px #0005;
+  box-shadow: var(--shadow);
   animation: pop 0.25s ease;
 }
 
@@ -79,8 +81,8 @@
   border-radius: 16px;
   overflow: hidden;
   border: 2px solid var(--border);
-  background: #2a241c;
-  box-shadow: 0 10px 28px #00000024;
+  background: var(--bg-muted);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-form-preview-img {
@@ -88,7 +90,7 @@
   width: 100%;
   aspect-ratio: 5 / 7;
   object-fit: contain;
-  background: #1a1612;
+  background: var(--bg-muted);
 }
 
 .card-form-preview-fallback {
@@ -100,7 +102,7 @@
   aspect-ratio: 5 / 7;
   padding: 16px;
   text-align: center;
-  background: linear-gradient(160deg, #ddd5c8 0%, #f7efe3 55%, #e8dcc8 100%);
+  background: linear-gradient(160deg, var(--bg-muted) 0%, var(--bg-elevated) 100%);
   color: var(--text-muted);
 }
 
@@ -120,7 +122,7 @@
   left: 8px;
   padding: 3px 9px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.72);
+  background: color-mix(in srgb, #2b1c12 80%, transparent);
   color: #fff;
   font-size: 12px;
   font-weight: 800;
@@ -269,16 +271,17 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(29, 18, 8, 0.72);
+  background: color-mix(in srgb, #2b1c12 62%, transparent);
   animation: fade 0.2s ease;
 }
 
 .confirm-dialog {
   width: min(420px, 100%);
   padding: 22px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
   background: var(--bg-elevated);
-  box-shadow: 0 24px 80px #0005;
+  box-shadow: var(--shadow);
   animation: pop 0.2s ease;
 }
 
@@ -326,9 +329,9 @@
   align-items: center;
   margin: 12px 0;
   padding: 10px;
-  border: 1px solid #efd6a4;
+  border: 1px solid var(--warn-soft);
   border-radius: 14px;
-  background: #fff3d8;
+  background: var(--accent-soft);
 }
 
 .similar small {
@@ -339,7 +342,7 @@
 .save-dialog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: color-mix(in srgb, #2b1c12 62%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,14 +351,14 @@
 }
 
 .save-dialog {
-  background: linear-gradient(135deg, #2a3a5e 0%, #1a2a4e 100%);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 1.75rem;
   width: min(420px, 90vw);
-  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
-  color: white;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-family: var(--font-sans);
 }
 
 .save-dialog h2 {
@@ -396,17 +399,18 @@
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.65rem 0.85rem;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
-  background: rgba(0,0,0,0.3);
-  color: white;
+  background: var(--bg-muted);
+  color: var(--text);
   font-size: 1rem;
   outline: none;
   font-family: inherit;
 }
 
 .save-dialog input:focus {
-  border-color: #4caf50;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-ring) 25%, transparent);
 }
 
 .save-dialog-actions {
@@ -425,21 +429,21 @@
 }
 
 .save-dialog .cancel-btn {
-  background: rgba(255,255,255,0.15);
-  color: white;
+  background: var(--bg-muted);
+  color: var(--text);
 }
 
 .save-dialog .cancel-btn:hover {
-  background: rgba(255,255,255,0.25);
+  background: var(--border);
 }
 
 .save-dialog .confirm-btn {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
+  background: var(--primary);
+  color: var(--primary-text);
 }
 
 .save-dialog .confirm-btn:hover {
-  filter: brightness(1.1);
+  background: var(--primary-hover);
 }
 
 .save-dialog-code-block {
@@ -461,8 +465,8 @@
   min-width: 0;
   padding: 0.55rem 0.65rem;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
 }
 
 .save-dialog-code {
@@ -480,16 +484,16 @@
 .save-dialog-copy-btn {
   flex-shrink: 0;
   padding: 0.35rem 0.65rem;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
+  background: var(--bg-elevated);
+  color: var(--text);
   cursor: pointer;
   font-size: 0.95rem;
 }
 
 .save-dialog-copy-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: var(--border);
 }
 
 /* Toast уведомления */
@@ -512,8 +516,8 @@
   gap: 10px;
   padding: 12px 12px 12px 16px;
   border-radius: 14px;
-  color: white;
-  box-shadow: 0 12px 30px #0003;
+  color: #fff;
+  box-shadow: var(--shadow);
   animation: slide 0.25s ease;
   pointer-events: auto;
 }
@@ -535,14 +539,14 @@
   height: 28px;
   padding: 0;
   border-radius: 8px;
-  background: #ffffff22;
+  background: #ffffff33;
   color: inherit;
   font-size: 18px;
   line-height: 1;
 }
 
 .toast-dismiss:hover {
-  background: #ffffff33;
+  background: #ffffff55;
   transform: none;
   box-shadow: none;
 }
@@ -552,7 +556,7 @@
 }
 
 .toast-error {
-  background: #c2410c;
+  background: var(--danger-text);
 }
 
 @keyframes slide {
@@ -567,7 +571,7 @@
   position: fixed;
   inset: 0;
   z-index: 15;
-  background: rgba(29, 18, 8, 0.8);
+  background: color-mix(in srgb, #2b1c12 80%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -582,7 +586,7 @@
   height: 100dvh;
   background: var(--bg-elevated);
   border-radius: 0;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -639,11 +643,11 @@
   font-weight: 800;
   color: var(--text-heading);
   cursor: pointer;
-  text-decoration: underline dotted rgba(0, 0, 0, 0.35);
+  text-decoration: underline dotted var(--text-muted);
   text-underline-offset: 3px;
 }
 .deck-modal-tally-hero:hover {
-  color: var(--accent-hover, #b06e00);
+  color: var(--accent-text);
 }
 .deck-modal-tally-hero--missing {
   color: var(--danger-text);
@@ -793,7 +797,7 @@
   place-items: center;
   min-height: 140px;
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--bg-muted);
   overflow: hidden;
 }
 
@@ -829,7 +833,7 @@
   margin: 0;
   font-size: 13.5px;
   line-height: 1.55;
-  color: var(--text-muted, #4a3a2c);
+  color: var(--text-muted);
 }
 
 .deck-hero-panel--empty {
@@ -908,14 +912,15 @@
   padding: 20px;
   border-radius: 22px;
   background: var(--bg-elevated);
-  box-shadow: 0 24px 80px #0006;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   animation: pop 0.22s ease;
 }
 
 .preview-dialog-art {
   width: min(420px, 92vw);
   padding: 12px;
-  background: #111;
+  background: var(--bg-muted);
 }
 
 .preview-art-only {
@@ -924,7 +929,7 @@
   aspect-ratio: var(--card-aspect);
   border: none;
   border-radius: 14px;
-  background: #1a1a1a;
+  background: var(--bg-muted);
 }
 
 .preview-art-only .preview-art-img {
@@ -971,7 +976,7 @@
   aspect-ratio: var(--card-aspect);
   border-radius: 16px;
   border: 1px solid var(--border);
-  background: linear-gradient(160deg, #ddd5c8, #f7efe3);
+  background: linear-gradient(160deg, var(--bg-muted), var(--bg-elevated));
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -1056,8 +1061,9 @@
   align-items: center;
   margin-bottom: 18px;
   padding: 14px;
-  border-radius: 22px;
-  background: #fff8eb;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
 }
 
 .admin-top h1 {
@@ -1095,13 +1101,13 @@
 }
 
 .row-actions button:first-of-type {
-  background: #35b86b;
-  color: white;
+  background: var(--success);
+  color: #fff;
   font-weight: 900;
 }
 
 .row-actions button:last-of-type {
-  background: #f87171;
-  color: white;
+  background: var(--danger);
+  color: #fff;
   font-weight: 900;
 }

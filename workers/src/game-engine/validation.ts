@@ -9,9 +9,22 @@
  */
 
 import type { Action, Card, GameState, PlayerState } from './types'
+
+/** Статус ревью механик: исполняется только 'implemented' (аудит §4.6, M1). */
+const EXECUTABLE_MECHANICS_STATUS = 'implemented'
+
+function mechanicsEnabled(card: Card, state: GameState): boolean {
+  const cat = state.catalog?.[card.id]
+  const status = cat?.mechanics_status ?? (card as Record<string, unknown>).mechanics_status
+  return (status ?? 'unreviewed') === EXECUTABLE_MECHANICS_STATUS
+}
 import { getActivePlayer, getAlivePlayers, getPlayer, getZone } from './utils'
 import { canPlayerDealDamage, pickBattleTarget } from './combat'
-import { effectiveAttackForCombat } from './mechanics-runtime'
+import {
+  effectiveAttackForCombat,
+  mechanicsFor,
+  unresolvableTargetIds,
+} from './mechanics-runtime'
 
 const ZONE_LIMIT = 10
 
@@ -30,6 +43,35 @@ function getCardCost(state: GameState, card: Card): number {
   const me = getActivePlayer(state)
   const reduced = Math.max(0, base - Number(me?.cost_reduction ?? 0))
   return me?.free_play_next ? 0 : reduced
+}
+
+/**
+ * Проверка земли — зеркало клиентской (src/utils/cardFields.ts:isLandCompatible).
+ * Раньше Worker землю не проверял вовсе: клиент мог показать «можно»,
+ * а движок принял бы карту куда угодно (аудит §7.1).
+ */
+function landCompatible(cardLand: string | null, zoneLand: string | null): boolean {
+  const ANY = 'any'
+  const ALIASES: Record<string, string> = {
+    sandy: 'sand',
+    desert: 'sand',
+    rainbow: ANY,
+  }
+  const canon = (raw: string | null): string | null => {
+    if (!raw) return null
+    const key = raw.trim().toLowerCase()
+    if (!key) return null
+    if (key === ANY) return ANY
+    if (['corn', 'ice', 'good', 'swamp', 'sand', 'blue'].includes(key)) return key
+    return ALIASES[key] ?? null
+  }
+  if (!cardLand || cardLand === ANY) return true
+  if (!zoneLand || zoneLand === ANY) return true
+  const a = canon(cardLand)
+  const b = canon(zoneLand)
+  // Неизвестный тип земли не блокирует игру (аудит §4.9.1).
+  if (!a || !b) return true
+  return a === b
 }
 
 export function validateAction(state: GameState, action: Action, actorId: string): ValidationResult {
@@ -61,6 +103,22 @@ export function validateAction(state: GameState, action: Action, actorId: string
       if (!zone) return fail('Зона не найдена')
       if (zone.cards.length >= ZONE_LIMIT) return fail('Земля полная')
       if ((me.actions_remaining ?? 0) < getCardCost(state, card)) return fail('Недостаточно действий')
+
+      // Правило земель: strict (по умолчанию) требует совпадения.
+      if (action.slotType !== 'spell') {
+        const rule = (state.game_state?.landPlacementRule as string) || 'strict'
+        if (rule === 'strict') {
+          const cat = state.catalog?.[card.id]
+          const cardLand: string | null = (cat?.is_rainbow === true || card.is_rainbow)
+            ? 'any'
+            : typeof cat?.land_type === 'string'
+              ? cat.land_type
+              : typeof card.land_type === 'string' ? card.land_type : null
+          if (!landCompatible(cardLand, zone.land_type ?? null)) {
+            return fail('Карта не подходит к этой земле')
+          }
+        }
+      }
       return ok()
     }
     case 'use_ability': {
@@ -71,6 +129,21 @@ export function validateAction(state: GameState, action: Action, actorId: string
       const card = zone.cards.find((c) => (c.instanceId ?? c.id) === action.cardId || c.id === action.cardId)
       if (!card) return fail('Карта не найдена в зоне')
       if (action.mechanicIndex < 0) return fail('Неверный индекс механики')
+
+      // Механика должна существовать, быть ручной и принадлежать карте.
+      // Раньше индекс просто проверялся на «>= 0», и клиент мог сослаться
+      // на любую запись (аудит §4.8, M3).
+      const mechanics = mechanicsFor(state, card)
+      const mechanic = mechanics[action.mechanicIndex]
+      if (!mechanic) return fail('Механика не найдена')
+      if (mechanic.trigger !== 'manual') return fail('Эта механика не активируется вручную')
+
+      // Выбранные цели обязаны быть на поле. Без этой проверки клиент мог
+      // целиться в любую карту любого игрока (аудит §4.5, M3).
+      const requested = action.targetCardIds ?? []
+      if (unresolvableTargetIds(state, requested).length) {
+        return fail('Выбрана карта, которой нет на поле')
+      }
       return ok()
     }
     case 'draw_free': {

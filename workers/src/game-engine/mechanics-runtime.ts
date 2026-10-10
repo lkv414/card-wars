@@ -59,15 +59,42 @@ function blueprint(state: GameState, card: Card): JsonObject {
   return { ...(catalog ?? {}), ...(card as JsonObject) }
 }
 
-function mechanicsFor(state: GameState, card: Card): JsonObject[] {
+/**
+ * Статус ревью механики.
+ *
+ * Контракт задан миграцией
+ * supabase/migrations/20260924120000_cards_mechanics_runtime_metadata.sql:
+ *   unreviewed (not executable), text_only (not executable),
+ *   implemented (runtime-approved), disabled.
+ *
+ * Раньше проверка статуса была снята с комментарием «text_only должны
+ * исполняться» — это противоречило и SQL-контракту, и заданию (аудит §4.6, M1).
+ * Теперь исполняется ТОЛЬКО 'implemented'. Остальные статусы показываются
+ * текстом в интерфейсе, но не исполняются.
+ */
+export type MechanicsStatus = 'unreviewed' | 'text_only' | 'implemented' | 'disabled'
+
+export const EXECUTABLE_STATUS: MechanicsStatus = 'implemented'
+
+export function mechanicsFor(state: GameState, card: Card): JsonObject[] {
   const source = blueprint(state, card)
-  // Mechanics are applied if they exist and have version 1.
-  // Status check removed: 'text_only' cards still have valid mechanics data
-  // (parsed from card descriptions) that should execute in-game.
   if (source.mechanics_version !== undefined && Number(source.mechanics_version) !== 1) return []
-  // Allow all statuses except 'disabled'
-  if (source.mechanics_status === 'disabled') return []
+  // Статус может прийти из каталога KV/БД. Если его нет — считаем карту
+  // неревьюенной: исполнить то, что не прошло ревью, нельзя.
+  const status = (source.mechanics_status ?? 'unreviewed') as MechanicsStatus
+  if (status !== EXECUTABLE_STATUS) return []
   return array(source.mechanics)
+}
+
+/** Статус механик карты — для UI («показывать текстом, не исполнять»). */
+export function cardMechanicsStatus(state: GameState, card: Card): MechanicsStatus {
+  const source = blueprint(state, card)
+  return (source.mechanics_status ?? 'unreviewed') as MechanicsStatus
+}
+
+/** Есть ли у карты исполняемые механики вообще. */
+export function hasExecutableMechanics(state: GameState, card: Card): boolean {
+  return mechanicsFor(state, card).length > 0
 }
 
 function isGenericAction(action: JsonObject): boolean {
@@ -134,41 +161,175 @@ function addCardToZone(playerState: PlayerState, card: Card, zonePosition?: numb
   return { ...playerState, zones: zones.map((z) => z === firstCreature ? { ...z, cards: [...z.cards, card] } : z) }
 }
 
-function targetCards(state: GameState, owner: PlayerState, target: string, targetIds: string[] = [], sourceCardId?: string): Array<{ player: PlayerState; zone: Zone; card: Card }> {
-  if (targetIds.length) return targetIds.map((id) => findCard(state, id)).filter((v): v is { player: PlayerState; zone: Zone; card: Card } => Boolean(v))
-  const source = allCards(state)
-  switch (target) {
-    case 'this_creature': {
-      const found = findInPlayer(owner, targetIds[0] ?? sourceCardId ?? '')
-      return found ? [{ player: owner, zone: found.zone, card: found.card }] : []
-    }
-    case 'chosen_creature':
-    case 'chosen_opponent_creature':
-    case 'chosen_opponent':
-      return []
-    case 'each_creature_yours': return source.filter(({ player: p, card }) => p.player_id === owner.player_id && card.card_type !== 'building' && card.card_type !== 'spell')
-    case 'each_creature_opponent': return source.filter(({ player: p, card }) => p.player_id !== owner.player_id && card.card_type !== 'building' && card.card_type !== 'spell')
-    case 'each_creature': return source.filter(({ card }) => card.card_type !== 'building' && card.card_type !== 'spell')
-    case 'each_creature_adjacent': {
-      const ownerCard = findInPlayer(owner, targetIds[0] ?? '')
-      if (!ownerCard) return []
-      return source.filter(({ card }) => card.zone_position === undefined ? false : Math.abs(Number(card.zone_position) - Number((ownerCard.card as JsonObject).zone_position ?? 0)) === 1)
-    }
-    case 'each_creature_in_lane': return source.filter(({ card }) => card.card_type !== 'building' && card.card_type !== 'spell')
-    case 'each_creature_landscape': return source.filter(({ card }) => card.card_type !== 'building' && card.card_type !== 'spell')
-    case 'each_creature_no_hand': return source.filter(({ player: p, card }) => p.player_id !== owner.player_id && card.card_type !== 'building' && card.card_type !== 'spell' && p.hand.length === 0)
-    default: return []
-  }
+/**
+ * Список target-ов, которые требуют явного выбора игроком.
+ *
+ * Для них `chosen_*` БЕЗ targetCardIds — это не «урон в лицо», а отсутствие
+ * цели: механику применять нельзя. Раньше applyAction трактовал пустой список
+ * как «бей первого противника» (аудит §4.5, M12).
+ */
+const TARGET_NEEDS_CHOICE = new Set([
+  'chosen_creature',
+  'chosen_opponent_creature',
+  'chosen_opponent',
+  'chosen_landscape',
+  'chosen_discard',
+])
+
+/** Селекторы, которые всегда описывают всё поле, а не выбранную карту. */
+const BROADCAST_TARGETS = new Set([
+  'each_creature_yours',
+  'each_creature_opponent',
+  'each_creature',
+  'each_creature_adjacent',
+  'each_creature_in_lane',
+  'each_creature_landscape',
+  'each_creature_no_hand',
+  'each_opponent',
+])
+
+export interface ResolvedTargets {
+  cards: Array<{ player: PlayerState; zone: Zone; card: Card }>
+  /** true, если селектор требует выбора, а игрок ничего не выбрал. */
+  needsChoice: boolean
+  /** true, если переданные id не прошли проверку (чужие/несуществующие). */
+  rejected: boolean
 }
 
-function conditionAllows(conditions: unknown): boolean {
-  if (!Array.isArray(conditions)) return true
-  return conditions.every((c) => {
-    const condition = object(c)
-    // cost_actions is a payment requirement handled by activateAbility, not a
-    // state predicate. verb is an action label, not a condition.
-    return condition.type === 'cost_actions' || condition.type === 'verb'
+function resolveTargets(
+  state: GameState,
+  owner: PlayerState,
+  target: string,
+  targetIds: string[] = [],
+  sourceCardId?: string,
+): ResolvedTargets {
+  // Явный выбор игрока. Проверяем каждый id: карта должна существовать,
+  // лежать на поле и принадлежать либо своему игроку, либо противнику —
+  // иначе клиент мог бы целиться в чужую карту (аудит §4.5, M3).
+  if (targetIds.length) {
+    const cards: Array<{ player: PlayerState; zone: Zone; card: Card }> = []
+    let rejected = false
+    for (const id of targetIds) {
+      const found = findCard(state, id)
+      if (!found) { rejected = true; continue }
+      cards.push(found)
+    }
+    return { cards, needsChoice: false, rejected }
+  }
+
+  if (TARGET_NEEDS_CHOICE.has(target)) {
+    return { cards: [], needsChoice: true, rejected: false }
+  }
+
+  const source = allCards(state)
+  const cards = ((): Array<{ player: PlayerState; zone: Zone; card: Card }> => {
+    switch (target) {
+    case 'this_creature': {
+      const found = findInPlayer(owner, sourceCardId ?? '')
+      return found ? [{ player: owner, zone: found.zone, card: found.card }] : []
+    }
+    // Селекторы, требующие выбора, обработаны выше — сюда не попадают.
+    case 'each_creature_yours': return source.filter(({ player: p, card }) => p.player_id === owner.player_id && isCreature(card))
+    case 'each_creature_opponent': return source.filter(({ player: p, card }) => p.player_id !== owner.player_id && isCreature(card))
+    case 'each_creature': return source.filter(({ card }) => isCreature(card))
+    case 'each_creature_adjacent': {
+      // Соседство считаем по ЗОНАМ в пределах своей стороны поля.
+      // Раньше сравнивался card.zone_position, которого у карты нет —
+      // фильтр молча отбрасывал всё либо цеплял чужие линии (аудит §4.8, M7).
+      const ownerCard = findInPlayer(owner, sourceCardId ?? '')
+      if (!ownerCard) return []
+      const anchorZone = ownerCard.card.zone_position
+      if (anchorZone === undefined) return []
+      const sameSide = source.filter(({ player: p }) => p.player_id === owner.player_id)
+      return sameSide.filter(({ zone, card }) =>
+        isCreature(card) && Math.abs(zone.zone_position - anchorZone) === 1,
+      )
+    }
+    // «В линии» и «на этой земле» без контекста линии/земли сузить нельзя.
+    // Раньше возвращались ВСЕ существа поля (аудит §4.8, M8) — теперь это
+    // явная пустая выборка, а не ложное срабатывание.
+    case 'each_creature_in_lane':
+    case 'each_creature_landscape':
+    case 'each_opponent':
+      return []
+    case 'each_creature_no_hand': return source.filter(({ player: p, card }) => p.player_id !== owner.player_id && isCreature(card) && p.hand.length === 0)
+    default: return []
+    }
+  })()
+
+  return { cards, needsChoice: false, rejected: false }
+}
+
+/** Существо ли это (не строение и не заклинание). */
+function isCreature(card: Card): boolean {
+  return card.card_type !== 'building' && card.card_type !== 'spell'
+}
+
+/**
+ * Селектор требует выбора, но игрок ничего не передал. Такую механику
+ * применять нельзя — иначе «нанеси 1 урон выбранному существу» без выбора
+ * превращалась в удар по первому попавшемуся противнику.
+ */
+export function hasUnmetChoice(
+  state: GameState,
+  owner: PlayerState,
+  mechanic: JsonObject,
+  chosenIds: string[] = [],
+): boolean {
+  const sourceCardId = typeof mechanic.owner_card_id === 'string' ? mechanic.owner_card_id : undefined
+  return (Array.isArray(mechanic.actions) ? mechanic.actions : []).some((raw) => {
+    const action = object(raw)
+    if (!isExecutableAction(action)) return false
+    const target = String(action.target ?? 'none')
+    if (!TARGET_NEEDS_CHOICE.has(target)) return false
+    if (chosenIds.length) return false
+    const ids = Array.isArray(action.targetCardIds) ? action.targetCardIds as string[] : []
+    if (ids.length) return false
+    return resolveTargets(state, owner, target, [], sourceCardId).needsChoice
   })
+}
+
+/** id карт, выбранных игроком для механики (для валидации в validation.ts). */
+export function mechanicTargetIds(mechanic: JsonObject): string[] {
+  const out: string[] = []
+  for (const raw of Array.isArray(mechanic.actions) ? mechanic.actions : []) {
+    const action = object(raw)
+    const ids = action.targetCardIds
+    if (Array.isArray(ids)) for (const id of ids) if (typeof id === 'string') out.push(id)
+  }
+  return out
+}
+
+/** Выбранные id, которые не указывают ни на одну карту поля. */
+export function unresolvableTargetIds(state: GameState, ids: string[]): string[] {
+  return ids.filter((id) => !findCard(state, id))
+}
+
+/** Условия, которые движок НЕ исполняет как предикат состояния. */
+const PREDICATE_CONDITIONS = new Set(['if', 'while', 'prerequisite'])
+
+/**
+ * Первое неисполняемое условие, либо null.
+ *
+ * Раньше был `conditionAllows`, возвращавший просто false на любое условие
+ * вне {cost_actions, verb}. Из-за этого 79 механик каталога выключались
+ * молча и ничем не отличались от сработавших (аудит §4.4, §4.8 M2).
+ *
+ * Теперь причина возвращается вызывающему, а сам факт «условие не
+ * исполнено» виден и в логах, и в тестах.
+ */
+function unmetCondition(conditions: unknown): string | null {
+  if (!Array.isArray(conditions)) return null
+  for (const raw of conditions) {
+    const type = String(object(raw).type ?? '')
+    if (PREDICATE_CONDITIONS.has(type)) return `condition_not_evaluated:${type}`
+  }
+  return null
+}
+
+/** true, если все условия — исполняемые либо служебные. */
+export function conditionAllows(conditions: unknown): boolean {
+  return unmetCondition(conditions) === null
 }
 
 function findTrigger(mechanic: JsonObject, eventType: MechanicEventType): boolean {
@@ -181,11 +342,69 @@ function actionAmount(action: JsonObject): number {
   return Number.isFinite(n) && n > 0 ? n : 1
 }
 
-function applyAction(state: GameState, owner: PlayerState, action: JsonObject, targetIds: string[] = [], sourceCardId?: string): GameState {
+/**
+ * Результат применения одного действия.
+ *
+ * Раньше applyAction возвращал только state, и «ничего не произошло» было
+ * неотличимо от «сработало». Теперь skipped/reason это различают —
+ * на этом стоит диагностика дыр (аудит §4.8, M15).
+ */
+interface ActionOutcome {
+  state: GameState
+  applied: boolean
+  reason?: string
+}
+
+const UNSUPPORTED_ACTIONS = new Set([
+  'search',
+  'flip_landscape',
+  'freeze_landscape',
+  'flip_ability',
+  'ignore_damage',
+  'immunity',
+  'peek',
+  'mill',
+])
+
+/** Типы, объявленные в mechanics.ts, но не исполняемые движком (аудит §4.3). */
+export function unsupportedActionReason(action: JsonObject): string | null {
   const type = String(action.type)
-  if (!isExecutableAction(action)) return state
+  if (UNSUPPORTED_ACTIONS.has(type)) return `unsupported_action:${type}`
+  if (type === 'stat_buff' && typeof action.amount === 'string') {
+    return 'unsupported_stat_buff_amount'
+  }
+  return null
+}
+
+/** Селекторы, которые исполнены неточно и требуют ручной доработки (аудит §4.8). */
+const IMPRECISE_TARGETS = new Set([
+  'each_creature_adjacent',
+  'each_creature_in_lane',
+  'each_creature_landscape',
+])
+
+function applyAction(state: GameState, owner: PlayerState, action: JsonObject, targetIds: string[] = [], sourceCardId?: string): ActionOutcome {
+  const type = String(action.type)
+  if (!isExecutableAction(action)) return { state, applied: false, reason: `generic_action:${type}` }
+
+  const unsupported = unsupportedActionReason(action)
+  if (unsupported) return { state, applied: false, reason: unsupported }
+
   const target = String(action.target ?? 'none')
-  const selected = targetCards(state, owner, target, targetIds, sourceCardId)
+  const resolved = resolveTargets(state, owner, target, targetIds, sourceCardId)
+  const selected = resolved.cards
+
+  // Селектор требует выбора, а игрок ничего не выбрал: механику НЕ применяем.
+  // Раньше deal_damage в этой ситуации бил первого противника в лицо.
+  if (resolved.needsChoice) {
+    return { state, applied: false, reason: `target_not_chosen:${target}` }
+  }
+  if (resolved.rejected && !selected.length) {
+    return { state, applied: false, reason: `targets_unresolvable:${target}` }
+  }
+
+  let applied = false
+  const note = IMPRECISE_TARGETS.has(target) ? `imprecise_target:${target}` : undefined
   let next = state
 
   switch (type) {
@@ -204,11 +423,23 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
             next = mutatePlayer(next, item.player.player_id, (p) => ({ ...p, zones: p.zones.map((z) => z.zone_position === item.zone.zone_position ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, health: remaining } : c) } : z) }))
           }
         }
-      } else if (target.includes('opponent') || target === 'chosen_opponent' || target === 'each_opponent') {
+        applied = true
+      } else if (target === 'chosen_opponent') {
+        // Селектор «выбранный противник» без выбора — это цель-герой,
+        // а не карта. Раньше сюда попадал и chosen_creature (аудит §4.5, M12).
         const opponent = next.players.find((p) => p.player_id !== owner.player_id && p.health > 0)
-        if (opponent) next = mutatePlayer(next, opponent.player_id, (p) => ({ ...p, health: Math.max(0, p.health - amount) }))
+        if (opponent) {
+          next = mutatePlayer(next, opponent.player_id, (p) => ({ ...p, health: Math.max(0, p.health - amount) }))
+          applied = true
+        }
+      } else if (target === 'each_opponent') {
+        for (const opponent of next.players) {
+          if (opponent.player_id === owner.player_id || opponent.health <= 0) continue
+          next = mutatePlayer(next, opponent.player_id, (p) => ({ ...p, health: Math.max(0, p.health - amount) }))
+        }
+        applied = true
       }
-      return next
+      break
     }
     case 'aoe_damage':
     case 'face_attack': {
@@ -216,7 +447,8 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
       const amount = type === 'face_attack' ? (action.amount !== undefined ? actionAmount(action) : effectiveAttack(source ?? { attack: 1 } as Card)) : actionAmount(action)
       const opponents = next.players.filter((p) => p.player_id !== owner.player_id && p.health > 0)
       for (const opponent of opponents) next = mutatePlayer(next, opponent.player_id, (p) => ({ ...p, health: Math.max(0, p.health - amount) }))
-      return next
+      applied = opponents.length > 0
+      break
     }
     case 'heal': {
       const amount = actionAmount(action)
@@ -227,19 +459,24 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
           const healed = Math.min(cap, max, effectiveHealth(item.card) + amount)
           next = mutatePlayer(next, item.player.player_id, (p) => ({ ...p, zones: p.zones.map((z) => z.zone_position === item.zone.zone_position ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, health: healed } : c) } : z) }))
         }
+        applied = true
       } else if (target === 'self') {
         next = mutatePlayer(next, owner.player_id, (p) => ({ ...p, health: Math.min(cap, p.health + amount) }))
+        applied = true
       }
-      return next
+      break
     }
     case 'draw_cards': {
       const count = actionAmount(action)
-      return mutatePlayer(next, owner.player_id, (p) => {
-        let hand = [...p.hand]
-        let deck = [...p.deck_pile]
-        for (let i = 0; i < count && deck.length; i++) hand.push(deck.shift() as Card)
+      let drew = 0
+      next = mutatePlayer(next, owner.player_id, (p) => {
+        const hand = [...p.hand]
+        const deck = [...p.deck_pile]
+        for (let i = 0; i < count && deck.length; i++) { hand.push(deck.shift() as Card); drew++ }
         return { ...p, hand, deck_pile: deck, deck_remaining: deck.length }
       })
+      applied = drew > 0
+      break
     }
     case 'discard_cards': {
       const count = actionAmount(action)
@@ -248,64 +485,133 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
           const removed = removeFromZone(p, item.zone.zone_position, cardKey(item.card))
           return addToDiscard(removed.player, removed.card)
         })
+        applied = true
       } else if (target === 'self' || target === 'none') {
+        let dropped = 0
         next = mutatePlayer(next, owner.player_id, (p) => {
           const hand = [...p.hand]
           const discarded: Card[] = []
-          for (let i = 0; i < count && hand.length; i++) discarded.push(hand.shift() as Card)
+          for (let i = 0; i < count && hand.length; i++) { discarded.push(hand.shift() as Card); dropped++ }
           return { ...p, hand, discard_pile: [...p.discard_pile, ...discarded] }
         })
+        applied = dropped > 0
       }
-      return next
+      break
     }
     case 'destroy': {
-      for (const item of selected.slice(0, actionAmount(action))) next = mutatePlayer(next, item.player.player_id, (p) => {
+      const targets = selected.slice(0, actionAmount(action))
+      for (const item of targets) next = mutatePlayer(next, item.player.player_id, (p) => {
         const removed = removeFromZone(p, item.zone.zone_position, cardKey(item.card))
         return addToDiscard(removed.player, removed.card)
       })
-      return next
+      applied = targets.length > 0
+      break
     }
     case 'move': {
+      if (action.destination === 'opponent_lane') {
+        // Перенос на чужую линию требует доступа к ЗОНЕ другого игрока.
+        // Раньше бралась последняя зона СВОЕГО игрока (аудит §4.8, M9) —
+        // то есть карта «переезжала» к себе же.
+        return { state, applied: false, reason: 'unsupported_move:opponent_lane' }
+      }
+      let moved = 0
       for (const item of selected) {
         next = mutatePlayer(next, item.player.player_id, (p) => {
           const removed = removeFromZone(p, item.zone.zone_position, cardKey(item.card))
           if (!removed.card) return p
-          const destination = action.destination === 'opponent_lane' ? p.zones[p.zones.length - 1]?.zone_position : undefined
-          return addCardToZone(removed.player, removed.card, destination)
+          moved++
+          return addCardToZone(removed.player, removed.card)
         })
       }
-      return next
+      applied = moved > 0
+      break
     }
     case 'return_from_discard': {
-      const selectedDiscard = targetIds.map((id) => {
-        const found = owner.discard_pile.find((c) => cardKey(c) === id || c.id === id)
-        return found
-      }).filter((c): c is Card => Boolean(c))
-      for (const card of selectedDiscard) next = mutatePlayer(next, owner.player_id, (p) => ({ ...p, discard_pile: p.discard_pile.filter((c) => cardKey(c) !== cardKey(card)), hand: action.destination === 'hand' ? [...p.hand, card] : p.hand, zones: action.destination === 'hand' ? p.zones : addCardToZone(p, card).zones }))
-      return next
+      const selectedDiscard = targetIds
+        .map((id) => owner.discard_pile.find((c) => cardKey(c) === id || c.id === id))
+        .filter((c): c is Card => Boolean(c))
+      for (const card of selectedDiscard) {
+        next = mutatePlayer(next, owner.player_id, (p) => ({
+          ...p,
+          discard_pile: p.discard_pile.filter((c) => cardKey(c) !== cardKey(card)),
+          hand: action.destination === 'hand' ? [...p.hand, card] : p.hand,
+          zones: action.destination === 'hand' ? p.zones : addCardToZone(p, card).zones,
+        }))
+      }
+      applied = selectedDiscard.length > 0
+      break
     }
     case 'stat_buff': {
-      const amount = action.amount
+      // Строковый amount ("x2", "equal_to_damage") не вычисляется и раньше
+      // молча давал +0 (аудит §4.8, M11). Он отсекается выше как unsupported.
+      const amount = Number(action.amount ?? 1)
       const stat = String(action.stat ?? 'attack')
-      for (const item of selected) next = mutatePlayer(next, item.player.player_id, (p) => ({ ...p, zones: p.zones.map((z) => z.zone_position === item.zone.zone_position ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, [`${stat}_bonus`]: Number((c as JsonObject)[`${stat}_bonus`] ?? 0) + (typeof amount === 'string' ? 0 : Number(amount ?? 1)), [`${stat}_buff_duration`]: action.duration ?? 'persistent' } as Card : c) } : z) }))
-      return next
+      const targets = selected.filter((item) => isCreature(item.card))
+      for (const item of targets) next = mutatePlayer(next, item.player.player_id, (p) => ({ ...p, zones: p.zones.map((z) => z.zone_position === item.zone.zone_position ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, [`${stat}_bonus`]: Number((c as JsonObject)[`${stat}_bonus`] ?? 0) + amount, [`${stat}_buff_duration`]: action.duration ?? 'persistent' } as Card : c) } : z) }))
+      // Бафф пишется в *_bonus, базовое поле не затирается.
+      applied = targets.length > 0
+      break
     }
     case 'gain_actions':
-      return mutatePlayer(next, owner.player_id, (p) => ({ ...p, actions_remaining: p.actions_remaining + actionAmount(action) }))
+      next = mutatePlayer(next, owner.player_id, (p) => ({ ...p, actions_remaining: p.actions_remaining + actionAmount(action) }))
+      applied = true
+      break
     case 'cost_reduction':
-      return mutatePlayer(next, owner.player_id, (p) => ({ ...p, cost_reduction: Number((p as unknown as JsonObject).cost_reduction ?? 0) + actionAmount(action) }))
+      next = mutatePlayer(next, owner.player_id, (p) => ({ ...p, cost_reduction: Number((p as unknown as JsonObject).cost_reduction ?? 0) + actionAmount(action) }))
+      applied = true
+      break
     case 'play_for_free':
-      return mutatePlayer(next, owner.player_id, (p) => ({ ...p, free_play_next: true }))
+      next = mutatePlayer(next, owner.player_id, (p) => ({ ...p, free_play_next: true }))
+      applied = true
+      break
     default:
-      return next
+      return { state: next, applied: false, reason: `unknown_action:${type}` }
   }
+
+  return { state: next, applied, reason: applied ? note : (note ?? 'no_effect') }
 }
 
-function applyMechanic(state: GameState, owner: PlayerState, mechanic: JsonObject, targetIds: string[] = [], sourceCardId?: string): GameState {
-  if (!conditionAllows(mechanic.conditions)) return state
+/** Почему механику не удалось применить, либо null, если применилась. */
+export interface MechanicOutcome {
+  state: GameState
+  applied: boolean
+  reasons: string[]
+}
+
+function applyMechanic(state: GameState, owner: PlayerState, mechanic: JsonObject, targetIds: string[] = [], sourceCardId?: string): MechanicOutcome {
+  // Условия не исполняются, но механика НЕ исчезает молча: причина
+  // возвращается вызывающему (аудит §4.4 / §4.8, M2).
+  const blocked = unmetCondition(mechanic.conditions)
+  if (blocked) return { state, applied: false, reasons: [blocked] }
+
+  const chosen = targetIds.length ? targetIds : mechanicTargetIds(mechanic)
+  const unresolvable = unresolvableTargetIds(state, chosen)
+  if (unresolvable.length) {
+    return { state, applied: false, reasons: [`targets_unresolvable:${unresolvable.join(',')}`] }
+  }
+
   let next = state
-  for (const action of array(mechanic.actions)) next = applyAction(next, owner, action, targetIds, sourceCardId)
-  return next
+  let applied = false
+  const reasons: string[] = []
+  for (const action of array(mechanic.actions)) {
+    const outcome = applyAction(next, owner, action, targetIds, sourceCardId)
+    next = outcome.state
+    if (outcome.applied) applied = true
+    else if (outcome.reason) reasons.push(outcome.reason)
+  }
+  return { state: next, applied, reasons }
+}
+
+/** applyMechanic + отбрасывание изменений, если ничего не применилось. */
+function applyMechanicOrKeep(
+  state: GameState,
+  owner: PlayerState,
+  mechanic: JsonObject,
+  targetIds: string[] = [],
+  sourceCardId?: string,
+): GameState {
+  const outcome = applyMechanic(state, owner, mechanic, targetIds, sourceCardId)
+  return outcome.applied ? outcome.state : state
 }
 
 export function resolveSpell(state: GameState, actorId: string, cardId: string, targetCardIds: string[] = []): GameState {
@@ -316,7 +622,7 @@ export function resolveSpell(state: GameState, actorId: string, cardId: string, 
   for (const mechanic of mechanicsFor(next, found.card)) {
     if (!['on_enters_play', 'manual'].includes(String(mechanic.trigger))) continue
     if (array(mechanic.conditions).some((c) => c.type === 'cost_actions')) continue
-    next = applyMechanic(next, owner, mechanic, targetCardIds, cardKey(found.card))
+    next = applyMechanicOrKeep(next, owner, mechanic, targetCardIds, cardKey(found.card))
   }
   return next
 }
@@ -329,7 +635,9 @@ export function dispatchMechanicEvent(state: GameState, event: MechanicEvent): G
     const drawn = owner.hand.find((c) => cardKey(c) === event.cardId || c.id === event.cardId)
     if (drawn) {
       for (const mechanic of mechanicsFor(next, drawn)) {
-        if (findTrigger(mechanic, event.type)) next = applyMechanic(next, owner, mechanic, event.targetCardIds, cardKey(drawn))
+        if (findTrigger(mechanic, event.type)) {
+          next = applyMechanicOrKeep(next, owner, mechanic, event.targetCardIds, cardKey(drawn))
+        }
       }
     }
   }
@@ -337,7 +645,7 @@ export function dispatchMechanicEvent(state: GameState, event: MechanicEvent): G
     if (event.cardId && cardKey(item.card) !== event.cardId && item.card.id !== event.cardId) continue
     for (const mechanic of mechanicsFor(next, item.card)) {
       if (!findTrigger(mechanic, event.type)) continue
-      next = applyMechanic(next, item.player, mechanic, event.targetCardIds, cardKey(item.card))
+      next = applyMechanicOrKeep(next, item.player, mechanic, event.targetCardIds, cardKey(item.card))
     }
   }
   return next
@@ -350,17 +658,104 @@ export function activateAbility(state: GameState, request: AbilityRequest): Abil
   if (!found) return { state, error: 'Карта не найдена в зоне', applied: false }
   const mechanics = mechanicsFor(state, found.card)
   const mechanic = mechanics[request.mechanicIndex]
-  if (!mechanic) return { state, error: 'Механика не найдена', applied: false }
+  if (!mechanic) {
+    // Механика есть в каталоге, но не прошла ревью — это «не реализована», а не «не найдена».
+    const hasRaw = Array.isArray(blueprint(state, found.card).mechanics)
+      && (blueprint(state, found.card).mechanics as unknown[]).length > 0
+    return {
+      state,
+      error: hasRaw ? 'Эта механика пока не реализована движком' : 'Механика не найдена',
+      applied: false,
+    }
+  }
   if (mechanic.trigger !== 'manual') return { state, error: 'Эта механика не активируется вручную', applied: false }
+
+  // Условие if/while/prerequisite — не исполняем. Сообщаем честно, что
+  // механика недоступна, и НЕ списываем за неё действие (аудит §4.4, M2).
+  const blocked = unmetCondition(mechanic.conditions)
+  if (blocked) return { state, error: 'Условие этой механики пока не поддерживается', applied: false }
+
   const executable = array(mechanic.actions).some(isExecutableAction)
   if (!executable) return { state, error: 'Механика пока не реализована движком', applied: false }
+
+  // Выбранные id обязаны существовать на поле. Раньше проверки не было:
+  // клиент мог прислать что угодно, и механика применялась «в никуда»
+  // либо по первой попавшейся карте (аудит §4.5, M3).
+  const requested = request.targetCardIds ?? []
+  const unresolvable = unresolvableTargetIds(state, requested)
+  if (unresolvable.length) {
+    return { state, error: 'Выбрана карта, которой нет на поле', applied: false }
+  }
+
+  // Селектор требует выбора, а игрок ничего не выбрал: действие не
+  // выполняем и стоимость не списываем (аудит §4.5, M12).
+  const needsChoice = hasUnmetChoice(
+    state,
+    owner,
+    { ...mechanic, owner_card_id: cardKey(found.card) },
+    requested,
+  )
+  if (needsChoice) {
+    return { state, error: 'Сначала выберите цель для этой способности', applied: false }
+  }
+
   const conditionCost = array(mechanic.conditions).find((c) => c.type === 'cost_actions')
   const actionCost = array(mechanic.actions).find((a) => Number.isFinite(Number(a.cost_actions)))
   const cost = Number(conditionCost?.value ?? actionCost?.cost_actions ?? 0)
   if (owner.actions_remaining < cost) return { state, error: `Недостаточно действий (нужно ${cost})`, applied: false }
-  let next = owner.actions_remaining === cost ? state : mutatePlayer(state, request.actorId, (p) => ({ ...p, actions_remaining: p.actions_remaining - cost }))
-  next = applyMechanic(next, owner, mechanic, request.targetCardIds, cardKey(found.card))
-  return { state: next, applied: true }
+
+  const paid = owner.actions_remaining === cost
+    ? state
+    : mutatePlayer(state, request.actorId, (p) => ({ ...p, actions_remaining: p.actions_remaining - cost }))
+  const outcome = applyMechanic(paid, owner, mechanic, requested, cardKey(found.card))
+
+  // Действие списано, но ничего не произошло — возвращаем стоимость,
+  // чтобы игрок не терял ход из-за неподдержанной механики.
+  if (!outcome.applied) {
+    const reason = outcome.reasons[0] ?? 'no_effect'
+    const restored = paid === state
+      ? state
+      : mutatePlayer(state, request.actorId, (p) => ({ ...p, actions_remaining: p.actions_remaining + cost }))
+    return {
+      state: restored,
+      error: describeOutcome(reason),
+      applied: false,
+    }
+  }
+  return { state: outcome.state, applied: true }
+}
+
+/** Человекочитаемая причина, по которой механику не удалось применить. */
+export function describeOutcome(reason: string): string {
+  switch (reason) {
+    case 'condition_not_evaluated:if':
+    case 'condition_not_evaluated:while':
+    case 'condition_not_evaluated:prerequisite':
+      return 'Условие этой механики пока не поддерживается'
+    case 'targets_unresolvable:self':
+      return 'Выбрана карта, которой нет на поле'
+    default:
+      break
+  }
+  if (reason.startsWith('targets_unresolvable:')) {
+    return 'Выбрана карта, которой нет на поле'
+  }
+  if (reason.startsWith('target_not_chosen:')) {
+    return 'Сначала выберите цель для этой способности'
+  }
+  if (reason.startsWith('unsupported_action:')) {
+    return 'Эта механика пока не реализована движком'
+  }
+  if (reason === 'unsupported_stat_buff_amount') {
+    return 'Эта механика пока не реализована движком'
+  }
+  if (reason === 'unsupported_move:opponent_lane') {
+    return 'Перенос на чужую линию пока не реализован'
+  }
+  if (reason.startsWith('imprecise_target:')) {
+    return 'Эта механика пока не реализована движком'
+  }
+  return 'Эта механика пока не реализована движком'
 }
 
 export function effectiveAttackForCombat(card: Card): number {

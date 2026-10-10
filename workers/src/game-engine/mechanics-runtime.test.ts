@@ -51,6 +51,7 @@ describe('mechanics runtime — Supabase/KV catalog contract', () => {
         id: 'spell',
         card_type: 'spell',
         cost: 0,
+        mechanics_status: 'implemented',
         mechanics: [{ trigger: 'on_enters_play', actions: [{ type: 'deal_damage', target: 'each_creature_opponent', amount: 2 }], conditions: [] }],
       },
     }
@@ -72,6 +73,7 @@ describe('mechanics runtime — Supabase/KV catalog contract', () => {
         id: 'source',
         card_type: 'creature',
         cost: 0,
+        mechanics_status: 'implemented',
         mechanics: [{ trigger: 'manual', actions: [{ type: 'deal_damage', target: 'chosen_opponent_creature', amount: 1 }], conditions: [{ type: 'cost_actions', value: 1 }] }],
       },
     }
@@ -99,6 +101,33 @@ describe('mechanics runtime — Supabase/KV catalog contract', () => {
     const result = activateAbility(state([p1], catalog), { actorId: 'p1', zonePosition: 1, cardId: 'source', mechanicIndex: 0 })
     expect(result.applied).toBe(false)
     expect(result.error).toContain('не реализована')
+  })
+
+  it('does not execute mechanics that have not passed review (unreviewed / text_only)', () => {
+    const source = card('source', 'creature', { instanceId: 'source-instance' })
+    const target = card('target', 'creature', { health: 4, instanceId: 'target-instance' })
+    const p1 = player('p1', 1, [], [source])
+    const p2 = player('p2', 2, [], [target])
+    for (const status of ['unreviewed', 'text_only']) {
+      const catalog = {
+        source: {
+          id: 'source',
+          card_type: 'creature',
+          cost: 0,
+          mechanics_status: status,
+          mechanics: [{ trigger: 'manual', actions: [{ type: 'deal_damage', target: 'chosen_opponent_creature', amount: 1 }], conditions: [{ type: 'cost_actions', value: 1 }] }],
+        },
+      }
+      const result = activateAbility(state([p1, p2], catalog), {
+        actorId: 'p1',
+        zonePosition: 1,
+        cardId: 'source-instance',
+        mechanicIndex: 0,
+        targetCardIds: ['target-instance'],
+      })
+      expect(result.applied).toBe(false)
+      expect(result.state.players[1].zones[0].cards[0].health).toBe(4)
+    }
   })
 
   it('keeps the event dispatcher pure and returns the same state for no matching trigger', () => {

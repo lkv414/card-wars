@@ -4,15 +4,12 @@ export const CARD_TYPES = {
   spell: 'Заклинание',
 }
 
-export const LAND_TYPES = {
-  corn: { shortLabel: 'Кукуруза', label: 'Кукурузное поле', icon: '🌽' },
-  ice: { shortLabel: 'Ледяная', label: 'Ледяная земля', icon: '❄️' },
-  good: { shortLabel: 'Добрая', label: 'Добрая земля', icon: '🌸' },
-  swamp: { shortLabel: 'Болото', label: 'Бесполезное болото', icon: '🌿' },
-  sand: { shortLabel: 'Пустынная', label: 'Пустынная земля', icon: '🏜️' },
-  blue: { shortLabel: 'Синяя', label: 'Синяя равнина', icon: '🔵' },
-  any: { shortLabel: 'Радужные', label: 'Любая земля', icon: '🌈' },
-}
+/**
+ * Типы земель живут в constants/landColors.js — это единственный справочник
+ * (аудит §2.3: LAND_TYPES дублировался здесь, в landColors и в
+ * cardCompositeTexture). Здесь оставлен реэкспорт для обратной совместимости.
+ */
+export { LAND_TYPES, LAND_DEFS, LAND_TYPE_IDS } from './landColors.js'
 
 export const DECK_LIMITS = {
   cards: { maxPerEntry: 3, maxTotal: 40 },

@@ -3,6 +3,8 @@
  * Runtime-поля (instanceId, tapped, flipped, health после боя) сохраняются поверх каталога.
  */
 
+import { getCardType } from './cardFields.ts'
+
 const CARD_SELECT_FIELDS =
   'id, card_number, name, description, card_type, cost, attack, health, land_type, is_rainbow, has_flip, flip_description, image_url, mechanics, hero, source'
 
@@ -131,7 +133,7 @@ export function enrichCard(card, catalog) {
     cost: card.cost ?? db.cost,
     attack: card.attack ?? db.attack,
     health: card.health ?? db.health,
-    card_type: card.card_type || card.type || db.card_type,
+    card_type: getCardType({ ...db, ...card }),
     land_type: card.land_type || db.land_type,
     flip_description: card.flip_description || db.flip_description,
   }

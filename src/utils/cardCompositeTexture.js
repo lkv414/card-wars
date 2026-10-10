@@ -68,15 +68,9 @@ const COLORS = {
   placeholder: '#5d4e8a',
 }
 
-const LAND_TYPE_LABELS = {
-  corn: 'CR',
-  ice: 'IC',
-  good: 'GD',
-  swamp: 'SW',
-  sand: 'SN',
-  blue: 'BL',
-  any: '*',
-}
+// Аббревиатуры земель берутся из единственного справочника (аудит §2.3:
+// раньше здесь была третья копия списка, расходившаяся с landColors/game).
+import { getLandDef } from '../constants/landColors.js'
 
 function drawArt(ctx, artImage) {
   ctx.fillStyle = COLORS.placeholder
@@ -141,11 +135,15 @@ function drawStats(ctx, stats) {
       { color: COLORS.defenseText, fontSize: badgeSize * 0.7 })
   }
 
-  if (stats.landType && stats.landType !== 'any' && LAND_TYPE_LABELS[stats.landType]) {
-    drawBadge(ctx, TEXTURE_WIDTH / 2 - badgeSize / 2, padding,
-      badgeSize, badgeSize * 0.7, COLORS.landBg,
-      LAND_TYPE_LABELS[stats.landType],
-      { color: COLORS.landText, fontSize: badgeSize * 0.45 })
+  // Канонический тип уже нормализован вызывающим кодом; unknown отсеивается.
+  if (stats.landType && stats.landType !== 'any') {
+    const badge = getLandDef(stats.landType).badge
+    if (badge && badge !== '*') {
+      drawBadge(ctx, TEXTURE_WIDTH / 2 - badgeSize / 2, padding,
+        badgeSize, badgeSize * 0.7, COLORS.landBg,
+        badge,
+        { color: COLORS.landText, fontSize: badgeSize * 0.45 })
+    }
   }
 
   if (stats.canFlip) {

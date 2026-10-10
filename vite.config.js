@@ -114,22 +114,20 @@ export default defineConfig(() => ({
     // lightningcss in the current Vite/Rolldown toolchain rejects the valid
     // keyframes used by the lobby stylesheet; esbuild preserves the CSS.
     cssMinify: 'esbuild',
-    // Большие чанки раздражают линтер Vite; 1 МБ — приемлемо для three-vendor.
-    chunkSizeWarningLimit: 1500,
+    // Большие чанки раздражают линтер Vite; 800 КБ — приемлемо для three-vendor.
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks(id) {
           const norm = id.replace(/\\/g, '/')
-          // Только три категории — three + r3f + drei как один three-vendor,
-          // supabase отдельно (нужен только на лобби), и react-router отдельно.
-          if (
-            /\/node_modules\/three(\/|$|\.js|\.mjs|\.cjs)/.test(norm) ||
-            /\/node_modules\/@react-three\//.test(norm)
-          ) {
-            return 'three-vendor'
-          }
+          // Разделяем three.js на отдельные чанки для лучшего кэширования
+          if (/\/node_modules\/three\/(src|examples)\//.test(norm)) return 'three-core'
+          if (/\/node_modules\/three\//.test(norm)) return 'three-addons'
+          if (/\/node_modules\/@react-three\/fiber\//.test(norm)) return 'r3f-fiber'
+          if (/\/node_modules\/@react-three\/drei\//.test(norm)) return 'r3f-drei'
           if (/\/node_modules\/@supabase\//.test(norm)) return 'supabase'
           if (/\/node_modules\/react-router/.test(norm)) return 'react-router'
+          if (/\/node_modules\/zustand\//.test(norm)) return 'zustand'
           return undefined
         },
       },

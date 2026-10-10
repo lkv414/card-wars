@@ -18,7 +18,7 @@ const LINE_W = 0.012
 
 function MatLine({ args, position }) {
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={position}>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={position} matrixAutoUpdate={false}>
       <planeGeometry args={args} />
       <meshBasicMaterial color="#2e5a28" transparent opacity={0.45} />
     </mesh>

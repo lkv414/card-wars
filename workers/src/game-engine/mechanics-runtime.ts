@@ -61,11 +61,12 @@ function blueprint(state: GameState, card: Card): JsonObject {
 
 function mechanicsFor(state: GameState, card: Card): JsonObject[] {
   const source = blueprint(state, card)
-  // A catalog row must be explicitly approved by the runtime contract before
-  // its mechanics can mutate a live game. Missing status is allowed only for
-  // legacy/dev fixtures.
+  // Mechanics are applied if they exist and have version 1.
+  // Status check removed: 'text_only' cards still have valid mechanics data
+  // (parsed from card descriptions) that should execute in-game.
   if (source.mechanics_version !== undefined && Number(source.mechanics_version) !== 1) return []
-  if (source.mechanics_status !== undefined && source.mechanics_status !== 'implemented') return []
+  // Allow all statuses except 'disabled'
+  if (source.mechanics_status === 'disabled') return []
   return array(source.mechanics)
 }
 

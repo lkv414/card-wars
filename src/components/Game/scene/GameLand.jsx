@@ -88,6 +88,7 @@ function LandMat({ landType, isSelected, dropState }) {
     <mesh
       rotation={[-Math.PI / 2, 0, 0]}
       position={[0, LAND_SURFACE_Y, 0]}
+      matrixAutoUpdate={false}
     >
       <primitive object={LAND_PLANE} attach="geometry" />
       <primitive object={material} attach="material" />
@@ -238,6 +239,7 @@ export const GameLand = memo(function GameLand({
         rotation={[-Math.PI / 2, 0, 0]}
         position={[0, LAND_SURFACE_Y - 0.001, 0]}
         onClick={handleLand}
+        matrixAutoUpdate={false}
       >
         <primitive object={LAND_PLANE} attach="geometry" />
         <meshStandardMaterial color="#ffffff" opacity={0} transparent depthWrite={false} />

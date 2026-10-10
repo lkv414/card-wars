@@ -17,10 +17,17 @@ function cardsEquivalent(a, b) {
     const cb = b[i]
     if (cardKey(ca) !== cardKey(cb)) return false
     if (typeof ca === 'object' && typeof cb === 'object' && ca && cb) {
+      // Сравниваем все поля, которые могут измениться в рантайме
       if (Boolean(ca.tapped) !== Boolean(cb.tapped)) return false
       if (Boolean(ca.flipped) !== Boolean(cb.flipped)) return false
       if ((ca.health ?? null) !== (cb.health ?? null)) return false
       if ((ca.status ?? null) !== (cb.status ?? null)) return false
+      if ((ca.cost ?? null) !== (cb.cost ?? null)) return false
+      if ((ca.attack ?? null) !== (cb.attack ?? null)) return false
+      if ((ca.defense ?? null) !== (cb.defense ?? null)) return false
+      if ((ca.card_type ?? null) !== (cb.card_type ?? null)) return false
+      if ((ca.land_type ?? null) !== (cb.land_type ?? null)) return false
+      if ((ca.zone_position ?? null) !== (cb.zone_position ?? null)) return false
     }
   }
   return true

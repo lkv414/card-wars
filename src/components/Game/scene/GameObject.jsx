@@ -28,6 +28,7 @@ import {
   CARD_PLANE,
 } from '../../../utils/sceneResources'
 import { useCardCompositeTexture } from '../../../utils/cardCompositeTexture'
+import { useCardAnimation } from './useCardAnimation'
 
 const PLACEHOLDER_COLOR = '#5d4e8a'
 const SELECTION_COLOR = '#fbbf24'
@@ -58,6 +59,8 @@ export const GameObject = memo(function GameObject({
   showStats = false,
   showFlipOption = false,
   damageFlash = false,
+  isNew = false,
+  isDying = false,
   onClick,
 }) {
   const [hovered, setHovered] = useState(false)
@@ -69,6 +72,14 @@ export const GameObject = memo(function GameObject({
   const compositeTexture = useCardCompositeTexture(card, {
     showStats,
     showFlipOption,
+  })
+
+  // Анимации карты: подброс при появлении, hover, смерть
+  const { update: updateAnimation } = useCardAnimation({
+    isNew,
+    isHovered: hovered,
+    isDying,
+    groupRef,
   })
 
   const baseX = position[0]
@@ -100,14 +111,17 @@ export const GameObject = memo(function GameObject({
     if (matRef.current) matRef.current.emissive.setRGB(0, 0, 0)
   }, [baseX, baseY, baseZ, rotX, rotY, baseRotZ, baseScale])
 
-  // damageFlash: фиксируем время старта. При выключении — useEffect выше сбрасывает.
+  // damageFlash: фиксируем время старта. При выключении — useEffect above сбрасывает.
   useEffect(() => {
     if (damageFlash) damageStartRef.current = performance.now()
   }, [damageFlash])
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     const g = groupRef.current
     if (!g) return
+
+    // Запускаем анимации (spawn, hover, death)
+    updateAnimation(delta)
 
     if (flatOnTable) {
       if (damageFlash) {

@@ -34,6 +34,7 @@ import {
   getBoardCenter,
 } from '../../../utils/gameObjectPlacement'
 import { TableDecor } from './TableDecor'
+import { PostProcessing } from './PostProcessing'
 
 const FOG_COLOR = '#3d4f5f'
 const FOG_NEAR = 10
@@ -124,6 +125,9 @@ export function GameExperience({ playerIndex, playerCount, controlsRef, children
       />
 
       {children}
+
+      {/* Пост-обработка: Bloom + Vignette + ToneMapping */}
+      <PostProcessing />
     </>
   )
 }

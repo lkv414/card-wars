@@ -72,6 +72,12 @@ export const useGameStore = create(
       }
 
       set((s) => {
+        // Быстрая проверка: если ничего не изменилось — не вызываем setState
+        if (finalState === s.game && s.serverVersion === incomingVersion && s.error === null) {
+          // Но всё равно чистим pendingActions если нужно
+          if (s.pendingActions.size === 0) return s
+        }
+
         const pendingActions = new Map(s.pendingActions)
         // Если сервер прислал более новую версию, чем та, при которой
         // мы выпустили запрос — считаем оптимистичный патч подтверждённым.
@@ -244,3 +250,42 @@ export const selectError = (s) => s.error
  * Удобный селектор: serverVersion.
  */
 export const selectServerVersion = (s) => s.serverVersion
+
+/**
+ * Мемоизированный селектор: текущий игрок (me).
+ * Возвращает стабильную ссылку — не вызывает re-render при изменении других полей.
+ */
+export const selectMe = (s) => {
+  const game = s.game
+  const currentPlayerId = game?.current_player_id
+  if (!game || !currentPlayerId) return null
+  return game.players.find((p) => p.player_id === currentPlayerId) ?? null
+}
+
+/**
+ * Мемоизированный селектор: все живые игроки.
+ */
+export const selectAlivePlayers = (s) => {
+  const game = s.game
+  if (!game) return []
+  return game.players.filter((p) => (p.health ?? 0) > 0)
+}
+
+/**
+ * Мемоизированный селектор: ход текущего игрока (boolean).
+ */
+export const selectIsMyTurn = (s) => {
+  const game = s.game
+  if (!game) return false
+  return game.current_player_id !== null
+}
+
+/**
+ * Мемоизированный селектор: статус игры.
+ */
+export const selectGameStatus = (s) => s.game?.status ?? null
+
+/**
+ * Мемоизированный селектор: победитель.
+ */
+export const selectWinner = (s) => s.game?.winner_id ?? null

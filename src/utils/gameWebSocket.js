@@ -5,7 +5,7 @@
  * e.g. http://127.0.0.1:8787 (wrangler dev) or https://card-wars-game.<account>.workers.dev
  */
 
-const MAX_RECONNECT_DELAY_MS = 15_000
+const MAX_RECONNECT_DELAY_MS = 5_000
 import { isOfflineTestMode, localWorkerBaseUrl } from './offlineMode'
 
 export function isGameWsConfigured() {
@@ -167,7 +167,10 @@ function createReconnectingSocket({
         return
       }
       onStatusChange?.('reconnecting')
-      const delay = Math.min(1000 * 2 ** retryAttempt, MAX_RECONNECT_DELAY_MS)
+      // Экспоненциальный backoff с jitter — предотвращает "thundering herd"
+      const baseDelay = Math.min(1000 * 2 ** retryAttempt, MAX_RECONNECT_DELAY_MS)
+      const jitter = Math.random() * 200 // 0-200 мс случайной задержки
+      const delay = baseDelay + jitter
       retryAttempt += 1
       clearRetry()
       retryTimer = setTimeout(connect, delay)

@@ -1,0 +1,222 @@
+/**
+ * CardDisplay.css — стили для универсального компонента отображения карты
+ */
+
+.card-display {
+  --card-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  background: #1a1a2e;
+  color: white;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-display--clickable {
+  cursor: pointer;
+}
+
+.card-display--clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.card-display--selected {
+  box-shadow: 0 0 0 2px #fbbf24, 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Режим 'hand' */
+.card-display--hand {
+  width: 96px;
+  height: 132px;
+  border: 2px solid var(--card-land-border, rgba(255, 255, 255, 0.35));
+}
+
+.card-display--hand .card-display-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-display--hand .card-display-cost {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(255, 152, 0, 0.92);
+  color: #111;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* Режим 'tile' */
+.card-display--tile {
+  width: 140px;
+  min-height: 200px;
+  border: 2px solid var(--card-land-border, rgba(255, 255, 255, 0.2));
+}
+
+.card-display-visual {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+}
+
+.card-display-visual .card-display-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-display-type {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-display-info {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-display-name {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.card-display-stats {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.card-display-desc {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.card-display-flip {
+  margin: 4px 0 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 193, 7, 0.12);
+  border: 1px solid rgba(255, 193, 7, 0.35);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Режим 'full' */
+.card-display--full {
+  width: 100%;
+  max-width: 480px;
+  padding: 16px;
+}
+
+.card-display-full {
+  display: flex;
+  gap: 16px;
+}
+
+.card-display-full-img {
+  flex: 0 0 140px;
+  width: 140px;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-display-full-img .card-display-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-display-full-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-display-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.card-display-land {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Fallback */
+.card-display-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2a3554 0%, #1f2940 100%);
+  font-size: 24px;
+}
+
+.card-display--hand .card-display-fallback {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+}
+
+/* Бейджи типов */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-creature {
+  background: rgba(76, 175, 80, 0.25);
+  color: #a5d6a7;
+}
+
+.badge-building {
+  background: rgba(100, 181, 246, 0.25);
+  color: #90caf9;
+}
+
+.badge-spell {
+  background: rgba(186, 104, 200, 0.25);
+  color: #ce93d8;
+}

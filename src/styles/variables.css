@@ -43,12 +43,22 @@
   /* Радиусы */
   --radius: 12px;
   --radius-lg: 22px;
-  
+
   /* Safe area для мобильных */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
-  
+
+  /* Игровые цвета */
+  --game-bg: #3d4f5f;
+  --game-fog: #3d4f5f;
+  --game-felt: #2e5a28;
+  --game-table: #5d4037;
+  --game-accent: #fbbf24;
+  --game-danger: #ff5252;
+  --game-success: #4caf50;
+  --game-info: #2196f3;
+
   /* Цветовая схема */
   color-scheme: light;
 }

@@ -70,6 +70,7 @@ export function useLobby() {
     onLobbyUpdate: handleLobbyWsUpdate,
     onClosed: handleLobbyClosed,
     onPresence: setOnlinePlayerIds,
+    onError: setError,
   })
 
   const { unsubscribeRef, subscribeToLobby, connectionStatus } = useLobbyChannel({

@@ -1,11 +1,14 @@
 import { useMemo, useRef } from 'react'
 import { getLandCardBorder } from '../../../constants/landColors'
 import { getCardCost } from '../../../utils/cardFields.ts'
+import { CardDisplay } from '../../Shared/CardDisplay'
+import '../../Shared/CardDisplay.css'
+// Убеждаемся что стили подключены один раз
 
 /**
  * HUDHand — карты в руке игрока (внизу экрана, вне Canvas).
- * Дедупликация по instanceId/id защищает от duplicate-key warnings
- * когда WS-push и после-оптимистичный reload временно дублируют карту.
+ * Использует CardDisplay для единообразного отображения.
+ * Дедупликация по instanceId/id защищает от duplicate-key warnings.
  */
 export function HUDHand({
   handCards,
@@ -24,7 +27,6 @@ export function HUDHand({
   const dragMovedRef = useRef(false)
 
   // Дедупликация: у каждой карты в руке должен быть уникальный instanceId.
-  // Если Supabase WS-push принёс дубль — оставляем только первое вхождение.
   const uniqueHand = useMemo(() => {
     if (!Array.isArray(handCards)) return []
     const seen = new Set()
@@ -50,12 +52,10 @@ export function HUDHand({
             const cost = getCardCost(c)
             const key = c?.instanceId || c?.id || `hand-${idx}`
             return (
-              <button
-                type="button"
+              <div
                 key={key}
                 className={`hud-hand-card${isSel ? ' selected' : ''}${isDragging ? ' dragging' : ''}${isYourTurn ? '' : ' disabled'}`}
                 style={{ '--card-land-border': landBorder }}
-                disabled={!isYourTurn || isFinished}
                 onClick={(e) => {
                   e.stopPropagation()
                   if (dragMovedRef.current) {
@@ -89,22 +89,13 @@ export function HUDHand({
                   e.stopPropagation()
                   setDraggingCardIndex(null)
                 }}
+                role="button"
                 aria-pressed={isSel}
                 aria-label={`${c?.name ?? `Карта ${idx + 1}`}, стоимость ${cost}`}
                 title={`${c?.name || `Карта ${idx + 1}`} · ⚡${cost} · двойной клик — описание`}
               >
-                <span className="hud-hand-card-cost" aria-hidden>⚡{cost}</span>
-                {c?.image_url ? (
-                  <img
-                    src={c.image_url}
-                    alt=""
-                    className="hud-hand-card-img"
-                    draggable={false}
-                  />
-                ) : (
-                  <span className="hud-hand-card-fallback">{c?.name || `Карта ${idx + 1}`}</span>
-                )}
-              </button>
+                <CardDisplay card={c} mode="hand" />
+              </div>
             )
           })
         ) : (

@@ -1,12 +1,37 @@
 /**
  * game.css — Стили для игровых экранов
+ *
+ * Использует CSS-переменные из variables.css для единообразия.
  */
+
+:root {
+  /* Игровые цвета (переопределяют variables.css для игровых экранов) */
+  --game-bg: #3d4f5f;
+  --game-fog: #3d4f5f;
+  --game-felt: #2e5a28;
+  --game-table: #5d4037;
+  --game-accent: #fbbf24;
+  --game-danger: #ff5252;
+  --game-success: #4caf50;
+  --game-info: #2196f3;
+
+  /* Размеры карточек в игре */
+  --game-card-width: 96px;
+  --game-card-height: 132px;
+  --game-card-radius: 10px;
+
+  /* Анимации */
+  --game-transition-fast: 0.15s ease;
+  --game-transition-normal: 0.25s ease;
+  --game-transition-slow: 0.4s ease;
+}
 
 .game-board-3d {
   position: relative;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background: var(--game-bg);
 }
 
 .game-board-3d--placing {

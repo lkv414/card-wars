@@ -3,6 +3,7 @@ import { useArtTileZoom } from '../../hooks/useArtTileZoom'
 import { CARD_ZOOM_SCALE, CARD_ZOOM_SCALE_COMPACT } from '../../utils/cardZoom'
 import { getDeckTileBlockReason } from '../../utils/deckTileLimits'
 import { normalizeDeckEntryId } from '../../utils/deckState'
+import { CardDisplay } from './CardDisplay'
 
 const ZONE_RATIO = 0.30
 
@@ -30,7 +31,8 @@ export const CardTile = memo(function CardTile({
     : 0
 
   const isLandCard = isLand || (!!item.name && !item.card_type)
-  const hasImage = item.image_url && !imageFailed
+  const imageUrl = item.card_url || item.image_url
+  const hasImage = imageUrl && !imageFailed
   const artOnly = hasImage && !isLandCard
   const zoomScale = compact ? CARD_ZOOM_SCALE_COMPACT : CARD_ZOOM_SCALE
 
@@ -155,7 +157,7 @@ export const CardTile = memo(function CardTile({
           }}
         >
           <img
-            src={item.image_url}
+            src={imageUrl}
             alt=""
             className="card-tile-img"
             loading="lazy"
@@ -173,20 +175,7 @@ export const CardTile = memo(function CardTile({
           )}
         </div>
       ) : (
-        <>
-          {hasImage ? (
-            <img
-              src={item.image_url}
-              alt=""
-              className="card-tile-img"
-              loading="lazy"
-              decoding="async"
-              onError={() => setImageFailed(true)}
-            />
-          ) : (
-            <div className="card-tile-fallback" aria-hidden="true" />
-          )}
-        </>
+        <CardDisplay card={item} mode="tile" imageFailed={imageFailed} />
       )}
 
       {!artOnly && (

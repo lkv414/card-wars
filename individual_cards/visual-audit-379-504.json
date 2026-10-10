@@ -1,0 +1,842 @@
+[
+  {
+    "image_index": 379,
+    "image_url": "images/lich_card_34.png",
+    "expected_name": "Му-бык",
+    "visual_name": "Му-бык",
+    "status": "match"
+  },
+  {
+    "image_index": 380,
+    "image_url": "images/lich_card_36.png",
+    "expected_name": "Вместе навсегда",
+    "visual_name": "Вместе навсегда",
+    "status": "match"
+  },
+  {
+    "image_index": 381,
+    "image_url": "images/lich_card_37.png",
+    "expected_name": "Последний шанс",
+    "visual_name": "Последний шанс",
+    "status": "match"
+  },
+  {
+    "image_index": 382,
+    "image_url": "images/lich_card_39.png",
+    "expected_name": "Убей-молния",
+    "visual_name": "Убей-молния",
+    "status": "match"
+  },
+  {
+    "image_index": 383,
+    "image_url": "images/lich_card_42.png",
+    "expected_name": "Мозг-щи",
+    "visual_name": "Мозг-щи",
+    "status": "match"
+  },
+  {
+    "image_index": 384,
+    "image_url": "images/lich_card_43.png",
+    "expected_name": "Неразборчивый гладиатор",
+    "visual_name": "Неразборчивый гладиатор",
+    "status": "match"
+  },
+  {
+    "image_index": 385,
+    "image_url": "images/lich_card_44.png",
+    "expected_name": "Очаровательный трупоедик",
+    "visual_name": "Очаровательный трупоедик",
+    "status": "match"
+  },
+  {
+    "image_index": 386,
+    "image_url": "images/lich_card_46.png",
+    "expected_name": "Чудесная жерва",
+    "visual_name": "Чудесная жерва",
+    "status": "match"
+  },
+  {
+    "image_index": 387,
+    "image_url": "images/lich_card_48.png",
+    "expected_name": "Мурррузрак",
+    "visual_name": "Мурррузрак",
+    "status": "match"
+  },
+  {
+    "image_index": 388,
+    "image_url": "images/marceline_card_1.png",
+    "expected_name": "Похоронный дом",
+    "visual_name": "Загробный дом",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 389,
+    "image_url": "images/marceline_card_2.png",
+    "expected_name": "Картонный особняк",
+    "visual_name": "Картонный особняк",
+    "status": "match"
+  },
+  {
+    "image_index": 390,
+    "image_url": "images/marceline_card_3.png",
+    "expected_name": "Кровавая купальня",
+    "visual_name": "Ванна крови",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 391,
+    "image_url": "images/marceline_card_5.png",
+    "expected_name": "Бабло прочь",
+    "visual_name": "Белкобомбы!",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 392,
+    "image_url": "images/marceline_card_7.png",
+    "expected_name": "Одноколесный велосипед",
+    "visual_name": "Унициклоп",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 393,
+    "image_url": "images/marceline_card_9.png",
+    "expected_name": "Мушкаловка",
+    "visual_name": "Мушка-хлопушка",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 394,
+    "image_url": "images/marceline_card_11.png",
+    "expected_name": "Принцесса Бэнши",
+    "visual_name": "Принцесса Банши",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 395,
+    "image_url": "images/marceline_card_13.png",
+    "expected_name": "Королева",
+    "visual_name": "Королева Банши",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 396,
+    "image_url": "images/marceline_card_14.png",
+    "expected_name": "Ангел Болот",
+    "visual_name": "Ангел-болом Банши",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 397,
+    "image_url": "images/marceline_card_15.png",
+    "expected_name": "Ведьмак",
+    "visual_name": "Ведьмак",
+    "status": "match"
+  },
+  {
+    "image_index": 398,
+    "image_url": "images/marceline_card_17.png",
+    "expected_name": "Болотный Бум",
+    "visual_name": "Бездомный болом",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 399,
+    "image_url": "images/marceline_card_19.png",
+    "expected_name": "Болотная лягушка-бомба",
+    "visual_name": "Болотная бомба-лягушка",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 400,
+    "image_url": "images/marceline_card_20.png",
+    "expected_name": "Доктор Ерунда",
+    "visual_name": "Док Кукольштейн",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 401,
+    "image_url": "images/marceline_card_21.png",
+    "expected_name": "Хлопушка",
+    "visual_name": "Хлопкопульма",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 402,
+    "image_url": "images/marceline_card_23.png",
+    "expected_name": "Свирепая курица",
+    "visual_name": "Яростная наседка",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 403,
+    "image_url": "images/marceline_card_24.png",
+    "expected_name": "Большой курятник",
+    "visual_name": "Яростная наседка",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 404,
+    "image_url": "images/marceline_card_25.png",
+    "expected_name": "Автоплут",
+    "visual_name": "Авто-ощипыватель",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 405,
+    "image_url": "images/marceline_card_26.png",
+    "expected_name": "Пентакутия",
+    "visual_name": "Пентапластырь",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 406,
+    "image_url": "images/marceline_card_28.png",
+    "expected_name": "Музыкальная утка",
+    "visual_name": "Утка-менестрель",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 407,
+    "image_url": "images/marceline_card_30.png",
+    "expected_name": "Бумажный тигр",
+    "visual_name": "Бумажный тигр",
+    "status": "match"
+  },
+  {
+    "image_index": 408,
+    "image_url": "images/marceline_card_32.png",
+    "expected_name": "Чёрная кулон",
+    "visual_name": "Ожерелье черных дыр",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 409,
+    "image_url": "images/marceline_card_34.png",
+    "expected_name": "Переливание крови",
+    "visual_name": "Переливание крови",
+    "status": "match"
+  },
+  {
+    "image_index": 410,
+    "image_url": "images/marceline_card_35.png",
+    "expected_name": "Свирепый цыплёнок",
+    "visual_name": "Переливание крови",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 412,
+    "image_url": "images/ftg_card_1.png",
+    "expected_name": "Голубой король Вечерюк",
+    "visual_name": "Голубой король Вечерюк",
+    "status": "match"
+  },
+  {
+    "image_index": 413,
+    "image_url": "images/ftg_card_2.png",
+    "expected_name": "Голубой гном",
+    "visual_name": "Голубой гном",
+    "status": "match"
+  },
+  {
+    "image_index": 414,
+    "image_url": "images/ftg_card_3.png",
+    "expected_name": "Черничное желе",
+    "visual_name": "Черничное желе",
+    "status": "match"
+  },
+  {
+    "image_index": 415,
+    "image_url": "images/ftg_card_4.png",
+    "expected_name": "Призрак Джонни",
+    "visual_name": "Призрак Джонни",
+    "status": "match"
+  },
+  {
+    "image_index": 416,
+    "image_url": "images/ftg_card_5.png",
+    "expected_name": "Дух ниндзя",
+    "visual_name": "Дух ниндзя",
+    "status": "match"
+  },
+  {
+    "image_index": 417,
+    "image_url": "images/ftg_card_6.png",
+    "expected_name": "Паладин",
+    "visual_name": "Паладин",
+    "status": "match"
+  },
+  {
+    "image_index": 418,
+    "image_url": "images/ftg_card_7.png",
+    "expected_name": "Няш-мяш",
+    "visual_name": "Няш-мяш",
+    "status": "match"
+  },
+  {
+    "image_index": 419,
+    "image_url": "images/ftg_card_8.png",
+    "expected_name": "Черничный пирогклон",
+    "visual_name": "Черничный пирогклон",
+    "status": "match"
+  },
+  {
+    "image_index": 420,
+    "image_url": "images/ftg_card_9.png",
+    "expected_name": "Ледяной глазастик",
+    "visual_name": "Ледяной глазастик",
+    "status": "match"
+  },
+  {
+    "image_index": 421,
+    "image_url": "images/ftg_card_10.png",
+    "expected_name": "Волшебник-гастролер",
+    "visual_name": "Волшебник-гастролер",
+    "status": "match"
+  },
+  {
+    "image_index": 422,
+    "image_url": "images/ftg_card_12.png",
+    "expected_name": "Лапа пумы",
+    "visual_name": "Лапа пумы",
+    "status": "match"
+  },
+  {
+    "image_index": 423,
+    "image_url": "images/ftg_card_13.png",
+    "expected_name": "Кукурузный волк",
+    "visual_name": "Розовая сахарная вата",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 424,
+    "image_url": "images/ftg_card_15.png",
+    "expected_name": "Книга Кунз-фу",
+    "visual_name": "Книга Кунз-фу",
+    "status": "match"
+  },
+  {
+    "image_index": 425,
+    "image_url": "images/ftg_card_16.png",
+    "expected_name": "Носки стойкости",
+    "visual_name": "Занашок от носок",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 426,
+    "image_url": "images/ftg_card_17.png",
+    "expected_name": "Снижение налогов",
+    "visual_name": "Снижение налогов",
+    "status": "match"
+  },
+  {
+    "image_index": 427,
+    "image_url": "images/ftg_card_18.png",
+    "expected_name": "Искажение пространства",
+    "visual_name": "Магический портал",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 428,
+    "image_url": "images/ftg_card_19.png",
+    "expected_name": "Домкрат",
+    "visual_name": "Хата на Новый Год",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 429,
+    "image_url": "images/ftg_card_20.png",
+    "expected_name": "Сиропоузел",
+    "visual_name": "Хижина эльфа",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 430,
+    "image_url": "images/ftg_card_21.png",
+    "expected_name": "Безумный дротик",
+    "visual_name": "Школа",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 431,
+    "image_url": "images/ftg_card_24.png",
+    "expected_name": "Камнеструм",
+    "visual_name": "Камнеструм",
+    "status": "match"
+  },
+  {
+    "image_index": 432,
+    "image_url": "images/ftg_card_25.png",
+    "expected_name": "Силос",
+    "visual_name": "Башня правосудия",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 433,
+    "image_url": "images/ftg_card_26.png",
+    "expected_name": "Маяк",
+    "visual_name": "Желтый маяк",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 434,
+    "image_url": "images/ftg_card_27.png",
+    "expected_name": "Колдовской путь",
+    "visual_name": "Темный лес",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 435,
+    "image_url": "images/ftg_card_28.png",
+    "expected_name": "Сила попкорна",
+    "visual_name": "Сила попкорна",
+    "status": "match"
+  },
+  {
+    "image_index": 436,
+    "image_url": "images/ftg_card_29.png",
+    "expected_name": "Амулет шелухи кукурузы",
+    "visual_name": "Кукурузный амулет",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 437,
+    "image_url": "images/ftg_card_30.png",
+    "expected_name": "Кукурузное ухо",
+    "visual_name": "Виноградная попка",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 438,
+    "image_url": "images/ftg_card_31.png",
+    "expected_name": "Апельсиновое желе",
+    "visual_name": "Лимонное желе",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 439,
+    "image_url": "images/ftg_card_32.png",
+    "expected_name": "Жёлтый гном",
+    "visual_name": "Желтый гном",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 440,
+    "image_url": "images/ftg_card_33.png",
+    "expected_name": "Солнечный король",
+    "visual_name": "Солнечный король",
+    "status": "match"
+  },
+  {
+    "image_index": 441,
+    "image_url": "images/ftg_card_34.png",
+    "expected_name": "Пиратский медведь",
+    "visual_name": "Пиратский медведь",
+    "status": "match"
+  },
+  {
+    "image_index": 443,
+    "image_url": "images/ftg_card_36.png",
+    "expected_name": "Глаза змеи",
+    "visual_name": "Деревянный рыцарь",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 444,
+    "image_url": "images/ftg_card_37.png",
+    "expected_name": "Кукурузная мышь",
+    "visual_name": "Кукурузная мышь",
+    "status": "match"
+  },
+  {
+    "image_index": 445,
+    "image_url": "images/ftg_card_38.png",
+    "expected_name": "Золотой шакал",
+    "visual_name": "Золотой шакал",
+    "status": "match"
+  },
+  {
+    "image_index": 446,
+    "image_url": "images/ftg_card_39.png",
+    "expected_name": "Золотой ниндзя",
+    "visual_name": "Золотой ниндзя",
+    "status": "match"
+  },
+  {
+    "image_index": 447,
+    "image_url": "images/ftg_card_40.png",
+    "expected_name": "Итан Олфайер",
+    "visual_name": "Итан Огонек",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 448,
+    "image_url": "images/ftg_card_41.png",
+    "expected_name": "Копитер",
+    "visual_name": "Коровий",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 449,
+    "image_url": "images/ftg_card_42.png",
+    "expected_name": "Капитан Тако",
+    "visual_name": "Капитан Тако",
+    "status": "match"
+  },
+  {
+    "image_index": 450,
+    "image_url": "images/ftg_card_43.png",
+    "expected_name": "Хулиган-яблоко",
+    "visual_name": "Яблочный страк",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 453,
+    "image_url": "images/ftg_card_48.png",
+    "expected_name": "Воскресная школа",
+    "visual_name": "Воскресная школа",
+    "status": "match"
+  },
+  {
+    "image_index": 454,
+    "image_url": "images/ftg_card_49.png",
+    "expected_name": "Победительный гном",
+    "visual_name": "Гном-победитель",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 455,
+    "image_url": "images/ftg_card_50.png",
+    "expected_name": "Клубничное желе",
+    "visual_name": "Клубничное желе",
+    "status": "match"
+  },
+  {
+    "image_index": 456,
+    "image_url": "images/ftg_card_51.png",
+    "expected_name": "Хлопковый глазастик",
+    "visual_name": "Хлопковый глазастик",
+    "status": "match"
+  },
+  {
+    "image_index": 457,
+    "image_url": "images/ftg_card_52.png",
+    "expected_name": "Подушка боли",
+    "visual_name": "Подушка боли",
+    "status": "match"
+  },
+  {
+    "image_index": 458,
+    "image_url": "images/ftg_card_53.png",
+    "expected_name": "Свиток свежего дыхания",
+    "visual_name": "Свиток свежего дыхания",
+    "status": "match"
+  },
+  {
+    "image_index": 459,
+    "image_url": "images/ftg_card_54.png",
+    "expected_name": "Кондитерское колечко",
+    "visual_name": "Кондитерское колечко",
+    "status": "match"
+  },
+  {
+    "image_index": 460,
+    "image_url": "images/ftg_card_55.png",
+    "expected_name": "Милая мельница",
+    "visual_name": "Милая мельница",
+    "status": "match"
+  },
+  {
+    "image_index": 461,
+    "image_url": "images/ftg_card_57.png",
+    "expected_name": "Привидение",
+    "visual_name": "Привидене",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 462,
+    "image_url": "images/ftg_card_58.png",
+    "expected_name": "Дух ведьмы",
+    "visual_name": "Дух ведьмы",
+    "status": "match"
+  },
+  {
+    "image_index": 463,
+    "image_url": "images/ftg_card_59.png",
+    "expected_name": "Дух дерева",
+    "visual_name": "Дух дерева",
+    "status": "match"
+  },
+  {
+    "image_index": 464,
+    "image_url": "images/ftg_card_60.png",
+    "expected_name": "Морская ведьма",
+    "visual_name": "Морская ведьма",
+    "status": "match"
+  },
+  {
+    "image_index": 465,
+    "image_url": "images/ftg_card_61.png",
+    "expected_name": "Костюмный волк",
+    "visual_name": "Приодетый Волк",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 466,
+    "image_url": "images/ftg_card_62.png",
+    "expected_name": "Красавчик Тимми",
+    "visual_name": "Красавчик Тимми",
+    "status": "match"
+  },
+  {
+    "image_index": 467,
+    "image_url": "images/ftg_card_64.png",
+    "expected_name": "Квагурай",
+    "visual_name": "Квагурай",
+    "status": "match"
+  },
+  {
+    "image_index": 468,
+    "image_url": "images/ftg_card_65.png",
+    "expected_name": "Пощёчина Ведьмы",
+    "visual_name": "Пощечина Ведьмы",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 469,
+    "image_url": "images/ftg_card_66.png",
+    "expected_name": "Кольцо нокаута",
+    "visual_name": "Кольцо нокаута",
+    "status": "match"
+  },
+  {
+    "image_index": 470,
+    "image_url": "images/ftg_card_67.png",
+    "expected_name": "Музыкальный трон",
+    "visual_name": "Музыкальный трон",
+    "status": "match"
+  },
+  {
+    "image_index": 471,
+    "image_url": "images/ftg_card_68.png",
+    "expected_name": "Мастер маскировки",
+    "visual_name": "Мастер маскировки",
+    "status": "match"
+  },
+  {
+    "image_index": 472,
+    "image_url": "images/ftg_card_69.png",
+    "expected_name": "Невероятное яйцо",
+    "visual_name": "Невероятное яйцо",
+    "status": "match"
+  },
+  {
+    "image_index": 473,
+    "image_url": "images/ftg_card_70.png",
+    "expected_name": "Цельнометаллическая ракетка",
+    "visual_name": "Цельнометаллическая ракетка",
+    "status": "match"
+  },
+  {
+    "image_index": 474,
+    "image_url": "images/ftg_card_71.png",
+    "expected_name": "Фонтан слез",
+    "visual_name": "Фонтан слез",
+    "status": "match"
+  },
+  {
+    "image_index": 475,
+    "image_url": "images/ftg_card_72.png",
+    "expected_name": "Дейви Бонз",
+    "visual_name": "Дейви Бонз",
+    "status": "match"
+  },
+  {
+    "image_index": 476,
+    "image_url": "images/ftg_card_73.png",
+    "expected_name": "Пень-колюга",
+    "visual_name": "Пень-колюга",
+    "status": "match"
+  },
+  {
+    "image_index": 477,
+    "image_url": "images/ftg_card_74.png",
+    "expected_name": "Жучья госпожа",
+    "visual_name": "Жучья госпожа",
+    "status": "match"
+  },
+  {
+    "image_index": 478,
+    "image_url": "images/ftg_card_75.png",
+    "expected_name": "Зелёный гном",
+    "visual_name": "Зеленый гном",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 479,
+    "image_url": "images/ftg_card_76.png",
+    "expected_name": "Лаймовое желе",
+    "visual_name": "Лаймовое желе",
+    "status": "match"
+  },
+  {
+    "image_index": 480,
+    "image_url": "images/ftg_card_78.png",
+    "expected_name": "Большая рука мумии",
+    "visual_name": "Большая рука мумии",
+    "status": "match"
+  },
+  {
+    "image_index": 481,
+    "image_url": "images/ftg_card_79.png",
+    "expected_name": "Песочный шакал",
+    "visual_name": "Песчаный шакал",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 482,
+    "image_url": "images/ftg_card_80.png",
+    "expected_name": "Призрачный главастук",
+    "visual_name": "Призрачный главастук",
+    "status": "match"
+  },
+  {
+    "image_index": 483,
+    "image_url": "images/ftg_card_81.png",
+    "expected_name": "Зелёная змейка",
+    "visual_name": "Зеленая змейка",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 484,
+    "image_url": "images/ftg_card_82.png",
+    "expected_name": "Зелёный король Вечерюк",
+    "visual_name": "Зеленый король Вечерюк",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 485,
+    "image_url": "images/ftg_card_83.png",
+    "expected_name": "Кактус Бангун",
+    "visual_name": "Кактус бангут",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 486,
+    "image_url": "images/ftg_card_84.png",
+    "expected_name": "Бриллиантовый Дэн",
+    "visual_name": "Бриллиантовый Дэн",
+    "status": "match"
+  },
+  {
+    "image_index": 488,
+    "image_url": "images/ftg_card_86.png",
+    "expected_name": "Мозговой смерч",
+    "visual_name": "Мозговой смерч",
+    "status": "match"
+  },
+  {
+    "image_index": 489,
+    "image_url": "images/ftg_card_87.png",
+    "expected_name": "Портал в никуда",
+    "visual_name": "Портал в никуда",
+    "status": "match"
+  },
+  {
+    "image_index": 490,
+    "image_url": "images/ftg_card_88.png",
+    "expected_name": "Портал антипризыва",
+    "visual_name": "Портал антипризыва",
+    "status": "match"
+  },
+  {
+    "image_index": 491,
+    "image_url": "images/ftg_card_91.png",
+    "expected_name": "Песчаная пирамида",
+    "visual_name": "Песчаная пирамида",
+    "status": "match"
+  },
+  {
+    "image_index": 492,
+    "image_url": "images/ftg_card_92.png",
+    "expected_name": "Храм солнца",
+    "visual_name": "Храм солнца",
+    "status": "match"
+  },
+  {
+    "image_index": 493,
+    "image_url": "images/ftg_card_97.png",
+    "expected_name": "Чёрный паладин",
+    "visual_name": "Черный паладин",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 494,
+    "image_url": "images/ftg_card_98.png",
+    "expected_name": "Голубой тритон",
+    "visual_name": "Голубой тритон",
+    "status": "match"
+  },
+  {
+    "image_index": 495,
+    "image_url": "images/ftg_card_99.png",
+    "expected_name": "Любопытный чучвачок",
+    "visual_name": "Любопытный чувачок",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 496,
+    "image_url": "images/ftg_card_100.png",
+    "expected_name": "Гном в стильных штанах",
+    "visual_name": "Гном в стильных штанах",
+    "status": "match"
+  },
+  {
+    "image_index": 497,
+    "image_url": "images/ftg_card_101.png",
+    "expected_name": "Рыболов",
+    "visual_name": "Рыболов",
+    "status": "match"
+  },
+  {
+    "image_index": 498,
+    "image_url": "images/ftg_card_102.png",
+    "expected_name": "Призрачный мимик",
+    "visual_name": "Призрачный мумик",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 500,
+    "image_url": "images/ftg_card_104.png",
+    "expected_name": "Лейтенант Груб",
+    "visual_name": "Лейтенант Груб",
+    "status": "match"
+  },
+  {
+    "image_index": 501,
+    "image_url": "images/ftg_card_106.png",
+    "expected_name": "Корнишон",
+    "visual_name": "Корнишон",
+    "status": "match"
+  },
+  {
+    "image_index": 502,
+    "image_url": "images/ftg_card_107.png",
+    "expected_name": "Старик-разбойник",
+    "visual_name": "Старик-разбойник",
+    "status": "match"
+  },
+  {
+    "image_index": 503,
+    "image_url": "images/ftg_card_108.png",
+    "expected_name": "Болотный глазастик",
+    "visual_name": "Болотный глазастик",
+    "status": "match"
+  },
+  {
+    "image_index": 504,
+    "image_url": "images/ftg_card_109.png",
+    "expected_name": "Громыла",
+    "visual_name": "Громыла",
+    "status": "match"
+  }
+]

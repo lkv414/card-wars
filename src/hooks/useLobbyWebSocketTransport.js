@@ -12,7 +12,7 @@ import { isOfflineTestMode } from '../utils/offlineMode'
 
 const ACTION_TIMEOUT_MS = 45_000
 
-export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, onClosed, onPresence } = {}) {
+export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, onClosed, onPresence, onError } = {}) {
   const [status, setStatus] = useState(() => (isGameWsConfigured() ? 'idle' : 'disabled'))
   const socketRef = useRef(null)
   const pendingRef = useRef(new Map())
@@ -20,12 +20,14 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
   const onLobbyUpdateRef = useRef(onLobbyUpdate)
   const onClosedRef = useRef(onClosed)
   const onPresenceRef = useRef(onPresence)
+  const onErrorRef = useRef(onError)
 
   useEffect(() => {
     onLobbyUpdateRef.current = onLobbyUpdate
     onClosedRef.current = onClosed
     onPresenceRef.current = onPresence
-  }, [onLobbyUpdate, onClosed, onPresence])
+    onErrorRef.current = onError
+  }, [onLobbyUpdate, onClosed, onPresence, onError])
 
   const settlePending = useCallback((requestId, fn) => {
     if (!requestId) return
@@ -37,10 +39,10 @@ export function useLobbyWebSocketTransport(lobbyId, clientId, { onLobbyUpdate, o
 
   const handleMessage = useCallback(
     (msg) => {
-      if (msg?.type === 'error') {
-        settlePending(msg.requestId, ({ reject }) =>
-          reject(new Error(msg.message || 'Lobby action failed')),
-        )
+      if (msg?.type === 'error' || msg?.type === 'lobby_failed') {
+        const error = new Error(msg.message || 'Lobby action failed')
+        settlePending(msg.requestId, ({ reject }) => reject(error))
+        onErrorRef.current?.(error)
         return
       }
       if (msg?.type === 'joined') {

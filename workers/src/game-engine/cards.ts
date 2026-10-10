@@ -316,7 +316,9 @@ function findFlipAbility(state: GameState, card: Card): Record<string, unknown> 
   if (!Array.isArray(mechs)) return null
   for (const m of mechs) {
     if (!m || typeof m !== 'object') continue
-    const actions = (m as Record<string, unknown>).actions
+    const mechanic = m as Record<string, unknown>
+    if (mechanic.type === 'flip_ability') return mechanic
+    const actions = mechanic.actions
     if (!Array.isArray(actions)) continue
     for (const a of actions) {
       if (a && typeof a === 'object' && (a as Record<string, unknown>).type === 'flip_ability') {

@@ -1,5 +1,7 @@
 /**
  * game-hud.css — HUD в стиле Card Wars
+ *
+ * Использует CSS-переменные из variables.css и game.css.
  */
 
 .hud-bottom {
@@ -13,6 +15,13 @@
   font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
   color: white;
   pointer-events: auto;
+}
+
+/* Используем игровые переменные для единообразия */
+.hud-hand-card {
+  width: var(--game-card-width, 96px);
+  height: var(--game-card-height, 132px);
+  border-radius: var(--game-card-radius, 10px);
 }
 
 .hud-bottom-status {

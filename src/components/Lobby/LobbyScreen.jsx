@@ -174,6 +174,7 @@ export function LobbyScreen({ toast }) {
   if (status === 'waiting' || status === 'in_game') {
     return (
       <>
+        {error && <div className="lobby-error" role="alert">{error}</div>}
         {(connectionStatus === 'disconnected' || connectionStatus === 'reconnecting') && (
           <div className="connection-banner" role="alert" aria-live="polite">
             <span className="connection-spinner" aria-hidden="true"></span>

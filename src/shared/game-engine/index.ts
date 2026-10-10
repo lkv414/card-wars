@@ -1,17 +1,51 @@
 /**
- * Client-side game engine mirror — re-exports the same `validateAction`
- * and `applyAction` the Worker uses, so the UI can pre-validate and
- * run optimistic updates with identical logic.
+ * shared/game-engine/index.ts — реэкспорт из серверного движка.
  *
- * The source of truth is `workers/src/game-engine/`. When you change
- * a file there, mirror the change here. (We accept the duplication
- * rather than introducing a cross-package build step — the engine is
- * pure TS and ~30 KB.)
+ * Внимание: это зеркало движка для клиентской pre-validation.
+ * Основной движок находится в workers/game-engine.
+ *
+ * Для избежания циклических зависимостей импортируем напрямую,
+ * а не через этот файл в серверном коде.
  */
+
+// Типы
+export type {
+  Card,
+  Zone,
+  PlayerState,
+  CardCatalogEntry,
+  GameState,
+  ApplyResult,
+  BattleEvent,
+  EngineError,
+  Action,
+  ActionName,
+} from '../../workers/src/game-engine/types.js'
+
+// Утилиты
 export {
+  bumpVersion,
+  getActivePlayer,
+  getPlayer,
+  getAlivePlayers,
+  getZone,
+  reshuffleIfNeeded,
+  drawTopCard,
+  shuffleDeck,
+  pushDiscard,
+  seededRng,
+} from '../../workers/src/game-engine/utils.js'
+
+// Движок
+export {
+  applyAction,
   validateAction,
-  type ValidationResult,
-} from './validation.js'
-export type { Action, GameState, PlayerState, Card, Zone } from './types.js'
-export { applyAction, isError as isEngineError } from './engine.js'
-export type { ApplyResult, EngineError, BattleEvent } from './types.js'
+  isError,
+} from '../../workers/src/game-engine/engine.js'
+
+// Механики
+export {
+  hydrateMechanics,
+  hydrateAction,
+  mechanicSummary,
+} from '../../workers/src/game-engine/mechanics.js'

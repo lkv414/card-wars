@@ -34,18 +34,20 @@ function PlayFieldMat() {
 
 /**
  * Круглый деревянный стол + сукно. В 2-игрокном режиме сукно накрывает поле.
+ *
+ * Все меши статичны — matrixAutoUpdate=false убирает пересчёт матриц каждый кадр.
  */
 export const TableDecor = memo(function TableDecor({ playerCount = 2 }) {
   return (
     <>
       {/* Большой деревянный стол */}
-      <mesh receiveShadow position={[0, TABLE_BASE_Y, 0]}>
+      <mesh receiveShadow position={[0, TABLE_BASE_Y, 0]} matrixAutoUpdate={false}>
         <cylinderGeometry args={[TABLE_RADIUS, TABLE_RADIUS + 0.06, 0.08, 64]} />
         <meshStandardMaterial color="#5d4037" roughness={0.94} metalness={0.02} />
       </mesh>
 
       {/* Внутренний круг — поле/сукно */}
-      <mesh receiveShadow position={[0, TABLE_FELT_Y, 0]}>
+      <mesh receiveShadow position={[0, TABLE_FELT_Y, 0]} matrixAutoUpdate={false}>
         <cylinderGeometry
           args={[TABLE_RADIUS - 0.2, TABLE_RADIUS - 0.2, FELT_THICKNESS, 64]}
         />

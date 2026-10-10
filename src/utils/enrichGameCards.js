@@ -62,16 +62,23 @@ export function collectCardIdsFromGame(game) {
 
 export function collectMissingCardIds(game, catalog) {
   const missing = new Set()
+  const seen = new Set() // Защита от дубликатов в разных массивах
+
   const consider = (card) => {
     const id = pickId(card)
     if (!id) return
     const key = catalogKey(id)
-    if (!catalog.has(key) || needsEnrichment(catalog.get(key))) {
+    if (seen.has(key)) return
+    seen.add(key)
+
+    const catalogCard = catalog.get(key)
+    if (!catalogCard || needsEnrichment(catalogCard)) {
       missing.add(String(id))
     }
     if (needsEnrichment(card)) missing.add(String(id))
   }
 
+  // Один проход по всем картам — без вложенных циклов по зонам
   for (const player of game?.players || []) {
     for (const card of player.hand || []) consider(card)
     for (const card of player.deck_pile || []) consider(card)

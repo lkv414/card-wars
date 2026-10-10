@@ -25,10 +25,11 @@ export function hasFlipAbility(card) {
     return true
   }
   if (Array.isArray(card.mechanics)) {
-    // flip_ability лежит ВЛОЖЕННО внутри m.actions[] (см. workers/.../mechanics.ts)
-    return card.mechanics.some((m) =>
-      m && Array.isArray(m.actions) && m.actions.some((a) => a && a.type === 'flip_ability')
-    )
+    return card.mechanics.some((m) => {
+      if (!m || typeof m !== 'object') return false
+      if (m.type === 'flip_ability') return true
+      return Array.isArray(m.actions) && m.actions.some((a) => a && a.type === 'flip_ability')
+    })
   }
   return false
 }

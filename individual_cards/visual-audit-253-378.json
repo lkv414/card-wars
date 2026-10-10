@@ -1,0 +1,828 @@
+[
+  {
+    "image_index": 253,
+    "image_url": "images/jake_2v2_card_1.png",
+    "expected_name": "Ласковая овечка",
+    "visual_name": "Ласковая овечка",
+    "status": "verified"
+  },
+  {
+    "image_index": 255,
+    "image_url": "images/jake_2v2_card_3.png",
+    "expected_name": "Щенок в заплатках",
+    "visual_name": "Щенок в заплатках",
+    "status": "verified"
+  },
+  {
+    "image_index": 256,
+    "image_url": "images/jake_2v2_card_4.png",
+    "expected_name": "Сшитая белка",
+    "visual_name": "Сшитая белка",
+    "status": "verified"
+  },
+  {
+    "image_index": 257,
+    "image_url": "images/jake_2v2_card_5.png",
+    "expected_name": "Куча мала",
+    "visual_name": "Куча мала",
+    "status": "verified"
+  },
+  {
+    "image_index": 258,
+    "image_url": "images/jake_2v2_card_6.png",
+    "expected_name": "Заплатка",
+    "visual_name": "Заплатка",
+    "status": "verified"
+  },
+  {
+    "image_index": 259,
+    "image_url": "images/jake_2v2_card_7.png",
+    "expected_name": "Сплочённость",
+    "visual_name": "Сплочённость",
+    "status": "verified"
+  },
+  {
+    "image_index": 260,
+    "image_url": "images/jake_2v2_card_8.png",
+    "expected_name": "Крепость из подушек",
+    "visual_name": "Крепость из подушек",
+    "status": "verified"
+  },
+  {
+    "image_index": 262,
+    "image_url": "images/jake_2v2_card_12.png",
+    "expected_name": "Привлекательный слон",
+    "visual_name": "Привлекательный слон",
+    "status": "verified"
+  },
+  {
+    "image_index": 263,
+    "image_url": "images/jake_2v2_card_13.png",
+    "expected_name": "Лёгкий жираф",
+    "visual_name": "Лёгкий жираф",
+    "status": "verified"
+  },
+  {
+    "image_index": 264,
+    "image_url": "images/jake_2v2_card_15.png",
+    "expected_name": "Обнимашный ёж",
+    "visual_name": "Обнимашный ёж",
+    "status": "verified"
+  },
+  {
+    "image_index": 266,
+    "image_url": "images/jake_2v2_card_17.png",
+    "expected_name": "Дикий зебрарог",
+    "visual_name": "Дикий зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 267,
+    "image_url": "images/jake_2v2_card_18.png",
+    "expected_name": "Бывалый зебрарог",
+    "visual_name": "Бывалый зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 268,
+    "image_url": "images/jake_2v2_card_19.png",
+    "expected_name": "Королевский малыш",
+    "visual_name": "Королевский малыш",
+    "status": "verified"
+  },
+  {
+    "image_index": 269,
+    "image_url": "images/jake_2v2_card_20.png",
+    "expected_name": "Защищенный зебрарог",
+    "visual_name": "Защищенный зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 271,
+    "image_url": "images/jake_2v2_card_22.png",
+    "expected_name": "Шипастый зебрарог",
+    "visual_name": "Шипастый зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 272,
+    "image_url": "images/jake_2v2_card_23.png",
+    "expected_name": "Тренированный крылатый зебрарог",
+    "visual_name": "Тренированный крылатый зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 273,
+    "image_url": "images/jake_2v2_card_25.png",
+    "expected_name": "Кукурузный гарнизон",
+    "visual_name": "Кукуразный гарнизон",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 274,
+    "image_url": "images/jake_2v2_card_26.png",
+    "expected_name": "Амбар с сеном",
+    "visual_name": "Амбар с сеном",
+    "status": "verified"
+  },
+  {
+    "image_index": 276,
+    "image_url": "images/jake_2v2_card_28.png",
+    "expected_name": "Слинять",
+    "visual_name": "Слинять",
+    "status": "verified"
+  },
+  {
+    "image_index": 277,
+    "image_url": "images/jake_2v2_card_29.png",
+    "expected_name": "Бесконечный комбайн",
+    "visual_name": "Бесконечный комбайн",
+    "status": "verified"
+  },
+  {
+    "image_index": 278,
+    "image_url": "images/jake_2v2_card_30.png",
+    "expected_name": "Кормежник",
+    "visual_name": "Кормежник",
+    "status": "verified"
+  },
+  {
+    "image_index": 280,
+    "image_url": "images/jake_2v2_card_34.png",
+    "expected_name": "Клон",
+    "visual_name": "Клон",
+    "status": "verified"
+  },
+  {
+    "image_index": 281,
+    "image_url": "images/jake_2v2_card_35.png",
+    "expected_name": "Семейные посиделки",
+    "visual_name": "Семейные посиделки",
+    "status": "verified"
+  },
+  {
+    "image_index": 282,
+    "image_url": "images/jake_2v2_card_36.png",
+    "expected_name": "Королевский тур",
+    "visual_name": "Королевский тур",
+    "status": "verified"
+  },
+  {
+    "image_index": 284,
+    "image_url": "images/jake_2v2_card_38.png",
+    "expected_name": "Овечка",
+    "visual_name": "Овечка",
+    "status": "verified"
+  },
+  {
+    "image_index": 285,
+    "image_url": "images/jake_2v2_card_40.png",
+    "expected_name": "Содействие",
+    "visual_name": "Содействие",
+    "status": "verified"
+  },
+  {
+    "image_index": 286,
+    "image_url": "images/lady_rainicorn_card_1.png",
+    "expected_name": "Песчаный сфинкс",
+    "visual_name": "Песчаный сфинкс",
+    "status": "verified"
+  },
+  {
+    "image_index": 287,
+    "image_url": "images/lady_rainicorn_card_3.png",
+    "expected_name": "Фолианкх",
+    "visual_name": "Фолианкх",
+    "status": "verified"
+  },
+  {
+    "image_index": 288,
+    "image_url": "images/lady_rainicorn_card_4.png",
+    "expected_name": "Пляжная мумия",
+    "visual_name": "Пляжная мумия",
+    "status": "verified"
+  },
+  {
+    "image_index": 289,
+    "image_url": "images/lady_rainicorn_card_6.png",
+    "expected_name": "Стена песка",
+    "visual_name": "Стена песка",
+    "status": "verified"
+  },
+  {
+    "image_index": 290,
+    "image_url": "images/lady_rainicorn_card_8.png",
+    "expected_name": "Сэндвич",
+    "visual_name": "Сэндвич",
+    "status": "verified"
+  },
+  {
+    "image_index": 291,
+    "image_url": "images/lady_rainicorn_card_10.png",
+    "expected_name": "Акула",
+    "visual_name": "Акула",
+    "status": "verified"
+  },
+  {
+    "image_index": 292,
+    "image_url": "images/lady_rainicorn_card_12.png",
+    "expected_name": "Мариачи",
+    "visual_name": "Мариачи",
+    "status": "verified"
+  },
+  {
+    "image_index": 293,
+    "image_url": "images/lady_rainicorn_card_14.png",
+    "expected_name": "Песчаный змей",
+    "visual_name": "Песчаный змей",
+    "status": "verified"
+  },
+  {
+    "image_index": 294,
+    "image_url": "images/lady_rainicorn_card_16.png",
+    "expected_name": "Муми-тролль",
+    "visual_name": "Муми-тролль",
+    "status": "verified"
+  },
+  {
+    "image_index": 295,
+    "image_url": "images/lady_rainicorn_card_17.png",
+    "expected_name": "Домашний кактус",
+    "visual_name": "Домашний кактус",
+    "status": "verified"
+  },
+  {
+    "image_index": 296,
+    "image_url": "images/lady_rainicorn_card_19.png",
+    "expected_name": "Затерянный голем",
+    "visual_name": "Затерянный голем",
+    "status": "verified"
+  },
+  {
+    "image_index": 297,
+    "image_url": "images/lady_rainicorn_card_20.png",
+    "expected_name": "Песчаная мышь",
+    "visual_name": "Песчаная мышь",
+    "status": "verified"
+  },
+  {
+    "image_index": 298,
+    "image_url": "images/lady_rainicorn_card_22.png",
+    "expected_name": "Песчаные рыцари",
+    "visual_name": "Песчаные рыцари",
+    "status": "verified"
+  },
+  {
+    "image_index": 299,
+    "image_url": "images/lady_rainicorn_card_23.png",
+    "expected_name": "Песчаный глазастик",
+    "visual_name": "Песчаный глазастик",
+    "status": "verified"
+  },
+  {
+    "image_index": 300,
+    "image_url": "images/lady_rainicorn_card_25.png",
+    "expected_name": "Волшебные семена Зазо",
+    "visual_name": "Волшебные семена Зазо",
+    "status": "verified"
+  },
+  {
+    "image_index": 301,
+    "image_url": "images/lady_rainicorn_card_28.png",
+    "expected_name": "Заумный Шторм Крови",
+    "visual_name": "Заумный Шторм Крови",
+    "status": "verified"
+  },
+  {
+    "image_index": 302,
+    "image_url": "images/lady_rainicorn_card_33.png",
+    "expected_name": "Песчаный ангел",
+    "visual_name": "Песчаный ангел",
+    "status": "verified"
+  },
+  {
+    "image_index": 303,
+    "image_url": "images/lady_rainicorn_card_35.png",
+    "expected_name": "Мисс Муми",
+    "visual_name": "Мисс Муми",
+    "status": "verified"
+  },
+  {
+    "image_index": 304,
+    "image_url": "images/lady_rainicorn_card_36.png",
+    "expected_name": "Персиковая Джинни",
+    "visual_name": "Персиковая Джинни",
+    "status": "verified"
+  },
+  {
+    "image_index": 305,
+    "image_url": "images/lady_rainicorn_card_38.png",
+    "expected_name": "Непустой гроб",
+    "visual_name": "Непустой гроб",
+    "status": "verified"
+  },
+  {
+    "image_index": 306,
+    "image_url": "images/lemongrab_card_1.png",
+    "expected_name": "Драконий поп-десят",
+    "visual_name": "Драконий поп-десят",
+    "status": "verified"
+  },
+  {
+    "image_index": 307,
+    "image_url": "images/lemongrab_card_2.png",
+    "expected_name": "Мясистый поп-десят",
+    "visual_name": "Мясистый поп-десят",
+    "status": "verified"
+  },
+  {
+    "image_index": 308,
+    "image_url": "images/lemongrab_card_3.png",
+    "expected_name": "Небезумный поп-десят",
+    "visual_name": "Небезумный поп-десят",
+    "status": "verified"
+  },
+  {
+    "image_index": 309,
+    "image_url": "images/lemongrab_card_5.png",
+    "expected_name": "Стампичный поп-десят",
+    "visual_name": "Стампичный поп-десят",
+    "status": "verified"
+  },
+  {
+    "image_index": 310,
+    "image_url": "images/lemongrab_card_7.png",
+    "expected_name": "БАБАХ",
+    "visual_name": "БАБАХ",
+    "status": "verified"
+  },
+  {
+    "image_index": 311,
+    "image_url": "images/lemongrab_card_9.png",
+    "expected_name": "Зона высадки",
+    "visual_name": "Зона высадки",
+    "status": "verified"
+  },
+  {
+    "image_index": 312,
+    "image_url": "images/lemongrab_card_11.png",
+    "expected_name": "Мясной кулак",
+    "visual_name": "Мясной кулак",
+    "status": "verified"
+  },
+  {
+    "image_index": 313,
+    "image_url": "images/lemongrab_card_12.png",
+    "expected_name": "Ты жкошь!",
+    "visual_name": "Ты жкошь!",
+    "status": "verified"
+  },
+  {
+    "image_index": 314,
+    "image_url": "images/lemongrab_card_14.png",
+    "expected_name": "Аванпост попугаев",
+    "visual_name": "Аванпост попугаев",
+    "status": "verified"
+  },
+  {
+    "image_index": 315,
+    "image_url": "images/lemongrab_card_15.png",
+    "expected_name": "Тёплый приём",
+    "visual_name": "Тёплый приём",
+    "status": "verified"
+  },
+  {
+    "image_index": 316,
+    "image_url": "images/lemongrab_card_16.png",
+    "expected_name": "Закусочная",
+    "visual_name": "Закусочная",
+    "status": "verified"
+  },
+  {
+    "image_index": 317,
+    "image_url": "images/lemongrab_card_17.png",
+    "expected_name": "Помпезный зебрарог",
+    "visual_name": "Помпезный зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 318,
+    "image_url": "images/lemongrab_card_19.png",
+    "expected_name": "Крушитель земли",
+    "visual_name": "Крушитель земли",
+    "status": "verified"
+  },
+  {
+    "image_index": 319,
+    "image_url": "images/lemongrab_card_21.png",
+    "expected_name": "Дрожь земли",
+    "visual_name": "Дрожь земли",
+    "status": "verified"
+  },
+  {
+    "image_index": 320,
+    "image_url": "images/lemongrab_card_23.png",
+    "expected_name": "Кукурузный глазстик",
+    "visual_name": "Кукурузный глазстик",
+    "status": "verified"
+  },
+  {
+    "image_index": 321,
+    "image_url": "images/lemongrab_card_24.png",
+    "expected_name": "Зебрарог на подборе",
+    "visual_name": "Зебрарог на подборе",
+    "status": "verified"
+  },
+  {
+    "image_index": 322,
+    "image_url": "images/lemongrab_card_26.png",
+    "expected_name": "Rock'n'Roller",
+    "visual_name": "Рок-н-рольщик",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 323,
+    "image_url": "images/lemongrab_card_28.png",
+    "expected_name": "Лавина маисы",
+    "visual_name": "Лавина маисы",
+    "status": "verified"
+  },
+  {
+    "image_index": 324,
+    "image_url": "images/lemongrab_card_29.png",
+    "expected_name": "Башня свободы",
+    "visual_name": "Башня свободы",
+    "status": "verified"
+  },
+  {
+    "image_index": 325,
+    "image_url": "images/lemongrab_card_30.png",
+    "expected_name": "Воронка",
+    "visual_name": "Воронка",
+    "status": "verified"
+  },
+  {
+    "image_index": 326,
+    "image_url": "images/lemongrab_card_31.png",
+    "expected_name": "Скачущий зебрарог",
+    "visual_name": "Скачущий зебрарог",
+    "status": "verified"
+  },
+  {
+    "image_index": 327,
+    "image_url": "images/lemongrab_card_32.png",
+    "expected_name": "Смещатель земли",
+    "visual_name": "Смещатель земли",
+    "status": "verified"
+  },
+  {
+    "image_index": 328,
+    "image_url": "images/lemongrab_card_33.png",
+    "expected_name": "Каракум",
+    "visual_name": "Каракум",
+    "status": "verified"
+  },
+  {
+    "image_index": 329,
+    "image_url": "images/lemongrab_card_34.png",
+    "expected_name": "Мути Ба",
+    "visual_name": "Мути Ба",
+    "status": "verified"
+  },
+  {
+    "image_index": 330,
+    "image_url": "images/lemongrab_card_35.png",
+    "expected_name": "Пескозавр Рекс",
+    "visual_name": "Пескозавр рекс",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 331,
+    "image_url": "images/lemongrab_card_36.png",
+    "expected_name": "Пескомаг",
+    "visual_name": "Пескомаг",
+    "status": "verified"
+  },
+  {
+    "image_index": 332,
+    "image_url": "images/lemongrab_card_37.png",
+    "expected_name": "Ска-пион",
+    "visual_name": "Ска-пион",
+    "status": "verified"
+  },
+  {
+    "image_index": 333,
+    "image_url": "images/lemongrab_card_39.png",
+    "expected_name": "Свободное падение",
+    "visual_name": "Свободное падение",
+    "status": "verified"
+  },
+  {
+    "image_index": 334,
+    "image_url": "images/lsp_card_1.png",
+    "expected_name": "Мавзолей",
+    "visual_name": "Мавзолей",
+    "status": "verified"
+  },
+  {
+    "image_index": 335,
+    "image_url": "images/lsp_card_2.png",
+    "expected_name": "Ночная башня",
+    "visual_name": "Темный маяк",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 336,
+    "image_url": "images/lsp_card_3.png",
+    "expected_name": "Туалет судьбы",
+    "visual_name": "Унимаз апокалипсиса",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 337,
+    "image_url": "images/lsp_card_4.png",
+    "expected_name": "Драконья нога",
+    "visual_name": "Драконья нога",
+    "status": "verified"
+  },
+  {
+    "image_index": 338,
+    "image_url": "images/lsp_card_6.png",
+    "expected_name": "Гусеница",
+    "visual_name": "Гусеница",
+    "status": "verified"
+  },
+  {
+    "image_index": 339,
+    "image_url": "images/lsp_card_8.png",
+    "expected_name": "Геркулес",
+    "visual_name": "Геркулес",
+    "status": "verified"
+  },
+  {
+    "image_index": 340,
+    "image_url": "images/lsp_card_10.png",
+    "expected_name": "Фигурка бесконечности",
+    "visual_name": "Беспредельная фигура",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 341,
+    "image_url": "images/lsp_card_12.png",
+    "expected_name": "Розовая ведьма",
+    "visual_name": "Розовая ведьма",
+    "status": "verified"
+  },
+  {
+    "image_index": 342,
+    "image_url": "images/lsp_card_13.png",
+    "expected_name": "Скелетная рука",
+    "visual_name": "Костяная рука",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 343,
+    "image_url": "images/lsp_card_14.png",
+    "expected_name": "Лысый присед",
+    "visual_name": "Лысый засегатель",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 344,
+    "image_url": "images/lsp_card_16.png",
+    "expected_name": "Стейкчоп",
+    "visual_name": "Рубленый стейк",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 345,
+    "image_url": "images/lsp_card_17.png",
+    "expected_name": "Пирамида",
+    "visual_name": "Пирамида",
+    "status": "verified"
+  },
+  {
+    "image_index": 346,
+    "image_url": "images/lsp_card_18.png",
+    "expected_name": "Кристаллы",
+    "visual_name": "Кристалл силы",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 347,
+    "image_url": "images/lsp_card_19.png",
+    "expected_name": "Сублиминальная сила",
+    "visual_name": "Сила подсознания",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 348,
+    "image_url": "images/lsp_card_21.png",
+    "expected_name": "Официальные штаны",
+    "visual_name": "Официальные штаны",
+    "status": "verified"
+  },
+  {
+    "image_index": 349,
+    "image_url": "images/lsp_card_22.png",
+    "expected_name": "Скелет гастропер",
+    "visual_name": "Скелем гастропер",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 350,
+    "image_url": "images/lsp_card_23.png",
+    "expected_name": "Черничная Джинни",
+    "visual_name": "Черничная Джинни",
+    "status": "verified"
+  },
+  {
+    "image_index": 351,
+    "image_url": "images/lsp_card_25.png",
+    "expected_name": "Виноградная Джинни",
+    "visual_name": "Виноградная Джинни",
+    "status": "verified"
+  },
+  {
+    "image_index": 352,
+    "image_url": "images/lsp_card_27.png",
+    "expected_name": "Лункий мозг",
+    "visual_name": "Лункий мозг",
+    "status": "verified"
+  },
+  {
+    "image_index": 353,
+    "image_url": "images/lsp_card_29.png",
+    "expected_name": "Школяр будущего",
+    "visual_name": "Школяр будущего",
+    "status": "verified"
+  },
+  {
+    "image_index": 354,
+    "image_url": "images/lsp_card_31.png",
+    "expected_name": "Тупица в наушниках",
+    "visual_name": "Тупица в наушниках",
+    "status": "verified"
+  },
+  {
+    "image_index": 356,
+    "image_url": "images/lsp_card_34.png",
+    "expected_name": "Козёл",
+    "visual_name": "Козел",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 357,
+    "image_url": "images/lsp_card_36.png",
+    "expected_name": "Хороший песик",
+    "visual_name": "Хороший песик",
+    "status": "verified"
+  },
+  {
+    "image_index": 358,
+    "image_url": "images/lsp_card_38.png",
+    "expected_name": "Сила трусов",
+    "visual_name": "Сила трусов",
+    "status": "verified"
+  },
+  {
+    "image_index": 359,
+    "image_url": "images/lsp_card_39.png",
+    "expected_name": "Вулкан",
+    "visual_name": "Вулкан",
+    "status": "verified"
+  },
+  {
+    "image_index": 360,
+    "image_url": "images/lich_card_1.png",
+    "expected_name": "Призрак Джинни",
+    "visual_name": "Призрак Джинни",
+    "status": "verified"
+  },
+  {
+    "image_index": 361,
+    "image_url": "images/lich_card_3.png",
+    "expected_name": "Прозрачный вышибала",
+    "visual_name": "Прозрачный вышибала",
+    "status": "verified"
+  },
+  {
+    "image_index": 362,
+    "image_url": "images/lich_card_5.png",
+    "expected_name": "Проклятый древний дуб",
+    "visual_name": "Проклятый древесный дух",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 363,
+    "image_url": "images/lich_card_6.png",
+    "expected_name": "Частичка души",
+    "visual_name": "Частичка души",
+    "status": "verified"
+  },
+  {
+    "image_index": 364,
+    "image_url": "images/lich_card_8.png",
+    "expected_name": "Призрачный ниндзя",
+    "visual_name": "Прозрачный ниндзя",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 365,
+    "image_url": "images/lich_card_10.png",
+    "expected_name": "Дух воплекура",
+    "visual_name": "Дух Воплекура",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 366,
+    "image_url": "images/lich_card_11.png",
+    "expected_name": "Призрак карги",
+    "visual_name": "Призрак карги",
+    "status": "verified"
+  },
+  {
+    "image_index": 367,
+    "image_url": "images/lich_card_13.png",
+    "expected_name": "Бесмелесный обжора",
+    "visual_name": "Бесмелесный обжор",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 368,
+    "image_url": "images/lich_card_15.png",
+    "expected_name": "Призрак Тэдди-крюка",
+    "visual_name": "Призрак Тэдди-крюка",
+    "status": "verified"
+  },
+  {
+    "image_index": 369,
+    "image_url": "images/lich_card_16.png",
+    "expected_name": "Некромама",
+    "visual_name": "Некромама",
+    "status": "verified"
+  },
+  {
+    "image_index": 370,
+    "image_url": "images/lich_card_17.png",
+    "expected_name": "Прямой скелем",
+    "visual_name": "Прямный скелем",
+    "status": "mismatch"
+  },
+  {
+    "image_index": 371,
+    "image_url": "images/lich_card_19.png",
+    "expected_name": "Коричневый зомби",
+    "visual_name": "Коричневый зомби",
+    "status": "verified"
+  },
+  {
+    "image_index": 372,
+    "image_url": "images/lich_card_21.png",
+    "expected_name": "Духо-муха",
+    "visual_name": "Духо-муха",
+    "status": "verified"
+  },
+  {
+    "image_index": 373,
+    "image_url": "images/lich_card_24.png",
+    "expected_name": "Призрачные бро",
+    "visual_name": "Призрачные бро",
+    "status": "verified"
+  },
+  {
+    "image_index": 374,
+    "image_url": "images/lich_card_26.png",
+    "expected_name": "Зомбахан",
+    "visual_name": "Зомбахан",
+    "status": "verified"
+  },
+  {
+    "image_index": 375,
+    "image_url": "images/lich_card_28.png",
+    "expected_name": "Уземающая пирамида",
+    "visual_name": "Уземающая пирамида",
+    "status": "verified"
+  },
+  {
+    "image_index": 376,
+    "image_url": "images/lich_card_29.png",
+    "expected_name": "Преобразователь скелетов",
+    "visual_name": "Преобразователь скелетов",
+    "status": "verified"
+  },
+  {
+    "image_index": 377,
+    "image_url": "images/lich_card_30.png",
+    "expected_name": "Призрачный шмак",
+    "visual_name": "Призрачный шмак",
+    "status": "verified"
+  },
+  {
+    "image_index": 378,
+    "image_url": "images/lich_card_32.png",
+    "expected_name": "Корова-нежить",
+    "visual_name": "Корова-нежить",
+    "status": "verified"
+  }
+]

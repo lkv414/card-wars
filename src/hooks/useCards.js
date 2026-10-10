@@ -1,8 +1,6 @@
 import { useCallback } from 'react'
 import { supabase } from '../utils/supabase'
 import { useSupabaseTable } from './useSupabaseTable'
-import { isOfflineTestMode } from '../utils/offlineMode'
-import { TEST_CARDS } from '../fixtures/testCatalog'
 
 const CARD_WRITE_FIELDS = [
   'card_number',
@@ -16,6 +14,7 @@ const CARD_WRITE_FIELDS = [
   'flip_description',
   'mechanics',
   'image_url',
+  'card_url',
   'land_type',
   'is_rainbow',
   'rarity',
@@ -41,13 +40,11 @@ function formatCardMutationError(error) {
 }
 
 export function useCards() {
-  const { rows: rows, setRows: setCards, loading: tableLoading, error: tableError, reload: loadCards } = useSupabaseTable(
+  const { rows, setRows: setCards, loading, error, reload: loadCards } = useSupabaseTable(
     'cards',
-    { orderBy: 'card_number', hookName: 'useCards', enabled: !isOfflineTestMode }
+    { orderBy: 'card_number', hookName: 'useCards' }
   )
-  const cards = isOfflineTestMode ? TEST_CARDS : rows
-  const loading = isOfflineTestMode ? false : tableLoading
-  const error = isOfflineTestMode ? null : tableError
+  const cards = rows
 
   const createCard = useCallback(async (cardData) => {
     const payload = pickCardPayload(cardData)

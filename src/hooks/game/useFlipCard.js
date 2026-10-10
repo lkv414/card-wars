@@ -9,6 +9,7 @@ import { applyFlipCardPatch } from '@/utils/gameStatePatch'
 export { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
 export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload } = {}) {
   return useCallback(
@@ -58,6 +59,11 @@ export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
+      // Worker — единственный авторитет. Флип в SQL применяется только под
+      // флагом: иначе карта переворачивается дважды (DO + plpgsql).
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Флюп недоступен (обновите сервер)' }
+      }
 
       const { data, error: rpcErr } = await supabase.rpc('flip_card', {
         p_game_id: game.id,

@@ -8,6 +8,7 @@ import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
 import { applyDrawPatch, normalizeDrawRpcData } from '../../utils/gameStatePatch'
 import { getGuestId } from '../../utils/guestId'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -23,6 +24,11 @@ export function useDrawFreeCard(game, _reload, { patchGame, transport, suppressR
     if (wsErr) return wsErr
     const wsOk = transportOk(ws, { draw_type: 'free' })
     if (wsOk) return wsOk
+    // Worker — единственный авторитет. SQL RPC допускается только под явным
+    // флагом, иначе одно действие применилось бы дважды в двух источниках правды.
+    if (!ALLOW_CLIENT_FALLBACK) {
+      return { error: 'Бесплатный добор недоступен (обновите сервер)' }
+    }
 
     const { data, error: rpcErr } = await supabase.rpc('draw_free_card', {
       p_game_id: game.id,

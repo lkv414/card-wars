@@ -6,6 +6,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId, withGuestId } from '../../utils/guestSession'
 import { clampZones, normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 /**
@@ -58,6 +59,12 @@ export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, t
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
+      // Worker — единственный авторитет. Ни SQL RPC, ни прямая запись в
+      // game_zones/game_players без явного флага: иначе карта списывается
+      // дважды — в Durable Object и в таблице.
+      if (!ALLOW_CLIENT_FALLBACK) {
+        return { error: 'Сброс с поля недоступен (обновите сервер)' }
+      }
 
       try {
         const { data, error: rpcErr } = await supabase.rpc('discard_from_zone', {

@@ -8,6 +8,7 @@ import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
 import { applyDrawPatch, normalizeDrawRpcData } from '../../utils/gameStatePatch'
 import { getGuestId } from '../../utils/guestId'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -23,6 +24,10 @@ export function useDrawCard(game, _reload, { patchGame, transport, suppressRealt
     if (wsErr) return wsErr
     const wsOk = transportOk(ws)
     if (wsOk) return { ...wsOk, actions_remaining: undefined, hand_count: undefined }
+    // Worker — единственный авторитет. SQL RPC допускается только под флагом.
+    if (!ALLOW_CLIENT_FALLBACK) {
+      return { error: 'Платный добор недоступен (обновите сервер)' }
+    }
 
     const { data, error: rpcErr } = await supabase.rpc('draw_card_for_action', {
       p_game_id: game.id,

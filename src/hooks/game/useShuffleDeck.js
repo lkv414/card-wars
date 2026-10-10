@@ -6,6 +6,7 @@ import { useCallback } from 'react'
 import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { isRpcUnavailable, rpcUnavailableMessage } from './rpcUtils'
+import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
@@ -21,6 +22,10 @@ export function useShuffleDeck(game, reload, { transport } = {}) {
     if (wsErr) return wsErr
     const wsOk = transportOk(ws)
     if (wsOk) return wsOk
+    // Worker — единственный авторитет. SQL RPC допускается только под флагом.
+    if (!ALLOW_CLIENT_FALLBACK) {
+      return { error: 'Перемешивание колоды недоступно (обновите сервер)' }
+    }
 
     const { data, error: rpcErr } = await supabase.rpc('shuffle_deck', {
       p_game_id: game.id,

@@ -5,7 +5,6 @@
  * иначе карта переворачивалась бы дважды (DO + plpgsql).
  */
 import { useCallback } from 'react'
-import { ensureGuestId } from '@/utils/guestSession'
 import { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 export { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 
@@ -15,8 +14,6 @@ export function useFlipCard(game, { transport } = {}) {
   return useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
-
-      await ensureGuestId()
 
       const player = game.players?.[playerIndex]
       if (!player) {

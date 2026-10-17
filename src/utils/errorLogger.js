@@ -25,7 +25,10 @@ export function formatErrorMessage(error) {
 }
 
 /**
- * User-friendly message for common Supabase/network failures.
+ * User-friendly message for common network failures.
+ *
+ * С Этапа 6 (v2) у приложения нет Supabase: всё общение — с Cloudflare Worker
+ * (`VITE_GAME_WS_URL`). Сообщение подсказывает именно это.
  * @param {unknown} error
  * @returns {string}
  */
@@ -38,11 +41,11 @@ export function toUserFacingError(error) {
     || lower.includes('connection refused')
     || lower.includes('err_connection_refused')
   ) {
-    const url = import.meta.env.VITE_SUPABASE_URL || ''
+    const url = import.meta.env.VITE_GAME_WS_URL || ''
     if (url.includes('127.0.0.1') || url.includes('localhost')) {
-      return 'Локальный Supabase недоступен. Запустите Docker и выполните: npx supabase start'
+      return 'Локальный Worker недоступен. Запустите: npm run workers:dev'
     }
-    return 'Не удалось подключиться к Supabase. Проверьте интернет и VITE_SUPABASE_URL.'
+    return 'Не удалось подключиться к игровому серверу. Проверьте интернет и VITE_GAME_WS_URL.'
   }
   return msg
 }

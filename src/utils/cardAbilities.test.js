@@ -6,7 +6,7 @@
  * flip_description / mechanics. Эти тесты защищают от регрессии.
  *
  * Почему отдельный файл (а не useFlipCard.test.js): Node native ESM
- * не резолвит импорты без .js, а useFlipCard.js тянет supabase → import.meta.env.
+ * не резолвит импорты без .js, а useFlipCard.js — React-хук с JSX-окружением.
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

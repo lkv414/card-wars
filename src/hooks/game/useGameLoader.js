@@ -1,6 +1,10 @@
 /**
  * useGameLoader — загрузка game state с защитой от race и duplicate-запросов.
  *
+ * Источник — HTTP-маршрут GameRoom DO (`/game/:gameId/state`, см. fetchGameState).
+ * Fog of war и авторитет — на стороне Worker; клиент только раскладывает
+ * полученный снимок в gameStore.
+ *
  * Логика:
  * - loadInFlightRef: текущая загрузка
  * - pendingReloadRef: если за время загрузки пришёл ещё один запрос,
@@ -10,10 +14,9 @@
  * - DUPLICATE_LOAD_MS: защита от двойной загрузки в течение короткого окна
  */
 import { useCallback, useEffect, useRef } from 'react'
-import { supabase } from '../../utils/supabase'
-import { ensureGuestId } from '../../utils/guestSession'
 import { getGuestId } from '../../utils/guestId'
-import { mapRpcGameState } from '../../utils/mapGameState'
+import { fetchGameState } from '../../utils/gameWebSocket'
+import { mapGameState } from '../../utils/mapGameState'
 import { enrichGameState } from '../../utils/enrichGameCards'
 import { gameDebugLog } from '../../utils/gameDebug'
 import { useGameStore } from '../../store/gameStore'
@@ -34,18 +37,11 @@ export function useGameLoader({ gameId, cardCatalogRef }) {
       const startedAt = performance.now()
       gameDebugLog('load', 'start', { source, gameId })
 
-      await ensureGuestId()
       const guestId = getGuestId()
-
-      const { data: state, error: rpcErr } = await supabase.rpc('get_player_game_state', {
-        p_game_id: gameId,
-        p_player_id: guestId,
-      })
-
-      if (rpcErr) throw new Error(rpcErr.message)
+      const state = await fetchGameState(gameId, guestId)
       if (!state) throw new Error('Игра не найдена или доступ запрещён')
 
-      const mapped = mapRpcGameState(state)
+      const mapped = mapGameState(state)
 
       const catalog = cardCatalogRef.current || new Map()
       const nextGame = catalog.size > 0 ? enrichGameState(mapped, catalog) : mapped

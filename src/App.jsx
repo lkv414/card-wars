@@ -1,9 +1,6 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { useToasts } from './hooks/useToasts'
-import { ensureGuestId } from './utils/guestSession'
-import { isSupabaseConfigured } from './utils/supabase'
-import { isOfflineTestMode } from './utils/offlineMode'
 import { LibraryProvider } from './context/LibraryContext'
 import { DeckBuilderPage } from './pages/LibraryPages'
 import { ErrorBoundary } from './components/Shared/ErrorBoundary'
@@ -26,22 +23,6 @@ function GameLoadingFallback({ message = 'Загружаем игру...' }) {
   )
 }
 
-function SupabaseConfigMissing() {
-  return (
-    <div className="app-status" role="alert">
-      <h1>Card Wars</h1>
-      <p>
-        Не заданы переменные <code>VITE_SUPABASE_URL</code> и{' '}
-        <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> для production-сборки.
-      </p>
-      <p>
-        Добавьте их в Cloudflare Pages → Settings → Environment variables (Production) или
-        закоммитьте <code>.env.production</code> с publishable key.
-      </p>
-    </div>
-  )
-}
-
 function GameRoute() {
   return (
     <ErrorBoundary>
@@ -54,14 +35,6 @@ function GameRoute() {
 
 function App() {
   const { toasts, toast, dismissToast } = useToasts()
-
-  useEffect(() => {
-    ensureGuestId()
-  }, [])
-
-  if (!isSupabaseConfigured && !isOfflineTestMode) {
-    return <SupabaseConfigMissing />
-  }
 
   return (
     <>

@@ -9,18 +9,16 @@
  */
 
 import { useCallback } from 'react'
-import { ensureGuestId } from '../../utils/guestSession'
 import { safePlayer, safePlayers } from '../../utils/safePlayer'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function useTurnControl(game, _writeGameState, _reload, { patchGame, transport } = {}) {
+export function useTurnControl(game, { patchGame, transport } = {}) {
   /**
    * End turn: switch to next player.
    * Computes simple alternation: player1 -> player2 -> player1.
    */
   const endTurn = useCallback(async () => {
     if (!game?.players) return { error: 'Игра не загружена' }
-    await ensureGuestId()
 
     // === Optimistic patch: мгновенно переключаем current_player_id
     // локально, чтобы UI не ждал WS round-trip. WS broadcast потом
@@ -57,7 +55,6 @@ export function useTurnControl(game, _writeGameState, _reload, { patchGame, tran
    */
   const forfeit = useCallback(async () => {
     if (!game?.players) return { error: 'Игра не загружена' }
-    await ensureGuestId()
     const me = safePlayer(safePlayers(game.players), game.current_player_id)
     if (me.__isFallback) return { error: 'Сейчас не ваш ход' }
 

@@ -3,7 +3,6 @@
  */
 
 export { useGameAction } from './useGameAction'
-export { useGameState } from './useGameState'
 export { usePlayCard } from './usePlayCard'
 export { useAttack } from './useAttack'
 export { useTurnControl } from './useTurnControl'

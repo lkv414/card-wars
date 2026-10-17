@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { ensureGuestId } from '@/utils/guestSession'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
 /**
@@ -8,7 +7,6 @@ import { runViaTransport, transportError, transportOk } from './runViaTransport'
  */
 export function useAbility(_game, { transport, suppressRealtimeReload } = {}) {
   return useCallback(async ({ playerId, zonePosition, cardId, mechanicIndex, targetCardIds = [] }) => {
-    await ensureGuestId()
     const result = await runViaTransport(transport, 'use_ability', {
       playerId,
       zonePosition,

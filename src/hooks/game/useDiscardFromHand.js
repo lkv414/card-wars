@@ -6,14 +6,12 @@
  */
 
 import { useCallback } from 'react'
-import { ensureGuestId } from '../../utils/guestSession'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function useDiscardFromHand(game, _reload, { transport } = {}) {
+export function useDiscardFromHand(game, { transport } = {}) {
   return useCallback(
     async (cardIndex) => {
       if (!game?.id) return { error: 'Игра не загружена' }
-      await ensureGuestId()
       const me = game.players?.find((p) => p.player_id === game.current_player_id)
       if (!me) return { error: 'Сейчас не ваш ход' }
 

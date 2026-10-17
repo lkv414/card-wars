@@ -4,14 +4,12 @@
  * Worker (GameRoom Durable Object) — единственный авторитет. SQL-фоллбека нет.
  */
 import { useCallback } from 'react'
-import { ensureGuestId } from '../../utils/guestSession'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function useLandSetup(game, _reload, { transport } = {}) {
+export function useLandSetup(game, { transport } = {}) {
   const reorderLands = useCallback(
     async (landIds) => {
       if (!game?.id) return
-      await ensureGuestId()
 
       const ws = await runViaTransport(transport, 'reorder_lands', { landIds })
       const wsErr = transportError(ws)
@@ -25,7 +23,6 @@ export function useLandSetup(game, _reload, { transport } = {}) {
   const confirmLandSetup = useCallback(
     async ({ landIds = [], bypass = false } = {}) => {
       if (!game?.id) return
-      await ensureGuestId()
 
       const ws = await runViaTransport(transport, 'confirm_land_setup', { landIds, bypass })
       const wsErr = transportError(ws)

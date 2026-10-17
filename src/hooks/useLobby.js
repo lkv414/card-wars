@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { getGuestId } from '../utils/guestId'
-import { ensureGuestId } from '../utils/guestSession'
 import {
   loadLobbySession,
   clearLobbySession,
@@ -24,10 +23,6 @@ export function useLobby() {
   const [onlinePlayerIds, setOnlinePlayerIds] = useState([])
 
   const lobbyIdRef = useRef(null)
-
-  useEffect(() => {
-    ensureGuestId()
-  }, [])
 
   const resetLobbyState = useCallback(() => {
     setLobbyId(null)

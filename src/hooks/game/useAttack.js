@@ -5,7 +5,6 @@
  */
 
 import { useCallback } from 'react'
-import { ensureGuestId } from '../../utils/guestSession'
 import { canAttack } from './zoneOpposition'
 import { canPlayerDealDamage } from './combat'
 import { safePlayers } from '../../utils/safePlayer'
@@ -15,7 +14,6 @@ export function useAttack(game, { transport } = {}) {
   return useCallback(
     async (fromZone, cardId, toOpponentZone, toPlayerId = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
-      await ensureGuestId()
 
       const playersSafe = safePlayers(game.players)
       const me = playersSafe.find((p) => p.player_id === game.current_player_id)

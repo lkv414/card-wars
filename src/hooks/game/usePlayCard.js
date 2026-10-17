@@ -7,19 +7,16 @@
  */
 
 import { useCallback } from 'react'
-import { ensureGuestId } from '../../utils/guestSession'
 import { canPlayCardToSlot, getCardSlotType } from './zoneCards'
 import { clampZones } from './format'
 import { getCardCost } from '../../utils/cardFields.ts'
 import { applyPlayCardPatch } from '../../utils/gameStatePatch'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport } = {}) {
+export function usePlayCard(game, { patchGame, cardCatalog, transport } = {}) {
   return useCallback(
     async (cardIndex, zoneIndex, _actionCost = 1, slotType = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
-
-      await ensureGuestId()
 
       const me = game.players.find((p) => p.player_id === game.current_player_id)
       if (!me) return { error: 'Сейчас не ваш ход' }

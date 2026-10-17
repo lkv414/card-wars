@@ -25,7 +25,7 @@ import { useGameWsHandler } from '../../hooks/game/useGameWsHandler'
 
 const GameBoard3D = lazy(() => import('./GameBoard3D'))
 
-const WS_FALLBACK_LOAD_MS = 12_000
+const WS_FALLBACK_LOAD_MS = 5_000
 
 export function GameScreen() {
   const { gameId } = useParams()
@@ -92,9 +92,8 @@ export function GameScreen() {
       cardCatalog,
       transport,
       suppressRealtimeReload,
-      reloadEnabled: !wsConfigured,
     }),
-    [cardCatalog, transport, suppressRealtimeReload, wsConfigured],
+    [cardCatalog, transport, suppressRealtimeReload],
   )
 
   const {
@@ -108,14 +107,14 @@ export function GameScreen() {
     forfeit,
     flipCard,
     discardFromZone,
-    isApplying: actionApplying,
-    error: actionError,
-  } = useGameAction(game, requestLoadGame, gameActions)
+  } = useGameAction(game, gameActions)
 
-  const { reorderLands, confirmLandSetup } = useLandSetup(game, requestLoadGame, { transport })
+  const { reorderLands, confirmLandSetup } = useLandSetup(game, { transport })
 
-  const combinedIsApplying = isApplying || actionApplying
-  const combinedError = actionError || storeError
+  // Ошибки действий и «идёт применение» живут в gameStore (`selectError`,
+  // `selectIsApplying`); per-action `{ error }` показывается тостом ниже.
+  const combinedIsApplying = isApplying
+  const combinedError = storeError
 
   useEffect(() => {
     if (combinedError) toast('error', combinedError)
@@ -150,7 +149,7 @@ export function GameScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game])
 
-  // === WS fallback load: если за 12 сек нет ни одного state — load через RPC ===
+  // === WS fallback load: если за 5 сек нет ни одного state — тянем снимок по HTTP ===
   useEffect(() => {
     if (!wsConfigured || !gameId) return undefined
     const timer = setTimeout(() => {

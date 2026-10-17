@@ -1,7 +1,7 @@
 /**
- * Map get_player_game_state RPC payload → client game object (GameScreen shape).
+ * Map a party snapshot (GameRoom DO broadcast shape) → client game object.
  */
-export function mapRpcGameState(state) {
+export function mapGameState(state) {
   if (!state) return null
   return {
     id: state.id,

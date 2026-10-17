@@ -2,8 +2,9 @@
  * Чистые хелперы для карт — без зависимостей от Supabase/React.
  *
  * Вынесено из useFlipCard.js, чтобы их можно было импортировать в unit-тестах
- * (Node test runner падает на `import './supabase.js'` из-за @supabase/supabase-js
- * → `import.meta.env.VITE_SUPABASE_URL`).
+ * (Node test runner раньше падал на `import './supabase.js'`, который тянул
+ * `import.meta.env` — модуля Supabase в проекте больше нет, но хелперы
+ * остаются отдельным файлом: их проверяют тестами без React).
  */
 
 /**

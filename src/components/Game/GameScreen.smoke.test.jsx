@@ -4,29 +4,15 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 const isGameWsConfigured = vi.fn(() => true)
 
-vi.mock('../../utils/supabase', () => ({
-  supabase: {
-    rpc: vi.fn(),
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      maybeSingle: vi.fn().mockResolvedValue({ data: { version: 1 }, error: null }),
-    })),
-  },
-}))
-
 vi.mock('../../utils/guestId', () => ({
   getGuestId: () => 'guest-test',
-}))
-
-vi.mock('../../utils/guestSession', () => ({
-  ensureGuestId: vi.fn(async () => {}),
 }))
 
 vi.mock('../../utils/gameWebSocket', () => ({
   isGameWsConfigured: () => isGameWsConfigured(),
   isGameWsEnabled: () => isGameWsConfigured(),
   getGameWsBaseUrl: () => 'http://127.0.0.1:8787',
+  fetchGameState: vi.fn(async () => null),
 }))
 
 vi.mock('../../hooks/useLands', () => ({
@@ -55,8 +41,6 @@ vi.mock('../../hooks/game', () => ({
     discardFromZone: vi.fn(),
     endTurn: vi.fn(),
     forfeit: vi.fn(),
-    isApplying: false,
-    actionError: null,
   }),
 }))
 

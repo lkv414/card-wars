@@ -72,6 +72,33 @@ export async function notifyLobbyRoom(lobbyId) {
 }
 
 /**
+ * Load one player's view of a party over HTTP.
+ *
+ * Replaces the legacy `get_player_game_state` RPC: the GameRoom DO builds the
+ * snapshot (fog of war included) and serves it on `/game/:gameId/state`. Used as
+ * the initial load when there is no cached session, and as a fallback when the
+ * WebSocket stays silent.
+ */
+export async function fetchGameState(gameId, playerId, { signal } = {}) {
+  if (!gameId || !playerId) throw new Error('gameId и playerId обязательны')
+  const httpRoot = httpBaseHost(getGameWsBaseUrl())
+  if (!httpRoot) throw new Error('VITE_GAME_WS_URL не задан')
+  const url = `${httpRoot}/game/${encodeURIComponent(gameId)}/state?playerId=${encodeURIComponent(playerId)}`
+  const response = await fetch(url, { signal })
+  if (!response.ok) {
+    let detail = `HTTP ${response.status}`
+    try {
+      const body = await response.json()
+      if (body?.error) detail = String(body.error)
+    } catch {
+      /* тело не JSON — оставляем HTTP-код */
+    }
+    throw new Error(detail)
+  }
+  return response.json()
+}
+
+/**
  * Reconnecting WebSocket — server-authoritative sync pattern:
  * join on connect → receive full state snapshot → auto-rejoin on disconnect.
  *

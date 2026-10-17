@@ -56,10 +56,8 @@ Source: [affaan-m/ECC](https://github.com/affaan-m/ECC) (Everything Claude Code)
 | [threejs-node-tsl](threejs-node-tsl/SKILL.md) | Three Shading Language (advanced) |
 | [card-wars-rules](card-wars-rules/SKILL.md) | **Project.** Mechanics runtime, `implemented` only, lands |
 | [r3f-board-3d](r3f-board-3d/SKILL.md) | **Project.** 3D board: CardFace, memo, clicks, attack targets |
-| [supabase-migrations](supabase-migrations/SKILL.md) | **Project.** Idempotent migrations, reseed from `individual_cards` |
 | [worker-durable-objects](worker-durable-objects/SKILL.md) | **Project.** Authoritative game room in Worker, no SQL RPC |
 | [project-gate](project-gate/SKILL.md) | **Project.** Full test/build gate before commit |
-| [docs-journal](docs-journal/SKILL.md) | **Project.** Journal of actions in `docs/journal/` — dated entries, recall before work |
 
 ## Task → skill bundles
 
@@ -76,8 +74,6 @@ Source: [affaan-m/ECC](https://github.com/affaan-m/ECC) (Everything Claude Code)
 | 3D post-effects (bloom, outlines) | `threejs-postprocessing` |
 | 3D placement / raycast | `threejs-math` → `threejs-helpers` |
 | Before PR / done | `verification-loop` → run `npm test && npm run lint && npm run build` |
-| Start of any task | `docs-journal` — recover context from `docs/journal/` before touching code |
-| End of any task | `docs-journal` — write the dated entry (`node scripts/journal.mjs start "..."`) |
 
 ## Local vs committed
 

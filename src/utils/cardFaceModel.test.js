@@ -19,7 +19,6 @@ import { resolveCardFace, STAT_ICONS } from './cardFaceModel.js'
 import {
   LAND_DEFS,
   LAND_TYPE_IDS,
-  LAND_TYPE_ALIASES,
   resolveLandType,
   isUnknownLandType,
   unmappedLandTypes,
@@ -79,13 +78,16 @@ test('справочник земель содержит ровно 7 канон
   }
 })
 
-test('псевдонимы типов земель отображаются в канонические', () => {
-  assert.equal(resolveLandType('sandy'), 'sand')
-  assert.equal(resolveLandType('desert'), 'sand')
-  assert.equal(resolveLandType('rainbow'), 'any')
+test('земли: только канон, регистр и пробелы нормализуются', () => {
   assert.equal(resolveLandType('CORN'), 'corn')
   assert.equal(resolveLandType('  ice  '), 'ice')
   assert.equal(resolveLandType('corn'), 'corn')
+  assert.equal(resolveLandType('any'), 'any')
+  // Псевдонимов больше нет: данные приведены к канону (R1),
+  // любое неканоническое значение — ошибка данных, а не догадка.
+  assert.equal(resolveLandType('sandy'), null)
+  assert.equal(resolveLandType('desert'), null)
+  assert.equal(resolveLandType('rainbow'), null)
 })
 
 test('неизвестный тип земли не отображается и распознаётся', () => {
@@ -99,8 +101,10 @@ test('неизвестный тип земли не отображается и 
 
 test('is_rainbow=true означает "на любую землю", как и в Worker', () => {
   assert.equal(getCardLandType({ is_rainbow: true, land_type: 'rainbow' }), 'any')
-  assert.equal(getCardLandType({ is_rainbow: false, land_type: 'rainbow' }), 'any')
-  assert.equal(getCardLandType({ land_type: 'sandy' }), 'sand')
+  assert.equal(getCardLandType({ is_rainbow: true, land_type: 'any' }), 'any')
+  assert.equal(getCardLandType({ land_type: 'corn' }), 'corn')
+  // неканоническое значение — не земля, а мусор данных (карта универсальна в UI)
+  assert.equal(getCardLandType({ land_type: 'sandy' }), null)
   assert.equal(getCardLandType({}), null)
 })
 
@@ -110,16 +114,13 @@ test('hasUnknownLandType не срабатывает для радужных', (
   assert.equal(hasUnknownLandType({ land_type: 'corn' }), false)
 })
 
-test('isLandCompatible сравнивает через справочник, а не строками', () => {
-  // Аудит §4.9.1: раньше 'sandy' != 'sand', и карта была неигровой.
-  assert.equal(isLandCompatible('sandy', 'sand'), true)
-  assert.equal(isLandCompatible('desert', 'sand'), true)
+test('isLandCompatible: канон сравнивается точно, мусор не блокирует игру', () => {
   assert.equal(isLandCompatible('corn', 'corn'), true)
   assert.equal(isLandCompatible('corn', 'ice'), false)
   assert.equal(isLandCompatible('any', 'ice'), true)
   assert.equal(isLandCompatible('corn', null), true)
   assert.equal(isLandCompatible(null, 'ice'), true)
-  // Неизвестный тип карты не блокирует игру
+  // Неизвестный тип карты не блокирует игру (устойчивость UI; данных таких нет)
   assert.equal(isLandCompatible('cute', 'ice'), true)
 })
 
@@ -141,12 +142,12 @@ test('unmappedLandTypes собирает неизвестные типы по н
   assert.deepEqual(types, ['cotton', 'cute'])
 })
 
-test('псевдонимы не придумывают значения: неоднозначные типы НЕ отображены', () => {
-  // Подставлять догадку = менять правила по землям. Эти значения ждут
-  // решения по данным каталога.
-  for (const ambiguous of ['cute', 'cotton', 'plain', 'plains']) {
-    assert.equal(LAND_TYPE_ALIASES[ambiguous], undefined, `${ambiguous} намеренно не отображён`)
-  }
+test('каталог земель — единственный источник: длины и id совпадают', () => {
+  assert.equal(LAND_TYPE_IDS.length, 7)
+  assert.deepEqual(
+    [...LAND_TYPE_IDS].sort(),
+    ['any', 'blue', 'corn', 'good', 'ice', 'sand', 'swamp'],
+  )
 })
 
 // ── Флип ────────────────────────────────────────────────────────────────────
@@ -190,7 +191,7 @@ test('resolveCardFace собирает значения из разнородн�
     cost: 2,
     attack: 3,
     health: 8,
-    land_type: 'sandy',
+    land_type: 'sand',
     card_url: 'art.png',
   })
   assert.equal(face.id, 'c1')

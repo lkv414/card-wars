@@ -52,24 +52,18 @@ function getCardCost(state: GameState, card: Card): number {
  */
 function landCompatible(cardLand: string | null, zoneLand: string | null): boolean {
   const ANY = 'any'
-  const ALIASES: Record<string, string> = {
-    sandy: 'sand',
-    desert: 'sand',
-    rainbow: ANY,
-  }
   const canon = (raw: string | null): string | null => {
     if (!raw) return null
     const key = raw.trim().toLowerCase()
-    if (!key) return null
-    if (key === ANY) return ANY
-    if (['corn', 'ice', 'good', 'swamp', 'sand', 'blue'].includes(key)) return key
-    return ALIASES[key] ?? null
+    return key || null
   }
   if (!cardLand || cardLand === ANY) return true
   if (!zoneLand || zoneLand === ANY) return true
   const a = canon(cardLand)
   const b = canon(zoneLand)
-  // Неизвестный тип земли не блокирует игру (аудит §4.9.1).
+  // Неизвестный тип земли не блокирует игру (аудит §4.9.1). После нормализации
+  // каталога (scripts/normalize-land-types.mjs) таких значений быть не должно —
+  // их отсутствие проверяет тест src/data/catalog.test.js.
   if (!a || !b) return true
   return a === b
 }

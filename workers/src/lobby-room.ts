@@ -316,7 +316,8 @@ export class LobbyRoom extends DurableObject<Env> {
   private buildLocalGame(gameId: string, lobbyPlayers: Array<Record<string, unknown>>): Record<string, unknown> {
     const players = lobbyPlayers.map((lobbyPlayer, order) => {
       const deck = (lobbyPlayer.deck ?? {}) as Record<string, unknown>
-      const cards = Array.isArray(deck.cards) ? deck.cards as Array<Record<string, unknown>> : []
+      const rawCards = Array.isArray(deck.cards) ? deck.cards as Array<Record<string, unknown>> : []
+      const cards = rawCards.filter((card) => String(card?.card_type ?? '') !== 'special')
       const hand = cards.slice(0, 5).map((card, index) => ({
         ...card,
         instanceId: String(card.instanceId ?? `${card.id ?? 'card'}-${order}-${index}`),

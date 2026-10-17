@@ -17,6 +17,7 @@ import { useDeckSave } from '../hooks/useDeckSave'
 import { useHeroes } from '../hooks/useHeroes'
 import { useBackNavigation } from '../hooks/useBackNavigation'
 import { DEFAULT_FILTERS, filterCards, filterLands } from '../utils/cardSort'
+import { isDeckCard } from '../utils/deckCards'
 
 export function DeckBuilder({
   cards,
@@ -102,7 +103,7 @@ export function DeckBuilder({
     [selectedCards, selectedLands]
   )
 
-  const filteredCards = useMemo(() => filterCards(cards, filters), [cards, filters])
+  const filteredCards = useMemo(() => filterCards(cards.filter(isDeckCard), filters), [cards, filters])
   const filteredLands = useMemo(() => filterLands(lands, filters.search), [lands, filters.search])
 
   const importDeck = async (code) => {

@@ -10,6 +10,7 @@
  * каталогу (`src/data/catalog.js`), без запросов в БД.
  */
 import { CARDS, LANDS } from '../data/catalog.js'
+import { isDeckCard } from './deckCards.js'
 
 const CODE_PREFIX = 'DK-'
 const CODE_VERSION = 2
@@ -211,8 +212,20 @@ export function expandDeckCodeWithCardData(deckCode) {
     return out
   }
 
+
+// ...
+
   const normalizedSelectedCards = normalize(cardsMap, selectedCards)
   const normalizedSelectedLands = normalize(landsMap, selectedLands)
+
+  // Партнёрские карты (special) и прочие недопустимые в колоде отсекаем,
+  // чтобы код колоды/импорт не тащил нерабочие карты.
+  const deckSelectedCards = Object.fromEntries(
+    Object.entries(normalizedSelectedCards).filter(([id]) => {
+      const row = cardsMap.get(id.toLowerCase())
+      return !row || isDeckCard(row)
+    }),
+  )
 
   const withQuantity = (map, selected) =>
     Object.entries(selected).map(([id, qty]) => {
@@ -221,9 +234,9 @@ export function expandDeckCodeWithCardData(deckCode) {
     })
 
   return {
-    selectedCards: normalizedSelectedCards,
+    selectedCards: deckSelectedCards,
     selectedLands: normalizedSelectedLands,
-    cards: withQuantity(cardsMap, normalizedSelectedCards),
+    cards: withQuantity(cardsMap, deckSelectedCards),
     lands: withQuantity(landsMap, normalizedSelectedLands),
   }
 }

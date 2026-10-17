@@ -9,17 +9,20 @@
  */
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 import { CARDS, LANDS } from './catalog.js'
 import { HEROES } from './heroes.js'
-import { LAND_DEFS, FALLBACK_LAND_ID } from '../constants/landColors.js'
+import { LAND_DEFS, FALLBACK_LAND_ID, resolveLandType } from '../constants/landColors.js'
+import cardIdsSnapshot from '../../individual_cards/card-ids.json' with { type: 'json' }
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const IMAGE_URL_RE = /^\/cards\/[^/]+\.webp$/
 const MECHANICS_STATUSES = new Set(['text_only', 'implemented'])
+/** Типы карт, которые понимает движок (workers/src/game-engine/types.ts). */
+const ENGINE_CARD_TYPES = new Set(['creature', 'building', 'spell'])
 
 test('cards.json: карты есть, id уникальны', () => {
   assert.ok(CARDS.length >= 400, `ожидалось >= 400 карт, пришло ${CARDS.length}`)
@@ -70,5 +73,86 @@ test('heroes.json: 23 героя, id уникальны, land_type из ката
     unknown.map((hero) => `${hero.id}:${hero.land_type}`),
     [],
     'land_type героя не из каталога земель',
+  )
+})
+
+// ── R1: земли приведены к канону (scripts/normalize-land-types.mjs) ──────────
+
+test('cards.json: земля каждой карты — каноническая (нет rainbow/sandy/cute/plain/cotton/desert)', () => {
+  const canonical = new Set(Object.keys(LAND_DEFS))
+  const bad = CARDS.filter((card) => !canonical.has(String(card.land_type || '').trim().toLowerCase()))
+  assert.deepEqual(
+    bad.map((card) => `${card.id}:${card.land_type}`),
+    [],
+    `неканонические земли (${bad.length}) — запусти node scripts/normalize-land-types.mjs`,
+  )
+  // resolveLandType не должен ничего додумывать
+  const unmapped = [...new Set(CARDS.map((card) => card.land_type))].filter(
+    (land) => resolveLandType(land) === null,
+  )
+  assert.deepEqual(unmapped, [], 'resolveLandType не отображает значения каталога')
+})
+
+test('cards.json: is_rainbow=true всегда означает землю any', () => {
+  const bad = CARDS.filter((card) => card.is_rainbow === true && card.land_type !== FALLBACK_LAND_ID)
+  assert.deepEqual(
+    bad.map((card) => `${card.id}: land_type=${card.land_type} is_rainbow=${card.is_rainbow}`),
+    [],
+    'радужная карта обязана иметь землю any',
+  )
+})
+
+test('канон земель не разъехался: LAND_DEFS клиента == LAND_TYPE_IDS воркера', () => {
+  const workerCatalog = readFileSync(path.join(repoRoot, 'workers/src/catalog.ts'), 'utf8')
+  const match = workerCatalog.match(/LAND_TYPE_IDS[^=]*=\s*\[([^\]]*)\]/)
+  assert.ok(match, 'в workers/src/catalog.ts не найден LAND_TYPE_IDS')
+  const workerIds = [...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1]).sort()
+  const clientIds = Object.values(LAND_DEFS)
+    .map((def) => def.id)
+    .filter((id) => id !== FALLBACK_LAND_ID)
+    .sort()
+  assert.deepEqual(workerIds, clientIds, 'список земель воркера разошёлся с LAND_DEFS')
+})
+
+test('cards.json: card_type — из известного набора (special — партнёрские карты 2v2)', async () => {
+  const known = new Set([...ENGINE_CARD_TYPES, 'special'])
+  const bad = CARDS.filter((card) => !known.has(card.card_type))
+  assert.deepEqual(
+    bad.map((card) => `${card.id}:${card.card_type}`),
+    [],
+    'тип карты вне известного набора',
+  )
+  const special = CARDS.filter((card) => card.card_type === 'special')
+  assert.equal(special.length, 5, 'партнёрских карт special ожидается 5')
+  // Эти карты не должны попадать в колоду: фильтр в редакторе и в воркере (R5).
+  const { isDeckCard } = await import('../utils/deckCards.js')
+  assert.deepEqual(
+    special.filter((card) => isDeckCard(card)).map((card) => card.id),
+    [],
+    'special-карты обязаны отсекаться фильтром колоды',
+  )
+})
+
+// ── id — неизменяемый ключ (колоды игроков ссылаются на id) ──────────────────
+
+test('cards.json: набор id совпадает со снимком individual_cards/card-ids.json', () => {
+  const ids = CARDS.map((card) => card.id)
+  const snapshot = new Set(cardIdsSnapshot.ids)
+  const added = ids.filter((id) => !snapshot.has(id))
+  const removed = cardIdsSnapshot.ids.filter((id) => !ids.includes(id))
+  assert.deepEqual(
+    { added: added.slice(0, 20), removed: removed.slice(0, 20) },
+    { added: [], removed: [] },
+    'id карт — неизменяемый ключ: переименование карты не должно менять id. ' +
+      'Если карта правда новая/удалена — node scripts/sync-card-ids.mjs --write',
+  )
+})
+
+test('cards.json: id в стабильном формате card-<слаг>', () => {
+  const bad = CARDS.filter((card) => !/^card-[a-zа-яё0-9-]+$/.test(String(card.id)))
+  assert.deepEqual(
+    bad.map((card) => String(card.id)),
+    [],
+    'id должен быть card-<слаг> (латиница/кириллица/цифры/дефис)',
   )
 })

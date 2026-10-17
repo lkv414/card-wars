@@ -116,9 +116,10 @@ export function getCardImageUrl(card: CardLike): string | null {
  *
  * `is_rainbow === true` означает «на любую землю» и нормализуется в 'any' —
  * так же, как это делает Worker (workers/src/game-engine/cards.ts:getCardLandType).
- * Неизвестный тип (в каталоге их 99: cute, plains, cotton, ...) даёт null,
- * и карта трактуется как универсальная — иначе она была бы неигровой
- * (аудит §4.9.1: 80 карт нельзя было положить на землю при строгом правиле).
+ * Тип земли в каталоге приведён к канону (scripts/normalize-land-types.mjs),
+ * поэтому неизвестное значение означает ошибку данных; для устойчивости UI
+ * такая карта трактуется как универсальная (null → «любая земля») и помечается
+ * `hasUnknownLandType`.
  */
 export function getCardLandType(card: CardLike): string | null {
   if (card?.is_rainbow === true) return 'any'
@@ -140,8 +141,10 @@ export function hasUnknownLandType(card: CardLike): boolean {
  * `any` (и радужные) карты — универсальные.
  * Зона без земли (land_type === null/'any') принимает всё.
  *
- * Обе стороны нормализуются через resolveLandType, поэтому 'sandy'/'desert'
- * и 'rainbow' сравниваются корректно.
+ * Обе стороны нормализуются через resolveLandType. После R1 в каталоге нет
+ * неканонических значений (rainbow/sandy/desert/cute/... — история), поэтому
+ * неизвестное значение здесь означает ошибку данных: карта не блокируется,
+ * но попадает в `hasUnknownLandType`.
  */
 export function isLandCompatible(
   cardLandType: string | null | undefined,

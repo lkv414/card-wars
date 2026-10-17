@@ -98,23 +98,18 @@ export const LAND_TYPES = Object.freeze(
 export const LAND_TYPE_IDS = Object.freeze(Object.keys(LAND_DEFS))
 
 /**
- * Псевдонимы типов земель, встречающиеся в каталоге, но не являющиеся
- * каноническими. Возникли из-за неполной нормализации при импорте
- * (individual_cards/cards.json).
+ * Псевдонимов земель больше нет.
  *
- * ВАЖНО: сюда попадают ТОЛЬКО однозначные синонимы. Неоднозначные
- * ('cute', 'cotton', 'plain', 'plains') намеренно НЕ отображены: подставлять
- * догадку — значит менять правила по землям. Такие карты попадают в
- * `unmappedLandTypes` для разбора данных и трактуются как универсальные
- * (см. resolveLandType), чтобы карта не была неигровой.
+ * Раньше здесь жила таблица `LAND_TYPE_ALIASES` (sandy/desert → sand,
+ * rainbow → any) для 7 неканонических значений каталога. Данные приведены к
+ * канону скриптом `scripts/normalize-land-types.mjs` (см. docs/CATALOG_REVIEW.md,
+ * §3 R1): rainbow → any, plains/plain → blue, cute/cotton → good,
+ * sandy/desert → sand. Теперь любое значение вне LAND_DEFS — это ошибка данных,
+ * и `resolveLandType` возвращает null, а не догадку.
+ *
+ * Контроль: тест `src/data/catalog.test.js` (земля каждой карты ∈ LAND_DEFS)
+ * и `node scripts/normalize-land-types.mjs --check`.
  */
-export const LAND_TYPE_ALIASES = Object.freeze({
-  sandy: 'sand',
-  desert: 'sand',
-  // `rainbow` — служебное значение каталога; канонический эквивалент — 'any'.
-  // Реальные радужные карты приходят с is_rainbow=true и нормализуются отдельно.
-  rainbow: 'any',
-})
 
 /** Значение для типа земли, которого нет в справочнике. */
 export const FALLBACK_LAND_ID = 'any'
@@ -130,9 +125,6 @@ export function resolveLandType(raw) {
   const key = raw.trim().toLowerCase()
   if (!key) return null
   if (Object.prototype.hasOwnProperty.call(LAND_DEFS, key)) return key
-  if (Object.prototype.hasOwnProperty.call(LAND_TYPE_ALIASES, key)) {
-    return LAND_TYPE_ALIASES[key]
-  }
   return null
 }
 
@@ -142,10 +134,12 @@ export function isUnknownLandType(raw) {
   return resolveLandType(raw) === null
 }
 
-/** Список всех неотображённых типов в наборе карт — для админки и тестов. */
+/** Список всех неотображённых типов в наборе карт — ошибка данных после R1. */
 export function unmappedLandTypes(cards) {
   const out = new Set()
   for (const card of cards || []) {
+    // Радужные карты универсальны независимо от написания land_type.
+    if (card?.is_rainbow === true) continue
     const raw = card?.land_type
     if (typeof raw === 'string' && raw.trim() && isUnknownLandType(raw)) out.add(raw)
   }

@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { supabase } from '../utils/supabase'
 import { TopBar } from './TopBar'
 import { DeckFilters } from './DeckFilters'
 import { DeckModal } from './DeckModal'
@@ -114,9 +113,9 @@ export function DeckBuilder({
     }
 
     try {
-      toast('success', 'Расширяем код колоды из БД...')
+      toast('success', 'Импортируем колоду...')
       const { selectedCards: importedCards, selectedLands: importedLands } =
-        await expandDeckCodeWithCardData(trimmedCode, supabase)
+        expandDeckCodeWithCardData(trimmedCode)
 
       setSelectedCards(normalizeDeckImportMap(importedCards))
       setSelectedLands(normalizeDeckImportMap(importedLands))

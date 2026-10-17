@@ -56,9 +56,9 @@ export function expandLandsToInstances(fullLands = []) {
 
 /**
  * Построить payload для записи в lobby_players.deck
- * из локальной колоды (useDecks) + данные карт из Supabase.
+ * из локальной колоды (useDecks) + данные карт из локального каталога.
  */
-export async function buildLobbyDeckPayload(localDeck, supabaseClient) {
+export async function buildLobbyDeckPayload(localDeck) {
   if (!localDeck) return null
 
   const selectedCards = localDeck.selectedCards || {}
@@ -74,7 +74,7 @@ export async function buildLobbyDeckPayload(localDeck, supabaseClient) {
     throw new Error('В выбранной колоде нет карт')
   }
 
-  const expanded = await expandDeckCodeWithCardData(code, supabaseClient)
+  const expanded = expandDeckCodeWithCardData(code)
   const cards = expandSelectionToInstances(expanded.cards)
   const lands = expandLandsToInstances(expanded.lands)
 

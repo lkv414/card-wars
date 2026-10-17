@@ -1,8 +1,19 @@
+/**
+ * deckCode — компактный код колоды (base64url от JSON-полезной нагрузки).
+ *
+ * Идентификаторы карт — строки каталога (`individual_cards/cards.json`,
+ * например `card-костяная-палочка`). Раньше это были UUID из Supabase,
+ * поэтому в v1-формате кода встречаются UUID — он остаётся поддержан
+ * (`decodeLegacyDeckCode`).
+ *
+ * Этап 5 плана v2: раскрытие кода в полные данные идёт по локальному
+ * каталогу (`src/data/catalog.js`), без запросов в БД.
+ */
+import { CARDS, LANDS } from '../data/catalog.js'
+
 const CODE_PREFIX = 'DK-'
 const CODE_VERSION = 2
 const EMPTY_CODE = `${CODE_PREFIX}000000`
-
-const UUID_REGEX = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i
 
 const encodeBase64Url = (bytes) => {
   let binary = ''
@@ -46,8 +57,8 @@ const normalizeEntries = (entries) => {
     .filter(([, qty]) => Number(qty) > 0)
     .sort(([a], [b]) => String(a).localeCompare(String(b)))
     .reduce((acc, [id, qty]) => {
-      if (!UUID_REGEX.test(id)) {
-        throw new Error('Идентификатор карты должен быть UUID')
+      if (typeof id !== 'string' || !id.trim()) {
+        throw new Error('Идентификатор карты должен быть непустой строкой')
       }
 
       const quantity = Number(qty)
@@ -170,87 +181,53 @@ export function decodeDeckCode(code) {
 }
 
 /**
- * Расширяет deckCode полными данными карт из БД
+ * Раскрывает код колоды в полные данные карт из локального каталога.
  * @param {string} deckCode - Короткий код колоды (DK-xxx...)
- * @param {Object} supabaseClient - Supabase клиент
- * @returns {Promise<{selectedCards: Object, selectedLands: Object, cards: Array, lands: Array}>}
- *   selectedCards/Lands: { uuid: quantity }
+ * @returns {{selectedCards: Object, selectedLands: Object, cards: Array, lands: Array}}
+ *   selectedCards/Lands: { id: quantity }
  *   cards/lands: полные объекты карт с полем quantity
  */
-export async function expandDeckCodeWithCardData(deckCode, supabaseClient) {
+export function expandDeckCodeWithCardData(deckCode) {
   const decoded = decodeDeckCode(deckCode)
   if (!decoded) throw new Error('Invalid deck code')
 
   const { selectedCards = {}, selectedLands = {} } = decoded
 
-  const cardUuids = Object.keys(selectedCards)
-  const landUuids = Object.keys(selectedLands)
-
-  if (cardUuids.length === 0 && landUuids.length === 0) {
+  if (Object.keys(selectedCards).length === 0 && Object.keys(selectedLands).length === 0) {
     // Пустая колода
     return { selectedCards: {}, selectedLands: {}, cards: [], lands: [] }
   }
 
-  // Загружаем карточки и земли раздельно, т.к. они лежат в разных таблицах
-  const [{ data: dbCards, error: cardsError }, { data: dbLands, error: landsError }] = await Promise.all([
-    cardUuids.length
-      ? supabaseClient.from('cards').select('id, card_number, name, description, card_type, cost, attack, health, land_type, is_rainbow, has_flip, flip_description, image_url, mechanics, hero, source').in('id', cardUuids)
-      : Promise.resolve({ data: [], error: null }),
-    landUuids.length
-      ? supabaseClient.from('lands').select('*').in('id', landUuids)
-      : Promise.resolve({ data: [], error: null }),
-  ])
+  const cardsMap = indexById(CARDS)
+  const landsMap = indexById(LANDS)
 
-  if (cardsError) throw new Error(`Database error: ${cardsError.message}`)
-  if (landsError) throw new Error(`Database error: ${landsError.message}`)
-
-  // Создаём map с нормализацией UUID (нижний регистр для поиска)
-  const cardsMap = new Map((dbCards || []).map((c) => [c.id.toLowerCase(), c]))
-  const landsMap = new Map((dbLands || []).map((l) => [l.id.toLowerCase(), l]))
-
-  // Нормализуем UUID в selectedCards/Lands для правильного поиска
-  const normalizedSelectedCards = {}
-  const normalizedSelectedLands = {}
-
-  for (const [uuid, qty] of Object.entries(selectedCards)) {
-    const lowerUuid = uuid.toLowerCase()
-    const card = cardsMap.get(lowerUuid)
-    if (card) {
-      normalizedSelectedCards[card.id] = Number(qty)
-    } else {
-      // Если карта не найдена, сохраняем оригинальный UUID
-      normalizedSelectedCards[uuid] = Number(qty)
+  // Канонизируем id (регистр + запись из каталога), сохраняя количество.
+  const normalize = (map, selected) => {
+    const out = {}
+    for (const [id, qty] of Object.entries(selected)) {
+      const row = map.get(id.toLowerCase())
+      out[row ? row.id : id] = Number(qty)
     }
+    return out
   }
 
-  for (const [uuid, qty] of Object.entries(selectedLands)) {
-    const lowerUuid = uuid.toLowerCase()
-    const land = landsMap.get(lowerUuid)
-    if (land) {
-      normalizedSelectedLands[land.id] = Number(qty)
-    } else {
-      // Если карта не найдена, сохраняем оригинальный UUID
-      normalizedSelectedLands[uuid] = Number(qty)
-    }
-  }
+  const normalizedSelectedCards = normalize(cardsMap, selectedCards)
+  const normalizedSelectedLands = normalize(landsMap, selectedLands)
 
-  // Собираем выбранные карты с количеством
-  const fullCards = Object.entries(normalizedSelectedCards).map(([uuid, qty]) => {
-    const card = cardsMap.get(uuid.toLowerCase())
-    if (!card) return { id: uuid, quantity: Number(qty) }
-    return { ...card, quantity: Number(qty) }
-  })
-
-  const fullLands = Object.entries(normalizedSelectedLands).map(([uuid, qty]) => {
-    const land = landsMap.get(uuid.toLowerCase())
-    if (!land) return { id: uuid, quantity: Number(qty) }
-    return { ...land, quantity: Number(qty) }
-  })
+  const withQuantity = (map, selected) =>
+    Object.entries(selected).map(([id, qty]) => {
+      const row = map.get(id.toLowerCase())
+      return row ? { ...row, quantity: Number(qty) } : { id, quantity: Number(qty) }
+    })
 
   return {
     selectedCards: normalizedSelectedCards,
     selectedLands: normalizedSelectedLands,
-    cards: fullCards,
-    lands: fullLands
+    cards: withQuantity(cardsMap, normalizedSelectedCards),
+    lands: withQuantity(landsMap, normalizedSelectedLands),
   }
+}
+
+function indexById(rows) {
+  return new Map(rows.map((row) => [String(row.id).toLowerCase(), row]))
 }

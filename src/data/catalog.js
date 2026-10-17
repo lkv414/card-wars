@@ -10,7 +10,7 @@
  * `land_type`. Поэтому зона игры ссылается на землю тем же значением, что
  * и её тип (`corn`, `ice`, `good`, `swamp`, `sand`, `blue`).
  */
-import cardsJson from '../../individual_cards/cards.json'
+import cardsJson from '../../individual_cards/cards.json' with { type: 'json' }
 import { LAND_DEFS, FALLBACK_LAND_ID } from '../constants/landColors.js'
 
 /** Полный список карт каталога (504 записи). */

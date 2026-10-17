@@ -5,7 +5,6 @@ import { getGuestNickname, setGuestNickname } from '../../utils/guestId'
 import { useLobby } from '../../hooks/useLobby'
 import { useDecks } from '../../hooks/useDecks'
 import { useHeroes } from '../../hooks/useHeroes'
-import { supabase } from '../../utils/supabase'
 import { isOfflineTestMode } from '../../utils/offlineMode'
 import { getLocalTestDeckPayload } from '../../fixtures/testDeck'
 import { buildLobbyDeckPayload } from '../../utils/lobbyDeck'
@@ -103,7 +102,7 @@ export function LobbyScreen({ toast }) {
     }
     try {
       if (isOfflineTestMode) return getLocalTestDeckPayload()
-      return await buildLobbyDeckPayload(deck, supabase)
+      return await buildLobbyDeckPayload(deck)
     } catch (err) {
       toast?.('error', err?.message || 'Не удалось подготовить колоду')
       return null

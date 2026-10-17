@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { generateDeckCode, decodeDeckCode } from './deckCode.js'
+import { generateDeckCode, decodeDeckCode, expandDeckCodeWithCardData } from './deckCode.js'
+import { CARDS, LANDS } from '../data/catalog.js'
 
 const CARD_A = '550e8400-e29b-41d4-a716-446655440001'
 const CARD_B = '550e8400-e29b-41d4-a716-446655440002'
@@ -39,8 +40,17 @@ test('decodeDeckCode returns null for invalid input', () => {
   assert.equal(decodeDeckCode('not-a-code'), null)
 })
 
-test('generateDeckCode rejects invalid UUID', () => {
-  assert.throws(() => generateDeckCode({ 'bad-id': 1 }, {}), /UUID/)
+test('generateDeckCode accepts slug ids from the local catalog', () => {
+  const selectedCards = { 'card-костяная-палочка': 2 }
+  const selectedLands = { corn: 1 }
+  const code = generateDeckCode(selectedCards, selectedLands)
+  const decoded = decodeDeckCode(code)
+  assert.deepEqual(decoded.selectedCards, selectedCards)
+  assert.deepEqual(decoded.selectedLands, selectedLands)
+})
+
+test('generateDeckCode rejects empty id', () => {
+  assert.throws(() => generateDeckCode({ '  ': 1 }, {}), /непустой строкой/)
 })
 
 test('generateDeckCode rejects quantity out of range', () => {
@@ -49,4 +59,26 @@ test('generateDeckCode rejects quantity out of range', () => {
 
 test('generateDeckCode ignores zero quantity entries', () => {
   assert.equal(generateDeckCode({ [CARD_A]: 0 }, {}), 'DK-000000')
+})
+
+test('expandDeckCodeWithCardData раскрывает карты и земли из локального каталога', () => {
+  const card = CARDS[0]
+  const land = LANDS[0]
+  const code = generateDeckCode({ [card.id]: 2 }, { [land.id]: 1 })
+
+  const expanded = expandDeckCodeWithCardData(code)
+
+  assert.equal(expanded.cards.length, 1)
+  assert.equal(expanded.cards[0].id, card.id)
+  assert.equal(expanded.cards[0].quantity, 2)
+  assert.ok(expanded.cards[0].name)
+  assert.ok(expanded.cards[0].image_url)
+  assert.equal(expanded.lands.length, 1)
+  assert.equal(expanded.lands[0].land_type, land.id)
+})
+
+test('expandDeckCodeWithCardData не падает на неизвестном id', () => {
+  const code = generateDeckCode({ 'нет-такой-карты': 1 }, {})
+  const expanded = expandDeckCodeWithCardData(code)
+  assert.deepEqual(expanded.cards, [{ id: 'нет-такой-карты', quantity: 1 }])
 })

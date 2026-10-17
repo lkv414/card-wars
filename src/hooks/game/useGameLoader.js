@@ -14,7 +14,7 @@ import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { getGuestId } from '../../utils/guestId'
 import { mapRpcGameState } from '../../utils/mapGameState'
-import { enrichGameStateAsync } from '../../utils/enrichGameCards'
+import { enrichGameState } from '../../utils/enrichGameCards'
 import { gameDebugLog } from '../../utils/gameDebug'
 import { useGameStore } from '../../store/gameStore'
 
@@ -48,8 +48,7 @@ export function useGameLoader({ gameId, cardCatalogRef }) {
       const mapped = mapRpcGameState(state)
 
       const catalog = cardCatalogRef.current || new Map()
-      const nextGame =
-        catalog.size > 0 ? await enrichGameStateAsync(mapped, catalog, supabase) : mapped
+      const nextGame = catalog.size > 0 ? enrichGameState(mapped, catalog) : mapped
 
       useGameStore.getState().applyServerState(nextGame, `load:${source}`)
       gameDebugLog('load', 'done', {

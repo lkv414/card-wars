@@ -6,7 +6,7 @@
  * Worker на этапе сборки. Земли — справочник типов, зеркало
  * `LAND_DEFS` из `src/constants/landColors.js` (id земли = её тип).
  */
-import cardsJson from '../../individual_cards/cards.json'
+import cardsJson from '../../individual_cards/cards.json' with { type: 'json' }
 
 export type Card = Record<string, unknown>
 export type Land = { id: string; land_type: string }

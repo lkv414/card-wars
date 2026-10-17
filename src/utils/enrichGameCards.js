@@ -5,9 +5,6 @@
 
 import { getCardType } from './cardFields.ts'
 
-const CARD_SELECT_FIELDS =
-  'id, card_number, name, description, card_type, cost, attack, health, land_type, is_rainbow, has_flip, flip_description, image_url, mechanics, hero, source'
-
 function catalogKey(id) {
   return String(id ?? '').trim().toLowerCase()
 }
@@ -31,14 +28,6 @@ export function buildCardCatalog(cards = []) {
   for (const card of cards) {
     const key = catalogKey(card?.id)
     if (key) map.set(key, card)
-  }
-  return map
-}
-
-export function mergeCatalogMaps(base, extra) {
-  const map = new Map(base)
-  for (const [key, card] of extra.entries()) {
-    map.set(key, card)
   }
   return map
 }
@@ -91,23 +80,6 @@ export function collectMissingCardIds(game, catalog) {
   }
 
   return [...missing]
-}
-
-export async function fetchCardsByIds(ids, supabaseClient) {
-  const unique = [...new Set((ids || []).filter(Boolean))]
-  if (unique.length === 0) return new Map()
-
-  const { data, error } = await supabaseClient
-    .from('cards')
-    .select(CARD_SELECT_FIELDS)
-    .in('id', unique)
-
-  if (error) {
-    console.warn('[enrichGameCards] fetchCardsByIds failed:', error.message)
-    return new Map()
-  }
-
-  return buildCardCatalog(data || [])
 }
 
 export function enrichCard(card, catalog) {
@@ -166,17 +138,6 @@ export function enrichGameState(game, catalog) {
     ...game,
     players: enrichGamePlayers(game.players, catalog),
   }
-}
-
-/** Догружает карты из Supabase по id и обогащает состояние игры. */
-export async function enrichGameStateAsync(game, catalog, supabaseClient) {
-  if (!game) return game
-  const missingIds = collectMissingCardIds(game, catalog)
-  if (missingIds.length === 0) return enrichGameState(game, catalog)
-
-  const fetched = await fetchCardsByIds(missingIds, supabaseClient)
-  const merged = mergeCatalogMaps(catalog, fetched)
-  return enrichGameState(game, merged)
 }
 
 export function resolveCardImageUrl(card) {

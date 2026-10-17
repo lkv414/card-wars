@@ -1,12 +1,11 @@
 /**
  * Lands catalog hook — public read-only consumer.
  *
- * Source of truth is Cloudflare KV served by the Worker at
- * `/catalog/lands`. See `useCatalog` for the full cache chain
- * (memory → IndexedDB → Worker → Supabase fallback).
+ * Источник — локальный бандл каталога (`src/data/catalog.js`): земли выведены
+ * из `LAND_DEFS`, потому что id земли совпадает с её типом.
  *
- * This hook keeps its old API (`{ lands, loading, error, loadLands }`)
- * so existing callers and tests don't have to change.
+ * Хук сохраняет прежний API (`{ lands, loading, error, loadLands }`),
+ * чтобы потребители и тесты не менялись.
  */
 import { useCallback, useMemo } from 'react'
 import { useCatalog } from './useCatalog'

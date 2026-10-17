@@ -348,7 +348,7 @@ export class GameRoom extends DurableObject<Env> {
       let hydrated = raw
       let cardCatalog: Record<string, CardCatalogEntry> = {}
       try {
-        const [lands, cards] = await Promise.all([getLands(this.env), getCardIndex(this.env)])
+        const [lands, cards] = [getLands(), getCardIndex()]
         const landTypes = new Map<string, string>()
         for (const land of lands) {
           const row = land as { id?: unknown; land_type?: unknown }

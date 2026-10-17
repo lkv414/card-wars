@@ -289,10 +289,35 @@ npm run build
 - Бот-псевдо-игрок внутри GameRoom.
 - Убрать `supabase.ts`/`persistSnapshot` из DO.
 
-### ⏳ Этап 7 — картинки + skills/docs
-- PNG → WebP → `public/cards/`.
-- Почистить `skills/` (оставить по делу: `card-wars-rules`, `r3f-board-3d`,
-  `worker-durable-objects`, `project-gate`) и `docs/`.
+### 🚧 Этап 7 — картинки + skills/docs
+
+**Сделано (7a):** `src/components/Game/scene/useCardAnimation.js` — сброс
+spawn-анимации перенесён из рендера в `useEffect` (закрыты 2 ошибки
+`react-hooks/refs`), удалён неиспользуемый импорт `useFrame`. Теперь
+`npx eslint src` → **0 ошибок**, осталось 2 warning'а (`cardFaceModel.js`,
+`PostProcessing`).
+
+**Арт карт — разведка (нужно решение):**
+- `image_url` = `images/bmo_card_1.png` (так пишет
+  `scripts/build-individual-card-export.mjs`), но статики нет: `public/` содержит
+  только `favicon.svg`, `icons.svg`, `_redirects` (`/* /index.html 200`), а
+  `vite.config.js` не переопределяет `publicDir`/`base`. → арт карт сейчас
+  **не раздаётся**: `TextureLoader` (`src/utils/textureCache.js`) уходит в
+  placeholder, то же для `<img src={image_url}>` (HeroPicker, HeroDisplay,
+  DeckModal, GameBoard3D drag-preview).
+- Объём: `individual_cards/images/` — 504 PNG, **209.6 МБ**.
+- `sharp` доступен (транзитивная зависимость, `require.resolve('sharp')` проходит);
+  `magick`/`ffmpeg`/`cwebp`/`sharp-cli` — нет.
+- Предложение: `scripts/build-card-art.mjs` → WebP (q≈80, ограничение по большей
+  стороне) в `public/cards/*.webp`, переписать `image_url` в `cards.json` на
+  `cards/<name>.webp`. Решить: (а) оставлять ли PNG в репо после конвертации;
+  (б) ресайз/качество; (в) место (`public/cards/` vs `public/images/`).
+
+**skills/docs — нужно решение:** в `skills/` 70+ файлов (generic `threejs-*`,
+`react-*`, `postgres-*` + проектные). План предлагал оставить 4
+(`card-wars-rules`, `r3f-board-3d`, `worker-durable-objects`, `project-gate`), но
+`threejs-*` релевантны R3F-доске — массовое удаление согласовать. `docs/_archive/*`
+оставить как архив.
 
 ### ⏳ Этап 8 — финальная уборка
 - `package.json`: убрать Supabase-зависимости и SQL-скрипты; `npm test` → vitest.
@@ -326,6 +351,8 @@ npm run build
 ## 5. История коммитов v2 (актуальная)
 
 ```
+1fe99a6 refactor(v2): stage 7a - fix scene lint debt in useCardAnimation
+79dc330 chore: add docs-journal helper, AGENTS.md and skills index entry
 3b98026 refactor(v2): stage 4b - trim dead gameStatePatch exports and format.js
 6e0bf49 docs(v2): mark stage 5 as deferred, add planning checklist
 b021f5d docs(v2): sync handoff after stage 4 (resume, history, lint debt)
@@ -348,8 +375,9 @@ c0ceab9 chore: enable lsp in opencode config
 
 | Проблема | Где | Когда чинить |
 |---|---|---|
-| 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | Этап 7 |
-| Lint-warning'и (unused `gl`, `useFrame`, `isFlippedCard`) | PostProcessing, cardFaceModel | Этап 7 |
+| 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | ✅ Этап 7a |
+| Lint-warning'и (unused `isFlippedCard`, `gl`/`useFrame`) | `cardFaceModel.js`, `PostProcessing` | Этап 7 |
+| Арт карт нигде не раздаётся; 504 PNG / 209.6 МБ | `individual_cards/images/`, `public/` | Этап 7 (согласовать) |
 | `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |
 | Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 5 |
 | `supabase/` (40 файлов) ещё в репо | — | Этап 5 |

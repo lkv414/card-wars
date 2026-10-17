@@ -141,7 +141,7 @@ function SlotPad({
   // Регистрируем только когда playable=true (drop целится в этот слот).
   const onClickStable = useCallback((e) => {
     e.stopPropagation()
-    onClick?.()
+    onClick?.(e)
   }, [onClick])
 
   // Регистрируем playable-слот в slotRegistry при mount, снимаем при unmount.
@@ -212,7 +212,7 @@ export const GameLand = memo(function GameLand({
 
   const handleCreature = useCallback(
     (e) => {
-      e.stopPropagation()
+      e?.stopPropagation()
       onCreatureClick?.()
     },
     [onCreatureClick],
@@ -220,7 +220,7 @@ export const GameLand = memo(function GameLand({
 
   const handleBuilding = useCallback(
     (e) => {
-      e.stopPropagation()
+      e?.stopPropagation()
       onBuildingClick?.()
     },
     [onBuildingClick],

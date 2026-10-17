@@ -500,6 +500,9 @@ export class GameRoom extends DurableObject<Env> {
   private async canReadGame(playerId: string): Promise<boolean> {
     const gameId = this.resolveGameId()
     if (this.devMode || this.isLocalTestRoom(gameId)) return true
+    // Если игра уже загружена и игрок в ней есть — доступ разрешён
+    // (защита от потери lobby DO / eviction).
+    if (this.currentGame?.players?.some((p: any) => p.player_id === playerId)) return true
     return this.isNativeLobbyMember(gameId, playerId)
   }
 

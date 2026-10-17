@@ -246,6 +246,8 @@ npm run build
 ## 5. История коммитов v2 (актуальная)
 
 ```
+6bf18d7 refactor(v2): stage 4 - remove dead code
+225e30b docs(v2): add refactor plan and handoff document
 199269c chore(v2): ignore .hermes and common build artifacts
 2a85fe8 refactor(v2): stage 3 - remove SQL fallbacks, Worker is sole authority
 fd5c8d3 refactor(v2): stage 2 - remove admin panel, auth layer, card CRUD
@@ -263,7 +265,10 @@ c0ceab9 chore: enable lsp in opencode config
 |---|---|---|
 | `npm test` сломан (legacy `node --test`) | `package.json` | Этап 8 |
 | 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | Этап 4/7 |
-| Lint-warning'и (unused `gl`, `useFrame`, eslint-disable, `isFlippedCard`) | PostProcessing, cardFaceModel, gameStatePatch, usePlayCard | Этап 4 |
+| Lint-warning'и (unused `gl`, `useFrame`, eslint-disable, `isFlippedCard`) | PostProcessing, cardFaceModel, gameStatePatch | Этап 4/7 |
+| `gameStatePatch.test.js` — осиротевший тест (не входит ни в один vitest-конфиг) + мёртвые экспорты `gameStatePatch.js` | `src/utils/` | Этап 8 |
+| `format.js`: `normalizeZoneRow`, `gameToEngineFormat` — 0 использований | `src/hooks/game/format.js` | Этап 8 |
+| `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |
 | Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 5 |
 | `supabase/` (40 файлов) ещё в репо | — | Этап 5 |
 | `исходники/` (1932 файла) в индексе | — | по решению пользователя оставлено |

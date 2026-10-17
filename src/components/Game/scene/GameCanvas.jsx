@@ -44,7 +44,7 @@ const CAMERA_CONFIG = Object.freeze({
   position: [0, 6, 8],
 })
 const CANVAS_STYLE = Object.freeze({
-  background: '#3d4f5f',
+  background: '#2d5a27',
   touchAction: 'none',
 })
 const DPR_RANGE = [1, maxDpr]
@@ -80,7 +80,7 @@ export function GameCanvas({
     ({ gl }) => {
       gl.domElement.style.touchAction = 'none'
       gl.toneMapping = THREE.ACESFilmicToneMapping
-      gl.toneMappingExposure = 1.08
+      gl.toneMappingExposure = 1.2
       gl.outputColorSpace = THREE.SRGBColorSpace
       // Тени осознанно не включаем: в сцене нет castShadow-объектов.
       gl.shadowMap.enabled = false

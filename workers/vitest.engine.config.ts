@@ -9,6 +9,6 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    include: ['src/game-engine/**/*.test.ts', 'src/state-broadcast.smoke.test.ts', 'src/supabase.smoke.test.ts'],
+    include: ['src/game-engine/**/*.test.ts', 'src/state-broadcast.smoke.test.ts'],
   },
 })

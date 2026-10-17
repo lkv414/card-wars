@@ -5,11 +5,6 @@ import {
   serverMsg,
   type GameActionName,
 } from './protocol'
-import {
-  assertPlayerInGame,
-  getFullGameState,
-  getPlayerGameState,
-} from './supabase'
 import { getCardIndex, getLands } from './catalog'
 import { applyAction, isError as isEngineError } from './game-engine/engine'
 import type {
@@ -51,18 +46,32 @@ const KNOWN_ACTIONS = new Set<GameActionName>([
 ])
 
 /**
- * Minimum number of state mutations between persisted snapshots. The
- * Worker pushes a snapshot every N actions so a Durable Object restart
- * doesn't lose more than N actions of progress.
- *
- * Authoritative state is persisted after every action. This is intentionally
- * conservative while the mechanics runtime is being introduced: correctness and
- * restart safety take priority over snapshot batching.
+ * Sessions are transient (Этап 6 плана v2): the authoritative state lives in
+ * this Durable Object's SQLite storage for as long as the room is alive, and
+ * Supabase is no longer involved. Snapshotting is still performed after every
+ * action — SQLite writes are local and cheap, and DO eviction mid-game must
+ * not lose progress.
  */
 const SNAPSHOT_EVERY_N_ACTIONS = 1
 
+/** SQLite key holding the serialized session state. */
+const STORAGE_KEY_GAME = 'game'
+
+/**
+ * How long an unwatched room is kept before its storage is dropped. The room is
+ * only cleaned by the alarm, so a party that nobody reconnects to disappears on
+ * its own (parties are transient by design).
+ */
+const ROOM_TTL_MS = 30 * 60 * 1000
+
+/**
+ * How often the alarm re-checks a room that still has live sockets. Cheap:
+ * the alarm only reads storage when it decides to clean up.
+ */
+const WATCHED_ROOM_RECHECK_MS = 5 * 60 * 1000
+
 export class GameRoom extends DurableObject<Env> {
-  /** game UUID — also available via ctx.id.name after hibernation */
+  /** game id — also available via ctx.id.name after hibernation */
   gameId = ''
 
   /** In-memory authoritative state. `null` until first loadGame() call. */
@@ -79,14 +88,11 @@ export class GameRoom extends DurableObject<Env> {
 
   /**
    * Dev-only flag. Set on the first join that arrives with the
-   * `x-dev-bypass-auth` handshake flag. When true the room never touches
-   * Supabase — it creates an in-memory game so two WS clients can exercise
-   * the sync/broadcast path without a database. Never enabled in prod
-   * because the bypass header is only honored here, not in assertPlayerInGame
-   * callers outside this file.
+   * `x-dev-bypass-auth` handshake flag (or on a `local-*` room). When true the
+   * room never asks the lobby for membership — it creates an in-memory game so
+   * a browser alone can exercise the sync/broadcast path.
    */
   private devMode = false
-  private nativeGame = false
 
   private resolveGameId(): string {
     if (this.gameId) return this.gameId
@@ -104,8 +110,28 @@ export class GameRoom extends DurableObject<Env> {
     if (fromQuery) this.gameId = fromQuery
     else this.resolveGameId()
 
+    // HTTP state read: replaces the legacy `get_player_game_state` RPC.
+    // Used by the client as the initial load (and as a WS fallback) — fog of
+    // war is applied per viewer, exactly like the WS push.
     if (request.headers.get('Upgrade') !== 'websocket') {
-      return new Response('Expected WebSocket', { status: 426 })
+      const wantsState = url.searchParams.get('state') === '1'
+      if (!wantsState) return new Response('Expected WebSocket', { status: 426 })
+      const playerId = (url.searchParams.get('playerId') ?? '').trim()
+      if (!playerId) {
+        return json({ error: 'playerId required' }, 400)
+      }
+      try {
+        const allowed = await this.canReadGame(playerId)
+        if (!allowed) return json({ error: 'Нет доступа к игре' }, 403)
+        if (!this.currentGame) await this.loadGame()
+        if (!this.currentGame) return json({ error: 'Игра не найдена' }, 404)
+        return json(buildBroadcastState(this.currentGame, playerId))
+      } catch (err) {
+        return json(
+          { error: err instanceof Error ? err.message : String(err) },
+          404,
+        )
+      }
     }
 
     // Capture WS-handshake headers / subprotocol ONCE so the rest of the
@@ -169,16 +195,13 @@ export class GameRoom extends DurableObject<Env> {
         // handshake in fetch()). The previous code referenced `request`
         // here which is a ReferenceError — every join used to crash.
         const meta = this.getSession(ws) ?? { clientId: '', bypassAuth: false }
-        const localTestRoom =
-          this.env.ENVIRONMENT !== 'production' &&
-          this.env.ALLOW_DEV_BYPASS === '1' &&
-          gameId.startsWith('local-')
-        if (!meta.bypassAuth && !localTestRoom) {
+        const bypass = meta.bypassAuth || this.isLocalTestRoom(gameId)
+        if (!bypass) {
           const nativeMember = await this.isNativeLobbyMember(gameId, clientId)
-          if (!nativeMember) await assertPlayerInGame(this.env, gameId, clientId)
+          if (!nativeMember) throw new Error('Нет доступа к игре')
           await this.loadGame()
         } else {
-          // Dev-only: no Supabase. Spin up an in-memory game so we can test
+          // Dev-only: no lobby. Spin up an in-memory game so we can test
           // broadcast/sync between two connected clients.
           this.devMode = true
           await this.ensureDevGame(clientId)
@@ -257,6 +280,7 @@ export class GameRoom extends DurableObject<Env> {
     if (session?.clientId) this.joined.delete(session.clientId)
     try {
       this.broadcastPresence()
+      await this.armCleanupIfUnwatched()
     } catch (err) {
       console.error('[GameRoom] broadcastPresence on close failed:', err)
     }
@@ -267,10 +291,34 @@ export class GameRoom extends DurableObject<Env> {
     if (session?.clientId) this.joined.delete(session.clientId)
     try {
       this.broadcastPresence()
+      await this.armCleanupIfUnwatched()
     } catch (err) {
       console.error('[GameRoom] broadcastPresence on error failed:', err)
     }
     void error
+  }
+
+  /**
+   * Alarm handler — the only way an abandoned room ever gets cleaned up.
+   * Parties are transient: storage survives DO eviction, but not an empty
+   * room. Live sockets postpone the cleanup (and re-check later).
+   */
+  async alarm(): Promise<void> {
+    try {
+      if (this.liveSocketCount() > 0) {
+        await this.ctx.storage.setAlarm(Date.now() + WATCHED_ROOM_RECHECK_MS)
+        return
+      }
+      await this.ctx.storage.deleteAll()
+      console.log('[GameRoom] alarm: session storage cleaned', { gameId: this.gameId })
+    } catch (err) {
+      console.error('[GameRoom] alarm cleanup failed:', err)
+    } finally {
+      this.currentGame = null
+      this.joined.clear()
+      this.processedRequests.clear()
+      this.actionsSinceSnapshot = 0
+    }
   }
 
   private getSession(ws: WebSocket): SessionMeta | null {
@@ -292,6 +340,29 @@ export class GameRoom extends DurableObject<Env> {
     }
   }
 
+  private liveSocketCount(): number {
+    let count = 0
+    for (const ws of this.ctx.getWebSockets()) {
+      if (ws.readyState === 1) count += 1
+    }
+    return count
+  }
+
+  /** Arm the cleanup alarm only when nobody is watching. */
+  private async armCleanupIfUnwatched(): Promise<void> {
+    if (this.liveSocketCount() > 0) return
+    await this.ctx.storage.setAlarm(Date.now() + ROOM_TTL_MS)
+  }
+
+  /** True for `local-*` rooms opened by the offline test mode. */
+  private isLocalTestRoom(gameId: string): boolean {
+    return (
+      this.env.ENVIRONMENT !== 'production' &&
+      this.env.ALLOW_DEV_BYPASS === '1' &&
+      gameId.startsWith('local-')
+    )
+  }
+
   private async isNativeLobbyMember(gameId: string, playerId: string): Promise<boolean> {
     try {
       const id = this.env.LOBBY_ROOM.idFromName(gameId)
@@ -306,6 +377,13 @@ export class GameRoom extends DurableObject<Env> {
     } catch {
       return false
     }
+  }
+
+  /** Read access check shared by the WS join and the HTTP state route. */
+  private async canReadGame(playerId: string): Promise<boolean> {
+    const gameId = this.resolveGameId()
+    if (this.devMode || this.isLocalTestRoom(gameId)) return true
+    return this.isNativeLobbyMember(gameId, playerId)
   }
 
   private async getNativeGameState(gameId: string): Promise<Record<string, unknown> | null> {
@@ -323,25 +401,25 @@ export class GameRoom extends DurableObject<Env> {
   }
 
   /**
-   * Load (or reload) the in-memory game from a Worker-native lobby first,
-   * then from Supabase for legacy games.
-   * Called on the first join of the session.
+   * Load (or reload) the in-memory game. Sources, in order:
+   *   1. This room's own SQLite snapshot (normal case after eviction).
+   *   2. The lobby DO's seed, written when the host started the game.
    *
    * Race fix (PERFORMANCE_AUDIT_WORKERS K1):
-   *   Два параллельных join'а раньше могли оба прочитать Supabase. Теперь
-   *   `blockConcurrencyWhile` атомарно проверяет+загружает state — только
-   *   один RPC пройдёт, остальные дождутся.
+   *   Два параллельных join'а раньше могли оба читать источник. Теперь
+   *   `blockConcurrencyWhile` атомарно проверяет+загружает state.
    */
   private async loadGame(): Promise<void> {
     if (this.currentGame) return
     await this.ctx.blockConcurrencyWhile(async () => {
       if (this.currentGame) return
       const gameId = this.resolveGameId()
-      const native = await this.getNativeGameState(gameId)
-      this.nativeGame = native !== null
-      const raw = native ?? await getFullGameState(this.env, gameId)
+      const stored = await this.ctx.storage.get(STORAGE_KEY_GAME) as
+        | Record<string, unknown>
+        | undefined
+      const raw = stored ?? (await this.getNativeGameState(gameId))
       if (!raw) {
-        throw new Error(`Game ${gameId} not found or snapshot RPC missing`)
+        throw new Error(`Игра ${gameId} не найдена`)
       }
       // Enrich zone metadata with the bundled card catalog. This is the
       // catalog -> Worker link used by the mechanics runtime.
@@ -390,7 +468,7 @@ export class GameRoom extends DurableObject<Env> {
 
   /**
    * Dev-only: build (or extend) an in-memory game so the sync path can be
-   * exercised without Supabase. The first joining client seeds the game;
+   * exercised without a lobby. The first joining client seeds the game;
    * a second distinct clientId is added as player 2 and the game flips to
    * `active`. Each player gets a small hand + deck of placeholder creatures
    * so `play_card` / `end_turn` run through the real engine.
@@ -431,85 +509,25 @@ export class GameRoom extends DurableObject<Env> {
   }
 
   /**
-   * Persist the in-memory game back to Supabase.
-   * Called periodically after SNAPSHOT_EVERY_N_ACTIONS mutations.
+   * Persist the in-memory game into this room's SQLite storage.
    *
-   * Race fix (PERFORMANCE_AUDIT_WORKERS K5): под `blockConcurrencyWhile`, чтобы
-   * два одновременных snapshot'а (две action'а, попавшие в один тик) не
-   * перетёрли друг друга в Supabase. После первого snapshot'а второй
-   * обнаружит свежий counter и не пойдёт в сеть.
+   * Sessions are transient — no Supabase, no lobby round-trip. The snapshot is
+   * written after every action so a DO restart does not lose progress; the
+   * alarm drops the whole session once the room has been empty for ROOM_TTL_MS.
    */
   private async persistSnapshot(): Promise<void> {
-    if (!this.currentGame || this.devMode) return
-    await this.ctx.blockConcurrencyWhile(async () => {
-      if (!this.currentGame) return
-      // Внутри critical section захватываем snapshot текущего state —
-      // даже если currentGame изменится во время await (новые action'ы
-      // могут прийти во время PATCH), мы persist'им ровно то, что было.
-      const game = this.currentGame
-      const payload: Record<string, unknown> = {
-        state: {
-          id: game.id,
-          lobby_id: game.lobby_id,
-          status: game.status,
-          current_turn: game.current_turn,
-          current_player_id: game.current_player_id,
-          winner_id: game.winner_id,
-          game_state: game.game_state ?? {},
-          version: game.version,
-          started_at: game.started_at,
-          ended_at: game.ended_at,
-          turn_started_at: game.turn_started_at,
-          players: game.players.map((p) => ({
-            player_id: p.player_id,
-            nickname: p.nickname,
-            position: p.position,
-            health: p.health,
-            player_order: p.player_order,
-            hand: p.hand,
-            deck_pile: p.deck_pile,
-            deck_remaining: p.deck_remaining,
-            discard_pile: p.discard_pile,
-            actions_remaining: p.actions_remaining,
-            free_draw_used: p.free_draw_used,
-            paid_draw_used: p.paid_draw_used,
-            cost_reduction: p.cost_reduction ?? 0,
-            free_play_next: p.free_play_next ?? false,
-            zones: p.zones,
-          })),
-        },
-        version: game.version,
-        status: game.status,
-        winner_id: game.winner_id,
-        ended_at: game.ended_at,
-        current_player_id: game.current_player_id,
-        current_turn: game.current_turn,
-      }
-      if (this.nativeGame) {
-        const targetLobbyId = String(game.lobby_id ?? this.resolveGameId())
-        const lobbyId = this.env.LOBBY_ROOM.idFromName(targetLobbyId)
-        const lobby = this.env.LOBBY_ROOM.get(lobbyId)
-        const response = await lobby.fetch(new Request('https://lobby.internal/internal/game-state', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }))
-        if (!response.ok) throw new Error(`Native snapshot save failed: HTTP ${response.status}`)
-        this.actionsSinceSnapshot = 0
-        return
-      }
-
-      const { saveFullGameState } = await import('./supabase.js')
-      await saveFullGameState(this.env, game.id, payload)
-      this.actionsSinceSnapshot = 0
-    })
+    if (!this.currentGame) return
+    const snapshot = serializeGameState(this.currentGame)
+    await this.ctx.storage.put(STORAGE_KEY_GAME, snapshot)
+    this.actionsSinceSnapshot = 0
+    await this.armCleanupIfUnwatched()
   }
 
   /**
    * Apply an action via the in-memory engine. After mutation:
    *   1. Save the new state to the in-memory cache.
    *   2. Push a personalized snapshot to every connected viewer.
-   *   3. If we've accumulated enough mutations, persist a snapshot.
+   *   3. Persist the session snapshot when due.
    */
   private async handleAction(
     ws: WebSocket,
@@ -654,7 +672,7 @@ export class GameRoom extends DurableObject<Env> {
 }
 
 /* -------------------------------------------------------------------- *
- * Conversions: Supabase JSON shape ↔ Engine GameState                  *
+ * Conversions: stored JSON shape ↔ Engine GameState                    *
  * -------------------------------------------------------------------- */
 
 /** Coerce an arbitrary JSON value into the engine's expected shape. */
@@ -680,8 +698,54 @@ function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : []
 }
 
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+/**
+ * Serialize the session for SQLite. `catalog` is intentionally dropped: the
+ * bundled catalog is re-attached on every load, and persisting 500+ rows per
+ * action would bloat storage for nothing.
+ */
+function serializeGameState(game: GameState): Record<string, unknown> {
+  return {
+    id: game.id,
+    lobby_id: game.lobby_id ?? null,
+    status: game.status,
+    current_turn: game.current_turn,
+    current_player_id: game.current_player_id,
+    winner_id: game.winner_id ?? null,
+    game_state: game.game_state ?? {},
+    version: game.version,
+    started_at: game.started_at ?? null,
+    ended_at: game.ended_at ?? null,
+    turn_started_at: game.turn_started_at ?? null,
+    players: game.players.map((p) => ({
+      player_id: p.player_id,
+      nickname: p.nickname ?? null,
+      position: p.position ?? null,
+      health: p.health,
+      player_order: p.player_order,
+      hand: p.hand,
+      deck_pile: p.deck_pile,
+      deck_remaining: p.deck_remaining,
+      discard_pile: p.discard_pile,
+      actions_remaining: p.actions_remaining,
+      free_draw_used: p.free_draw_used,
+      paid_draw_used: p.paid_draw_used,
+      cost_reduction: p.cost_reduction ?? 0,
+      free_play_next: p.free_play_next ?? false,
+      is_bot: p.is_bot ?? false,
+      zones: p.zones,
+    })),
+  }
+}
+
 /* -------------------------------------------------------------------- *
- * Dev-only in-memory game factory (no Supabase)                        *
+ * Dev-only in-memory game factory (no lobby)                           *
  * -------------------------------------------------------------------- */
 
 let devCardSeq = 0
@@ -746,6 +810,7 @@ function rawPlayer(raw: unknown): PlayerState {
     paid_draw_used: asBool(obj.paid_draw_used, false),
     cost_reduction: asInt(obj.cost_reduction, 0),
     free_play_next: asBool(obj.free_play_next, false),
+    is_bot: obj.is_bot === true,
     zones: zones as PlayerState['zones'],
   }
 }

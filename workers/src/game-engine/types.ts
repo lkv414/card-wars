@@ -83,6 +83,8 @@ export interface PlayerState {
   zones: Zone[]
   /** Convenience flag — only the active viewer has is_self=true. */
   is_self?: boolean
+  /** True when this seat is driven by the server-side bot, not a human. */
+  is_bot?: boolean
 }
 
 /** Subset of card fields the engine reads without needing the catalog. */

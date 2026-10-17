@@ -108,6 +108,20 @@ export default {
       return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
     }
 
+    // Партия → снимок состояния для конкретного игрока (fog of war применяется
+    // внутри GameRoom). Замена legacy `get_player_game_state` RPC.
+    const gameStateMatch = url.pathname.match(/^\/game\/([^/]+)\/state$/)
+    if (gameStateMatch && request.method === 'GET') {
+      const gameId = gameStateMatch[1]
+      const id = env.GAME_ROOM.idFromName(gameId)
+      const stub = env.GAME_ROOM.get(id)
+      const roomUrl = new URL(request.url)
+      roomUrl.pathname = '/state'
+      roomUrl.searchParams.set('gameId', gameId)
+      roomUrl.searchParams.set('state', '1')
+      return withCors(await stub.fetch(new Request(roomUrl.toString(), request)))
+    }
+
     const lobbyMatch = url.pathname.match(/^\/lobby\/([^/]+)\/ws$/)
     if (lobbyMatch) {
       const lobbyId = lobbyMatch[1]
@@ -139,6 +153,7 @@ export default {
           routes: [
             '/health',
             '/game/:gameId/ws',
+            '/game/:gameId/state',
             '/lobby/:lobbyId/ws',
             '/lobby/:lobbyId/join',
              '/lobby/:lobbyId',

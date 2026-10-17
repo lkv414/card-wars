@@ -46,10 +46,14 @@ export interface Zone {
   zone_position: number
   /** Cards currently in this slot (creatures, buildings). */
   cards: Card[]
-  /** Optional land_id binding this slot to a landscape type. */
+/** Optional land_id binding this slot to a landscape type. */
   land_id?: string | null
   /** Landscape type of the bound land (corn/ice/good/swamp/sand/blue/any). */
   land_type?: string | null
+  /** True when this land is frozen (Ледяной жетон): cannot play creatures here. */
+  frozen?: boolean
+  /** True when this land is flipped face-down. */
+  flipped?: boolean
 }
 
 /** Per-player runtime state. */

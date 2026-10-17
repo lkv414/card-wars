@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { activateAbility, dispatchMechanicEvent } from './mechanics-runtime'
-import { playCard } from './cards'
+import { playCard, discardFromHand } from './cards'
 import type { Card, GameState, PlayerState, Zone } from './types'
 
 function zones(cards: Card[] = []): Zone[] {
@@ -135,5 +135,141 @@ describe('mechanics runtime — bundled catalog contract', () => {
     const before = state([p1])
     const after = dispatchMechanicEvent(before, { type: 'start_of_turn', actorId: 'p1' })
     expect(after).toEqual(before)
+  })
+})
+
+
+describe("mechanics runtime — new structured actions", () => {
+  it("freeze_landscape marks the zone frozen", () => {
+    const source = card("source", "creature", { instanceId: "source-instance" })
+    const p1 = player("p1", 1, [], [source])
+    const catalog = {
+      source: {
+        id: "source",
+        card_type: "creature",
+        cost: 0,
+        mechanics_status: "implemented",
+        mechanics: [{ trigger: "manual", actions: [{ type: "freeze_landscape", target: "this_landscape" }], conditions: [] }],
+      },
+    }
+    const result = activateAbility(state([p1], catalog), {
+      actorId: "p1",
+      zonePosition: 1,
+      cardId: "source-instance",
+      mechanicIndex: 0,
+    })
+    expect(result.error).toBeUndefined()
+    expect(result.state.players[0].zones[0].frozen).toBe(true)
+  })
+
+  it("frozen zone blocks playing a creature", () => {
+    const played = card("creature", "creature")
+    const p1 = player("p1", 1, [played])
+    p1.zones[0].frozen = true
+    const result = playCard(state([p1]), { type: "play_card", cardIndex: 0, zonePosition: 1 })
+    expect("error" in result).toBe(true)
+  })
+
+  it("discard_from_hand removes one frozen token", () => {
+    const p1 = player("p1", 1, [card("c", "creature")])
+    p1.zones[0].frozen = true
+    const s = state([p1])
+    const result = discardFromHand(s, { type: "discard_from_hand", cardIndex: 0 })
+    expect("state" in result).toBe(true)
+    if (!("state" in result)) return
+    expect(result.state.players[0].zones[0].frozen).toBe(false)
+  })
+
+  it("flip_landscape toggles the flipped flag", () => {
+    const source = card("source", "creature", { instanceId: "source-instance" })
+    const p1 = player("p1", 1, [], [source])
+    const catalog = {
+      source: {
+        id: "source",
+        card_type: "creature",
+        cost: 0,
+        mechanics_status: "implemented",
+        mechanics: [{ trigger: "manual", actions: [{ type: "flip_landscape", target: "this_landscape", face: "down" }], conditions: [] }],
+      },
+    }
+    const result = activateAbility(state([p1], catalog), {
+      actorId: "p1",
+      zonePosition: 1,
+      cardId: "source-instance",
+      mechanicIndex: 0,
+    })
+    expect(result.error).toBeUndefined()
+    expect(result.state.players[0].zones[0].flipped).toBe(true)
+  })
+
+  it("immunity sets the immune_to flag on the card", () => {
+    const source = card("source", "creature", { instanceId: "source-instance" })
+    const p1 = player("p1", 1, [], [source])
+    const catalog = {
+      source: {
+        id: "source",
+        card_type: "creature",
+        cost: 0,
+        mechanics_status: "implemented",
+        mechanics: [{ trigger: "manual", actions: [{ type: "immunity", target: "none", to: "damage_from_spells" }], conditions: [] }],
+      },
+    }
+    const result = activateAbility(state([p1], catalog), {
+      actorId: "p1",
+      zonePosition: 1,
+      cardId: "source-instance",
+      mechanicIndex: 0,
+    })
+    expect(result.error).toBeUndefined()
+    expect(result.state.players[0].zones[0].cards[0].immune_to).toBe("damage_from_spells")
+  })
+
+  it("peek succeeds without changing deck", () => {
+    const source = card("source", "creature", { instanceId: "source-instance" })
+    const p1 = player("p1", 1, [], [source])
+    p1.deck_pile = [card("a", "creature"), card("b", "creature")]
+    const catalog = {
+      source: {
+        id: "source",
+        card_type: "creature",
+        cost: 0,
+        mechanics_status: "implemented",
+        mechanics: [{ trigger: "manual", actions: [{ type: "peek", target: "none", count: 2 }], conditions: [] }],
+      },
+    }
+    const result = activateAbility(state([p1], catalog), {
+      actorId: "p1",
+      zonePosition: 1,
+      cardId: "source-instance",
+      mechanicIndex: 0,
+    })
+    expect(result.error).toBeUndefined()
+    expect(result.applied).toBe(true)
+  })
+
+  it("condition template: discard pile size", () => {
+    const source = card("source", "creature", { instanceId: "source-instance" })
+    const target = card("target", "creature", { health: 4, instanceId: "target-instance" })
+    const p1 = player("p1", 1, [], [source])
+    const p2 = player("p2", 2, [], [target])
+    p1.discard_pile = [card("d1", "creature"), card("d2", "creature"), card("d3", "creature"), card("d4", "creature"), card("d5", "creature")]
+    const catalog = {
+      source: {
+        id: "source",
+        card_type: "creature",
+        cost: 0,
+        mechanics_status: "implemented",
+        mechanics: [{ trigger: "manual", actions: [{ type: "deal_damage", target: "chosen_opponent_creature", amount: 1 }], conditions: [{ type: "if", description: "в твоей стопке сброса 5 карт или более" }] }],
+      },
+    }
+    const result = activateAbility(state([p1, p2], catalog), {
+      actorId: "p1",
+      zonePosition: 1,
+      cardId: "source-instance",
+      mechanicIndex: 0,
+      targetCardIds: ["target-instance"],
+    })
+    expect(result.error).toBeUndefined()
+    expect(result.state.players[1].zones[0].cards[0].health).toBe(3)
   })
 })

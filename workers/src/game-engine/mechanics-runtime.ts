@@ -318,11 +318,73 @@ const PREDICATE_CONDITIONS = new Set(['if', 'while', 'prerequisite'])
  * Теперь причина возвращается вызывающему, а сам факт «условие не
  * исполнено» виден и в логах, и в тестах.
  */
-function unmetCondition(conditions: unknown): string | null {
+/**
+ * Оценивает предикативные условия (if/while/prerequisite) по шаблонам
+ * текста. Возвращает:
+ *   null            — условие выполнено (или его нет) → механику можно применять;
+ *   'condition_not_met:...'  — условие не выполнено (механика не сработает);
+ *   'condition_not_evaluated:...' — шаблон не распознан (механика остаётся
+ *                                   text_only, пока шаблон не добавят).
+ */
+function evaluatePredicate(cond: JsonObject, state: GameState, owner: PlayerState, sourceCardId?: string): 'ok' | 'unmet' | 'unknown' {
+  const desc = String(cond.description ?? '').toLowerCase()
+  const src = sourceCardId ? findCard(state, sourceCardId) : undefined
+  const lane = src?.zone.zone_position
+  const ownerZone = lane !== undefined ? owner.zones.find((z) => z.zone_position === lane) : undefined
+
+  // «в твоей стопке сброса N карт или более»
+  const discardMatch = desc.match(/стопк[^.]*сброс[^.]*?(\d+)\s*карт/)
+  if (discardMatch) {
+    const n = Number(discardMatch[1])
+    return (owner.discard_pile?.length ?? 0) >= n ? 'ok' : 'unmet'
+  }
+  // «ты не контролируешь существ на этой линии»
+  if (desc.includes('не контролируешь существ на этой линии') || desc.includes('не контролируешь существ на э') ) {
+    return (ownerZone?.cards.filter((c) => c.card_type !== 'building' && c.card_type !== 'spell').length ?? 0) === 0 ? 'ok' : 'unmet'
+  }
+  // «эта земля пустая»
+  if (desc.includes('эта земля пустая') || desc.includes('этом земля пустая')) {
+    return (ownerZone?.cards.length ?? 0) === 0 ? 'ok' : 'unmet'
+  }
+  // «на соседних линиях нет существ»
+  if (desc.includes('на соседних линиях нет существ') || desc.includes('соседних линиях нет существ')) {
+    const adj = [lane !== undefined ? lane - 1 : -99, lane !== undefined ? lane + 1 : -99]
+    const anyCreature = state.players.some((p) =>
+      p.zones.some((z) => adj.includes(z.zone_position) && z.cards.some((c) => c.card_type !== 'building' && c.card_type !== 'spell')),
+    )
+    return anyCreature ? 'unmet' : 'ok'
+  }
+  // «на ... нет урона»
+  if (desc.includes('нет урона')) {
+    const card = src?.card
+    if (!card) return 'ok'
+    const base = Number(card.health ?? card.defense ?? 0)
+    const cur = Number(card.health ?? 0)
+    return cur >= base ? 'ok' : 'unmet'
+  }
+  // prerequisite: «Уничтожь существо/строение под своим контролем» — стоимость,
+  // не блокирует применение (игрок сам уничтожает карту).
+  if (desc.includes('уничтожь') && (desc.includes('под своим контролем') || desc.includes('под твоим контролем'))) {
+    return 'ok'
+  }
+  // «это существо погибло» — контекст on_death, считаем выполненным.
+  if (desc.includes('погиб')) {
+    return 'ok'
+  }
+  return 'unknown'
+}
+
+function unmetCondition(conditions: unknown, state?: GameState, owner?: PlayerState, sourceCardId?: string): string | null {
   if (!Array.isArray(conditions)) return null
   for (const raw of conditions) {
-    const type = String(object(raw).type ?? '')
-    if (PREDICATE_CONDITIONS.has(type)) return `condition_not_evaluated:${type}`
+    const cond = object(raw)
+    const type = String(cond.type ?? '')
+    if (type === 'cost_actions' || type === 'verb') continue
+    if (PREDICATE_CONDITIONS.has(type)) {
+      const verdict = evaluatePredicate(cond, state as GameState, owner as PlayerState, sourceCardId)
+      if (verdict === 'unknown') return `condition_not_evaluated:${type}`
+      if (verdict === 'unmet') return `condition_not_met:${type}`
+    }
   }
   return null
 }
@@ -333,7 +395,17 @@ export function conditionAllows(conditions: unknown): boolean {
 }
 
 function findTrigger(mechanic: JsonObject, eventType: MechanicEventType): boolean {
-  return mechanic.trigger === eventType
+  const t = String(mechanic.trigger ?? '')
+  if (t === eventType) return true
+  // persistent: аура — срабатывает при входе в игру и в начале хода.
+  if (t === 'persistent' && (eventType === 'on_enters_play' || eventType === 'start_of_turn')) return true
+  // conditional: событие зависит от условия («если погибло» → on_death).
+  if (t === 'conditional') {
+    const desc = String((mechanic.conditions as any)?.[0]?.description ?? '').toLowerCase()
+    if (desc.includes('погиб')) return eventType === 'on_death'
+    return eventType === 'on_enters_play'
+  }
+  return false
 }
 
 function actionAmount(action: JsonObject): number {
@@ -356,14 +428,8 @@ interface ActionOutcome {
 }
 
 const UNSUPPORTED_ACTIONS = new Set([
-  'search',
-  'flip_landscape',
-  'freeze_landscape',
   'flip_ability',
   'ignore_damage',
-  'immunity',
-  'peek',
-  'mill',
 ])
 
 /** Типы, объявленные в mechanics.ts, но не исполняемые движком (аудит §4.3). */
@@ -564,6 +630,207 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
       next = mutatePlayer(next, owner.player_id, (p) => ({ ...p, free_play_next: true }))
       applied = true
       break
+    case 'freeze_landscape': {
+      // Заморозка земли (Правила заморозки.docx): на землю с Ледяным жетоном
+      // нельзя сыграть существо; существо на ней не может быть заменено.
+      // Снять жетон можно, сбросив карту из руки (см. discard_from_hand).
+      const lane = (() => {
+        if (target === 'this_landscape' || target === 'this_landscape_pair') {
+          const src = sourceCardId ? findCard(state, sourceCardId) : undefined
+          return src?.zone.zone_position
+        }
+        // chosen_landscape: игрок выбрал карту на нужной линии (или зону).
+        if (targetIds.length) {
+          const found = findCard(state, targetIds[0])
+          return found?.zone.zone_position
+        }
+        return undefined
+      })()
+      if (lane === undefined) {
+        return { state: next, applied: false, reason: 'targets_unresolvable:chosen_landscape' }
+      }
+      const freezeAll = target === 'this_landscape_pair' || target === 'chosen_landscape'
+      const ownersToFreeze = freezeAll ? next.players : [owner]
+      for (const p of ownersToFreeze) {
+        next = mutatePlayer(next, p.player_id, (pl) => ({
+          ...pl,
+          zones: pl.zones.map((z) =>
+            z.zone_position === lane ? { ...z, frozen: true } : z,
+          ),
+        }))
+      }
+      applied = true
+      break
+    }
+    case 'flip_landscape': {
+      // Переворот земли лицом вниз/вверх. Перевёрнутая замороженная земля
+      // остаётся замороженной (Правила заморозки.docx).
+      const face = String(action.face ?? 'down')
+      const lane = (() => {
+        if (target === 'this_landscape') {
+          const src = sourceCardId ? findCard(state, sourceCardId) : undefined
+          return src?.zone.zone_position
+        }
+        if (targetIds.length) return findCard(state, targetIds[0])?.zone.zone_position
+        return undefined
+      })()
+      if (lane === undefined) {
+        return { state: next, applied: false, reason: 'targets_unresolvable:chosen_landscape' }
+      }
+      const flipTo = face === 'up' ? false : face === 'down' ? true : undefined
+      const owners = target === 'this_landscape' ? [owner] : next.players
+      for (const p of owners) {
+        next = mutatePlayer(next, p.player_id, (pl) => ({
+          ...pl,
+          zones: pl.zones.map((z) =>
+            z.zone_position === lane
+              ? { ...z, flipped: flipTo === undefined ? !z.flipped : flipTo }
+              : z,
+          ),
+        }))
+      }
+      applied = true
+      break
+    }
+    case 'mill': {
+      // «Открывай карты с верха колоды, пока не найдёшь существо, сыграй его
+      // бесплатно на эту землю, замешай остальные обратно» (Остров голово-краба).
+      const count = actionAmount(action)
+      const src = sourceCardId ? findCard(state, sourceCardId) : undefined
+      const zone = src?.zone
+      if (!zone || zone.cards.length > 0) {
+        // Земля должна быть пустой — иначе эффект не срабатывает.
+        return { state: next, applied: false, reason: 'targets_unresolvable:this_landscape' }
+      }
+      let drew = 0
+      const revealed: Card[] = []
+      let found: Card | undefined
+      next = mutatePlayer(next, owner.player_id, (p) => {
+        const deck = [...p.deck_pile]
+        while (deck.length && !found) {
+          const c = deck.shift() as Card
+          drew++
+          if (c.card_type !== 'building' && c.card_type !== 'spell') {
+            found = c
+          } else {
+            revealed.push(c)
+          }
+          if (drew >= count + revealed.length + (found ? 1 : 0) && !found && deck.length === 0) break
+        }
+        // Если существо найдено — кладём его на землю (бесплатно), остальные
+        // замешиваем обратно в колоду.
+        if (found) {
+          const placed: Card = { ...found, tapped: false, flipped: false, zone_position: zone.zone_position, slot_type: 'creature' }
+          // Вернём revealed обратно в колоду (в конец).
+          const newDeck = [...deck, ...revealed]
+          // Перемешаем revealed (простой Fisher–Yates).
+          for (let i = newDeck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]]
+          }
+          return {
+            ...p,
+            deck_pile: newDeck,
+            deck_remaining: newDeck.length,
+            zones: p.zones.map((z) =>
+              z.zone_position === zone.zone_position ? { ...z, cards: [...z.cards, placed] } : z,
+            ),
+          }
+        }
+        // Существо не найдено — вернуть всё обратно.
+        const restored = [...revealed, ...deck]
+        return { ...p, deck_pile: restored, deck_remaining: restored.length }
+      })
+      applied = !!found
+      break
+    }
+    case 'search': {
+      // Вырубка леса: найти строение в колоде, ввести в игру, перемешать.
+      const src = sourceCardId ? findCard(state, sourceCardId) : undefined
+      const zone = src?.zone
+      if (!zone || zone.cards.length > 0) {
+        return { state: next, applied: false, reason: 'targets_unresolvable:this_landscape' }
+      }
+      let found: Card | undefined
+      const revealed: Card[] = []
+      next = mutatePlayer(next, owner.player_id, (p) => {
+        const deck = [...p.deck_pile]
+        while (deck.length && !found) {
+          const c = deck.shift() as Card
+          if (c.card_type === 'building') found = c
+          else revealed.push(c)
+        }
+        if (found) {
+          const placed: Card = { ...found, tapped: false, flipped: false, zone_position: zone.zone_position, slot_type: 'building' }
+          const newDeck = [...deck, ...revealed]
+          for (let i = newDeck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]]
+          }
+          return {
+            ...p,
+            deck_pile: newDeck,
+            deck_remaining: newDeck.length,
+            zones: p.zones.map((z) =>
+              z.zone_position === zone.zone_position ? { ...z, cards: [...z.cards, placed] } : z,
+            ),
+          }
+        }
+        const restored = [...revealed, ...deck]
+        return { ...p, deck_pile: restored, deck_remaining: restored.length }
+      })
+      applied = !!found
+      break
+    }
+    case 'peek': {
+      // Информационная механика: посмотреть N верхних карт. Состояние не
+      // меняется, но механика считается сработавшей (клиент показывает
+      // подсмотренные карты из game_state.lastPeek).
+      const count = actionAmount(action)
+      const top = owner.deck_pile.slice(0, count).map((c) => c.id ?? c.instanceId)
+      next = mutatePlayer(next, owner.player_id, (p) => ({
+        ...p,
+        // сохраняем для клиента (fog of war не скрывает собственную руку)
+      }))
+      // Записываем подсмотренные id в game_state для активного игрока.
+      next = { ...next, game_state: { ...(next.game_state ?? {}), lastPeek: top, lastPeekPlayer: owner.player_id } }
+      applied = true
+      break
+    }
+    case 'immunity': {
+      // Иммунитет (Мятная мороженка): нельзя нанести урон заклинаниями/
+      // способностями. Ставим флаг на карте; снятие — при выходе из игры.
+      const to = String(action.to ?? 'damage_from_spells')
+      const targets = selected.filter((item) => isCreature(item.card))
+      for (const item of targets) {
+        next = mutatePlayer(next, item.player.player_id, (p) => ({
+          ...p,
+          zones: p.zones.map((z) =>
+            z.zone_position === item.zone.zone_position
+              ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, immune_to: to } : c) }
+              : z,
+          ),
+        }))
+      }
+      // Если цель — сама карта-источник, ставим флаг на неё.
+      if (sourceCardId) {
+        const found = findCard(next, sourceCardId)
+        if (found) {
+          next = mutatePlayer(next, found.player.player_id, (p) => ({
+            ...p,
+            zones: p.zones.map((z) =>
+              z.zone_position === found.zone.zone_position
+                ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(found.card) ? { ...c, immune_to: to } : c) }
+                : z,
+            ),
+          }))
+        }
+      }
+      applied = targets.length > 0 || !!sourceCardId
+      break
+    }
+
+
     default:
       return { state: next, applied: false, reason: `unknown_action:${type}` }
   }
@@ -581,7 +848,7 @@ export interface MechanicOutcome {
 function applyMechanic(state: GameState, owner: PlayerState, mechanic: JsonObject, targetIds: string[] = [], sourceCardId?: string): MechanicOutcome {
   // Условия не исполняются, но механика НЕ исчезает молча: причина
   // возвращается вызывающему (аудит §4.4 / §4.8, M2).
-  const blocked = unmetCondition(mechanic.conditions)
+  const blocked = unmetCondition(mechanic.conditions, state, owner, sourceCardId)
   if (blocked) return { state, applied: false, reasons: [blocked] }
 
   const chosen = targetIds.length ? targetIds : mechanicTargetIds(mechanic)
@@ -672,7 +939,7 @@ export function activateAbility(state: GameState, request: AbilityRequest): Abil
 
   // Условие if/while/prerequisite — не исполняем. Сообщаем честно, что
   // механика недоступна, и НЕ списываем за неё действие (аудит §4.4, M2).
-  const blocked = unmetCondition(mechanic.conditions)
+  const blocked = unmetCondition(mechanic.conditions, state, owner, cardKey(found.card))
   if (blocked) return { state, error: 'Условие этой механики пока не поддерживается', applied: false }
 
   const executable = array(mechanic.actions).some(isExecutableAction)

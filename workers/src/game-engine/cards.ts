@@ -126,6 +126,11 @@ export function playCard(
     }
   }
 
+  // Замороженная земля: сыграть существо/строение на неё нельзя.
+  if (!isSpell && zone.frozen) {
+    return err('Земля заморожена — сыграть карту нельзя')
+  }
+
   // Slot-specific guard — slot is derived from the trusted catalog/card type.
   if (!isSpell) {
     if (expectedSlot === 'building') {
@@ -266,10 +271,17 @@ export function discardFromHand(
 
   const card = me.hand[cardIndex]
   const newHand = [...me.hand.slice(0, cardIndex), ...me.hand.slice(cardIndex + 1)]
+  // Правила заморозки: сбросив карту из руки, снимаешь один Ледяной жетон.
+  let zones = me.zones
+  const frozenIdx = zones.findIndex((z) => z.frozen)
+  if (frozenIdx !== -1) {
+    zones = zones.map((z, i) => (i === frozenIdx ? { ...z, frozen: false } : z))
+  }
   const updated: PlayerState = {
     ...me,
     hand: newHand,
     discard_pile: pushDiscard(me.discard_pile, card),
+    zones,
   }
   return { state: bumpVersion(withPlayer(state, me.player_id, () => updated)) }
 }

@@ -322,6 +322,8 @@ npm run build
 ## 5. История коммитов v2 (актуальная)
 
 ```
+6e0bf49 docs(v2): mark stage 5 as deferred, add planning checklist
+b021f5d docs(v2): sync handoff after stage 4 (resume, history, lint debt)
 80beeed docs(v2): stage 5 detailed plan and data-source findings
 edf7d81 docs(v2): update handoff (stage 4 commit, remaining debt)
 6bf18d7 refactor(v2): stage 4 - remove dead code

@@ -130,6 +130,26 @@ describe('fillSeatWithCatalogDeck', () => {
     ).toBe(false)
   })
 
+  it('replaces the "any" placeholder land of a bot seat with the deck land', () => {
+    // Так место бота описывает LobbyRoom: колоды нет, земля — заглушка 'any'.
+    const botSeat = makePlayer({
+      player_id: BOT_ID,
+      is_bot: true,
+      zones: [1, 2, 3, 4].map((n) => ({
+        zone_position: n,
+        cards: [] as Card[],
+        land_id: null,
+        land_type: 'any',
+      })),
+    })
+    const filled = fillSeatWithCatalogDeck(botSeat, seededRng(3))
+    for (const zone of filled.zones) {
+      expect(zone.land_type).toBe(filled.zones[0]!.land_type)
+      expect(zone.land_type).not.toBe('any')
+      expect(zone.land_id).toBe(zone.land_type)
+    }
+  })
+
   it('produces a deck the engine accepts on the first lane (land rule)', () => {
     const catalog = Object.fromEntries(getCardIndex()) as Record<string, CardCatalogEntry>
     const filled = fillSeatWithCatalogDeck(

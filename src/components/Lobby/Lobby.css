@@ -196,6 +196,20 @@
   box-shadow: 0 8px 20px rgba(245, 166, 35, 0.3);
 }
 
+/* Кнопка «Играть против бота» — вторичный акцент рядом с «Начать игру» */
+.lobby-btn--bot {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  font-size: 16px;
+  padding: 14px;
+}
+
+.lobby-btn--bot:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
 .lobby-code-input {
   padding: 14px 16px;
   font-size: 22px;

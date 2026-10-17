@@ -13,10 +13,14 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
   const myPlayer = players.find(p => p.player_id === guestId)
   const amReady = myPlayer?.ready ?? false
   const myHasDeck = isLobbyDeckPlayable(myPlayer?.deck)
-  const allHaveDecks = players.length >= 2 && players.every(p => isLobbyDeckPlayable(p.deck))
-  const missingDeckNames = players
+  const humans = players.filter(p => !p.is_bot)
+  // Бот получает колоду на сервере (GameRoom собирает её из cards.json),
+  // поэтому в проверках колоды он не участвует.
+  const allHaveDecks = humans.length >= 2 && humans.every(p => isLobbyDeckPlayable(p.deck))
+  const missingDeckNames = humans
     .filter(p => !isLobbyDeckPlayable(p.deck))
     .map(p => p.nickname || p.player_id.slice(0, 6))
+  const canStartVsBot = isHost && !players.some(p => p.is_bot) && myHasDeck
 
   const handleCopy = async () => {
     const url = `${window.location.origin}/lobby/${code}`
@@ -40,6 +44,14 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
       return
     }
     onStartGame?.(landPlacementRule)
+  }
+
+  const handleStartVsBot = () => {
+    if (!myHasDeck) {
+      toast?.('error', 'Сначала выберите колоду в «Мои колоды»')
+      return
+    }
+    onStartGame?.(landPlacementRule, { vsBot: true })
   }
 
   return (
@@ -83,10 +95,12 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
                       {p.nickname || `Игрок ${p.player_id.slice(0, 6).toUpperCase()}`}
                       {p.player_id === guestId && <span className="lobby-player__you"> (вы)</span>}
                     </span>
-                    <span className={`lobby-player__deck ${hasDeck ? 'ok' : 'missing'}`}>
-                      {hasDeck
-                        ? `🃏 ${deckName || 'Колода'}${cardCount != null ? ` · ${cardCount}` : ''}`
-                        : '⚠ нет колоды'}
+                    <span className={`lobby-player__deck ${hasDeck || p.is_bot ? 'ok' : 'missing'}`}>
+                      {p.is_bot
+                        ? '🤖 колода от сервера'
+                        : hasDeck
+                          ? `🃏 ${deckName || 'Колода'}${cardCount != null ? ` · ${cardCount}` : ''}`
+                          : '⚠ нет колоды'}
                     </span>
                   </div>
                   <span className={`lobby-player__status ${p.ready ? 'ready' : 'waiting'}`}>
@@ -103,10 +117,10 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
               </li>
             ))}
           </ul>
-          {players.length < 2 && (
-            <p className="lobby-players__hint">Нужно минимум 2 игрока для старта</p>
+          {humans.length < 2 && (
+            <p className="lobby-players__hint">Нужно минимум 2 игрока для старта — или сыграйте против бота</p>
           )}
-          {players.length >= 2 && !allHaveDecks && (
+          {humans.length >= 2 && !allHaveDecks && (
             <p className="lobby-players__hint lobby-players__hint--warn">
               Без колоды: {missingDeckNames.join(', ')}. Нужно выбрать колоду и перезайти.
             </p>
@@ -122,13 +136,13 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
             <button
               className={`lobby-btn ${amReady ? 'lobby-btn--ready-done' : 'lobby-btn--ready'}`}
               onClick={handleReady}
-              disabled={amReady || players.length < 2 || !myHasDeck}
+              disabled={amReady || humans.length < 2 || !myHasDeck}
               aria-pressed={amReady}
               aria-label={amReady ? 'Вы уже готовы' : 'Отметить себя готовым'}
               title={
                 !myHasDeck
                   ? 'Нет колоды'
-                  : players.length < 2
+                  : humans.length < 2
                     ? 'Нужно минимум 2 игрока'
                     : undefined
               }
@@ -136,7 +150,7 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
               {amReady ? '✓ Вы готовы' : 'Готов'}
             </button>
 
-            {isHost && players.length >= 2 && (
+            {isHost && humans.length >= 2 && (
               <div className="lobby-settings" role="group" aria-label="Правила земель">
                 <span className="lobby-settings__label">Типизация земель</span>
                 <div className="lobby-settings__options">
@@ -155,7 +169,7 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
               </div>
             )}
 
-            {isHost && players.length >= 2 && (
+            {isHost && humans.length >= 2 && (
               <button
                 className="lobby-btn lobby-btn--start"
                 onClick={handleStart}
@@ -164,6 +178,16 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
                 aria-label={allHaveDecks ? 'Начать игру' : `Нужно выбрать колоды: ${missingDeckNames.join(', ')}`}
               >
                 ▶ Начать игру
+              </button>
+            )}
+
+            {canStartVsBot && (
+              <button
+                className="lobby-btn lobby-btn--start lobby-btn--bot"
+                onClick={handleStartVsBot}
+                aria-label="Начать игру против бота"
+              >
+                🤖 Играть против бота
               </button>
             )}
           </>

@@ -229,6 +229,12 @@ export class LobbyRoom extends DurableObject<Env> {
     } else if (action === 'start_game') {
       if (this.localLobby.host_id !== clientId) throw new Error('Только хост может начать игру')
       const gameId = this.resolveLobbyId()
+      // Игра против бота: серверный псевдо-игрок получает место в составе
+      // лобби, но без колоды — её соберёт GameRoom из cards.json
+      // (см. ensureBotSeats в game-room.ts). Клиент колоду боту не шлёт.
+      if (payload.vsBot === true && !players.some((p) => p.is_bot === true)) {
+        players.push(this.botLobbyPlayer())
+      }
       this.localGameState = this.buildLocalGame(gameId, players)
       await this.ctx.storage.put('localGameState', this.localGameState)
       this.localLobby = {
@@ -326,6 +332,8 @@ export class LobbyRoom extends DurableObject<Env> {
         position: null,
         health: 25,
         player_order: order + 1,
+        // is_bot читает GameRoom: такое место он ведёт сам, по alarm.
+        is_bot: lobbyPlayer.is_bot === true,
         hand,
         deck_pile: deckPile,
         deck_remaining: deckPile.length,
@@ -371,6 +379,21 @@ export class LobbyRoom extends DurableObject<Env> {
       nickname: String(nickname || 'Игрок'),
       ready: false,
       deck: deck ?? {},
+      joined_at: new Date().toISOString(),
+    }
+  }
+
+  /**
+   * Место бота в составе лобби. player_id со случайным суффиксом: клиент не
+   * должен иметь возможности представиться ботом на WS-хендшейке.
+   */
+  private botLobbyPlayer(): Record<string, unknown> {
+    return {
+      player_id: `bot-${crypto.randomUUID().slice(0, 8)}`,
+      nickname: 'Бот',
+      ready: true,
+      deck: {},
+      is_bot: true,
       joined_at: new Date().toISOString(),
     }
   }

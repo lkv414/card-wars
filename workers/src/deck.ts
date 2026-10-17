@@ -124,6 +124,10 @@ export function needsDeck(player: PlayerState): boolean {
 /**
  * Fill a seat with a catalog deck and bind every zone to that deck's land.
  * Existing zones (and their land bindings) are kept; only missing pieces are added.
+ *
+ * Зона без земли и зона с заглушкой `any` (так LobbyRoom описывает место, у
+ * которого не было колоды — например, бота) получают землю этой колоды, иначе
+ * правило размещения заблокирует карты в руке.
  */
 export function fillSeatWithCatalogDeck(player: PlayerState, rng: Rng = Math.random): PlayerState {
   const built = buildCatalogDeck(rng)
@@ -136,11 +140,17 @@ export function fillSeatWithCatalogDeck(player: PlayerState, rng: Rng = Math.ran
     deck_pile: built.deck,
     deck_remaining: built.deck.length,
     discard_pile: [],
-    zones: zones.map((zone) => ({
-      ...zone,
-      cards: zone.cards ?? [],
-      land_id: zone.land_id ?? built.landType,
-      land_type: zone.land_type ?? built.landType,
-    })),
+    zones: zones.map((zone) => {
+      const existing = typeof zone.land_type === 'string' && zone.land_type !== 'any'
+        ? zone.land_type
+        : null
+      const landType = existing ?? built.landType
+      return {
+        ...zone,
+        cards: zone.cards ?? [],
+        land_id: existing ? (zone.land_id ?? landType) : landType,
+        land_type: landType,
+      }
+    }),
   }
 }

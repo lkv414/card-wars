@@ -61,11 +61,11 @@ export function LobbyScreen({ toast }) {
     if (status !== 'in_game' || !lobbyId) return
   }, [status, lobbyId, pendingGameId, navigate])
 
-  const handleStartGame = async (landPlacementRule) => {
+  const handleStartGame = async (landPlacementRule, options) => {
     if (!lobbyId) return
     setSubmitting(true)
     try {
-      const result = await startGame(landPlacementRule)
+      const result = await startGame(landPlacementRule, options)
       if (result?.error) {
         toast?.('error', result.error)
         return

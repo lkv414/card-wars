@@ -173,13 +173,13 @@ export function useLobby() {
     }
   }, [lobbyTransport])
 
-  const startGame = useCallback(async (landPlacementRule = 'strict') => {
+  const startGame = useCallback(async (landPlacementRule = 'strict', { vsBot = false } = {}) => {
     if (!lobbyIdRef.current) return { error: 'Лобби не найдено' }
     if (!lobbyTransport?.enabled || typeof lobbyTransport.sendActionAsync !== 'function') {
       return { error: 'Realtime лобби недоступно' }
     }
     try {
-      await lobbyTransport.sendActionAsync('start_game', { landPlacementRule })
+      await lobbyTransport.sendActionAsync('start_game', { landPlacementRule, vsBot })
       return { success: true }
     } catch (err) {
       return { error: err.message || 'Не удалось создать игру' }

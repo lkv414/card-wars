@@ -41,7 +41,7 @@ export function HUDHand({
 
   return (
     <div className="hud-hand-row">
-      <div className="hud-hand" role="list" aria-label="Ваша рука">
+      <div className="hud-hand" role="group" aria-label="Ваша рука">
         {uniqueHand.length > 0 ? (
           uniqueHand.map((c, idx) => {
             const isSel = selectedCardIndex === idx

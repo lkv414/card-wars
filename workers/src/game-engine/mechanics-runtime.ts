@@ -882,7 +882,27 @@ function applyMechanic(state: GameState, owner: PlayerState, mechanic: JsonObjec
     return { state, applied: false, reasons: [`targets_unresolvable:${unresolvable.join(',')}`] }
   }
 
+  // verb-условие «Уничтожь ...» — стоимость: уничтожить карту-источник
+  // (или выбранное существо) до применения эффекта (Зеленая сирена и др.).
   let next = state
+  for (const raw of Array.isArray(mechanic.conditions) ? mechanic.conditions : []) {
+    const cond = object(raw)
+    if (String(cond.type ?? '') !== 'verb') continue
+    const verb = String(cond.value ?? '').toLowerCase()
+    if (verb.includes('уничтож')) {
+      if (sourceCardId) {
+        const found = findCard(next, sourceCardId)
+        if (!found) {
+          return { state, applied: false, reasons: ['targets_unresolvable:self'] }
+        }
+        next = mutatePlayer(next, found.player.player_id, (p) => {
+          const removed = removeFromZone(p, found.zone.zone_position, cardKey(found.card))
+          return addToDiscard(removed.player, removed.card)
+        })
+      }
+    }
+  }
+
   let applied = false
   const reasons: string[] = []
   for (const action of array(mechanic.actions)) {

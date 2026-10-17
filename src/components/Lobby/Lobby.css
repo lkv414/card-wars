@@ -205,6 +205,17 @@
   padding: 14px;
 }
 
+.lobby-bot-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.lobby-bot-settings .lobby-settings__options {
+  display: flex;
+  gap: var(--space-2, 8px);
+}
+
 .lobby-btn--bot:hover:not(:disabled) {
   background: var(--accent);
   color: var(--accent-text);

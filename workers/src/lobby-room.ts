@@ -232,8 +232,10 @@ export class LobbyRoom extends DurableObject<Env> {
       // Игра против бота: серверный псевдо-игрок получает место в составе
       // лобби, но без колоды — её соберёт GameRoom из cards.json
       // (см. ensureBotSeats в game-room.ts). Клиент колоду боту не шлёт.
-      if (payload.vsBot === true && !players.some((p) => p.is_bot === true)) {
-        players.push(this.botLobbyPlayer())
+      if (payload.vsBot === true) {
+        const botCount = Math.max(1, Math.min(3, Number(payload.botCount) || 1))
+        const existing = players.filter((p) => p.is_bot === true).length
+        for (let i = existing; i < botCount; i++) players.push(this.botLobbyPlayer())
       }
       this.localGameState = this.buildLocalGame(gameId, players)
       await this.ctx.storage.put('localGameState', this.localGameState)

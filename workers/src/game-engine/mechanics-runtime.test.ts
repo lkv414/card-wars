@@ -40,7 +40,7 @@ function state(players: PlayerState[], catalog: Record<string, any> = {}): GameS
   }
 }
 
-describe('mechanics runtime — Supabase/KV catalog contract', () => {
+describe('mechanics runtime — bundled catalog contract', () => {
   it('executes on_enters_play from catalog mechanics after play', () => {
     const played = card('spell', 'spell')
     const target = card('target', 'creature', { health: 5 })

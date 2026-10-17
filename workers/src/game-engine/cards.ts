@@ -309,7 +309,7 @@ export function discardFromZone(
  *   - уже перевёрнута ли в этом ходу (flipped_this_turn)
  *   - заблокирована ли карта через flipped (уже лежит лицом вниз) или FloopDisabled
  */
-/** Ищет действие flip_ability во встроенном или KV-каталоге карты. */
+/** Ищет действие flip_ability во встроенном каталоге карты. */
 function findFlipAbility(state: GameState, card: Card): Record<string, unknown> | null {
   const catalog = state.catalog?.[card.id]
   const mechs = (catalog?.mechanics ?? (card as Record<string, unknown>).mechanics)

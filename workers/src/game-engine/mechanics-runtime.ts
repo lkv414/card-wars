@@ -79,7 +79,7 @@ export const EXECUTABLE_STATUS: MechanicsStatus = 'implemented'
 export function mechanicsFor(state: GameState, card: Card): JsonObject[] {
   const source = blueprint(state, card)
   if (source.mechanics_version !== undefined && Number(source.mechanics_version) !== 1) return []
-  // Статус может прийти из каталога KV/БД. Если его нет — считаем карту
+  // Статус может прийти из каталога карты. Если его нет — считаем карту
   // неревьюенной: исполнить то, что не прошло ревью, нельзя.
   const status = (source.mechanics_status ?? 'unreviewed') as MechanicsStatus
   if (status !== EXECUTABLE_STATUS) return []

@@ -92,7 +92,7 @@ export interface CardCatalogEntry {
   cost?: number
   /** If defined, engine treats the card as a "building" (one per slot). */
   slot_type?: 'creature' | 'building'
-  /** Structured runtime mechanics loaded from Supabase -> KV. */
+  /** Structured runtime mechanics loaded from the bundled card catalog. */
   mechanics?: unknown
   mechanics_version?: number
   mechanics_status?: 'unreviewed' | 'text_only' | 'implemented' | 'disabled'

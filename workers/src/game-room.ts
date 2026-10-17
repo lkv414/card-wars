@@ -343,8 +343,8 @@ export class GameRoom extends DurableObject<Env> {
       if (!raw) {
         throw new Error(`Game ${gameId} not found or snapshot RPC missing`)
       }
-      // Enrich zone metadata and load the authoritative card catalog from KV.
-      // This is the DB -> KV -> Worker link used by the mechanics runtime.
+      // Enrich zone metadata with the bundled card catalog. This is the
+      // catalog -> Worker link used by the mechanics runtime.
       let hydrated = raw
       let cardCatalog: Record<string, CardCatalogEntry> = {}
       try {
@@ -378,7 +378,7 @@ export class GameRoom extends DurableObject<Env> {
         }
       } catch (error) {
         console.error('[GameRoom] catalog hydration failed', error)
-        // Mechanics are authoritative, but a missing KV catalog must be visible.
+        // Mechanics are authoritative, but a broken catalog must be visible.
         cardCatalog = {}
       }
       // eslint-disable-next-line react-hooks/immutability -- DO mutation must happen inside the critical section

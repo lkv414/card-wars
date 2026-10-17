@@ -10,8 +10,7 @@
  * - hover: подъём карты при наведении
  * - death: растворение при удалении карты
  */
-import { useRef, useCallback } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useRef, useCallback, useEffect } from 'react'
 import * as THREE from 'three'
 
 const SPAWN_DURATION = 0.4
@@ -33,10 +32,12 @@ export function useCardAnimation({ isNew, isHovered, isDying, groupRef }) {
     hoverOffset: 0,
   })
 
-  // Сброс анимации при появлении новой карты
-  if (isNew && animState.current.spawnProgress === 1) {
-    animState.current.spawnProgress = 0
-  }
+  // Сброс анимации при появлении новой карты (в эффекте, не в рендере)
+  useEffect(() => {
+    if (isNew && animState.current.spawnProgress === 1) {
+      animState.current.spawnProgress = 0
+    }
+  }, [isNew])
 
   const update = useCallback((delta) => {
     const g = groupRef.current

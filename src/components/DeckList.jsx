@@ -7,7 +7,6 @@ import { copyToClipboard } from '../utils/clipboard'
 import { useBackNavigation, useNavigateWithOrigin } from '../hooks/useBackNavigation'
 import { saveDeckSelection, sumDeckQuantities } from '../utils/deckState'
 import { useDecks } from '../hooks/useDecks'
-import { usePresetDecks, presetToDeckSelection } from '../hooks/usePresetDecks'
 import { useHeroes } from '../hooks/useHeroes'
 import { HeroDisplay } from './HeroDisplay'
 import { ConfirmDialog } from './Shared/ConfirmDialog'
@@ -16,8 +15,7 @@ import './DeckList.css'
 export function DeckList() {
   const navigate = useNavigateWithOrigin()
   const goBack = useBackNavigation('/')
-  const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck, addDeck } = useDecks()
-  const { presets, loading: presetsLoading, error: presetsError } = usePresetDecks()
+  const { decks, selectedDeckId, selectDeck, removeDeck, renameDeck } = useDecks()
   const { heroes } = useHeroes()
   const [copiedId, setCopiedId] = useState(null)
   const [renamingId, setRenamingId] = useState(null)
@@ -60,22 +58,6 @@ export function DeckList() {
   const handleEdit = (deck) => {
     selectDeck(deck.id)
     saveDeckSelection(deck.selectedCards || {}, deck.selectedLands || {}, {
-      heroId: deck.heroId ?? null,
-      editingDeckId: deck.id,
-    })
-    navigate('/deck')
-  }
-
-  const handleImportPreset = (preset) => {
-    const { selectedCards, selectedLands, name, heroId } = presetToDeckSelection(preset)
-    const deck = addDeck({
-      name,
-      selectedCards,
-      selectedLands,
-      heroId,
-      description: preset.description || null,
-    })
-    saveDeckSelection(deck.selectedCards, deck.selectedLands, {
       heroId: deck.heroId ?? null,
       editingDeckId: deck.id,
     })
@@ -238,60 +220,6 @@ export function DeckList() {
           )
         })}
       </div>
-
-      <section className="decks-presets" aria-label="Готовые колоды">
-        <h2>Готовые колоды</h2>
-        {presetsLoading && <p role="status">Загрузка пресетов…</p>}
-        {presetsError && <p className="decks-presets-error" role="alert">{presetsError}</p>}
-        {!presetsLoading && presets.length === 0 && (
-          <p className="decks-presets-empty">Пресеты пока не загружены в базу.</p>
-        )}
-        <div className="decks-presets-grid">
-          {presets.map((preset) => {
-            const { selectedCards, selectedLands } = presetToDeckSelection(preset)
-            const cardCount = sumDeckQuantities(selectedCards)
-            const landCount = sumDeckQuantities(selectedLands)
-            const landscapes = Array.isArray(preset.landscapes) ? preset.landscapes : []
-            const winrate = preset.winrate != null ? Number(preset.winrate) : null
-            const presetHeroId = preset.heroId || preset.hero_id
-            const presetHero = presetHeroId ? heroById.get(presetHeroId) || null : null
-            return (
-              <article key={preset.id} className="deck-card deck-card--preset">
-                <h3>{preset.name}</h3>
-                <div className="deck-stats">
-                  <span className="deck-stat" title="Карты">🃏 {cardCount} / 40</span>
-                  <span className="deck-stat" title="Земли">🌍 {landCount} / 4</span>
-                  {presetHero ? (
-                    <span className="deck-stat deck-stat--hero" title="Герой">
-                      <HeroDisplay hero={presetHero} align="right" />
-                    </span>
-                  ) : (
-                    <span className="deck-stat deck-stat--hero deck-stat--empty" title="Герой не выбран">
-                      🦸 Без героя
-                    </span>
-                  )}
-                </div>
-                {preset.description && <p className="deck-card-desc">{preset.description}</p>}
-                {winrate != null && !Number.isNaN(winrate) && (
-                  <p className="deck-preset-winrate">📊 Винрейт: {winrate.toFixed(1)}%</p>
-                )}
-                {landscapes.length > 0 && (
-                  <ul className="deck-preset-lands" aria-label="Земли колоды">
-                    {landscapes.map((land, i) => (
-                      <li key={land.card_id || land.id || i}>
-                        🌍 {land.name || land.land_type || 'Земля'}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <button type="button" className="select-btn" onClick={() => handleImportPreset(preset)}>
-                  Импортировать
-                </button>
-              </article>
-            )
-          })}
-        </div>
-      </section>
     </main>
   )
 }

@@ -273,54 +273,6 @@
   background: var(--accent-hover);
 }
 
-.decks-presets {
-  max-width: 1200px;
-  margin: var(--space-8, 32px) auto 0;
-  padding-top: var(--space-6, 24px);
-  border-top: 1px solid var(--border);
-}
-
-.decks-presets h2 {
-  margin: 0 0 var(--space-4, 16px);
-  font-size: var(--font-size-lg, 20px);
-  font-weight: 900;
-  color: var(--text-heading);
-}
-
-.decks-presets-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-4, 16px);
-}
-
-.deck-card--preset {
-  min-height: 0;
-}
-
-.deck-preset-winrate {
-  margin: 0;
-  font-size: var(--font-size-sm, 14px);
-  font-weight: 800;
-  color: var(--success-text);
-}
-
-.deck-preset-lands {
-  margin: 0;
-  padding-left: 18px;
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-.decks-presets-error {
-  color: var(--danger-text);
-  font-weight: 700;
-}
-
-.decks-presets-empty {
-  color: var(--text-muted);
-}
-
 @media (max-width: 600px) {
   .decks-page {
     padding: var(--space-4, 16px);
@@ -330,8 +282,7 @@
     font-size: 24px;
   }
 
-  .decks-grid,
-  .decks-presets-grid {
+  .decks-grid {
     grid-template-columns: 1fr;
   }
 }

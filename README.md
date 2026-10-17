@@ -1,7 +1,7 @@
 # Card Wars
 
 Браузерная карточная игра по мотивам Adventure Time: Card Wars.
-React + Cloudflare Workers (Durable Objects) + Supabase.
+React + Cloudflare Workers (Durable Objects). Каталог карт — локальный JSON.
 
 ---
 

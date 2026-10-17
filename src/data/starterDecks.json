@@ -1,0 +1,179 @@
+[
+  {
+    "name": "Стартовая: Кукурузные поля",
+    "land": "corn",
+    "selectedCards": {
+      "card-лункий-мозг": 1,
+      "card-бабах": 1,
+      "card-лысый-бродяга": 1,
+      "card-крепость-крови": 1,
+      "card-овечка": 1,
+      "card-музыкальная-утка": 1,
+      "card-кукурузный-чемпион": 1,
+      "card-золотой-ниндзя": 1,
+      "card-гусеница": 1,
+      "card-ангел-болот": 1,
+      "card-призрак-карги": 1,
+      "card-красавчик-тимми": 1,
+      "card-зернотавр": 1,
+      "card-легион-уховерток": 1,
+      "card-школяр-будущего": 1,
+      "card-кукурузная-валькирия": 1,
+      "card-сладкий-пирожок": 1,
+      "card-клубничка": 1,
+      "card-картонный-особняк": 1,
+      "card-домик-из-разного-дерева": 1
+    },
+    "selectedLands": {
+      "corn": 4
+    },
+    "code": "DK-eyJ2ZXJzaW9uIjoyLCJjYXJkcyI6eyJjYXJkLdCw0L3Qs9C10Lst0LHQvtC70L7RgiI6MSwiY2FyZC3QsdCw0LHQsNGFIjoxLCJjYXJkLdCz0YPRgdC10L3QuNGG0LAiOjEsImNhcmQt0LTQvtC80LjQui3QuNC3LdGA0LDQt9C90L7Qs9C-LdC00LXRgNC10LLQsCI6MSwiY2FyZC3Qt9C10YDQvdC-0YLQsNCy0YAiOjEsImNhcmQt0LfQvtC70L7RgtC-0Lkt0L3QuNC90LTQt9GPIjoxLCJjYXJkLdC60LDRgNGC0L7QvdC90YvQuS3QvtGB0L7QsdC90Y_QuiI6MSwiY2FyZC3QutC70YPQsdC90LjRh9C60LAiOjEsImNhcmQt0LrRgNCw0YHQsNCy0YfQuNC6LdGC0LjQvNC80LgiOjEsImNhcmQt0LrRgNC10L_QvtGB0YLRjC3QutGA0L7QstC4IjoxLCJjYXJkLdC60YPQutGD0YDRg9C30L3QsNGPLdCy0LDQu9GM0LrQuNGA0LjRjyI6MSwiY2FyZC3QutGD0LrRg9GA0YPQt9C90YvQuS3Rh9C10LzQv9C40L7QvSI6MSwiY2FyZC3Qu9C10LPQuNC-0L0t0YPRhdC-0LLQtdGA0YLQvtC6IjoxLCJjYXJkLdC70YPQvdC60LjQuS3QvNC-0LfQsyI6MSwiY2FyZC3Qu9GL0YHRi9C5LdCx0YDQvtC00Y_Qs9CwIjoxLCJjYXJkLdC80YPQt9GL0LrQsNC70YzQvdCw0Y8t0YPRgtC60LAiOjEsImNhcmQt0L7QstC10YfQutCwIjoxLCJjYXJkLdC_0YDQuNC30YDQsNC6LdC60LDRgNCz0LgiOjEsImNhcmQt0YHQu9Cw0LTQutC40Lkt0L_QuNGA0L7QttC-0LoiOjEsImNhcmQt0YjQutC-0LvRj9GALdCx0YPQtNGD0YnQtdCz0L4iOjF9LCJsYW5kcyI6eyJjb3JuIjo0fX0"
+  },
+  {
+    "name": "Стартовая: Ледяная земля",
+    "land": "ice",
+    "selectedCards": {
+      "card-лысый-бродяга": 1,
+      "card-фонтан-слез": 1,
+      "card-дух-дерева": 1,
+      "card-сэндвич-с-мороженым": 1,
+      "card-бочка": 1,
+      "card-музыкальная-утка": 1,
+      "card-дрожь-земли": 1,
+      "card-снежный-кролик": 2,
+      "card-rock-n-roller": 1,
+      "card-красавчик-тимми": 1,
+      "card-школяр-будущего": 1,
+      "card-большой-курятник": 1,
+      "card-призрак-карги": 1,
+      "card-одноколесный-велосипед": 1,
+      "card-плавучий-дворец-льда": 1,
+      "card-усталый-воин": 1,
+      "card-сладкий-пирожок": 1,
+      "card-клубничка": 1,
+      "card-картонный-особняк": 1
+    },
+    "selectedLands": {
+      "ice": 4
+    },
+    "code": "DK-eyJ2ZXJzaW9uIjoyLCJjYXJkcyI6eyJjYXJkLdCx0L7Qu9GM0YjQvtC5LdC60YPRgNGP0YLQvdC40LoiOjEsImNhcmQt0LHQvtGH0LrQsCI6MSwiY2FyZC3QtNGA0L7QttGMLdC30LXQvNC70LgiOjEsImNhcmQt0LTRg9GFLdC00LXRgNC10LLQsCI6MSwiY2FyZC3QutCw0YDRgtC-0L3QvdGL0Lkt0L7RgdC-0LHQvdGP0LoiOjEsImNhcmQt0LrQu9GD0LHQvdC40YfQutCwIjoxLCJjYXJkLdC60YDQsNGB0LDQstGH0LjQui3RgtC40LzQvNC4IjoxLCJjYXJkLdC70YvRgdGL0Lkt0LHRgNC-0LTRj9Cz0LAiOjEsImNhcmQt0LzRg9C30YvQutCw0LvRjNC90LDRjy3Rg9GC0LrQsCI6MSwiY2FyZC3QvtC00L3QvtC60L7Qu9C10YHQvdGL0Lkt0LLQtdC70L7RgdC40L_QtdC0IjoxLCJjYXJkLdC_0LvQsNCy0YPRh9C40Lkt0LTQstC-0YDQtdGGLdC70YzQtNCwIjoxLCJjYXJkLdC_0YDQuNC30YDQsNC6LdC60LDRgNCz0LgiOjEsImNhcmQt0YHQu9Cw0LTQutC40Lkt0L_QuNGA0L7QttC-0LoiOjEsImNhcmQt0YHQvdC10LbQvdGL0Lkt0LrRgNC-0LvQuNC6IjoyLCJjYXJkLdGB0Y3QvdC00LLQuNGHLdGBLdC80L7RgNC-0LbQtdC90YvQvCI6MSwiY2FyZC3Rg9GB0YLQsNC70YvQuS3QstC-0LjQvSI6MSwiY2FyZC3RhNC-0L3RgtCw0L0t0YHQu9C10LciOjEsImNhcmQt0YjQutC-0LvRj9GALdCx0YPQtNGD0YnQtdCz0L4iOjEsImNhcmQtcm9jay1uLXJvbGxlciI6MX0sImxhbmRzIjp7ImljZSI6NH19"
+  },
+  {
+    "name": "Стартовая: Добрая земля",
+    "land": "good",
+    "selectedCards": {
+      "card-великолепная-крепость": 1,
+      "card-преобразователь-скелетов": 1,
+      "card-песчаный-ангел": 1,
+      "card-призрак-джинни": 1,
+      "card-великолепный-замок": 1,
+      "card-привидение": 1,
+      "card-призрачные-бро": 1,
+      "card-лёгкий-жираф": 2,
+      "card-пещера-одиночества": 1,
+      "card-призрак-тэдди-крюка": 1,
+      "card-сшитый-ленивец": 1,
+      "card-вязаный-котик": 1,
+      "card-доктор-ерунда": 1,
+      "card-большой-курятник": 1,
+      "card-перекормленный-орангутан": 1,
+      "card-привлекательный-слон": 1,
+      "card-картонный-особняк": 1,
+      "card-клубничка": 1,
+      "card-сладкий-пирожок": 1
+    },
+    "selectedLands": {
+      "good": 4
+    },
+    "code": "DK-eyJ2ZXJzaW9uIjoyLCJjYXJkcyI6eyJjYXJkLdCx0L7Qu9GM0YjQvtC5LdC60YPRgNGP0YLQvdC40LoiOjEsImNhcmQt0LLQtdC70LjQutC-0LvQtdC_0L3QsNGPLdC60YDQtdC_0L7RgdGC0YwiOjEsImNhcmQt0LLQtdC70LjQutC-0LvQtdC_0L3Ri9C5LdC30LDQvNC-0LoiOjEsImNhcmQt0LLRj9C30LDQvdGL0Lkt0LrQvtGC0LjQuiI6MSwiY2FyZC3QtNC-0LrRgtC-0YAt0LXRgNGD0L3QtNCwIjoxLCJjYXJkLdC60LDRgNGC0L7QvdC90YvQuS3QvtGB0L7QsdC90Y_QuiI6MSwiY2FyZC3QutC70YPQsdC90LjRh9C60LAiOjEsImNhcmQt0LvRkdCz0LrQuNC5LdC20LjRgNCw0YQiOjIsImNhcmQt0L_QtdGA0LXQutC-0YDQvNC70LXQvdC90YvQuS3QvtGA0LDQvdCz0YPRgtCw0L0iOjEsImNhcmQt0L_QtdGB0YfQsNC90YvQuS3QsNC90LPQtdC7IjoxLCJjYXJkLdC_0LXRidC10YDQsC3QvtC00LjQvdC-0YfQtdGB0YLQstCwIjoxLCJjYXJkLdC_0YDQtdC-0LHRgNCw0LfQvtCy0LDRgtC10LvRjC3RgdC60LXQu9C10YLQvtCyIjoxLCJjYXJkLdC_0YDQuNCy0LjQtNC10L3QuNC1IjoxLCJjYXJkLdC_0YDQuNCy0LvQtdC60LDRgtC10LvRjNC90YvQuS3RgdC70L7QvSI6MSwiY2FyZC3Qv9GA0LjQt9GA0LDQui3QtNC20LjQvdC90LgiOjEsImNhcmQt0L_RgNC40LfRgNCw0Lot0YLRjdC00LTQuC3QutGA0Y7QutCwIjoxLCJjYXJkLdC_0YDQuNC30YDQsNGH0L3Ri9C1LdCx0YDQviI6MSwiY2FyZC3RgdC70LDQtNC60LjQuS3Qv9C40YDQvtC20L7QuiI6MSwiY2FyZC3RgdGI0LjRgtGL0Lkt0LvQtdC90LjQstC10YYiOjF9LCJsYW5kcyI6eyJnb29kIjo0fX0"
+  },
+  {
+    "name": "Стартовая: Бесполезное болото",
+    "land": "swamp",
+    "selectedCards": {
+      "card-зубастик": 1,
+      "card-зомбахан": 1,
+      "card-пирамида": 1,
+      "card-овечка": 1,
+      "card-квагурай": 1,
+      "card-скелет-гастропер": 1,
+      "card-уземающая-пирамида": 1,
+      "card-костяная-палочка": 2,
+      "card-желтая-сирена": 1,
+      "card-розовая-ведьма": 1,
+      "card-очаровательный-трупоедик": 1,
+      "card-болотная-лягушка-бомба": 1,
+      "card-прямой-скелем": 1,
+      "card-школяр-будущего": 1,
+      "card-зеленый-тритон": 1,
+      "card-усталый-воин": 1,
+      "card-картонный-особняк": 1,
+      "card-клубничка": 1,
+      "card-сладкий-пирожок": 1
+    },
+    "selectedLands": {
+      "swamp": 4
+    },
+    "code": "DK-eyJ2ZXJzaW9uIjoyLCJjYXJkcyI6eyJjYXJkLdCx0L7Qu9C-0YLQvdCw0Y8t0LvRj9Cz0YPRiNC60LAt0LHQvtC80LHQsCI6MSwiY2FyZC3QttC10LvRgtCw0Y8t0YHQuNGA0LXQvdCwIjoxLCJjYXJkLdC30LXQu9C10L3Ri9C5LdGC0YDQuNGC0L7QvSI6MSwiY2FyZC3Qt9C-0LzQsdCw0YXQsNC9IjoxLCJjYXJkLdC30YPQsdCw0YHRgtC40LoiOjEsImNhcmQt0LrQsNGA0YLQvtC90L3Ri9C5LdC-0YHQvtCx0L3Rj9C6IjoxLCJjYXJkLdC60LLQsNCz0YPRgNCw0LkiOjEsImNhcmQt0LrQu9GD0LHQvdC40YfQutCwIjoxLCJjYXJkLdC60L7RgdGC0Y_QvdCw0Y8t0L_QsNC70L7Rh9C60LAiOjIsImNhcmQt0L7QstC10YfQutCwIjoxLCJjYXJkLdC-0YfQsNGA0L7QstCw0YLQtdC70YzQvdGL0Lkt0YLRgNGD0L_QvtC10LTQuNC6IjoxLCJjYXJkLdC_0LjRgNCw0LzQuNC00LAiOjEsImNhcmQt0L_RgNGP0LzQvtC5LdGB0LrQtdC70LXQvCI6MSwiY2FyZC3RgNC-0LfQvtCy0LDRjy3QstC10LTRjNC80LAiOjEsImNhcmQt0YHQutC10LvQtdGCLdCz0LDRgdGC0YDQvtC_0LXRgCI6MSwiY2FyZC3RgdC70LDQtNC60LjQuS3Qv9C40YDQvtC20L7QuiI6MSwiY2FyZC3Rg9C30LXQvNCw0Y7RidCw0Y8t0L_QuNGA0LDQvNC40LTQsCI6MSwiY2FyZC3Rg9GB0YLQsNC70YvQuS3QstC-0LjQvSI6MSwiY2FyZC3RiNC60L7Qu9GP0YAt0LHRg9C00YPRidC10LPQviI6MX0sImxhbmRzIjp7InN3YW1wIjo0fX0"
+  },
+  {
+    "name": "Стартовая: Пустынная земля",
+    "land": "sand",
+    "selectedCards": {
+      "card-пляжная-мумия": 1,
+      "card-духо-муха": 1,
+      "card-мушкаловка": 1,
+      "card-стейкчоп": 1,
+      "card-фонтан-милашности": 1,
+      "card-вулкан": 1,
+      "card-неразборчивый-гладиатор": 1,
+      "card-козёл": 1,
+      "card-стена-песка": 1,
+      "card-прозрачный-вышибала": 1,
+      "card-одноколесный-велосипед": 1,
+      "card-песчаная-мышь": 1,
+      "card-тупица-в-наушниках": 1,
+      "card-бондарь": 1,
+      "card-призрачный-ниндзя": 1,
+      "card-очаровательный-трупоедик": 1,
+      "card-затерянный-голем": 1,
+      "card-картонный-особняк": 1,
+      "card-клубничка": 1,
+      "card-сладкий-пирожок": 1
+    },
+    "selectedLands": {
+      "sand": 4
+    },
+    "code": "DK-eyJ2ZXJzaW9uIjoyLCJjYXJkcyI6eyJjYXJkLdCx0L7QvdC00LDRgNGMIjoxLCJjYXJkLdCy0YPQu9C60LDQvSI6MSwiY2FyZC3QtNGD0YXQvi3QvNGD0YXQsCI6MSwiY2FyZC3Qt9Cw0YLQtdGA0Y_QvdC90YvQuS3Qs9C-0LvQtdC8IjoxLCJjYXJkLdC60LDRgNGC0L7QvdC90YvQuS3QvtGB0L7QsdC90Y_QuiI6MSwiY2FyZC3QutC70YPQsdC90LjRh9C60LAiOjEsImNhcmQt0LrQvtC30ZHQuyI6MSwiY2FyZC3QvNGD0YjQutCw0LvQvtCy0LrQsCI6MSwiY2FyZC3QvdC10YDQsNC30LHQvtGA0YfQuNCy0YvQuS3Qs9C70LDQtNC40LDRgtC-0YAiOjEsImNhcmQt0L7QtNC90L7QutC-0LvQtdGB0L3Ri9C5LdCy0LXQu9C-0YHQuNC_0LXQtCI6MSwiY2FyZC3QvtGH0LDRgNC-0LLQsNGC0LXQu9GM0L3Ri9C5LdGC0YDRg9C_0L7QtdC00LjQuiI6MSwiY2FyZC3Qv9C10YHRh9Cw0L3QsNGPLdC80YvRiNGMIjoxLCJjYXJkLdC_0LvRj9C20L3QsNGPLdC80YPQvNC40Y8iOjEsImNhcmQt0L_RgNC40LfRgNCw0YfQvdGL0Lkt0L3QuNC90LTQt9GPIjoxLCJjYXJkLdC_0YDQvtC30YDQsNGH0L3Ri9C5LdCy0YvRiNC40LHQsNC70LAiOjEsImNhcmQt0YHQu9Cw0LTQutC40Lkt0L_QuNGA0L7QttC-0LoiOjEsImNhcmQt0YHRgtC10LnQutGH0L7QvyI6MSwiY2FyZC3RgdGC0LXQvdCwLdC_0LXRgdC60LAiOjEsImNhcmQt0YLRg9C_0LjRhtCwLdCyLdC90LDRg9GI0L3QuNC60LDRhSI6MSwiY2FyZC3RhNC-0L3RgtCw0L0t0LzQuNC70LDRiNC90L7RgdGC0LgiOjF9LCJsYW5kcyI6eyJzYW5kIjo0fX0"
+  },
+  {
+    "name": "Стартовая: Синяя равнина",
+    "land": "blue",
+    "selectedCards": {
+      "card-школа": 1,
+      "card-небесный-наблюдатель": 1,
+      "card-шалаш-вайда": 1,
+      "card-зелёная-змейка": 1,
+      "card-пень-колюга": 1,
+      "card-скелет-гастропер": 1,
+      "card-фигурка-бесконечности": 1,
+      "card-зомбахан": 1,
+      "card-болотная-лягушка-бомба": 1,
+      "card-стружанский-джинн": 1,
+      "card-драконий-поп-десят": 1,
+      "card-rock-n-roller": 1,
+      "card-прямой-скелем": 1,
+      "card-голубой-король-вечерюк": 1,
+      "card-воронка": 1,
+      "card-призрак-карги": 1,
+      "card-картонный-особняк": 1,
+      "card-черничный-пирогклон": 1,
+      "card-клубничка": 1,
+      "card-сладкий-пирожок": 1
+    },
+    "selectedLands": {
+      "blue": 4
+    },
+    "code": "DK-eyJ2ZXJzaW9uIjoyLCJjYXJkcyI6eyJjYXJkLdCx0L7Qu9C-0YLQvdCw0Y8t0LvRj9Cz0YPRiNC60LAt0LHQvtC80LHQsCI6MSwiY2FyZC3QstC-0YDQvtC90LrQsCI6MSwiY2FyZC3Qs9C-0LvRg9Cx0L7QuS3QutC-0YDQvtC70Ywt0LLQtdGH0LXRgNGO0LoiOjEsImNhcmQt0LTRgNCw0LrQvtC90LjQuS3Qv9C-0L8t0LTQtdGB0Y_RgiI6MSwiY2FyZC3Qt9C10LvRkdC90LDRjy3Qt9C80LXQudC60LAiOjEsImNhcmQt0LfQvtC80LHQsNGF0LDQvSI6MSwiY2FyZC3QutCw0YDRgtC-0L3QvdGL0Lkt0L7RgdC-0LHQvdGP0LoiOjEsImNhcmQt0LrQu9GD0LHQvdC40YfQutCwIjoxLCJjYXJkLdC90LXQsdC10YHQvdGL0Lkt0L3QsNCx0LvRjtC00LDRgtC10LvRjCI6MSwiY2FyZC3Qv9C10L3RjC3QutC-0LvRjtCz0LAiOjEsImNhcmQt0L_RgNC40LfRgNCw0Lot0LrQsNGA0LPQuCI6MSwiY2FyZC3Qv9GA0Y_QvNC-0Lkt0YHQutC10LvQtdC8IjoxLCJjYXJkLdGB0LrQtdC70LXRgi3Qs9Cw0YHRgtGA0L7Qv9C10YAiOjEsImNhcmQt0YHQu9Cw0LTQutC40Lkt0L_QuNGA0L7QttC-0LoiOjEsImNhcmQt0YHRgtGA0YPQttCw0L3RgdC60LjQuS3QtNC20LjQvdC9IjoxLCJjYXJkLdGE0LjQs9GD0YDQutCwLdCx0LXRgdC60L7QvdC10YfQvdC-0YHRgtC4IjoxLCJjYXJkLdGH0LXRgNC90LjRh9C90YvQuS3Qv9C40YDQvtCz0LrQu9C-0L0iOjEsImNhcmQt0YjQsNC70LDRiC3QstCw0LnQtNCwIjoxLCJjYXJkLdGI0LrQvtC70LAiOjEsImNhcmQtcm9jay1uLXJvbGxlciI6MX0sImxhbmRzIjp7ImJsdWUiOjR9fQ"
+  }
+]

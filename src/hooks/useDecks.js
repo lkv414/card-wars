@@ -24,6 +24,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { generateDeckCode } from '../utils/deckCode.js'
 import { isOfflineTestMode } from '../utils/offlineMode'
 import { TEST_DECK } from '../fixtures/testDeck'
+import starterDecksRaw from '../data/starterDecks.json'
 
 const STORAGE_KEY = 'decks'
 
@@ -31,9 +32,22 @@ function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) {
-      return isOfflineTestMode
-        ? { decks: [{ ...TEST_DECK, selected: true }], selectedDeckId: TEST_DECK.id }
-        : { decks: [], selectedDeckId: null }
+      if (isOfflineTestMode) {
+        return { decks: [{ ...TEST_DECK, selected: true }], selectedDeckId: TEST_DECK.id }
+      }
+      // Первый запуск: подсеваем стартовые колоды (по одной на землю).
+      const seeded = (starterDecksRaw || []).map((d, i) => ({
+        id: makeId(),
+        name: d.name,
+        code: d.code,
+        selectedCards: { ...d.selectedCards },
+        selectedLands: { ...d.selectedLands },
+        heroId: null,
+        description: 'Стартовая колода',
+        selected: i === 0,
+        createdAt: Date.now(),
+      }))
+      return { decks: seeded, selectedDeckId: seeded[0]?.id ?? null }
     }
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed.decks)) return { decks: [], selectedDeckId: null }

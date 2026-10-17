@@ -203,11 +203,58 @@ npm run build
 - `src/hooks/game/useGameState.js` — после Этапа 3 `writeGameState` не нужен действиям;
   проверить `isApplying`/`error` и решить в Этапе 5.
 
-### ⏳ Этап 5 — данные на JSON
-- Написать генератор каталога (`scripts/build-catalog.mjs`) → `src/generated/catalog.ts`.
-- Переписать `useCatalog`/`useLands`/`useHeroes`/`usePresetDecks` на JSON.
-- Убрать цепочку memory→IDB→Worker→Supabase; убрать KV-биндинг и `workers/src/catalog.ts`.
-- Убрать `src/utils/supabase.js`, `useGameLoader`/`guestSession` RPC → WS/DO.
+### ⏳ Этап 5 — данные на JSON (самый крупный этап)
+
+**Что найдено (разведка):**
+
+- `individual_cards/cards.json` — 504 карты. `id` — **слаги** (`card-костяная-палочка`),
+  не UUID. Ключ: `id, name, card_number, card_type, cost, attack, health, land_type,
+  is_rainbow, has_flip, flip_description, description, mechanics, image_url,
+  mechanics_version, mechanics_status, image_index`. `image_url` — относительный
+  локальный путь (`images/bmo_card_1.png`). `mechanics_status` ∈ {`text_only`, `implemented`}.
+- **Данные lands/heroes/presets есть только в Supabase**, но их можно извлечь из
+  `supabase/full_dump.sql` (8.9 МБ, INSERT'ы):
+  - `public."lands"` — 6 строк (land_type: swamp, ice, sand, blue, corn, good);
+  - `public."Heroes"` — hero_number 3001+ (mechanics/script/hero_slug/land_type);
+  - `public."preset_decks"`, `public."deck_heroes"`, `public."preset_deck_cards"`;
+  - `public."cards"` — те же карты, но с **UUID**-id.
+- ⚠️ **Блокер для пресетов:** `preset_deck_cards.card_id` — UUID, а канон-`id` — слаг.
+  Нужна карта `uuid → card_number/slug` из INSERT'а `cards` того же дампа.
+- Worker-сторона: `workers/src/catalog.ts` (чтение KV), `workers/src/index.ts`
+  (`/catalog/{cards|lands}`), `game-room.ts` (`getLands`/`getCardIndex` в строке ~351),
+  `workers/src/env.d.ts` (`CATALOG: KVNamespace`), KV-биндинг в `workers/wrangler*.jsonc`.
+- Клиент: `src/hooks/useCatalog.js` (memory→IDB→Worker→Supabase, `loadCatalog`,
+  `invalidateCatalog`, `useCardsCatalog`, `useLandsCatalog`), `useLands.js` (обёртка),
+  `useHeroes.js` (`heroes_v` + `deck_heroes_v`), `usePresetDecks.js`
+  (`preset_decks` + вложенные `preset_deck_cards`), `src/utils/supabase.js`.
+- Потребители: `GameScreen.jsx`, `LobbyScreen.jsx`, `DeckBuilder.jsx`, `DeckList.jsx`
+  (+ их smoke-тесты).
+- `LAND_TYPES`/`LAND_DEFS`/`LAND_TYPE_IDS` уже локальны — `src/constants/landColors.js`
+  (реэкспорт из `src/constants/game.js`).
+
+**План (разбит на под-этапы):**
+
+- **5a — cards + lands (высокая ценность, низкий риск):**
+  1. `scripts/build-catalog.mjs` читает `individual_cards/cards.json` + `lands.json`
+     → генерирует `src/generated/catalog.js` (`CARDS`, `LANDS`, `CARD_INDEX`).
+  2. `scripts/extract-supabase-data.mjs` — разово парсит `full_dump.sql` → `lands.json`
+     (+ `heroes.json`, `presets.json` для 5b).
+  3. Worker: `catalog.ts` читает сгенерированный модуль вместо KV; `index.ts`
+     `/catalog/*` отдаёт из него; убрать KV-биндинг (`env.d.ts`, `wrangler*.jsonc`);
+     `game-room.ts` — `getCardIndex` из модуля.
+  4. Клиент: `useCatalog`/`useLands` читают сгенерированный модуль (убрать
+     memory→IDB→Worker→Supabase). `supabase.js` пока оставить (нужен для heroes/presets).
+- **5b — heroes + presets:**
+  1. Через `extract-supabase-data.mjs` получить `heroes.json`, `presets.json`
+     (с маппингом UUID→slug из INSERT'а `cards`).
+  2. Переписать `useHeroes`/`usePresetDecks` на локальные JSON.
+  3. Удалить `src/utils/supabase.js` и таблицы/запросы к ним.
+- **5c — оставшиеся RPC (пересекается с Этапом 6):** `useGameLoader.js`
+  (`get_player_game_state`) и `guestSession.js` (`set_guest_id`) → действие по WS/DO.
+  Пока не трогать, если не готов Worker-эндпоинт загрузки состояния.
+
+**Открытый вопрос к пользователю:** делать весь Этап 5 сразу или начать с 5a
+(cards+lands), а 5b/5c — отдельно (безопаснее, дерево зелёное между шагами).
 
 ### ⏳ Этап 6 — транзитные партии + бот
 - `workers/src/game-room.ts`: SQLite только на сессию + cleanup по alarm.

@@ -291,6 +291,12 @@ npm run build
 
 ### 🚧 Этап 7 — картинки + skills/docs
 
+**Сделано (7b):** `scripts/build-card-art.mjs` — 504 PNG (209.6 МБ) → WebP
+(q82, max сторона 1024) в `public/cards/` (31.1 МБ, ×6.7). `image_url` в
+`individual_cards/cards.json` переписан на `/cards/<stem>.webp`. `individual_cards/images/`
+удалён из репо (оригиналы остаются в `исходники/карты/`, 840 файлов). Арт теперь
+раздаётся статикой (раньше был 404 → placeholder). Коммит `b4385d1`.
+
 **Сделано (7a):** `src/components/Game/scene/useCardAnimation.js` — сброс
 spawn-анимации перенесён из рендера в `useEffect` (закрыты 2 ошибки
 `react-hooks/refs`), удалён неиспользуемый импорт `useFrame`. Теперь
@@ -351,6 +357,8 @@ spawn-анимации перенесён из рендера в `useEffect` (з
 ## 5. История коммитов v2 (актуальная)
 
 ```
+b4385d1 refactor(v2): stage 7b - convert card art to WebP in public/cards, drop PNG originals
+53c6db9 docs(v2): journal entry and stage 7 art findings
 1fe99a6 refactor(v2): stage 7a - fix scene lint debt in useCardAnimation
 79dc330 chore: add docs-journal helper, AGENTS.md and skills index entry
 3b98026 refactor(v2): stage 4b - trim dead gameStatePatch exports and format.js
@@ -377,7 +385,7 @@ c0ceab9 chore: enable lsp in opencode config
 |---|---|---|
 | 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | ✅ Этап 7a |
 | Lint-warning'и (unused `isFlippedCard`, `gl`/`useFrame`) | `cardFaceModel.js`, `PostProcessing` | Этап 7 |
-| Арт карт нигде не раздаётся; 504 PNG / 209.6 МБ | `individual_cards/images/`, `public/` | Этап 7 (согласовать) |
+| Арт карт: 504 PNG → WebP, 209.6 → 31.1 МБ; PNG удалены | `public/cards/`, `individual_cards/cards.json` | ✅ Этап 7b |
 | `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |
 | Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 5 |
 | `supabase/` (40 файлов) ещё в репо | — | Этап 5 |

@@ -3,7 +3,7 @@
 > Живой документ. Обновляется по ходу работы. Если сессия/контекст оборвётся —
 > восстанавливай состояние отсюда, а не из чата.
 >
-> Последнее обновление: Этап 4 завершён. Следующий — Этап 5.
+> Последнее обновление: Этап 4 завершён. Следующий — Этап 5 (см. §3 и §4).
 
 ---
 
@@ -87,11 +87,11 @@ npm run build
 ```
 - `npm test` — **сломан** (legacy `node --test`), не использовать; переписать на
   vitest в Этапе 8.
-- `npm run lint` = `eslint .`. В проекте **есть 2 pre-existing ошибки**
-  (`react-hooks/refs` в `src/components/Game/scene/useCardAnimation.js`) и
-  несколько warning'ов (PostProcessing, cardFaceModel, gameStatePatch, usePlayCard
-  eslint-disable). Они **не наши** — не гоняться за ними в этапах 1–6, разобрать в
-  Этапе 4/7 при чистке сцены. `npx eslint src/hooks/game` — чисто.
+- `npm run lint` = `eslint .`. Остаётся **6 проблем**: 2 pre-existing ошибки
+  (`react-hooks/refs` в `src/components/Game/scene/useCardAnimation.js`) и 4 warning'а
+  (PostProcessing, cardFaceModel, gameStatePatch). Они **не наши** — не гоняться за
+  ними в этапах 5–6, разобрать в Этапе 7 при чистке сцены.
+  (`npx eslint src/hooks/game` — чисто. Warning `usePlayCard` устранён в Этапе 4.)
 - `npx eslint src workers/src` падает: `workers/src` не покрыт конфигом ESLint —
   линтить только `src`.
 
@@ -185,7 +185,7 @@ npm run build
 | `src/hooks/game/useBoardUi.js` | 0 импортов, дубль `GameBoard3D`. **Удалить.** |
 | `selectIsMyTurn` (`src/store/gameStore.js:277`) | 0 использований. **Удалить.** |
 | `src/components/Game/gameBoard3D/layout.test.js` | **Уже не существует** — переименован в `src/utils/gameObjectPlacement.test.js`. Ничего не делать. |
-| `src/hooks/useGraphicsSettings.js` | 0 импортов, **но упомянут в `skills/r3f-board-3d`** → ⚠️ открытое решение: удалить или подключить (для эффектов). Спросить пользователя. |
+| `src/hooks/useGraphicsSettings.js` | 0 импортов, **но упоминался в `skills/r3f-board-3d`**. Решение пользователя: **удалить** (сделано). |
 | `src/utils/gameStatePatch.js` — `applyFlipCardPatch`, `applyAttackPatch` | Стали мёртвыми после Этапа 3 (не покрыты тестами). Кандидаты на удаление. |
 | `src/utils/gameStatePatch.js` — `applyEndTurnPatch`, `applyDrawPatch`, `normalizeDrawRpcData` | Держатся тестами `gameStatePatch.test.js`, но продукт-мёртвы. Решить: удалить функции+тесты или оставить. |
 | `src/hooks/game/format.js` | Оставить только 3 `normalize*`, остальное проверить на использование. |
@@ -274,14 +274,13 @@ npm run build
 
 ## 4. Как продолжить (resume)
 
+**Этапы 0–4 завершены.** Продолжать с Этапа 5.
+
 1. Убедиться, что ты на ветке `v2` и дерево чистое: `git status`, `git log --oneline -6`.
-2. Прочитать раздел «Этап 4» выше — там готовый список к удалению.
-3. Спросить пользователя про `useGraphicsSettings` (удалить или подключить).
-4. Удалить подтверждённые мёртвые файлы (`git rm`), обновить `useGameAction`/импорты
-   при необходимости.
-5. Прогнать тест-гейт (см. §2).
-6. Коммит: `refactor(v2): stage 4 - remove dead code`.
-7. Перейти к Этапу 5.
+2. Прочитать раздел «Этап 5» выше — там разведка, данные и под-план 5a/5b/5c.
+3. Решить объём: весь Этап 5 сразу или начать с 5a (cards+lands).
+4. Реализовать, прогоняя тест-гейт (см. §2) после каждого под-шага.
+5. Коммит: `refactor(v2): stage 5a - ...` (и т.д.).
 
 ### Полезные ориентиры
 - Аудит (детали, местами устарел): `docs/_archive/FULL_AUDIT_tester_00005.md`.
@@ -293,6 +292,8 @@ npm run build
 ## 5. История коммитов v2 (актуальная)
 
 ```
+80beeed docs(v2): stage 5 detailed plan and data-source findings
+edf7d81 docs(v2): update handoff (stage 4 commit, remaining debt)
 6bf18d7 refactor(v2): stage 4 - remove dead code
 225e30b docs(v2): add refactor plan and handoff document
 199269c chore(v2): ignore .hermes and common build artifacts
@@ -311,8 +312,8 @@ c0ceab9 chore: enable lsp in opencode config
 | Проблема | Где | Когда чинить |
 |---|---|---|
 | `npm test` сломан (legacy `node --test`) | `package.json` | Этап 8 |
-| 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | Этап 4/7 |
-| Lint-warning'и (unused `gl`, `useFrame`, eslint-disable, `isFlippedCard`) | PostProcessing, cardFaceModel, gameStatePatch | Этап 4/7 |
+| 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | Этап 7 |
+| Lint-warning'и (unused `gl`, `useFrame`, eslint-disable, `isFlippedCard`) | PostProcessing, cardFaceModel, gameStatePatch | Этап 7 |
 | `gameStatePatch.test.js` — осиротевший тест (не входит ни в один vitest-конфиг) + мёртвые экспорты `gameStatePatch.js` | `src/utils/` | Этап 8 |
 | `format.js`: `normalizeZoneRow`, `gameToEngineFormat` — 0 использований | `src/hooks/game/format.js` | Этап 8 |
 | `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |

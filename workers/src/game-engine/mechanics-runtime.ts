@@ -614,6 +614,7 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
           return addCardToZone(removed.player, removed.card, destLane)
         })
       }
+      if (moved > 0) next = dispatchMechanicEvent(next, { type: 'on_line_change', actorId: owner.player_id, cardId: sourceCardId })
       applied = moved > 0
       break
     }

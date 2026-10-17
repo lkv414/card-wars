@@ -8,7 +8,7 @@
 
 import type { BattleEvent, Card, GameState, PlayerState, Zone } from './types'
 import { cardMatchesId, findCardInZone, replaceCardInZone } from './cards'
-import { effectiveAttackForCombat, effectiveHealthForCombat } from './mechanics-runtime'
+import { dispatchMechanicEvent, effectiveAttackForCombat, effectiveHealthForCombat } from './mechanics-runtime'
 
 /**
  * Mirrors `can_player_deal_damage(attacker_order, alive_count, turn)`.
@@ -137,6 +137,7 @@ export function resolveAttack(
     creatureKilled = defenderDies
     creatureDamaged = !defenderDies
     if (defenderDies) {
+      nextState = dispatchMechanicEvent(nextState, { type: 'on_death', actorId: target.defenderId, cardId: defenderCreature.instanceId ?? defenderCreature.id })
       nextState = applyZoneMutation(nextState, target.defenderId, target.toZone, (zone) => ({
         ...zone,
         cards: zone.cards.filter((c) => (c.instanceId ?? c.id) !== (defenderCreature.instanceId ?? defenderCreature.id)),
@@ -150,9 +151,11 @@ export function resolveAttack(
         replaceCardInZone(zone, defenderCreature.instanceId ?? defenderCreature.id, (c) => ({ ...c, health: defenderHp - attack })),
       )
     }
+      nextState = dispatchMechanicEvent(nextState, { type: 'on_damage_dealt', actorId: attackerId, cardId: attackerCard.instanceId ?? attackerCard.id, amount: attack, targetCardIds: [defenderCreature.instanceId ?? defenderCreature.id] })
     if (counterDamage > 0) {
       attackerDamaged = !attackerDies
       if (attackerDies) {
+      nextState = dispatchMechanicEvent(nextState, { type: 'on_death', actorId: attackerId, cardId: attackerCard.instanceId ?? attackerCard.id })
         nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) => ({
           ...zone,
           cards: zone.cards.filter((c) => (c.instanceId ?? c.id) !== (attackerCard.instanceId ?? attackerCard.id)),

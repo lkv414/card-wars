@@ -272,15 +272,6 @@ export const selectAlivePlayers = (s) => {
 }
 
 /**
- * Мемоизированный селектор: ход текущего игрока (boolean).
- */
-export const selectIsMyTurn = (s) => {
-  const game = s.game
-  if (!game) return false
-  return game.current_player_id !== null
-}
-
-/**
  * Мемоизированный селектор: статус игры.
  */
 export const selectGameStatus = (s) => s.game?.status ?? null

@@ -20,7 +20,6 @@ metadata:
 - Лицо карты — только через `CardFace` / `cardFaceModel.js`. Текстура — кэш значений, не отдельный дизайн.
 - Поля карты читать только через `cardFields.ts`.
 - Цвета земель — только из `src/constants/landColors.js`.
-- Уважать `useGraphicsSettings`: качество и тени зависят от настроек.
 - Позиции и повороты — модульные константы (`sceneResources.js`), чтобы `memo` работал.
 - Колбэки в пропсах стабильны (`useCallback` + refs). Новый inline-объект в JSX ломает `memo`.
 - Ручная атака: подсветка целей через `getManualAttackTargets`, клик по `GameLand` через `onZoneAttackClick`.

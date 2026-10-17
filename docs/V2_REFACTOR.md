@@ -3,7 +3,7 @@
 > Живой документ. Обновляется по ходу работы. Если сессия/контекст оборвётся —
 > восстанавливай состояние отсюда, а не из чата.
 >
-> Последнее обновление: Этап 4 (в процессе).
+> Последнее обновление: Этап 4 завершён. Следующий — Этап 5.
 
 ---
 
@@ -164,9 +164,18 @@ npm run build
   `src/hooks/game/useGameLoader.js` (`get_player_game_state`) и
   `src/utils/guestSession.js` (`set_guest_id`).
 
-### 🚧 Этап 4 — мёртвый код (В ПРОЦЕССЕ)
+### ✅ Этап 4 — мёртвый код
+- удалены `src/shared/game-engine/*` (8 реэкспорт-шимов на `workers/`),
+  `src/utils/validateBeforeSend.ts` (0 вызовов), `src/components/Game/hud/HeroAvatar.jsx`
+  (0 импортов), `src/hooks/game/useBoardUi.js` (0 импортов, дубль `GameBoard3D`),
+  `src/hooks/useGraphicsSettings.js` (0 импортов; строка про него убрана из
+  `skills/r3f-board-3d/SKILL.md`);
+- из `src/store/gameStore.js` удалён мёртвый селектор `selectIsMyTurn`;
+- из `package.json` удалён `test:supabase` (конфиг удалён ещё в Этапе 3);
+- `src/components/Game/gameBoard3D/layout.test.js` уже не существовал — переименован
+  в `src/utils/gameObjectPlacement.test.js`.
 
-Проверено `grep`'ом (см. ниже — что реально мертво):
+Проверено `grep`'ом (итог — что было мертво):
 
 | Кандидат | Статус |
 |---|---|
@@ -181,6 +190,18 @@ npm run build
 | `src/utils/gameStatePatch.js` — `applyEndTurnPatch`, `applyDrawPatch`, `normalizeDrawRpcData` | Держатся тестами `gameStatePatch.test.js`, но продукт-мёртвы. Решить: удалить функции+тесты или оставить. |
 | `src/hooks/game/format.js` | Оставить только 3 `normalize*`, остальное проверить на использование. |
 | `src/hooks/game/useGameState.js` | После Этапа 3 `writeGameState` не нужен действиям; проверить `isApplying`/`error` в `useGameAction`/`GameScreen` → вероятно Этап 5. |
+
+Осознанно **не** тронуто в этом этапе:
+- `src/utils/gameStatePatch.test.js` — **осиротевший**: не входит ни в один vitest-конфиг
+  (`vitest.store.config.js` его не включает) и тестирует функции, ставшие мёртвыми после
+  Этапа 3. Живой в `gameStatePatch.js` только `applyPlayCardPatch`; мёртвые экспорты —
+  `applyEndTurnPatch`, `applyDrawPatch`, `normalizeDrawRpcData`,
+  `sanitizeDrawRpcDataForSync`, `applyBattleEventPatch`, `applyPlayCardZoneSnapshot`,
+  `applyFlipCardPatch`, `applyAttackPatch`. Снести вместе с тестом — Этап 8.
+- `src/hooks/game/format.js` — `normalizeZoneRow` и `gameToEngineFormat` имеют 0 внешних
+  использований; оставлены (малый риск), добить в Этапе 8.
+- `src/hooks/game/useGameState.js` — после Этапа 3 `writeGameState` не нужен действиям;
+  проверить `isApplying`/`error` и решить в Этапе 5.
 
 ### ⏳ Этап 5 — данные на JSON
 - Написать генератор каталога (`scripts/build-catalog.mjs`) → `src/generated/catalog.ts`.

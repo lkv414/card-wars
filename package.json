@@ -12,7 +12,6 @@
     "test": "node scripts/run-unit-tests.mjs",
     "test:engine": "vitest run --root workers --config vitest.engine.config.ts",
     "test:smoke": "vitest run",
-    "test:supabase": "vitest run --config vitest.supabase.config.js",
     "test:store": "vitest run --config vitest.store.config.js",
     "db:push": "node scripts/db-push.mjs",
     "db:schema": "node scripts/generate-db-schema.mjs",

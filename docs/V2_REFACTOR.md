@@ -289,7 +289,12 @@ npm run build
 - Бот-псевдо-игрок внутри GameRoom.
 - Убрать `supabase.ts`/`persistSnapshot` из DO.
 
-### 🚧 Этап 7 — картинки + skills/docs
+### ✅ Этап 7 — картинки + lint (7a–7c сделаны; чистка `skills/` отложена по решению)
+
+**Сделано (7c):** `src/utils/cardFaceModel.js` — убран неиспользуемый импорт
+`isFlippedCard`; `src/components/Game/scene/PostProcessing.jsx` — убраны
+неиспользуемые `useThree`/`gl`. `npx eslint src` → **0 проблем** (exit 0).
+Коммит `ca9b309`.
 
 **Сделано (7b):** `scripts/build-card-art.mjs` — 504 PNG (209.6 МБ) → WebP
 (q82, max сторона 1024) в `public/cards/` (31.1 МБ, ×6.7). `image_url` в
@@ -299,9 +304,8 @@ npm run build
 
 **Сделано (7a):** `src/components/Game/scene/useCardAnimation.js` — сброс
 spawn-анимации перенесён из рендера в `useEffect` (закрыты 2 ошибки
-`react-hooks/refs`), удалён неиспользуемый импорт `useFrame`. Теперь
-`npx eslint src` → **0 ошибок**, осталось 2 warning'а (`cardFaceModel.js`,
-`PostProcessing`).
+`react-hooks/refs`), удалён неиспользуемый импорт `useFrame`. `npx eslint src` →
+**0 ошибок** (2 warning'а закрыты в 7c). Коммит `1fe99a6`.
 
 **Арт карт — разведка (нужно решение):**
 - `image_url` = `images/bmo_card_1.png` (так пишет
@@ -357,6 +361,8 @@ spawn-анимации перенесён из рендера в `useEffect` (з
 ## 5. История коммитов v2 (актуальная)
 
 ```
+ca9b309 refactor(v2): stage 7c - clear remaining lint warnings
+6710ede docs(v2): record stage 7b completion
 b4385d1 refactor(v2): stage 7b - convert card art to WebP in public/cards, drop PNG originals
 53c6db9 docs(v2): journal entry and stage 7 art findings
 1fe99a6 refactor(v2): stage 7a - fix scene lint debt in useCardAnimation
@@ -384,7 +390,7 @@ c0ceab9 chore: enable lsp in opencode config
 | Проблема | Где | Когда чинить |
 |---|---|---|
 | 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | ✅ Этап 7a |
-| Lint-warning'и (unused `isFlippedCard`, `gl`/`useFrame`) | `cardFaceModel.js`, `PostProcessing` | Этап 7 |
+| Lint-warning'и (`isFlippedCard`, `gl`, `useFrame`) | `cardFaceModel.js`, `PostProcessing`, `useCardAnimation.js` | ✅ Этап 7c |
 | Арт карт: 504 PNG → WebP, 209.6 → 31.1 МБ; PNG удалены | `public/cards/`, `individual_cards/cards.json` | ✅ Этап 7b |
 | `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |
 | Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 5 |

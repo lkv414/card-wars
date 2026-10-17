@@ -16,7 +16,8 @@ import type {
   PlayerState,
 } from './game-engine/types.js'
 import { buildBroadcastState } from './state-broadcast.js'
-import { testCard } from './dev-fixtures.js'
+import { chooseBotAction, findBotId, BOT_NICKNAME } from './bot.js'
+import { fillSeatWithCatalogDeck, needsDeck } from './deck.js'
 
 interface SessionMeta {
   clientId: string
@@ -69,6 +70,13 @@ const ROOM_TTL_MS = 30 * 60 * 1000
  * the alarm only reads storage when it decides to clean up.
  */
 const WATCHED_ROOM_RECHECK_MS = 5 * 60 * 1000
+
+/**
+ * Pause between two bot actions. Bot turns are driven one action per alarm tick
+ * so the party reads like a real opponent (and so a DO eviction mid-turn is
+ * harmless — the next alarm re-loads the session and continues).
+ */
+const BOT_STEP_MS = 900
 
 export class GameRoom extends DurableObject<Env> {
   /** game id — also available via ctx.id.name after hibernation */
@@ -221,8 +229,10 @@ export class GameRoom extends DurableObject<Env> {
             requestId: requestId,
           }),
         )
+        if (await this.ensureBotSeats()) await this.publishCurrentState()
         await this.sendStateTo(ws, clientId, requestId)
         this.broadcastPresence()
+        await this.armBotIfItsTurn()
         return
       }
 
@@ -252,6 +262,7 @@ export class GameRoom extends DurableObject<Env> {
           }
         }
         await this.handleAction(ws, msg.action as GameActionName, msg.payload ?? {}, session.clientId, requestId)
+        await this.armBotIfItsTurn()
         return
       }
 
@@ -299,26 +310,132 @@ export class GameRoom extends DurableObject<Env> {
   }
 
   /**
-   * Alarm handler — the only way an abandoned room ever gets cleaned up.
-   * Parties are transient: storage survives DO eviction, but not an empty
-   * room. Live sockets postpone the cleanup (and re-check later).
+   * Alarm handler — drives bot turns and cleans up abandoned rooms.
+   *
+   * Parties are transient: storage survives DO eviction, but not an empty room.
+   * Live sockets postpone the cleanup (and re-check later); a bot turn is
+   * advanced one action per tick, then the next tick is armed.
    */
   async alarm(): Promise<void> {
     try {
+      if (!this.currentGame) {
+        const stored = await this.ctx.storage.get(STORAGE_KEY_GAME)
+        if (!stored) return
+        await this.loadGame()
+      }
+
+      let didBotWork = false
+      const game = this.currentGame
+      if (!game) return
+      const botId = findBotId(game)
+      if (botId && game.status === 'active' && game.current_player_id === botId) {
+        await this.ensureBotSeats()
+        didBotWork = await this.runBotStep(botId)
+        const stillBot =
+          this.currentGame?.status === 'active' && this.currentGame.current_player_id === botId
+        if (stillBot) {
+          await this.scheduleBotStep()
+          return
+        }
+      }
+
       if (this.liveSocketCount() > 0) {
         await this.ctx.storage.setAlarm(Date.now() + WATCHED_ROOM_RECHECK_MS)
         return
       }
+      if (didBotWork) {
+        // Игрок отключился, пока бот доигрывал свой ход — даём шанс вернуться.
+        await this.ctx.storage.setAlarm(Date.now() + ROOM_TTL_MS)
+        return
+      }
+
       await this.ctx.storage.deleteAll()
       console.log('[GameRoom] alarm: session storage cleaned', { gameId: this.gameId })
-    } catch (err) {
-      console.error('[GameRoom] alarm cleanup failed:', err)
-    } finally {
       this.currentGame = null
       this.joined.clear()
       this.processedRequests.clear()
       this.actionsSinceSnapshot = 0
+    } catch (err) {
+      console.error('[GameRoom] alarm failed:', err)
     }
+  }
+
+  /**
+   * Advance the bot by exactly one action. Returns false when nothing was
+   * applied (not the bot's turn, no legal move, engine refusal).
+   */
+  private async runBotStep(botId: string): Promise<boolean> {
+    const game = this.currentGame
+    if (!game) return false
+    if (game.status !== 'active' || game.current_player_id !== botId) return false
+
+    const chosen = chooseBotAction(game, botId)
+    // `end_turn` is a guaranteed legal fallback: if the chosen move is refused
+    // by the engine we still hand the turn back instead of stalling the party.
+    const attempts: Action[] = chosen ? [chosen, { type: 'end_turn' }] : [{ type: 'end_turn' }]
+
+    for (const action of attempts) {
+      const result = applyAction(game, action, botId)
+      if (isEngineError(result)) {
+        console.error('[GameRoom] bot action refused', { action: action.type, error: result.error })
+        continue
+      }
+      const applyResult = result as ApplyResult
+      this.currentGame = applyResult.state
+      this.actionsSinceSnapshot += 1
+      await this.broadcastPersonalizedStates(applyResult)
+      try {
+        await this.persistSnapshot()
+      } catch (err) {
+        console.error('[GameRoom] bot persistSnapshot failed:', err)
+      }
+      return true
+    }
+    return false
+  }
+
+  /** Arm the next bot action. */
+  private async scheduleBotStep(): Promise<void> {
+    await this.ctx.storage.setAlarm(Date.now() + BOT_STEP_MS)
+  }
+
+  /** Hand every bot seat a catalog deck if it has none yet. */
+  private async ensureBotSeats(): Promise<boolean> {
+    const game = this.currentGame
+    if (!game) return false
+    if (!game.players.some((player) => player.is_bot && needsDeck(player))) return false
+    // eslint-disable-next-line react-hooks/immutability -- DO mutation, not React state
+    this.currentGame = {
+      ...game,
+      players: game.players.map((player) =>
+        player.is_bot && needsDeck(player) ? fillSeatWithCatalogDeck(player) : player,
+      ),
+    }
+    return true
+  }
+
+  /** Push the current in-memory state to every viewer and persist it. */
+  private async publishCurrentState(): Promise<void> {
+    if (!this.currentGame) return
+    await this.broadcastPersonalizedStates({ state: this.currentGame })
+    try {
+      await this.persistSnapshot()
+    } catch (err) {
+      console.error('[GameRoom] publishCurrentState persist failed:', err)
+    }
+  }
+
+  /**
+   * If the party reached the bot's turn, arm the alarm that will play it.
+   * Called after every state change (join, action) — a human ending their turn
+   * must not leave the bot hanging until the socket closes.
+   */
+  private async armBotIfItsTurn(): Promise<void> {
+    const game = this.currentGame
+    if (!game || game.status !== 'active') return
+    const botId = findBotId(game)
+    if (!botId || game.current_player_id !== botId) return
+    await this.scheduleBotStep()
   }
 
   private getSession(ws: WebSocket): SessionMeta | null {
@@ -470,8 +587,8 @@ export class GameRoom extends DurableObject<Env> {
    * Dev-only: build (or extend) an in-memory game so the sync path can be
    * exercised without a lobby. The first joining client seeds the game;
    * a second distinct clientId is added as player 2 and the game flips to
-   * `active`. Each player gets a small hand + deck of placeholder creatures
-   * so `play_card` / `end_turn` run through the real engine.
+   * `active`. Decks come from the bundled catalog (same builder the bot uses),
+   * so the local test room shows real cards and real art.
    */
   private async ensureDevGame(clientId: string): Promise<void> {
     if (!this.currentGame) {
@@ -489,15 +606,19 @@ export class GameRoom extends DurableObject<Env> {
       }
     }
     if (!this.currentGame.players.some((p) => p.player_id === clientId)) {
-      this.currentGame.players.push(makeDevPlayer(clientId, this.currentGame.players.length + 1))
+      this.currentGame.players.push(emptyPlayer(clientId, this.currentGame.players.length + 1, clientId))
     }
     // Local test rooms include a deterministic opponent so one browser can
     // exercise the complete turn loop without a second participant.
-    if (
-      this.currentGame.players.length === 1 &&
-      !this.currentGame.players.some((p) => p.player_id === 'test-bot')
-    ) {
-      this.currentGame.players.push(makeDevPlayer('test-bot', 2))
+    if (this.currentGame.players.length === 1 && !this.currentGame.players.some((p) => p.is_bot)) {
+      this.currentGame.players.push(fillSeatWithCatalogDeck(makeBotSeat(2)))
+    }
+    // eslint-disable-next-line react-hooks/immutability -- DO mutation, not React state
+    this.currentGame = {
+      ...this.currentGame,
+      players: this.currentGame.players.map((player) =>
+        needsDeck(player) ? fillSeatWithCatalogDeck(player) : player,
+      ),
     }
     if (this.currentGame.players.length >= 2 && this.currentGame.status === 'setup') {
       this.currentGame.status = 'active'
@@ -745,37 +866,33 @@ function serializeGameState(game: GameState): Record<string, unknown> {
 }
 
 /* -------------------------------------------------------------------- *
- * Dev-only in-memory game factory (no lobby)                           *
+ * Seats                                                                *
  * -------------------------------------------------------------------- */
 
-let devCardSeq = 0
-
-function devCard(): Card {
-  return testCard(devCardSeq++)
-}
-
-function makeDevPlayer(playerId: string, order: number): PlayerState {
-  const hand: Card[] = []
-  const deck: Card[] = []
-  for (let i = 0; i < 20; i++) {
-    const c = devCard()
-    if (i < 5) hand.push(c)
-    else deck.push(c)
-  }
+/** A seat with no cards — decks are filled from the catalog afterwards. */
+function emptyPlayer(playerId: string, order: number, nickname?: string): PlayerState {
   return {
     player_id: playerId,
-    nickname: playerId,
+    nickname: nickname ?? playerId,
     position: null,
     health: 25,
     player_order: order,
-    hand,
-    deck_pile: deck,
-    deck_remaining: deck.length,
+    hand: [],
+    deck_pile: [],
+    deck_remaining: 0,
     discard_pile: [],
     actions_remaining: 2,
     free_draw_used: false,
     paid_draw_used: false,
     zones: [1, 2, 3, 4].map((z) => ({ zone_position: z, cards: [], land_id: null })),
+  }
+}
+
+/** Bot seat. The id is random so a client cannot claim the bot's identity. */
+function makeBotSeat(order: number): PlayerState {
+  return {
+    ...emptyPlayer(`bot-${crypto.randomUUID().slice(0, 8)}`, order, BOT_NICKNAME),
+    is_bot: true,
   }
 }
 

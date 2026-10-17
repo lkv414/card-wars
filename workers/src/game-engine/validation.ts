@@ -104,6 +104,24 @@ export function validateAction(state: GameState, action: Action, actorId: string
       if (zone.cards.length >= ZONE_LIMIT) return fail('Земля полная')
       if ((me.actions_remaining ?? 0) < getCardCost(state, card)) return fail('Недостаточно действий')
 
+      // Слот занят? Проверка зеркалит playCard (cards.ts): без неё
+      // validateAction говорит «ок», а движок потом отказывает.
+      const catalogType = state.catalog?.[card.id]?.card_type ?? card.card_type
+      const isSpell = catalogType === 'spell' || card.card_type === 'spell'
+      if (!isSpell) {
+        const expectedSlot =
+          state.catalog?.[card.id]?.card_type === 'building' || card.card_type === 'building'
+            ? 'building'
+            : 'creature'
+        if (expectedSlot === 'building') {
+          if (zone.cards.some((c) => c.card_type !== 'building' && c.card_type !== 'spell')) {
+            return fail('Слот строения занят существом')
+          }
+        } else if (zone.cards.some((c) => c.slot_type === 'creature' || c.card_type === 'building')) {
+          return fail('Слот существа занят строением')
+        }
+      }
+
       // Правило земель: strict (по умолчанию) требует совпадения.
       if (action.slotType !== 'spell') {
         const rule = (state.game_state?.landPlacementRule as string) || 'strict'

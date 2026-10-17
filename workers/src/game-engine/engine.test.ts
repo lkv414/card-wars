@@ -147,6 +147,21 @@ describe('validateAction', () => {
     const result = validateAction(state, { type: 'play_card', cardIndex: 0, zonePosition: 1 }, 'p1')
     expect(result.ok).toBe(true)
   })
+
+  it('rejects a creature played onto a lane that already holds a creature', () => {
+    const state = makeTwoPlayerAttackReady()
+    // makeTwoPlayerAttackReady leaves p1's zone 1 with an attacker that has no
+    // slot_type — give it one, exactly like playCard does when placing a card.
+    state.players[0]!.zones[0]!.cards = [makeCard({ id: 'in-zone', slot_type: 'creature' })]
+    state.players[0]!.hand = [makeCard({ id: 'from-hand', cost: 1, slot_type: 'creature' })]
+
+    const blocked = validateAction(state, { type: 'play_card', cardIndex: 0, zonePosition: 1 }, 'p1')
+    expect(blocked.ok).toBe(false)
+    if (!blocked.ok) expect(blocked.error).toMatch(/занят/)
+
+    const free = validateAction(state, { type: 'play_card', cardIndex: 0, zonePosition: 2 }, 'p1')
+    expect(free.ok).toBe(true)
+  })
 })
 
 /* -------------------------------------------------------------------- *

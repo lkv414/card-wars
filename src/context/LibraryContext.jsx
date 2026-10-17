@@ -1,25 +1,11 @@
 import { createContext, useContext, useMemo } from 'react'
-import { useCards } from '../hooks/useCards'
-import { useLands } from '../hooks/useLands'
+import { useCatalog } from '../hooks/useCatalog'
 
 const LibraryContext = createContext(null)
 
 export function LibraryProvider({ children }) {
-  const {
-    cards,
-    loading: loadingCards,
-    error: cardsError,
-    loadCards,
-    createCard,
-    updateCard,
-    deleteCard,
-    findSimilarCards,
-  } = useCards()
-  const {
-    lands,
-    loading: loadingLands,
-    error: landsError,
-  } = useLands()
+  const { rows: cards, loading: loadingCards, error: cardsError } = useCatalog('cards')
+  const { rows: lands, loading: loadingLands, error: landsError } = useCatalog('lands')
 
   const value = useMemo(
     () => ({
@@ -27,25 +13,8 @@ export function LibraryProvider({ children }) {
       lands,
       loadingLibrary: loadingCards || loadingLands,
       libraryError: cardsError || landsError || '',
-      loadCards,
-      createCard,
-      updateCard,
-      deleteCard,
-      findSimilarCards,
     }),
-    [
-      cards,
-      lands,
-      loadingCards,
-      loadingLands,
-      cardsError,
-      landsError,
-      loadCards,
-      createCard,
-      updateCard,
-      deleteCard,
-      findSimilarCards,
-    ],
+    [cards, lands, loadingCards, loadingLands, cardsError, landsError],
   )
 
   return <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>

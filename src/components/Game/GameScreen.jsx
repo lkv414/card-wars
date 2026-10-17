@@ -10,7 +10,7 @@ import { getGuestId } from '../../utils/guestId'
 import { useGameAction } from '../../hooks/game'
 import { useLandSetup } from '../../hooks/game/useLandSetup'
 import { useLands } from '../../hooks/useLands'
-import { useCards } from '../../hooks/useCards'
+import { useCatalog } from '../../hooks/useCatalog'
 import { buildCardCatalog } from '../../utils/enrichGameCards'
 import { isGameWsConfigured } from '../../utils/gameWebSocket'
 import { gameDebugLog } from '../../utils/gameDebug'
@@ -40,7 +40,7 @@ export function GameScreen() {
 
   // === Local effects state ===
   const { lands } = useLands()
-  const { cards: catalogCards, loading: catalogLoading } = useCards()
+  const { rows: catalogCards, loading: catalogLoading } = useCatalog('cards')
   const cardCatalog = useMemo(() => buildCardCatalog(catalogCards), [catalogCards])
   const cardCatalogRef = useRef(cardCatalog)
   // Обновляем ref в эффекте — не во время рендера (правило react-hooks/refs).

@@ -14,7 +14,7 @@ import {
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 
-const MECH_JSON = resolve(__dirname, "../../../исходники/cards.with_mechanics.json")
+const MECH_JSON = resolve(__dirname, "../../../individual_cards/cards.json")
 
 describe("hydrateAction — round-trip count/amount contract", () => {
   it("DrawCards: Python stores `count`, hydrate must read it (not 0)", () => {
@@ -63,7 +63,7 @@ describe("hydrateAction — manual/passive are real types, not imperative", () =
   })
 })
 
-describe("hydrateMechanics on real parsed data (исходники/cards.with_mechanics.json)", () => {
+describe("hydrateMechanics on real parsed data (individual_cards/cards.json)", () => {
   const raw = JSON.parse(readFileSync(MECH_JSON, "utf8"))
   const cards = Array.isArray(raw) ? raw : Object.values(raw)
 

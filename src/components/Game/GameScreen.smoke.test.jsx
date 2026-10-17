@@ -33,8 +33,8 @@ vi.mock('../../hooks/useLands', () => ({
   useLands: () => ({ lands: [] }),
 }))
 
-vi.mock('../../hooks/useCards', () => ({
-  useCards: () => ({ cards: [], loading: false }),
+vi.mock('../../hooks/useCatalog', () => ({
+  useCatalog: () => ({ rows: [], loading: false, error: null, source: null, reload: vi.fn() }),
 }))
 
 vi.mock('../../hooks/useGameTransport', () => ({

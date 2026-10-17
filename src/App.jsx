@@ -5,10 +5,7 @@ import { ensureGuestId } from './utils/guestSession'
 import { isSupabaseConfigured } from './utils/supabase'
 import { isOfflineTestMode } from './utils/offlineMode'
 import { LibraryProvider } from './context/LibraryContext'
-import { AdminAuthProvider } from './context/AdminAuthContext'
-import { DeckBuilderPage, AdminPanelPage } from './pages/LibraryPages'
-import { AdminRoute } from './components/admin/AdminRoute'
-import { AdminLogin } from './components/admin/AdminLogin'
+import { DeckBuilderPage } from './pages/LibraryPages'
 import { ErrorBoundary } from './components/Shared/ErrorBoundary'
 import './App.css'
 
@@ -75,20 +72,6 @@ function App() {
 
         <Route element={<LibraryProvider><Outlet /></LibraryProvider>}>
           <Route path="/deck" element={<DeckBuilderPage toast={toast} />} />
-        </Route>
-
-        <Route element={<AdminAuthProvider><Outlet /></AdminAuthProvider>}>
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route element={<AdminRoute />}>
-            <Route
-              path="/admin"
-              element={
-                <LibraryProvider>
-                  <AdminPanelPage toast={toast} />
-                </LibraryProvider>
-              }
-            />
-          </Route>
         </Route>
 
         <Route path="/lobby" element={<LobbyScreen toast={toast} />} />

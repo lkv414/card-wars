@@ -3,8 +3,9 @@
 > Живой документ. Обновляется по ходу работы. Если сессия/контекст оборвётся —
 > восстанавливай состояние отсюда, а не из чата.
 >
-> Последнее обновление: Этапы 4/4b завершены. Этап 5 **отложен** до отдельного
-> планирования (см. §3). Независимая работа возможна в Этапе 7.
+> Последнее обновление: **Этап 5 сделан** (5a–5d). Каталог карт/земель/героев
+> читается из локальных файлов, KV и Supabase из путей данных убраны, пресеты
+> удалены. Дальше — Этап 6 (транзитные партии + бот).
 
 ---
 
@@ -209,9 +210,46 @@ npm run build
 Остаток на Этап 5: `src/hooks/game/useGameState.js` — после Этапа 3 `writeGameState`
 не нужен действиям; проверить `isApplying`/`error` и решить.
 
-### ⏳ Этап 5 — данные на JSON (самый крупный этап)
+### ✅ Этап 5 — данные на локальный JSON (сделан: 5a–5d)
 
-**Что найдено (разведка):**
+**Итог (что теперь так):**
+
+- Каталог карт — один файл `individual_cards/cards.json` (504 карты), импортируется
+  напрямую и клиентом, и Worker'ом: `src/data/catalog.js` (клиент, читает `useCatalog`)
+  и `workers/src/catalog.ts` (Worker). Импорт с атрибутом `with { type: 'json' }`
+  (требование Node ESM) → `workers/tsconfig.json` получил `resolveJsonModule` и
+  `module: ESNext`.
+- Земли — не отдельный файл: выводятся из `LAND_DEFS`
+  (`src/constants/landColors.js`). `id` земли = её `land_type`
+  (`corn`, `ice`, `good`, `swamp`, `sand`, `blue`); таблица `lands` из дампа
+  оказалась избыточной (те же названия уже были в коде).
+- Герои — `src/data/heroes.json` (23 записи, извлечены из `supabase/full_dump.sql`
+  скриптом), `src/data/heroes.js` + `useHeroes` читают их локально, без Supabase.
+  `image_url` у героев пустой — как и было в БД, арта героев нет.
+- Пресеты **удалены**: из 18 колод дампа ни одна не собиралась против нашего
+  `cards.json` (совпадение 18–98%, две колоды пустые). Решение пользователя:
+  «сейчас удалим, потом заново сделаем». `usePresetDecks.js` удалён, секция
+  «Готовые колоды» и её CSS убраны из `DeckList`.
+- KV убран целиком: нет `/catalog/{cards|lands}` в `workers/src/index.ts`, нет
+  `CATALOG` в `workers/src/env.d.ts`, нет `kv_namespaces` в `wrangler.jsonc` /
+  `wrangler.dev.jsonc`; удалены `scripts/migrate-catalog-to-kv.mjs` и npm-скрипт
+  `catalog:migrate`.
+- Кэш каталога на клиенте не нужен: удалён `src/utils/catalogIdb.js`,
+  `useCatalog`/`useLands` стали синхронными обёртками над локальным модулем
+  (API `{ rows, loading, error, reload }` сохранён, `source: 'local'`).
+- Коды колод: `id` карт теперь слаги, а не UUID → в `deckCode.js` проверка UUID
+  заменена на «непустая строка»; `expandDeckCodeWithCardData` раскрывает код по
+  локальному каталогу (без Supabase) и стала синхронной. v1-формат кода (UUID)
+  по-прежнему читается.
+- Обогащение карт (`enrichGameCards`) полностью локальное: удалены
+  `fetchCardsByIds`, `enrichGameStateAsync`, `mergeCatalogMaps`; `useGameEnrichment`
+  синхронный, без Supabase.
+
+**Что осталось на Supabase (Это этап 6):** `src/utils/supabase.js`,
+`guestSession.js` (`set_guest_id`), `useGameLoader.js` (`get_player_game_state`),
+`useGameState.js` (мёртвая запись `writeGameState`), предупреждение в `App.jsx`.
+
+**Что было найдено при разведке (для истории):**
 
 - `individual_cards/cards.json` — 504 карты. `id` — **слаги** (`card-костяная-палочка`),
   не UUID. Ключ: `id, name, card_number, card_type, cost, attack, health, land_type,
@@ -238,51 +276,48 @@ npm run build
 - `LAND_TYPES`/`LAND_DEFS`/`LAND_TYPE_IDS` уже локальны — `src/constants/landColors.js`
   (реэкспорт из `src/constants/game.js`).
 
-**План (разбит на под-этапы):**
+**План vs факт (чем реальность отличается от первоначального плана):**
 
-- **5a — cards + lands (высокая ценность, низкий риск):**
-  1. `scripts/build-catalog.mjs` читает `individual_cards/cards.json` + `lands.json`
-     → генерирует `src/generated/catalog.js` (`CARDS`, `LANDS`, `CARD_INDEX`).
-  2. `scripts/extract-supabase-data.mjs` — разово парсит `full_dump.sql` → `lands.json`
-     (+ `heroes.json`, `presets.json` для 5b).
-  3. Worker: `catalog.ts` читает сгенерированный модуль вместо KV; `index.ts`
-     `/catalog/*` отдаёт из него; убрать KV-биндинг (`env.d.ts`, `wrangler*.jsonc`);
-     `game-room.ts` — `getCardIndex` из модуля.
-  4. Клиент: `useCatalog`/`useLands` читают сгенерированный модуль (убрать
-     memory→IDB→Worker→Supabase). `supabase.js` пока оставить (нужен для heroes/presets).
-- **5b — heroes + presets:**
-  1. Через `extract-supabase-data.mjs` получить `heroes.json`, `presets.json`
-     (с маппингом UUID→slug из INSERT'а `cards`).
-  2. Переписать `useHeroes`/`usePresetDecks` на локальные JSON.
-  3. Удалить `src/utils/supabase.js` и таблицы/запросы к ним.
-- **5c — оставшиеся RPC (пересекается с Этапом 6):** `useGameLoader.js`
-  (`get_player_game_state`) и `guestSession.js` (`set_guest_id`) → действие по WS/DO.
-  Пока не трогать, если не готов Worker-эндпоинт загрузки состояния.
+- Планировались `scripts/build-catalog.mjs` → `src/generated/catalog.js` и
+  `scripts/extract-supabase-data.mjs`. Реализовано проще: JSON импортируется
+  напрямую (`with { type: 'json' }`), генератор не нужен; `heroes.json` извлечён
+  одноразовым скриптом (в репо не оставлен).
+- Планировалось `land.json` из дампа. Отброшено: `LAND_DEFS` уже канон, дубль не нужен.
+- Порядок под-этапов в реализации: 5a (карты + земли + KV), 5b (коды колод +
+  обогащение + развязка от supabase-аргументов), 5c (герои + удаление пресетов),
+  5d (правка устаревших комментариев про KV в workers).
+- 5c в первоначальном плане — «оставшиеся RPC»; они уехали в Этап 6, а освободившийся
+  5c заняла работа по героям и пресетам.
 
-**Статус: ОТЛОЖЕН до отдельного планирования** (решение пользователя от 17.10.2026).
-Требует более тщательной проработки: как это видится в проекте и как лучше
-реализовать. Код Этапа 5 **не начинать**, пока план не согласован.
+**Проверки после каждого под-этапа:** `npm test` 230/230, `npm run test:smoke` 46/46,
+`npm run test:store` 26/26, `npm run test:engine` 51/51, `npx vite build` — ok
+(предупреждение про размер чанка, `index` вырос до ~782 КБ из-за каталога),
+`npx tsc --noEmit -p workers/tsconfig.json` exit 0, `npx eslint src` 0 проблем,
+`npm run workers:check` (wrangler dry-run) — 1255.85 KiB, биндингов каталога нет.
 
-**Вопросы, которые нужно решить при планировании:**
-1. **Где хранить JSON:** `individual_cards/*.json` (рядом с `cards.json`) vs
-   `data/` vs `src/generated/`. Что считать source of truth.
-2. **Формат модуля и шаринг:** `.ts`/`.js`/`.json`; как один артефакт отдать и
-   Worker (wrangler/esbuild), и клиенту (vite) без дублей.
-3. **Как клиент получает каталог:** прямой бандл-импорт модуля vs `fetch`
-   `/catalog` из Worker (кэш, версионирование, обновляемость без пересборки).
-4. **lands:** в дампе 6 строк; сверить `land_type` с `src/constants/landColors.js`
-   и решить, где источник описаний/цветов.
-5. **heroes:** где реально используются; аудит говорит «декоративны, пассивок
-   нет» → возможно упростить до минимума или отложить.
-6. **presets:** маппинг `uuid → card_number → slug`; сколько пресетов; насколько
-   это живая фича для игры/бота.
-7. **Бот:** нужна ли ему пресет-колода (зависимость 5b ↔ Этап 6).
-8. **Кто ещё держит Supabase:** `supabase.js`, `useGameLoader`, `guestSession`,
-   пайплайны `games`/`lobbies`/`game_players`/`game_zones`, скрипты.
-9. **Порядок и точки безопасности:** data JSON → клиент → Worker → вырезание
-   Supabase; какой шаг первый и как держать дерево зелёным.
-10. **Деплой/тесты:** убрать KV-биндинг (`wrangler*.jsonc`, `env.d.ts`); обновить
-    smoke/store/engine-фикстуры, которые мокают supabase.
+**Решения по вопросам планирования (для истории):**
+
+1. **Где хранить JSON:** каталог карт — `individual_cards/cards.json` (source of truth,
+   как и было); герои — `src/data/heroes.json`; земли — вообще не файл, а `LAND_DEFS`.
+2. **Формат и шаринг:** обычный `.json` с `with { type: 'json' }`; один и тот же файл
+   читают и vite (клиент), и esbuild (Worker) — дублей нет.
+3. **Как клиент получает каталог:** прямой бандл-импорт (выбор пользователя).
+   Цена — рост клиентского бандла (~+0.5 МБ), выигрыш — нет сети/IDB и работает офлайн.
+4. **lands:** источник — `LAND_DEFS`; `land_type` дампа совпал с ним один в один.
+5. **heroes:** прочитаны из дампа как есть (23 записи); арта нет, пассивки не подключены.
+6. **presets:** восстановить нельзя (161 из 392 карт отсутствуют в нашем каталоге) → удалены.
+7. **Бот:** пресетов ему не будет; колоду боту собирать в Этапе 6 из `cards.json`.
+8. **Кто держит Supabase:** остались `supabase.js`, `useGameLoader`, `useGameState`,
+   `guestSession`, `App.jsx` (см. списком выше) — Этап 6.
+9. **Порядок:** клиент+Worker вместе (5a) → накопители данных (5b) → герои/пресеты (5c),
+   после каждого шага полный тест-гейт.
+10. **Тесты:** новый `useCatalog.smoke.test.js` проверяет локальный источник;
+    `deckCode.test.js` — слаги вместо UUID; мок `../utils/supabase` убран из
+    `DeckBuilder.smoke.test.jsx` (компонент больше не импортирует Supabase).
+
+**Что осталось сделать по каталогу (отдельная задача, решение пользователя):**
+перепроверить весь список карт и картинок на корректность (504 карты ↔
+`public/cards/*.webp`) — предложить скрипт-ревизию отдельно.
 
 ### ⏳ Этап 6 — транзитные партии + бот
 - `workers/src/game-room.ts`: SQLite только на сессию + cleanup по alarm.
@@ -337,17 +372,23 @@ spawn-анимации перенесён из рендера в `useEffect` (з
 
 ## 4. Как продолжить (resume)
 
-**Этапы 0–4b завершены.** Этап 5 **отложен** до планирования (см. §3) — его не
-начинать, пока план не согласован.
+**Этапы 0–5 сделаны** (Этап 7a–7c — тоже). Дальше — **Этап 6: транзитные партии + бот**.
 
 1. Убедиться, что ты на ветке `v2` и дерево чистое: `git status`, `git log --oneline -6`.
-2. Прочитать §3 (состояние этапов). По Этапу 5 — сначала согласовать план
-   (вопросы перечислены в §3), потом реализовывать.
+2. Прочитать §3 (состояние этапов) — Этап 5 (готово) и ниже план Этапа 6.
 
-Пока Этап 5 ждёт плана, безопасная независимая работа:
-- **Этап 7** (не зависит от Этапа 5): PNG → WebP → `public/cards/`; чистка
-  `skills/` и `docs/`.
-- Lint-долг сцены (2 ошибки `react-hooks/refs` + warning'и) — тоже Этап 7.
+Объём Этапа 6 (что смотреть):
+- `workers/src/game-room.ts` — убрать `getFullGameState`/`persistSnapshot`
+  (`./supabase.js`), оставить SQLite на сессию DO + cleanup по alarm.
+- `workers/src/index.ts` — маршрут загрузки состояния партии (замена
+  `supabase.rpc('get_player_game_state')` в `src/hooks/game/useGameLoader.js`).
+- Бот-псевдо-игрок внутри GameRoom (колоду собрать из `cards.json`).
+- Клиент: удалить `src/utils/supabase.js`, `useGameState.js`, `guestSession.js`,
+  предупреждение в `App.jsx`; убрать `gameId`-загрузку через Supabase.
+
+Отдельная задача (после Этапа 6 или параллельно, по желанию):
+- Скрипт-ревизия каталога: 504 карты ↔ `public/cards/*.webp`, дубли, битые
+  `image_url`, поля `mechanics_status`.
 
 Этап 4b (остатки мёртвого кода) — **сделан**, см. §3.
 
@@ -361,6 +402,10 @@ spawn-анимации перенесён из рендера в `useEffect` (з
 ## 5. История коммитов v2 (актуальная)
 
 ```
+bef2256 docs(v2): stage 5 - drop stale KV catalog comments in workers
+1fe595b refactor(v2): stage 5c - heroes from local JSON, remove preset decks
+87a829b refactor(v2): stage 5b - deck codes and enrichment read the local catalog
+02479b7 refactor(v2): stage 5a - serve cards catalog from bundled JSON, drop KV
 ca9b309 refactor(v2): stage 7c - clear remaining lint warnings
 6710ede docs(v2): record stage 7b completion
 b4385d1 refactor(v2): stage 7b - convert card art to WebP in public/cards, drop PNG originals
@@ -392,8 +437,12 @@ c0ceab9 chore: enable lsp in opencode config
 | 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | ✅ Этап 7a |
 | Lint-warning'и (`isFlippedCard`, `gl`, `useFrame`) | `cardFaceModel.js`, `PostProcessing`, `useCardAnimation.js` | ✅ Этап 7c |
 | Арт карт: 504 PNG → WebP, 209.6 → 31.1 МБ; PNG удалены | `public/cards/`, `individual_cards/cards.json` | ✅ Этап 7b |
-| `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |
-| Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 5 |
-| `supabase/` (40 файлов) ещё в репо | — | Этап 5 |
+| `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 6 |
+| Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 6 |
+| `supabase/` (40 файлов) ещё в репо | — | Этап 6/8 |
+| Пресеты колод удалены (восстановить из дампа нельзя) | `DeckList.jsx`, `usePresetDecks.js` (удалён) | новая задача |
+| Каталог карт не сверен с артом (`cards.json` ↔ `public/cards/*.webp`) | `individual_cards/`, `public/cards/` | новая задача |
+| `getCards()` в Worker не тестируется | `workers/src/catalog.ts` | при удобном случае |
+| Дубликат списка земель: `LAND_TYPE_IDS` (Worker) и `LAND_DEFS` (клиент) | `workers/src/catalog.ts`, `src/constants/landColors.js` | при удобном случае |
 | `исходники/` (1932 файла) в индексе | — | по решению пользователя оставлено |
 | Картинки 209 МБ PNG | `individual_cards/images/` | Этап 7 |

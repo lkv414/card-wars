@@ -578,8 +578,11 @@ export class GameRoom extends DurableObject<Env> {
       }
       // eslint-disable-next-line react-hooks/immutability -- DO mutation must happen inside the critical section
       this.currentGame = rawToGameState(hydrated, cardCatalog)
-      // eslint-disable-next-line react-hooks/immutability -- counter reset, not React state
+      // eslint-disable-next line react-hooks/immutability -- counter reset, not React state
       this.actionsSinceSnapshot = 0
+      // Бот-места заполняются колодой до первого broadcast'а, чтобы клиент
+      // при первой загрузке видел земли и карты бота.
+      if (await this.ensureBotSeats()) await this.publishCurrentState()
     })
   }
 

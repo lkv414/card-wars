@@ -8,6 +8,7 @@ import './Lobby.css'
 export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost, hostId, onReady, onLeave, onStartGame, toast }) {
   const [copied, setCopied] = useState(false)
   const [landPlacementRule, setLandPlacementRule] = useState(LAND_PLACEMENT_RULES.STRICT)
+  const [botCount, setBotCount] = useState(1)
   const guestId = getGuestId()
 
   const myPlayer = players.find(p => p.player_id === guestId)
@@ -20,7 +21,7 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
   const missingDeckNames = humans
     .filter(p => !isLobbyDeckPlayable(p.deck))
     .map(p => p.nickname || p.player_id.slice(0, 6))
-  const canStartVsBot = isHost && !players.some(p => p.is_bot) && myHasDeck
+  const canStartVsBot = isHost && myHasDeck
 
   const handleCopy = async () => {
     const url = `${window.location.origin}/lobby/${code}`
@@ -51,7 +52,7 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
       toast?.('error', 'Сначала выберите колоду в «Мои колоды»')
       return
     }
-    onStartGame?.(landPlacementRule, { vsBot: true })
+    onStartGame?.(landPlacementRule, { vsBot: true, botCount })
   }
 
   return (
@@ -182,13 +183,28 @@ export function LobbyRoom({ code, players, onlinePlayerIds = [], status, isHost,
             )}
 
             {canStartVsBot && (
-              <button
-                className="lobby-btn lobby-btn--start lobby-btn--bot"
-                onClick={handleStartVsBot}
-                aria-label="Начать игру против бота"
-              >
-                🤖 Играть против бота
-              </button>
+              <div className="lobby-bot-settings">
+                <div className="lobby-settings__options" role="group" aria-label="Количество ботов">
+                  {[1, 2, 3].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      className={`lobby-settings__opt ${botCount === n ? 'is-active' : ''}`}
+                      aria-pressed={botCount === n}
+                      onClick={() => setBotCount(n)}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className="lobby-btn lobby-btn--start lobby-btn--bot"
+                  onClick={handleStartVsBot}
+                  aria-label="Начать игру против ботов"
+                >
+                  🤖 Играть против {botCount} {botCount === 1 ? 'бота' : 'ботов'}
+                </button>
+              </div>
             )}
           </>
         )}

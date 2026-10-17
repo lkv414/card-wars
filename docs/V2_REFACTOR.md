@@ -3,8 +3,8 @@
 > Живой документ. Обновляется по ходу работы. Если сессия/контекст оборвётся —
 > восстанавливай состояние отсюда, а не из чата.
 >
-> Последнее обновление: Этап 4 завершён. Этап 5 **отложен** до отдельного
-> планирования (см. §3). Независимая работа возможна в Этапах 7 / 4-остатки.
+> Последнее обновление: Этапы 4/4b завершены. Этап 5 **отложен** до отдельного
+> планирования (см. §3). Независимая работа возможна в Этапе 7.
 
 ---
 
@@ -81,18 +81,20 @@ user.email = 82571424+lkv414@users.noreply.github.com
 
 ### Тест-гейт (обязателен после каждого этапа)
 ```
-npm run test:smoke     # vitest, smoke-тесты компонентов
-npm run test:store     # vitest, store/утилиты
+npm test               # всё в src/: node:test-файлы + файлы на API vitest
+npm run test:smoke     # vitest, smoke-тесты компонентов (.smoke.test.jsx)
+npm run test:store     # vitest, store/утилиты (3 файла)
 npx vitest run --root workers --config vitest.engine.config.ts   # движок Worker
 npm run build
 ```
-- `npm test` — **сломан** (legacy `node --test`), не использовать; переписать на
-  vitest в Этапе 8.
-- `npm run lint` = `eslint .`. Остаётся **6 проблем**: 2 pre-existing ошибки
-  (`react-hooks/refs` в `src/components/Game/scene/useCardAnimation.js`) и 4 warning'а
-  (PostProcessing, cardFaceModel, gameStatePatch). Они **не наши** — не гоняться за
-  ними в этапах 5–6, разобрать в Этапе 7 при чистке сцены.
-  (`npx eslint src/hooks/game` — чисто. Warning `usePlayCard` устранён в Этапе 4.)
+- `npm test` **работает**: `scripts/run-unit-tests.mjs` сам раскладывает
+  `src/**/*.test.js` по API (node:test vs vitest) и гоняет оба прогона.
+  Сейчас: node:test 227 + vitest 26. (В доке раньше было «сломан» — неверно,
+  перепроверено 17.10.2026.)
+- `npm run lint` = `eslint .`. Остаётся **5 проблем**: 2 pre-existing ошибки
+  (`react-hooks/refs` в `src/components/Game/scene/useCardAnimation.js`) и 3 warning'а
+  (PostProcessing, cardFaceModel). Они **не наши** — разобрать в Этапе 7.
+  (`npx eslint src/hooks/game` — чисто.)
 - `npx eslint src workers/src` падает: `workers/src` не покрыт конфигом ESLint —
   линтить только `src`.
 
@@ -187,22 +189,25 @@ npm run build
 | `selectIsMyTurn` (`src/store/gameStore.js:277`) | 0 использований. **Удалить.** |
 | `src/components/Game/gameBoard3D/layout.test.js` | **Уже не существует** — переименован в `src/utils/gameObjectPlacement.test.js`. Ничего не делать. |
 | `src/hooks/useGraphicsSettings.js` | 0 импортов, **но упоминался в `skills/r3f-board-3d`**. Решение пользователя: **удалить** (сделано). |
-| `src/utils/gameStatePatch.js` — `applyFlipCardPatch`, `applyAttackPatch` | Стали мёртвыми после Этапа 3 (не покрыты тестами). Кандидаты на удаление. |
-| `src/utils/gameStatePatch.js` — `applyEndTurnPatch`, `applyDrawPatch`, `normalizeDrawRpcData` | Держатся тестами `gameStatePatch.test.js`, но продукт-мёртвы. Решить: удалить функции+тесты или оставить. |
-| `src/hooks/game/format.js` | Оставить только 3 `normalize*`, остальное проверить на использование. |
+| `src/utils/gameStatePatch.js` — `applyFlipCardPatch`, `applyAttackPatch` | Мёртвые после Этапа 3 (и без тестов). **Удалено в 4b.** |
+| `src/utils/gameStatePatch.js` — `applyEndTurnPatch`, `applyDrawPatch`, `normalizeDrawRpcData` и др. | Продукт-мёртвые после Этапа 3. **Удалено в 4b** вместе с тестами. |
+| `src/hooks/game/format.js` | `gameToEngineFormat` удалён, `normalizeZoneRow` сделан внутренним (4b). |
 | `src/hooks/game/useGameState.js` | После Этапа 3 `writeGameState` не нужен действиям; проверить `isApplying`/`error` в `useGameAction`/`GameScreen` → вероятно Этап 5. |
 
-Осознанно **не** тронуто в этом этапе:
-- `src/utils/gameStatePatch.test.js` — **осиротевший**: не входит ни в один vitest-конфиг
-  (`vitest.store.config.js` его не включает) и тестирует функции, ставшие мёртвыми после
-  Этапа 3. Живой в `gameStatePatch.js` только `applyPlayCardPatch`; мёртвые экспорты —
-  `applyEndTurnPatch`, `applyDrawPatch`, `normalizeDrawRpcData`,
-  `sanitizeDrawRpcDataForSync`, `applyBattleEventPatch`, `applyPlayCardZoneSnapshot`,
-  `applyFlipCardPatch`, `applyAttackPatch`. Снести вместе с тестом — Этап 8.
-- `src/hooks/game/format.js` — `normalizeZoneRow` и `gameToEngineFormat` имеют 0 внешних
-  использований; оставлены (малый риск), добить в Этапе 8.
-- `src/hooks/game/useGameState.js` — после Этапа 3 `writeGameState` не нужен действиям;
-  проверить `isApplying`/`error` и решить в Этапе 5.
+### ✅ Этап 4b — остатки мёртвого кода
+Коммит `3b98026`, −658 строк:
+- `src/utils/gameStatePatch.js` обрезан до единственного живого `applyPlayCardPatch`
+  (используется в `usePlayCard.js`). Удалены мёртвые экспорты: `applyEndTurnPatch`,
+  `applyDrawPatch`, `normalizeDrawRpcData`, `sanitizeDrawRpcDataForSync`,
+  `applyBattleEventPatch`, `applyBattleEventsPatch`, `applyPlayCardZoneSnapshot`,
+  `applyFlipCardPatch`, `applyAttackPatch` (+ внутренние helper'ы).
+- `src/utils/gameStatePatch.test.js` обрезан до теста `applyPlayCardPatch`.
+  (Файл **не** осиротевший — его гоняет `npm test`.)
+- `src/hooks/game/format.js`: удалён `gameToEngineFormat` (0 внешних использований),
+  `normalizeZoneRow` сделан внутренним (нужен `normalizePlayerZoneRows`).
+
+Остаток на Этап 5: `src/hooks/game/useGameState.js` — после Этапа 3 `writeGameState`
+не нужен действиям; проверить `isApplying`/`error` и решить.
 
 ### ⏳ Этап 5 — данные на JSON (самый крупный этап)
 
@@ -297,7 +302,7 @@ npm run build
 
 ## 4. Как продолжить (resume)
 
-**Этапы 0–4 завершены.** Этап 5 **отложен** до планирования (см. §3) — его не
+**Этапы 0–4b завершены.** Этап 5 **отложен** до планирования (см. §3) — его не
 начинать, пока план не согласован.
 
 1. Убедиться, что ты на ветке `v2` и дерево чистое: `git status`, `git log --oneline -6`.
@@ -305,12 +310,11 @@ npm run build
    (вопросы перечислены в §3), потом реализовывать.
 
 Пока Этап 5 ждёт плана, безопасная независимая работа:
-- **Этап 4-остатки** (тривиально, дерево зелёное): осиротевший
-  `src/utils/gameStatePatch.test.js` + мёртвые экспорты `gameStatePatch.js`;
-  `format.js` — убрать неиспользуемые `normalizeZoneRow`/`gameToEngineFormat`.
 - **Этап 7** (не зависит от Этапа 5): PNG → WebP → `public/cards/`; чистка
   `skills/` и `docs/`.
 - Lint-долг сцены (2 ошибки `react-hooks/refs` + warning'и) — тоже Этап 7.
+
+Этап 4b (остатки мёртвого кода) — **сделан**, см. §3.
 
 ### Полезные ориентиры
 - Аудит (детали, местами устарел): `docs/_archive/FULL_AUDIT_tester_00005.md`.
@@ -322,6 +326,7 @@ npm run build
 ## 5. История коммитов v2 (актуальная)
 
 ```
+3b98026 refactor(v2): stage 4b - trim dead gameStatePatch exports and format.js
 6e0bf49 docs(v2): mark stage 5 as deferred, add planning checklist
 b021f5d docs(v2): sync handoff after stage 4 (resume, history, lint debt)
 80beeed docs(v2): stage 5 detailed plan and data-source findings
@@ -343,11 +348,8 @@ c0ceab9 chore: enable lsp in opencode config
 
 | Проблема | Где | Когда чинить |
 |---|---|---|
-| `npm test` сломан (legacy `node --test`) | `package.json` | Этап 8 |
 | 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | Этап 7 |
-| Lint-warning'и (unused `gl`, `useFrame`, eslint-disable, `isFlippedCard`) | PostProcessing, cardFaceModel, gameStatePatch | Этап 7 |
-| `gameStatePatch.test.js` — осиротевший тест (не входит ни в один vitest-конфиг) + мёртвые экспорты `gameStatePatch.js` | `src/utils/` | Этап 8 |
-| `format.js`: `normalizeZoneRow`, `gameToEngineFormat` — 0 использований | `src/hooks/game/format.js` | Этап 8 |
+| Lint-warning'и (unused `gl`, `useFrame`, `isFlippedCard`) | PostProcessing, cardFaceModel | Этап 7 |
 | `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 5 |
 | Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 5 |
 | `supabase/` (40 файлов) ещё в репо | — | Этап 5 |

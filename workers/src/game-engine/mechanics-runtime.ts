@@ -74,6 +74,13 @@ function blueprint(state: GameState, card: Card): JsonObject {
  */
 export type MechanicsStatus = 'unreviewed' | 'text_only' | 'implemented' | 'disabled'
 
+export const EXECUTABLE_ACTION_TYPES: ReadonlySet<string> = new Set([
+  'deal_damage', 'aoe_damage', 'face_attack', 'heal', 'draw_cards', 'discard_cards',
+  'destroy', 'move', 'return_from_discard', 'stat_buff', 'gain_actions',
+  'cost_reduction', 'play_for_free', 'freeze_landscape', 'flip_landscape', 'mill',
+  'search', 'peek', 'immunity',
+])
+
 export const EXECUTABLE_STATUS: MechanicsStatus = 'implemented'
 
 export function mechanicsFor(state: GameState, card: Card): JsonObject[] {
@@ -176,17 +183,6 @@ const TARGET_NEEDS_CHOICE = new Set([
   'chosen_discard',
 ])
 
-/** Селекторы, которые всегда описывают всё поле, а не выбранную карту. */
-const BROADCAST_TARGETS = new Set([
-  'each_creature_yours',
-  'each_creature_opponent',
-  'each_creature',
-  'each_creature_adjacent',
-  'each_creature_in_lane',
-  'each_creature_landscape',
-  'each_creature_no_hand',
-  'each_opponent',
-])
 
 export interface ResolvedTargets {
   cards: Array<{ player: PlayerState; zone: Zone; card: Card }>
@@ -389,16 +385,12 @@ function unmetCondition(conditions: unknown, state?: GameState, owner?: PlayerSt
   return null
 }
 
-/** true, если все условия — исполняемые либо служебные. */
-export function conditionAllows(conditions: unknown): boolean {
-  return unmetCondition(conditions) === null
-}
 
 function findTrigger(mechanic: JsonObject, eventType: MechanicEventType): boolean {
   const t = String(mechanic.trigger ?? '')
   if (t === eventType) return true
   // persistent: аура — срабатывает при входе в игру и в начале хода.
-  if (t === 'persistent' && (eventType === 'on_enters_play' || eventType === 'start_of_turn')) return true
+  if (t === 'persistent' && eventType === 'on_enters_play') return true
   // conditional: событие зависит от условия («если погибло» → on_death).
   if (t === 'conditional') {
     const desc = String((mechanic.conditions as any)?.[0]?.description ?? '').toLowerCase()
@@ -481,10 +473,16 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
           const hp = effectiveHealth(item.card)
           const remaining = hp - amount
           if (remaining <= 0) {
+            const pierce = action.pierce === true
+            const overkill = pierce ? amount - hp : 0
             next = mutatePlayer(next, item.player.player_id, (p) => {
               const removed = removeFromZone(p, item.zone.zone_position, cardKey(item.card))
               return addToDiscard(removed.player, removed.card)
             })
+            if (pierce && overkill > 0) {
+              const opp = next.players.find((p) => p.player_id !== owner.player_id)
+              if (opp) next = mutatePlayer(next, opp.player_id, (p) => ({ ...p, health: Math.max(0, p.health - overkill) }))
+            }
           } else {
             next = mutatePlayer(next, item.player.player_id, (p) => ({ ...p, zones: p.zones.map((z) => z.zone_position === item.zone.zone_position ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, health: remaining } : c) } : z) }))
           }
@@ -507,10 +505,36 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
       }
       break
     }
-    case 'aoe_damage':
+    case 'aoe_damage': {
+      const amount = actionAmount(action)
+      const targets = selected.length
+        ? selected
+        : allCards(state).filter(({ player: p, card }) => p.player_id !== owner.player_id && isCreature(card))
+      for (const item of targets) {
+        const hp = effectiveHealth(item.card)
+        const remaining = hp - amount
+        if (remaining <= 0) {
+          next = mutatePlayer(next, item.player.player_id, (p) => {
+            const removed = removeFromZone(p, item.zone.zone_position, cardKey(item.card))
+            return addToDiscard(removed.player, removed.card)
+          })
+        } else {
+          next = mutatePlayer(next, item.player.player_id, (p) => ({
+            ...p,
+            zones: p.zones.map((z) =>
+              z.zone_position === item.zone.zone_position
+                ? { ...z, cards: z.cards.map((c) => (cardKey(c) === cardKey(item.card) ? { ...c, health: remaining } : c)) }
+                : z,
+            ),
+          }))
+        }
+      }
+      applied = targets.length > 0
+      break
+    }
     case 'face_attack': {
       const source = sourceCardId ? findCard(state, sourceCardId)?.card : undefined
-      const amount = type === 'face_attack' ? (action.amount !== undefined ? actionAmount(action) : effectiveAttack(source ?? { attack: 1 } as Card)) : actionAmount(action)
+      const amount = action.amount !== undefined ? actionAmount(action) : effectiveAttack(source ?? { attack: 1 } as Card)
       const opponents = next.players.filter((p) => p.player_id !== owner.player_id && p.health > 0)
       for (const opponent of opponents) next = mutatePlayer(next, opponent.player_id, (p) => ({ ...p, health: Math.max(0, p.health - amount) }))
       applied = opponents.length > 0
@@ -582,11 +606,12 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
       }
       let moved = 0
       for (const item of selected) {
+        const destLane = action.destination === 'this_lane' ? item.zone.zone_position : undefined
         next = mutatePlayer(next, item.player.player_id, (p) => {
           const removed = removeFromZone(p, item.zone.zone_position, cardKey(item.card))
           if (!removed.card) return p
           moved++
-          return addCardToZone(removed.player, removed.card)
+          return addCardToZone(removed.player, removed.card, destLane)
         })
       }
       applied = moved > 0

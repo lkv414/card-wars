@@ -10,14 +10,6 @@
 
 import type { Action, Card, GameState, PlayerState } from './types'
 
-/** Статус ревью механик: исполняется только 'implemented' (аудит §4.6, M1). */
-const EXECUTABLE_MECHANICS_STATUS = 'implemented'
-
-function mechanicsEnabled(card: Card, state: GameState): boolean {
-  const cat = state.catalog?.[card.id]
-  const status = cat?.mechanics_status ?? (card as Record<string, unknown>).mechanics_status
-  return (status ?? 'unreviewed') === EXECUTABLE_MECHANICS_STATUS
-}
 import { getActivePlayer, getAlivePlayers, getPlayer, getZone } from './utils'
 import { canPlayerDealDamage, pickBattleTarget } from './combat'
 import {

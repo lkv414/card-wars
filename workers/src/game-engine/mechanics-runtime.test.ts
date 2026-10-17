@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { activateAbility, dispatchMechanicEvent } from './mechanics-runtime'
+import { activateAbility, dispatchMechanicEvent, EXECUTABLE_ACTION_TYPES } from './mechanics-runtime'
 import { playCard, discardFromHand } from './cards'
 import type { Card, GameState, PlayerState, Zone } from './types'
+import cardsJson from '../../../individual_cards/cards.json' with { type: 'json' }
 
 function zones(cards: Card[] = []): Zone[] {
   return [1, 2, 3, 4].map((n) => ({ zone_position: n, cards: n === 1 ? cards : [] }))
@@ -271,5 +272,25 @@ describe("mechanics runtime — new structured actions", () => {
     })
     expect(result.error).toBeUndefined()
     expect(result.state.players[1].zones[0].cards[0].health).toBe(3)
+  })
+})
+
+
+
+describe("mechanics runtime — contract with catalog", () => {
+  it("EXECUTABLE_ACTION_TYPES covers every action of every implemented card", () => {
+    const cards = cardsJson as any[]
+    const unsupported: string[] = []
+    for (const card of cards) {
+      if (card.mechanics_status !== "implemented") continue
+      for (const mech of (card.mechanics ?? [])) {
+        for (const action of (mech?.actions ?? [])) {
+          if (action?.source_type) continue
+          if (typeof action?.type !== "string") continue
+          if (!EXECUTABLE_ACTION_TYPES.has(action.type)) unsupported.push(card.id + ":" + action.type)
+        }
+      }
+    }
+    expect(unsupported).toEqual([])
   })
 })

@@ -33,7 +33,7 @@ export function PostProcessing({ enabled = true }) {
       // Vignette для кинематографичности
       <Vignette
         key="vignette"
-        darkness={isMobile ? 0.25 : 0.35}
+        darkness={isMobile ? 0.1 : 0.15}
         offset={0.3}
       />,
       // ToneMapping для кинематографичных цветов

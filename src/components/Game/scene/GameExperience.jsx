@@ -98,12 +98,11 @@ function AdaptiveCamera({ playerIndex, playerCount, controlsRef }) {
 export function GameExperience({ playerIndex, playerCount, controlsRef, children }) {
   return (
     <>
-      <color attach="background" args={['#3d4f5f']} />
-      <fog attach="fog" args={[FOG_COLOR, FOG_NEAR, FOG_FAR]} />
+      <color attach="background" args={['#2d5a27']} />
 
       {/* Освещение без IBL: ambient + hemisphere как «заполняющий» свет,
           один directional как ключевой. Никакой сети и никакого PMREM. */}
-      <ambientLight intensity={0.55} />
+      <ambientLight intensity={0.7} />
       <hemisphereLight args={['#e8eef2', '#4a3728', 0.75]} />
       <directionalLight position={[4, 6, 3]} intensity={1.6} />
       <pointLight position={[0, 5, 2]} intensity={0.3} color="#fff5e6" distance={14} decay={2} />

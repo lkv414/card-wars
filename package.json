@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "e2e:bot": "node scripts/e2e-bot.mjs",
+    "catalog:audit": "node scripts/catalog-audit.mjs",
     "test": "node scripts/run-unit-tests.mjs",
     "test:engine": "vitest run --root workers --config vitest.engine.config.ts",
     "test:smoke": "vitest run",

@@ -3,9 +3,10 @@
 > Живой документ. Обновляется по ходу работы. Если сессия/контекст оборвётся —
 > восстанавливай состояние отсюда, а не из чата.
 >
-> Последнее обновление: **Этап 5 сделан** (5a–5d). Каталог карт/земель/героев
-> читается из локальных файлов, KV и Supabase из путей данных убраны, пресеты
-> удалены. Дальше — Этап 6 (транзитные партии + бот).
+> Последнее обновление: **Этап 6 сделан** (6a–6d). GameRoom держит сессию в
+> SQLite самого DO (Supabase из DO убран), партии транзитные, есть бот-псевдо-игрок
+> и вход «Играть против бота» из лобби. Дальше — Этап 8 (уборка Supabase-остатков
+> в `package.json`/README) и ревизия каталога (`docs/CATALOG_REVIEW.md`).
 
 ---
 
@@ -319,10 +320,51 @@ npm run build
 перепроверить весь список карт и картинок на корректность (504 карты ↔
 `public/cards/*.webp`) — предложить скрипт-ревизию отдельно.
 
-### ⏳ Этап 6 — транзитные партии + бот
-- `workers/src/game-room.ts`: SQLite только на сессию + cleanup по alarm.
-- Бот-псевдо-игрок внутри GameRoom.
-- Убрать `supabase.ts`/`persistSnapshot` из DO.
+### ✅ Этап 6 — транзитные партии + бот (сделан: 6a–6d)
+
+**Сделано (6d, `881e0fa`):** `LobbyRoom` на `start_game` с `vsBot: true` добавляет
+место бота (`bot-<random>`, `is_bot: true`, без колоды) в состав лобби и прокидывает
+`is_bot` в состояние партии; `LobbyRoom.jsx` — кнопка «🤖 Играть против бота» для
+хоста (нужна только своя колода), счётчики и предупреждения о колодах считают только
+людей. `deck.ts`: зона с заглушкой `any` получает землю колоды (иначе правило
+размещения запирало руку бота). `scripts/e2e-bot.mjs` + `npm run e2e:bot` — два
+сценария на живом Worker.
+
+**Сделано (6c, `e4fad43`):** удалены `src/utils/supabase.js`,
+`src/utils/guestSession.js`, `src/hooks/game/useGameState.js`; из 11 action-хуков
+убран `ensureGuestId` и мёртвые параметры; `utils/gameWebSocket.js` получил
+`fetchGameState(gameId, playerId)` (GET `/game/:id/state`) вместо
+`supabase.rpc('get_player_game_state')`; `mapRpcGameState` → `mapGameState`;
+`useGameAction` больше не тянет `useGameState` (isApplying/error живут в store);
+`App.jsx` без `ensureGuestId` и баннера про `VITE_SUPABASE_*`.
+
+**Сделано (6b, `a5eb8c9`):** `workers/src/deck.ts` (`buildCatalogDeck`,
+`fillSeatWithCatalogDeck`, `needsDeck`) — колода из `cards.json`; `workers/src/bot.ts`
+(`chooseBotAction`, `findBotId`, `BOT_NICKNAME`); драйвер бота в `game-room.ts`
+(`alarm`, `runBotStep`, `BOT_STEP_MS = 900`); багфикс `validation.ts` — `play_card`
+проверяет занятость слота, как `playCard` (раньше `validateAction` пропускал, а
+движок отказывал).
+
+**Сделано (6a, `283e45e`):** сессия партии — в SQLite самого DO (`ctx.storage`, ключ
+`game`), членство — только через нативный lobby DO (`isNativeLobbyMember`), очистка
+по alarm (`ROOM_TTL_MS = 30 мин`, `WATCHED_ROOM_RECHECK_MS = 5 мин`), новый маршрут
+`GET /game/:gameId/state?playerId=…` (fog of war внутри DO); удалён
+`workers/src/supabase.ts`.
+
+**Проверки этапа:**
+
+| Команда | Результат |
+| --- | --- |
+| `npm test` | 234/234 (node:test) + 26/26 (store) |
+| `npm run test:smoke` | 46/46 |
+| `npm run test:engine` | 65/65 |
+| `npm run test:store` | 26/26 |
+| `npx vite build` | ok (только warning о размере чанка, 806 КБ `index`) |
+| `npx tsc --noEmit -p workers/tsconfig.json` | exit 0 |
+| `npx eslint src` | 0 проблем |
+| `npm run workers:check` | 1247.85 KiB, биндингов Supabase/KV нет |
+| `npm run e2e:bot` (живой `wrangler dev`) | лобби→бот: бот с колодой 5+15 из каталога, ход бота `2:bot → 7:host`, 3 карты разыграно; `GET /state` → 200 своему, 403 чужому; dev-комната `local-*` — обе колоды из каталога, бот играет |
+
 
 ### ✅ Этап 7 — картинки + lint (7a–7c сделаны; чистка `skills/` отложена по решению)
 
@@ -366,7 +408,17 @@ spawn-анимации перенесён из рендера в `useEffect` (з
 
 ### ⏳ Этап 8 — финальная уборка
 - `package.json`: убрать Supabase-зависимости и SQL-скрипты; `npm test` → vitest.
+  (В package.json ещё живут `catalog:mechanics`, `db:push`, `db:schema`, `ocr`,
+  ссылающиеся на скрипты Supabase-эпохи.)
 - `README`, единый local mode (без Supabase env).
+
+### 📋 Ревизия каталога — отдельная задача (план готов)
+`docs/CATALOG_REVIEW.md` + `npm run catalog:audit` (`scripts/catalog-audit.mjs`).
+Числа на 2026-10-17: 504 карты, арт структурно чист (504/504, сирот 0), но 177 карт
+с неканоническими землями (`rainbow` 78, `plains` 27, `cute` 36, `sandy` 13,
+`plain` 8, `cotton` 8, `desert` 7), 15 расхождений «имя ↔ арт», 94 карты группы
+`ftg` вообще без сверки, 7 существ без статов, 5 карт `card_type: special`,
+механик `implemented` 89 из 504.
 
 ---
 
@@ -402,6 +454,12 @@ spawn-анимации перенесён из рендера в `useEffect` (з
 ## 5. История коммитов v2 (актуальная)
 
 ```
+881e0fa Этап 6d: игра против бота из лобби + E2E-сценарий
+e4fad43 Этап 6c: клиент без Supabase — состояние по HTTP-маршруту GameRoom
+a5eb8c9 Этап 6b: бот-псевдо-игрок внутри GameRoom + колода из cards.json
+283e45e Этап 6a: GameRoom без Supabase — сессия в SQLite DO, очистка по alarm
+06d7ece docs(v2): record stage 5 completion (data on local JSON)
+01bf36d test(v2): stage 5 - guard catalog and art consistency
 bef2256 docs(v2): stage 5 - drop stale KV catalog comments in workers
 1fe595b refactor(v2): stage 5c - heroes from local JSON, remove preset decks
 87a829b refactor(v2): stage 5b - deck codes and enrichment read the local catalog
@@ -437,11 +495,13 @@ c0ceab9 chore: enable lsp in opencode config
 | 2 pre-existing lint-ошибки `react-hooks/refs` | `src/components/Game/scene/useCardAnimation.js` | ✅ Этап 7a |
 | Lint-warning'и (`isFlippedCard`, `gl`, `useFrame`) | `cardFaceModel.js`, `PostProcessing`, `useCardAnimation.js` | ✅ Этап 7c |
 | Арт карт: 504 PNG → WebP, 209.6 → 31.1 МБ; PNG удалены | `public/cards/`, `individual_cards/cards.json` | ✅ Этап 7b |
-| `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | Этап 6 |
-| Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | Этап 6 |
-| `supabase/` (40 файлов) ещё в репо | — | Этап 6/8 |
-| Пресеты колод удалены (восстановить из дампа нельзя) | `DeckList.jsx`, `usePresetDecks.js` (удалён) | новая задача |
-| Каталог карт не сверен с артом (`cards.json` ↔ `public/cards/*.webp`) | `individual_cards/`, `public/cards/` | новая задача |
+| `useGameState.js`: `writeGameState` больше не нужен действиям | `src/hooks/game/` | ✅ Этап 6c |
+| Остаточные `supabase.rpc` (основной путь, не фоллбек) | `useGameLoader.js`, `guestSession.js` | ✅ Этап 6c |
+| `supabase/` (40 файлов) ещё в репо | — | Этап 8 |
+| Пресеты колод удалены (восстановить из дампа нельзя) | `DeckList.jsx`, `usePresetDecks.js` (удалён) | пересобрать из `cards.json` после ревизии каталога |
+| Каталог не сверен с артом: 15 расхождений имени, 94 карты `ftg` без сверки, 177 карт с неканоническими землями, 7 существ без статов | `individual_cards/`, `public/cards/` | 📋 план `docs/CATALOG_REVIEW.md`, аудит `npm run catalog:audit` |
+| Остатки Supabase-эпохи в `package.json` (`catalog:mechanics`, `db:push`, `db:schema`, `ocr`) | `package.json`, `scripts/` | Этап 8 |
+| Дубликат списка земель: `LAND_TYPE_IDS` (Worker) и `LAND_DEFS` (клиент) + псевдонимы только в `validation.ts` | `workers/src/catalog.ts`, `src/constants/landColors.js` | этап R3 ревизии каталога |
 | `getCards()` в Worker не тестируется | `workers/src/catalog.ts` | при удобном случае |
 | Дубликат списка земель: `LAND_TYPE_IDS` (Worker) и `LAND_DEFS` (клиент) | `workers/src/catalog.ts`, `src/constants/landColors.js` | при удобном случае |
 | `исходники/` (1932 файла) в индексе | — | по решению пользователя оставлено |

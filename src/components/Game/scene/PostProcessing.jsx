@@ -11,12 +11,10 @@
 import { useMemo } from 'react'
 import { EffectComposer, Bloom, Vignette, ToneMapping } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
-import { useThree } from '@react-three/fiber'
 
 import { detectDeviceProfile } from '../../../utils/deviceCapabilities'
 
 export function PostProcessing({ enabled = true }) {
-  const { gl } = useThree()
   const { isMobile, isLowEnd } = detectDeviceProfile()
 
   // На слабых устройствах отключаем дорогие эффекты

@@ -18,7 +18,6 @@ import {
   getEffectiveAttack,
   getEffectiveHealth,
   hasUnknownLandType,
-  isFlippedCard,
 } from './cardFields.ts'
 import { CARD_TYPES } from '../constants/game.js'
 import { getLandDef } from '../constants/landColors.js'

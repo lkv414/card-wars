@@ -1,19 +1,17 @@
 /**
- * useAttack — атака своим существом по зоне противника (RPC perform_attack).
+ * useAttack — атака своим существом по зоне противника.
+ *
+ * Worker (GameRoom Durable Object) — единственный авторитет. SQL-фоллбека нет.
  */
 
 import { useCallback } from 'react'
-import { supabase } from '../../utils/supabase'
 import { ensureGuestId } from '../../utils/guestSession'
 import { canAttack } from './zoneOpposition'
 import { canPlayerDealDamage } from './combat'
 import { safePlayers } from '../../utils/safePlayer'
-import { isRpcUnavailable } from './rpcUtils'
-import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
-import { applyAttackPatch } from '../../utils/gameStatePatch'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-export function useAttack(game, { patchGame, transport, suppressRealtimeReload } = {}) {
+export function useAttack(game, { transport } = {}) {
   return useCallback(
     async (fromZone, cardId, toOpponentZone, toPlayerId = null) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -38,9 +36,7 @@ export function useAttack(game, { patchGame, transport, suppressRealtimeReload }
       }
 
       const aliveCount = playersSafe.filter((p) => (p.health ?? 0) > 0).length
-      if (
-        !canPlayerDealDamage(me.player_order, aliveCount, game.current_turn ?? 0)
-      ) {
+      if (!canPlayerDealDamage(me.player_order, aliveCount, game.current_turn ?? 0)) {
         return { error: 'Урон ещё недоступен (первый ход)' }
       }
 
@@ -58,46 +54,9 @@ export function useAttack(game, { patchGame, transport, suppressRealtimeReload }
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
-      if (!ALLOW_CLIENT_FALLBACK) {
-        return { error: 'Атака недоступна (обновите сервер)' }
-      }
 
-      const { data, error: rpcErr } = await supabase.rpc('perform_attack', {
-        p_game_id: game.id,
-        p_player_id: me.player_id,
-        p_from_zone: fromZone + 1,
-        p_attacker_card_id: String(cardId),
-        p_to_player_id: opponent.player_id,
-        p_to_zone: toOpponentZone + 1,
-      })
-
-      if (rpcErr) {
-        if (isRpcUnavailable(rpcErr)) {
-          return { error: 'Атака недоступна (обновите сервер)' }
-        }
-        return { error: rpcErr.message }
-      }
-      if (data?.error) return { error: data.error }
-
-      if (typeof patchGame === 'function') {
-        patchGame((state) => applyAttackPatch(state, data))
-      }
-
-      // Suppress realtime reload for 8s to avoid interrupting battle animations
-      if (typeof suppressRealtimeReload === 'function') {
-        suppressRealtimeReload(8000)
-      }
-
-      return {
-        success: true,
-        damage: data.damage ?? 0,
-        faceDamage: data.face_damage ?? 0,
-        creatureKilled: Boolean(data.creature_killed),
-        creatureDamaged: Boolean(data.creature_damaged),
-        defenderHealth: data.defender_health,
-        gameFinished: Boolean(data.game_finished),
-      }
+      return { error: 'Атака недоступна (обновите сервер)' }
     },
-    [game, patchGame, transport, suppressRealtimeReload]
+    [game, transport]
   )
 }

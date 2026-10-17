@@ -1,17 +1,17 @@
 /**
- * useFlipCard — хук для флюпа карт на поле (RPC flip_card + outbox sync).
+ * useFlipCard — флюп карт на поле.
+ *
+ * Worker (GameRoom Durable Object) — единственный авторитет. SQL-фоллбека нет:
+ * иначе карта переворачивалась бы дважды (DO + plpgsql).
  */
 import { useCallback } from 'react'
-import { supabase } from '@/utils/supabase'
 import { ensureGuestId } from '@/utils/guestSession'
 import { hasFlipAbility, getFlipCost } from './cardAbilities.js'
-import { applyFlipCardPatch } from '@/utils/gameStatePatch'
 export { hasFlipAbility, getFlipCost } from './cardAbilities.js'
 
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
-import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
 
-export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload } = {}) {
+export function useFlipCard(game, { transport } = {}) {
   return useCallback(
     async (playerIndex, zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -28,9 +28,7 @@ export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload
         return { error: 'Зона не найдена' }
       }
 
-      const card = (zone.cards || []).find(
-        (c) => c.id === cardId || c.instanceId === cardId
-      )
+      const card = (zone.cards || []).find((c) => c.id === cardId || c.instanceId === cardId)
       if (!card) {
         return { error: 'Карта не найдена' }
       }
@@ -59,39 +57,9 @@ export function useFlipCard(game, { patchGame, transport, suppressRealtimeReload
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
-      // Worker — единственный авторитет. Флип в SQL применяется только под
-      // флагом: иначе карта переворачивается дважды (DO + plpgsql).
-      if (!ALLOW_CLIENT_FALLBACK) {
-        return { error: 'Флюп недоступен (обновите сервер)' }
-      }
 
-      const { data, error: rpcErr } = await supabase.rpc('flip_card', {
-        p_game_id: game.id,
-        p_player_id: player.player_id,
-        p_zone_position: zoneIndex + 1,
-        p_card_id: String(cardId),
-      })
-
-      if (rpcErr) {
-        return { error: rpcErr.message }
-      }
-      if (data?.error) {
-        return { error: data.error }
-      }
-
-      if (typeof patchGame === 'function') {
-        patchGame((state) =>
-          applyFlipCardPatch(state, player.player_id, zoneIndex, cardId, data.version)
-        )
-      }
-
-      // Suppress realtime reload for 3s to avoid interrupting flip animation (~300ms)
-      if (typeof suppressRealtimeReload === 'function') {
-        suppressRealtimeReload(3000)
-      }
-
-      return { success: true }
+      return { error: 'Флюп недоступен (обновите сервер)' }
     },
-    [game, patchGame, transport, suppressRealtimeReload]
+    [game, transport]
   )
 }

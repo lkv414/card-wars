@@ -1,93 +1,66 @@
 /**
-
  * usePlayCard — розыгрыш карты из руки в слот зоны (существо или строение).
-
+ *
+ * Worker (GameRoom Durable Object) — единственный авторитет. SQL-фоллбека нет:
+ * действие уходит только по WebSocket, иначе оно применилось бы дважды
+ * (в DO и в таблице).
  */
 
-
-
 import { useCallback } from 'react'
-
-import { supabase } from '../../utils/supabase'
-
-import { ensureGuestId, withGuestId } from '../../utils/guestSession'
-
+import { ensureGuestId } from '../../utils/guestSession'
 import { canPlayCardToSlot, getCardSlotType } from './zoneCards'
-
 import { clampZones } from './format'
-
-import { isRpcUnavailable } from './rpcUtils'
-
-import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
-
 import { getCardCost } from '../../utils/cardFields.ts'
-
 import { applyPlayCardPatch } from '../../utils/gameStatePatch'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-
-
 export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCatalog, transport } = {}) {
-
   return useCallback(
-
-    // eslint-disable-next-line no-unused-vars
     async (cardIndex, zoneIndex, _actionCost = 1, slotType = null) => {
-
       if (!game?.players) return { error: 'Игра не загружена' }
 
       await ensureGuestId()
 
       const me = game.players.find((p) => p.player_id === game.current_player_id)
-
       if (!me) return { error: 'Сейчас не ваш ход' }
 
-
-
       const hand = me.hand || []
-
       if (cardIndex < 0 || cardIndex >= hand.length) return { error: 'Неверный индекс карты' }
 
       const card = hand[cardIndex]
-
       const slot = slotType || getCardSlotType(card)
-
       const actionCost = getCardCost(card)
 
-
-
       const actionsLeft = me.actions_remaining ?? game.actions_remaining ?? 2
-
       if (actionsLeft < actionCost) {
-
         return { error: `Недостаточно действий (нужно ${actionCost}, осталось ${actionsLeft})` }
-
       }
-
-
 
       const zones = clampZones(me.zones)
-
       const zoneCards = zones[zoneIndex] || []
-
       if (!canPlayCardToSlot(zoneCards, card)) {
-
         if (slot === 'building') return { error: 'Слот строения занят или карта не подходит' }
-
         return { error: 'Слот существа занят или карта не подходит' }
-
       }
 
+      // Оптимистичный патч: показываем розыгрыш сразу, WS-broadcast подтвердит
+      // (или store откатит по версии, если сервер не принял действие).
       if (typeof patchGame === 'function') {
-        patchGame(
-          (state) =>
-            applyPlayCardPatch(state, me.player_id, cardIndex, zoneIndex, slot, {
+        patchGame((state) =>
+          applyPlayCardPatch(
+            state,
+            me.player_id,
+            cardIndex,
+            zoneIndex,
+            slot,
+            {
               version: (state.version ?? 0) + 1,
               actions_remaining: actionsLeft - actionCost,
               action_cost: actionCost,
               card,
-            }, cardCatalog),
-          'optimistic:play_card'
+            },
+            cardCatalog
+          )
         )
       }
 
@@ -100,221 +73,9 @@ export function usePlayCard(game, _writeGameState, _reload, { patchGame, cardCat
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
-      if (!ALLOW_CLIENT_FALLBACK) {
-        return { error: 'Розыгрыш недоступен (обновите сервер)' }
-      }
 
-      try {
-
-        const baseArgs = {
-
-          p_game_id: game.id,
-
-          p_player_id: me.player_id,
-
-          p_card_index: cardIndex,
-
-          p_zone_position: zoneIndex + 1,
-
-        }
-
-
-
-        let data = null
-
-        let rpcErr = null
-
-
-
-        ;({ data, error: rpcErr } = await supabase.rpc('play_card', {
-
-          ...baseArgs,
-
-          p_slot_type: slot,
-
-        }))
-
-
-
-        if (rpcErr && isRpcUnavailable(rpcErr)) {
-
-          ;({ data, error: rpcErr } = await supabase.rpc('play_card', baseArgs))
-
-        }
-
-
-
-        if (!rpcErr && data?.success) {
-
-          const nextState = applyPlayCardPatch(
-
-            game,
-
-            me.player_id,
-
-            cardIndex,
-
-            zoneIndex,
-
-            slot,
-
-            data,
-
-            cardCatalog
-
-          )
-
-          if (typeof patchGame === 'function') {
-
-            patchGame(() => nextState)
-
-          }
-
-          return { success: true }
-
-        }
-
-        if (rpcErr) {
-
-          if (!isRpcUnavailable(rpcErr)) {
-
-            return { error: rpcErr.message }
-
-          }
-
-          if (!ALLOW_CLIENT_FALLBACK) {
-
-            return { error: 'Розыгрыш недоступен (обновите сервер)' }
-
-          }
-
-          console.warn('[usePlayCard] RPC unavailable, using fallback:', rpcErr.message)
-
-        } else if (data?.error) {
-
-          return { error: data.error }
-
-        }
-
-      } catch (e) {
-
-        if (!ALLOW_CLIENT_FALLBACK) {
-
-          return { error: e?.message || 'Розыгрыш недоступен' }
-
-        }
-
-        console.warn('[usePlayCard] RPC threw:', e?.message)
-
-      }
-
-
-
-      if (!ALLOW_CLIENT_FALLBACK) {
-
-        return { error: 'Розыгрыш недоступен (обновите сервер)' }
-
-      }
-
-
-
-      const newHand = hand.filter((_, i) => i !== cardIndex)
-
-      const nextZones = clampZones(me.zones)
-
-      const instanceId = card.instanceId || card.id || `card-${Date.now()}-${cardIndex}`
-
-      nextZones[zoneIndex] = [
-
-        ...(nextZones[zoneIndex] || []),
-
-        { ...card, id: card.id, instanceId, tapped: false, flipped: false, slot_type: slot },
-
-      ]
-
-      const deckPile = Array.isArray(me.deck_pile) ? [...me.deck_pile] : []
-
-
-
-      const [playersRes, zonesRes] = await withGuestId(() =>
-
-        Promise.all([
-
-          supabase
-
-            .from('game_players')
-
-            .update({
-
-              hand: newHand,
-
-              deck_pile: deckPile,
-
-              deck_remaining: deckPile.length,
-
-              actions_remaining: actionsLeft - actionCost,
-
-            })
-
-            .eq('game_id', game.id)
-
-            .eq('player_id', me.player_id),
-
-          supabase
-
-            .from('game_zones')
-
-            .update({ cards: nextZones[zoneIndex] })
-
-            .eq('game_id', game.id)
-
-            .eq('player_id', me.player_id)
-
-            .eq('zone_position', zoneIndex + 1),
-
-        ])
-
-      )
-
-
-
-      const err = playersRes.error || zonesRes.error
-
-      if (err) return { error: `Розыгрыш не сохранился: ${err.message || err}` }
-
-
-
-      const nextState = applyPlayCardPatch(
-
-        game,
-
-        me.player_id,
-
-        cardIndex,
-
-        zoneIndex,
-
-        slot,
-
-        { version: (game.version ?? 0) + 1, actions_remaining: actionsLeft - actionCost, card },
-
-        cardCatalog
-
-      )
-
-      if (typeof patchGame === 'function') {
-
-        patchGame(() => nextState)
-
-      }
-
-      return { success: true }
-
+      return { error: 'Розыгрыш недоступен (обновите сервер)' }
     },
-
     [game, patchGame, cardCatalog, transport]
-
   )
-
 }
-

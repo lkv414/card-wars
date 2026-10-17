@@ -1,49 +1,15 @@
 /**
  * useDiscardFromZone — убрать карту с земли в сброс.
+ *
+ * Worker (GameRoom Durable Object) — единственный авторитет. SQL-фоллбека нет:
+ * иначе карта списывалась бы дважды — в Durable Object и в таблице.
  */
 
 import { useCallback } from 'react'
-import { supabase } from '../../utils/supabase'
-import { ensureGuestId, withGuestId } from '../../utils/guestSession'
-import { clampZones, normalizePlayerZoneRows, normalizeZoneCards } from './format.js'
-import { ALLOW_CLIENT_FALLBACK } from '../../utils/featureFlags'
+import { ensureGuestId } from '../../utils/guestSession'
 import { runViaTransport, transportError, transportOk } from './runViaTransport'
 
-/**
- * applyDiscardFromZonePatch — remove card from zone and add to discard.
- */
-function applyDiscardFromZonePatch(game, playerId, zoneIndex, cardId) {
-  if (!game?.players) return game
-
-  return {
-    ...game,
-    version: (game.version ?? 0) + 1,
-    players: game.players.map((player) => {
-      if (player.player_id !== playerId) return player
-
-      const zoneRows = normalizePlayerZoneRows(player.zones)
-      const zone = zoneRows[zoneIndex]
-      if (!zone) return player
-
-      const cards = normalizeZoneCards(zone)
-      const card = cards.find((c) => c.id === cardId || c.instanceId === cardId)
-      if (!card) return player
-
-      const newCards = cards.filter((c) => c.id !== cardId && c.instanceId !== cardId)
-      const discard = [...(player.discard_pile || []), card]
-
-      zoneRows[zoneIndex] = { ...zone, cards: newCards }
-
-      return {
-        ...player,
-        zones: zoneRows,
-        discard_pile: discard,
-      }
-    }),
-  }
-}
-
-export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, transport, suppressRealtimeReload } = {}) {
+export function useDiscardFromZone(game, _writeGameState, _reload, { transport } = {}) {
   return useCallback(
     async (zoneIndex, cardId) => {
       if (!game?.players) return { error: 'Игра не загружена' }
@@ -59,77 +25,9 @@ export function useDiscardFromZone(game, _writeGameState, reload, { patchGame, t
       if (wsErr) return wsErr
       const wsOk = transportOk(ws)
       if (wsOk) return wsOk
-      // Worker — единственный авторитет. Ни SQL RPC, ни прямая запись в
-      // game_zones/game_players без явного флага: иначе карта списывается
-      // дважды — в Durable Object и в таблице.
-      if (!ALLOW_CLIENT_FALLBACK) {
-        return { error: 'Сброс с поля недоступен (обновите сервер)' }
-      }
 
-      try {
-        const { data, error: rpcErr } = await supabase.rpc('discard_from_zone', {
-          p_game_id: game.id,
-          p_player_id: me.player_id,
-          p_zone_position: zoneIndex + 1,
-          p_card_id: String(cardId),
-        })
-        if (!rpcErr && data?.success) {
-          if (typeof patchGame === 'function') {
-            patchGame((state) => applyDiscardFromZonePatch(state, me.player_id, zoneIndex, cardId))
-          }
-
-          // Suppress realtime reload for 4s
-          if (typeof suppressRealtimeReload === 'function') {
-            suppressRealtimeReload(4000)
-          }
-
-          return { success: true }
-        }
-        if (rpcErr && !/function .* does not exist/i.test(rpcErr.message || '')) {
-          return { error: rpcErr.message }
-        }
-        if (data?.error) return { error: data.error }
-      } catch (e) {
-        console.warn('[useDiscardFromZone] RPC threw:', e?.message)
-      }
-
-      const zones = clampZones(me.zones)
-      const zoneCards = zones[zoneIndex] || []
-      const removed = zoneCards.find((c) => c.id === cardId || c.instanceId === cardId)
-      if (!removed) return { error: 'Карта не найдена на земле' }
-
-      const newZone = zoneCards.filter((c) => c.id !== cardId && c.instanceId !== cardId)
-      const discard = [...(me.discard_pile || []), removed]
-
-      const [zonesRes, playersRes] = await withGuestId(() =>
-        Promise.all([
-          supabase
-            .from('game_zones')
-            .update({ cards: newZone })
-            .eq('game_id', game.id)
-            .eq('player_id', me.player_id)
-            .eq('zone_position', zoneIndex + 1),
-          supabase
-            .from('game_players')
-            .update({ discard_pile: discard })
-            .eq('game_id', game.id)
-            .eq('player_id', me.player_id),
-        ])
-      )
-
-      const err = zonesRes.error || playersRes.error
-      if (err) return { error: `Сброс не сохранился: ${err.message || err}` }
-
-      if (typeof patchGame === 'function') {
-        patchGame((state) => applyDiscardFromZonePatch(state, me.player_id, zoneIndex, cardId))
-      }
-
-      if (typeof suppressRealtimeReload === 'function') {
-        suppressRealtimeReload(4000)
-      }
-
-      return { success: true }
+      return { error: 'Сброс с поля недоступен (обновите сервер)' }
     },
-    [game, patchGame, transport, suppressRealtimeReload]
+    [game, transport]
   )
 }

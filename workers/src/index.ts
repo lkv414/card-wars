@@ -14,20 +14,10 @@ const CORS_HEADERS = {
  * иначе WebSocket-handshake сломается — новый Response без webSocket теряет апгрейд.
  */
 function withCors(response: Response): Response {
-  // Если response содержит WebSocket (WS upgrade) — копируем напрямую через конструктор
-  // с webSocket property (поддерживается в Cloudflare Workers runtime, см. types).
+  // WebSocket-ответ: не навешиваем CORS-заголовки, иначе браузер
+  // закрывает соединение до завершения handshake (101 Shifting Protocols).
   if ((response as Response & { webSocket?: WebSocket | null }).webSocket) {
-    const headers = new Headers(response.headers)
-    for (const [key, value] of Object.entries(CORS_HEADERS)) {
-      headers.set(key, value)
-    }
-    const init: ResponseInit & { webSocket?: WebSocket | null } = {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-      webSocket: (response as Response & { webSocket?: WebSocket | null }).webSocket,
-    }
-    return new Response(null, init)
+    return response
   }
   const headers = new Headers(response.headers)
   for (const [key, value] of Object.entries(CORS_HEADERS)) {

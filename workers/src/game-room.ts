@@ -503,6 +503,10 @@ export class GameRoom extends DurableObject<Env> {
     // Если игра уже загружена и игрок в ней есть — доступ разрешён
     // (защита от потери lobby DO / eviction).
     if (this.currentGame?.players?.some((p: any) => p.player_id === playerId)) return true
+    if (!this.currentGame) {
+      try { await this.loadGame() } catch { /* ignore */ }
+      if ((this.currentGame as any)?.players?.some((p: any) => p.player_id === playerId)) return true
+    }
     return this.isNativeLobbyMember(gameId, playerId)
   }
 
@@ -585,10 +589,10 @@ export class GameRoom extends DurableObject<Env> {
       this.actionsSinceSnapshot = 0
       // Бот-места заполняются колодой до первого broadcast'а, чтобы клиент
       // при первой загрузке видел земли и карты бота.
-      if (await this.ensureBotSeats()) await this.publishCurrentState()
+      await this.ensureBotSeats()
+      await this.publishCurrentState()
     })
   }
-
   /**
    * Dev-only: build (or extend) an in-memory game so the sync path can be
    * exercised without a lobby. The first joining client seeds the game;

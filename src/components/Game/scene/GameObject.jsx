@@ -32,6 +32,7 @@ import { useCardAnimation } from './useCardAnimation'
 
 const PLACEHOLDER_COLOR = '#5d4e8a'
 const SELECTION_COLOR = '#fbbf24'
+const PASSIVE_COLOR = '#f59e0b'
 const CARD_FACE_DOWN_COLOR = '#1a1a2e'
 
 function getCardMatProps(texture) {
@@ -61,6 +62,7 @@ export const GameObject = memo(function GameObject({
   damageFlash = false,
   isNew = false,
   isDying = false,
+  passiveDamage = false,
   onClick,
 }) {
   const [hovered, setHovered] = useState(false)
@@ -111,10 +113,10 @@ export const GameObject = memo(function GameObject({
     if (matRef.current) matRef.current.emissive.setRGB(0, 0, 0)
   }, [baseX, baseY, baseZ, rotX, rotY, baseRotZ, baseScale])
 
-  // damageFlash: фиксируем время старта. При выключении — useEffect above сбрасывает.
+  // damageFlash + passiveDamage: фиксируем время старта.
   useEffect(() => {
-    if (damageFlash) damageStartRef.current = performance.now()
-  }, [damageFlash])
+    if (damageFlash || passiveDamage) damageStartRef.current = performance.now()
+  }, [damageFlash, passiveDamage])
 
   useFrame((state, delta) => {
     const g = groupRef.current
@@ -133,6 +135,14 @@ export const GameObject = memo(function GameObject({
         if (matRef.current) {
           const intensity = (1 - t) * 1.4
           matRef.current.emissive.setRGB(intensity, 0, 0)
+        }
+      } else if (passiveDamage) {
+        // Пассивный эффект: медленное моргание (блекание/зажигание)
+        const elapsed = performance.now() - damageStartRef.current
+        const t = Math.min(elapsed / 800, 1)
+        const intensity = 0.3 + 0.7 * (1 - t)
+        if (matRef.current) {
+          matRef.current.emissive.setRGB(intensity, intensity * 0.5, 0)
         }
       }
       return
@@ -185,6 +195,9 @@ export const GameObject = memo(function GameObject({
         />
       </mesh>
       {isSelected && <Outlines thickness={0.04} color={SELECTION_COLOR} />}
+      {passiveDamage && (
+        <Outlines thickness={0.06} color={PASSIVE_COLOR} transparent opacity={0.7} />
+      )}
     </group>
   )
 })

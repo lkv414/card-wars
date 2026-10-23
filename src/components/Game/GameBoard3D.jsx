@@ -142,6 +142,28 @@ export function GameBoard3D({
   const [damageFlashCards, setDamageFlashCards] = useState({})
   const [zoneCardActionMenu, setZoneCardActionMenu] = useState(null)
   const [attackFrom, setAttackFrom] = useState(null)
+  // === Passive visual state ===
+  // markersPassive — числа пассивных эффектов (например, у труб +урон когда
+  // в игре есть другие бочки). Отдельно от battleMarkers, чтобы пассив не
+  // мешался с атаками. Каждый marker ключён transformKey для уникальности.
+  const [passiveMarkers, setPassiveMarkers] = useState([])
+
+  // === Passive visual helper ===
+  // triggerPassiveVisual — инициирует пассивную анимацию над картой:
+  // - число (урон/здоровье) всплывает над зоной
+  // - карточка перекрашивается на пассивный цвет (желтый/красный) на время
+  //   анимации
+  // Отличается от triggerDamageVisual тем, что:
+  // - использует свой key space (passive- markers)
+  // - красит карту без удаления флага damageFlashCard
+  const triggerPassiveVisual = useCallback(({ playerId, zoneIndex, amount, type }) => {
+    const key = `passive-${playerId}-${zoneIndex}-${type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+    setPassiveMarkers((prev) => [...prev, { key, playerId, zoneIndex, amount, type }])
+    const id = setTimeout(() => {
+      setPassiveMarkers((prev) => prev.filter((m) => m.key !== key))
+    }, 1400)
+    damageTimersRef.current.push(id)
+  }, [])
 
   // === Refs ===
   const boardRef = useRef(null)
@@ -225,6 +247,86 @@ export function GameBoard3D({
     draggingRef.current = idx != null
     setDraggingCardIndex(idx)
   }, [])
+
+  // === Check passive effects on game change ===
+  // Сравнивает текущее состояние зон с предыдущим — если карта с пассивным
+  // механикой (persistent/start_of_turn) появилась на поле или исчезла, пассивный
+  // эффект визуализируется/убирается. Каждая карта может иметь любой пассив.
+  const passiveCardsRef = useRef(new Set())
+  const prevPassiveBarrelsRef = useRef(new Map())
+  useEffect(() => {
+    // Build set of card IDs that have persistent/start_of_turn triggers
+    const havePassive = new Set()
+    const rawCatalog = cardCatalogRef.current
+    const catalog = rawCatalog instanceof Map
+      ? Array.from(rawCatalog.values())
+      : Array.isArray(rawCatalog)
+        ? rawCatalog
+        : Object.values(rawCatalog || {})
+    for (const card of catalog) {
+      for (const mechanic of (card.mechanics || [])) {
+        if ((mechanic.trigger === 'persistent' || mechanic.trigger === 'start_of_turn') && mechanic.conditions) {
+          havePassive.add(mechanic.cardId || mechanic.card_id || 'unknown')
+        }
+      }
+    }
+    passiveCardsRef.current = havePassive
+
+    // For each player zone, check all cards: if card has a passive trigger,
+    // and it's in play, show the visual effect.
+    for (const player of players) {
+      for (const zone of player.zones) {
+        for (const card of zone.cards) {
+          const cardId = card.id || card.card_id
+          if (!cardId) continue
+          // Card has a passive mechanic in its definition
+          if (!passiveCardsRef.current.has(cardId)) continue
+          // Card is in play (has a zone)
+          // Old state detection: if the card just appeared or was removed
+          const prevBarrels = prevPassiveBarrelsRef.current.get(player.player_id)
+          if (prevBarrels === undefined) continue
+          // Always trigger when the card is present (persistent) or start_of_turn
+          // The visual is a simple marker showing "passive active"
+          if (prevBarrels.has(cardId)) {
+            // Remove tracking
+            prevBarrels.delete(cardId)
+          } else {
+            // Card appeared — trigger passive visual
+            triggerPassiveVisual({
+              playerId: player.player_id,
+              zoneIndex: zone.zoneIndex,
+              amount: 1,
+              type: 'passive',
+            })
+            prevBarrels.set(cardId, true)
+          }
+        }
+      }
+    }
+    // Cleanup: remove cards that are no longer in play
+    for (const [pid, barrels] of prevPassiveBarrelsRef.current) {
+      for (const cid of barrels.keys()) {
+        const stillThere = players.some((p) =>
+          p.player_id === pid &&
+          p.zones.some((z) => z.cards.some((c) => (c.id || c.card_id) === cid))
+        )
+        if (!stillThere) {
+          barrels.delete(cid)
+        }
+      }
+    }
+    // Rebuild Map: keep remaining entries, add empty sets for players that don't have them
+    const newMap = new Map()
+    for (const [pid, barrels] of prevPassiveBarrelsRef.current) {
+      if (barrels.size > 0) newMap.set(pid, barrels)
+    }
+    for (const player of players) {
+      if (!newMap.has(player.player_id)) {
+        newMap.set(player.player_id, new Set())
+      }
+    }
+    prevPassiveBarrelsRef.current = newMap
+  }, [players, playerId, triggerPassiveVisual, cardCatalog])
 
   // === Кэш getBoundingClientRect ===
   const refreshBoardRect = useCallback(() => {
@@ -352,7 +454,7 @@ export function GameBoard3D({
       setDraggingCardIndex(null)
       onSuppressRealtimeReload?.(5000)
       try {
-        const result = await onPlayCard?.(cardIdx, target.zoneIndex, 1, target.slotType)
+        const result = await onPlayCard?.(cardIdx, target.zoneIndex, myIndex, target.slotType)
         if (result?.error) {
           toast('error', result.error)
           return
@@ -364,7 +466,7 @@ export function GameBoard3D({
         placingLockRef.current = false
       }
     },
-    [handCards, me, landCatalog, game.game_state?.landPlacementRule, onPlayCard, onSuppressRealtimeReload, toast],
+    [handCards, me, landCatalog, game.game_state?.landPlacementRule, onPlayCard, onSuppressRealtimeReload, toast, myIndex],
   )
 
   /**
@@ -519,10 +621,8 @@ export function GameBoard3D({
   }, [onEndTurn, onSuppressRealtimeReload, playerId, toast, triggerDamageVisual, setDragging])
 
   // === Damage flash key для ZoneColumn ===
-  const damageFlashKey = useMemo(() => {
-    const keys = Object.keys(damageFlashCards)
-    return keys.length === 1 ? keys[0] : null
-  }, [damageFlashCards])
+  const damageFlashKeys = useMemo(() => Object.keys(damageFlashCards), [damageFlashCards])
+
 
   // Snapshot ref'а для передачи в ZoneColumn без re-render'а каталога.
   const cardCatalogSnapshot = cardCatalogRef.current
@@ -575,6 +675,9 @@ export function GameBoard3D({
             const dropState = dropStatesByZoneKey.get(zKey) || null
             const creaturePlayable = zone.isOwnerMe && isYourTurn && !inSetup && !isFinished && Boolean(activeCard)
             const buildingPlayable = creaturePlayable
+            // Passive effect key: какая карта в зоне имеет активный пассив
+            const passiveKey = `${zone.player.player_id}-${zone.zoneIndex}`
+            const passiveCreature = passiveMarkers.some((m) => m.playerId === zone.player.player_id && m.zoneIndex === zone.zoneIndex && m.type === 'passive')
             return (
               <ZoneColumn
                 key={`zone-${zKey}`}
@@ -587,7 +690,7 @@ export function GameBoard3D({
                 isYourTurn={isYourTurn}
                 creaturePlayable={creaturePlayable}
                 buildingPlayable={buildingPlayable}
-                damageFlashKey={damageFlashKey}
+                damageFlashKeys={damageFlashKeys}
                 tableScale={FIELD_CARD_SCALE}
                 onLandClick={handleLandClick}
                 isAttackTarget={attackTargetKeys.has(zKey)}
@@ -596,6 +699,8 @@ export function GameBoard3D({
                 onBuildingSlotClick={handleBuildingSlotClick}
                 onCreatureCardClick={handleCreatureCardClick}
                 onBuildingCardClick={handleBuildingCardClick}
+                passiveMarkerKey={passiveKey}
+                hasPassiveDamage={passiveCreature}
               />
             )
           })}
@@ -630,6 +735,24 @@ export function GameBoard3D({
                 markerKeys={[m.key]}
                 amount={m.amount}
                 position={[center[0], PLAY_FIELD_Y + 0.45, center[2]]}
+              />
+            )
+          })}
+
+          {/* Числа пассивных эффектов над картами — всплывают и угасают */}
+          {passiveMarkers.map((m) => {
+            const targetZone = zones.find(
+              (z) => z.player.player_id === m.playerId && z.zoneIndex === m.zoneIndex,
+            )
+            if (!targetZone) return null
+            const { center } = targetZone
+            return (
+              <GameDamageFloater
+                key={m.key}
+                markerKeys={[m.key]}
+                amount={m.amount}
+                position={[center[0], PLAY_FIELD_Y + 0.85, center[2]]}
+                color="#ffd54f"
               />
             )
           })}

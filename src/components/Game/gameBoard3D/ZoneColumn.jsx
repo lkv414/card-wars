@@ -37,7 +37,7 @@ export const ZoneColumn = memo(function ZoneColumn({
   isYourTurn,
   creaturePlayable,
   buildingPlayable,
-  damageFlashKey,
+  damageFlashKeys = [],
   tableScale,
   onLandClick,
   isAttackTarget = false,
@@ -46,6 +46,8 @@ export const ZoneColumn = memo(function ZoneColumn({
   onBuildingSlotClick,
   onCreatureCardClick,
   onBuildingCardClick,
+  passiveMarkerKey,
+  hasPassiveDamage = false,
 }) {
   const creatureCard = rawCreature ? resolveCardVisual(rawCreature, cardCatalog) : null
   const buildingCard = rawBuilding ? resolveCardVisual(rawBuilding, cardCatalog) : null
@@ -69,8 +71,8 @@ export const ZoneColumn = memo(function ZoneColumn({
 
   const cardLayerY = PLAY_FIELD_Y + CARD_LAYER_Y
   const zoneKey = `${zone.player.player_id}-${zone.zoneIndex}`
-  const creatureDamage = damageFlashKey === `${zoneKey}-creature`
-  const buildingDamage = damageFlashKey === `${zoneKey}-building`
+  const creatureDamage = damageFlashKeys.includes(`${zoneKey}-creature`)
+  const buildingDamage = damageFlashKeys.includes(`${zoneKey}-building`)
 
   return (
     <group
@@ -108,6 +110,7 @@ export const ZoneColumn = memo(function ZoneColumn({
           isFaceUp
           showStats
           damageFlash={creatureDamage}
+          passiveDamage={hasPassiveDamage}
           showFlipOption={Boolean(zone.isOwnerMe && isYourTurn)}
           onClick={() => onCreatureCardClick?.(zone, creatureCard)}
         />

@@ -18,11 +18,13 @@ const RISE_DISTANCE = 0.7
  * @param {number} [props.zoneIndex] индекс зоны
  * @param {number} [props.amount] число урона
  * @param {[number,number,number]} [props.position] мировая позиция
+ * @param {string} [props.color] цвет числа (пассивные эффекты — жёлтый)
  */
 export function GameDamageFloater({
   markerKeys,
   amount = 0,
   position = [0, 0.42, 0],
+  color = '#ff1744',
 }) {
   const groupRef = useRef(null)
   const startTimeRef = useRef(0)
@@ -51,7 +53,7 @@ export function GameDamageFloater({
       position={position}
     >
       <Text
-        color="#ff1744"
+        color={color}
         fontSize={0.28}
         fontWeight="bold"
         anchorX="center"

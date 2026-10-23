@@ -201,56 +201,58 @@ export function GameScreen() {
   }
 
   return (
-    <>
-      <Suspense
-        fallback={
-          <div className="game-loading" role="status" aria-live="polite">
-            Загружаем 3D-сцену...
-          </div>
-        }
-      >
-        <GameBoard3D
-          game={game}
-          playerId={guestId}
-          landCatalog={landCatalog}
-          onGameEnd={() => navigate('/lobby')}
-          onPlayCard={playCard}
-          onAttack={attack}
-          onDrawFreeCard={async () => {
-            const r = await drawFreeCard()
-            if (r?.error) toast('error', r.error)
-            return r
-          }}
-          onDrawPaidCard={async () => {
-            const r = await drawCard()
-            if (r?.error) toast('error', r.error)
-            return r
-          }}
-          onShuffleDeck={async () => {
-            const r = await shuffleDeck()
-            if (r?.error) toast('error', r.error)
-            return r
-          }}
-          onDiscardFromHand={async (idx) => {
-            const r = await discardFromHand(idx)
-            if (r?.error) toast('error', r.error)
-            return r
-          }}
-          onFlipCard={flipCard}
-          onDiscardFromZone={discardFromZone}
-          onEndTurn={endTurn}
-          onForfeit={forfeit}
-          onReorderLands={reorderLands}
-          onConfirmLandSetup={confirmLandSetup}
-          onSuppressRealtimeReload={suppressRealtimeReload}
-          realtimeStatus={connectionStatus}
-          isApplying={combinedIsApplying}
-          actionError={combinedError}
-          toast={toast}
-          cardCatalog={cardCatalog}
-        />
-      </Suspense>
-      <Toasts toasts={toasts} onDismiss={dismissToast} />
-    </>
+    <main id="game" className="game-screen">
+      <>
+        <Suspense
+          fallback={
+            <div className="game-loading" role="status" aria-live="polite">
+              Загружаем 3D-сцену...
+            </div>
+          }
+        >
+          <GameBoard3D
+            game={game}
+            playerId={guestId}
+            landCatalog={landCatalog}
+            onGameEnd={() => navigate('/lobby')}
+            onPlayCard={playCard}
+            onAttack={attack}
+            onDrawFreeCard={async () => {
+              const r = await drawFreeCard()
+              if (r?.error) toast('error', r.error)
+              return r
+            }}
+            onDrawPaidCard={async () => {
+              const r = await drawCard()
+              if (r?.error) toast('error', r.error)
+              return r
+            }}
+            onShuffleDeck={async () => {
+              const r = await shuffleDeck()
+              if (r?.error) toast('error', r.error)
+              return r
+            }}
+            onDiscardFromHand={async (idx) => {
+              const r = await discardFromHand(idx)
+              if (r?.error) toast('error', r.error)
+              return r
+            }}
+            onFlipCard={flipCard}
+            onDiscardFromZone={discardFromZone}
+            onEndTurn={endTurn}
+            onForfeit={forfeit}
+            onReorderLands={reorderLands}
+            onConfirmLandSetup={confirmLandSetup}
+            onSuppressRealtimeReload={suppressRealtimeReload}
+            realtimeStatus={connectionStatus}
+            isApplying={combinedIsApplying}
+            actionError={combinedError}
+            toast={toast}
+            cardCatalog={cardCatalog}
+          />
+        </Suspense>
+        <Toasts toasts={toasts} onDismiss={dismissToast} />
+      </>
+    </main>
   )
 }

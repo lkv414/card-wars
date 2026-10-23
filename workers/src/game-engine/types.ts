@@ -25,6 +25,12 @@ export interface Card {
   attack?: number
   health?: number
   defense?: number
+  /** Temporary shield HP — damage first hits the shield, then the creature. */
+  shield?: number
+  /** Passive ATK bonus from abilities (e.g. Крепость Крови +1 ATK). */
+  attack_bonus?: number
+  /** Passive DEF bonus from abilities (e.g. Фея Шепард +2 DEF). */
+  defense_bonus?: number
   cost?: number
   /** True field — deployed creature already attacked this turn. */
   tapped?: boolean

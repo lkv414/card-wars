@@ -2453,7 +2453,26 @@
     "has_flip": false,
     "flip_description": "",
     "description": "",
-    "mechanics": [],
+    "mechanics": [
+      {
+        "trigger": "persistent",
+        "actions": [
+          {
+            "type": "stat_buff",
+            "stat": "attack",
+            "amount": 1
+          }
+        ],
+        "conditions": [
+          {
+            "type": "if",
+            "description": "в игре есть другие бочки"
+          }
+        ],
+        "description": "Пассив: когда в игре есть другие бочки, все существа получают +1 ATK",
+        "source_text": "Пассив: когда в игре есть другие бочки, все существа получают +1 ATK"
+      }
+    ],
     "image_url": "/cards/charlie_card_2.webp",
     "mechanics_version": 1,
     "mechanics_status": "implemented",

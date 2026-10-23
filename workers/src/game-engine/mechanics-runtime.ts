@@ -117,7 +117,11 @@ function effectiveAttack(card: Card): number {
 }
 
 function effectiveHealth(card: Card): number {
-  return Number(card.health ?? card.defense ?? 0) + Number((card as JsonObject).health_bonus ?? 0)
+  return (
+    Number(card.health ?? card.defense ?? 0) +
+    Number((card as JsonObject).health_bonus ?? 0) +
+    Number((card as JsonObject).defense_bonus ?? 0)
+  )
 }
 
 function allCards(state: GameState): Array<{ player: PlayerState; zone: Zone; card: Card }> {
@@ -249,6 +253,10 @@ function resolveTargets(
     case 'each_opponent':
       return []
     case 'each_creature_no_hand': return source.filter(({ player: p, card }) => p.player_id !== owner.player_id && isCreature(card) && p.hand.length === 0)
+    case 'none':
+    case '':
+      // no target specified - apply to all creatures
+      return source.filter(({ card }) => isCreature(card))
     default: return []
     }
   })()
@@ -259,6 +267,16 @@ function resolveTargets(
 /** Существо ли это (не строение и не заклинание). */
 function isCreature(card: Card): boolean {
   return card.card_type !== 'building' && card.card_type !== 'spell'
+}
+
+/** True if the source card is a spell (used for immunity checks). */
+function isSpellSource(state: GameState, sourceCardId?: string): boolean {
+  if (!sourceCardId) return false
+  const found = findCard(state, sourceCardId)
+  const card = found?.card
+  if (!card) return false
+  const cat = state.catalog?.[card.id]
+  return card.card_type === 'spell' || cat?.card_type === 'spell'
 }
 
 /**
@@ -367,6 +385,12 @@ function evaluatePredicate(cond: JsonObject, state: GameState, owner: PlayerStat
   if (desc.includes('погиб')) {
     return 'ok'
   }
+  // «в игре есть другие бочки» — пассивные эффекты труб
+  if (desc.includes('в игре есть другие бочки') || desc.includes('есть другие бочки')) {
+    const barrels = allCards(state).filter(({ card }) => card.id === 'card-бочка');
+    const otherBarrels = barrels.filter(({ card }) => card.instanceId !== sourceCardId && card.id === 'card-бочка');
+    return otherBarrels.length > 0 ? 'ok' : 'unmet';
+  }
   return 'unknown'
 }
 
@@ -469,7 +493,12 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
     case 'deal_damage': {
       const amount = actionAmount(action)
       if (selected.length) {
+        let anyApplied = false
         for (const item of selected) {
+          // immunity: пропускаем цели, невосприимчивые к урону от заклинаний
+          if (item.card.immune_to === 'damage_from_spells' && isSpellSource(state, sourceCardId)) {
+            continue
+          }
           const hp = effectiveHealth(item.card)
           const remaining = hp - amount
           if (remaining <= 0) {
@@ -486,8 +515,9 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
           } else {
             next = mutatePlayer(next, item.player.player_id, (p) => ({ ...p, zones: p.zones.map((z) => z.zone_position === item.zone.zone_position ? { ...z, cards: z.cards.map((c) => cardKey(c) === cardKey(item.card) ? { ...c, health: remaining } : c) } : z) }))
           }
+          anyApplied = true
         }
-        applied = true
+        applied = anyApplied
       } else if (target === 'chosen_opponent') {
         // Селектор «выбранный противник» без выбора — это цель-герой,
         // а не карта. Раньше сюда попадал и chosen_creature (аудит §4.5, M12).
@@ -507,9 +537,10 @@ function applyAction(state: GameState, owner: PlayerState, action: JsonObject, t
     }
     case 'aoe_damage': {
       const amount = actionAmount(action)
-      const targets = selected.length
+      const rawTargets = selected.length
         ? selected
         : allCards(state).filter(({ player: p, card }) => p.player_id !== owner.player_id && isCreature(card))
+      const targets = rawTargets.filter((item) => !(item.card.immune_to === 'damage_from_spells' && isSpellSource(state, sourceCardId)))
       for (const item of targets) {
         const hp = effectiveHealth(item.card)
         const remaining = hp - amount
@@ -911,6 +942,10 @@ function applyMechanic(state: GameState, owner: PlayerState, mechanic: JsonObjec
     next = outcome.state
     if (outcome.applied) applied = true
     else if (outcome.reason) reasons.push(outcome.reason)
+  }
+  // Если ни одно действие не применилось — откатываем verb-уничтожение источника (стоимость не списывается).
+  if (!applied) {
+    return { state, applied: false, reasons }
   }
   return { state: next, applied, reasons }
 }

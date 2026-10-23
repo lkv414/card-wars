@@ -137,7 +137,7 @@ export function resolveAttack(
     creatureKilled = defenderDies
     creatureDamaged = !defenderDies
     if (defenderDies) {
-      nextState = dispatchMechanicEvent(nextState, { type: 'on_death', actorId: target.defenderId, cardId: defenderCreature.instanceId ?? defenderCreature.id })
+      nextState = dispatchMechanicEvent(nextState, { type: 'on_death', actorId: target.defenderId, cardId: defenderCreature.instanceId ?? defenderCreature.id  })
       nextState = applyZoneMutation(nextState, target.defenderId, target.toZone, (zone) => ({
         ...zone,
         cards: zone.cards.filter((c) => (c.instanceId ?? c.id) !== (defenderCreature.instanceId ?? defenderCreature.id)),
@@ -147,15 +147,25 @@ export function resolveAttack(
         discard_pile: [...(p.discard_pile ?? []), defenderCreature],
       }))
     } else {
+      // Применяем урон к щиту сначала, потом к существу
+      const currentShield = defenderCreature.shield ?? 0
+      const remainingDamage = Math.max(0, attack - currentShield)
+      const newShield = Math.max(0, currentShield - attack)
+      const newHealth = Math.max(0, defenderHp - remainingDamage)
+
       nextState = applyZoneMutation(nextState, target.defenderId, target.toZone, (zone) =>
-        replaceCardInZone(zone, defenderCreature.instanceId ?? defenderCreature.id, (c) => ({ ...c, health: defenderHp - attack })),
+        replaceCardInZone(zone, defenderCreature.instanceId ?? defenderCreature.id, (c) => ({
+          ...c,
+          shield: c.shield !== undefined ? newShield : 0,
+          health: newHealth,
+        })),
       )
     }
-      nextState = dispatchMechanicEvent(nextState, { type: 'on_damage_dealt', actorId: attackerId, cardId: attackerCard.instanceId ?? attackerCard.id, amount: attack, targetCardIds: [defenderCreature.instanceId ?? defenderCreature.id] })
+    nextState = dispatchMechanicEvent(nextState, { type: 'on_damage_dealt', actorId: attackerId, cardId: attackerCard.instanceId ?? attackerCard.id, amount: attack, targetCardIds: [defenderCreature.instanceId ?? defenderCreature.id] })
     if (counterDamage > 0) {
       attackerDamaged = !attackerDies
       if (attackerDies) {
-      nextState = dispatchMechanicEvent(nextState, { type: 'on_death', actorId: attackerId, cardId: attackerCard.instanceId ?? attackerCard.id })
+        nextState = dispatchMechanicEvent(nextState, { type: 'on_death', actorId: attackerId, cardId: attackerCard.instanceId ?? attackerCard.id })
         nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) => ({
           ...zone,
           cards: zone.cards.filter((c) => (c.instanceId ?? c.id) !== (attackerCard.instanceId ?? attackerCard.id)),
@@ -165,8 +175,18 @@ export function resolveAttack(
           discard_pile: [...(p.discard_pile ?? []), attackerCard],
         }))
       } else {
+        // Применяем урон атакующему к его щиту сначала
+        const currentShield = attackerCard.shield ?? 0
+        const remainingDamage = Math.max(0, counterDamage - currentShield)
+        const newShield = Math.max(0, currentShield - counterDamage)
+        const newHealth = Math.max(0, attackerHp - remainingDamage)
+
         nextState = applyZoneMutation(nextState, attackerId, fromZone, (zone) =>
-          replaceCardInZone(zone, attackerCard.instanceId ?? attackerCard.id, (c) => ({ ...c, health: attackerHp - counterDamage })),
+          replaceCardInZone(zone, attackerCard.instanceId ?? attackerCard.id, (c) => ({
+            ...c,
+            shield: c.shield !== undefined ? newShield : 0,
+            health: newHealth,
+          })),
         )
       }
     }

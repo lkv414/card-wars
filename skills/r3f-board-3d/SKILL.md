@@ -29,3 +29,16 @@ metadata:
 - `npm run test:smoke` (рендер компонентов).
 - `npx.cmd vite build` — ловит ошибки импорта.
 - Визуально: `chrome-devtools` MCP, открыть игру и проверить клик и подсветку.
+
+## Пассивные эффекты (добавлены в этой ветке)
+- Пассивный механизм (напр. у труб +урон при наличии других бобок):
+  `trigger: "persistent"`, `actions: [{ type: "deal_damage", ... }]`,
+  `conditions: [{ type: "if", "description": "..." }]`.
+- Движок: `mechanics-runtime.ts` — `evaluatePredicate` и `dispatchMechanicEvent`
+  уже умеют обрабатывать `persistent` и `if` условия; проверьте `mechanicsFor`
+  перед добавлением новых.
+- Визуал: `GameObject.jsx` получил `passiveDamage` prop + customProgram
+  `Outlines` для свечения; `GameBoard3D.jsx` использует `triggerPassiveVisual`
+  для всплытия чисел через `GameDamageFloater`.
+- Контроль: добавьте тест в `workers/src/game-engine/engine.test.ts` или
+  `mechanics-runtime.test.ts` для условия, которое добавляете.

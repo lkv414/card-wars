@@ -25,7 +25,10 @@ metadata:
   Однозначные псевдонимы: `sandy`/`desert` → `sand`, `rainbow` → `any`.
 - Механика `implemented` принимается только с тестом «механика → состояние».
 - Правила боя не менять ради картинки.
-- `individual_cards/*.json` не править руками — только через скрипты.
+- **Пользователь предпочитает работать напрямую, не через скрипты**: правка
+  `individual_cards/*.json` допускается вручную (аналог `skill_manage` /
+  `patch` / `write_file` от агента, не `node scripts/*.mjs`). Скрипты в
+  `scripts/` были удалены — проект не зависит от них.
 
 ## Как проверять
 1. Тест в `workers/src/game-engine/mechanics-runtime.test.ts` (фикстура с `mechanics_status: 'implemented'`).

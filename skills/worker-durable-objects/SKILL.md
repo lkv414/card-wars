@@ -24,6 +24,14 @@ metadata:
 - Перед деплоем проверять типы: `npx.cmd tsc --noEmit -p workers/tsconfig.json`.
 - Не коммитить `workers/.dev.vars` и секреты.
 
+## WebSocket (DooDge, версия v2+)
+- Цепочка `index.ts` → `withCors` → `GameRoom.fetch` → `new Response(null, { status: 101, webSocket })`.
+- **Правило:** `withCors` НЕ должен навешивать CORS-заголовки на WebSocket-ответы.
+  CORS-заголовки ломают handshake (браузер закрывает соединение до `101`).
+  Формат: `if (response имеет webSocket) return response;`, иначе навешиваем `CORS_HEADERS`.
+- Ниже `withCors` свойство `webSocket` читается через type assertion
+  `(response as Response & { webSocket?: WebSocket | null })`.
+
 ## Проверка
 - `npm run test:engine`
 - `npx.cmd tsc --noEmit -p workers/tsconfig.json`

@@ -4,7 +4,8 @@
 > Документ отвечает на вопрос «как убедиться, что каталог описывает то, что
 > напечатано на картинках», содержит числа на 2026-10-17 и пошаговый план правок.
 >
-> Машинная часть уже сделана: `npm run catalog:audit` (скрипт `scripts/catalog-audit.mjs`).
+> Машинная часть выполнялась скриптом `scripts/catalog-audit.mjs`; скрипты из
+> `scripts/` удалены — аудит теперь только ручной/зрительный.
 > Ручная/зрительная часть — этапы R2–R6 ниже.
 
 ## 0. Коротко
@@ -65,7 +66,7 @@ land_type, description, mechanics, review_required`). Это не истина (
 | `charlie_card_25.webp` | «Сшитый ленивец», SEWN SLOTH, «Милое существо», белое облачко, cost 2, 0/8 | `good`, cost 2, 0/8 | ✅ `good` = Nicelands |
 | `tree_trunks_card_1.webp` | «Хлопковый Великан», «Милое существо», cost 2, 2/10 | каталог: «Малыш камнепух», `cotton`, cost 1, 1/7 | ❌ имя и цифры разошлись; земля = Nicelands |
 
-Инструменты, которые уже есть в репозитории:
+Инструменты, которые были в репозитории (удалены вместе с `scripts/`):
 
 - `scripts/ocr-cards.mjs` — пакетный OCR через ocr.space (нужны `OCR_API_KEYS`, `OCR_INPUT_DIR`, `OCR_OUTPUT_CSV`);
 - `scripts/ocr-cards-ui.html` + `scripts/ocr-cards-server.mjs` — ручная проверка карточек по одной;
@@ -220,7 +221,7 @@ UI и авторитета. `sandy`/`desert`/`rainbow` спасает табли
 
 | Что | Где |
 | --- | --- |
-| Машинный аудит | `scripts/catalog-audit.mjs`, `npm run catalog:audit` (код 1 при ошибках) |
+| Машинный аудит | `scripts/catalog-audit.mjs` (удалён; остались журналы прогонов) |
 | Этот разбор и решения | `docs/CATALOG_REVIEW.md` |
 | Таблица сверки (появится) | `individual_cards/review/cards-review.csv` + `report-<дата>.json` |
 | Контактные листы для ручного просмотра (появятся) | `individual_cards/review/sheets/<колода>.html` |

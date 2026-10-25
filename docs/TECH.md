@@ -198,7 +198,7 @@ apps/
 ## Процесс
 
 - **AGENTS.md** в корне — всегда загружаемые инструкции агента (clean-room, конвенции, команды). Скиллы проекта в `.agents/skills/`: `ask-first` (уточнять, а не догадываться — адаптация `interview-me` из addyosmani/agent-skills), `card-review` (ревью по чеклисту проекта). По мере этапов: `match-sim`, `add-card`, `add-mechanic`, `dev-run`, `deploy`.
-- **MCP**: подключены к workspace — `context7` (актуальные доки библиотек), `cloudflare-docs` (документация Workers/DO). Observability-сервер Cloudflare добавим на этапе 2 при первом деплое (нужен OAuth-вход в аккаунт).
+- **MCP**: подключены к workspace — `context7` (актуальные доки библиотек), `cloudflare-docs` (документация Workers/DO), `cloudflare-observability` (логи/аналитика аккаунта; при первом использовании — OAuth-вход в Cloudflare), `cloudflare` (единый официальный сервер, OAuth при первом обращении). Вход для **деплоя** — не MCP, а `wrangler login` (браузер, один раз) либо API-токен в переменных окружения. Установлены официальные скиллы Cloudflare (`~/.agents/skills/`: wrangler, durable-objects, workers-best-practices и др.) и бета-CLI `cf` (полное покрытие Cloudflare API; в этом проекте приоритет — wrangler, т.к. есть wrangler.jsonc).
 - **Дизайн** — code-first: макеты описаны в docs и собираются сразу в коде. Figma MCP (чтение макетов) отложен; обратной синхронизации «код → Figma» из коробки нет — если появится макет, изменения вносит владелец.
 - **Язык кода**: идентификаторы и комментарии — английский, строки интерфейса и игровой контент — русский.
 

@@ -110,6 +110,8 @@ function toCommand(c: Sample): Command {
       return { type: 'mulligan', player: c.player };
     case 'keep_hand':
       return { type: 'keep_hand', player: c.player };
+    case 'disconnect_loss':
+      return { type: 'disconnect_loss', player: c.player };
   }
 }
 

@@ -48,6 +48,43 @@ function requireActiveMain(draft: Draft<MatchState>, playerId: PlayerId): void {
   if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
 }
 
+/** Eliminate a player by their own action (surrender) or by timeout (disconnect); the opponent wins. */
+function finishByForfeit(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  playerId: PlayerId,
+  reason: 'surrender' | 'disconnect',
+): void {
+  const p = player(draft, playerId);
+  if (p.eliminated) throw new DomainError('match_finished', 'player already out');
+  if (reason === 'surrender') {
+    p.surrendered = true;
+    emit(ctx, { type: 'player_surrendered', player: playerId });
+  } else {
+    emit(ctx, { type: 'player_disconnected', player: playerId });
+  }
+  for (const zone of p.zones) {
+    for (const slot of ['creature', 'building'] as const) {
+      const id = zone[slot];
+      if (id) {
+        instance(draft, id).location = 'removed';
+        zone[slot] = null;
+      }
+    }
+  }
+  if (p.companion) {
+    instance(draft, p.companion).location = 'removed';
+    p.companion = null;
+  }
+  p.eliminated = true;
+  emit(ctx, { type: 'player_eliminated', player: playerId });
+  const winners = draft.order.filter((pid) => !draft.players[pid]!.eliminated);
+  draft.status = 'finished';
+  draft.winners = winners;
+  draft.finishReason = reason;
+  emit(ctx, { type: 'match_finished', winners, reason });
+}
+
 function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
   switch (command.type) {
     case 'mulligan':
@@ -128,31 +165,13 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
     }
     case 'surrender': {
       requireRunning(draft);
-      const p = player(draft, command.player);
-      if (p.eliminated) throw new DomainError('match_finished', 'player already out');
-      p.surrendered = true;
-      emit(ctx, { type: 'player_surrendered', player: command.player });
-      // Remove the surrendering player's cards from the game; in 2 players the other wins.
-      for (const zone of p.zones) {
-        for (const slot of ['creature', 'building'] as const) {
-          const id = zone[slot];
-          if (id) {
-            instance(draft, id).location = 'removed';
-            zone[slot] = null;
-          }
-        }
-      }
-      if (p.companion) {
-        instance(draft, p.companion).location = 'removed';
-        p.companion = null;
-      }
-      p.eliminated = true;
-      emit(ctx, { type: 'player_eliminated', player: command.player });
-      const winners = draft.order.filter((pid) => !draft.players[pid]!.eliminated);
-      draft.status = 'finished';
-      draft.winners = winners;
-      draft.finishReason = 'surrender';
-      emit(ctx, { type: 'match_finished', winners, reason: 'surrender' });
+      finishByForfeit(draft, ctx, command.player, 'surrender');
+      return;
+    }
+    case 'disconnect_loss': {
+      // Server-only command: the reconnect wait expired for this player (docs/NETWORK.md).
+      requireRunning(draft);
+      finishByForfeit(draft, ctx, command.player, 'disconnect');
       return;
     }
     default: {

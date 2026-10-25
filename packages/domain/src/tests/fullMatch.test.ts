@@ -84,6 +84,18 @@ describe('полная партия', () => {
     expect(a).toEqual(b);
   });
 
+  it('обрыв соединения: поражение обрывавшему (команда сервера disconnect_loss)', () => {
+    const s = newGame();
+    const res = applyCommand(s, { type: 'disconnect_loss', player: P2 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.state.status).toBe('finished');
+    expect(res.state.winners).toEqual([P1]);
+    expect(res.state.finishReason).toBe('disconnect');
+    expect(res.events).toContainEqual({ type: 'player_disconnected', player: P2 });
+    expect(res.events).toContainEqual({ type: 'match_finished', winners: [P1], reason: 'disconnect' });
+  });
+
   it('сдача завершает партию победой соперника', () => {
     const s = newGame();
     const res = applyCommand(s, { type: 'surrender', player: P1 }, deps);

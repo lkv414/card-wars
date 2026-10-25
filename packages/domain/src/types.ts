@@ -109,7 +109,7 @@ export type Phase = 'draw' | 'main' | 'combat';
 
 export type Location = 'deck' | 'hand' | 'field' | 'discard' | 'companion' | 'removed';
 
-export type FinishReason = 'elimination' | 'surrender';
+export type FinishReason = 'elimination' | 'surrender' | 'disconnect';
 
 export interface LandState {
   type: LandType;

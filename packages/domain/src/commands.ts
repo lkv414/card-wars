@@ -22,7 +22,9 @@ export type Command =
   | { type: 'go_battle'; player: PlayerId }
   /** Automatic transition sent by the adapter when the turn timer fires (docs/TECH.md). */
   | { type: 'time_expired'; player: PlayerId }
-  | { type: 'surrender'; player: PlayerId };
+  | { type: 'surrender'; player: PlayerId }
+  /** Server-only: the adapter applies it when the reconnect wait expires (docs/NETWORK.md). */
+  | { type: 'disconnect_loss'; player: PlayerId };
 
 export interface DomainDeps {
   config: GameConfig;

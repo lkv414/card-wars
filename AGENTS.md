@@ -35,6 +35,7 @@ pnpm -r test          # тесты (vitest)
 pnpm -r build         # сборка пакетов → client → статика
 wrangler dev          # локальный Worker + DO (из apps/server)
 wrangler deploy       # деплой (из apps/server)
+pnpm --filter @card-wars/server smoke  # e2e-смоук «двух вкладок» (нужен запущенный wrangler dev)
 ```
 
 ## Контент

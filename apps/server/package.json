@@ -5,10 +5,19 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "typecheck": "tsc --noEmit"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@card-wars/application": "workspace:*",
+    "@card-wars/content": "workspace:*",
+    "@card-wars/domain": "workspace:*",
+    "@card-wars/protocol": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.0.0",
+    "vitest": "^3.0.0",
     "wrangler": "^4.0.0"
   }
 }

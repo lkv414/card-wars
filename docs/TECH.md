@@ -69,7 +69,7 @@ apps/
 - `domain` → ничего (единственное исключение — Immer, см. «Отклонения»).
 - `application` → `domain`, `protocol`, `content`.
 - `protocol` → только zod.
-- `content` → ничего.
+- `content` → `domain` **только типами** (формат карты/каталога описан в domain; данных и кода из domain content не использует).
 - `server` → `domain`, `application`, `protocol`, `content`.
 - `client` → `protocol`, `content`. Напрямую `domain`/`application` клиент **не использует**: роль application на клиенте выполняет сетевой адаптер (отправка команд, приём снапшота) — это отображение правила «presentation зависит от application» ([STRUCTURE.md](./STRUCTURE.md)) на клиент-серверное разделение.
 

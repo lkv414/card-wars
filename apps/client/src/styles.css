@@ -1,0 +1,274 @@
+:root {
+  color-scheme: dark;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #14171c;
+  color: #e6e9ef;
+}
+
+.center-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  background: #1d2129;
+  border: 1px solid #2c323d;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 8px;
+}
+
+.menu {
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  background: #14171c;
+  border: 1px solid #2c323d;
+  color: inherit;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+button {
+  background: #2b6cb0;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button.floop {
+  padding: 1px 8px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.hint {
+  color: #8b93a3;
+  font-size: 13px;
+}
+
+.error-line {
+  color: #ff8a8a;
+  font-size: 13px;
+}
+
+.disconnected {
+  opacity: 0.5;
+}
+
+.game {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+header {
+  margin-bottom: 8px;
+}
+
+.timer {
+  margin-left: 14px;
+  font-weight: bold;
+  color: #7fd1ff;
+}
+
+.timer.low {
+  color: #ff8a8a;
+}
+
+.timer.paused,
+.pending-banner {
+  color: #ffd27f;
+}
+
+.pending-banner {
+  padding: 6px 10px;
+  background: #2a2416;
+  border: 1px solid #5a4a1a;
+  border-radius: 8px;
+  margin: 6px 0;
+}
+
+.boards {
+  display: grid;
+  gap: 10px;
+}
+
+.board {
+  background: #1a1e25;
+  border: 1px solid #2c323d;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.board.active {
+  border-color: #48bb78;
+}
+
+.board.mine {
+  background: #1b2420;
+}
+
+.board.eliminated {
+  opacity: 0.4;
+}
+
+.board-head {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.lives {
+  color: #ff9f9f;
+  font-weight: bold;
+}
+
+.zones {
+  display: flex;
+  gap: 8px;
+}
+
+.zone {
+  flex: 1;
+  border: 1px dashed #2c323d;
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 90px;
+}
+
+.zone.frozen {
+  border-color: #5aa7d1;
+}
+
+.land {
+  font-size: 12px;
+  text-align: center;
+  color: #9fb3c8;
+  background: #222831;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.slot {
+  background: #20252e;
+  border-radius: 6px;
+  padding: 6px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.slot.building {
+  opacity: 0.85;
+}
+
+.pickable {
+  outline: 2px solid #48bb78;
+  cursor: pointer;
+}
+
+.chip {
+  font-size: 13px;
+}
+
+.chip.flipped {
+  opacity: 0.65;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.hand .cards-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.card {
+  background: #232a35;
+  border: 1px solid #2f3745;
+  border-radius: 8px;
+  padding: 8px;
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.card.selected {
+  border-color: #48bb78;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-actions button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.journal {
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.log-line {
+  padding: 1px 0;
+  border-bottom: 1px solid #222831;
+  color: #b9c1cf;
+}
+
+.mulligan {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

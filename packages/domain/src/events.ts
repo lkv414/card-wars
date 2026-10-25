@@ -26,4 +26,5 @@ export type GameEvent =
   | { type: 'timer_expired'; player: PlayerId }
   | { type: 'player_eliminated'; player: PlayerId }
   | { type: 'player_surrendered'; player: PlayerId }
+  | { type: 'player_disconnected'; player: PlayerId }
   | { type: 'match_finished'; winners: PlayerId[]; reason: FinishReason };

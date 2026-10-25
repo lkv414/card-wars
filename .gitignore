@@ -11,3 +11,14 @@ node_modules/
 
 # Архив старой версии (v2) — в репозиторий не входит (clean-room)
 .archive/
+
+# Сборка и инструменты
+dist/
+.wrangler/
+coverage/
+*.tsbuildinfo
+.dev.vars
+
+# Секреты и окружение
+.env
+.env.*

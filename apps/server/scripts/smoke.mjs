@@ -1,6 +1,6 @@
 // Stage-2 smoke: a full scripted match over real WebSockets against wrangler dev.
 // Two connections act as the "two browser tabs" (docs/TECH.md, этап 2).
-import { cards, deckPresets } from '@card-wars/content';
+import { cards } from '@card-wars/content';
 
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:8787';
 const WS_BASE = BASE.replace('http', 'ws');

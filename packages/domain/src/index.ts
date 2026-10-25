@@ -1,3 +1,16 @@
-// Домен — чистое ядро правил Card Wars: модели, команды, события, бой (docs/STRUCTURE.md).
-// Ноль внешних зависимостей (кроме Immer на этапе 1), ноль I/O. Наполняется на этапе 1.
-export {};
+// Card Wars v3 domain — pure rules core (docs/ARCHITECTURE.md, docs/STRUCTURE.md).
+// No I/O, no clocks, no Math.random: RNG and config arrive through ports,
+// card definitions through the CardCatalog port. The only dependency is Immer.
+
+export * from './types';
+export * from './config';
+export * from './catalog';
+export * from './commands';
+export * from './events';
+export * from './errors';
+export * from './rng';
+
+export { createMatch, type MatchSetup, type PlayerSetup } from './match/create';
+export { applyCommand } from './match/apply';
+export { computeEff } from './effects/stats';
+export { mirrorZoneIndex } from './effects/targets';

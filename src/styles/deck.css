@@ -1,8 +1,0 @@
-/**
- * deck.css — стили редактора колод и списка колод.
- *
- * Редактор: deck/builder.css (единый файл, цвета из variables.css).
- * Список колод: стили в components/DeckList.css.
- */
-
-@import url('./deck/builder.css');

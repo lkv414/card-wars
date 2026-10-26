@@ -46,6 +46,7 @@ export function DeckEditor({
   const [hovered, setHovered] = useState<CardData | null>(null);
 
   const errors = validateSavedDeck(draft);
+  const hero = heroes.find((h) => h.id === draft.heroId);
   const counts = useMemo(() => {
     const map = new Map<string, number>();
     for (const id of draft.cards) map.set(id, (map.get(id) ?? 0) + 1);
@@ -106,82 +107,112 @@ export function DeckEditor({
   };
 
   return (
-    <div className="editor-screen">
-      <div className="editor-head">
-        <button className="mini" onClick={onClose}>
-          ← Назад
-        </button>
-        <input
-          className="deck-name"
-          value={draft.name}
-          maxLength={40}
-          onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
-        />
-        <span className={draft.cards.length === CONFIG.deckSize ? 'count-ok' : 'hint'}>
-          {draft.cards.length} / {CONFIG.deckSize} карт
-        </span>
-        <button disabled={errors.length > 0} onClick={save}>
+    <main className="deck-builder ui-v2">
+      <header className="deck-header">
+        <div className="deck-header-start">
+          <button className="back-btn" onClick={onClose} aria-label="Назад">
+            ←
+          </button>
+          <div className="deck-header-brand">
+            <span className="eyebrow">Редактор колод</span>
+            <input
+              className="deck-name-input"
+              value={draft.name}
+              maxLength={40}
+              onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="deck-header-stats">
+          <span className={`deck-stat ${draft.cards.length === CONFIG.deckSize ? 'deck-stat--ok' : ''}`}>
+            <span className="deck-stat-label">Карты</span>
+            <b>
+              {draft.cards.length}/{CONFIG.deckSize}
+            </b>
+          </span>
+          <span className="deck-stat deck-stat--ok">
+            <span className="deck-stat-label">Земли</span>
+            <b>
+              {draft.lands.length}/{CONFIG.landsPerPlayer}
+            </b>
+          </span>
+          <span className="deck-stat">
+            <span className="deck-stat-label">Герой</span>
+            <b>{hero?.name ?? '—'}</b>
+          </span>
+        </div>
+
+        <button className="btn-primary" disabled={errors.length > 0} onClick={save}>
           Сохранить
         </button>
-      </div>
+      </header>
 
       {errors.length > 0 && (
-        <div className="deck-errors">
+        <div className="deck-header-alerts">
           {errors.map((error) => (
-            <div key={error} className="error-line">
+            <span key={error} className="deck-alert">
               {error}
-            </div>
+            </span>
           ))}
         </div>
       )}
 
-      <div className="editor-body">
-        <aside className="deck-panel panel">
-          <h3>Герой</h3>
-          <select value={draft.heroId} onChange={(e) => setDraft((d) => ({ ...d, heroId: e.target.value }))}>
-            {heroes.map((hero) => (
-              <option key={hero.id} value={hero.id}>
-                {hero.name}
-              </option>
-            ))}
-          </select>
-          <p className="hint">{heroes.find((h) => h.id === draft.heroId)?.ability.text}</p>
+      <div className="deck-builder-layout">
+        <aside className="deck-sidebar ui-card">
+          <section className="deck-side-section">
+            <h2>Герой</h2>
+            <select value={draft.heroId} onChange={(e) => setDraft((d) => ({ ...d, heroId: e.target.value }))}>
+              {heroes.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <p className="hint">{hero?.ability.text}</p>
+          </section>
 
-          <h3>Земли</h3>
-          <div className="lands-row">
-            {Array.from({ length: CONFIG.landsPerPlayer }, (_, i) => (
-              <select key={i} value={draft.lands[i] ?? 'rainbow'} onChange={(e) => setLand(i, e.target.value as LandType)}>
-                {LAND_TYPES.map((land) => (
-                  <option key={land} value={land}>
-                    {LAND_RU[land]}
-                  </option>
-                ))}
-              </select>
-            ))}
-          </div>
+          <section className="deck-side-section">
+            <h2>Земли</h2>
+            <div className="lands-row">
+              {Array.from({ length: CONFIG.landsPerPlayer }, (_, i) => (
+                <select key={i} value={draft.lands[i] ?? 'rainbow'} onChange={(e) => setLand(i, e.target.value as LandType)}>
+                  {LAND_TYPES.map((land) => (
+                    <option key={land} value={land}>
+                      {LAND_RU[land]}
+                    </option>
+                  ))}
+                </select>
+              ))}
+            </div>
+          </section>
 
-          <h3>Колода</h3>
-          <div className="deck-list">
-            {[...counts.entries()].map(([cardId, count]) => {
-              const card = cards.find((c) => c.id === cardId);
-              if (!card) return null;
-              return (
-                <div key={cardId} className="deck-row" onMouseEnter={() => setHovered(card)}>
-                  <span>
-                    {card.name} <span className="hint">({count})</span>
-                  </span>
-                  <button className="mini" onClick={() => removeCard(cardId)}>
-                    −
-                  </button>
-                </div>
-              );
-            })}
-            {draft.cards.length === 0 && <p className="hint">Добавьте карты из каталога справа</p>}
-          </div>
+          <section className="deck-side-section deck-side-section--grow">
+            <h2>
+              Колода <span className="deck-count">{draft.cards.length}</span>
+            </h2>
+            <div className="deck-list">
+              {[...counts.entries()].map(([cardId, count]) => {
+                const card = cards.find((c) => c.id === cardId);
+                if (!card) return null;
+                return (
+                  <div key={cardId} className="deck-row" onMouseEnter={() => setHovered(card)}>
+                    <span>
+                      {card.name} <span className="hint">×{count}</span>
+                    </span>
+                    <button className="mini danger" onClick={() => removeCard(cardId)} aria-label={`Убрать ${card.name}`}>
+                      −
+                    </button>
+                  </div>
+                );
+              })}
+              {draft.cards.length === 0 && <p className="hint">Добавьте карты из каталога справа</p>}
+            </div>
+          </section>
         </aside>
 
-        <section className="catalog-panel">
-          <div className="filters">
+        <section className="deck-library">
+          <div className="library-toolbar ui-card">
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}>
               <option value="all">все типы</option>
               <option value="creature">существа</option>
@@ -204,14 +235,15 @@ export function DeckEditor({
                 </option>
               ))}
             </select>
-            <label className="check">
+            <label className="filter-check">
               <input type="checkbox" checked={favoritesOnly} onChange={(e) => setFavoritesOnly(e.target.checked)} />
               избранные
             </label>
-            <label className="check">
+            <label className="filter-check">
               <input type="checkbox" checked={showCompanions} onChange={(e) => setShowCompanions(e.target.checked)} />
               парные (2 на 2)
             </label>
+            <span className="library-meta">{filtered.length} карт</span>
           </div>
 
           <div className="catalog-grid">
@@ -234,10 +266,10 @@ export function DeckEditor({
                     {count > 0 && <span className="catalog-count">{count}</span>}
                   </button>
                   <div className="catalog-buttons">
-                    <button className={`mini ${favorite ? 'fav' : ''}`} onClick={() => toggleFavorite(card.id)}>
+                    <button className={`mini ${favorite ? 'fav' : ''}`} onClick={() => toggleFavorite(card.id)} aria-label="В избранное">
                       ★
                     </button>
-                    <button className="mini" disabled={count === 0} onClick={() => removeCard(card.id)}>
+                    <button className="mini danger" disabled={count === 0} onClick={() => removeCard(card.id)} aria-label="Убрать карту">
                       −
                     </button>
                   </div>
@@ -249,13 +281,13 @@ export function DeckEditor({
       </div>
 
       {hovered && <CardPreview card={hovered} />}
-    </div>
+    </main>
   );
 }
 
 function CardPreview({ card }: { card: CardData }) {
   return (
-    <div className="card-preview panel">
+    <div className="card-preview ui-card">
       <b>{card.name}</b>
       <div className="hint">
         {TYPE_RU[card.type]} · стоимость {card.cost} · {LAND_RU[card.landType]}

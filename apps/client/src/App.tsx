@@ -81,72 +81,104 @@ function MainMenu({
   const selectedDeck = decks.find((d) => d.id === getSelectedDeckId()) ?? decks[0];
 
   return (
-    <div className="center-screen menu-screen">
-      <div className="panel menu">
+    <main className="main-menu ui-v2">
+      <div className="main-menu-content">
         <h1>Card Wars</h1>
-        <p className="hint">Онлайн-партия по коду. Первый вошедший — хост.</p>
-        <input
-          placeholder="Ник"
-          maxLength={20}
-          value={nickname}
-          onChange={(e) => onNickname(e.target.value)}
-        />
-        <button disabled={!nickname.trim()} onClick={() => onEnter(makeRoomCode(), true)}>
-          Создать лобби
-        </button>
-        <div className="row">
-          <input
-            placeholder={`Код (${CONFIG.lobbyCodeDigits} цифры)`}
-            inputMode="numeric"
-            maxLength={CONFIG.lobbyCodeDigits}
-            value={codeInput}
-            onChange={(e) => onCodeInput(e.target.value.replace(/\D/g, ''))}
-            onKeyDown={(e) => e.key === 'Enter' && codeInput.length === CONFIG.lobbyCodeDigits && nickname.trim() && onEnter(codeInput)}
-          />
+        <p className="main-menu-subtitle">Собирайте колоду и сражайтесь онлайн</p>
+
+        <div className="main-menu-form">
+          <label className="field">
+            <span className="field-label">Ваш ник</span>
+            <input
+              placeholder="Введите ник"
+              maxLength={20}
+              value={nickname}
+              onChange={(e) => onNickname(e.target.value)}
+            />
+          </label>
+
           <button
-            disabled={codeInput.length !== CONFIG.lobbyCodeDigits || !nickname.trim()}
-            onClick={() => onEnter(codeInput)}
+            className="btn-primary btn-xl"
+            disabled={!nickname.trim()}
+            onClick={() => onEnter(makeRoomCode(), true)}
           >
-            Войти
+            Создать лобби
+          </button>
+
+          <div className="join-block">
+            <span className="field-label">Войти по коду</span>
+            <div className="join-row">
+              <input
+                className="code-input"
+                placeholder={'•'.repeat(CONFIG.lobbyCodeDigits)}
+                inputMode="numeric"
+                maxLength={CONFIG.lobbyCodeDigits}
+                value={codeInput}
+                onChange={(e) => onCodeInput(e.target.value.replace(/\D/g, ''))}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' &&
+                  codeInput.length === CONFIG.lobbyCodeDigits &&
+                  nickname.trim() &&
+                  onEnter(codeInput)
+                }
+              />
+              <button
+                className="btn-accent"
+                disabled={codeInput.length !== CONFIG.lobbyCodeDigits || !nickname.trim()}
+                onClick={() => onEnter(codeInput)}
+              >
+                Войти
+              </button>
+            </div>
+          </div>
+
+          <button className="btn-accent btn-xl" onClick={onDecks}>
+            Мои колоды
           </button>
         </div>
-        <button className="secondary" onClick={onDecks}>
-          Редактор колод
-        </button>
-        <div className="menu-settings">
-          <span className="hint">
-            Колода: {selectedDeck ? `${selectedDeck.name} · ${heroName(selectedDeck.heroId)}` : 'не выбрана'}
+
+        <div className="main-menu-foot">
+          <span>
+            Активная колода: <b>{selectedDeck ? selectedDeck.name : 'не выбрана'}</b>
+            {selectedDeck ? ` · ${heroName(selectedDeck.heroId)}` : ''}
           </span>
-          <span className="hint">
+          <span>
             Графика:{' '}
-            <button className="mini" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
+            <button className="link-btn" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
               {quality === 'high' ? 'высокая' : 'низкая'}
             </button>
           </span>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
 function NicknameScreen({ code, onDone }: { code: string; onDone: (nick: string) => void }) {
   const [nick, setNick] = useState('');
   return (
-    <div className="center-screen">
-      <div className="panel menu">
-        <h2>Комната {code}</h2>
-        <input
-          autoFocus
-          placeholder="Ник"
-          maxLength={20}
-          value={nick}
-          onChange={(e) => setNick(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && nick.trim() && onDone(nick.trim())}
-        />
-        <button disabled={!nick.trim()} onClick={() => onDone(nick.trim())}>
-          Войти
-        </button>
+    <main className="main-menu ui-v2">
+      <div className="main-menu-content">
+        <span className="eyebrow">Card Wars</span>
+        <h1>Комната {code}</h1>
+        <p className="main-menu-subtitle">Представьтесь, чтобы войти в лобби</p>
+        <div className="main-menu-form">
+          <label className="field">
+            <span className="field-label">Ваш ник</span>
+            <input
+              autoFocus
+              placeholder="Введите ник"
+              maxLength={20}
+              value={nick}
+              onChange={(e) => setNick(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && nick.trim() && onDone(nick.trim())}
+            />
+          </label>
+          <button className="btn-primary btn-xl" disabled={!nick.trim()} onClick={() => onDone(nick.trim())}>
+            Войти
+          </button>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

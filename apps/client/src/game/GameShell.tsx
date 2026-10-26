@@ -23,13 +23,16 @@ export function GameShell({ code, nickname }: { code: string; nickname: string }
 
   if (status === 'closed') {
     return (
-      <div className="center-screen">
-        <div className="panel">
-          <h2>Соединение потеряно</h2>
-          <p className="hint">Токен сессии сохранён — перезагрузка вернёт вас в партию</p>
-          <button onClick={() => location.reload()}>Переподключиться</button>
+      <main className="main-menu ui-v2">
+        <div className="main-menu-content">
+          <span className="eyebrow">Card Wars</span>
+          <h1>Соединение потеряно</h1>
+          <p className="main-menu-subtitle">Токен сессии сохранён — перезагрузка вернёт вас в партию</p>
+          <button className="btn-primary btn-xl" onClick={() => location.reload()}>
+            Переподключиться
+          </button>
         </div>
-      </div>
+      </main>
     );
   }
 

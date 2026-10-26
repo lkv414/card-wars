@@ -103,70 +103,82 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
   };
 
   if (editing) {
-    return (
-      <div className="screen">
-        <DeckEditor deck={editing} onSave={saveDeck} onClose={() => setEditing(null)} />
-      </div>
-    );
+    return <DeckEditor deck={editing} onSave={saveDeck} onClose={() => setEditing(null)} />;
   }
 
   return (
-    <div className="screen decks-screen">
-      <header className="screen-head">
-        <button className="mini" onClick={onBack}>
+    <main className="decks-page ui-v2">
+      <header className="decks-header">
+        <button className="back-btn" onClick={onBack}>
           ← В меню
         </button>
-        <h1>Колоды</h1>
-        <button onClick={createDeck}>Создать колоду</button>
+        <div className="decks-title">
+          <span className="eyebrow">Card Wars</span>
+          <h1>Мои колоды</h1>
+        </div>
+        <button className="create-btn" onClick={createDeck}>
+          + Создать колоду
+        </button>
       </header>
+      <p className="decks-subtitle">Выберите активную колоду или соберите новую</p>
 
-      {message && <div className="ok-line">{message}</div>}
-      {error && <div className="error-line">{error}</div>}
+      {message && <div className="ui-toast ui-toast--success">{message}</div>}
+      {error && <div className="ui-toast ui-toast--error">{error}</div>}
 
       <div className="decks-grid">
         {decks.map((deck) => {
           const problems = validateSavedDeck(deck);
+          const active = selectedId === deck.id;
           return (
-            <div key={deck.id} className={`deck-card panel ${selectedId === deck.id ? 'selected' : ''}`}>
-              <div className="deck-card-head">
-                <b>{deck.name}</b>
-                {selectedId === deck.id && <span className="badge">активная</span>}
+            <article key={deck.id} className={`deck-card ${active ? 'active' : ''}`}>
+              {active && <span className="active-badge">активная</span>}
+              <div className="deck-card-top">
+                <h3 className="deck-name">{deck.name}</h3>
               </div>
-              <div className="hint">
-                {heroName(deck.heroId)} · {deck.cards.length} / {CONFIG.deckSize} карт
+              <div className="deck-stats">
+                <span className="deck-stat deck-stat--hero">{heroName(deck.heroId)}</span>
+                <span className={`deck-stat ${deck.cards.length === CONFIG.deckSize ? 'deck-stat--ok' : 'deck-stat--warn'}`}>
+                  {deck.cards.length} / {CONFIG.deckSize} карт
+                </span>
+                <span className="deck-stat">{deck.lands.length} земли</span>
               </div>
-              <div className="hint">земли: {deck.lands.join(', ')}</div>
-              {problems.length > 0 && <div className="error-line">{problems[0]}</div>}
-              <div className="deck-card-actions">
-                <button className="mini" onClick={() => setEditing(deck)}>
+              <div className={`deck-card-desc ${problems.length > 0 ? 'deck-card-desc--error' : ''}`}>
+                {problems[0] ?? 'Колода готова к игре'}
+              </div>
+              <div className="deck-actions">
+                <button className="select-btn" onClick={() => makeActive(deck)} disabled={active}>
+                  {active ? 'Выбрана' : 'Выбрать'}
+                </button>
+                <button className="edit-btn" onClick={() => setEditing(deck)}>
                   Изменить
                 </button>
-                <button className="mini" onClick={() => makeActive(deck)} disabled={selectedId === deck.id}>
-                  Выбрать
-                </button>
-                <button className="mini" onClick={() => showCode(deck)}>
+                <button className="code-btn" onClick={() => showCode(deck)}>
                   Код
                 </button>
-                <button className="mini" onClick={() => duplicate(deck)}>
+                <button className="edit-btn" onClick={() => duplicate(deck)}>
                   Копия
                 </button>
-                <button className="mini danger" onClick={() => remove(deck)}>
+                <button className="delete-btn" onClick={() => remove(deck)}>
                   Удалить
                 </button>
               </div>
-            </div>
+            </article>
           );
         })}
+
+        <button className="big-create-btn" onClick={createDeck}>
+          + Создать новую колоду
+        </button>
       </div>
 
       {codePanel && (
-        <div className="panel code-panel">
-          <b>Код колоды «{codePanel.deck.name}»</b>
+        <section className="code-panel ui-card">
+          <h2>Код колоды «{codePanel.deck.name}»</h2>
           <p className="hint">Скопируйте и вставьте на другом устройстве в поле импорта.</p>
           <textarea readOnly value={codePanel.code} rows={3} />
           <div className="row">
             <button
-              className="mini"
+              className="btn-primary"
               onClick={() => {
                 navigator.clipboard?.writeText(codePanel.code);
                 setMessage('Код скопирован');
@@ -174,26 +186,26 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
             >
               Скопировать
             </button>
-            <button className="mini" onClick={() => setCodePanel(null)}>
+            <button className="btn-soft" onClick={() => setCodePanel(null)}>
               Закрыть
             </button>
           </div>
-        </div>
+        </section>
       )}
 
-      <div className="panel import-panel">
-        <b>Импорт по коду</b>
-        <div className="row">
+      <section className="decks-import ui-card">
+        <h2>Импорт по коду</h2>
+        <div className="join-row">
           <input
             placeholder="Вставьте код колоды"
             value={importCode}
             onChange={(e) => setImportCode(e.target.value)}
           />
-          <button disabled={!importCode.trim()} onClick={importDeck}>
+          <button className="btn-primary" disabled={!importCode.trim()} onClick={importDeck}>
             Импортировать
           </button>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

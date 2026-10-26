@@ -6,11 +6,15 @@ import type { CommandChoices } from '../commands';
 import type { Ctx } from '../util';
 import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
+import { isActive } from '../zones';
 
 function requireActiveMain(draft: Draft<MatchState>, playerId: PlayerId): void {
   if (draft.status === 'finished') throw new DomainError('match_finished', 'match is finished');
   if (draft.status !== 'running') throw new DomainError('match_not_running', 'match is not running');
-  if (draft.activePlayer !== playerId) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (!isActive(draft, playerId)) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (draft.players[playerId]!.battleReady) {
+    throw new DomainError('wrong_phase', 'player is ready for battle');
+  }
   if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
 }
 
@@ -46,13 +50,55 @@ export function handlePlayCard(
   }
   const card = cardOf(ctx, inst);
 
-  if (card.type === 'companion') {
-    // Companions are playable only in the 2v2 mode (after MVP) — docs/MVP.md.
-    throw new DomainError('invalid_card_type', 'companion cards are not playable in this mode');
-  }
-
   if (p.actions < card.cost) {
     throw new DomainError('insufficient_actions', `need ${card.cost} actions, have ${p.actions}`);
+  }
+
+  if (matchingLandCount(draft, playerId, card.landType) < ctx.config.landRequirementPerCard) {
+    throw new DomainError(
+      'land_requirement_not_met',
+      `no land of type ${card.landType} under control`,
+    );
+  }
+
+  if (card.type === 'companion') {
+    // Companions exist only in 2v2 (docs/RULES.md «Розыгрыш карт»).
+    if (draft.mode !== 'teams') {
+      throw new DomainError('invalid_card_type', 'companion cards are not playable in this mode');
+    }
+    const replaced = p.companion;
+    if (replaced) {
+      const oldInst = instance(draft, replaced);
+      oldInst.location = 'discard';
+      oldInst.zone = null;
+      oldInst.slot = null;
+      p.discard.push(replaced);
+      p.companion = null;
+      emit(ctx, {
+        type: 'card_discarded',
+        player: playerId,
+        instanceId: replaced,
+        cardId: oldInst.cardId,
+        from: 'companion',
+      });
+    }
+    p.actions -= card.cost;
+    inst.location = 'companion';
+    inst.zone = null;
+    inst.slot = null;
+    inst.playedTurn = draft.turn;
+    p.hand.splice(p.hand.indexOf(instanceId), 1);
+    p.companion = instanceId;
+    emit(ctx, {
+      type: 'companion_played',
+      player: playerId,
+      instanceId,
+      cardId: card.id,
+      replacedInstanceId: replaced ?? null,
+    });
+    fireTriggerForInstance(draft, ctx, 'on_enters_play', instanceId, choices);
+    afterEffects(draft, ctx);
+    return;
   }
 
   if (card.type === 'spell') {
@@ -72,13 +118,6 @@ export function handlePlayCard(
     throw new DomainError('zone_out_of_range', `zone ${zone} out of range`);
   }
   const slot = card.type === 'creature' ? 'creature' : 'building';
-
-  if (matchingLandCount(draft, playerId, card.landType) < ctx.config.landRequirementPerCard) {
-    throw new DomainError(
-      'land_requirement_not_met',
-      `no land of type ${card.landType} under control`,
-    );
-  }
 
   // Frozen land: discard a card from hand to remove the freeze first (docs/RULES.md «Земли»).
   if (p.lands[zone]!.frozen) {
@@ -126,6 +165,6 @@ export function handlePlayCard(
     replacedInstanceId: replaced ?? null,
   });
 
-  fireTriggerForInstance(draft, ctx, 'on_enters_play', instanceId);
+  fireTriggerForInstance(draft, ctx, 'on_enters_play', instanceId, choices);
   afterEffects(draft, ctx);
 }

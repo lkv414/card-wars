@@ -9,6 +9,7 @@ export * from './commands';
 export * from './events';
 export * from './errors';
 export * from './rng';
+export * from './zones';
 
 export { createMatch, type MatchSetup, type PlayerSetup } from './match/create';
 export { applyCommand } from './match/apply';

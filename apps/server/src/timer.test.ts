@@ -64,6 +64,14 @@ describe('таймер хода (стейт-машина адаптера)', () 
     expect(remainingMs(resumed, 61_000)).toBe(78_000);
   });
 
+  it('дедлайн учитывает текущее окно ускорения', () => {
+    const { state } = hurry(stoppedTimer(), 0, cfg);
+    // 90 с остатка, первая секунда ×2: к t=1000 остаётся 88 с → дедлайн 89 000.
+    expect(deadlineMs(state, 0)).toBe(89_000);
+    const later = advance(state, 2000);
+    expect(deadlineMs(later, 2000)).toBe(89_000);
+  });
+
   it('выключенный таймер не даёт дедлайна', () => {
     expect(deadlineMs(stoppedTimer(), 0)).toBeNull();
     expect(expired(stoppedTimer(), 1e9)).toBe(false);

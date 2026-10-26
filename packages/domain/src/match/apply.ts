@@ -1,12 +1,15 @@
 import { produce } from 'immer';
 import type { ApplyResult, Command, DomainDeps } from '../commands';
-import { afterEffects } from '../deaths';
+import { afterEffects, eliminatePlayer, eliminateTeam } from '../deaths';
 import { drawCards } from '../draw';
 import { DomainError } from '../errors';
+import { finishMatch } from '../finish';
+import { isActive, teamOf } from '../zones';
 import { resolveCombat } from './combat';
 import { handleFloop } from './floop';
 import { handleKeepHand, handleMulligan } from './mulligan';
 import { handlePlayCard } from './play';
+import { endTurn } from './turn';
 import { emit, instance, moveId, player } from '../util';
 import type { Draft } from 'immer';
 import type { Ctx } from '../util';
@@ -44,45 +47,90 @@ function requireRunning(draft: Draft<MatchState>): void {
 
 function requireActiveMain(draft: Draft<MatchState>, playerId: PlayerId): void {
   requireRunning(draft);
-  if (draft.activePlayer !== playerId) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (!isActive(draft, playerId)) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (draft.players[playerId]!.battleReady) {
+    throw new DomainError('wrong_phase', 'player is ready for battle');
+  }
   if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
 }
 
-/** Eliminate a player by their own action (surrender) or by timeout (disconnect); the opponent wins. */
-function finishByForfeit(
+/** FFA surrender eliminates one player and continues; 2v2 loses the team only on the second surrender. */
+function handleSurrender(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId): void {
+  requireRunning(draft);
+  const p = player(draft, playerId);
+  if (p.eliminated) throw new DomainError('match_finished', 'player already out');
+  if (p.surrendered) throw new DomainError('already_surrendered', 'player already surrendered');
+
+  p.surrendered = true;
+  emit(ctx, { type: 'player_surrendered', player: playerId });
+
+  const team = teamOf(draft, playerId);
+  if (team) {
+    const allSurrendered = team.playerIds.every(
+      (pid) => draft.players[pid]!.surrendered || draft.players[pid]!.eliminated,
+    );
+    if (!allSurrendered) return; // the team keeps playing until both surrender
+    eliminateTeam(draft, ctx, team.id);
+    const otherTeam = Object.values(draft.teams ?? {}).find(
+      (t) => t.id !== team.id && !t.eliminated,
+    );
+    finishMatch(draft, ctx, otherTeam ? [...otherTeam.playerIds] : [], 'surrender');
+    return;
+  }
+
+  const wasActive = isActive(draft, playerId);
+  eliminatePlayer(draft, ctx, playerId);
+  const alive = draft.order.filter((pid) => !draft.players[pid]!.eliminated);
+  if (alive.length <= 1) {
+    finishMatch(draft, ctx, alive, 'surrender');
+    return;
+  }
+  if (wasActive) endTurn(draft, ctx);
+}
+
+/** Reconnect wait expired: the disconnected side loses immediately (docs/NETWORK.md). */
+function handleDisconnectLoss(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId): void {
+  requireRunning(draft);
+  const p = player(draft, playerId);
+  if (p.eliminated) return;
+  emit(ctx, { type: 'player_disconnected', player: playerId });
+
+  const team = teamOf(draft, playerId);
+  if (team) {
+    eliminateTeam(draft, ctx, team.id);
+    const otherTeam = Object.values(draft.teams ?? {}).find(
+      (t) => t.id !== team.id && !t.eliminated,
+    );
+    finishMatch(draft, ctx, otherTeam ? [...otherTeam.playerIds] : [], 'disconnect');
+    return;
+  }
+
+  eliminatePlayer(draft, ctx, playerId);
+  const winners = draft.order.filter((pid) => !draft.players[pid]!.eliminated);
+  finishMatch(draft, ctx, winners, 'disconnect');
+}
+
+/** «В бой» / timer: in 2v2 only marks this ally ready; combat starts when both are ready. */
+function markBattleReady(
   draft: Draft<MatchState>,
   ctx: Ctx,
   playerId: PlayerId,
-  reason: 'surrender' | 'disconnect',
+  timedOut: boolean,
 ): void {
+  requireRunning(draft);
+  if (!isActive(draft, playerId)) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
   const p = player(draft, playerId);
-  if (p.eliminated) throw new DomainError('match_finished', 'player already out');
-  if (reason === 'surrender') {
-    p.surrendered = true;
-    emit(ctx, { type: 'player_surrendered', player: playerId });
-  } else {
-    emit(ctx, { type: 'player_disconnected', player: playerId });
+  if (p.battleReady) return; // stale timer / duplicate press
+  if (timedOut) emit(ctx, { type: 'timer_expired', player: playerId });
+  if (draft.mode !== 'teams' || draft.activePlayers.length === 1) {
+    resolveCombat(draft, ctx);
+    return;
   }
-  for (const zone of p.zones) {
-    for (const slot of ['creature', 'building'] as const) {
-      const id = zone[slot];
-      if (id) {
-        instance(draft, id).location = 'removed';
-        zone[slot] = null;
-      }
-    }
-  }
-  if (p.companion) {
-    instance(draft, p.companion).location = 'removed';
-    p.companion = null;
-  }
-  p.eliminated = true;
-  emit(ctx, { type: 'player_eliminated', player: playerId });
-  const winners = draft.order.filter((pid) => !draft.players[pid]!.eliminated);
-  draft.status = 'finished';
-  draft.winners = winners;
-  draft.finishReason = reason;
-  emit(ctx, { type: 'match_finished', winners, reason });
+  p.battleReady = true;
+  emit(ctx, { type: 'battle_ready', player: playerId });
+  const allReady = draft.activePlayers.every((pid) => draft.players[pid]!.battleReady);
+  if (allReady) resolveCombat(draft, ctx);
 }
 
 function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
@@ -143,37 +191,29 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
         p.zones[inst.zone]![inst.slot] = null;
       }
       if (inst.location === 'companion') p.companion = null;
+      const from = inst.location === 'companion' ? 'companion' : 'field';
       inst.location = 'discard';
       inst.zone = null;
       inst.slot = null;
       p.discard.push(command.instanceId);
-      emit(ctx, { type: 'card_discarded', player: command.player, instanceId: command.instanceId, cardId: inst.cardId, from: 'field' });
+      emit(ctx, { type: 'card_discarded', player: command.player, instanceId: command.instanceId, cardId: inst.cardId, from });
       afterEffects(draft, ctx);
       return;
     }
-    case 'go_battle': {
-      requireActiveMain(draft, command.player);
-      resolveCombat(draft, ctx);
+    case 'go_battle':
+      markBattleReady(draft, ctx, command.player, false);
       return;
-    }
-    case 'time_expired': {
+    case 'time_expired':
       // Automatic transition sent by the adapter's timer state machine (docs/TECH.md).
-      requireActiveMain(draft, command.player);
-      emit(ctx, { type: 'timer_expired', player: command.player });
-      resolveCombat(draft, ctx);
+      markBattleReady(draft, ctx, command.player, true);
       return;
-    }
-    case 'surrender': {
-      requireRunning(draft);
-      finishByForfeit(draft, ctx, command.player, 'surrender');
+    case 'surrender':
+      handleSurrender(draft, ctx, command.player);
       return;
-    }
-    case 'disconnect_loss': {
+    case 'disconnect_loss':
       // Server-only command: the reconnect wait expired for this player (docs/NETWORK.md).
-      requireRunning(draft);
-      finishByForfeit(draft, ctx, command.player, 'disconnect');
+      handleDisconnectLoss(draft, ctx, command.player);
       return;
-    }
     default: {
       // Exhaustiveness guard: unknown command shapes are rejected, not thrown past the API.
       const exhaustive: never = command;

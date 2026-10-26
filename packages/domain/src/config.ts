@@ -3,6 +3,9 @@
 export interface GameConfig {
   startingLives: number;
   teamStartingLives: number;
+  teamSize: number;
+  minPlayers: number;
+  maxPlayers: number;
   deckSize: number;
   startingHandSize: number;
   mulliganCount: number;

@@ -48,13 +48,6 @@ export function inPlayInstanceIds(draft: Draft<MatchState>): string[] {
   return ids;
 }
 
-/** The single opponent in a 2-player match (MVP); 3–4 players arrive in stage 5. */
-export function opponentOf(draft: Draft<MatchState>, playerId: PlayerId): PlayerId {
-  const other = draft.order.find((id) => id !== playerId);
-  if (!other) throw new DomainError('invalid_setup', 'opponent not found');
-  return other;
-}
-
 /** Move an instance id between id lists of a player (hand/deck/discard). */
 export function moveId(from: string[], to: string[], id: string): void {
   const i = from.indexOf(id);

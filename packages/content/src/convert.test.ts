@@ -6,6 +6,9 @@ import { cards as generatedCards, catalog, deckPresets, heroes as generatedHeroe
 const config: GameConfig = {
   startingLives: 25,
   teamStartingLives: 50,
+  teamSize: 2,
+  minPlayers: 2,
+  maxPlayers: 4,
   deckSize: 40,
   startingHandSize: 5,
   mulliganCount: 1,

@@ -1,4 +1,5 @@
 import { Room } from './room';
+import { config } from './config';
 
 export { Room };
 
@@ -35,5 +36,6 @@ export default {
 /** Room code: exactly `lobbyCodeDigits` digits (docs/CONFIG.md). */
 function sanitizeCode(raw: string | null): string | null {
   if (!raw) return null;
-  return /^\d{4}$/.test(raw) ? raw : null;
+  const pattern = new RegExp(`^\\d{${config.lobbyCodeDigits}}$`);
+  return pattern.test(raw) ? raw : null;
 }

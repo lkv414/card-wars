@@ -17,6 +17,7 @@ export type RejectCode =
   | 'zone_not_frozen'
   | 'unfreeze_card_invalid'
   | 'already_flipped'
+  | 'already_surrendered'
   | 'floop_forbidden_first_turn'
   | 'deck_empty'
   | 'mulligan_unavailable'

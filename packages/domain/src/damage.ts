@@ -3,6 +3,28 @@ import { DomainError } from './errors';
 import type { Ctx } from './util';
 import { emit, instance, player } from './util';
 import type { CardInstance, MatchState, PlayerId } from './types';
+import { teamOf } from './zones';
+
+/** Lives live on the team in 2v2; both allies mirror the shared value (docs/RULES.md). */
+function currentLives(draft: Draft<MatchState>, playerId: PlayerId): number {
+  const team = teamOf(draft, playerId);
+  return team ? team.lives : player(draft, playerId).lives;
+}
+
+function maxLivesOf(draft: Draft<MatchState>, playerId: PlayerId): number {
+  const team = teamOf(draft, playerId);
+  return team ? team.maxLives : player(draft, playerId).maxLives;
+}
+
+function setLives(draft: Draft<MatchState>, playerId: PlayerId, lives: number): void {
+  const team = teamOf(draft, playerId);
+  if (team) {
+    team.lives = lives;
+    for (const pid of team.playerIds) draft.players[pid]!.lives = lives;
+  } else {
+    player(draft, playerId).lives = lives;
+  }
+}
 
 /** Damage to a creature: shield absorbs first (docs/RULES.md «Бой», «Щит»). Death is checked later in batch. */
 export function dealToCreature(
@@ -30,7 +52,7 @@ export function dealToCreature(
   });
 }
 
-/** Damage to a player's lives. Players have no shield. */
+/** Damage to a player's lives (shared team lives in 2v2). Players have no shield. */
 export function dealToPlayer(
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -39,8 +61,9 @@ export function dealToPlayer(
   sourceInstanceId: string | null,
 ): void {
   if (amount <= 0) return;
-  const p = player(draft, targetId);
-  p.lives -= amount;
+  player(draft, targetId);
+  const lives = currentLives(draft, targetId) - amount;
+  setLives(draft, targetId, lives);
   emit(ctx, {
     type: 'damage_dealt',
     sourceInstanceId,
@@ -50,7 +73,24 @@ export function dealToPlayer(
     absorbedByShield: 0,
     toTarget: amount,
   });
-  emit(ctx, { type: 'lives_changed', player: targetId, delta: -amount, lives: p.lives });
+  emit(ctx, { type: 'lives_changed', player: targetId, delta: -amount, lives });
+}
+
+/** Heal a player/team up to the cap; returns the amount actually restored. */
+export function healPlayer(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  targetId: PlayerId,
+  amount: number,
+): number {
+  if (amount <= 0) return 0;
+  player(draft, targetId);
+  const healed = Math.min(amount, maxLivesOf(draft, targetId) - currentLives(draft, targetId));
+  if (healed <= 0) return 0;
+  const lives = currentLives(draft, targetId) + healed;
+  setLives(draft, targetId, lives);
+  emit(ctx, { type: 'lives_changed', player: targetId, delta: healed, lives });
+  return healed;
 }
 
 /** Remove a card from its zone slot and put it into the discard pile. */

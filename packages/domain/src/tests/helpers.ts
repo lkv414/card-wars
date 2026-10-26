@@ -18,6 +18,9 @@ export const P2 = 'p2';
 export const defaultConfig: GameConfig = {
   startingLives: 25,
   teamStartingLives: 50,
+  teamSize: 2,
+  minPlayers: 2,
+  maxPlayers: 4,
   deckSize: 40,
   startingHandSize: 5,
   mulliganCount: 1,
@@ -104,6 +107,22 @@ export const cards: CardData[] = [
         trigger: 'on_death',
         effect: { op: 'deal_damage', target: { kind: 'each_creature_opponent' }, amount: 1 },
         text: 'При смерти — 1 урон всем существам противника',
+      },
+    ],
+  }),
+  card({
+    id: 'death-pick',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 1,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_death',
+        effect: { op: 'deal_damage', target: { kind: 'chosen_creature' }, amount: 1 },
+        text: 'При смерти — 1 урон выбранному существу',
       },
     ],
   }),

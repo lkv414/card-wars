@@ -39,6 +39,20 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
   }
 }
 
+/** Remove every member of a team from the game (docs/RULES.md «2 на 2»). */
+export function eliminateTeam(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  teamId: string,
+): void {
+  const team = draft.teams?.[teamId];
+  if (!team || team.eliminated) return;
+  team.eliminated = true;
+  for (const pid of team.playerIds) {
+    if (!draft.players[pid]!.eliminated) eliminatePlayer(draft, ctx, pid);
+  }
+}
+
 /** Remove a player's field cards and companion from the game (docs/RULES.md «Выбывание»). */
 export function eliminatePlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId): void {
   const p = player(draft, playerId);
@@ -63,6 +77,23 @@ export function eliminatePlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: Pl
 export function afterEffects(draft: Draft<MatchState>, ctx: Ctx): void {
   processDeaths(draft, ctx);
   if (draft.status === 'finished') return;
+
+  if (draft.teams) {
+    for (const team of Object.values(draft.teams)) {
+      if (!team.eliminated && team.lives <= 0) eliminateTeam(draft, ctx, team.id);
+    }
+    const aliveTeams = Object.values(draft.teams).filter((team) => !team.eliminated);
+    if (aliveTeams.length <= 1) {
+      finishMatch(
+        draft,
+        ctx,
+        aliveTeams.flatMap((team) => [...team.playerIds]),
+        'elimination',
+      );
+    }
+    return;
+  }
+
   const justEliminated: PlayerId[] = [];
   for (const pid of draft.order) {
     const p = draft.players[pid]!;

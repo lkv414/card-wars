@@ -58,6 +58,22 @@ describe('эффекты', () => {
     expect(res.events.some((e) => e.type === 'card_discarded' && e.player === P2 && e.from === 'hand')).toBe(true);
   });
 
+  it('автоматический триггер с выбранной целью не прерывает переход', () => {
+    let s = startedMatch();
+    s = deploy(s, P1, 'death-pick', 0);
+    const victim = s.players[P1]!.zones[0]!.creature!;
+    s = forceToHand(s, P1, 'spell-damage');
+    // on_death требует выбранную цель, но выбора нет — эффект пропускается,
+    // команда остаётся законной (иначе бой/ход абортируется).
+    const res = ok(s, {
+      type: 'play_card',
+      player: P1,
+      instanceId: handCardId(s, P1, 'spell-damage'),
+      choices: { creature: victim },
+    });
+    expect(res.state.players[P1]!.zones[0]!.creature).toBeNull();
+  });
+
   it('on_enters_play лечит соседей', () => {
     let s = startedMatch();
     s = deploy(s, P1, 'vanilla-swamp', 0);

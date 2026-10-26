@@ -7,6 +7,9 @@ import { viewFor } from './view';
 const deps = { config: {
   startingLives: 25,
   teamStartingLives: 50,
+  teamSize: 2,
+  minPlayers: 2,
+  maxPlayers: 4,
   deckSize: 40,
   startingHandSize: 5,
   mulliganCount: 1,
@@ -65,6 +68,40 @@ describe('viewFor', () => {
   });
 });
 
+describe('viewFor — 2 на 2', () => {
+  it('отдаёт режим, команды и обоих активных союзников', () => {
+    const { state } = createMatch(deps, {
+      players: [0, 1, 2, 3].map((i) => ({
+        id: `p${i + 1}`,
+        nickname: `Игрок ${i + 1}`,
+        heroId: deckPresets[i % 2]!.heroId,
+        deck: [...deckPresets[i % 2]!.deck],
+        lands: [...deckPresets[i % 2]!.lands],
+      })),
+      seed: 7,
+      mode: 'teams',
+      teamVariant: 'wall',
+    });
+    let s = state;
+    for (const pid of state.order) {
+      const res = applyCommand(s, { type: 'keep_hand', player: pid }, deps);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    const view = viewFor(deps, s, 'p1');
+    expect(view.mode).toBe('teams');
+    expect(view.teamVariant).toBe('wall');
+    expect(view.teams!['team-a']!.playerIds).toEqual(['p1', 'p2']);
+    expect(view.activePlayers).toEqual(['p1', 'p2']);
+    expect(view.players.p1!.teamId).toBe('team-a');
+    expect(view.players.p1!.lives).toBe(50);
+    expect(view.players.p1!.battleReady).toBe(false);
+
+    const json = JSON.stringify(view);
+    for (const id of s.players.p2!.hand) expect(json).not.toContain(`"${id}"`);
+  });
+});
+
 describe('journalLines', () => {
   it('формирует русские строки для ключевых событий', () => {
     const s = newMatch();
@@ -76,7 +113,7 @@ describe('journalLines', () => {
     const started = journalLines(deps, s, [{ type: 'match_started', players: [
       { id: 'p1', nickname: 'Бимо', heroId: 'hero-bimo' },
       { id: 'p2', nickname: 'Билли', heroId: 'hero-billy' },
-    ], firstPlayer: 'p1' }]);
+    ], firstPlayer: 'p1', mode: 'ffa', teamVariant: null, teams: null }]);
     expect(started[0]).toContain('Партия начата');
     expect(started[0]).toContain('Бимо');
     expect(started[0]).toContain('Билли');

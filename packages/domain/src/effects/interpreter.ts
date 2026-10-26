@@ -4,7 +4,8 @@ import { drawCards, discardTopDeck, opponentDiscardsRandom, returnFromDiscard } 
 import { finishMatch } from '../finish';
 import { cardOf, emit, instance, player } from '../util';
 import type { Ctx } from '../util';
-import { dealToCreature, dealToPlayer, killInstance } from '../damage';
+import { dealToCreature, dealToPlayer, healPlayer, killInstance } from '../damage';
+import { teamOf, opponentsOf } from '../zones';
 import { checkConditions, grantPermanentBonus } from './stats';
 import { resolveTargets } from './targets';
 import type { EffectSource } from './targets';
@@ -47,10 +48,7 @@ export function runEffect(
           inst.damage -= healed;
           if (healed > 0) emit(ctx, { type: 'creature_healed', instanceId: ref.instanceId, amount: healed });
         } else if (ref.kind === 'player') {
-          const p = player(draft, ref.playerId);
-          const healed = Math.min(effect.amount, p.maxLives - p.lives);
-          p.lives += healed;
-          if (healed > 0) emit(ctx, { type: 'lives_changed', player: ref.playerId, delta: healed, lives: p.lives });
+          healPlayer(draft, ctx, ref.playerId, effect.amount);
         }
       }
       return;
@@ -141,13 +139,12 @@ export function runEffect(
     }
     case 'win_if_opponents_deck_empty': {
       if (draft.status === 'finished') return;
-      const opponents = draft.order.filter(
-        (pid) => pid !== source.player && !draft.players[pid]!.eliminated,
-      );
+      const opponents = opponentsOf(draft, source.player);
       const allEmpty =
         opponents.length > 0 && opponents.every((pid) => draft.players[pid]!.deck.length === 0);
       if (allEmpty) {
-        finishMatch(draft, ctx, [source.player], 'elimination');
+        const team = teamOf(draft, source.player);
+        finishMatch(draft, ctx, team ? [...team.playerIds] : [source.player], 'elimination');
       }
       return;
     }
@@ -163,7 +160,14 @@ function runAbility(
 ): void {
   if (!ability.effect) return;
   if (!checkConditions(draft, ability.conditions, source.player)) return;
-  runEffect(draft, ctx, ability.effect, source, choices);
+  try {
+    runEffect(draft, ctx, ability.effect, source, choices);
+  } catch (error) {
+    // Automatic triggers (on_death, start_of_turn, auras) have no player to ask
+    // for a target: skip such effects instead of aborting the whole transition.
+    if (!choices && error instanceof DomainError && error.code === 'target_required') return;
+    throw error;
+  }
 }
 
 /** Fire a trigger for one specific in-play instance (on_enters_play, on_death, …). */
@@ -172,13 +176,14 @@ export function fireTriggerForInstance(
   ctx: Ctx,
   trigger: TriggerKind,
   instanceId: string,
+  choices?: CommandChoices,
 ): void {
   const inst = instance(draft, instanceId);
   const card = cardOf(ctx, inst);
   const source: EffectSource = { player: inst.controller, instanceId };
   for (const ability of card.abilities) {
     if (ability.kind !== 'passive' || ability.trigger !== trigger) continue;
-    runAbility(draft, ctx, ability, source, undefined);
+    runAbility(draft, ctx, ability, source, choices);
   }
 }
 
@@ -200,8 +205,12 @@ export function fireTriggerForPlayer(
 }
 
 /** Hero passive (docs/CARDS.md «Герои»); runs at the trigger point of its ability. */
-export function runHeroAbility(draft: Draft<MatchState>, ctx: Ctx, hero: HeroData): void {
-  const playerId = draft.activePlayer;
+export function runHeroAbility(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  hero: HeroData,
+  playerId: PlayerId,
+): void {
   const ability = hero.ability;
   if (ability.effect && ability.kind === 'passive' && ability.trigger === 'start_of_turn') {
     runAbility(draft, ctx, ability, { player: playerId, instanceId: null }, undefined);

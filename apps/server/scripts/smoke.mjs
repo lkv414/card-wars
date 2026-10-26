@@ -1,10 +1,12 @@
-// Stage-2 smoke: a full scripted match over real WebSockets against wrangler dev.
-// Two connections act as the "two browser tabs" (docs/TECH.md, этап 2).
+// Stage-5 smoke: a full scripted match over real WebSockets against wrangler dev.
+// Two connections act as the "two browser tabs" (docs/TECH.md, этапы 2/5):
+// lobby → ready → start → match → pause/reconnect → finish.
 import { cards } from '@card-wars/content';
 
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:8787';
 const WS_BASE = BASE.replace('http', 'ws');
 const CODE = String(Math.floor(1000 + Math.random() * 9000));
+const PROTOCOL_VERSION = 2;
 
 function connect(name) {
   const ws = new WebSocket(`${WS_BASE}/ws?code=${CODE}`);
@@ -47,23 +49,35 @@ const b = connect('Вкладка B');
 await a.ready;
 await b.ready;
 
-a.send({ t: 'join', code: CODE, nickname: 'Бимо', protocolVersion: 1 });
+a.send({ t: 'join', code: CODE, nickname: 'Бимо', protocolVersion: PROTOCOL_VERSION });
 const joinedA = await a.wait((m) => m.t === 'joined', 'A joined');
 assert(joinedA.you.isHost === true, 'первый вошедший — хост');
+assert(joinedA.room.slots.filter(Boolean).length === 1, 'в лобби один слот');
 
-b.send({ t: 'join', code: CODE, nickname: 'Билли', protocolVersion: 1 });
+b.send({ t: 'join', code: CODE, nickname: 'Билли', protocolVersion: PROTOCOL_VERSION });
 const joinedB = await b.wait((m) => m.t === 'joined', 'B joined');
 assert(joinedB.you.isHost === false, 'второй — не хост');
-await a.wait((m) => m.t === 'lobby' && m.room.players.length === 2, 'A видит обоих в лобби');
+const lobbyA = await a.wait(
+  (m) => m.t === 'lobby' && m.room.slots.filter(Boolean).length === 2,
+  'A видит обоих в лобби',
+);
+assert(lobbyA.room.slots.filter(Boolean).every((s) => s.deck !== null), 'колоды по умолчанию видны');
 
-a.send({ t: 'start', player: joinedA.you.playerId });
+a.send({ t: 'lobby_command', command: { type: 'ready', ready: true } });
+b.send({ t: 'lobby_command', command: { type: 'ready', ready: true } });
+await a.wait(
+  (m) => m.t === 'lobby' && m.room.slots.filter(Boolean).every((s) => s.ready),
+  'все готовы',
+);
+a.send({ t: 'lobby_command', command: { type: 'start' } });
+
 const snapA1 = await a.wait((m) => m.t === 'snapshot' && m.view.status === 'mulligan', 'снапшот муллигана у A');
 const snapB1 = await b.wait((m) => m.t === 'snapshot' && m.view.status === 'mulligan', 'снапшот муллигана у B');
 assert(snapB1.view.players[joinedA.you.playerId].handCount === 5, 'рука A = 5 (только счётчик)');
+assert(snapA1.view.mode === 'ffa' && snapA1.view.activePlayers.length === 1, 'режим FFA, один активный');
 
 // утечка: id карт руки A не встречаются в виде B
 const jsonB = JSON.stringify(snapB1);
-// возьмём реальный вид A: его собственная рука
 for (const card of snapA1.view.myHand) {
   assert(!jsonB.includes(card.instanceId), `карта ${card.instanceId} руки A не утекла к B`);
 }
@@ -75,9 +89,12 @@ await b.wait((m) => m.t === 'snapshot' && m.view.status === 'running', 'матч
 assert(snapA2.view.turn === 1 && snapA2.view.activePlayer === joinedA.you.playerId, 'первый ход у A');
 assert(snapA2.view.journal.length > 0, 'журнал заполнен');
 
-// A играет существо из руки (любое существо в руке)
-const handCard = snapA2.view.myHand.find((c) => cards.find((x) => x.id === c.cardId)?.type === 'creature');
-assert(Boolean(handCard), 'в руке A есть существо');
+// A играет существо из руки (доступное по стоимости и землям — пресет с синими землями)
+const handCard = snapA2.view.myHand.find((c) => {
+  const meta = cards.find((x) => x.id === c.cardId);
+  return meta?.type === 'creature' && meta.cost <= 2;
+});
+assert(Boolean(handCard), 'в руке A есть доступное существо');
 const itsCost = cards.find((x) => x.id === handCard.cardId).cost;
 a.send({ t: 'command', command: { type: 'play_card', player: joinedA.you.playerId, instanceId: handCard.instanceId, zone: 0 } });
 const snapA3 = await a.wait((m) => m.t === 'snapshot' && m.view.players[joinedA.you.playerId].zones[0].creature, 'существо в зоне 1');
@@ -87,18 +104,28 @@ assert(snapA3.view.players[joinedA.you.playerId].actions === 2 - itsCost, 'де�
 b.send({ t: 'command', command: { type: 'go_battle', player: joinedA.you.playerId } });
 await b.wait((m) => m.t === 'error' && m.message.includes('другого игрока'), 'команда за другого отклонена');
 
-// A заканчивает ход → ход B; A жмёт «Поторопить»
+// A заканчивает ход → ход B; A жмёт «Поторопить» на таймер B
 a.send({ t: 'command', command: { type: 'go_battle', player: joinedA.you.playerId } });
 const snapB2 = await b.wait((m) => m.t === 'snapshot' && m.view.activePlayer === joinedB.you.playerId, 'ход перешёл к B');
 assert(snapB2.view.turn === 2, 'ход 2');
-a.send({ t: 'hurry', player: joinedA.you.playerId });
-const timerMsg = await a.wait((m) => m.t === 'timer' && m.timer.running, 'таймер запущен');
-assert(timerMsg.timer.remainingMs > 80_000, `таймер ~90 с (${Math.round(timerMsg.timer.remainingMs / 1000)} с)`);
+a.send({ t: 'hurry', player: joinedA.you.playerId, target: joinedB.you.playerId });
+const timerMsg = await a.wait(
+  (m) => m.t === 'timer' && m.timer.timers.some((t) => t.player === joinedB.you.playerId && t.running),
+  'таймер B запущен',
+);
+const firstRemaining = timerMsg.timer.timers.find((t) => t.player === joinedB.you.playerId).remainingMs;
+assert(firstRemaining > 80_000, `таймер ~90 с (${Math.round(firstRemaining / 1000)} с)`);
 
 // спам «Поторопить» ускоряет
-a.send({ t: 'hurry', player: joinedA.you.playerId });
-const timer2 = await a.wait((m) => m.t === 'timer' && m.timer !== timerMsg.timer, 'повторное ускорение');
-assert(timer2.timer.remainingMs <= timerMsg.timer.remainingMs, 'остаток не сброшен');
+a.send({ t: 'hurry', player: joinedA.you.playerId, target: joinedB.you.playerId });
+const timer2 = await a.wait(
+  (m) =>
+    m.t === 'timer' &&
+    m.timer.timers.some((t) => t.player === joinedB.you.playerId && t.running),
+  'повторное ускорение',
+);
+const secondRemaining = timer2.timer.timers.find((t) => t.player === joinedB.you.playerId).remainingMs;
+assert(secondRemaining <= firstRemaining, 'остаток не сброшен');
 
 // обрыв B: партия на паузу, реконнект по токену — пауза снята
 b.ws.close();
@@ -106,7 +133,7 @@ const pausedSnap = await a.wait((m) => m.t === 'snapshot' && m.timer?.paused ===
 assert(pausedSnap.view.players[joinedB.you.playerId].connected === false, 'B помечен отключённым');
 const b2 = connect('Вкладка B (возврат)');
 await b2.ready;
-b2.send({ t: 'join', code: CODE, nickname: 'Билли', token: joinedB.you.token, protocolVersion: 1 });
+b2.send({ t: 'join', code: CODE, nickname: 'Билли', token: joinedB.you.token, protocolVersion: PROTOCOL_VERSION });
 await b2.wait((m) => m.t === 'joined', 'B переподключился по токену');
 const resumedA = await a.wait((m) => m.t === 'snapshot' && m.timer?.paused === false, 'пауза снята после возврата');
 assert(resumedA.view.players[joinedB.you.playerId].connected === true, 'B снова на связи');
@@ -116,7 +143,7 @@ b2.send({ t: 'command', command: { type: 'surrender', player: joinedB.you.player
 const finA = await a.wait((m) => m.t === 'snapshot' && m.view.status === 'finished', 'партия завершена (A)');
 assert(finA.view.winners.includes(joinedA.you.playerId), 'победитель — A');
 assert(finA.view.finishReason === 'surrender', 'причина — сдача');
-await b.wait((m) => m.t === 'snapshot' && m.view.status === 'finished', 'партия завершена (B)');
+await b2.wait((m) => m.t === 'snapshot' && m.view.status === 'finished', 'партия завершена (B)');
 
-console.log('\nSMOKE PASS — партия в «двух вкладках» сыграна полностью');
+console.log('\nSMOKE PASS — лобби и партия в «двух вкладках» сыграны полностью');
 process.exit(0);

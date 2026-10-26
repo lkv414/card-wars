@@ -3,7 +3,8 @@ import { drawCards } from '../draw';
 import { fireTriggerForPlayer, runHeroAbility } from '../effects/interpreter';
 import type { Ctx } from '../util';
 import { emit, player } from '../util';
-import type { MatchState } from '../types';
+import type { MatchState, PlayerId } from '../types';
+import { teamOf } from '../zones';
 
 /** The last non-eliminated player in seating order — the only one attacking in round 1 (docs/RULES.md). */
 export function lastAliveInOrder(draft: Draft<MatchState>): string {
@@ -15,11 +16,8 @@ export function lastAliveInOrder(draft: Draft<MatchState>): string {
 }
 
 /** Untap + automatic draw phase + hero ability + start-of-turn triggers + actions. */
-export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
-  const pid = draft.activePlayer;
+function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): void {
   const p = player(draft, pid);
-  draft.turn += 1;
-  emit(ctx, { type: 'turn_started', player: pid, turn: draft.turn, round: draft.round });
 
   // Подготовка: own field cards and companion become ready again.
   for (const zone of p.zones) {
@@ -35,7 +33,7 @@ export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
 
   // Hero passive (e.g. an extra free draw), then card start-of-turn triggers.
   const hero = ctx.catalog.getHero(p.heroId);
-  if (hero) runHeroAbility(draft, ctx, hero);
+  if (hero) runHeroAbility(draft, ctx, hero, pid);
   fireTriggerForPlayer(draft, ctx, 'start_of_turn', pid);
 
   draft.phase = 'main';
@@ -43,23 +41,49 @@ export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   p.actions = ctx.config.actionsPerTurn;
 }
 
-/** Burn leftovers, drop this-turn buffs and spell visuals, pass to the next alive player. */
+/**
+ * Start a turn for the active set: one player in FFA, both allies in 2v2.
+ * Each active player gets their own preparation, draw and action pool.
+ */
+export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
+  draft.turn += 1;
+  for (const pid of draft.order) draft.players[pid]!.battleReady = false;
+  for (const pid of draft.activePlayers) {
+    emit(ctx, { type: 'turn_started', player: pid, turn: draft.turn, round: draft.round });
+    startPlayerTurn(draft, ctx, pid);
+  }
+  draft.phase = 'main';
+}
+
+/** Burn leftovers, drop this-turn buffs and spell visuals, pass to the next team/player. */
 export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.tempBuffs = [];
   draft.castSpells = [];
-  player(draft, draft.activePlayer).actions = 0;
+  for (const pid of draft.activePlayers) player(draft, pid).actions = 0;
 
-  const currentIndex = draft.order.indexOf(draft.activePlayer);
-  let nextIndex = currentIndex;
+  const current = draft.activePlayers;
+  const currentTeamId = draft.players[current[0]!]!.teamId;
+  const lastSeat = Math.max(...current.map((pid) => draft.order.indexOf(pid)));
+  let nextPid: PlayerId | null = null;
+  let wrapped = false;
+
   for (let step = 1; step <= draft.order.length; step++) {
-    const candidate = (currentIndex + step) % draft.order.length;
-    const pid = draft.order[candidate]!;
-    if (!draft.players[pid]!.eliminated) {
-      nextIndex = candidate;
-      break;
-    }
+    const index = (lastSeat + step) % draft.order.length;
+    const pid = draft.order[index]!;
+    const p = draft.players[pid]!;
+    if (p.eliminated) continue;
+    if (currentTeamId !== null && p.teamId === currentTeamId) continue;
+    nextPid = pid;
+    wrapped = index <= lastSeat;
+    break;
   }
-  if (nextIndex <= currentIndex) draft.round += 1;
-  draft.activePlayer = draft.order[nextIndex]!;
+  if (!nextPid) return; // no opponents left; the match is finished elsewhere
+
+  if (wrapped) draft.round += 1;
+  const nextTeam = teamOf(draft, nextPid);
+  draft.activePlayers = nextTeam
+    ? nextTeam.playerIds.filter((pid) => !draft.players[pid]!.eliminated)
+    : [nextPid];
+  draft.activePlayer = draft.activePlayers[0]!;
   startTurn(draft, ctx);
 }

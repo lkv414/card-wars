@@ -53,8 +53,12 @@ describe('protocol schemas', () => {
     const view = PlayerViewSchema.parse({
       status: 'running',
       phase: 'main',
+      mode: 'ffa',
+      teamVariant: null,
+      teams: null,
       turn: 1,
       round: 1,
+      activePlayers: ['p1'],
       activePlayer: 'p1',
       order: ['p1', 'p2'],
       me: 'p1',
@@ -66,6 +70,12 @@ describe('protocol schemas', () => {
       journal: [],
     });
     expect(view.me).toBe('p1');
+
+    const lobby = ClientMessageSchema.safeParse({
+      t: 'lobby_command',
+      command: { type: 'set_mode', mode: { kind: 'teams', variant: 'wall' } },
+    });
+    expect(lobby.success).toBe(true);
     const msg = ServerMessageSchema.safeParse({
       t: 'events',
       events: [{ type: 'turn_started', player: 'p1', turn: 1, round: 1 }],

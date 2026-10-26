@@ -24,8 +24,18 @@ export function journalLines(deps: DomainDeps, state: MatchState, events: GameEv
 
 function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): string | null {
   switch (event.type) {
-    case 'match_started':
-      return `Партия начата: ${event.players.map((p) => `${p.nickname} (${deps.catalog.getHero(p.heroId)?.name ?? p.heroId})`).join(' против ')}. Первым ходит ${event.firstPlayer === state.order[0] ? nick(state, event.firstPlayer) : nick(state, event.firstPlayer)}`;
+    case 'match_started': {
+      const mode =
+        event.mode === 'teams'
+          ? event.teamVariant === 'wall'
+            ? ' (2 на 2, стенка)'
+            : ' (2 на 2, соседи)'
+          : '';
+      const roster = event.players
+        .map((p) => `${p.nickname} (${deps.catalog.getHero(p.heroId)?.name ?? p.heroId})`)
+        .join(', ');
+      return `Партия начата${mode}: ${roster}. Первым ходит ${nick(state, event.firstPlayer)}`;
+    }
     case 'mulligan_made':
       return `${nick(state, event.player)} сделал муллиган`;
     case 'mulligan_kept':
@@ -41,6 +51,10 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
     case 'card_played': {
       const replaced = event.replacedInstanceId ? ' (замена)' : '';
       return `${nick(state, event.player)} играет ${cardName(deps, event.cardId)} в зону ${event.zone + 1}${replaced}`;
+    }
+    case 'companion_played': {
+      const replaced = event.replacedInstanceId ? ' (замена)' : '';
+      return `${nick(state, event.player)} разыгрывает парную карту ${cardName(deps, event.cardId)}${replaced}`;
     }
     case 'spell_cast':
       return `${nick(state, event.player)} читает заклинание ${cardName(deps, event.cardId)}`;
@@ -67,7 +81,9 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
     case 'creature_destroyed':
       return `${cardName(deps, event.cardId)} уничтожено и уходит в сброс`;
     case 'card_discarded':
-      return `${nick(state, event.player)} сбрасывает ${cardName(deps, event.cardId)} (из ${event.from === 'hand' ? 'руки' : event.from === 'deck' ? 'колоды' : 'поля'})`;
+      return `${nick(state, event.player)} сбрасывает ${cardName(deps, event.cardId)} (из ${
+        event.from === 'hand' ? 'руки' : event.from === 'deck' ? 'колоды' : event.from === 'companion' ? 'парной зоны' : 'поля'
+      })`;
     case 'card_returned':
       return `${nick(state, event.player)} возвращает ${cardName(deps, event.cardId)} из сброса в руку`;
     case 'land_changed': {
@@ -80,6 +96,8 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
       return `${cardName(deps, event.cardId)}: щит ${event.shield}`;
     case 'card_moved':
       return `${cardName(deps, state.instances[event.instanceId]?.cardId ?? '')} перемещается: зона ${event.fromZone + 1} → ${event.toZone + 1}`;
+    case 'battle_ready':
+      return `${nick(state, event.player)} готов к бою`;
     case 'timer_expired':
       return `время хода ${nick(state, event.player)} истекло — автоматический бой`;
     case 'player_eliminated':

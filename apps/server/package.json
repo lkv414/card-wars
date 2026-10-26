@@ -7,7 +7,8 @@
     "deploy": "wrangler deploy",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:bots": "node scripts/bots-smoke.mjs"
   },
   "dependencies": {
     "@card-wars/application": "workspace:*",

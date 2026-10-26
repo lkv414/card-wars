@@ -1,7 +1,9 @@
-// Sparring bot for visual checks: joins as the host, starts when a second
-// player arrives, keeps its hand, then idles holding the match open.
+// Sparring client for visual checks: joins the room, marks itself ready,
+// keeps its hand and ends its turns automatically. The actual game logic and
+// bot opponents live on the server (docs/NETWORK.md «Боты»).
 const CODE = process.argv[2] ?? '3141';
 const BASE = process.env.SMOKE_BASE ?? 'ws://127.0.0.1:8787/ws';
+const PROTOCOL_VERSION = 2;
 
 const ws = new WebSocket(`${BASE}?code=${CODE}`);
 const queue = [];
@@ -25,24 +27,36 @@ const wait = (predicate, label, timeoutMs = 240000) =>
   });
 
 const you = await new Promise((resolve, reject) => {
-  ws.addEventListener('open', () => send({ t: 'join', code: CODE, nickname: 'Спарринг-бот', protocolVersion: 1 }));
+  ws.addEventListener('open', () =>
+    send({ t: 'join', code: CODE, nickname: 'Спарринг-бот', protocolVersion: PROTOCOL_VERSION }),
+  );
   ws.addEventListener('error', reject);
   wait((m) => m.t === 'joined', 'joined').then((m) => resolve(m.you));
 });
 
 console.log(`bot joined room ${CODE} as ${you.playerId} (host=${you.isHost}); waiting for a partner…`);
-await wait((m) => m.t === 'lobby' && m.room.players.length === 2, 'partner');
-send({ t: 'start', player: you.playerId });
-await wait((m) => m.t === 'snapshot' && m.view.status === 'mulligan', 'match started');
-send({ t: 'command', command: { type: 'keep_hand', player: you.playerId } });
-console.log('match started, bot kept hand; ending its turns automatically');
+await wait(
+  (m) => m.t === 'lobby' && m.room.slots.filter(Boolean).length >= 2,
+  'partner',
+);
+send({ t: 'lobby_command', command: { type: 'ready', ready: true } });
+console.log('partner found; ready. Waiting for the host to start…');
 
-// Игровой цикл: на своём ходу в основную фазу бот отправляет «В бой».
+let keptHand = false;
 let mainTicks = 0;
 const loop = setInterval(() => {
   const snapshot = [...queue].reverse().find((m) => m.t === 'snapshot');
-  if (!snapshot || snapshot.view.status !== 'running') return;
-  if (snapshot.view.activePlayer === you.playerId && snapshot.view.phase === 'main') {
+  if (!snapshot) return;
+
+  if (snapshot.view.status === 'mulligan' && !keptHand) {
+    keptHand = true;
+    send({ t: 'command', command: { type: 'keep_hand', player: you.playerId } });
+    console.log('kept hand');
+    return;
+  }
+  if (snapshot.view.status !== 'running') return;
+
+  if (snapshot.view.activePlayers.includes(you.playerId) && snapshot.view.phase === 'main') {
     mainTicks++;
     if (mainTicks >= 2) {
       mainTicks = 0;
@@ -52,6 +66,7 @@ const loop = setInterval(() => {
     mainTicks = 0;
   }
 }, 900);
+
 setTimeout(() => {
   clearInterval(loop);
   process.exit(0);

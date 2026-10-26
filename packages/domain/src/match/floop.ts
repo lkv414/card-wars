@@ -6,6 +6,7 @@ import type { CommandChoices } from '../commands';
 import type { Ctx } from '../util';
 import { cardOf, emit, instance, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
+import { isActive } from '../zones';
 
 /**
  * Floop: turn (tap) a card and run its floop ability (docs/RULES.md «Ход игрока»).
@@ -21,7 +22,10 @@ export function handleFloop(
 ): void {
   if (draft.status === 'finished') throw new DomainError('match_finished', 'match is finished');
   if (draft.status !== 'running') throw new DomainError('match_not_running', 'match is not running');
-  if (draft.activePlayer !== playerId) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (!isActive(draft, playerId)) throw new DomainError('not_your_turn', `not ${playerId}'s turn`);
+  if (draft.players[playerId]!.battleReady) {
+    throw new DomainError('wrong_phase', 'player is ready for battle');
+  }
   if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
 
   const p = player(draft, playerId);
@@ -38,9 +42,12 @@ export function handleFloop(
     throw new DomainError('card_has_no_floop', `card ${card.id} has no flop ability`);
   }
 
-  // Первый игрок в самый первый ход не флипает (docs/RULES.md «Подготовка партии»).
-  if (draft.round === 1 && draft.turn <= draft.order.length && draft.activePlayer === draft.order[0]) {
-    throw new DomainError('floop_forbidden_first_turn', 'first player cannot flop in the first turn');
+  // FFA: the first player cannot floop in their first turn; 2v2: no floops in round 1.
+  // (docs/RULES.md «Подготовка партии», «Ход команды»).
+  const firstRoundForbidden =
+    draft.round === 1 && (draft.mode === 'teams' || draft.activePlayer === draft.order[0]);
+  if (firstRoundForbidden) {
+    throw new DomainError('floop_forbidden_first_turn', 'floop is forbidden in the first round');
   }
 
   const paidActions = floops.reduce((sum, a) => sum + (a.floopCost ?? 0), 0);

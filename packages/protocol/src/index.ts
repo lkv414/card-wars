@@ -1,10 +1,14 @@
 import { z } from 'zod';
 
+export { CONFIG } from './config';
+
 // Wire protocol between the client and the Room Durable Object (docs/TECH.md «Протокол»).
 // Schemas are the single source of truth for the wire shapes; application and
 // client use the inferred types. zod lives only here and at the adapters.
+// Rule constants (deck size, copy limit, …) are validated on the server against
+// CONFIG, not duplicated in these schemas.
 
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 // --- Personal view (docs/NETWORK.md «Персональный вид состояния») ---
 
@@ -36,6 +40,20 @@ export const DiscardCardViewSchema = z.object({
   cardId: z.string(),
 });
 
+export const SpellViewSchema = z.object({
+  instanceId: z.string(),
+  cardId: z.string(),
+  player: z.string(),
+});
+
+export const TeamViewSchema = z.object({
+  id: z.string(),
+  playerIds: z.array(z.string()),
+  lives: z.number(),
+  maxLives: z.number(),
+  eliminated: z.boolean(),
+});
+
 export const PlayerPublicViewSchema = z.object({
   id: z.string(),
   nickname: z.string(),
@@ -49,22 +67,29 @@ export const PlayerPublicViewSchema = z.object({
   deckCount: z.number(),
   handCount: z.number(),
   discard: z.array(DiscardCardViewSchema),
+  companion: CardViewSchema.nullable(),
   surrendered: z.boolean(),
   eliminated: z.boolean(),
+  teamId: z.string().nullable(),
+  battleReady: z.boolean(),
   mulliganDecision: z.enum(['keep', 'mulligan']).nullable(),
 });
 
 export const PlayerViewSchema = z.object({
   status: z.enum(['mulligan', 'running', 'finished']),
   phase: z.enum(['draw', 'main', 'combat']),
+  mode: z.enum(['ffa', 'teams']),
+  teamVariant: z.enum(['neighbors', 'wall']).nullable(),
+  teams: z.record(z.string(), TeamViewSchema).nullable(),
   turn: z.number(),
   round: z.number(),
+  activePlayers: z.array(z.string()),
   activePlayer: z.string(),
   order: z.array(z.string()),
   me: z.string(),
   players: z.record(z.string(), PlayerPublicViewSchema),
   myHand: z.array(DiscardCardViewSchema),
-  castSpells: z.array(DiscardCardViewSchema),
+  castSpells: z.array(SpellViewSchema),
   winners: z.array(z.string()).nullable(),
   finishReason: z.enum(['elimination', 'surrender', 'disconnect']).nullable(),
   journal: z.array(z.string()),
@@ -74,10 +99,12 @@ export type LandView = z.infer<typeof LandViewSchema>;
 export type CardView = z.infer<typeof CardViewSchema>;
 export type ZoneView = z.infer<typeof ZoneViewSchema>;
 export type DiscardCardView = z.infer<typeof DiscardCardViewSchema>;
+export type SpellView = z.infer<typeof SpellViewSchema>;
+export type TeamView = z.infer<typeof TeamViewSchema>;
 export type PlayerPublicView = z.infer<typeof PlayerPublicViewSchema>;
 export type PlayerView = z.infer<typeof PlayerViewSchema>;
 
-// --- Commands (mirror of the domain Command union; adapter validates then forwards) ---
+// --- Match commands (mirror of the domain Command union; adapter validates then forwards) ---
 
 export const CommandChoicesSchema = z.object({
   creature: z.string().optional(),
@@ -120,33 +147,77 @@ export const CommandSchema = z.discriminatedUnion('type', [
 ]);
 
 export type Command = z.infer<typeof CommandSchema>;
+export type CommandChoices = z.infer<typeof CommandChoicesSchema>;
 
-// --- Lobby ---
+// --- Lobby (docs/COMMANDS.md «Лобби») ---
 
-export const LobbyPlayerSchema = z.object({
+export const LobbyDeckSchema = z.object({
+  heroId: z.string(),
+  lands: z.array(z.string()).max(16),
+  cards: z.array(z.string()).max(200),
+});
+
+export const LobbyModeSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('ffa') }),
+  z.object({ kind: z.literal('teams'), variant: z.enum(['neighbors', 'wall']) }),
+]);
+
+export const LobbySlotSchema = z.object({
   id: z.string(),
   nickname: z.string(),
   connected: z.boolean(),
+  ready: z.boolean(),
+  isBot: z.boolean(),
+  deck: LobbyDeckSchema.nullable(),
 });
 
 export const LobbyViewSchema = z.object({
   code: z.string(),
   host: z.string().nullable(),
-  players: z.array(LobbyPlayerSchema),
+  mode: LobbyModeSchema,
+  hidden: z.boolean(),
+  slots: z.array(LobbySlotSchema.nullable()),
+  minPlayers: z.number(),
+  maxPlayers: z.number(),
   started: z.boolean(),
 });
 
+export type LobbyDeck = z.infer<typeof LobbyDeckSchema>;
+export type LobbyMode = z.infer<typeof LobbyModeSchema>;
+export type LobbySlot = z.infer<typeof LobbySlotSchema>;
 export type LobbyView = z.infer<typeof LobbyViewSchema>;
 
-// --- Timer ---
+export const LobbyCommandSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('ready'), ready: z.boolean() }),
+  z.object({ type: z.literal('set_deck'), deck: LobbyDeckSchema }),
+  z.object({ type: z.literal('set_mode'), mode: LobbyModeSchema }),
+  z.object({ type: z.literal('set_hidden'), hidden: z.boolean() }),
+  z.object({ type: z.literal('add_bot') }),
+  z.object({ type: z.literal('remove_bot'), player: z.string() }),
+  z.object({ type: z.literal('kick'), player: z.string() }),
+  z.object({ type: z.literal('transfer_host'), player: z.string() }),
+  z.object({ type: z.literal('move_player'), player: z.string(), seat: z.number() }),
+  z.object({ type: z.literal('start') }),
+  z.object({ type: z.literal('leave') }),
+]);
 
-export const TimerInfoSchema = z.object({
+export type LobbyCommand = z.infer<typeof LobbyCommandSchema>;
+
+// --- Timer (per active player in 2v2 — docs/NETWORK.md «Таймеры») ---
+
+export const TimerSlotSchema = z.object({
+  player: z.string(),
   running: z.boolean(),
-  paused: z.boolean(),
   remainingMs: z.number(),
-  serverNowMs: z.number(),
 });
 
+export const TimerInfoSchema = z.object({
+  paused: z.boolean(),
+  serverNowMs: z.number(),
+  timers: z.array(TimerSlotSchema),
+});
+
+export type TimerSlotInfo = z.infer<typeof TimerSlotSchema>;
 export type TimerInfo = z.infer<typeof TimerInfoSchema>;
 
 // --- Wire messages ---
@@ -158,10 +229,12 @@ export const ClientMessageSchema = z.discriminatedUnion('t', [
     nickname: z.string().min(1).max(20),
     token: z.string().optional(),
     protocolVersion: z.number(),
+    /** «Создать лобби»: сервер откажет, если комната с таким кодом уже существует. */
+    create: z.boolean().optional(),
   }),
-  z.object({ t: z.literal('start'), player: z.string() }),
+  z.object({ t: z.literal('lobby_command'), command: LobbyCommandSchema }),
   z.object({ t: z.literal('command'), command: CommandSchema }),
-  z.object({ t: z.literal('hurry'), player: z.string() }),
+  z.object({ t: z.literal('hurry'), player: z.string(), target: z.string() }),
 ]);
 
 export type ClientMessage = z.infer<typeof ClientMessageSchema>;

@@ -1,9 +1,10 @@
 import type { Draft } from 'immer';
 import { DomainError } from '../errors';
-import { instance, opponentOf, player } from '../util';
+import { instance, player } from '../util';
 import type { Ctx } from '../util';
 import type { CommandChoices } from '../commands';
 import type { MatchState, PlayerId, TargetSpec } from '../types';
+import { mirrorZoneIndex, opponentZoneFor, opponentsOf } from '../zones';
 
 export type TargetRef =
   | { kind: 'creature'; instanceId: string }
@@ -31,7 +32,6 @@ export function resolveTargets(
 ): TargetRef[] {
   const src = source.instanceId ? instance(draft, source.instanceId) : null;
   const srcZone = src?.zone ?? null;
-  const opponent = opponentOf(draft, source.player);
 
   switch (spec.kind) {
     case 'this_creature':
@@ -45,8 +45,9 @@ export function resolveTargets(
     }
     case 'this_lane_opponent_creature': {
       if (srcZone === null) return [];
-      const mirrored = mirrorZoneIndex(srcZone, player(draft, source.player).zones.length);
-      const id = player(draft, opponent).zones[mirrored]?.creature;
+      const target = opponentZoneFor(draft, source.player, srcZone);
+      if (!target) return [];
+      const id = player(draft, target.player).zones[target.zone]?.creature;
       return id ? [{ kind: 'creature', instanceId: id }] : [];
     }
     case 'adjacent_creature': {
@@ -63,7 +64,9 @@ export function resolveTargets(
     case 'each_creature_yours':
       return creaturesOf(draft, source.player).map((id) => ({ kind: 'creature' as const, instanceId: id }));
     case 'each_creature_opponent':
-      return creaturesOf(draft, opponent).map((id) => ({ kind: 'creature' as const, instanceId: id }));
+      return opponentsOf(draft, source.player).flatMap((pid) =>
+        creaturesOf(draft, pid).map((id) => ({ kind: 'creature' as const, instanceId: id })),
+      );
     case 'each_creature':
       return draft.order
         .flatMap((pid) => creaturesOf(draft, pid))
@@ -83,7 +86,8 @@ export function resolveTargets(
         throw new DomainError('target_required', 'chosen_opponent_creature requires choices.creature');
       }
       const inst = instance(draft, id);
-      if (inst.location !== 'field' || inst.controller === source.player || slotIsNotCreature(inst)) {
+      const isOpponent = opponentsOf(draft, source.player).includes(inst.controller);
+      if (inst.location !== 'field' || !isOpponent || slotIsNotCreature(inst)) {
         throw new DomainError('invalid_choice', `instance ${id} is not an opponent field creature`);
       }
       return [{ kind: 'creature', instanceId: id }];
@@ -91,7 +95,7 @@ export function resolveTargets(
     case 'chosen_opponent': {
       const pid = choices?.opponent;
       if (!pid) throw new DomainError('target_required', 'chosen_opponent requires choices.opponent');
-      if (pid === source.player || !draft.players[pid]) {
+      if (!opponentsOf(draft, source.player).includes(pid)) {
         throw new DomainError('invalid_choice', `player ${pid} is not an opponent`);
       }
       return [{ kind: 'player', playerId: pid }];
@@ -114,7 +118,4 @@ function slotIsNotCreature(inst: { slot: string | null }): boolean {
   return inst.slot !== 'creature';
 }
 
-/** Mirror pairing (docs/RULES.md «Зоны»): zone i faces zone n-1-i of the opponent. */
-export function mirrorZoneIndex(zone: number, zoneCount: number): number {
-  return zoneCount - 1 - zone;
-}
+export { mirrorZoneIndex };

@@ -109,6 +109,12 @@ export type MatchStatus = 'mulligan' | 'running' | 'finished';
 
 export type Phase = 'draw' | 'main' | 'combat';
 
+/** FFA 2–4 or two teams of two (docs/RULES.md «Зоны»). */
+export type MatchMode = 'ffa' | 'teams';
+
+/** 2v2 seating variant: allies sit opposite or next to each other. */
+export type TeamVariant = 'neighbors' | 'wall';
+
 export type Location = 'deck' | 'hand' | 'field' | 'discard' | 'companion' | 'removed';
 
 export type FinishReason = 'elimination' | 'surrender' | 'disconnect';
@@ -146,6 +152,7 @@ export interface PlayerState {
   id: PlayerId;
   nickname: string;
   heroId: string;
+  /** In team mode both allies carry the team's shared lives (docs/RULES.md «2 на 2»). */
   lives: number;
   maxLives: number;
   deck: string[];
@@ -157,6 +164,18 @@ export interface PlayerState {
   actions: number;
   mulligansUsed: number;
   surrendered: boolean;
+  eliminated: boolean;
+  teamId: string | null;
+  /** 2v2 team turn: this ally has pressed «В бой» or their timer expired. */
+  battleReady: boolean;
+}
+
+export interface TeamState {
+  id: string;
+  /** Seating order within the team (determines the half of the wall row). */
+  playerIds: PlayerId[];
+  lives: number;
+  maxLives: number;
   eliminated: boolean;
 }
 
@@ -170,9 +189,15 @@ export interface TempBuff {
 export interface MatchState {
   status: MatchStatus;
   phase: Phase;
+  mode: MatchMode;
+  teamVariant: TeamVariant | null;
+  teams: Record<string, TeamState> | null;
   players: Record<PlayerId, PlayerState>;
   /** Seating order; also the turn order. */
   order: PlayerId[];
+  /** Players acting in the current turn: one in FFA, both allies in 2v2. */
+  activePlayers: PlayerId[];
+  /** First active player (display/backward-compatible; use activePlayers for legality). */
   activePlayer: PlayerId;
   turn: number;
   round: number;

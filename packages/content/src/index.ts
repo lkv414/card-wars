@@ -20,6 +20,9 @@ import { buildPreset } from './convert.ts';
 export const cards = generatedCards as unknown as CardData[];
 export const heroes = generatedHeroes as unknown as HeroData[];
 
+/** Canonical land types (docs/RULES.md «Земли»). */
+export const LAND_TYPES: LandType[] = ['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow'];
+
 export const catalog: CardCatalog = {
   getCard: (id) => cards.find((c) => c.id === id),
   getHero: (id) => heroes.find((h) => h.id === id),

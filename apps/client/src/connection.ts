@@ -1,5 +1,5 @@
-import { PROTOCOL_VERSION } from '@card-wars/protocol';
-import type { ClientMessage, Command, LobbyCommand, ServerMessage } from '@card-wars/protocol';
+import { PROTOCOL_VERSION, ServerMessageSchema } from '@card-wars/protocol';
+import type { ClientMessage, Command, LobbyCommand } from '@card-wars/protocol';
 import { patchConnection, pushEvents, setConnectionSink, useGame } from './store';
 import { makeRoomCode } from './roomCode';
 
@@ -61,12 +61,16 @@ export class GameConnection {
 
   private handle(raw: string): void {
     if (raw === 'pong') return;
-    let message: ServerMessage;
+    let parsed: unknown;
     try {
-      message = JSON.parse(raw) as ServerMessage;
+      parsed = JSON.parse(raw);
     } catch {
       return;
     }
+    // zod — только на границе (docs/TECH.md): серверные сообщения валидируются.
+    const result = ServerMessageSchema.safeParse(parsed);
+    if (!result.success) return;
+    const message = result.data;
     switch (message.t) {
       case 'joined':
         sessionStorage.setItem(`cw-token-${this.code}`, message.you.token);

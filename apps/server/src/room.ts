@@ -175,15 +175,19 @@ export class Room extends DurableObject {
     session.disconnectedAt = Date.now();
 
     if (state.phase === 'match' && state.match) {
-      // Пауза + таймер возврата от первого оборвавшегося (docs/NETWORK.md).
-      if (!state.paused) {
-        state.paused = true;
-        state.reconnectDeadlineMs = Date.now() + config.reconnectWaitSeconds * 1000;
-        for (const pid of Object.keys(state.timers)) {
-          state.timers[pid] = pauseTimer(state.timers[pid]!, Date.now());
+      const player = state.match.players[session.playerId];
+      // Выбывший игрок уже не влияет на партию — пауза не нужна.
+      if (player && !player.eliminated) {
+        // Пауза + таймер возврата от первого оборвавшегося (docs/NETWORK.md).
+        if (!state.paused) {
+          state.paused = true;
+          state.reconnectDeadlineMs = Date.now() + config.reconnectWaitSeconds * 1000;
+          for (const pid of Object.keys(state.timers)) {
+            state.timers[pid] = pauseTimer(state.timers[pid]!, Date.now());
+          }
         }
+        this.scheduleBots(state, Date.now());
       }
-      this.scheduleBots(state, Date.now());
       await this.persist();
       await this.scheduleAlarm(state, Date.now());
       this.broadcastSnapshots(state);

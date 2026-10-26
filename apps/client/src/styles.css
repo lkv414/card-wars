@@ -252,7 +252,8 @@ header {
 }
 
 .log-line {
-  padding: 1px 0;
+  padding: 2px 0;
+  line-height: 1.35;
   border-bottom: 1px solid #222831;
   color: #b9c1cf;
 }
@@ -271,4 +272,88 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 20;
+}
+
+/* --- 3D-экран (этап 4) --- */
+
+.game-3d {
+  position: fixed;
+  inset: 0;
+}
+
+.game-3d canvas {
+  display: block;
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+.hud-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+  background: rgba(16, 20, 27, 0.82);
+  border-bottom: 1px solid #2c323d;
+  font-size: 14px;
+}
+
+.hud-spacer {
+  flex: 1;
+}
+
+.hud-stats {
+  position: absolute;
+  left: 14px;
+  top: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(16, 20, 27, 0.7);
+  border: 1px solid #2c323d;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.hud-actions {
+  position: absolute;
+  right: 14px;
+  bottom: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hud-actions button {
+  min-width: 170px;
+}
+
+.hud-journal {
+  position: absolute;
+  left: 14px;
+  top: 150px;
+  width: 270px;
+  max-height: 45vh;
+  overflow-y: auto;
+  background: rgba(16, 20, 27, 0.66);
+  border: 1px solid #2c323d;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+}
+
+button.mini {
+  padding: 2px 8px;
+  font-size: 12px;
 }

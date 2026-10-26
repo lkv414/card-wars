@@ -203,6 +203,8 @@ export class Room extends DurableObject {
         this.sendTo(ws, { t: 'error', message: 'Матч уже идёт — подключение невозможно без токена' });
         return;
       }
+      // В лобби отключившиеся игроки слотов не держат: их сессии выселяются.
+      state.sessions = state.sessions.filter((s) => s.connected);
       if (state.sessions.length >= config.maxPlayers) {
         this.sendTo(ws, { t: 'error', message: 'Комната заполнена' });
         return;

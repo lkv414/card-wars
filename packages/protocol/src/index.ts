@@ -167,7 +167,8 @@ export const ClientMessageSchema = z.discriminatedUnion('t', [
 export type ClientMessage = z.infer<typeof ClientMessageSchema>;
 
 /** Domain events travel as passthrough JSON: our server produced them, the client renders them. */
-const GameEventWireSchema = z.object({ type: z.string() }).passthrough();
+export const GameEventWireSchema = z.object({ type: z.string() }).passthrough();
+export type GameEvent = z.infer<typeof GameEventWireSchema>;
 
 export const ServerMessageSchema = z.discriminatedUnion('t', [
   z.object({

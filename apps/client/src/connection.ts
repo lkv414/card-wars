@@ -1,33 +1,13 @@
 import { PROTOCOL_VERSION } from '@card-wars/protocol';
-import type { ClientMessage, Command, LobbyView, PlayerView, ServerMessage, TimerInfo } from '@card-wars/protocol';
+import type { ClientMessage, Command, ServerMessage } from '@card-wars/protocol';
+import { patchConnection, pushEvents, setConnectionSink, useGame } from './store';
 
 // Thin WebSocket client: sends commands, replaces the whole view on every
 // snapshot (docs/TECH.md «Протокол»). No game logic lives here.
 
-export interface ConnectionState {
-  status: 'connecting' | 'lobby' | 'match' | 'closed';
-  you: { playerId: string; token: string; isHost: boolean } | null;
-  lobby: LobbyView | null;
-  view: PlayerView | null;
-  timer: TimerInfo | null;
-  error: { code?: string; message: string } | null;
-}
-
-type Listener = (state: ConnectionState) => void;
-
 export class GameConnection {
   private ws: WebSocket | null = null;
-  private listeners = new Set<Listener>();
   private closedByUser = false;
-
-  state: ConnectionState = {
-    status: 'connecting',
-    you: null,
-    lobby: null,
-    view: null,
-    timer: null,
-    error: null,
-  };
 
   constructor(
     private code: string,
@@ -45,9 +25,14 @@ export class GameConnection {
     ws.onmessage = (event) => this.handle(String(event.data));
     ws.onclose = () => {
       if (!this.closedByUser) {
-        this.patch({ status: 'closed', error: { message: 'Соединение потеряно' } });
+        patchConnection({ status: 'closed', error: { message: 'Соединение потеряно' } });
       }
     };
+    setConnectionSink({
+      sendCommand: (command: Command) => this.send({ t: 'command', command }),
+      hurry: () => this.send({ t: 'hurry', player: this.safePlayerId() }),
+      start: () => this.send({ t: 'start', player: this.safePlayerId() }),
+    });
   }
 
   close(): void {
@@ -55,28 +40,14 @@ export class GameConnection {
     this.ws?.close();
   }
 
-  subscribe(listener: Listener): () => void {
-    this.listeners.add(listener);
-    listener(this.state);
-    return () => this.listeners.delete(listener);
+  private safePlayerId(): string {
+    return useGame.getState().you?.playerId ?? '';
   }
 
   send(message: ClientMessage): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     }
-  }
-
-  sendCommand(command: Command): void {
-    this.send({ t: 'command', command });
-  }
-
-  start(): void {
-    if (this.state.you) this.send({ t: 'start', player: this.state.you.playerId });
-  }
-
-  hurry(): void {
-    if (this.state.you) this.send({ t: 'hurry', player: this.state.you.playerId });
   }
 
   private handle(raw: string): void {
@@ -90,28 +61,25 @@ export class GameConnection {
     switch (message.t) {
       case 'joined':
         sessionStorage.setItem(`cw-token-${this.code}`, message.you.token);
-        this.patch({ you: message.you, lobby: message.room, status: message.room.started ? 'match' : 'lobby', error: null });
+        patchConnection({ you: message.you, lobby: message.room, status: message.room.started ? 'match' : 'lobby', error: null });
         return;
       case 'lobby':
-        this.patch({ lobby: message.room, status: message.room.started && this.state.view ? 'match' : message.room.started ? 'match' : 'lobby' });
+        patchConnection({ lobby: message.room, status: message.room.started ? 'match' : 'lobby' });
         return;
       case 'snapshot':
-        this.patch({ view: message.view, timer: message.timer, status: 'match' });
+        patchConnection({ view: message.view, timer: message.timer, status: 'match' });
         return;
       case 'timer':
-        this.patch({ timer: message.timer });
+        patchConnection({ timer: message.timer });
         return;
       case 'error':
-        this.patch({ error: { code: message.code, message: message.message } });
+        patchConnection({ error: { code: message.code, message: message.message } });
         return;
       case 'events':
+        pushEvents(message.events);
+        return;
       case 'finished':
-        return; // события видны через журнал снапшота; finished — через view
+        return; // финал виден через снапшот
     }
-  }
-
-  private patch(part: Partial<ConnectionState>): void {
-    this.state = { ...this.state, ...part };
-    for (const listener of this.listeners) listener(this.state);
   }
 }

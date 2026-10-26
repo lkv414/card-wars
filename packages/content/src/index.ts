@@ -1,4 +1,14 @@
-import type { CardCatalog, CardData, HeroData, LandType } from '@card-wars/domain';
+import type {
+  AbilityData,
+  CardCatalog,
+  CardData,
+  EffectSpec,
+  HeroData,
+  LandType,
+  StatAmount,
+  StatKey,
+  TargetSpec,
+} from '@card-wars/domain';
 import generatedCards from './generated/cards.json' with { type: 'json' };
 import generatedHeroes from './generated/heroes.json' with { type: 'json' };
 import { buildPreset } from './convert.ts';
@@ -29,4 +39,4 @@ export const deckPresets: DeckPreset[] = [
 ];
 
 export { buildPreset };
-export type { CardData, HeroData };
+export type { AbilityData, CardData, EffectSpec, HeroData, LandType, StatAmount, StatKey, TargetSpec };

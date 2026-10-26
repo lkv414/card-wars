@@ -1,0 +1,1 @@
+{"file":"charlie_card_26.png","name":"Сшитый ленивец","cost":2,"type":"Милое существо","attack":0,"defense":8,"description":"У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK.","flavor":"","sha256":"2b148e2f53fac7b794c7756488d294d7ff2d7736c963458dff67d1c57de0fb3d","typeCategory":"creature","landType":"good"}

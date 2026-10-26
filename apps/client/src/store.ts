@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { GameEvent } from '@card-wars/protocol';
-import type { LobbyView, PlayerView, TimerInfo } from '@card-wars/protocol';
+import type { LobbyCommand, LobbyView, PlayerView, TimerInfo } from '@card-wars/protocol';
 import type { Command } from '@card-wars/protocol';
 
 // Client state (docs/TECH.md «Клиент»): the snapshot is the single source of
@@ -21,6 +21,7 @@ export interface UiState {
   draggingOverZone: number | null;
   holdingFloop: { instanceId: string; startedAt: number } | null;
   pendingPick: PendingPick | null;
+  journalOpen: boolean;
 }
 
 interface GameStore {
@@ -37,8 +38,8 @@ interface GameStore {
   ui: UiState;
   // commands are injected by the connection owner
   sendCommand: (command: Command) => void;
-  hurry: () => void;
-  start: () => void;
+  lobbyCommand: (command: LobbyCommand) => void;
+  hurry: (target: string) => void;
 }
 
 export const useGame = create<GameStore>(() => ({
@@ -57,18 +58,19 @@ export const useGame = create<GameStore>(() => ({
     draggingOverZone: null,
     holdingFloop: null,
     pendingPick: null,
+    journalOpen: false,
   },
   sendCommand: () => {},
+  lobbyCommand: () => {},
   hurry: () => {},
-  start: () => {},
 }));
 
 export function setConnectionSink(sink: {
   sendCommand: (command: Command) => void;
-  hurry: () => void;
-  start: () => void;
+  lobbyCommand: (command: LobbyCommand) => void;
+  hurry: (target: string) => void;
 }): void {
-  useGame.setState({ sendCommand: sink.sendCommand, hurry: sink.hurry, start: sink.start });
+  useGame.setState({ sendCommand: sink.sendCommand, lobbyCommand: sink.lobbyCommand, hurry: sink.hurry });
 }
 
 export function patchConnection(part: Partial<GameStore>): void {
@@ -94,4 +96,8 @@ export function pushEvents(events: GameEvent[]): void {
 
 export function sendCommand(command: Command): void {
   useGame.getState().sendCommand(command);
+}
+
+export function sendLobbyCommand(command: LobbyCommand): void {
+  useGame.getState().lobbyCommand(command);
 }

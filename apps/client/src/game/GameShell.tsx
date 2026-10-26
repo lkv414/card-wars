@@ -4,14 +4,16 @@ import { useGame } from '../store';
 import { Scene } from './scene/Scene';
 import { Hud } from './hud/Hud';
 import { DomGame } from './debug/DomGame';
+import { Lobby } from './lobby/Lobby';
 
-/** Экран игры: 3D-сцена + HUD; ?debug=1 — DOM-отладочный вид этапа 2. */
+/** Экран игры: лобби → 3D-сцена + HUD; ?debug=1 — DOM-отладочный вид. */
 export function GameShell({ code, nickname }: { code: string; nickname: string }) {
-  const conn = useMemo(() => new GameConnection(code, nickname), [code, nickname]);
+  const [create] = useMemo(
+    () => [new URLSearchParams(location.search).get('create') === '1'],
+    [],
+  );
+  const conn = useMemo(() => new GameConnection(code, nickname, create), [code, nickname, create]);
   const status = useGame((s) => s.status);
-  const lobby = useGame((s) => s.lobby);
-  const you = useGame((s) => s.you);
-  const error = useGame((s) => s.error);
   const view = useGame((s) => s.view);
 
   useEffect(() => {
@@ -31,36 +33,9 @@ export function GameShell({ code, nickname }: { code: string; nickname: string }
     );
   }
 
-  if (status === 'lobby' && !view) {
-    return (
-      <div className="center-screen">
-        <div className="panel menu">
-          <h2>Лобби {code}</h2>
-          {lobby?.players.map((p) => (
-            <div key={p.id} className={p.connected ? '' : 'disconnected'}>
-              {p.nickname} {lobby.host === p.id ? '(хост)' : ''} {p.connected ? '' : '— нет связи'}
-            </div>
-          ))}
-          <button onClick={() => navigator.clipboard?.writeText(`${location.origin}/play/${code}`)}>
-            Скопировать ссылку
-          </button>
-          {you?.isHost ? (
-            <button
-              disabled={(lobby?.players.filter((p) => p.connected).length ?? 0) < 2}
-              onClick={() => useGame.getState().start()}
-            >
-              Начать матч
-            </button>
-          ) : (
-            <p className="hint">Ждём, когда хост начнёт матч…</p>
-          )}
-          {error && <div className="error-line">{error.message}</div>}
-        </div>
-      </div>
-    );
+  if (!view) {
+    return <Lobby code={code} />;
   }
-
-  if (!view) return <div className="center-screen hint">Ожидание начала матча…</div>;
 
   if (location.search.includes('debug=1')) {
     return <DomGame code={code} />;

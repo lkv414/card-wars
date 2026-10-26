@@ -2,8 +2,20 @@ import { useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { GameEvent, PlayerView } from '@card-wars/protocol';
-import { cards as catalog } from '@card-wars/content';
-import { CARD_H, CARD_W, SPRITE_SCALE, deckPos, discardPos, heroPos, rowZ, zoneX } from './layout';
+import {
+  CARD_H,
+  CARD_W,
+  HAND,
+  SPRITE_SCALE,
+  boardTransform,
+  localToWorld,
+  worldOfCompanion,
+  worldOfDeck,
+  worldOfDiscard,
+  worldOfHero,
+  worldOfSlot,
+  zoneX,
+} from './layout';
 import { cardTexture, textSprite, tokenTexture } from './textures';
 import { useGame } from '../../store';
 
@@ -36,16 +48,50 @@ function positionOfInstance(view: PlayerView | null, instanceId: string | null):
   if (!view || !instanceId) return null;
   for (const pid of view.order) {
     const p = view.players[pid]!;
-    const isMe = pid === view.me;
-    const rowZValue = rowZ(isMe);
     for (let z = 0; z < p.zones.length; z++) {
       const zone = p.zones[z]!;
-      if (zone.creature?.instanceId === instanceId || zone.building?.instanceId === instanceId) {
-        return [zoneX(z), 3, rowZValue];
-      }
+      if (zone.creature?.instanceId === instanceId) return worldOfSlot(view, pid, z, 'creature');
+      if (zone.building?.instanceId === instanceId) return worldOfSlot(view, pid, z, 'building');
     }
+    if (p.companion?.instanceId === instanceId) return worldOfCompanion(view, pid);
   }
   return null;
+}
+
+function ownerOf(view: PlayerView | null, instanceId: string): string | null {
+  if (!view) return null;
+  for (const pid of view.order) {
+    const p = view.players[pid]!;
+    for (const zone of p.zones) {
+      if (zone.creature?.instanceId === instanceId || zone.building?.instanceId === instanceId) return pid;
+    }
+    if (p.companion?.instanceId === instanceId) return pid;
+    if (p.discard.some((card) => card.instanceId === instanceId)) return pid;
+  }
+  return null;
+}
+
+function heroAt(view: PlayerView | null, pid: string | null | undefined): [number, number, number] {
+  if (!view || !pid) return [0, 20, 0];
+  return worldOfHero(view, pid) ?? [0, 20, 0];
+}
+
+function deckAt(view: PlayerView | null, pid: string | null | undefined): [number, number, number] {
+  if (!view || !pid) return [0, 4, 0];
+  return worldOfDeck(view, pid) ?? [0, 4, 0];
+}
+
+function discardAt(view: PlayerView | null, pid: string | null | undefined): [number, number, number] {
+  if (!view || !pid) return [0, 4, 0];
+  return worldOfDiscard(view, pid) ?? [0, 4, 0];
+}
+
+function landAt(view: PlayerView | null, pid: string | null | undefined, zone: number): [number, number, number] {
+  if (!view || !pid) return [0, 4, 0];
+  const transform = boardTransform(view, pid);
+  if (!transform) return [0, 4, 0];
+  const world = localToWorld(transform, zoneX(zone), 0);
+  return [world.x, 4, world.z];
 }
 
 // Событие с точки зрения анимаций: поля приходят из домена как passthrough JSON.
@@ -59,40 +105,49 @@ interface AnimEvent {
   amount?: number;
   delta?: number;
   zone?: number;
+  slot?: 'creature' | 'building';
   change?: string;
 }
 
 /** Map incoming server events to visual ghosts. */
 export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): void {
-  const handPos: [number, number, number] = [0, 30, 330];
+  if (!view) return;
+  const handPos: [number, number, number] = [0, 30, HAND.z];
   for (const raw of events) {
     const event = raw as unknown as AnimEvent;
     const zone = event.zone ?? 0;
     const amount = event.amount ?? 0;
     const instanceId = event.instanceId ?? null;
+    const fromHand = event.player === view?.me ? handPos : heroAt(view, event.player);
     switch (event.type) {
       case 'card_played': {
-        const isMe = event.player === view?.me;
-        pushAnim({
-          kind: 'fly',
-          cardId: event.cardId,
-          from: handPos,
-          to: [zoneX(zone), 4, rowZ(isMe)],
-          duration: 380,
-        });
+        const to = worldOfSlot(view!, event.player!, zone, event.slot ?? 'creature') ?? [0, 4, 0];
+        pushAnim({ kind: 'fly', cardId: event.cardId, from: fromHand, to, duration: 380 });
+        break;
+      }
+      case 'companion_played': {
+        const to = worldOfCompanion(view!, event.player!) ?? [0, 8, 0];
+        pushAnim({ kind: 'fly', cardId: event.cardId, from: fromHand, to, duration: 380 });
         break;
       }
       case 'creature_destroyed': {
-        const from = positionOfInstance(view, instanceId) ?? [0, 4, 0];
-        const owner = findOwner(view, event.instanceId ?? '');
-        pushAnim({ kind: 'fly', cardId: event.cardId, from, to: [...discardPos(owner)] as [number, number, number], duration: 520 });
+        const from = positionOfInstance(view, instanceId) ?? heroAt(view, ownerOf(view, instanceId ?? ''));
+        const to = discardAt(view, ownerOf(view, instanceId ?? ''));
+        pushAnim({ kind: 'fly', cardId: event.cardId, from, to, duration: 520 });
         break;
       }
       case 'damage_dealt': {
         const target: [number, number, number] = event.targetInstanceId
           ? (positionOfInstance(view, event.targetInstanceId) ?? [0, 20, 0])
-          : [...heroPos(event.targetPlayer === view?.me)] as [number, number, number];
-        pushAnim({ kind: 'number', text: `-${amount}`, color: '#ff8a7a', from: [target[0], target[1] + 60, target[2]], to: [target[0], target[1] + 130, target[2]], duration: 900 });
+          : heroAt(view, event.targetPlayer);
+        pushAnim({
+          kind: 'number',
+          text: `-${amount}`,
+          color: '#ff8a7a',
+          from: [target[0], target[1] + 60, target[2]],
+          to: [target[0], target[1] + 130, target[2]],
+          duration: 900,
+        });
         if (event.targetInstanceId) {
           pushAnim({ kind: 'tokenDrop', from: [target[0], 130, target[2]], to: [target[0] + 18, 8, target[2] - 12], duration: 420 });
         }
@@ -106,20 +161,18 @@ export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): voi
       case 'lives_changed': {
         const delta = event.delta ?? 0;
         if (delta < 0) break; // уже показано damage_dealt
-        const at = heroPos(event.player === view?.me);
+        const at = heroAt(view, event.player);
         pushAnim({ kind: 'number', text: `+${delta}`, color: '#7fe0a0', from: [at[0], 80, at[2]], to: [at[0], 140, at[2]], duration: 900 });
         break;
       }
       case 'land_changed': {
-        const isMe = event.player === view?.me;
-        const at: [number, number, number] = [zoneX(zone), 4, rowZ(isMe)];
+        const at = landAt(view, event.player, zone);
         pushAnim({ kind: 'flash', color: event.change === 'frozen' ? '#9fd8ff' : '#ffe9a8', from: at, to: at, duration: 500 });
         break;
       }
       case 'card_drawn': {
-        const isMe = event.player === view?.me;
-        const deck = deckPos(isMe);
-        pushAnim({ kind: 'fly', from: [...deck] as [number, number, number], to: handPos, duration: 340 });
+        const to = event.player === view?.me ? handPos : heroAt(view, event.player);
+        pushAnim({ kind: 'fly', from: deckAt(view, event.player), to, duration: 340 });
         break;
       }
       case 'floop_used': {
@@ -127,24 +180,20 @@ export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): voi
         if (at) pushAnim({ kind: 'flash', color: '#48d9a0', from: at, to: at, duration: 420 });
         break;
       }
+      case 'battle_ready': {
+        const at = heroAt(view, event.player);
+        pushAnim({ kind: 'flash', color: '#4c8ee8', from: at, to: at, duration: 520 });
+        break;
+      }
+      case 'spell_cast': {
+        const at = landAt(view, event.player, 1);
+        pushAnim({ kind: 'flash', color: '#b48cff', from: [at[0], 25, at[2]], to: [at[0], 25, at[2]], duration: 500 });
+        break;
+      }
       default:
         break;
     }
   }
-}
-
-function findOwner(view: PlayerView | null, instanceId: string): boolean {
-  if (!view) return true;
-  for (const pid of view.order) {
-    const p = view.players[pid]!;
-    for (const zone of p.zones) {
-      if (zone.creature?.instanceId === instanceId || zone.building?.instanceId === instanceId) {
-        return pid === view.me;
-      }
-    }
-    if (p.discard.some((d) => d.instanceId === instanceId)) return pid === view.me;
-  }
-  return true;
 }
 
 /** Consumes the store's event stream and feeds the anim list. */
@@ -204,7 +253,7 @@ function Ghost({ anim, now }: { anim: Anim; now: number }) {
   const e = ease(t);
   const pos: [number, number, number] = [
     anim.from[0] + (anim.to[0] - anim.from[0]) * e,
-    anim.from[1] + (anim.to[1] - anim.from[1]) * e + (anim.kind === 'fly' ? Math.sin(Math.PI * t) * 90 : anim.kind === 'tokenDrop' ? 0 : 0),
+    anim.from[1] + (anim.to[1] - anim.from[1]) * e + (anim.kind === 'fly' ? Math.sin(Math.PI * t) * 90 : 0),
     anim.from[2] + (anim.to[2] - anim.from[2]) * e,
   ];
   const opacity = anim.kind === 'number' ? 1 - t * t : 1 - Math.max(0, t - 0.8) * 5;
@@ -220,9 +269,6 @@ function Ghost({ anim, now }: { anim: Anim; now: number }) {
     );
   }
   if (anim.kind === 'tokenDrop') {
-    // bounce at the end: small overshoot on Y
-    const bounce = t > 0.85 ? Math.abs(Math.sin((t - 0.85) * Math.PI * 3)) * 8 * (1 - t) : 0;
-    void bounce;
     return (
       <mesh position={[pos[0], pos[1], pos[2]]}>
         <cylinderGeometry args={[12.5, 12.5, 3, 20]} />
@@ -249,5 +295,3 @@ function Ghost({ anim, now }: { anim: Anim; now: number }) {
 export function hasActiveAnims(): boolean {
   return anims.length > 0;
 }
-
-void catalog;

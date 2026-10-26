@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useGame } from '../../store';
-import { CAMERA } from './layout';
+import { cameraFor } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
@@ -22,11 +22,12 @@ export function Scene() {
       shadows={quality === 'high'}
       dpr={quality === 'high' ? [1, 2] : 1}
       frameloop="demand"
-      camera={{ position: [...CAMERA.position], fov: CAMERA.fov }}
+      camera={{ position: [0, 560, 640], fov: 46, near: 1, far: 6000 }}
       gl={{ antialias: quality === 'high' }}
     >
       <color attach="background" args={['#10141b']} />
       <SceneContent />
+      <CameraRig />
       <LoopController />
     </Canvas>
   );
@@ -35,14 +36,10 @@ export function Scene() {
 function SceneContent() {
   const view = useGame((s) => s.view);
   const quality = useGame((s) => s.ui.quality);
-  const three = useThree();
-
-  useEffect(() => {
-    three.camera.lookAt(new THREE.Vector3(...CAMERA.lookAt));
-  }, [three.camera]);
 
   if (!view) return null;
-  const opponentFirst = [...view.order].reverse();
+  // Мой ряд рисуется последним, чтобы быть поверх соседних досок.
+  const order = [...view.order].sort((a, b) => (a === view.me ? 1 : b === view.me ? -1 : 0));
 
   return (
     <>
@@ -55,15 +52,15 @@ function SceneContent() {
       />
       {/* стол: с запасом за краями доски, чтобы камера не видела фон */}
       <mesh position={[0, -0.5, 20]} receiveShadow={quality === 'high'}>
-        <boxGeometry args={[1900, 1, 1700]} />
+        <boxGeometry args={[2200, 1, 1900]} />
         <meshLambertMaterial color="#274232" />
       </mesh>
       <mesh position={[0, 0.05, 20]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={quality === 'high'}>
-        <planeGeometry args={[1800, 1600]} />
+        <planeGeometry args={[2100, 1800]} />
         <meshLambertMaterial color="#2e5240" />
       </mesh>
 
-      {opponentFirst.map((pid) => (
+      {order.map((pid) => (
         <PlayerBoard key={pid} view={view} pid={pid} isMe={pid === view.me} />
       ))}
 
@@ -72,6 +69,33 @@ function SceneContent() {
       <AnimLayer />
     </>
   );
+}
+
+/** Фиксированная камера за своей стороной; дальше и выше для 3–4 игроков и «стенки». */
+function CameraRig() {
+  const view = useGame((s) => s.view);
+  const { camera, size, invalidate } = useThree();
+
+  useEffect(() => {
+    if (!view) return;
+    const config = cameraFor(view);
+    const portrait = size.height > size.width;
+    const distanceScale = portrait ? 1.28 : 1;
+    camera.position.set(
+      config.position[0],
+      config.position[1] * (portrait ? 1.12 : 1),
+      config.position[2] * distanceScale,
+    );
+    camera.lookAt(new THREE.Vector3(...config.lookAt));
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.fov = portrait ? config.fov + 16 : config.fov;
+      camera.aspect = size.width / Math.max(1, size.height);
+      camera.updateProjectionMatrix();
+    }
+    invalidate();
+  }, [view, camera, size.width, size.height, invalidate]);
+
+  return null;
 }
 
 /** demand-рендер: активен, пока есть анимации/драг/удержание/наведение. */

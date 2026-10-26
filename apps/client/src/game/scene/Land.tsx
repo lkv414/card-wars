@@ -61,8 +61,8 @@ export function Land({
         </mesh>
       )}
       {/* slot guides: creature toward the centre line, building toward the owner */}
-      <SlotGuide z={slotLocalZ('creature', isMe)} w={CARD_W} h={CARD_H} />
-      <SlotGuide z={slotLocalZ('building', isMe)} w={CARD_W * 0.7} h={CARD_H * 0.7} dim />
+      <SlotGuide z={slotLocalZ('creature')} w={CARD_W} h={CARD_H} />
+      <SlotGuide z={slotLocalZ('building')} w={CARD_W * 0.7} h={CARD_H * 0.7} dim />
     </group>
   );
 }

@@ -18,12 +18,16 @@ export function CardMesh({
   card: CardView;
   view: PlayerView;
   isMe: boolean;
-  slot: 'creature' | 'building';
+  slot: 'creature' | 'building' | 'companion';
 }) {
   const group = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
   const texture = useMemo(() => cardTexture(card.cardId), [card.cardId]);
-  const myMain = view.activePlayer === view.me && view.status === 'running' && view.phase === 'main';
+  const myMain =
+    view.activePlayers.includes(view.me) &&
+    !view.players[view.me]!.battleReady &&
+    view.status === 'running' &&
+    view.phase === 'main';
   const canHold = isMe && myMain && !card.flipped;
   const pendingPick = useGame((s) => s.ui.pendingPick);
   const pickable = pendingPick?.pick === 'creature';
@@ -62,7 +66,7 @@ export function CardMesh({
   };
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
-    if (!pendingPick) return;
+    if (!pendingPick || slot === 'companion') return;
     event.stopPropagation();
     const choices = { ...((pendingPick.base.choices as object) ?? {}), creature: card.instanceId };
     sendCommand({ ...pendingPick.base, choices } as never);
@@ -70,7 +74,7 @@ export function CardMesh({
   };
 
   return (
-    <group position={[0, CARD_T / 2 + 0.4, slotLocalZ(slot, isMe)]}>
+    <group position={[0, CARD_T / 2 + 0.4, slotLocalZ(slot)]}>
       <group ref={group} onClick={handleClick} onPointerDown={startHold} onPointerUp={cancelHold} onPointerOut={cancelHold}>
         <mesh>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />

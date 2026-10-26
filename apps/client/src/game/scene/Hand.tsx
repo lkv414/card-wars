@@ -3,7 +3,7 @@ import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
 import { cards as catalog } from '@card-wars/content';
-import { CARD_H, CARD_T, CARD_W, HAND, ROW_LEN, zoneX } from './layout';
+import { CARD_H, CARD_T, CARD_W, HAND, myBoardTransform, zoneFromWorld } from './layout';
 import { cardTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
 
@@ -13,14 +13,25 @@ import { sendCommand, setUi, useGame } from '../../store';
  * клик по своей зоне играет карту; перетаскивание в правый нижний угол — сброс.
  */
 export function Hand({ view }: { view: PlayerView }) {
-  const myMain = view.activePlayer === view.me && view.status === 'running' && view.phase === 'main';
+  const me = view.players[view.me]!;
+  const myMain =
+    view.activePlayers.includes(view.me) &&
+    !me.battleReady &&
+    view.status === 'running' &&
+    view.phase === 'main';
   const selected = useGame((s) => s.ui.selectedHand);
   const dragging = useGame((s) => s.ui.dragging);
   const group = useRef<THREE.Group>(null);
 
   const items = view.myHand.filter((c) => c.instanceId !== dragging);
-  // Шаг веера ужинается с ростом руки, чтобы крайние карты не уходили за кадр.
-  const step = items.length <= 6 ? HAND.step : Math.max(70, 560 / items.length);
+  // Шаг веера ужинается с ростом руки и шириной экрана.
+  const narrow = typeof window !== 'undefined' && window.innerWidth < 720;
+  const step =
+    items.length <= 6
+      ? narrow
+        ? 74
+        : HAND.step
+      : Math.max(narrow ? 54 : 70, (narrow ? 380 : 560) / items.length);
 
   // Глобальное окончание перетаскивания: указатель в этот момент уже НЕ над
   // картой руки, поэтому решаем всё здесь — зона = сыграть, угол = сброс.
@@ -42,6 +53,22 @@ export function Hand({ view }: { view: PlayerView }) {
     window.addEventListener('pointerup', onUp);
     return () => window.removeEventListener('pointerup', onUp);
   }, [view.me]);
+
+  // Выбранная карта ушла из руки (сыграна/сброшена) — снимаем выделение.
+  useEffect(() => {
+    if (selected && !view.myHand.some((card) => card.instanceId === selected)) {
+      setUi({ selectedHand: null });
+    }
+  }, [selected, view.myHand]);
+
+  // Вне своей основной фазы ввод из руки не активен — сбрасываем UI-выделение.
+  useEffect(() => {
+    if (myMain) return;
+    const ui = useGame.getState().ui;
+    if (ui.selectedHand || ui.dragging || ui.holdingFloop) {
+      setUi({ selectedHand: null, dragging: null, draggingOverZone: null, holdingFloop: null });
+    }
+  }, [myMain]);
 
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -65,12 +92,12 @@ export function Hand({ view }: { view: PlayerView }) {
             step={step}
             selected={isSelected}
             playable={myMain}
-            isSpell={meta?.type === 'spell'}
+            isDirect={meta?.type === 'spell' || meta?.type === 'companion'}
             view={view}
           />
         );
       })}
-      {dragging && <DragPlane />}
+      {dragging && <DragPlane view={view} />}
       {dragging && <CornerHint instanceId={dragging} />}
     </group>
   );
@@ -94,7 +121,7 @@ function HandCard({
   step,
   selected,
   playable,
-  isSpell,
+  isDirect,
   view,
 }: {
   instanceId: string;
@@ -103,7 +130,7 @@ function HandCard({
   step: number;
   selected: boolean;
   playable: boolean;
-  isSpell: boolean;
+  isDirect: boolean;
   view: PlayerView;
 }) {
   const texture = useMemo(() => cardTexture(cardId), [cardId]);
@@ -151,7 +178,8 @@ function HandCard({
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
     if (!playable) return;
-    if (isSpell) {
+    if (event.delta > 8) return; // это завершение драга, а не клик
+    if (isDirect) {
       sendCommand({ type: 'play_card', player: view.me, instanceId });
       setUi({ selectedHand: null });
       return;
@@ -183,24 +211,24 @@ function HandCard({
 }
 
 /** Прозрачная (но не visible=false — рейкаст невидимых отключён) плоскость
- *  улавливания при перетаскивании: подсвечивает зоны. */
-function DragPlane() {
+ *  улавливания при перетаскивании: подсвечивает зоны моей доски. */
+function DragPlane({ view }: { view: PlayerView }) {
+  const origin = myBoardTransform(view);
   return (
     <mesh
-      position={[0, 45, 0]}
+      position={[origin.x, 45, origin.z]}
       rotation={[-Math.PI / 2, 0, 0]}
       onPointerMove={(event) => {
         event.stopPropagation();
-        const { x, z } = event.point;
-        if (z > 0 && Math.abs(x) < ROW_LEN / 2 + 20) {
-          const zone = THREE.MathUtils.clamp(Math.round((x - zoneX(0)) / (zoneX(1) - zoneX(0))), 0, 3);
-          useGame.setState((s) => ({ ui: { ...s.ui, draggingOverZone: zone } }));
-        } else {
-          useGame.setState((s) => (s.ui.draggingOverZone !== null ? { ui: { ...s.ui, draggingOverZone: null } } : {}));
-        }
+        const zone = zoneFromWorld(view, event.point.x, event.point.z);
+        useGame.setState((s) =>
+          s.ui.draggingOverZone !== zone
+            ? { ui: { ...s.ui, draggingOverZone: zone } }
+            : {},
+        );
       }}
     >
-      <planeGeometry args={[1200, 900]} />
+      <planeGeometry args={[1000, 600]} />
       <meshBasicMaterial transparent opacity={0} depthWrite={false} />
     </mesh>
   );

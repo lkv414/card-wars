@@ -26,8 +26,9 @@ export function DomGame({ code }: { code: string }) {
   }, [error]);
 
   const me = view.players[view.me]!;
-  const myTurn = view.activePlayer === view.me && view.status === 'running';
+  const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
+  const activeNames = view.activePlayers.map((pid) => view.players[pid]?.nickname ?? pid).join(', ');
   const selectedMeta = selected ? cardMeta(view.myHand.find((c) => c.instanceId === selected)?.cardId ?? '') : undefined;
 
   const send = (command: Parameters<typeof sendCommand>[0]) => {
@@ -44,8 +45,7 @@ export function DomGame({ code }: { code: string }) {
   return (
     <div className="game">
       <header>
-        <b>DEBUG · Комната {code}</b> — круг {view.round}, ход {view.turn}, фаза {view.phase}, сейчас:{' '}
-        {view.players[view.activePlayer]?.nickname}
+        <b>DEBUG · Комната {code}</b> — круг {view.round}, ход {view.turn}, фаза {view.phase}, сейчас: {activeNames}
       </header>
       <div className="boards">
         {[...view.order].reverse().map((pid) => (
@@ -61,7 +61,12 @@ export function DomGame({ code }: { code: string }) {
             </button>
           </>
         )}
-        {!myTurn && <button onClick={() => useGame.getState().hurry()}>Поторопить</button>}
+        {!myTurn &&
+          view.activePlayers.map((pid) => (
+            <button key={pid} onClick={() => useGame.getState().hurry(pid)}>
+              Поторопить {view.players[pid]?.nickname ?? ''}
+            </button>
+          ))}
         <button onClick={() => confirm('Сдаться?') && send({ type: 'surrender', player: view.me })}>Сдаться</button>
       </div>
       <div className="hand panel">
@@ -118,10 +123,10 @@ function DebugBoard({
   const view = useGame((s) => s.view)!;
   const p = view.players[pid]!;
   const isMe = pid === view.me;
-  const myMain = view.activePlayer === view.me && view.status === 'running' && view.phase === 'main';
+  const myMain = view.activePlayers.includes(view.me) && view.status === 'running' && view.phase === 'main';
   const pending = useGame((s) => s.ui.pendingPick);
   return (
-    <div className={`board ${isMe ? 'mine' : ''} ${view.activePlayer === pid ? 'active' : ''}`}>
+    <div className={`board ${isMe ? 'mine' : ''} ${view.activePlayers.includes(pid) ? 'active' : ''}`}>
       <div className="board-head">
         <b>{p.nickname}</b> <span className="hint">({heroNameOf(p.heroId)})</span> <span className="lives">❤ {p.lives}</span>
         <span className="hint">колода {p.deckCount} · рука {p.handCount} · сброс {p.discard.length}</span>
@@ -181,6 +186,9 @@ function findCardId(instanceId: string, view: NonNullable<ReturnType<typeof useG
     for (const zone of view.players[pid]!.zones) {
       if (zone.creature?.instanceId === instanceId) return zone.creature.cardId;
       if (zone.building?.instanceId === instanceId) return zone.building.cardId;
+    }
+    if (view.players[pid]!.companion?.instanceId === instanceId) {
+      return view.players[pid]!.companion!.cardId;
     }
   }
   return null;

@@ -1,0 +1,6746 @@
+[
+ {
+  "id": "card-костяная-палочка",
+  "name": "Костяная палочка",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/bmo_card_1.webp",
+  "description": "Играй только если под твоим контролем есть существо болотных земель. Выбранный противник сбрасывает карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-кольцо-змееглаза",
+  "name": "Кольцо змееглаза",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/bmo_card_2.webp",
+  "description": "Верни случайное болотное существо из своей стопки сброса себе в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-крепость-крови",
+  "name": "Крепость Крови",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/bmo_card_6.webp",
+  "description": "Твое существо получает +1 ATK на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "Твое существо получает +1 ATK на этой линии."
+   }
+  ]
+ },
+ {
+  "id": "card-лысый-бродяга",
+  "name": "Лысый бродяга",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 10,
+  "image": "/cards/bmo_card_10.webp",
+  "description": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "discard_top",
+     "count": 1
+    },
+    "text": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса"
+   }
+  ]
+ },
+ {
+  "id": "card-желтая-сирена",
+  "name": "Желтая сирена",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 3,
+  "defense": 9,
+  "image": "/cards/bmo_card_12.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-зеленая-сирена",
+  "name": "Зеленая сирена",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/bmo_card_13.webp",
+  "description": "Уничтожь Зеленую сирену >>> Нанеси 1 урон каждому существу противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-зеленый-тритон",
+  "name": "Зеленый тритон",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 0,
+  "defense": 6,
+  "image": "/cards/bmo_card_14.webp",
+  "description": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса. Нанеси урон каждому существу равный стоимости действий карты.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "discard_top",
+     "count": 1
+    },
+    "text": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса"
+   }
+  ]
+ },
+ {
+  "id": "card-пламенная-мышь",
+  "name": "Пламенная мышь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 4,
+  "defense": 4,
+  "image": "/cards/bmo_card_15.webp",
+  "description": "Играй Пламенную мышь только если у тебя 10 или более карт в стопке сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-мумук",
+  "name": "Мумук",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 10,
+  "image": "/cards/bmo_card_17.webp",
+  "description": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке.",
+  "abilities": []
+ },
+ {
+  "id": "card-темный-ангел",
+  "name": "Темный ангел",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 0,
+  "defense": 5,
+  "image": "/cards/bmo_card_18.webp",
+  "description": "+1 ATK за каждые 5 карт в твоей стопке сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-док-смерть",
+  "name": "Док Смерть",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/bmo_card_19.webp",
+  "description": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-мамб-паук",
+  "name": "Мамб-паук",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/bmo_card_20.webp",
+  "description": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса"
+   }
+  ]
+ },
+ {
+  "id": "card-серая-мышь",
+  "name": "Серая мышь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/bmo_card_22.webp",
+  "description": "Потрать 1 действие >>> Верни случайное болотное существо из своей стопки сброса себе в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-зубастик",
+  "name": "Зубастик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 4,
+  "image": "/cards/bmo_card_25.webp",
+  "description": "+2 DEF за каждые 5 карт в твоей стопке сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-дьявольский-глазстик",
+  "name": "Дьявольский глазстик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/bmo_card_27.webp",
+  "description": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-остролист",
+  "name": "Остролист",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 3,
+  "defense": 10,
+  "image": "/cards/bmo_card_29.webp",
+  "description": "Если в твоей стопке сброса 10 карт или более, потрать на 2 действия меньше чтобы сыграть Остролиста.",
+  "abilities": []
+ },
+ {
+  "id": "card-дворец-костей",
+  "name": "Дворец Костей",
+  "type": "building",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/bmo_card_33.webp",
+  "description": "У существ противника на этой линии не срабатывают эффекты вступления в игру и покидания игры.",
+  "abilities": []
+ },
+ {
+  "id": "card-башня-духа",
+  "name": "Башня Духа",
+  "type": "building",
+  "cost": 2,
+  "landType": "swamp",
+  "image": "/cards/bmo_card_34.webp",
+  "description": "Потрать 1 действие, ПРИЕМ >>> Если ты не контролируешь существ на этой линии, то перемести выбранное существо на свою сторону и подгомовь его. В конце хода верни его на сторону владельца.",
+  "abilities": []
+ },
+ {
+  "id": "card-абрака-амадеус",
+  "name": "Абрака Амадеус",
+  "type": "building",
+  "cost": 2,
+  "landType": "swamp",
+  "image": "/cards/bmo_card_35.webp",
+  "description": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-звон-магических-колец",
+  "name": "Звон магических колец",
+  "type": "spell",
+  "cost": 2,
+  "landType": "swamp",
+  "image": "/cards/bmo_card_36.webp",
+  "description": "Каждое твое существо получает +1 ATK этот ход за каждые 5 карт в твоей стопке сброса.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "Каждое твое существо получает +1 ATK"
+   }
+  ]
+ },
+ {
+  "id": "card-древо-нежить",
+  "name": "Древо-нежить",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/bmo_card_38.webp",
+  "description": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-пень-с-булавой",
+  "name": "Пень с булавой",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/bmo_card_39.webp",
+  "description": "Уничтожь Пень с булавой >>> Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-падающая-звезда",
+  "name": "Падающая звезда",
+  "type": "spell",
+  "cost": 2,
+  "landType": "good",
+  "image": "/cards/bubblegum_card_2.webp",
+  "description": "Существа под твоим контролем не получают урон от существ противника в этом ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-голубая-сахарная-вата",
+  "name": "Голубая сахарная вата",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/bubblegum_card_3.webp",
+  "description": "Восстанови до 3 Урона с выбранного существа под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-мельница-процветания",
+  "name": "Мельница процветания",
+  "type": "building",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/bubblegum_card_5.webp",
+  "description": "Пока на твоем существе на этой линии нет урона, оно получает +2 АТК.",
+  "abilities": []
+ },
+ {
+  "id": "card-пещера-одиночества",
+  "name": "Пещера одиночества",
+  "type": "building",
+  "cost": 2,
+  "landType": "good",
+  "image": "/cards/bubblegum_card_6.webp",
+  "description": "Сбрось карту >>> Твое существо на этой линии не может быть атаковано или выбрано до начала твоего следующего хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-пироклоп",
+  "name": "Пироклоп",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_10.webp",
+  "description": "Когда Пироклоп вступает в игру, восстанови 1 урон с каждого соседнего существа.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "adjacent_creature"
+     },
+     "amount": 1
+    },
+    "text": "Когда Пироклоп вступает в игру, восстанови 1 урон с каждого соседнего существа"
+   }
+  ]
+ },
+ {
+  "id": "card-стена-шоколада",
+  "name": "Стена шоколада",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/bubblegum_card_12.webp",
+  "description": "Пока на Стене шоколада нет урона, она получает +3 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-кольцо-пушистости",
+  "name": "Кольцо пушистости",
+  "type": "spell",
+  "cost": 2,
+  "landType": "good",
+  "image": "/cards/bubblegum_card_14.webp",
+  "description": "Выбранное существо под твоим контролем получает +X ATK в этот ход, где X это число урона на нем.",
+  "abilities": []
+ },
+ {
+  "id": "card-милозавр-рекс",
+  "name": "Милозавр Рекс",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_17.webp",
+  "description": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту"
+   }
+  ]
+ },
+ {
+  "id": "card-мисс-пушинка",
+  "name": "Мисс Пушинка",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/bubblegum_card_18.webp",
+  "description": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-фея-шепард",
+  "name": "Фея Шепард",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/bubblegum_card_19.webp",
+  "description": "Каждое соседнее cute существо получает +2 DEF.",
+  "abilities": []
+ },
+ {
+  "id": "card-милашка",
+  "name": "Милашка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 0,
+  "defense": 6,
+  "image": "/cards/bubblegum_card_20.webp",
+  "description": "ПРИЕМ >>> Восстанови себе 1 HP. (Но не более 25.)",
+  "abilities": []
+ },
+ {
+  "id": "card-мятный-змей",
+  "name": "Мятный змей",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_22.webp",
+  "description": "Когда Мятный змей наносит урон противнику, можешь восстановить столько же HP (но не более 25).",
+  "abilities": []
+ },
+ {
+  "id": "card-шоколадный-ангел",
+  "name": "Шоколадный ангел",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 3,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_25.webp",
+  "description": "Потрать 1 Действие >>> Восстанови весь урон с Ангела шоколада.",
+  "abilities": []
+ },
+ {
+  "id": "card-майонезный-ангел",
+  "name": "Майонезный ангел",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/bubblegum_card_26.webp",
+  "description": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела.",
+  "abilities": []
+ },
+ {
+  "id": "card-яблочный-пироклоп",
+  "name": "Яблочный пироклоп",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_28.webp",
+  "description": "В начале твоего хода можешь восстановить или нанести 1 урон с каждого существа под твоим контролем. (Выбери для каждого существа.)",
+  "abilities": []
+ },
+ {
+  "id": "card-хлопковая-мышь",
+  "name": "Хлопковая мышь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/bubblegum_card_30.webp",
+  "description": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 АТК.",
+  "abilities": []
+ },
+ {
+  "id": "card-ангельское-сердце",
+  "name": "Ангельское сердце",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_33.webp",
+  "description": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 АТК.",
+  "abilities": []
+ },
+ {
+  "id": "card-корова",
+  "name": "Корова",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/bubblegum_card_35.webp",
+  "description": "Муу.",
+  "abilities": []
+ },
+ {
+  "id": "card-зеленая-сахарная-вата",
+  "name": "Зеленая сахарная вата",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/bubblegum_card_39.webp",
+  "description": "Восстанови или нанеси 1 Урон выбранному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-рука-помощи",
+  "name": "Рука помощи",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/cake_card_1.webp",
+  "description": "ПРИЕМ >>> Верни строение из стопки сброса себе в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-хэнклоп",
+  "name": "Хэнклоп",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/cake_card_3.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-замок-крови",
+  "name": "Замок Крови",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/cake_card_5.webp",
+  "description": "Каждый раз когда существо противника на этой линии получает урон, прибавь к значению 1.",
+  "abilities": []
+ },
+ {
+  "id": "card-великолепная-крепость",
+  "name": "Великолепная Крепость",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/cake_card_7.webp",
+  "description": "Существо противника на этой линии получает -2 DEF.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "chosen_opponent_creature"
+     },
+     "stat": "defense",
+     "amount": -2
+    },
+    "text": "Существо противника на этой линии получает -2 DEF."
+   }
+  ]
+ },
+ {
+  "id": "card-яростный-гнев",
+  "name": "Яростный гнев",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/cake_card_9.webp",
+  "description": "Выбранное существо получает +2 ATK в этом ходу за каждое применённое существо под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-лунный-урожай",
+  "name": "Лунный урожай",
+  "type": "spell",
+  "cost": 2,
+  "landType": "corn",
+  "image": "/cards/cake_card_11.webp",
+  "description": "Верни строение из стопки сброса в игру.",
+  "abilities": []
+ },
+ {
+  "id": "card-деревянный-ритм",
+  "name": "Деревянный ритм",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/cake_card_12.webp",
+  "description": "Каждое твое существо на земле со строением получает +2 АТК в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 АТК в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-домик-из-разного-дерева",
+  "name": "Домик из разного дерева",
+  "type": "building",
+  "cost": 5,
+  "landType": "corn",
+  "image": "/cards/cake_card_14.webp",
+  "description": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем. Твое существо на этой линии получает +5 DEF.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": 5
+    },
+    "text": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем. Твое существо на этой линии получает +5 DEF."
+   }
+  ]
+ },
+ {
+  "id": "card-ферма",
+  "name": "Ферма",
+  "type": "building",
+  "cost": 2,
+  "landType": "corn",
+  "image": "/cards/cake_card_15.webp",
+  "description": "Ферма считается за дополнительную Кукурузную землю под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-космонаперсток",
+  "name": "Космонаперсток",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/cake_card_16.webp",
+  "description": "Потеряй 2 здоровья, получи 1 действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-стрелец-дэника",
+  "name": "Стрелец Дэника",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/cake_card_17.webp",
+  "description": "Уничтожь Строение под твоим контролем, ПРИЕМ >>> Нанеси 3 урона каждому существу противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-крепкий-лесоруб",
+  "name": "Крепкий лесоруб",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/cake_card_18.webp",
+  "description": "Можешь сыграть дополнительное строение на этой земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-тамплиер",
+  "name": "Кукурузный тамплиер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/cake_card_20.webp",
+  "description": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1
+    },
+    "text": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплие"
+   }
+  ]
+ },
+ {
+  "id": "card-друид-початка",
+  "name": "Друид початка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/cake_card_22.webp",
+  "description": "Примененное существо под твоим контролем получает +1 АТК.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-чемпион",
+  "name": "Кукурузный чемпион",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/cake_card_24.webp",
+  "description": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузная-валькирия",
+  "name": "Кукурузная валькирия",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/cake_card_26.webp",
+  "description": "Кукурузная валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-царица-полей",
+  "name": "Царица полей",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/cake_card_28.webp",
+  "description": "Царица полей получает +1 ATK за каждое применённое существо под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-помощник-лесоруба",
+  "name": "Помощник лесоруба",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/cake_card_29.webp",
+  "description": "ПРИЕМ >>> Перемести выбранное строение под твоим контролем на любую землю без строения.",
+  "abilities": []
+ },
+ {
+  "id": "card-попкорн-бабочка",
+  "name": "Попкорн-бабочка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/cake_card_31.webp",
+  "description": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контрол"
+   }
+  ]
+ },
+ {
+  "id": "card-крысолов",
+  "name": "Крысолов",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/cake_card_33.webp",
+  "description": "Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него.",
+  "abilities": []
+ },
+ {
+  "id": "card-острый-парень",
+  "name": "Острый парень",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/cake_card_35.webp",
+  "description": "ПРИЕМ >>> Нанеси 2 урона выбранному существу противника на этой линии.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_opponent"
+     },
+     "amount": 2,
+     "pierce": false
+    },
+    "text": "ПРИЕМ >>> Нанеси 2 урона выбранному существу противника на этой лин"
+   }
+  ]
+ },
+ {
+  "id": "card-огненное-торнадо",
+  "name": "Огненное торнадо",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 0,
+  "defense": 10,
+  "image": "/cards/cake_card_36.webp",
+  "description": "ПРИЕМ >>> Огненное торнадо получает +3 АТК пока применено.",
+  "abilities": []
+ },
+ {
+  "id": "card-баба-лесоруб",
+  "name": "Баба-лесоруб",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/cake_card_38.webp",
+  "description": "Когда лесоруб вступает в игру, нанеси 1 урон противнику за каждое строение под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "Когда лесоруб вступает в игру, нанеси 1 урон противнику за каждое строение под твоим контролем"
+   }
+  ]
+ },
+ {
+  "id": "card-вырубка-леса",
+  "name": "Вырубка леса",
+  "type": "spell",
+  "cost": 2,
+  "landType": "corn",
+  "image": "/cards/cake_card_40.webp",
+  "description": "Дополнительная стоимость: примени существо под твоим контролем. Просмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду.",
+  "abilities": []
+ },
+ {
+  "id": "card-фирменное-рукопожатие",
+  "name": "Фирменное рукопожатие",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/charlie_card_1.webp",
+  "description": "Предыграй Радужное существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-бочка",
+  "name": "Бочка",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/charlie_card_2.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-связь",
+  "name": "Связь",
+  "type": "spell",
+  "cost": 0,
+  "landType": "blue",
+  "image": "/cards/charlie_card_6.webp",
+  "description": "Добавь карту из своей колоды на руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-торжество-чар",
+  "name": "Торжество чар",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/charlie_card_9.webp",
+  "description": "Нанеси 1 урон выбранному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-робомансер",
+  "name": "Робомансер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/charlie_card_11.webp",
+  "description": "+1 ATK за каждое существо, которое сменило линию в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-пиромансер",
+  "name": "Пиромансер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 0,
+  "defense": 8,
+  "image": "/cards/charlie_card_13.webp",
+  "description": "Пока Пиромансер на земле, можешь нанести 3 Урона выбранному существу на этой линии. Трать 1 действие, чтобы переместить его на пустую землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-некромансер",
+  "name": "Некромансер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/charlie_card_15.webp",
+  "description": "Когда существо под твоим контролем покидает игру, ты можешь переместить его на одну из пустых земель.",
+  "abilities": []
+ },
+ {
+  "id": "card-гидромансер",
+  "name": "Гидромансер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/charlie_card_17.webp",
+  "description": "Когда Гидромансер вступает в игру, можешь найти Подмогу и сыграть ее бесплатно. Промсмотренные карты смешай со своей колодой.",
+  "abilities": []
+ },
+ {
+  "id": "card-хрономансер",
+  "name": "Хрономансер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/charlie_card_18.webp",
+  "description": "Каждый раз, когда Хрономансер меняет линию, ты получаешь 1 действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-аеромансер",
+  "name": "Аеромансер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 5,
+  "image": "/cards/charlie_card_19.webp",
+  "description": "Когда Аеромансер вступает в игру, ты можешь поменяться местами с 2 существами на выбранной линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-биомансер",
+  "name": "Биомансер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/charlie_card_20.webp",
+  "description": "Каждый раз, когда твое существо меняет линию, восстанови 2 Урона Биомансеру.",
+  "abilities": []
+ },
+ {
+  "id": "card-просвещение",
+  "name": "Просвещение",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/charlie_card_22.webp",
+  "description": "Возьми верхнюю карту из своей колоды и посмотри на нее, затем положи на место или сбрось.",
+  "abilities": []
+ },
+ {
+  "id": "card-перенаправление-опасности",
+  "name": "Перенаправление опасности",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/charlie_card_23.webp",
+  "description": "Нанеси 2 Урона выбранному существу. Если оно погибло, выбери другое существо и нанеси ему 2 Урона.",
+  "abilities": []
+ },
+ {
+  "id": "card-сшитый-ленивец",
+  "name": "Сшитый ленивец",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 0,
+  "defense": 8,
+  "image": "/cards/charlie_card_25.webp",
+  "description": "Каждое соседнее существо получает +1 ATK. Если у Сшитого ленивца 4 Урона или больше, соседние существа получают +2 ATK.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "Каждое соседнее существо получает +1 ATK"
+   }
+  ]
+ },
+ {
+  "id": "card-перекормленный-орангутан",
+  "name": "Перекормленный орангутан",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/charlie_card_27.webp",
+  "description": "Пока у Перекормленного орангутана 4 Урона или больше, он получает +1 ATK за каждые 2 Урона.",
+  "abilities": []
+ },
+ {
+  "id": "card-милое-партнерство",
+  "name": "Милое партнерство",
+  "type": "building",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/charlie_card_28.webp",
+  "description": "Во время фазы сражения твоей и твоего партнера, первый раз когда нанесен урон противнику, другой партнер может нанести 1 урон выбранному существу на 1 из своих линий.",
+  "abilities": []
+ },
+ {
+  "id": "card-вязаный-котик",
+  "name": "Вязаный котик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 3,
+  "defense": 7,
+  "image": "/cards/charlie_card_33.webp",
+  "description": "На Вязаного котика действуют строения соседних земель.",
+  "abilities": []
+ },
+ {
+  "id": "card-пушистая-лиса",
+  "name": "Пушистая лиса",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/charlie_card_34.webp",
+  "description": "Пока у Пушистой лисы 4 Урона или больше, первые 2 Урона, нанесенные ей существами противника, игнорируются.",
+  "abilities": []
+ },
+ {
+  "id": "card-обнимашки",
+  "name": "Обнимашки",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/charlie_card_37.webp",
+  "description": "Уничтожь выбранное свое существо и выбранное существо противника на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-набивной-друг",
+  "name": "Набивной друг",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/charlie_card_38.webp",
+  "description": "Выбери свое существо, нанеси ему столько Урона, сколько у него ATK, и удвой его ATK до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-бомба-фасольчатая",
+  "name": "Бомба фасольчатая",
+  "type": "building",
+  "cost": 2,
+  "landType": "good",
+  "image": "/cards/charlie_card_39.webp",
+  "description": "ПРИЕМ >>> Восстанови силы, нанеси урон своему существу на этой земле, если у него 4 Урона.",
+  "abilities": []
+ },
+ {
+  "id": "card-любимый-ягненок",
+  "name": "Любимый ягненок",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/charlie_card_40.webp",
+  "description": "В начале своего хода, если у Любимого ягненка 4 Урона или больше, он наносит 2 Урона выбранному существу противника на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_opponent_creature"
+     },
+     "amount": 2,
+     "pierce": false
+    },
+    "text": "В начале своего хода, если у Любимого ягненка 4 Урона или больше, он наносит 2 Урона выбранному существу противника на э"
+   }
+  ]
+ },
+ {
+  "id": "card-древний-ученый",
+  "name": "Древний ученый",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/finn_card_1.webp",
+  "description": "ПРИЕМ >>> Возврати случайную Радужную карту из сброса в руку. Затем, если на этой линии есть строение, получи 1 действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-крутой-пес",
+  "name": "Крутой пес",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/finn_card_3.webp",
+  "description": "Соседние существа не могут Безумить.",
+  "abilities": []
+ },
+ {
+  "id": "card-когтистый-дракон",
+  "name": "Когтистый дракон",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/finn_card_5.webp",
+  "description": "ПРИЕМ >>> Отправь свое существо на одну из пустых линий.",
+  "abilities": []
+ },
+ {
+  "id": "card-смущающий-бард",
+  "name": "Смущающий бард",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/finn_card_7.webp",
+  "description": "ПРИЕМ >>> Возьми столько карт, сколько существ под твоим контролем, включая Смущающего барда.",
+  "abilities": []
+ },
+ {
+  "id": "card-небесный-наблюдатель",
+  "name": "Небесный наблюдатель",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 5,
+  "image": "/cards/finn_card_9.webp",
+  "description": "ПРИЕМ >>> Выложи заклинание из сброса на верх своей колоды.",
+  "abilities": []
+ },
+ {
+  "id": "card-пси-архитектор",
+  "name": "Пси-архитектор",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/finn_card_10.webp",
+  "description": "Когда Пси-архитектор вступает в игру, можешь перевернуть примененное свое существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-панк-котик",
+  "name": "Панк-котик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/finn_card_12.webp",
+  "description": "Каждое существо, которое сменило линию в этом ходу, получает +2 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-стружанский-джинн",
+  "name": "Стружанский джинн",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 11,
+  "image": "/cards/finn_card_14.webp",
+  "description": "Стружанский джинн получает +2 ATK за каждое примененное твое существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-вождь-воадик",
+  "name": "Вождь Воадик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/finn_card_16.webp",
+  "description": "Вождь Воадик получает +2 ATK за каждое заклинание, сыгранное в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-воадикский-мародер",
+  "name": "Воадикский мародер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 9,
+  "image": "/cards/finn_card_17.webp",
+  "description": "Каждый раз, когда Воадикский мародер меняет линию, возьми карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-большой-дух-воина",
+  "name": "Большой дух воина",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/finn_card_19.webp",
+  "description": "Каждое соседнее существо получает +1 ATK.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "Каждое соседнее существо получает +1 ATK"
+   }
+  ]
+ },
+ {
+  "id": "card-уни-рыцарь",
+  "name": "Уни-рыцарь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 4,
+  "image": "/cards/finn_card_21.webp",
+  "description": "Трать 1 действие: выбери существо на этой линии и уменьши его ATK на 10 до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-школа",
+  "name": "Школа",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/finn_card_22.webp",
+  "description": "ПРИЕМ >>> Существо на этой линии теряет все способности и получает перевернутую случайную свою карту из сброса до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-шалаш-вайда",
+  "name": "Шалаш Вайда",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/finn_card_23.webp",
+  "description": "ПРИЕМ >>> Перемести свое существо на соседнюю линию, если она пуста.",
+  "abilities": []
+ },
+ {
+  "id": "card-поросенок",
+  "name": "Поросенок",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 4,
+  "image": "/cards/finn_card_25.webp",
+  "description": "ПРИЕМ >>> Выбери и поверни одну из своих земель с типом Земли вниз.",
+  "abilities": []
+ },
+ {
+  "id": "card-телепорт",
+  "name": "Телепорт",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/finn_card_29.webp",
+  "description": "Перемести одно свое существо на одну из своих пустых линий.",
+  "abilities": []
+ },
+ {
+  "id": "card-вуадикская-кровь",
+  "name": "Вуадикская кровь",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/finn_card_31.webp",
+  "description": "Каждое существо, которое сменило линию в этом ходу, получает +2 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-воадикский-талисман",
+  "name": "Воадикский талисман",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/finn_card_34.webp",
+  "description": "Выбери свое существо с типом Равнинное существо, оно получает +2 ATK до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-кровавая-крепость",
+  "name": "Кровавая крепость",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/finn_card_36.webp",
+  "description": "Твое существо на этой линии получает +1 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-сопли-гнома",
+  "name": "Сопли гнома",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/finn_card_39.webp",
+  "description": "Уничтожь 3 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-нефтяная-вышка",
+  "name": "Нефтяная вышка",
+  "type": "building",
+  "cost": 2,
+  "landType": "blue",
+  "image": "/cards/fiona_card_1.webp",
+  "description": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-великолепный-грамофон",
+  "name": "Великолепный грамофон",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/fiona_card_2.webp",
+  "description": "Возьми 4 карты, затем сбрось 2 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-парад-щенков",
+  "name": "Парад щенков",
+  "type": "spell",
+  "cost": 2,
+  "landType": "blue",
+  "image": "/cards/fiona_card_4.webp",
+  "description": "Восстанови 2 Урона каждому своему существу; каждое свое существо меняет тип на Радужное существо до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-меч-сноп",
+  "name": "Меч-сноп",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/fiona_card_6.webp",
+  "description": "Нанеси 1 Урон выбранному существу за каждые 2 Урона, полученные картами в твоей руке в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-браслет-дружбы",
+  "name": "Браслет дружбы",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/fiona_card_8.webp",
+  "description": "Поменяй местами любое количество Урона между двумя своими существами.",
+  "abilities": []
+ },
+ {
+  "id": "card-детский-ученый",
+  "name": "Детский ученый",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/fiona_card_10.webp",
+  "description": "Если в этом ходу ты сыграл Радужную карту, Детский ученый получает +3 ATK до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-одинокая-панда",
+  "name": "Одинокая панда",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/fiona_card_11.webp",
+  "description": "Когда Одинокая панда вступает в игру и под твоим контролем нет других существ, возьми карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-пси-фехтовальщик",
+  "name": "Пси-фехтовальщик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/fiona_card_13.webp",
+  "description": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-кроха-слон",
+  "name": "Кроха слон",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/fiona_card_15.webp",
+  "description": "Когда Кроха слон покидает игру, ты можешь убрать еще одно Радужное существо (в дополнение к Равнинному существу).",
+  "abilities": []
+ },
+ {
+  "id": "card-чародейка-вайда",
+  "name": "Чародейка Вайда",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/fiona_card_16.webp",
+  "description": "Существа на этой линии не могут использовать Приемы.",
+  "abilities": []
+ },
+ {
+  "id": "card-матриарх-вайда",
+  "name": "Матриарх Вайда",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/fiona_card_17.webp",
+  "description": "Матриарх Вайда получает +1 ATK за каждое Радужное существо под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-золотой-ретривер",
+  "name": "Золотой ретривер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/fiona_card_21.webp",
+  "description": "Каждый раз, когда Золотой ретривер атакует, можешь поменять карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-хитрый-хорек",
+  "name": "Хитрый хорек",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/fiona_card_22.webp",
+  "description": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил Радужную карту, получи 1 Действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-невероятный-опоссум",
+  "name": "Невероятный опоссум",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/fiona_card_23.webp",
+  "description": "Когда эта карта оказывается в твоем сбросе, можешь сбросить карту с руки, чтобы вернуть Невероятного опоссума себе в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-чудук-вайда",
+  "name": "Чудук Вайда",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/fiona_card_27.webp",
+  "description": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой. (У нее нет типа Земли.)",
+  "abilities": []
+ },
+ {
+  "id": "card-очаровательный-город",
+  "name": "Очаровательный город",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/fiona_card_30.webp",
+  "description": "Все существа на этой линии меняют свой тип Земли и становятся Радужными существами.",
+  "abilities": []
+ },
+ {
+  "id": "card-центр-знаний",
+  "name": "Центр знаний",
+  "type": "building",
+  "cost": 2,
+  "landType": "blue",
+  "image": "/cards/fiona_card_31.webp",
+  "description": "Центр знаний получает игровой текст строений под твоим контролем на соседних линиях (но не их имена).",
+  "abilities": []
+ },
+ {
+  "id": "card-пони",
+  "name": "Пони",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/fiona_card_33.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-пес",
+  "name": "Пес",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/fiona_card_35.webp",
+  "description": "ПРИЕМ >>> Строения промывника в этой линии без текста пока Пес применен.",
+  "abilities": []
+ },
+ {
+  "id": "card-лорд-вампиров",
+  "name": "Лорд Вампиров",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/fiona_card_37.webp",
+  "description": "Когда Лорд Вампиров наносит урон, он восстанавливает то же количество Урона у себя.",
+  "abilities": []
+ },
+ {
+  "id": "card-меч-певунец",
+  "name": "Меч певунец",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/fiona_card_38.webp",
+  "description": "Выбранное существо получает +1 ATK за каждые 2 вытянутые тобой карты в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-река-мечей",
+  "name": "Река мечей",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/fiona_card_40.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу. Тяни 2 карты.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-дуэт",
+  "name": "Дуэт",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/grand_prix_card_3.webp",
+  "description": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-пляжная-вечеринка",
+  "name": "Пляжная Вечеринка",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/grand_prix_card_4.webp",
+  "description": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложить Пляжную Вечеринку в руку партнёра.",
+  "abilities": []
+ },
+ {
+  "id": "card-близняшки",
+  "name": "Близняшки",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/grand_prix_card_5.webp",
+  "description": "Вытяни карту и открой ее. Выбранный игрок открывает верхнюю карту своей колоды. Если стоимость карт совпадает, выбранный игрок берет ее себе на руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-бондарь",
+  "name": "Бондарь",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/grand_prix_card_7.webp",
+  "description": "ПРИЕМ >>> Выбранное существо получает столько +ATK сколько стоят все карты партнерства под контролем твоей команды.",
+  "abilities": []
+ },
+ {
+  "id": "card-подмога",
+  "name": "Подмога",
+  "type": "companion",
+  "cost": 7,
+  "landType": "sand",
+  "image": "/cards/grand_prix_card_8.webp",
+  "description": "В начале фазы сражения твоей или твоего партнера, если ты или партнёр сыграл существо стоимостью 2 и более в этот ход, другой партнёр может тянуть карту",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-банк",
+  "name": "Ледяной банк",
+  "type": "building",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/grand_prix_card_9.webp",
+  "description": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледящее-пение",
+  "name": "Ледящее пение",
+  "type": "spell",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/grand_prix_card_10.webp",
+  "description": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-лимонад",
+  "name": "Ледяной лимонад",
+  "type": "spell",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/grand_prix_card_11.webp",
+  "description": "Сосчитай количество земель с ледяными жетонами. Восстанови 1 урон с такого же количества дружественных существ.",
+  "abilities": []
+ },
+ {
+  "id": "card-ультра-пес",
+  "name": "Ультра пес",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/grand_prix_card_12.webp",
+  "description": "ПРИЕМ >>> Заморозь выбранную землю и существо на ней.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "freeze_landscape",
+     "target": {
+      "kind": "chosen_landscape"
+     }
+    },
+    "text": "ПРИЕМ >>> Заморозь выбранную землю и существо на н"
+   }
+  ]
+ },
+ {
+  "id": "card-банан-в-шоколаде",
+  "name": "Банан в шоколаде",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/grand_prix_card_14.webp",
+  "description": "Если в начале твоей фазы сражения, на этой линии есть хотя бы один Ледяной жетон, нанеси 2 урона выбранному противнику.",
+  "abilities": []
+ },
+ {
+  "id": "card-сэндвич-с-мороженым",
+  "name": "Сэндвич с мороженым",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/grand_prix_card_15.webp",
+  "description": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "freeze_landscape",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на н"
+   }
+  ]
+ },
+ {
+  "id": "card-мятная-мороженка",
+  "name": "Мятная мороженка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/grand_prix_card_16.webp",
+  "description": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ.",
+  "abilities": []
+ },
+ {
+  "id": "card-mokkomem",
+  "name": "Mokkomem",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 0,
+  "defense": 4,
+  "image": "/cards/grand_prix_card_18.webp",
+  "description": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 2 урона выбранному существу. Если это существо погибло, заморозь землю под ним.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_creature"
+     },
+     "amount": 2,
+     "pierce": false
+    },
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 2 урона выбранному существу"
+   }
+  ]
+ },
+ {
+  "id": "card-замороженный-патриот",
+  "name": "Замороженный патриот",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/grand_prix_card_19.webp",
+  "description": "Когда Замороженный патриот вступает в игру, можешь Заморозить Землю на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_landscape",
+     "target": {
+      "kind": "chosen_landscape"
+     }
+    },
+    "text": "Когда Замороженный патриот вступает в игру, можешь Заморозить Землю на этой линии"
+   }
+  ]
+ },
+ {
+  "id": "card-мягкий-рекрут",
+  "name": "Мягкий рекрут",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 5,
+  "image": "/cards/grand_prix_card_23.webp",
+  "description": "Когда Мягкий рекрут вступает на игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-товарищество",
+  "name": "Товарищество",
+  "type": "companion",
+  "cost": 2,
+  "landType": "ice",
+  "image": "/cards/grand_prix_card_24.webp",
+  "description": "Каждый раз, когда существо противника наносит урон твоей команде, нанеси 1 урон команде противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-песочный-замок",
+  "name": "Песочный замок",
+  "type": "building",
+  "cost": 1,
+  "landType": "sand",
+  "image": "/cards/grand_prix_card_25.webp",
+  "description": "Сбрось Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно.",
+  "abilities": []
+ },
+ {
+  "id": "card-остров-голово-краба",
+  "name": "Остров голово-краба",
+  "type": "building",
+  "cost": 1,
+  "landType": "sand",
+  "image": "/cards/grand_prix_card_26.webp",
+  "description": "Потрать 1 действие, ПРИЕМ >>> Если эта земля пустая, то открывай карты с верху своей колоды до тех пор, пока не найдешь Существо, сыграй его бесплатно на эту землю и замешай открытые карты обратно в свою колоду.",
+  "abilities": []
+ },
+ {
+  "id": "card-горячая-подача",
+  "name": "Горячая подача",
+  "type": "spell",
+  "cost": 1,
+  "landType": "sand",
+  "image": "/cards/grand_prix_card_27.webp",
+  "description": "Уничтожь выбранное существо противника. Каждый противник тянет столько карт сколько стоило это существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-спасайся-кто-может",
+  "name": "Спасайся кто может!",
+  "type": "spell",
+  "cost": 1,
+  "landType": "sand",
+  "image": "/cards/grand_prix_card_29.webp",
+  "description": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно.",
+  "abilities": []
+ },
+ {
+  "id": "card-лобстер-спасатель",
+  "name": "Лобстер-спасатель",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/grand_prix_card_30.webp",
+  "description": "Каждый раз когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа.",
+  "abilities": []
+ },
+ {
+  "id": "card-сёрф-лобстер",
+  "name": "Сёрф-лобстер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/grand_prix_card_32.webp",
+  "description": "+1 ATK за каждую землю Бесполезных болот в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-отражающий-камнекраб",
+  "name": "Отражающий камнекраб",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/grand_prix_card_33.webp",
+  "description": "Каждый раз когда Камнекраб регулировщик получает урон от существа, он наносит столько же урона этому же существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-камнекраб-регулировщик",
+  "name": "Камнекраб регулировщик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/grand_prix_card_34.webp",
+  "description": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию.",
+  "abilities": []
+ },
+ {
+  "id": "card-песочный-краб-пират",
+  "name": "Песочный краб пират",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/grand_prix_card_36.webp",
+  "description": "Когда песочный краб пират вступает в игру, можешь бесплатно сыграть существо стоимостью 1.",
+  "abilities": []
+ },
+ {
+  "id": "card-ловкий-песочный-краб",
+  "name": "Ловкий песочный краб",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/grand_prix_card_38.webp",
+  "description": "Каждый раз когда во время твоего хода существо вступает в игру, можешь поменять их местами с Ловким песочным крабом.",
+  "abilities": []
+ },
+ {
+  "id": "card-песочный-краб-рубака",
+  "name": "Песочный краб рубака",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/grand_prix_card_40.webp",
+  "description": "Каждый раз когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "amount": 2,
+     "pierce": false
+    },
+    "text": "когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии"
+   }
+  ]
+ },
+ {
+  "id": "card-магазин-для-отдыха",
+  "name": "Магазин для отдыха",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/gunter_card_2.webp",
+  "description": "ПРИЕМ >>> Перемести неактивное существо под твоим контролем на эту землю (если она пустая).",
+  "abilities": []
+ },
+ {
+  "id": "card-милый-оверлорг",
+  "name": "Милый Оверлорг",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/gunter_card_3.webp",
+  "description": "Уничтожь любое число существ под твоим контролем. Тяни карту за каждого существа уничтоженного таким образом.",
+  "abilities": []
+ },
+ {
+  "id": "card-снежная-лавина",
+  "name": "Снежная лавина",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/gunter_card_4.webp",
+  "description": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками.",
+  "abilities": []
+ },
+ {
+  "id": "card-плавучий-дворец-льда",
+  "name": "Плавучий Дворец Льда",
+  "type": "building",
+  "cost": 2,
+  "landType": "ice",
+  "image": "/cards/gunter_card_9.webp",
+  "description": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном.",
+  "abilities": []
+ },
+ {
+  "id": "card-пурга",
+  "name": "Пурга",
+  "type": "spell",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/gunter_card_10.webp",
+  "description": "Выбери линию и заморозь обе земли на ней.",
+  "abilities": []
+ },
+ {
+  "id": "card-снегопад",
+  "name": "Снегопад",
+  "type": "spell",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/gunter_card_11.webp",
+  "description": "Выбери линию и заморозь обе земли на ней.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-душегуб",
+  "name": "Ледяной душегуб",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/gunter_card_12.webp",
+  "description": "Ледяной душегуб вступает в игру только на земли с ледяным жетоном.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяная-снегобаба",
+  "name": "Ледяная снегобаба",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 3,
+  "defense": 5,
+  "image": "/cards/gunter_card_14.webp",
+  "description": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_landscape",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "text": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии"
+   }
+  ]
+ },
+ {
+  "id": "card-ледяной-гонщик",
+  "name": "Ледяной гонщик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/gunter_card_15.webp",
+  "description": "+4 ATK, если обе земли на этой линии имеют Ледяные жетоны.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-диверсант",
+  "name": "Ледяной диверсант",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/gunter_card_16.webp",
+  "description": "Ледяной диверсант получает +1 АТК за каждую землю с Ледяным жетоном.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-штурмовик",
+  "name": "Ледяной Штурмовик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/gunter_card_18.webp",
+  "description": "Потрать 1 действие, ПРИЕМ >>> Заморозь выбранную землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-снежок",
+  "name": "Снежок",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/gunter_card_20.webp",
+  "description": "Удали Ледяной жетон с земли Снежка >>> Нанеси 3 урона выбранному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-морозильник",
+  "name": "Морозильник",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 4,
+  "defense": 7,
+  "image": "/cards/gunter_card_22.webp",
+  "description": "Когда Морозильник покидает игру, заморозь его землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-заманчивое-спа",
+  "name": "Заманчивое Спа",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/gunter_card_23.webp",
+  "description": "Если в начале твоей фазы Сражения, у тебя под контролем есть неактивное существо на этой земле, вытащи карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-с-добрым-утром",
+  "name": "С добрым утром!",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/gunter_card_24.webp",
+  "description": "Подготовь каждое существо под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-мазокрака",
+  "name": "Мазокрака",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/gunter_card_25.webp",
+  "description": "Сыграй только, если под твоим контролем не более 1 существа и у тебя не более 15 HP. Перемести выбранное существо на выбранную линию под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-последний-раунд",
+  "name": "Последний раунд!",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/gunter_card_26.webp",
+  "description": "Выбранное существо под твоим контролем получает +2 АТК за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
+  "abilities": []
+ },
+ {
+  "id": "card-тонущий-клирик",
+  "name": "Тонущий клирик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 5,
+  "image": "/cards/gunter_card_28.webp",
+  "description": "В начале своего хода перемести Тонущего клирика на пустую землю под твоим контролем. Если не смог, то сбрось его.",
+  "abilities": []
+ },
+ {
+  "id": "card-усталый-библиотекарь",
+  "name": "Усталый библиотекарь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 4,
+  "image": "/cards/gunter_card_30.webp",
+  "description": "Усталый библиотекарь вступает в игру неактивным и не подготовлен в начале твоего хода. Всякий раз, когда он меняет линию, подготовь его.",
+  "abilities": []
+ },
+ {
+  "id": "card-заводской-убийца",
+  "name": "Заводской убийца",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/gunter_card_32.webp",
+  "description": "Уничтожь существо под твоим контролем, ПРИЕМ >>> Вытяни карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-усталый-вомбат",
+  "name": "Усталый вомбат",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 4,
+  "defense": 5,
+  "image": "/cards/gunter_card_34.webp",
+  "description": "В начале своего хода перемести Усталого вомбата на пустую землю под твоим контролем. Если не смог, то перемести на пустую землю твоего противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-усталый-воин",
+  "name": "Усталый Воин",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 5,
+  "defense": 6,
+  "image": "/cards/gunter_card_36.webp",
+  "description": "Усталый Воин вступает в игру неактивным и не подготовлен в начале твоего хода. Всякий раз, когда он меняет линию, подготовь его.",
+  "abilities": []
+ },
+ {
+  "id": "card-предводитель-вайда",
+  "name": "Предводитель Вайда",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 4,
+  "image": "/cards/gunter_card_38.webp",
+  "description": "В начале своего хода перемести Предводителя Вайда на пустую землю под твоим контролем. Если не смог, то сбрось его.",
+  "abilities": []
+ },
+ {
+  "id": "card-снежная-полоса-препятствий",
+  "name": "Снежная полоса препятствий",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/gunter_card_40.webp",
+  "description": "ПРИЕМ >>> Заморозь обе земли на этой линии. Используй только если нет Ледяных жетонов в игре.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "freeze_landscape",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "text": "ПРИЕМ >>> Заморозь обе земли на этой линии"
+   }
+  ]
+ },
+ {
+  "id": "card-альфа-йети",
+  "name": "Альфа-йети",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 3,
+  "defense": 2,
+  "image": "/cards/ice_king_card_1.webp",
+  "description": "+3 ATK пока твой противник не контролирует существо на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-бордер-колли",
+  "name": "Бордер колли",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/ice_king_card_3.webp",
+  "description": "ПРИЕМ >>> Перемести Бордер колли на любую свою пустую землю. Если эта земля заморожена, получи 1 Действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-зимний-солдат",
+  "name": "Зимний солдат",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/ice_king_card_4.webp",
+  "description": "+3 ATK пока твой противник не контролирует существо на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-дракон",
+  "name": "Ледяной дракон",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/ice_king_card_6.webp",
+  "description": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-императорский-пингвин",
+  "name": "Императорский пингвин",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/ice_king_card_8.webp",
+  "description": "Существа на землях с ледяным жетоном получают -1 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-мороженник",
+  "name": "Мороженник",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 10,
+  "image": "/cards/ice_king_card_10.webp",
+  "description": "В начале своего хода нанеси 1 урон каждому существу на земле с ледяным жетоном.",
+  "abilities": []
+ },
+ {
+  "id": "card-мороженная-рыба",
+  "name": "Мороженная рыба",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/ice_king_card_12.webp",
+  "description": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-зашибенный-водила",
+  "name": "Зашибенный водила",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 0,
+  "defense": 5,
+  "image": "/cards/ice_king_card_14.webp",
+  "description": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетоном.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_creature"
+     },
+     "amount": 3,
+     "pierce": false
+    },
+    "text": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетон"
+   }
+  ]
+ },
+ {
+  "id": "card-царственный-олень",
+  "name": "Царственный олень",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 4,
+  "defense": 4,
+  "image": "/cards/ice_king_card_16.webp",
+  "description": "ПРИЕМ >>> Тяни карту за каждую землю с ледяным жетоном под контролем царебсов.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "ПРИЕМ >>> Тяни карту за каждую землю с ледяным жетоном под контролем царебс"
+   }
+  ]
+ },
+ {
+  "id": "card-снежный-кролик",
+  "name": "Снежный кролик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/ice_king_card_18.webp",
+  "description": "Уничтожь Снежного Кролика >>> Заморозь выбранную землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-снежный-ангел",
+  "name": "Снежный ангел",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/ice_king_card_20.webp",
+  "description": "ПРИЕМ >>> Восстанови 1 Урон с каждого своего существа за каждую землю с ледяным жетоном под контролем игроков.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1
+    },
+    "text": "ПРИЕМ >>> Восстанови 1 Урон с каждого своего существа за каждую землю с ледяным жетоном под контролем игрок"
+   }
+  ]
+ },
+ {
+  "id": "card-снежный-пес",
+  "name": "Снежный пес",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/ice_king_card_21.webp",
+  "description": "ПРИЕМ >>> Каждое соседнее существо получает +2 АТК.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое соседнее существо получает +2 АТК"
+   }
+  ]
+ },
+ {
+  "id": "card-ослепительная-люси",
+  "name": "Ослепительная Люси",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/ice_king_card_23.webp",
+  "description": "Ослепительная Люси получает +1 АТК за каждую землю с ледяным жетоном под контролем игроков.",
+  "abilities": []
+ },
+ {
+  "id": "card-полюс-холода",
+  "name": "Полюс холода",
+  "type": "spell",
+  "cost": 2,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_24.webp",
+  "description": "Заморозь каждую землю твоего противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-замораживающий-луч",
+  "name": "Замораживающий луч",
+  "type": "spell",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_26.webp",
+  "description": "Заморозь выбранную землю, затем тяни карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-дорога-снега",
+  "name": "Дорога снега",
+  "type": "spell",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_28.webp",
+  "description": "Заморозь две выбранные земли.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяная-леди",
+  "name": "Ледяная леди",
+  "type": "spell",
+  "cost": 2,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_29.webp",
+  "description": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-кристальный-дворец",
+  "name": "Кристальный дворец",
+  "type": "building",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_31.webp",
+  "description": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-морозильная-камера",
+  "name": "Морозильная камера",
+  "type": "building",
+  "cost": 1,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_32.webp",
+  "description": "Существа на землях с ледяными жетонами на этой линии, не могут атаковать или использовать способности.",
+  "abilities": []
+ },
+ {
+  "id": "card-острая-сосулька",
+  "name": "Острая сосулька",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 1,
+  "image": "/cards/ice_king_card_35.webp",
+  "description": "Поберегись!",
+  "abilities": []
+ },
+ {
+  "id": "card-замороженное-сердце",
+  "name": "Замороженное сердце",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/ice_king_card_37.webp",
+  "description": "Нанеси 1 Урон выбранному существу. Если это существо на земле с Ледяным жетоном, то вместо 1 нанеси 3 Урона.",
+  "abilities": []
+ },
+ {
+  "id": "card-снежный-бизнес",
+  "name": "Снежный бизнес",
+  "type": "spell",
+  "cost": 2,
+  "landType": "ice",
+  "image": "/cards/ice_king_card_40.webp",
+  "description": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-фермер-кочевник",
+  "name": "Фермер-кочевник",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 12,
+  "image": "/cards/jake_card_1.webp",
+  "description": "Когда Фермер-кочевник покидает игру, нанеси 1 урон противнику за каждую карту в его руке.",
+  "abilities": []
+ },
+ {
+  "id": "card-стена-початков",
+  "name": "Стена початков",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 4,
+  "image": "/cards/jake_card_3.webp",
+  "description": "Стена початков получает +1 DEF за каждое Кукурузное поле в игре (у всех игроков).",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-пес",
+  "name": "Кукурузный пес",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 0,
+  "defense": 12,
+  "image": "/cards/jake_card_5.webp",
+  "description": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-жнец",
+  "name": "Жнец",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/jake_card_6.webp",
+  "description": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо на этой линии на пустую соседнюю линию (на своей стороне).",
+  "abilities": []
+ },
+ {
+  "id": "card-поля-кошмаров",
+  "name": "Поля кошмаров",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_card_7.webp",
+  "description": "Наноси 1 урон противнику за каждую карту в его руке.",
+  "abilities": []
+ },
+ {
+  "id": "card-червь-шелухи",
+  "name": "Червь шелухи",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 5,
+  "defense": 4,
+  "image": "/cards/jake_card_11.webp",
+  "description": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз.",
+  "abilities": []
+ },
+ {
+  "id": "card-разбойная-тыква",
+  "name": "Разбойная тыква",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 0,
+  "defense": 5,
+  "image": "/cards/jake_card_15.webp",
+  "description": "ПРИЕМ >>> Наносит 1 урон выбранному существу. Повтори это за каждое Кукурузное поле под твоим контролем. (Может повредить каждое существо только 1 раз.)",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "ПРИЕМ >>> Наносит 1 урон выбранному существу"
+   }
+  ]
+ },
+ {
+  "id": "card-царь-полей",
+  "name": "Царь полей",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 0,
+  "defense": 7,
+  "image": "/cards/jake_card_18.webp",
+  "description": "Царь полей получает +1 ATK за каждое другое Кукурузное существо под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-ронин",
+  "name": "Кукурузный ронин",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/jake_card_19.webp",
+  "description": "+1 ATK за каждое соседнее Кукурузное поле.",
+  "abilities": []
+ },
+ {
+  "id": "card-зернотавр",
+  "name": "Зернотавр",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/jake_card_21.webp",
+  "description": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем"
+   }
+  ]
+ },
+ {
+  "id": "card-призрак-полей",
+  "name": "Призрак полей",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 10,
+  "image": "/cards/jake_card_23.webp",
+  "description": "В начале твоего хода каждый игрок тянет карту.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "В начале твоего хода каждый игрок тянет карту"
+   }
+  ]
+ },
+ {
+  "id": "card-башня-правды",
+  "name": "Башня правды",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_card_25.webp",
+  "description": "Потрать 2 действия >>> Укради случайную карту с руки противника и сыграй ее бесплатно.",
+  "abilities": []
+ },
+ {
+  "id": "card-перекрестное-опыление",
+  "name": "Перекрестное опыление",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/jake_card_28.webp",
+  "description": "Каждое твое Кукурузное существо получает +1 ATK в этом ходу за каждый уникальный тип земель под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "получает +1 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-восстановление-ландшафта",
+  "name": "Восстановление ландшафта",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/jake_card_29.webp",
+  "description": "Можешь перевернуть одну свою землю лицом вверх. Можешь переместить одно свое строение на свою линию без строений.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-скипетр",
+  "name": "Кукурузный скипетр",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/jake_card_31.webp",
+  "description": "Наноси 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-злое-око",
+  "name": "Злое око",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/jake_card_36.webp",
+  "description": "Зло таится в глазах смотрящего.",
+  "abilities": []
+ },
+ {
+  "id": "card-филлис",
+  "name": "Филлис",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/jake_card_37.webp",
+  "description": "Она отвлекает тебя клинком, чтобы отдубасить тебя сумкой.",
+  "abilities": []
+ },
+ {
+  "id": "card-слюнявый-чел",
+  "name": "Слюнявый чел",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 9,
+  "image": "/cards/jake_card_38.webp",
+  "description": "Девушки в калошах любят его.",
+  "abilities": []
+ },
+ {
+  "id": "card-бигфут",
+  "name": "БигФут",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/jake_card_39.webp",
+  "description": "ПРИЕМ >>> Переверни выбранную землю под твоим контролем лицом вверх.",
+  "abilities": []
+ },
+ {
+  "id": "card-щенок-в-заплатках",
+  "name": "Щенок в заплатках",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/jake_2v2_card_3.webp",
+  "description": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 ATK в этот ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-сшитая-белка",
+  "name": "Сшитая белка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/jake_2v2_card_4.webp",
+  "description": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-куча-мала",
+  "name": "Куча мала",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/jake_2v2_card_5.webp",
+  "description": "Дружественные существа получают +1 ATK до начала следующей фазы сражения. Затем каждое существо наносит урон равный его ATK существу противника на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-заплатка",
+  "name": "Заплатка",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/jake_2v2_card_6.webp",
+  "description": "Перераспредели урон на существах под твоим контролем (сделай это так, чтобы урона было не больше DEF).",
+  "abilities": []
+ },
+ {
+  "id": "card-сплочённость",
+  "name": "Сплочённость",
+  "type": "companion",
+  "cost": 2,
+  "landType": "good",
+  "image": "/cards/jake_2v2_card_7.webp",
+  "description": "Первое существо, которое атакует другое существо в течение хода твоей команды, получает +1 АТК в этот ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-крепость-из-подушек",
+  "name": "Крепость из подушек",
+  "type": "building",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/jake_2v2_card_8.webp",
+  "description": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. Проделай то же самое с другим дружественным существом.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_creature"
+     },
+     "amount": 2,
+     "pierce": false
+    },
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле"
+   }
+  ]
+ },
+ {
+  "id": "card-дикий-зебрарог",
+  "name": "Дикий зебрарог",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/jake_2v2_card_17.webp",
+  "description": "Когда Дикий зебрарог атакует, нанеси 1 урон выбранному противнику.",
+  "abilities": []
+ },
+ {
+  "id": "card-бывалый-зебрарог",
+  "name": "Бывалый зебрарог",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/jake_2v2_card_18.webp",
+  "description": "Когда Бывалый зебрарог атакует, нанеси 2 урона выбранному противнику.",
+  "abilities": []
+ },
+ {
+  "id": "card-королевский-малыш",
+  "name": "Королевский малыш",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/jake_2v2_card_19.webp",
+  "description": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контрол"
+   }
+  ]
+ },
+ {
+  "id": "card-шипастый-зебрарог",
+  "name": "Шипастый зебрарог",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/jake_2v2_card_22.webp",
+  "description": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-тренированный-крылатый-зебрарог",
+  "name": "Тренированный крылатый зебрарог",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 3,
+  "defense": 7,
+  "image": "/cards/jake_2v2_card_23.webp",
+  "description": "+1 ATK за каждую Тимборн под контролем твоей команды. Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его в свою руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-гарнизон",
+  "name": "Кукурузный гарнизон",
+  "type": "building",
+  "cost": 2,
+  "landType": "corn",
+  "image": "/cards/jake_2v2_card_25.webp",
+  "description": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-слинять",
+  "name": "Слинять",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_2v2_card_28.webp",
+  "description": "Когда выбранное существо атакует в этот ход, оно покидает игру перед фазой сражения, сняв весь урон с него за это.",
+  "abilities": []
+ },
+ {
+  "id": "card-бесконечный-комбайн",
+  "name": "Бесконечный комбайн",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_2v2_card_29.webp",
+  "description": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-кормежник",
+  "name": "Кормежник",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/jake_2v2_card_30.webp",
+  "description": "Когда Кормежник вступает в игру, следующее существо, введенное в игру в этом ходу, будет стоить на 1 меньше.",
+  "abilities": []
+ },
+ {
+  "id": "card-семейные-посиделки",
+  "name": "Семейные посиделки",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/jake_2v2_card_35.webp",
+  "description": "Выбери другого игрока и землю под твоим контролем. Каждый тянет карту существа соответствующего этой земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-королевский-тур",
+  "name": "Королевский тур",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/jake_2v2_card_36.webp",
+  "description": "Если выбранное существо под твоим контролем наносит 1 и более урона противнику в этот ход, то нанеси 2 урона этому же противнику. Как сделал это, передай эту карту в руку своему партнёру.",
+  "abilities": []
+ },
+ {
+  "id": "card-овечка",
+  "name": "Овечка",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 3,
+  "image": "/cards/jake_2v2_card_38.webp",
+  "description": "Радужное существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-содействие",
+  "name": "Содействие",
+  "type": "companion",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_2v2_card_40.webp",
+  "description": "В начале фазы сражения, если ты партнёр и твой партнёр не сыграл существо в этом ходу, ты можешь бесплатно сыграть существо стоимостью 1 или менее.",
+  "abilities": []
+ },
+ {
+  "id": "card-песчаный-сфинкс",
+  "name": "Песчаный сфинкс",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "image": "/cards/lady_rainicorn_card_1.webp",
+  "description": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-фолианкх",
+  "name": "Фолианкх",
+  "type": "spell",
+  "cost": 1,
+  "landType": "sand",
+  "image": "/cards/lady_rainicorn_card_3.webp",
+  "description": "Тяни карту за каждую свою пустую линию.",
+  "abilities": []
+ },
+ {
+  "id": "card-пляжная-мумия",
+  "name": "Пляжная мумия",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 0,
+  "defense": 7,
+  "image": "/cards/lady_rainicorn_card_4.webp",
+  "description": "ПРИЕМ >>> Верни существо на соседней линии в руку владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-стена-песка",
+  "name": "Стена песка",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 1,
+  "defense": 12,
+  "image": "/cards/lady_rainicorn_card_6.webp",
+  "description": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 ATK в этот ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-сэндвич",
+  "name": "Сэндвич",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 0,
+  "defense": 12,
+  "image": "/cards/lady_rainicorn_card_8.webp",
+  "description": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику.",
+  "abilities": []
+ },
+ {
+  "id": "card-акула",
+  "name": "Акула",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/lady_rainicorn_card_10.webp",
+  "description": "Когда песчаное существо вступает в игру во время твоего хода (включая Акулу), оно получает +1 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "получает +1 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-мариачи",
+  "name": "Мариачи",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/lady_rainicorn_card_12.webp",
+  "description": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо, вступившее в игру в этот ход.",
+  "abilities": [
+   {
+    "kind": "floop",
+    "trigger": "floop",
+    "floopCost": 1,
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо, вступившее в игру в этот х"
+   }
+  ]
+ },
+ {
+  "id": "card-песчаный-змей",
+  "name": "Песчаный змей",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 0,
+  "defense": 9,
+  "image": "/cards/lady_rainicorn_card_14.webp",
+  "description": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_opponent_creature"
+     },
+     "amount": 4,
+     "pierce": false
+    },
+    "text": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии"
+   }
+  ]
+ },
+ {
+  "id": "card-муми-тролль",
+  "name": "Муми-тролль",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/lady_rainicorn_card_16.webp",
+  "description": "ПРИЕМ >>> Получи 1 Действие в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-домашний-кактус",
+  "name": "Домашний кактус",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 0,
+  "defense": 4,
+  "image": "/cards/lady_rainicorn_card_17.webp",
+  "description": "+2 ATK за каждый Домашний кактус под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-затерянный-голем",
+  "name": "Затерянный голем",
+  "type": "creature",
+  "cost": 3,
+  "landType": "sand",
+  "attack": 5,
+  "defense": 6,
+  "image": "/cards/lady_rainicorn_card_19.webp",
+  "description": "Затерянный голем стоит на 1 меньше за каждое другое существо, сыгранное в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-песчаная-мышь",
+  "name": "Песчаная мышь",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 1,
+  "defense": 10,
+  "image": "/cards/lady_rainicorn_card_20.webp",
+  "description": "Песчаная мышь получает 1 DEF за каждое другое существо, вступившее в игру под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-песчаные-рыцари",
+  "name": "Песчаные рыцари",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/lady_rainicorn_card_22.webp",
+  "description": "+2 ATK, если под твоим контролем Голубые равнины.",
+  "abilities": []
+ },
+ {
+  "id": "card-песчаный-глазастик",
+  "name": "Песчаный глазастик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/lady_rainicorn_card_23.webp",
+  "description": "Когда Песчаный глазастик вступает в игру, нанеси 1 урон каждому существу в игре, включая каждое твое существо.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "Когда Песчаный глазастик вступает в игру, нанеси 1 урон каждому существу в игре, включая каждое твое существо"
+   }
+  ]
+ },
+ {
+  "id": "card-волшебные-семена-зазо",
+  "name": "Волшебные семена Зазо",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lady_rainicorn_card_25.webp",
+  "description": "Выбранное песчаное существо получает +2 ATK в этом ходу за каждое существо, вступившее в игру на соседней линии в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-песчаный-ангел",
+  "name": "Песчаный ангел",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/lady_rainicorn_card_33.webp",
+  "description": "Ложись на песок, подвигай руками и ногами, и она придёт к тебе.",
+  "abilities": []
+ },
+ {
+  "id": "card-мисс-муми",
+  "name": "Мисс Муми",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/lady_rainicorn_card_35.webp",
+  "description": "В начале своего хода можешь вернуть Мисс Муми в руку владельцу. Если сделаешь это, выбранное Песчаное Существо под твоим контролем получает +1 DEF.",
+  "abilities": []
+ },
+ {
+  "id": "card-персиковая-джинни",
+  "name": "Персиковая Джинни",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 6,
+  "image": "/cards/lady_rainicorn_card_36.webp",
+  "description": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "получает +1 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-непустой-гроб",
+  "name": "Непустой гроб",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lady_rainicorn_card_38.webp",
+  "description": "Следующее существо, сыгранное тобой в этот ход, стоит на 2 действия меньше.",
+  "abilities": []
+ },
+ {
+  "id": "card-драконий-поп-десят",
+  "name": "Драконий поп-десят",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/lemongrab_card_1.webp",
+  "description": "При входе на поле переместите его на пустую землю; соседние существа теряют 1 атаку.",
+  "abilities": []
+ },
+ {
+  "id": "card-мясистый-поп-десят",
+  "name": "Мясистый поп-десят",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 4,
+  "image": "/cards/lemongrab_card_2.webp",
+  "description": "При входе переместите на пустую землю, затем переверните эту землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-небезумный-поп-десят",
+  "name": "Небезумный поп-десят",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/lemongrab_card_3.webp",
+  "description": "При входе переместите на пустую землю; не может быть выбран противником.",
+  "abilities": []
+ },
+ {
+  "id": "card-стампичный-поп-десят",
+  "name": "Стампичный поп-десят",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 6,
+  "image": "/cards/lemongrab_card_5.webp",
+  "description": "При входе переместите на пустую землю; не может быть выбран противником.",
+  "abilities": []
+ },
+ {
+  "id": "card-бабах",
+  "name": "БАБАХ",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 5,
+  "image": "/cards/lemongrab_card_7.webp",
+  "description": "При входе нанесите 1 урон каждому соседнему существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-зона-высадки",
+  "name": "Зона высадки",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_9.webp",
+  "description": "Выберите одного из своих существ и верните его в руку.",
+  "abilities": []
+ },
+ {
+  "id": "card-мясной-кулак",
+  "name": "Мясной кулак",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_11.webp",
+  "description": "Выбранное существо под вашим контролем теряет 5 атаки в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-ты-жкошь",
+  "name": "Ты жкошь!",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_12.webp",
+  "description": "Переверните выбранную землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-аванпост-попугаев",
+  "name": "Аванпост попугаев",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_14.webp",
+  "description": "Каждое существо на этой линии получает -1 атаку (не ниже 0).",
+  "abilities": []
+ },
+ {
+  "id": "card-тёплый-приём",
+  "name": "Тёплый приём",
+  "type": "spell",
+  "cost": 1,
+  "landType": "sand",
+  "image": "/cards/lemongrab_card_15.webp",
+  "description": "Верните существо в руку его владельца и получите столько действий, сколько стоила карта.",
+  "abilities": []
+ },
+ {
+  "id": "card-закусочная",
+  "name": "Закусочная",
+  "type": "building",
+  "cost": 2,
+  "landType": "sand",
+  "image": "/cards/lemongrab_card_16.webp",
+  "description": "Получите действие за каждого попавшего на поле существа в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-помпезный-зебрарог",
+  "name": "Помпезный зебрарог",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/lemongrab_card_17.webp",
+  "description": "Получайте 1 дополнительную защиту за каждый различный тип земли под вашим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-крушитель-земли",
+  "name": "Крушитель земли",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/lemongrab_card_19.webp",
+  "description": "При входе переверните землю; при уходе откройте её.",
+  "abilities": []
+ },
+ {
+  "id": "card-дрожь-земли",
+  "name": "Дрожь земли",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/lemongrab_card_21.webp",
+  "description": "Получайте 2 атаки за каждую перевёрнутую землю в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-зебрарог-на-подборе",
+  "name": "Зебрарог на подборе",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 6,
+  "image": "/cards/lemongrab_card_24.webp",
+  "description": "Получайте 1 атаку за каждый различный тип земли под контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-rock-n-roller",
+  "name": "Rock'n'Roller",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/lemongrab_card_26.webp",
+  "description": "При входе переверните землю, а при уходе откройте её.",
+  "abilities": []
+ },
+ {
+  "id": "card-лавина-маисы",
+  "name": "Лавина маисы",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_28.webp",
+  "description": "Каждое существо получает 1 атаку за каждую перевёрнутую землю в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-башня-свободы",
+  "name": "Башня свободы",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_29.webp",
+  "description": "Сбросьте карту, выберите свою землю и измените её тип до следующего хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-воронка",
+  "name": "Воронка",
+  "type": "building",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_30.webp",
+  "description": "Сбросьте карту и переверните выбранную землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-скачущий-зебрарог",
+  "name": "Скачущий зебрарог",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/lemongrab_card_31.webp",
+  "description": "Получайте 1 атаку за каждый различный тип земли под контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-смещатель-земли",
+  "name": "Смещатель земли",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/lemongrab_card_32.webp",
+  "description": "Получайте 2 атаки за каждую перевёрнутую землю в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-каракум",
+  "name": "Каракум",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 0,
+  "defense": 4,
+  "image": "/cards/lemongrab_card_33.webp",
+  "description": "Получайте по 1 атаке и защите за каждую карту под этим существом; помещайте карты под него и сбрасывайте при уходе.",
+  "abilities": []
+ },
+ {
+  "id": "card-мути-ба",
+  "name": "Мути Ба",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/lemongrab_card_34.webp",
+  "description": "Верните эту карту в руку и поменяйте её местами с двумя другими существами.",
+  "abilities": []
+ },
+ {
+  "id": "card-пескомаг",
+  "name": "Пескомаг",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 2,
+  "defense": 4,
+  "image": "/cards/lemongrab_card_36.webp",
+  "description": "Верните эту карту в руку; существа под контролем получают по 1 дополнительной атаке и защите.",
+  "abilities": []
+ },
+ {
+  "id": "card-ска-пион",
+  "name": "Ска-пион",
+  "type": "creature",
+  "cost": 1,
+  "landType": "sand",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/lemongrab_card_37.webp",
+  "description": "Пока контролирует противник, стоимость уменьшена на 1.",
+  "abilities": []
+ },
+ {
+  "id": "card-свободное-падение",
+  "name": "Свободное падение",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lemongrab_card_39.webp",
+  "description": "Каждое существо получает 1 атаку за каждое существо, попавшее на поле в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-мавзолей",
+  "name": "Мавзолей",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_1.webp",
+  "description": "Получайте 1 дополнительную защиту за каждые 5 сброшенных карт.",
+  "abilities": []
+ },
+ {
+  "id": "card-ночная-башня",
+  "name": "Ночная башня",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_2.webp",
+  "description": "Если у противника нет существ на линии, сбросьте карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-туалет-судьбы",
+  "name": "Туалет судьбы",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_3.webp",
+  "description": "Выбранное существо под контролем получает 1 атаку в этом ходу за каждые 5 сброшенных карт.",
+  "abilities": []
+ },
+ {
+  "id": "card-драконья-нога",
+  "name": "Драконья нога",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/lsp_card_4.webp",
+  "description": "При сбросе карты эта карта получает 1 атаку в этом ходу (до 5).",
+  "abilities": []
+ },
+ {
+  "id": "card-гусеница",
+  "name": "Гусеница",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 3,
+  "image": "/cards/lsp_card_6.webp",
+  "description": "За каждые 5 сброшенных карт получайте 2 атаки.",
+  "abilities": []
+ },
+ {
+  "id": "card-геркулес",
+  "name": "Геркулес",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/lsp_card_8.webp",
+  "description": "Сбросьте карту, чтобы получить 4 атаки один раз за ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-фигурка-бесконечности",
+  "name": "Фигурка бесконечности",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/lsp_card_10.webp",
+  "description": "Сбросьте карту, чтобы 1 урон другому существу; можно использовать любое число раз.",
+  "abilities": []
+ },
+ {
+  "id": "card-розовая-ведьма",
+  "name": "Розовая ведьма",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/lsp_card_12.webp",
+  "description": "Сбросьте карту, чтобы нанести 1 урон каждому вражескому существу один раз за ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-скелетная-рука",
+  "name": "Скелетная рука",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/lsp_card_13.webp",
+  "description": "Возьмите 3 верхние карты сброса; заклинания, сброшенные таким образом, стоят на 3 меньше.",
+  "abilities": []
+ },
+ {
+  "id": "card-лысый-присед",
+  "name": "Лысый присед",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/lsp_card_14.webp",
+  "description": "Сбросьте карту, чтобы восстановить 1 урон, один раз за ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-пирамида",
+  "name": "Пирамида",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_17.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-кристаллы",
+  "name": "Кристаллы",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_18.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-сублиминальная-сила",
+  "name": "Сублиминальная сила",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_19.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-официальные-штаны",
+  "name": "Официальные штаны",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_21.webp",
+  "description": "Замените выбранное существо пустой синей линией.",
+  "abilities": []
+ },
+ {
+  "id": "card-скелет-гастропер",
+  "name": "Скелет гастропер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 8,
+  "image": "/cards/lsp_card_22.webp",
+  "description": "Поменяйте линии местами с другим существом.",
+  "abilities": []
+ },
+ {
+  "id": "card-черничная-джинни",
+  "name": "Черничная Джинни",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/lsp_card_23.webp",
+  "description": "При входе замените выбранное существо; поменяйте обе карты местами.",
+  "abilities": []
+ },
+ {
+  "id": "card-виноградная-джинни",
+  "name": "Виноградная Джинни",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/lsp_card_25.webp",
+  "description": "При входе замените выбранное существо и положите верхнюю карту сброса в замену ему.",
+  "abilities": []
+ },
+ {
+  "id": "card-лункий-мозг",
+  "name": "Лункий мозг",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/lsp_card_27.webp",
+  "description": "При входе замените выбранное существо и получите 2 атаки в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-школяр-будущего",
+  "name": "Школяр будущего",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/lsp_card_29.webp",
+  "description": "При входе замените выбранное существо и получите действие.",
+  "abilities": []
+ },
+ {
+  "id": "card-тупица-в-наушниках",
+  "name": "Тупица в наушниках",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/lsp_card_31.webp",
+  "description": "При входе замените выбранное существо; нанесите 3 урон соседнему существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-козёл",
+  "name": "Козёл",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/lsp_card_34.webp",
+  "description": "При входе замените выбранное существо и поменяйте карты местами.",
+  "abilities": []
+ },
+ {
+  "id": "card-хороший-песик",
+  "name": "Хороший песик",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 5,
+  "image": "/cards/lsp_card_36.webp",
+  "description": "Сбросьте карту, чтобы получить 2 атаки в этом ходу, один раз за ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-сила-трусов",
+  "name": "Сила трусов",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_38.webp",
+  "description": "Выбранное существо получает 2 атаки в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-вулкан",
+  "name": "Вулкан",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lsp_card_39.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-призрак-джинни",
+  "name": "Призрак Джинни",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/lich_card_1.webp",
+  "description": "Следующее заклинание в этом ходу стоит на 1 меньше.",
+  "abilities": []
+ },
+ {
+  "id": "card-прозрачный-вышибала",
+  "name": "Прозрачный вышибала",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/lich_card_3.webp",
+  "description": "Получайте 1 атаку за каждое соседнее призрачное существо.",
+  "abilities": []
+ },
+ {
+  "id": "card-проклятый-древний-дуб",
+  "name": "Проклятый древний дуб",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "defense": 8,
+  "image": "/cards/lich_card_5.webp",
+  "description": "В начале следующего хода увеличивайте защиту на 1; вражеские существа на линии без урона уходят, паникуют и теряют 1 атаку.",
+  "abilities": []
+ },
+ {
+  "id": "card-частичка-души",
+  "name": "Частичка души",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 4,
+  "image": "/cards/lich_card_6.webp",
+  "description": "Сбросьте карту, чтобы взять любое проклятие из колоды; иначе уйдите и возьмите карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрачный-ниндзя",
+  "name": "Призрачный ниндзя",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 5,
+  "image": "/cards/lich_card_8.webp",
+  "description": "При атаке существом можете уклониться; бросьте 4+ и избежите атаки.",
+  "abilities": []
+ },
+ {
+  "id": "card-дух-воплекура",
+  "name": "Дух воплекура",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/lich_card_10.webp",
+  "description": "Когда герой паладина входит, нанесите 1 урон всем врагам или 3 урону существу перед паладином.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрак-карги",
+  "name": "Призрак карги",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/lich_card_11.webp",
+  "description": "После смерти вы получаете 1 атаку за каждое своё или проклятое существо; если призрак убивает существо, демон получает урон, равный его силе.",
+  "abilities": []
+ },
+ {
+  "id": "card-бесмелесный-обжора",
+  "name": "Бесмелесный обжора",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/lich_card_13.webp",
+  "description": "Пожирает души; при гибели союзника кладёт карту под себя и получает 1 атаку и 2 защиты.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрак-тэдди-крюка",
+  "name": "Призрак Тэдди-крюка",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "defense": 8,
+  "image": "/cards/lich_card_15.webp",
+  "description": "При атаке врага получите 1 атаку за каждого соседнего врага.",
+  "abilities": []
+ },
+ {
+  "id": "card-некромама",
+  "name": "Некромама",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 7,
+  "image": "/cards/lich_card_16.webp",
+  "description": "Берите карты с верха сброса до коричневого зомби или прямого скелема, затем сбросьте остальные; если места нет, не берите карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-прямой-скелем",
+  "name": "Прямой скелем",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 4,
+  "image": "/cards/lich_card_17.webp",
+  "description": "Получает 1 дополнительную защиту, если на поле есть другой прямой скелем.",
+  "abilities": []
+ },
+ {
+  "id": "card-коричневый-зомби",
+  "name": "Коричневый зомби",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/lich_card_19.webp",
+  "description": "Не мамой уж и сладкий.",
+  "abilities": []
+ },
+ {
+  "id": "card-духо-муха",
+  "name": "Духо-муха",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/lich_card_21.webp",
+  "description": "Перед смертью бросает кости в существо промывника и получает 1 дополнительный урон; касается только убившего муху существа.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрачные-бро",
+  "name": "Призрачные бро",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/lich_card_24.webp",
+  "description": "Не получают урон при атаке на существо промывника.",
+  "abilities": []
+ },
+ {
+  "id": "card-зомбахан",
+  "name": "Зомбахан",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/lich_card_26.webp",
+  "description": "Если у промывника под контролем 2 или меньше существ, получите 1 атаку.",
+  "abilities": []
+ },
+ {
+  "id": "card-уземающая-пирамида",
+  "name": "Уземающая пирамида",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_28.webp",
+  "description": "Существо промывника на этой линии получает -2 защиты; защита не может стать меньше 1.",
+  "abilities": []
+ },
+ {
+  "id": "card-преобразователь-скелетов",
+  "name": "Преобразователь скелетов",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_29.webp",
+  "description": "За каждое попавшее на линию существо восстанавливает 1 урон всем своим существам.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрачный-шмак",
+  "name": "Призрачный шмак",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_30.webp",
+  "description": "Уничтожьте выбранное строение промывника.",
+  "abilities": []
+ },
+ {
+  "id": "card-корова-нежить",
+  "name": "Корова-нежить",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/lich_card_32.webp",
+  "description": "Радужное существо \"Му?\"",
+  "abilities": []
+ },
+ {
+  "id": "card-му-бык",
+  "name": "Му-бык",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/lich_card_34.webp",
+  "description": "Получает 1 атаку, когда атакует существо с железным цветом.",
+  "abilities": []
+ },
+ {
+  "id": "card-вместе-навсегда",
+  "name": "Вместе навсегда",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_36.webp",
+  "description": "Распределите урон между двумя существами под вашим контролем как угодно; урон одного существа не может превышать его защиту.",
+  "abilities": []
+ },
+ {
+  "id": "card-последний-шанс",
+  "name": "Последний шанс",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_37.webp",
+  "description": "Уничтожьте своё существо без урона, затем возьмите и бесплатно сбросьте любое существо из сброса или колоды промывника.",
+  "abilities": []
+ },
+ {
+  "id": "card-убей-молния",
+  "name": "Убей-молния",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_39.webp",
+  "description": "Нанесите урон по цепочке трём существам промывника на соседних землях: 3, 2 и 1.",
+  "abilities": []
+ },
+ {
+  "id": "card-мозг-щи",
+  "name": "Мозг-щи",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_42.webp",
+  "description": "+2 атаки в этом ходу выбранному существу с наибольшей атакой среди существ под вашим контролем в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-неразборчивый-гладиатор",
+  "name": "Неразборчивый гладиатор",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 4,
+  "defense": 3,
+  "image": "/cards/lich_card_43.webp",
+  "description": "При атаке существа промывника, если рядом есть союзные существа, нанесите 2 урона одному из них.",
+  "abilities": []
+ },
+ {
+  "id": "card-очаровательный-трупоедик",
+  "name": "Очаровательный трупоедик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/lich_card_44.webp",
+  "description": "Питается павшими. Приём >>>: уничтожьте верхнюю карту сброса промывника и получите постоянно 1 атаку; поместите карту под него, сбросьте всё при смерти.",
+  "abilities": []
+ },
+ {
+  "id": "card-чудесная-жерва",
+  "name": "Чудесная жерва",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lich_card_46.webp",
+  "description": "Уничтожьте выбранное существо под контролем; если у него меньше половины защиты, сначала уменьшите его защиту, иначе получите 2 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-мурррузрак",
+  "name": "Мурррузрак",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/lich_card_48.webp",
+  "description": "Снимается призрачным и мыльным существом одновременно; после уничтожения может воскреснуть с полными жизнями один раз по желанию; после этого нельзя вернуть из сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-похоронный-дом",
+  "name": "Похоронный дом",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_1.webp",
+  "description": "Нанесите 1 урон выбранному существу; если оно умирает, нанесите 1 урон соседнему существу и получите карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-картонный-особняк",
+  "name": "Картонный особняк",
+  "type": "building",
+  "cost": 5,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_2.webp",
+  "description": "Соперник теряет 3 действия; если у него нет существ на поле, он сбрасывает карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-кровавая-купальня",
+  "name": "Кровавая купальня",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_3.webp",
+  "description": "Нанесите 1 урон всем существам промывника и выбранному существу промывника ещё 3 урона.",
+  "abilities": []
+ },
+ {
+  "id": "card-бабло-прочь",
+  "name": "Бабло прочь",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_5.webp",
+  "description": "Выбранное существо может вернуться в руку; получите столько действий, сколько оно стоило.",
+  "abilities": []
+ },
+ {
+  "id": "card-одноколесный-велосипед",
+  "name": "Одноколесный велосипед",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 10,
+  "image": "/cards/marceline_card_7.webp",
+  "description": "В начале хода соперника нанесите 2 урона соседнему существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-мушкаловка",
+  "name": "Мушкаловка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/marceline_card_9.webp",
+  "description": "Нанесите 1 урон выбранному существу соперника.",
+  "abilities": []
+ },
+ {
+  "id": "card-принцесса-бэнши",
+  "name": "Принцесса Бэнши",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/marceline_card_11.webp",
+  "description": "Когда существо промывника умирает, нанесите 1 урон его владельцу; когда умирает существо соперника, вы получаете карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-королева",
+  "name": "Королева",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 9,
+  "image": "/cards/marceline_card_13.webp",
+  "description": "Каждый раз, когда промывник сбрасывает карту, каждый раз, когда вы наносите урон, и каждый раз, когда вы получаете урон, можете нанести 1 урон выбранному существу соперника.",
+  "abilities": []
+ },
+ {
+  "id": "card-ангел-болот",
+  "name": "Ангел Болот",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/marceline_card_14.webp",
+  "description": "Нанесите 1 урон выбранному существу; разместите эту карту сбоку от него как усиление. В конце хода соперника нанесите 1 урон этому существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-ведьмак",
+  "name": "Ведьмак",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 11,
+  "image": "/cards/marceline_card_15.webp",
+  "description": "В начале хода сбросьте 2 карты или получите 2 урона.",
+  "abilities": []
+ },
+ {
+  "id": "card-болотный-бум",
+  "name": "Болотный Бум",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/marceline_card_17.webp",
+  "description": "Нанесите 2 урона выбранному существу; если оно умирает, вы получаете 2 действия.",
+  "abilities": []
+ },
+ {
+  "id": "card-болотная-лягушка-бомба",
+  "name": "Болотная лягушка-бомба",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/marceline_card_19.webp",
+  "description": "Нанесите 2 урона соседнему существу; когда умирает существо, можете повторить.",
+  "abilities": []
+ },
+ {
+  "id": "card-доктор-ерунда",
+  "name": "Доктор Ерунда",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/marceline_card_20.webp",
+  "description": "Каждый раз, когда вы теряете урон, можете сбросить карту; если это существо промывника, сбросьте случайную карту промывника, в противном случае получите урон.",
+  "abilities": []
+ },
+ {
+  "id": "card-хлопушка",
+  "name": "Хлопушка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/marceline_card_21.webp",
+  "description": "Получайте 1 дополнительную защиту за каждое существо под вами.",
+  "abilities": []
+ },
+ {
+  "id": "card-свирепая-курица",
+  "name": "Свирепая курица",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 10,
+  "image": "/cards/marceline_card_23.webp",
+  "description": "Пока в игре, существа промывника не могут атаковать в ваш ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-автоплут",
+  "name": "Автоплут",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_25.webp",
+  "description": "В конце хода соперника, если на поле нет существ промывника, получите действие; выберите существо соперника для замены этой картой.",
+  "abilities": []
+ },
+ {
+  "id": "card-пентакутия",
+  "name": "Пентакутия",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_26.webp",
+  "description": "Нанесите 1 урон выбранному существу; если оно умирает, возьмите карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-музыкальная-утка",
+  "name": "Музыкальная утка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 9,
+  "image": "/cards/marceline_card_28.webp",
+  "description": "В конце хода, если существо атаковало вас, разместите эту карту на его земле вместо него, пока вы атакуете, затем верните его на место.",
+  "abilities": []
+ },
+ {
+  "id": "card-бумажный-тигр",
+  "name": "Бумажный тигр",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/marceline_card_30.webp",
+  "description": "Когда существо промывника атакует вас, нанесите 2 урона атакующему существу и поместите эту карту под ним.",
+  "abilities": []
+ },
+ {
+  "id": "card-чёрная-кулон",
+  "name": "Чёрная кулон",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_32.webp",
+  "description": "Выбранное существо получает 4 атаки и 4 защиты в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-переливание-крови",
+  "name": "Переливание крови",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/marceline_card_34.webp",
+  "description": "Выбранное существо получает 4 атаки и 4 защиты в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-свирепый-цыплёнок",
+  "name": "Свирепый цыплёнок",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 5,
+  "image": "/cards/marceline_card_35.webp",
+  "description": "Пока в игре, существа промывника не могут атаковать в ваш ход.",
+  "abilities": []
+ },
+ {
+  "id": "card-голубой-король-вечерюк",
+  "name": "Голубой король Вечерюк",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/ftg_card_1.webp",
+  "description": "Вский раз когда ты тянешь карту, Голубой король Вечерюк получает +1 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "получает +1 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-голубой-гном",
+  "name": "Голубой гном",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_2.webp",
+  "description": "ПРИЁМ >>> Нанеси 1 урон каждому существу промывника на Бесполезных болотах.",
+  "abilities": []
+ },
+ {
+  "id": "card-черничное-желе",
+  "name": "Черничное желе",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/ftg_card_3.webp",
+  "description": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрак-джонни",
+  "name": "Призрак Джонни",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_4.webp",
+  "description": "ПРИЁМ >>> Твое следующее заклинание в этом ходу стоит на 2 меньше.",
+  "abilities": []
+ },
+ {
+  "id": "card-дух-ниндзя",
+  "name": "Дух ниндзя",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/ftg_card_5.webp",
+  "description": "Когда Дух ниндзя наносит урон промывнику, этот промывник не может играть заклинания во время своего следующего хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-паладин",
+  "name": "Паладин",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 7,
+  "image": "/cards/ftg_card_6.webp",
+  "description": "Каждое существо сменившее линию в этом ходу получает +3 ATK в этом ходу. Не действует на существ промывника.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 3
+    },
+    "text": "получает +3 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-няш-мяш",
+  "name": "Няш-мяш",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/ftg_card_7.webp",
+  "description": "Промывники не могут играть карты стоимостью 0.",
+  "abilities": []
+ },
+ {
+  "id": "card-черничный-пирогклон",
+  "name": "Черничный пирогклон",
+  "type": "creature",
+  "cost": 4,
+  "landType": "blue",
+  "attack": 5,
+  "defense": 6,
+  "image": "/cards/ftg_card_8.webp",
+  "description": "Черничный пирогклон стоит на 1 меньше за каждое сыгранное заклинание в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-глазастик",
+  "name": "Ледяной глазастик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 4,
+  "defense": 1,
+  "image": "/cards/ftg_card_9.webp",
+  "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-волшебник-гастролер",
+  "name": "Волшебник-гастролер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/ftg_card_10.webp",
+  "description": "Когда Волшебник-гастролер вступает в игру, Существо промывника на этой линии и Волшебник-гастролер меняются местами.",
+  "abilities": []
+ },
+ {
+  "id": "card-лапа-пумы",
+  "name": "Лапа пумы",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/ftg_card_12.webp",
+  "description": "Подзамовь неактивное Существо под твоим контролем. Оно получает +2 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-кукурузный-волк",
+  "name": "Кукурузный волк",
+  "type": "spell",
+  "cost": 2,
+  "landType": "corn",
+  "image": "/cards/ftg_card_13.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-книга-кунз-фу",
+  "name": "Книга Кунз-фу",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_15.webp",
+  "description": "Подзамовь по одному существу каждого типа, которое у тебя есть в игре (например, существо Равнинное, Кукурузное, Милое и т. д.).",
+  "abilities": []
+ },
+ {
+  "id": "card-носки-стойкости",
+  "name": "Носки стойкости",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_16.webp",
+  "description": "Подзамовь каждое существо, которое сменило линию в этом ходу. Каждое из них получает +2 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-снижение-налогов",
+  "name": "Снижение налогов",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_17.webp",
+  "description": "Ты можешь обменять местами 2 своих строения в разных линиях под твоим контролем. Выбранный противник может обменять местами 2 своих строения в разных линиях под его контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-искажение-пространства",
+  "name": "Искажение пространства",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_18.webp",
+  "description": "Обменяй местами 2 существа под твоим контролем, они одновременно меняются линиями.",
+  "abilities": []
+ },
+ {
+  "id": "card-домкрат",
+  "name": "Домкрат",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_19.webp",
+  "description": "ПРИЁМ >>> Твоё существо на этой линии получает +3 ATK в этом ходу, если оно сменило линию в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 3
+    },
+    "text": "получает +3 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-сиропоузел",
+  "name": "Сиропоузел",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_20.webp",
+  "description": "ПРОМЫТЬ 1 ДЕЙСТВИЕ, вытяни карту за каждое существо в этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-безумный-дротик",
+  "name": "Безумный дротик",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_21.webp",
+  "description": "ПРИЁМ >>> Твоё существо на этой линии теряет все способности и получает способность ПРИЁМ случайного существа (со способностью) из твоей стопки сброса до конца хода.",
+  "abilities": []
+ },
+ {
+  "id": "card-камнеструм",
+  "name": "Камнеструм",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/ftg_card_24.webp",
+  "description": "Камнеструм получает +1 ATK, пока атакует существо на Песчаной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-силос",
+  "name": "Силос",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_25.webp",
+  "description": "ПРОМЫТЬ 1 ДЕЙСТВИЕ, Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-маяк",
+  "name": "Маяк",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_26.webp",
+  "description": "В начале своего хода каждое твое существо атакует сменяется с картой.",
+  "abilities": []
+ },
+ {
+  "id": "card-колдовской-путь",
+  "name": "Колдовской путь",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_27.webp",
+  "description": "Каждое твое существо на бесполезных землях получает +2 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-сила-попкорна",
+  "name": "Сила попкорна",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_28.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Золотой равнине.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-амулет-шелухи-кукурузы",
+  "name": "Амулет шелухи кукурузы",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_29.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Кукурузной земле.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-кукурузное-ухо",
+  "name": "Кукурузное ухо",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 4,
+  "defense": 1,
+  "image": "/cards/ftg_card_30.webp",
+  "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-апельсиновое-желе",
+  "name": "Апельсиновое желе",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/ftg_card_31.webp",
+  "description": "Если ты контролируешь 3 или более различных типов земли, когда Апельсиновое желе вступает в игру, восстанови 4 урона каждому своему существу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 4
+    },
+    "text": "когда Апельсиновое желе вступает в игру, восстанови 4 урона каждому своему существу"
+   }
+  ]
+ },
+ {
+  "id": "card-жёлтый-гном",
+  "name": "Жёлтый гном",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_32.webp",
+  "description": "ПРИЁМ >>> Нанеси 1 урон каждому существу противника на Кукурузной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-солнечный-король",
+  "name": "Солнечный король",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 0,
+  "defense": 8,
+  "image": "/cards/ftg_card_33.webp",
+  "description": "Солнечный король считается дополнительной Кукурузной землей под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-пиратский-медведь",
+  "name": "Пиратский медведь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 3,
+  "image": "/cards/ftg_card_34.webp",
+  "description": "Когда Пиратский медведь на бесполезных болотах, он наносит тройной урон.",
+  "abilities": []
+ },
+ {
+  "id": "card-глаза-змеи",
+  "name": "Глаза змеи",
+  "type": "spell",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/ftg_card_36.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Бесполезных болотах.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-кукурузная-мышь",
+  "name": "Кукурузная мышь",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/ftg_card_37.webp",
+  "description": "Помрачь 1 Действие >>> Нанеси 1 урон выбранному существу на этой линии за каждый различный тип земли под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-золотой-шакал",
+  "name": "Золотой шакал",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/ftg_card_38.webp",
+  "description": "ПРИЁМ >>> Сбрось Песчаную карту, затем нанеси 1 урон каждому существу противника на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-золотой-ниндзя",
+  "name": "Золотой ниндзя",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/ftg_card_39.webp",
+  "description": "Когда Золотой ниндзя вступает в игру, Нанеси 1 урон выбранному существу за каждый различный тип земли под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "Когда Золотой ниндзя вступает в игру, Нанеси 1 урон выбранному существу за каждый различный тип земли под твоим контролем"
+   }
+  ]
+ },
+ {
+  "id": "card-итан-олфайер",
+  "name": "Итан Олфайер",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 0,
+  "defense": 4,
+  "image": "/cards/ftg_card_40.webp",
+  "description": "Когда Итан Олфайер вступает в игру, вытяни карту за каждую землю типа Кукурузная под твоим контролем.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "Когда Итан Олфайер вступает в игру, вытяни карту за каждую землю типа Кукурузная под твоим контролем"
+   }
+  ]
+ },
+ {
+  "id": "card-копитер",
+  "name": "Копитер",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/ftg_card_41.webp",
+  "description": "Каждое соседнее Кукурузное существо получает +1 DEF.",
+  "abilities": []
+ },
+ {
+  "id": "card-капитан-тако",
+  "name": "Капитан Тако",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 1,
+  "defense": 1,
+  "image": "/cards/ftg_card_42.webp",
+  "description": "Когда Капитан Тако вступает в игру, нанеси 1 урон каждому существу, которое не находится на Кукурузной земле.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "pierce": false
+    },
+    "text": "Когда Капитан Тако вступает в игру, нанеси 1 урон каждому существу, которое не находится на Кукурузной земле"
+   }
+  ]
+ },
+ {
+  "id": "card-хулиган-яблоко",
+  "name": "Хулиган-яблоко",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/ftg_card_43.webp",
+  "description": "Земля Хулигана-яблока не может быть изменена эффектами противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-воскресная-школа",
+  "name": "Воскресная школа",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_48.webp",
+  "description": "Пока у меня чётное количество HP, твои существа на этой земле получают +2 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-победительный-гном",
+  "name": "Победительный гном",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_49.webp",
+  "description": "ПРИЁМ >>> Нанеси 1 урон каждому существу противника на Песчаной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-клубничное-желе",
+  "name": "Клубничное желе",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/ftg_card_50.webp",
+  "description": "Если ты контролируешь 3 или более различных типов земли, когда Клубничное желе вступает в игру, восстанови 4 урона каждому своему существу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 4
+    },
+    "text": "когда Клубничное желе вступает в игру, восстанови 4 урона каждому своему существу"
+   }
+  ]
+ },
+ {
+  "id": "card-хлопковый-глазастик",
+  "name": "Хлопковый глазастик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 4,
+  "defense": 1,
+  "image": "/cards/ftg_card_51.webp",
+  "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-подушка-боли",
+  "name": "Подушка боли",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/ftg_card_52.webp",
+  "description": "Пока урона на Подушке боли ровно 6, он получает +6 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-свиток-свежего-дыхания",
+  "name": "Свиток свежего дыхания",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/ftg_card_53.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на бесполезных болотах.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-кондитерское-колечко",
+  "name": "Кондитерское колечко",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/ftg_card_54.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Кукурузной земле.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-милая-мельница",
+  "name": "Милая мельница",
+  "type": "building",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/ftg_card_55.webp",
+  "description": "Помрачь 1 действие >>> Восстанови или нанеси 2 урона своему существу на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-привидение",
+  "name": "Привидение",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/ftg_card_57.webp",
+  "description": "Привидение получает +2 ATK, пока обороняется от существ на бесполезных болотах.",
+  "abilities": []
+ },
+ {
+  "id": "card-дух-ведьмы",
+  "name": "Дух ведьмы",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/ftg_card_58.webp",
+  "description": "Дух ведьмы получает +2 ATK, пока обороняется от существ на Золотой равнине.",
+  "abilities": []
+ },
+ {
+  "id": "card-дух-дерева",
+  "name": "Дух дерева",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/ftg_card_59.webp",
+  "description": "Дух дерева получает +2 ATK, пока обороняется от существ на Кукурузной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-морская-ведьма",
+  "name": "Морская ведьма",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/ftg_card_60.webp",
+  "description": "Морская ведьма получает +1 ATK, пока атакует существо на бесполезных болотах.",
+  "abilities": []
+ },
+ {
+  "id": "card-костюмный-волк",
+  "name": "Костюмный волк",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/ftg_card_61.webp",
+  "description": "Костюмный волк получает +1 ATK, пока атакует существо на Кукурузной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-красавчик-тимми",
+  "name": "Красавчик Тимми",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 6,
+  "image": "/cards/ftg_card_62.webp",
+  "description": "Красавчик Тимми получает +1 ATK, пока атакует существо на Песчаной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-квагурай",
+  "name": "Квагурай",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 6,
+  "image": "/cards/ftg_card_64.webp",
+  "description": "В начале своего хода можешь нанести 2 урона промывнику с 4 или более картами в руке.",
+  "abilities": []
+ },
+ {
+  "id": "card-пощёчина-ведьмы",
+  "name": "Пощёчина Ведьмы",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_65.webp",
+  "description": "Выбранный промывник сбрасывает до 5 карт, затем получает 1 урон за каждую сброшенную любым способом карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-кольцо-нокаута",
+  "name": "Кольцо нокаута",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_66.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-музыкальный-трон",
+  "name": "Музыкальный трон",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_67.webp",
+  "description": "Ты можешь обменять местами до 2 земель под твоим контролем с землями, чья камера не в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-мастер-маскировки",
+  "name": "Мастер маскировки",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_68.webp",
+  "description": "Каждое существо промывника получает -1 ATK в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-невероятное-яйцо",
+  "name": "Невероятное яйцо",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_69.webp",
+  "description": "Открой 2 верхние карты своей колоды и посмотри на них. Ты можешь взять открытые Кукурузные карты в руку, а остальные сбросить.",
+  "abilities": []
+ },
+ {
+  "id": "card-цельнометаллическая-ракетка",
+  "name": "Цельнометаллическая ракетка",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_70.webp",
+  "description": "Нанеси 2 урона выбранному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-фонтан-слез",
+  "name": "Фонтан слез",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/ftg_card_71.webp",
+  "description": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-дейви-бонз",
+  "name": "Дейви Бонз",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 4,
+  "image": "/cards/ftg_card_72.webp",
+  "description": "Дейви Бонз получает +2 ATK, пока обороняется от существ на Песчаной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-пень-колюга",
+  "name": "Пень-колюга",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/ftg_card_73.webp",
+  "description": "Каждое существо промывника вытягивает карту и получает 1 урон.",
+  "abilities": []
+ },
+ {
+  "id": "card-жучья-госпожа",
+  "name": "Жучья госпожа",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/ftg_card_74.webp",
+  "description": "Если в начале твоего хода под твоим контролем не более 2 существ, ты можешь вернуть эту карту на руку её владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-зелёный-гном",
+  "name": "Зелёный гном",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_75.webp",
+  "description": "ПРИЁМ >>> Нанеси 1 урон каждому существу промывника на Золотой равнине.",
+  "abilities": []
+ },
+ {
+  "id": "card-лаймовое-желе",
+  "name": "Лаймовое желе",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/ftg_card_76.webp",
+  "description": "Если ты контролируешь 3 или более различных типов земли, когда Лаймовое желе вступает в игру, вытяни 2 карты.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 2
+    },
+    "text": "когда Лаймовое желе вступает в игру, вытяни 2 карты"
+   }
+  ]
+ },
+ {
+  "id": "card-большая-рука-мумии",
+  "name": "Большая рука мумии",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 0,
+  "defense": 7,
+  "image": "/cards/ftg_card_78.webp",
+  "description": "ПРИЁМ >>> Нанеси 1 урон каждому соседнему выбранному существу на Кукурузной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-песочный-шакал",
+  "name": "Песочный шакал",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 3,
+  "defense": 3,
+  "image": "/cards/ftg_card_79.webp",
+  "description": "Когда Песочный шакал атакует существо промывника на Милое, восстанови 3 урона Песочному шакалу.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрачный-главастук",
+  "name": "Призрачный главастук",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 4,
+  "defense": 1,
+  "image": "/cards/ftg_card_80.webp",
+  "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-зелёная-змейка",
+  "name": "Зелёная змейка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_81.webp",
+  "description": "Когда Зелёная змейка побеждена, нанеси 1 урон выбранному существу на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-зелёный-король-вечерюк",
+  "name": "Зелёный король Вечерюк",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/ftg_card_82.webp",
+  "description": "Когда Зелёный король Вечерюк выигрывает шар, восстанови 1 урона Зелёному королю Вечерюку.",
+  "abilities": []
+ },
+ {
+  "id": "card-кактус-бангун",
+  "name": "Кактус Бангун",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/ftg_card_83.webp",
+  "description": "Каждое соседнее Кукурузное существо получает +1 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-бриллиантовый-дэн",
+  "name": "Бриллиантовый Дэн",
+  "type": "creature",
+  "cost": 1,
+  "landType": "blue",
+  "attack": 2,
+  "defense": 2,
+  "image": "/cards/ftg_card_84.webp",
+  "description": "Когда Бриллиантовый Дэн побежден на Милое, верни его на руку его владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-мозговой-смерч",
+  "name": "Мозговой смерч",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/ftg_card_86.webp",
+  "description": "Верни все свои существа, включая украденных, на руку их владельцев.",
+  "abilities": []
+ },
+ {
+  "id": "card-портал-в-никуда",
+  "name": "Портал в никуда",
+  "type": "spell",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/ftg_card_87.webp",
+  "description": "Перемести выбранное существо промывника на соседнюю пустую линию на другую сторону.",
+  "abilities": []
+ },
+ {
+  "id": "card-портал-антипризыва",
+  "name": "Портал антипризыва",
+  "type": "spell",
+  "cost": 2,
+  "landType": "blue",
+  "image": "/cards/ftg_card_88.webp",
+  "description": "Верни выбранное существо на руку его владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-песчаная-пирамида",
+  "name": "Песчаная пирамида",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/ftg_card_91.webp",
+  "description": "Помрачь 2 действия >>> Верни каждое существо на этой линии на руку его владельца.",
+  "abilities": []
+ },
+ {
+  "id": "card-храм-солнца",
+  "name": "Храм солнца",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/ftg_card_92.webp",
+  "description": "Когда на этой линии вступает в игру Песчаное существо под твоим контролем стоимостью 1 и более, ты можешь вернуть его на руку владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-чёрный-паладин",
+  "name": "Чёрный паладин",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/ftg_card_97.webp",
+  "description": "Чёрный паладин получает +1 ATK за каждую карту, уничтоженную заклинаниями (включая задевшие карты) в этом ходу.",
+  "abilities": []
+ },
+ {
+  "id": "card-голубой-тритон",
+  "name": "Голубой тритон",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 5,
+  "image": "/cards/ftg_card_98.webp",
+  "description": "ПРИЁМ >>> Вытяни карту, затем сбрось карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-любопытный-чучвачок",
+  "name": "Любопытный чучвачок",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/ftg_card_99.webp",
+  "description": "В начале своего хода можешь посмотреть на верхнюю карту своей колоды и положить её вниз.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "В начале своего хода можешь посмотреть на верхнюю карту своей колоды и положить её вниз"
+   }
+  ]
+ },
+ {
+  "id": "card-гном-в-стильных-штанах",
+  "name": "Гном в стильных штанах",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 6,
+  "image": "/cards/ftg_card_100.webp",
+  "description": "ПРИЁМ >>> Нанеси 1 урон каждому существу промывника на Кукурузной земле.",
+  "abilities": []
+ },
+ {
+  "id": "card-рыболов",
+  "name": "Рыболов",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/ftg_card_101.webp",
+  "description": "Если Рыболов вступает в игру на Голубой равнине, нанеси 2 урона каждому существу промывника.",
+  "abilities": []
+ },
+ {
+  "id": "card-призрачный-мимик",
+  "name": "Призрачный мимик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 9,
+  "image": "/cards/ftg_card_102.webp",
+  "description": "Когда Призрачный мимик покидает игру, вытяни нижнюю карту своей колоды.",
+  "abilities": []
+ },
+ {
+  "id": "card-лейтенант-груб",
+  "name": "Лейтенант Груб",
+  "type": "creature",
+  "cost": 1,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 3,
+  "image": "/cards/ftg_card_104.webp",
+  "description": "Когда Лейтенант Груб покидает игру в этом ходу, каждый промывник сбрасывает 3 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-корнишон",
+  "name": "Корнишон",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 9,
+  "image": "/cards/ftg_card_106.webp",
+  "description": "Уничтожь Корнишон >>> Нанеси 3 урона выбранному существу.",
+  "abilities": []
+ },
+ {
+  "id": "card-старик-разбойник",
+  "name": "Старик-разбойник",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/ftg_card_107.webp",
+  "description": "Когда Старик-разбойник вступает в игру, каждый игрок сбрасывает 2 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-болотный-глазастик",
+  "name": "Болотный глазастик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 4,
+  "defense": 1,
+  "image": "/cards/ftg_card_108.webp",
+  "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-громыла",
+  "name": "Громыла",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/ftg_card_109.webp",
+  "description": "ПРИЁМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
+  "abilities": []
+ },
+ {
+  "id": "card-брекеты-озера",
+  "name": "Брекеты Озера",
+  "type": "spell",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/ftg_card_110.webp",
+  "description": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса.",
+  "abilities": []
+ },
+ {
+  "id": "card-погняемые-мёртвых",
+  "name": "Погняемые мёртвых",
+  "type": "spell",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/ftg_card_111.webp",
+  "description": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
+  "abilities": []
+ },
+ {
+  "id": "card-волшебная-лампа",
+  "name": "Волшебная лампа",
+  "type": "spell",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/ftg_card_112.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-свиток-плохого-дыхания",
+  "name": "Свиток плохого дыхания",
+  "type": "spell",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/ftg_card_113.webp",
+  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Милой земле.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK"
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "получает +2 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-призрачный-маяк",
+  "name": "Призрачный маяк",
+  "type": "building",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/ftg_card_114.webp",
+  "description": "Помрачь 1 действие >>> Выбранное существо на этой линии получает +1 ATK в этом ходу за каждые 5 карт в твоей стопке сброса.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "получает +1 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-теневая-пирамида",
+  "name": "Теневая пирамида",
+  "type": "building",
+  "cost": 1,
+  "landType": "swamp",
+  "image": "/cards/ftg_card_116.webp",
+  "description": "ПРИЁМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту.",
+  "abilities": []
+ },
+ {
+  "id": "card-сладкий-затос",
+  "name": "Сладкий затос",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_1.webp",
+  "description": "В конце хода вытяни 2 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-эспрессо-любви",
+  "name": "Эспрессо любви",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_2.webp",
+  "description": "В конце хода каждый игрок берёт 2 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-домино-белый",
+  "name": "Домино белый",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_4.webp",
+  "description": "Нарисуй значение 5 и сохрани его на этом строении.",
+  "abilities": []
+ },
+ {
+  "id": "card-незаконные-артефакты",
+  "name": "Незаконные артефакты",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_6.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-эспрессо-счастья",
+  "name": "Эспрессо счастья",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_7.webp",
+  "description": "В конце хода каждый игрок берёт 2 карты.",
+  "abilities": []
+ },
+ {
+  "id": "card-кофе-с-корицей",
+  "name": "Кофе с корицей",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_9.webp",
+  "description": "Сбрось 2 карты из руки. Выбранный противник отбрасывает 2 карты из своей руки.",
+  "abilities": []
+ },
+ {
+  "id": "card-стандарт",
+  "name": "Стандарт",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 1,
+  "image": "/cards/monika_card_10.webp",
+  "description": "В конце хода сбрось 1 карту из руки.",
+  "abilities": []
+ },
+ {
+  "id": "card-клубничка",
+  "name": "Клубничка",
+  "type": "creature",
+  "cost": 3,
+  "landType": "rainbow",
+  "attack": 3,
+  "defense": 2,
+  "image": "/cards/monika_card_22.webp",
+  "description": "",
+  "abilities": []
+ },
+ {
+  "id": "card-моча-счастья",
+  "name": "Моча счастья",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_33.webp",
+  "description": "Выбранный противник кладёт верхнюю карту из своей колоды на поле.",
+  "abilities": []
+ },
+ {
+  "id": "card-моча-любви",
+  "name": "Моча любви",
+  "type": "spell",
+  "cost": 2,
+  "landType": "rainbow",
+  "image": "/cards/monika_card_37.webp",
+  "description": "Выбранный противник отбрасывает две верхние карты из своей колоды.",
+  "abilities": []
+ },
+ {
+  "id": "card-малыш-камнепух",
+  "name": "Малыш камнепух",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 1,
+  "defense": 7,
+  "image": "/cards/tree_trunks_card_1.webp",
+  "description": "Если на поле присутствует Мамуля камнепух под твоим контролем, при защите Малыш получает +2 АТК.",
+  "abilities": []
+ },
+ {
+  "id": "card-шабашиз",
+  "name": "Шабашиз",
+  "type": "creature",
+  "cost": 0,
+  "landType": "good",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/tree_trunks_card_4.webp",
+  "description": "В начале твоего хода выбери существо под контролем соперника. Восстанови ему 1 здоровья.",
+  "abilities": []
+ },
+ {
+  "id": "card-хлопковая-аллея",
+  "name": "Хлопковая аллея",
+  "type": "building",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/tree_trunks_card_7.webp",
+  "description": "Приём >>> Если у тебя под контролем одна аллея, можешь переместить существо на этой линии на пустую соседнюю землю. Если две, можешь также переместиться ко второй аллее или поменять местами существ, находящихся на землях с аллеей.",
+  "abilities": []
+ },
+ {
+  "id": "card-абрака-милиц",
+  "name": "Абрака-милиц",
+  "type": "spell",
+  "cost": 0,
+  "landType": "good",
+  "image": "/cards/tree_trunks_card_10.webp",
+  "description": "Восстанови себе до 3 жизней, после чего распредели то же количество урона на своих существах на твой выбор.",
+  "abilities": []
+ },
+ {
+  "id": "card-сладкий-пирожок",
+  "name": "Сладкий пирожок",
+  "type": "creature",
+  "cost": 4,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 8,
+  "image": "/cards/tree_trunks_card_34.webp",
+  "description": "Стоит на 1 действия меньше за каждое другое существо в игре под твоим контролем. Приём >>> Пирожок: нанеси 2 урона существу, у которого осталось меньше всего DEF, и ещё 1 — тому, у которого больше всего.",
+  "abilities": []
+ },
+ {
+  "id": "card-коровушка",
+  "name": "Коровушка",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 3,
+  "image": "/cards/tree_trunks_card_36.webp",
+  "description": "Ей просто норм. +2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-хлопковый-форт",
+  "name": "Хлопковый форт",
+  "type": "building",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/tree_trunks_card_38.webp",
+  "description": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF.",
+  "abilities": []
+ },
+ {
+  "id": "card-фонтан-милашности",
+  "name": "Фонтан милашности",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/tree_trunks_card_40.webp",
+  "description": "Восстанови себе 2 жизни (но не более 25) за каждое уничтоженное существо под твоим контролем на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-газы-огра",
+  "name": "Газы Огра",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/bmo_card_4.webp",
+  "description": "Открой 3 карты сверху своей колоды. Одну положи вниз своей колоды, остальные две сбрось.",
+  "abilities": []
+ },
+ {
+  "id": "card-великолепный-замок",
+  "name": "Великолепный замок",
+  "type": "building",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/bmo_card_8.webp",
+  "description": "Твое существо получает +3 DEF на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": 3
+    },
+    "text": "Твое существо получает +3 DEF на этой линии."
+   }
+  ]
+ },
+ {
+  "id": "card-бессмертный-ходок-маиса",
+  "name": "Бессмертный ходок маиса",
+  "type": "creature",
+  "cost": 2,
+  "landType": "swamp",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/bmo_card_30.webp",
+  "description": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон.",
+  "abilities": []
+ },
+ {
+  "id": "card-пирогошторм",
+  "name": "Пирогошторм",
+  "type": "spell",
+  "cost": 1,
+  "landType": "good",
+  "image": "/cards/bubblegum_card_16.webp",
+  "description": "Каждое твое существо без урона на нем получает +2 ATK в этом ход.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "persistent",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 2
+    },
+    "text": "Каждое твое существо без урона на нем получает +2 ATK"
+   }
+  ]
+ },
+ {
+  "id": "card-мышь-альбинос",
+  "name": "Мышь альбинос",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/bubblegum_card_7.webp",
+  "description": "Пока на Мыше альбиносе ровно 2 Урона, она получает +2 ATK",
+  "abilities": []
+ },
+ {
+  "id": "card-пиратская-бухта",
+  "name": "Пиратская бухта",
+  "type": "building",
+  "cost": 1,
+  "landType": "blue",
+  "image": "/cards/charlie_card_7.webp",
+  "description": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием промудника.",
+  "abilities": []
+ },
+ {
+  "id": "card-лёгкий-жираф",
+  "name": "Лёгкий жираф",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/jake_2v2_card_13.webp",
+  "description": "Пока у Лёгкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-очаровательный-кролик",
+  "name": "Очаровательный кролик",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 0,
+  "defense": 8,
+  "image": "/cards/charlie_card_31.webp",
+  "description": "В начале своего хода, если у Очаровательного кролика 4 Урона или больше, он наносит 3 Урона выбранному существу противника.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_opponent"
+     },
+     "amount": 3,
+     "pierce": false
+    },
+    "text": "В начале своего хода, если у Очаровательного кролика 4 Урона или больше, он наносит 3 Урона выбранному существу противни"
+   }
+  ]
+ },
+ {
+  "id": "card-привлекательный-слон",
+  "name": "Привлекательный слон",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 4,
+  "defense": 4,
+  "image": "/cards/jake_2v2_card_12.webp",
+  "description": "Каждый раз, когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-нежный-снежный-малыш",
+  "name": "Нежный Снежный Малыш",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 2,
+  "image": "/cards/ice_king_card_33.webp",
+  "description": "+3 ATK пока у противника нет существа на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-заумный-шторм-крови",
+  "name": "Заумный Шторм Крови",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/lady_rainicorn_card_28.webp",
+  "description": "Наноси 1 Урон каждому существу противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-чокнутая-кошатница",
+  "name": "Чокнутая кошатница",
+  "type": "creature",
+  "cost": 2,
+  "landType": "blue",
+  "attack": 1,
+  "defense": 10,
+  "image": "/cards/fiona_card_19.webp",
+  "description": "Твои Радужные существа получают +1 ATK.",
+  "abilities": []
+ },
+ {
+  "id": "card-ледяной-лазутчик",
+  "name": "Ледяной лазутчик",
+  "type": "creature",
+  "cost": 0,
+  "landType": "rainbow",
+  "attack": 1,
+  "defense": 5,
+  "image": "/cards/grand_prix_card_1.webp",
+  "description": "Когда Ледяной лазутчик вступает в игру, заморозь его землю.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_landscape",
+     "target": {
+      "kind": "chosen_landscape"
+     }
+    },
+    "text": "Когда Ледяной лазутчик вступает в игру, заморозь его землю"
+   }
+  ]
+ },
+ {
+  "id": "card-дай-пять",
+  "name": "Дай пять!",
+  "type": "spell",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/grand_prix_card_2.webp",
+  "description": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнёру.",
+  "abilities": []
+ },
+ {
+  "id": "card-сотрудничество",
+  "name": "Сотрудничество",
+  "type": "companion",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/cards/grand_prix_card_6.webp",
+  "description": "В первый раз, когда ты или твой партнёр сыграете Радужное заклинание во время своего хода, другой партнёр может сыграть Радужное заклинание той же стоимости бесплатно.",
+  "abilities": []
+ },
+ {
+  "id": "card-вафля-в-шоколаде",
+  "name": "Вафля в шоколаде",
+  "type": "creature",
+  "cost": 2,
+  "landType": "ice",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/grand_prix_card_13.webp",
+  "description": "Если в начале твоей фазы сражения на этой линии есть хотя бы один Ледяный жетон, нанеси 1 урон каждому существу под контролем выбранного игрока.",
+  "abilities": []
+ },
+ {
+  "id": "card-кокмейль",
+  "name": "Кокмейль",
+  "type": "creature",
+  "cost": 1,
+  "landType": "ice",
+  "attack": 1,
+  "defense": 8,
+  "image": "/cards/grand_prix_card_22.webp",
+  "description": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-крышесносная-кола",
+  "name": "Крышесносная кола",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/gunter_card_6.webp",
+  "description": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника).",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1
+    },
+    "text": "получает +1 ATK в этом ходу"
+   }
+  ]
+ },
+ {
+  "id": "card-кукурузные-рыцари",
+  "name": "Кукурузные рыцари",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_card_9.webp",
+  "description": "Кукурузные рыцари получают +1 ATK и +2 DEF за каждое Кукурузное поле под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-легион-уховерток",
+  "name": "Легион уховерток",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 8,
+  "image": "/cards/jake_card_13.webp",
+  "description": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
+  "abilities": []
+ },
+ {
+  "id": "card-стрелец-дэн",
+  "name": "Стрелец Дэн",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/jake_card_17.webp",
+  "description": "ПРИЕМ >>> Уничтожь выбранное строение на линии Стрельца Дэна.",
+  "abilities": []
+ },
+ {
+  "id": "card-ласковая-овечка",
+  "name": "Ласковая овечка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/jake_2v2_card_1.webp",
+  "description": "Если в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии.",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "chosen_opponent_creature"
+     },
+     "amount": 2,
+     "pierce": false
+    },
+    "text": "в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии"
+   }
+  ]
+ },
+ {
+  "id": "card-обнимашный-ёж",
+  "name": "Обнимашный ёж",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 3,
+  "defense": 8,
+  "image": "/cards/jake_2v2_card_15.webp",
+  "description": "Пока у Обнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
+  "abilities": []
+ },
+ {
+  "id": "card-защищенный-зебрарог",
+  "name": "Защищенный зебрарог",
+  "type": "creature",
+  "cost": 1,
+  "landType": "corn",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/jake_2v2_card_20.webp",
+  "description": "Когда Защищенный зебрарог атакует, можешь восстановить 1 урон у соседнего существа.",
+  "abilities": []
+ },
+ {
+  "id": "card-амбар-с-сеном",
+  "name": "Амбар с сеном",
+  "type": "building",
+  "cost": 1,
+  "landType": "corn",
+  "image": "/cards/jake_2v2_card_26.webp",
+  "description": "Потрать 1 Действие, ПРИЕМ >>> Если эта земля пустует, сыграй на нее Кормежника из стопки сброса бесплатно. Если Амбар с сеном покидает игру, уничтожь Кормежника на этой линии.",
+  "abilities": []
+ },
+ {
+  "id": "card-клон",
+  "name": "Клон",
+  "type": "spell",
+  "cost": 0,
+  "landType": "rainbow",
+  "image": "/cards/jake_2v2_card_34.webp",
+  "description": "Сыграй своё следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре.",
+  "abilities": []
+ },
+ {
+  "id": "card-кукурузный-глазстик",
+  "name": "Кукурузный глазстик",
+  "type": "creature",
+  "cost": 2,
+  "landType": "corn",
+  "attack": 4,
+  "defense": 1,
+  "image": "/cards/lemongrab_card_23.webp",
+  "description": "+1 DEF за каждую различную землю под твоим контролем.",
+  "abilities": []
+ },
+ {
+  "id": "card-пескозавр-рекс",
+  "name": "Пескозавр Рекс",
+  "type": "creature",
+  "cost": 2,
+  "landType": "sand",
+  "attack": 0,
+  "defense": 9,
+  "image": "/cards/lemongrab_card_35.webp",
+  "description": "+2 ATK за каждую твою пустую землю.",
+  "abilities": []
+ },
+ {
+  "id": "card-стейкчоп",
+  "name": "Стейкчоп",
+  "type": "creature",
+  "cost": 1,
+  "landType": "rainbow",
+  "attack": 4,
+  "defense": 4,
+  "image": "/cards/lsp_card_16.webp",
+  "description": "В начале твоего хода сбрось 2 карты или уничтожь Рубленый стейк. (Сбрось после начального взятия карты.)",
+  "abilities": []
+ },
+ {
+  "id": "card-большой-курятник",
+  "name": "Большой курятник",
+  "type": "creature",
+  "cost": 2,
+  "landType": "rainbow",
+  "attack": 0,
+  "defense": 10,
+  "image": "/cards/marceline_card_24.webp",
+  "description": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней.",
+  "abilities": []
+ },
+ {
+  "id": "card-мамуля-камнепух",
+  "name": "Мамуля камнепух",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 6,
+  "image": "/cards/tree_trunks_card_2.webp",
+  "description": "Укромитель: +1 ATK против существ со стойкостью ровно 2.",
+  "abilities": []
+ },
+ {
+  "id": "card-пф",
+  "name": "Пф!",
+  "type": "creature",
+  "cost": 2,
+  "landType": "good",
+  "attack": 2,
+  "defense": 10,
+  "image": "/cards/tree_trunks_card_5.webp",
+  "description": "Бей её сильнее — ей всё равно. Подушка боли не может получать больше 4 урона за удар существа промывника, зато магия наносит ей на 2 единицы урона больше.",
+  "abilities": []
+ },
+ {
+  "id": "card-котячья-девятка",
+  "name": "Котячья Девятка",
+  "type": "creature",
+  "cost": 1,
+  "landType": "good",
+  "attack": 2,
+  "defense": 7,
+  "image": "/cards/tree_trunks_card_8.webp",
+  "description": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две.",
+  "abilities": []
+ }
+]

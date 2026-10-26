@@ -62,7 +62,9 @@ export type EffectSpec =
     }
   | { op: 'gain_actions'; amount: number }
   | { op: 'gain_shield'; target: TargetSpec; amount: number }
-  | { op: 'freeze_landscape'; target: TargetSpec };
+  | { op: 'freeze_landscape'; target: TargetSpec }
+  /** Win condition (e.g. hero Billy): all opponents' decks are empty at the check point. */
+  | { op: 'win_if_opponents_deck_empty' };
 
 /** Conditions (docs/MECHANICS.md «Условия», v1 subset). */
 export type ConditionSpec = { kind: 'if_discard_count'; min: number };

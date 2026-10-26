@@ -269,6 +269,7 @@ function GameScreen({ code, nickname }: { code: string; nickname: string }) {
               <div
                 key={instanceId}
                 className={`card ${selectedHand === instanceId ? 'selected' : ''}`}
+                title={cardMeta(cardId)?.description || undefined}
                 onClick={() => setSelectedHand(selectedHand === instanceId ? null : instanceId)}
               >
                 <b>{cardName(cardId)}</b>
@@ -326,12 +327,26 @@ function GameScreen({ code, nickname }: { code: string; nickname: string }) {
               Причина:{' '}
               {view.finishReason === 'surrender' ? 'сдача' : view.finishReason === 'disconnect' ? 'обрыв соединения' : 'жизни на нуле'}
             </p>
+            <button onClick={downloadJournal(view.journal, code)}>Скачать журнал (.txt)</button>
             <button onClick={() => (location.href = '/')}>В меню</button>
           </div>
         </div>
       )}
     </div>
   );
+}
+
+/** Export the match journal to a .txt file (docs/RULES.md «Журнал партии»). */
+function downloadJournal(journal: string[], code: string): () => void {
+  return () => {
+    const blob = new Blob([journal.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `card-wars-${code}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 }
 
 function phaseRu(phase: string): string {
@@ -440,7 +455,7 @@ function PlayerBoard({
 
 function CardChip({ card }: { card: CardView }) {
   return (
-    <span className={`chip ${card.flipped ? 'flipped' : ''}`}>
+    <span className={`chip ${card.flipped ? 'flipped' : ''}`} title={cardMeta(card.cardId)?.description || undefined}>
       <b>{cardName(card.cardId)}</b>
       {(card.effAttack > 0 || card.effDefense > 0) && ` ${card.effAttack}/${card.effDefense}`}
       {card.damage > 0 && ` (урон ${card.damage})`}

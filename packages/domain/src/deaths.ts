@@ -1,6 +1,7 @@
 import type { Draft } from 'immer';
 import { killInstance } from './damage';
 import { fireTriggerForInstance } from './effects/interpreter';
+import { finishMatch } from './finish';
 import { emit, inPlayInstanceIds, instance, player } from './util';
 import type { Ctx } from './util';
 import { computeEff } from './effects/stats';
@@ -56,18 +57,6 @@ export function eliminatePlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: Pl
     p.companion = null;
   }
   emit(ctx, { type: 'player_eliminated', player: playerId });
-}
-
-export function finishMatch(
-  draft: Draft<MatchState>,
-  ctx: Ctx,
-  winners: PlayerId[],
-  reason: 'elimination' | 'surrender',
-): void {
-  draft.status = 'finished';
-  draft.winners = winners;
-  draft.finishReason = reason;
-  emit(ctx, { type: 'match_finished', winners, reason });
 }
 
 /** Standard post-effect batch: deaths, then elimination/win check. */

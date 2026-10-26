@@ -286,8 +286,13 @@ export const heroes: HeroData[] = [
   {
     id: 'hero-billy',
     name: 'Билли',
-    ability: { kind: 'passive', text: 'Без способности (фикстура)' },
-    text: 'Без способности (фикстура)',
+    ability: {
+      kind: 'passive',
+      trigger: 'start_of_turn',
+      effect: { op: 'win_if_opponents_deck_empty' },
+      text: 'Если к началу твоего хода колода каждого противника опустела — победа',
+    },
+    text: 'Если к началу твоего хода колода каждого противника опустела — победа',
   },
 ];
 

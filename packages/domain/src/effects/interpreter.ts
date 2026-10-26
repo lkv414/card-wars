@@ -1,6 +1,7 @@
 import type { Draft } from 'immer';
 import { DomainError } from '../errors';
 import { drawCards, discardTopDeck, opponentDiscardsRandom, returnFromDiscard } from '../draw';
+import { finishMatch } from '../finish';
 import { cardOf, emit, instance, player } from '../util';
 import type { Ctx } from '../util';
 import { dealToCreature, dealToPlayer, killInstance } from '../damage';
@@ -135,6 +136,18 @@ export function runEffect(
           land.frozen = true;
           emit(ctx, { type: 'land_changed', player: ref.playerId, zone: ref.zone, change: 'frozen' });
         }
+      }
+      return;
+    }
+    case 'win_if_opponents_deck_empty': {
+      if (draft.status === 'finished') return;
+      const opponents = draft.order.filter(
+        (pid) => pid !== source.player && !draft.players[pid]!.eliminated,
+      );
+      const allEmpty =
+        opponents.length > 0 && opponents.every((pid) => draft.players[pid]!.deck.length === 0);
+      if (allEmpty) {
+        finishMatch(draft, ctx, [source.player], 'elimination');
       }
       return;
     }

@@ -250,6 +250,10 @@ importers:
       '@card-wars/domain':
         specifier: workspace:*
         version: link:../domain
+    devDependencies:
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.7(supports-color@10.2.2)
 
   packages/domain:
     dependencies:

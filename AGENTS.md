@@ -30,12 +30,14 @@
 ## Команды (по мере появления пакетов)
 
 ```
+start.bat             # Windows: зависимости (при первом запуске) + сборка клиента + wrangler dev + браузер
 pnpm install          # установка
 pnpm -r test          # тесты (vitest)
 pnpm -r build         # сборка пакетов → client → статика
 wrangler dev          # локальный Worker + DO (из apps/server)
 wrangler deploy       # деплой (из apps/server)
-pnpm --filter @card-wars/server smoke  # e2e-смоук «двух вкладок» (нужен запущенный wrangler dev)
+pnpm --filter @card-wars/server smoke        # e2e-смоук «двух вкладок» (нужен запущенный wrangler dev)
+pnpm --filter @card-wars/server smoke:bots   # e2e-смоук 2 на 2 с серверными ботами
 ```
 
 ## Контент

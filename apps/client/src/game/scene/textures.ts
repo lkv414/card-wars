@@ -17,6 +17,7 @@ export const LAND_COLORS: Record<LandType, { bg: string; deep: string; label: st
   sand: { bg: '#d8c08a', deep: '#96803f', label: 'Пески' },
   swamp: { bg: '#6f8f5a', deep: '#3f5a32', label: 'Болото' },
   rainbow: { bg: '#b48ae0', deep: '#6f4fa0', label: 'Радуга' },
+  ghost: { bg: '#8fa9b8', deep: '#4f6b7a', label: 'Призрачные' },
 };
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {

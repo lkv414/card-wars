@@ -2,7 +2,7 @@
 
 export type PlayerId = string;
 
-export type LandType = 'corn' | 'blue' | 'good' | 'ice' | 'sand' | 'swamp' | 'rainbow';
+export type LandType = 'corn' | 'blue' | 'good' | 'ice' | 'sand' | 'swamp' | 'rainbow' | 'ghost';
 
 export type CardType = 'creature' | 'building' | 'spell' | 'companion';
 

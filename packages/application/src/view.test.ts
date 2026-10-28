@@ -111,8 +111,8 @@ describe('journalLines', () => {
     const lines = journalLines(deps, res.state, res.events);
     expect(lines.some((l) => l.includes('Ход 2') && l.includes('Билли'))).toBe(true);
     const started = journalLines(deps, s, [{ type: 'match_started', players: [
-      { id: 'p1', nickname: 'Бимо', heroId: 'hero-bimo' },
-      { id: 'p2', nickname: 'Билли', heroId: 'hero-billy' },
+      { id: 'p1', nickname: 'Бимо', heroId: 'hero_bmo' },
+      { id: 'p2', nickname: 'Билли', heroId: 'hero_billy' },
     ], firstPlayer: 'p1', mode: 'ffa', teamVariant: null, teams: null }]);
     expect(started[0]).toContain('Партия начата');
     expect(started[0]).toContain('Бимо');

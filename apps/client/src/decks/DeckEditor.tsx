@@ -18,6 +18,7 @@ const LAND_RU: Record<LandType, string> = {
   sand: 'песок',
   swamp: 'болото',
   rainbow: 'радужная',
+  ghost: 'призрачная',
 };
 
 type TypeFilter = 'all' | CardData['type'];

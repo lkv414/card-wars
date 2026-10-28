@@ -1,0 +1,12 @@
+# зависимости и IDE
+node_modules/
+.idea/
+.zcode/
+
+# тестово-временные каталоги
+.ocr-test/
+.tmp-view/
+
+# сборки и локальное состояние wrangler/клиента
+apps/server/.wrangler/
+apps/client/dist/

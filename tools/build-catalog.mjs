@@ -1,4 +1,4 @@
-// Собирает каталог @card-wars/content из content/: per-card JSON -> cards.json/heroes.json.
+// Builds the @card-wars/content catalog from content/: per-card JSON -> cards.json/heroes.json.
 // Run: node tools/build-catalog.mjs (or pnpm --filter @card-wars/content generate).
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -65,13 +65,13 @@ const cards = readdirSync(join(contentDir, 'cards'))
 
 // Structured hero abilities are engine code, not scan data: keep the two implemented heroes.
 const HERO_ABILITIES = {
-  'БиМО': {
+  hero_bmo: {
     kind: 'passive',
     trigger: 'start_of_turn',
     effect: { op: 'draw_cards', count: 1 },
     text: 'Дополнительный бесплатный добор карты в начале хода',
   },
-  'Билли': {
+  hero_billy: {
     kind: 'passive',
     trigger: 'start_of_turn',
     effect: { op: 'win_if_opponents_deck_empty' },
@@ -89,7 +89,7 @@ const heroes = readdirSync(join(contentDir, 'heroes', 'heroes'))
       id: hero.id,
       name: hero.name,
       image: hero.image,
-      ability: HERO_ABILITIES[hero.name] ?? { kind: 'passive', text },
+      ability: HERO_ABILITIES[hero.id] ?? { kind: 'passive', text },
       text,
     };
   })

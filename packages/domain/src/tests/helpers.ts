@@ -9,7 +9,7 @@ import type {
   PlayerSetup,
 } from '../index';
 
-// Test fixtures only — the real catalog arrives in stage 3 (docs/data/cards_test_v1.json).
+// Test fixtures only — the real catalog lives in content/ (packages/content).
 // No rule code may reference these cards; they exercise the data-driven ability format.
 
 export const P1 = 'p1';

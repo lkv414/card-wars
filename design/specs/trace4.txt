@@ -1,0 +1,2238 @@
+  abs 9 full cand Group 1@1 inBox=true gate=true max=-1 ord=undefined
+  abs 225 full cand x@213 inBox=true gate=true max=-1 ord=undefined
+TRUNC @236 Card detail bottom sheet: closing Dimmed game summary@171, x@213
+  abs 431 full cand Scan placeholder@408 inBox=false gate=true max=-1 ord=0
+  abs 431 full cand Creature portrait card@294 inBox=false gate=false max=1 ord=0
+  abs 431 full cand Card detail bottom sheet@236 inBox=false gate=false max=2 ord=0
+  abs 431 full cand Card detail backdrop@150 inBox=true gate=false max=1 ord=0
+  abs 431 full cand Mobile card modal@109 inBox=true gate=false max=1 ord=0
+  abs 431 full cand Overlay state row@89 inBox=true gate=false max=0 ord=0
+  abs 431 full cand Supplementary States@9 inBox=false gate=false max=1 ord=0
+  abs 431 full cand Group 1@1 inBox=true gate=true max=-1 ord=0
+TRUNC @449 Scan emblem: closing Mobile card modal@109, Card detail backdrop@150, Card detail bottom sheet@236, Creature portrait card@294, Scan placeholder@408, Abstract landscape@431
+TRUNC @489 Type line: closing Group 1@1, Supplementary States@9, Overlay state row@89
+@489 Type line ord=2 -> ROOT | stack: __ROOT__@undefined(max=2) / Type line@489(max=-1)
+TRUNC @718 Primary button: closing Type line@489, Creature stats@531
+@718 Primary button ord=5 -> ROOT | stack: __ROOT__@undefined(max=5) / Primary button@718(max=-1)
+@768 Mobile filters drawer ord=1 -> ROOT | stack: __ROOT__@undefined(max=5) / Mobile filters drawer@768(max=-1)
+  abs 887 full cand x@875 inBox=true gate=true max=-1 ord=undefined
+TRUNC @898 Label: closing Drawer title@833, x@875
+  abs 979 full cand chevron-down@967 inBox=true gate=true max=-1 ord=undefined
+TRUNC @990 Label: closing Set select@920, chevron-down@967
+TRUNC @1214 Label: closing Type filters@1012, Filter chip@1169
+TRUNC @1839 Label: closing Cost filters@1595, Filter chip@1614, Filter chip@1794
+TRUNC @1960 Match outcome specimens: closing Mobile filters drawer@768, Filters drawer@809, Secondary button@1912
+@1960 Match outcome specimens ord=2 -> ROOT | stack: __ROOT__@undefined(max=5) / Match outcome specimens@1960(max=-1)
+  abs 2077 full cand trophy@2065 inBox=true gate=true max=-1 ord=undefined
+TRUNC @2151 Match stats: closing Result heading@2045, Result copy@2088
+TRUNC @2377 Defeat overlay: closing Victory overlay@2021, Match stats@2151, Rematch controls@2261, Secondary button@2330
+  abs 2433 full cand flag@2421 inBox=true gate=true max=-1 ord=undefined
+TRUNC @2507 Match stats: closing Result heading@2401, Result copy@2444
+TRUNC @2733 Surrender confirmation: closing Defeat overlay@2377, Match stats@2507, Rematch controls@2617, Secondary button@2686
+  abs 2789 full cand flag@2777 inBox=true gate=true max=-1 ord=undefined
+TRUNC @2961 Disconnected during game: closing Surrender confirmation@2733, Confirmation actions@2845, Secondary button@2914
+  abs 3017 full cand wifi-off@3005 inBox=true gate=true max=-1 ord=undefined
+TRUNC @3184 Empty and invalid state row: closing Match outcome specimens@1960, Result variants@2001, Disconnected during game@2961, Reconnect actions@3073, Filter chip@3092, Secondary button@3137
+@3184 Empty and invalid state row ord=2 -> ROOT | stack: __ROOT__@undefined(max=5) / Empty and invalid state row@3184(max=-1)
+  abs 3253 full cand Hero portrait placeholder@3228 inBox=false gate=true max=-1 ord=0
+  abs 3253 full cand No decks empty state@3204 inBox=false gate=false max=0 ord=0
+  abs 3253 full cand Empty and invalid state row@3184 inBox=true gate=false max=0 ord=0
+  abs 3253 corner cand Hero portrait placeholder@3228 inBox=true gate=true max=-1 ord=0
+  abs 3270 full cand Silhouette body@3253 inBox=true gate=false max=-1 ord=1
+  abs 3270 full cand Hero portrait placeholder@3228 inBox=true gate=true max=0 ord=1
+  abs 3287 full cand Silhouette head@3270 inBox=false gate=false max=-1 ord=2
+  abs 3287 full cand Silhouette body@3253 inBox=false gate=false max=-1 ord=2
+  abs 3287 full cand Hero portrait placeholder@3228 inBox=true gate=true max=1 ord=2
+TRUNC @3304 State title: closing Hero portrait placeholder@3228, Silhouette body@3253, Silhouette head@3270, Spark@3287
+TRUNC @3467 Empty collection filter: closing No decks empty state@3204, Secondary button@3419
+  abs 3503 full cand search-x@3491 inBox=true gate=true max=-1 ord=undefined
+TRUNC @3674 Invalid deck examples: closing Empty collection filter@3467, Primary button@3624
+  abs 3797 full cand triangle-alert@3785 inBox=true gate=true max=-1 ord=undefined
+  abs 3906 full cand info@3894 inBox=true gate=true max=-1 ord=undefined
+TRUNC @3981 Custom hero and settings states: closing Empty and invalid state row@3184, Invalid deck examples@3674, Over copy limit warning@3763, Incomplete deck warning@3872, Incomplete warning@3917
+@3981 Custom hero and settings states ord=3 -> ROOT | stack: __ROOT__@undefined(max=5) / Custom hero and settings states@3981(max=-1)
+TRUNC @4135 Bonus hero gallery: closing Custom hero title@4025, Filter chip@4067
+  abs 4206 full cand Hero portrait placeholder@4181 inBox=false gate=true max=-1 ord=0
+  abs 4206 full cand Bonus hero option@4157 inBox=true gate=false max=0 ord=0
+  abs 4206 full cand Bonus hero gallery@4135 inBox=true gate=false max=0 ord=0
+  abs 4206 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4206 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4206 corner cand Hero portrait placeholder@4181 inBox=true gate=true max=-1 ord=0
+  abs 4223 full cand Silhouette body@4206 inBox=true gate=false max=-1 ord=1
+  abs 4223 full cand Hero portrait placeholder@4181 inBox=true gate=true max=0 ord=1
+  abs 4240 full cand Silhouette head@4223 inBox=false gate=false max=-1 ord=2
+  abs 4240 full cand Silhouette body@4206 inBox=false gate=false max=-1 ord=2
+  abs 4240 full cand Hero portrait placeholder@4181 inBox=true gate=true max=1 ord=2
+TRUNC @4257 Label: closing Hero portrait placeholder@4181, Silhouette body@4206, Silhouette head@4223, Spark@4240
+  abs 4328 full cand Hero portrait placeholder@4303 inBox=false gate=true max=-1 ord=0
+  abs 4328 full cand Bonus hero option@4279 inBox=true gate=false max=0 ord=0
+  abs 4328 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 4328 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4328 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4328 corner cand Hero portrait placeholder@4303 inBox=true gate=true max=-1 ord=0
+  abs 4345 full cand Silhouette body@4328 inBox=true gate=false max=-1 ord=1
+  abs 4345 full cand Hero portrait placeholder@4303 inBox=true gate=true max=0 ord=1
+  abs 4362 full cand Silhouette head@4345 inBox=false gate=false max=-1 ord=2
+  abs 4362 full cand Silhouette body@4328 inBox=false gate=false max=-1 ord=2
+  abs 4362 full cand Hero portrait placeholder@4303 inBox=true gate=true max=1 ord=2
+TRUNC @4379 Label: closing Hero portrait placeholder@4303, Silhouette body@4328, Silhouette head@4345, Spark@4362
+  abs 4450 full cand Hero portrait placeholder@4425 inBox=false gate=true max=-1 ord=0
+  abs 4450 full cand Bonus hero option@4401 inBox=true gate=false max=0 ord=0
+  abs 4450 full cand Bonus hero option@4279 inBox=true gate=false max=2 ord=0
+  abs 4450 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 4450 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4450 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4450 corner cand Hero portrait placeholder@4425 inBox=true gate=true max=-1 ord=0
+  abs 4467 full cand Silhouette body@4450 inBox=true gate=false max=-1 ord=1
+  abs 4467 full cand Hero portrait placeholder@4425 inBox=true gate=true max=0 ord=1
+  abs 4484 full cand Silhouette head@4467 inBox=false gate=false max=-1 ord=2
+  abs 4484 full cand Silhouette body@4450 inBox=false gate=false max=-1 ord=2
+  abs 4484 full cand Hero portrait placeholder@4425 inBox=true gate=true max=1 ord=2
+TRUNC @4501 Label: closing Hero portrait placeholder@4425, Silhouette body@4450, Silhouette head@4467, Spark@4484
+  abs 4572 full cand Hero portrait placeholder@4547 inBox=false gate=true max=-1 ord=0
+  abs 4572 full cand Bonus hero option@4523 inBox=true gate=false max=0 ord=0
+  abs 4572 full cand Bonus hero option@4279 inBox=true gate=false max=3 ord=0
+  abs 4572 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 4572 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4572 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4572 corner cand Hero portrait placeholder@4547 inBox=true gate=true max=-1 ord=0
+  abs 4589 full cand Silhouette body@4572 inBox=true gate=false max=-1 ord=1
+  abs 4589 full cand Hero portrait placeholder@4547 inBox=true gate=true max=0 ord=1
+  abs 4606 full cand Silhouette head@4589 inBox=false gate=false max=-1 ord=2
+  abs 4606 full cand Silhouette body@4572 inBox=false gate=false max=-1 ord=2
+  abs 4606 full cand Hero portrait placeholder@4547 inBox=true gate=true max=1 ord=2
+TRUNC @4623 Label: closing Hero portrait placeholder@4547, Silhouette body@4572, Silhouette head@4589, Spark@4606
+  abs 4694 full cand Hero portrait placeholder@4669 inBox=false gate=true max=-1 ord=0
+  abs 4694 full cand Bonus hero option@4645 inBox=true gate=false max=0 ord=0
+  abs 4694 full cand Bonus hero option@4279 inBox=true gate=false max=4 ord=0
+  abs 4694 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 4694 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4694 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4694 corner cand Hero portrait placeholder@4669 inBox=true gate=true max=-1 ord=0
+  abs 4711 full cand Silhouette body@4694 inBox=true gate=false max=-1 ord=1
+  abs 4711 full cand Hero portrait placeholder@4669 inBox=true gate=true max=0 ord=1
+  abs 4728 full cand Silhouette head@4711 inBox=false gate=false max=-1 ord=2
+  abs 4728 full cand Silhouette body@4694 inBox=false gate=false max=-1 ord=2
+  abs 4728 full cand Hero portrait placeholder@4669 inBox=true gate=true max=1 ord=2
+TRUNC @4745 Label: closing Hero portrait placeholder@4669, Silhouette body@4694, Silhouette head@4711, Spark@4728
+  abs 4816 full cand Hero portrait placeholder@4791 inBox=false gate=true max=-1 ord=0
+  abs 4816 full cand Bonus hero option@4767 inBox=true gate=false max=0 ord=0
+  abs 4816 full cand Bonus hero option@4279 inBox=true gate=false max=5 ord=0
+  abs 4816 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 4816 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4816 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4816 corner cand Hero portrait placeholder@4791 inBox=true gate=true max=-1 ord=0
+  abs 4833 full cand Silhouette body@4816 inBox=true gate=false max=-1 ord=1
+  abs 4833 full cand Hero portrait placeholder@4791 inBox=true gate=true max=0 ord=1
+  abs 4850 full cand Silhouette head@4833 inBox=false gate=false max=-1 ord=2
+  abs 4850 full cand Silhouette body@4816 inBox=false gate=false max=-1 ord=2
+  abs 4850 full cand Hero portrait placeholder@4791 inBox=true gate=true max=1 ord=2
+TRUNC @4867 Label: closing Hero portrait placeholder@4791, Silhouette body@4816, Silhouette head@4833, Spark@4850
+  abs 4938 full cand Hero portrait placeholder@4913 inBox=false gate=true max=-1 ord=0
+  abs 4938 full cand Bonus hero option@4889 inBox=true gate=false max=0 ord=0
+  abs 4938 full cand Bonus hero option@4279 inBox=true gate=false max=6 ord=0
+  abs 4938 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 4938 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 4938 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 4938 corner cand Hero portrait placeholder@4913 inBox=true gate=true max=-1 ord=0
+  abs 4955 full cand Silhouette body@4938 inBox=true gate=false max=-1 ord=1
+  abs 4955 full cand Hero portrait placeholder@4913 inBox=true gate=true max=0 ord=1
+  abs 4972 full cand Silhouette head@4955 inBox=false gate=false max=-1 ord=2
+  abs 4972 full cand Silhouette body@4938 inBox=false gate=false max=-1 ord=2
+  abs 4972 full cand Hero portrait placeholder@4913 inBox=true gate=true max=1 ord=2
+TRUNC @4989 Label: closing Hero portrait placeholder@4913, Silhouette body@4938, Silhouette head@4955, Spark@4972
+  abs 5060 full cand Hero portrait placeholder@5035 inBox=false gate=true max=-1 ord=0
+  abs 5060 full cand Bonus hero option@5011 inBox=true gate=false max=0 ord=0
+  abs 5060 full cand Bonus hero option@4279 inBox=true gate=false max=7 ord=0
+  abs 5060 full cand Bonus hero gallery@4135 inBox=true gate=false max=1 ord=0
+  abs 5060 full cand Custom hero selection@4001 inBox=false gate=false max=2 ord=0
+  abs 5060 full cand Custom hero and settings states@3981 inBox=true gate=false max=0 ord=0
+  abs 5060 corner cand Hero portrait placeholder@5035 inBox=true gate=true max=-1 ord=0
+  abs 5077 full cand Silhouette body@5060 inBox=true gate=false max=-1 ord=1
+  abs 5077 full cand Hero portrait placeholder@5035 inBox=true gate=true max=0 ord=1
+  abs 5094 full cand Silhouette head@5077 inBox=false gate=false max=-1 ord=2
+  abs 5094 full cand Silhouette body@5060 inBox=false gate=false max=-1 ord=2
+  abs 5094 full cand Hero portrait placeholder@5035 inBox=true gate=true max=1 ord=2
+TRUNC @5111 Label: closing Hero portrait placeholder@5035, Silhouette body@5060, Silhouette head@5077, Spark@5094
+TRUNC @5133 Custom hero action: closing Bonus hero gallery@4135, Bonus hero option@4279, Bonus hero option@5011
+TRUNC @5223 Settings modal: closing Custom hero selection@4001, Custom hero action@5133
+  abs 5301 full cand x@5289 inBox=true gate=true max=-1 ord=undefined
+TRUNC @5312 Sound setting: closing Settings title@5247, x@5289
+TRUNC @5486 Label: closing Language setting@5399, Filter chip@5441
+TRUNC @5662 Primary button: closing Quality options@5508, Filter chip@5617
+TRUNC @5712 Doubles partnership state: closing Settings modal@5223, Sound setting@5312, Primary button@5662
+  abs 5803 full cand Hero portrait placeholder@5778 inBox=false gate=true max=-1 ord=0
+  abs 5803 full cand Partners@5758 inBox=false gate=false max=0 ord=0
+  abs 5803 full cand Doubles partnership state@5712 inBox=false gate=false max=1 ord=0
+  abs 5803 full cand Custom hero and settings states@3981 inBox=true gate=false max=2 ord=0
+  abs 5803 corner cand Hero portrait placeholder@5778 inBox=true gate=true max=-1 ord=0
+  abs 5820 full cand Silhouette body@5803 inBox=true gate=false max=-1 ord=1
+  abs 5820 full cand Hero portrait placeholder@5778 inBox=true gate=true max=0 ord=1
+  abs 5837 full cand Silhouette head@5820 inBox=false gate=false max=-1 ord=2
+  abs 5837 full cand Silhouette body@5803 inBox=false gate=false max=-1 ord=2
+  abs 5837 full cand Hero portrait placeholder@5778 inBox=true gate=true max=1 ord=2
+TRUNC @5854 Filter chip: closing Hero portrait placeholder@5778, Silhouette body@5803, Silhouette head@5820, Spark@5837
+  abs 5924 full cand Hero portrait placeholder@5899 inBox=false gate=true max=-1 ord=0
+  abs 5924 full cand Partners@5758 inBox=false gate=false max=2 ord=0
+  abs 5924 full cand Doubles partnership state@5712 inBox=false gate=false max=1 ord=0
+  abs 5924 full cand Custom hero and settings states@3981 inBox=true gate=false max=2 ord=0
+  abs 5924 corner cand Hero portrait placeholder@5899 inBox=true gate=true max=-1 ord=0
+  abs 5941 full cand Silhouette body@5924 inBox=true gate=false max=-1 ord=1
+  abs 5941 full cand Hero portrait placeholder@5899 inBox=true gate=true max=0 ord=1
+  abs 5958 full cand Silhouette head@5941 inBox=false gate=false max=-1 ord=2
+  abs 5958 full cand Silhouette body@5924 inBox=false gate=false max=-1 ord=2
+  abs 5958 full cand Hero portrait placeholder@5899 inBox=true gate=true max=1 ord=2
+TRUNC @5975 Partnership landscape card: closing Partners@5758, Hero portrait placeholder@5899, Silhouette body@5924, Silhouette head@5941, Spark@5958
+  abs 6129 full cand Scan placeholder@6107 inBox=false gate=true max=-1 ord=0
+  abs 6129 full cand Landscape content@6087 inBox=false gate=false max=0 ord=0
+  abs 6129 full cand Partnership landscape card@5975 inBox=false gate=false max=1 ord=0
+  abs 6129 full cand Doubles partnership state@5712 inBox=false gate=false max=2 ord=0
+  abs 6129 full cand Custom hero and settings states@3981 inBox=true gate=false max=2 ord=0
+  abs 6129 corner cand Scan placeholder@6107 inBox=true gate=true max=-1 ord=0
+TRUNC @6273 Label: closing Partnership landscape card@5975, Landscape content@6087, Card rules@6187
+  abs 6333 full cand hourglass@6321 inBox=true gate=true max=-1 ord=undefined
+  abs 6428 full cand Opponent turn state@6296 inBox=false gate=true max=4 ord=undefined
+  abs 6428 full cand Custom hero and settings states@3981 inBox=false gate=true max=4 ord=undefined
+  abs 6428 corner cand Opponent turn state@6296 inBox=false gate=true max=4 ord=undefined
+  abs 6428 corner cand Custom hero and settings states@3981 inBox=true gate=true max=4 ord=undefined
+TRUNC @6643 Kit section: closing Kit introduction@6445, Version stamp@6573
+TRUNC @7314 Semantic colors: closing Land color palette@6727, Land color token@7233
+TRUNC @7434 Semantic color token: closing Semantic color token@7333, Token label@7371
+TRUNC @7636 Semantic color token: closing Semantic color token@7535, Token label@7573
+TRUNC @7737 Semantic color token: closing Semantic color token@7636, Token label@7674
+TRUNC @7838 Semantic color token: closing Semantic color token@7737, Token label@7775
+TRUNC @7939 Semantic color token: closing Semantic color token@7838, Token label@7876
+TRUNC @8040 Kit section: closing Kit section@6643, Semantic colors@7314, Semantic color token@7434, Semantic color token@7939, Token label@7977
+  abs 8520 full cand swords@8508 inBox=true gate=true max=-1 ord=undefined
+  abs 8683 full cand settings@8671 inBox=true gate=true max=-1 ord=undefined
+TRUNC @8694 Card Game/Secondary button: closing Card Game/Icon button@8647, settings@8671
+TRUNC @8876 Kit section: closing Kit section@8040, Typography scale@8124, Kit section@8377, Control specimens@8461, Card Game/Filter chip@8831
+  abs 9161 full cand Scan placeholder@9138 inBox=false gate=true max=-1 ord=0
+  abs 9161 full cand Card Game/Creature portrait card@9026 inBox=false gate=false max=1 ord=0
+  abs 9161 full cand Portrait type specimen@8980 inBox=false gate=false max=1 ord=0
+  abs 9161 full cand Portrait card specimens@8960 inBox=true gate=false max=0 ord=0
+  abs 9161 full cand Kit section@8876 inBox=true gate=false max=1 ord=0
+  abs 9161 full cand Design System and UI Kit@6428 inBox=false gate=false max=4 ord=0
+  abs 9161 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 9161 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 9161 corner cand Scan placeholder@9138 inBox=true gate=true max=-1 ord=0
+TRUNC @9356 Rules text: closing Type line@9219, Creature stats@9261, Defense stat@9302
+  abs 9605 full cand Scan placeholder@9582 inBox=false gate=true max=-1 ord=0
+  abs 9605 full cand Card Game/Spell portrait card@9470 inBox=false gate=false max=1 ord=0
+  abs 9605 full cand Portrait type specimen@9424 inBox=false gate=false max=1 ord=0
+  abs 9605 full cand Portrait card specimens@8960 inBox=true gate=false max=1 ord=0
+  abs 9605 full cand Kit section@8876 inBox=true gate=false max=1 ord=0
+  abs 9605 full cand Design System and UI Kit@6428 inBox=false gate=false max=4 ord=0
+  abs 9605 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 9605 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 9605 corner cand Scan placeholder@9582 inBox=true gate=true max=-1 ord=0
+  abs 9954 full cand Scan placeholder@9931 inBox=false gate=true max=-1 ord=0
+  abs 9954 full cand Card Game/Building portrait card@9819 inBox=false gate=false max=1 ord=0
+  abs 9954 full cand Portrait type specimen@9773 inBox=false gate=false max=1 ord=0
+  abs 9954 full cand Portrait card specimens@8960 inBox=true gate=false max=2 ord=0
+  abs 9954 full cand Kit section@8876 inBox=true gate=false max=1 ord=0
+  abs 9954 full cand Design System and UI Kit@6428 inBox=false gate=false max=4 ord=0
+  abs 9954 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 9954 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 9954 corner cand Scan placeholder@9931 inBox=true gate=true max=-1 ord=0
+  abs 10303 full cand Scan placeholder@10280 inBox=false gate=true max=-1 ord=0
+  abs 10303 full cand Card Game/Partnership portrait card@10168 inBox=false gate=false max=1 ord=0
+  abs 10303 full cand Portrait type specimen@10122 inBox=false gate=false max=1 ord=0
+  abs 10303 full cand Portrait card specimens@8960 inBox=true gate=false max=3 ord=0
+  abs 10303 full cand Kit section@8876 inBox=true gate=false max=1 ord=0
+  abs 10303 full cand Design System and UI Kit@6428 inBox=false gate=false max=4 ord=0
+  abs 10303 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 10303 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 10303 corner cand Scan placeholder@10280 inBox=true gate=true max=-1 ord=0
+TRUNC @10471 Kit section: closing Kit section@8876, Portrait card specimens@8960, Portrait type specimen@10122
+  abs 10775 full cand Scan placeholder@10753 inBox=false gate=true max=-1 ord=0
+  abs 10775 full cand Landscape content@10733 inBox=false gate=false max=0 ord=0
+  abs 10775 full cand Card Game/Creature landscape card@10621 inBox=false gate=false max=1 ord=0
+  abs 10775 full cand Landscape type specimen@10575 inBox=false gate=false max=1 ord=0
+  abs 10775 full cand Landscape card specimens@10555 inBox=true gate=false max=0 ord=0
+  abs 10775 full cand Kit section@10471 inBox=true gate=false max=1 ord=0
+  abs 10775 full cand Design System and UI Kit@6428 inBox=false gate=false max=5 ord=0
+  abs 10775 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 10775 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 10775 corner cand Scan placeholder@10753 inBox=true gate=true max=-1 ord=0
+TRUNC @10992 Label: closing Creature stats@10874, Defense stat@10915
+TRUNC @11014 Landscape type specimen: closing Landscape type specimen@10575, Card Game/Creature landscape card@10621, Landscape content@10733, Card rules@10833
+  abs 11214 full cand Scan placeholder@11192 inBox=false gate=true max=-1 ord=0
+  abs 11214 full cand Landscape content@11172 inBox=false gate=false max=0 ord=0
+  abs 11214 full cand Card Game/Spell landscape card@11060 inBox=false gate=false max=1 ord=0
+  abs 11214 full cand Landscape type specimen@11014 inBox=false gate=false max=1 ord=0
+  abs 11214 full cand Landscape card specimens@10555 inBox=true gate=false max=1 ord=0
+  abs 11214 full cand Kit section@10471 inBox=true gate=false max=1 ord=0
+  abs 11214 full cand Design System and UI Kit@6428 inBox=false gate=false max=5 ord=0
+  abs 11214 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 11214 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 11214 corner cand Scan placeholder@11192 inBox=true gate=true max=-1 ord=0
+TRUNC @11358 Landscape type specimen: closing Landscape type specimen@11014, Card Game/Spell landscape card@11060, Landscape content@11172, Card rules@11272
+  abs 11558 full cand Scan placeholder@11536 inBox=false gate=true max=-1 ord=0
+  abs 11558 full cand Landscape content@11516 inBox=false gate=false max=0 ord=0
+  abs 11558 full cand Card Game/Building landscape card@11404 inBox=false gate=false max=1 ord=0
+  abs 11558 full cand Landscape type specimen@11358 inBox=false gate=false max=1 ord=0
+  abs 11558 full cand Landscape card specimens@10555 inBox=true gate=false max=2 ord=0
+  abs 11558 full cand Kit section@10471 inBox=true gate=false max=1 ord=0
+  abs 11558 full cand Design System and UI Kit@6428 inBox=false gate=false max=5 ord=0
+  abs 11558 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 11558 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 11558 corner cand Scan placeholder@11536 inBox=true gate=true max=-1 ord=0
+TRUNC @11702 Landscape type specimen: closing Landscape type specimen@11358, Card Game/Building landscape card@11404, Landscape content@11516, Card rules@11616
+  abs 11902 full cand Scan placeholder@11880 inBox=false gate=true max=-1 ord=0
+  abs 11902 full cand Landscape content@11860 inBox=false gate=false max=0 ord=0
+  abs 11902 full cand Card Game/Partnership landscape card@11748 inBox=false gate=false max=1 ord=0
+  abs 11902 full cand Landscape type specimen@11702 inBox=false gate=false max=1 ord=0
+  abs 11902 full cand Landscape card specimens@10555 inBox=true gate=false max=3 ord=0
+  abs 11902 full cand Kit section@10471 inBox=true gate=false max=1 ord=0
+  abs 11902 full cand Design System and UI Kit@6428 inBox=false gate=false max=5 ord=0
+  abs 11902 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 11902 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 11902 corner cand Scan placeholder@11880 inBox=true gate=true max=-1 ord=0
+TRUNC @12046 Kit section: closing Kit section@10471, Landscape card specimens@10555, Landscape type specimen@11702, Card Game/Partnership landscape card@11748, Landscape content@11860, Card rules@11960
+  abs 12282 full cand plus@12270 inBox=true gate=true max=-1 ord=undefined
+TRUNC @12317 Resource badge primitives: closing Land slot primitive@12150, Card Game/Land slot@12196, Empty drop target@12245
+  abs 12418 full cand shield@12406 inBox=true gate=true max=-1 ord=undefined
+  abs 12487 full cand heart@12475 inBox=true gate=true max=-1 ord=undefined
+  abs 12597 full cand zap@12585 inBox=true gate=true max=-1 ord=undefined
+  abs 12644 full cand zap@12632 inBox=true gate=true max=-1 ord=undefined
+TRUNC @12655 Card back specimen: closing Card Game/Shield before health@12363, Card Game/Action tokens@12542, Action token@12561, Action token@12608, zap@12632
+TRUNC @12736 Label: closing Card Game/Deck card back@12674, Card back border@12697, Card crest@12721
+TRUNC @12758 Tooltip primitive: closing Resource badge primitives@12317, Card back specimen@12655
+TRUNC @12961 Card Game/Drawer primitive: closing Tooltip primitive@12758, Card Game/Filter chip@12916
+  abs 13039 full cand x@13027 inBox=true gate=true max=-1 ord=undefined
+TRUNC @13050 Divider: closing Drawer heading@12985, x@13027
+TRUNC @13144 Card Game/Modal primitive: closing Card Game/Drawer primitive@12961, Drawer handle@13110, Handle@13130
+TRUNC @13311 Kit section: closing Kit section@12046, Gameplay primitives@12130, Card Game/Modal primitive@13144, Secondary button@13263
+TRUNC @13843 Radius scale: closing Spacing scale@13393, Spacing bars@13439, Space token@13788
+TRUNC @13993 Shadow scale: closing Radius scale@13843, Radius examples@13889, Radius token@13976
+TRUNC @14202 Card Game/Connection loss toast primitive: closing Kit section@13311, Foundation specimens@13373, Shadow scale@13993, Shadow examples@14039, Shadow token@14058, Shadow token@14154
+  abs 14239 full cand wifi-off@14227 inBox=true gate=true max=-1 ord=undefined
+  abs 14359 full cand Secondary button@14312 inBox=false gate=true max=0 ord=undefined
+  abs 14359 full cand Card Game/Connection loss toast primitive@14202 inBox=false gate=true max=4 ord=undefined
+  abs 14359 full cand Design System and UI Kit@6428 inBox=false gate=true max=8 ord=undefined
+  abs 14359 full cand Opponent turn state@6296 inBox=false gate=true max=4 ord=undefined
+  abs 14359 full cand Custom hero and settings states@3981 inBox=false gate=true max=4 ord=undefined
+  abs 14359 corner cand Secondary button@14312 inBox=false gate=true max=0 ord=undefined
+  abs 14359 corner cand Card Game/Connection loss toast primitive@14202 inBox=false gate=true max=4 ord=undefined
+  abs 14359 corner cand Design System and UI Kit@6428 inBox=false gate=true max=8 ord=undefined
+  abs 14359 corner cand Opponent turn state@6296 inBox=false gate=true max=4 ord=undefined
+  abs 14359 corner cand Custom hero and settings states@3981 inBox=true gate=true max=4 ord=undefined
+  abs 14448 full cand list@14436 inBox=true gate=true max=-1 ord=undefined
+  abs 14471 full cand settings@14459 inBox=true gate=true max=-1 ord=undefined
+TRUNC @14482 Turn banner: closing Battle navigation@14374, Game utility controls@14417, settings@14459
+  abs 14656 full cand Hero portrait placeholder@14631 inBox=false gate=true max=-1 ord=0
+  abs 14656 full cand Opponent zone@14611 inBox=false gate=false max=0 ord=0
+  abs 14656 full cand Turn banner@14482 inBox=false gate=false max=2 ord=0
+  abs 14656 full cand Game Mobile@14359 inBox=true gate=false max=1 ord=0
+  abs 14656 full cand Secondary button@14312 inBox=false gate=false max=0 ord=0
+  abs 14656 full cand Card Game/Connection loss toast primitive@14202 inBox=false gate=false max=4 ord=0
+  abs 14656 full cand Design System and UI Kit@6428 inBox=false gate=false max=8 ord=0
+  abs 14656 full cand Opponent turn state@6296 inBox=false gate=false max=4 ord=0
+  abs 14656 full cand Custom hero and settings states@3981 inBox=true gate=false max=4 ord=0
+  abs 14656 corner cand Hero portrait placeholder@14631 inBox=true gate=true max=-1 ord=0
+  abs 14673 full cand Silhouette body@14656 inBox=true gate=false max=-1 ord=1
+  abs 14673 full cand Hero portrait placeholder@14631 inBox=true gate=true max=0 ord=1
+  abs 14690 full cand Silhouette head@14673 inBox=false gate=false max=-1 ord=2
+  abs 14690 full cand Silhouette body@14656 inBox=false gate=false max=-1 ord=2
+  abs 14690 full cand Hero portrait placeholder@14631 inBox=true gate=true max=1 ord=2
+TRUNC @14707 Opponent hero: closing Hero portrait placeholder@14631, Silhouette body@14656, Silhouette head@14673, Spark@14690
+  abs 14803 full cand shield@14791 inBox=true gate=true max=-1 ord=undefined
+  abs 14872 full cand heart@14860 inBox=true gate=true max=-1 ord=undefined
+TRUNC @15008 Opponent hand: closing Opponent zone@14611, Opponent hero@14707, Shield before health@14748, Opponent deck@14905, Deck card back@14924, Card back border@14947
+TRUNC @15171 Deck card back: closing Turn banner@14482, Opponent hand@15008, Hidden hand fan@15027, Deck card back@15045, Card back border@15069, Deck card back@15108, Card back border@15132, Card crest@15156
+TRUNC @15234 Deck card back: closing Deck card back@15171, Card back border@15195, Card crest@15219
+TRUNC @15296 Label: closing Game Mobile@14359, Deck card back@15234, Card back border@15257, Card crest@15281
+TRUNC @15340 Pannable battlefield: closing Custom hero and settings states@3981, Opponent turn state@6296, Design System and UI Kit@6428, Card Game/Connection loss toast primitive@14202, Secondary button@14312
+@15340 Pannable battlefield ord=3 -> ROOT | stack: __ROOT__@undefined(max=5) / Pannable battlefield@15340(max=-1)
+  abs 15505 full cand Scan placeholder@15482 inBox=false gate=true max=-1 ord=0
+  abs 15505 full cand Creature in play@15432 inBox=false gate=false max=1 ord=0
+  abs 15505 full cand Land slot@15382 inBox=false gate=false max=1 ord=0
+  abs 15505 full cand Opponent land row@15361 inBox=true gate=false max=0 ord=0
+  abs 15505 full cand Pannable battlefield@15340 inBox=false gate=false max=0 ord=0
+  abs 15505 corner cand Scan placeholder@15482 inBox=true gate=true max=-1 ord=0
+  abs 15636 full cand Defense stat@15582 inBox=false gate=true max=1 ord=2
+  abs 15636 full cand Board stats@15540 inBox=false gate=true max=1 ord=2
+  abs 15636 full cand Scan placeholder@15482 inBox=false gate=false max=2 ord=2
+  abs 15636 full cand Creature in play@15432 inBox=false gate=true max=1 ord=2
+  abs 15636 full cand Land slot@15382 inBox=false gate=true max=1 ord=2
+  abs 15636 full cand Opponent land row@15361 inBox=true gate=false max=0 ord=2
+  abs 15636 full cand Pannable battlefield@15340 inBox=false gate=false max=0 ord=2
+  abs 15636 corner cand Defense stat@15582 inBox=true gate=true max=1 ord=2
+TRUNC @15685 Land slot: closing Land slot@15382, Creature in play@15432, Scan placeholder@15482, Board stats@15540, Defense stat@15582, Damage preview@15636
+  abs 15805 full cand Scan placeholder@15782 inBox=false gate=true max=-1 ord=0
+  abs 15805 full cand Building in play@15733 inBox=false gate=false max=1 ord=0
+  abs 15805 full cand Land slot@15685 inBox=false gate=false max=1 ord=0
+  abs 15805 full cand Opponent land row@15361 inBox=true gate=false max=1 ord=0
+  abs 15805 full cand Pannable battlefield@15340 inBox=false gate=false max=0 ord=0
+  abs 15805 corner cand Scan placeholder@15782 inBox=true gate=true max=-1 ord=0
+TRUNC @15882 Land slot: closing Land slot@15685, Building in play@15733, Scan placeholder@15782, Board stats@15840
+  abs 15968 full cand sprout@15956 inBox=true gate=true max=-1 ord=undefined
+TRUNC @16003 Land slot: closing Land slot@15882, Empty drop target@15930
+  abs 16089 full cand sprout@16077 inBox=true gate=true max=-1 ord=undefined
+TRUNC @16124 Own land row: closing Opponent land row@15361, Land slot@16003, Empty drop target@16051
+  abs 16267 full cand Scan placeholder@16244 inBox=false gate=true max=-1 ord=0
+  abs 16267 full cand Creature in play@16195 inBox=false gate=false max=1 ord=0
+  abs 16267 full cand Land slot@16145 inBox=false gate=false max=1 ord=0
+  abs 16267 full cand Own land row@16124 inBox=true gate=false max=0 ord=0
+  abs 16267 full cand Pannable battlefield@15340 inBox=false gate=false max=1 ord=0
+  abs 16267 corner cand Scan placeholder@16244 inBox=true gate=true max=-1 ord=0
+TRUNC @16398 Land slot: closing Land slot@16145, Creature in play@16195, Scan placeholder@16244, Board stats@16302, Defense stat@16344
+  abs 16518 full cand Scan placeholder@16495 inBox=false gate=true max=-1 ord=0
+  abs 16518 full cand Building in play@16446 inBox=false gate=false max=1 ord=0
+  abs 16518 full cand Land slot@16398 inBox=false gate=false max=1 ord=0
+  abs 16518 full cand Own land row@16124 inBox=true gate=false max=1 ord=0
+  abs 16518 full cand Pannable battlefield@15340 inBox=false gate=false max=1 ord=0
+  abs 16518 corner cand Scan placeholder@16495 inBox=true gate=true max=-1 ord=0
+TRUNC @16595 Land slot: closing Land slot@16398, Building in play@16446, Scan placeholder@16495, Board stats@16553
+  abs 16680 full cand plus@16668 inBox=true gate=true max=-1 ord=undefined
+TRUNC @16715 Land slot: closing Land slot@16595, Empty drop target@16643
+  abs 16801 full cand sprout@16789 inBox=true gate=true max=-1 ord=undefined
+  abs 16836 full cand Empty drop target@16763 inBox=false gate=true max=1 ord=2
+  abs 16836 full cand Land slot@16715 inBox=false gate=true max=1 ord=2
+  abs 16836 full cand Own land row@16124 inBox=false gate=false max=3 ord=2
+  abs 16836 full cand Pannable battlefield@15340 inBox=false gate=true max=1 ord=2
+  abs 16836 corner cand Empty drop target@16763 inBox=true gate=true max=1 ord=2
+  abs 16885 full cand Battlefield seam@16836 inBox=false gate=false max=0 ord=3
+  abs 16885 full cand Empty drop target@16763 inBox=false gate=true max=2 ord=3
+  abs 16885 full cand Land slot@16715 inBox=false gate=false max=1 ord=3
+  abs 16885 full cand Own land row@16124 inBox=false gate=false max=3 ord=3
+  abs 16885 full cand Pannable battlefield@15340 inBox=true gate=false max=1 ord=3
+  abs 16885 corner cand Battlefield seam@16836 inBox=true gate=false max=0 ord=3
+  abs 16885 corner cand Empty drop target@16763 inBox=true gate=true max=2 ord=3
+  abs 16904 full cand Attack preview arc@16885 inBox=false gate=false max=-1 ord=4
+  abs 16904 full cand Battlefield seam@16836 inBox=false gate=false max=0 ord=4
+  abs 16904 full cand Empty drop target@16763 inBox=false gate=true max=3 ord=4
+  abs 16904 full cand Land slot@16715 inBox=true gate=false max=1 ord=4
+  abs 16904 full cand Own land row@16124 inBox=true gate=true max=3 ord=4
+TRUNC @16921 Own hero zone: closing Attack preview arc@16885, Attack arrowhead@16904
+  abs 16966 full cand Hero portrait placeholder@16941 inBox=false gate=true max=-1 ord=0
+  abs 16966 full cand Own hero zone@16921 inBox=false gate=false max=0 ord=0
+  abs 16966 full cand Battlefield seam@16836 inBox=false gate=false max=4 ord=0
+  abs 16966 full cand Empty drop target@16763 inBox=true gate=false max=3 ord=0
+  abs 16966 full cand Land slot@16715 inBox=true gate=false max=1 ord=0
+  abs 16966 full cand Own land row@16124 inBox=true gate=false max=4 ord=0
+  abs 16966 full cand Pannable battlefield@15340 inBox=false gate=false max=1 ord=0
+  abs 16966 corner cand Hero portrait placeholder@16941 inBox=true gate=true max=-1 ord=0
+  abs 16983 full cand Silhouette body@16966 inBox=true gate=false max=-1 ord=1
+  abs 16983 full cand Hero portrait placeholder@16941 inBox=true gate=true max=0 ord=1
+  abs 17000 full cand Silhouette head@16983 inBox=false gate=false max=-1 ord=2
+  abs 17000 full cand Silhouette body@16966 inBox=false gate=false max=-1 ord=2
+  abs 17000 full cand Hero portrait placeholder@16941 inBox=true gate=true max=1 ord=2
+TRUNC @17017 Own hero: closing Hero portrait placeholder@16941, Silhouette body@16966, Silhouette head@16983, Spark@17000
+  abs 17113 full cand shield@17101 inBox=true gate=true max=-1 ord=undefined
+  abs 17182 full cand heart@17170 inBox=true gate=true max=-1 ord=undefined
+  abs 17311 full cand zap@17299 inBox=true gate=true max=-1 ord=undefined
+  abs 17358 full cand zap@17346 inBox=true gate=true max=-1 ord=undefined
+TRUNC @17537 Hand paper tray: closing Own hero zone@16921, Own hero@17017, Shield before health@17058, Health badge@17146, Own actions@17215, Action tokens@17256, Action token@17275, Action token@17322, Deck and discard@17369, Piles@17388, Deck card back@17407, Card back border@17430, Discard pile@17469
+TRUNC @17640 Swipe mini card hand: closing Pannable battlefield@15340, Own land row@16124, Land slot@16715, Empty drop target@16763, Battlefield seam@16836, Hand paper tray@17537, Player hand@17557, Hand label@17576
+@17640 Swipe mini card hand ord=1 -> ROOT | stack: __ROOT__@undefined(max=5) / Swipe mini card hand@17640(max=-1)
+  abs 17794 full cand Scan placeholder@17771 inBox=false gate=true max=-1 ord=0
+  abs 17794 full cand Creature portrait card@17659 inBox=false gate=false max=1 ord=0
+  abs 17794 full cand Swipe mini card hand@17640 inBox=true gate=false max=0 ord=0
+  abs 17794 corner cand Scan placeholder@17771 inBox=true gate=true max=-1 ord=0
+TRUNC @17966 Rules text: closing Type line@17829, Creature stats@17871, Defense stat@17912
+TRUNC @17989 Spell portrait card: closing Creature portrait card@17659, Scan placeholder@17771
+  abs 18124 full cand Scan placeholder@18101 inBox=false gate=true max=-1 ord=0
+  abs 18124 full cand Spell portrait card@17989 inBox=false gate=false max=1 ord=0
+  abs 18124 full cand Swipe mini card hand@17640 inBox=true gate=false max=1 ord=0
+  abs 18124 corner cand Scan placeholder@18101 inBox=true gate=true max=-1 ord=0
+TRUNC @18224 Creature portrait card: closing Spell portrait card@17989, Scan placeholder@18101
+  abs 18359 full cand Scan placeholder@18336 inBox=false gate=true max=-1 ord=0
+  abs 18359 full cand Creature portrait card@18224 inBox=false gate=false max=1 ord=0
+  abs 18359 full cand Swipe mini card hand@17640 inBox=true gate=false max=2 ord=0
+  abs 18359 corner cand Scan placeholder@18336 inBox=true gate=true max=-1 ord=0
+TRUNC @18531 Rules text: closing Type line@18394, Creature stats@18436, Defense stat@18477
+TRUNC @18554 Spell portrait card: closing Creature portrait card@18224, Scan placeholder@18336
+  abs 18689 full cand Scan placeholder@18666 inBox=false gate=true max=-1 ord=0
+  abs 18689 full cand Spell portrait card@18554 inBox=false gate=false max=1 ord=0
+  abs 18689 full cand Swipe mini card hand@17640 inBox=true gate=false max=3 ord=0
+  abs 18689 corner cand Scan placeholder@18666 inBox=true gate=true max=-1 ord=0
+TRUNC @18789 Creature portrait card: closing Spell portrait card@18554, Scan placeholder@18666
+  abs 18924 full cand Scan placeholder@18901 inBox=false gate=true max=-1 ord=0
+  abs 18924 full cand Creature portrait card@18789 inBox=false gate=false max=1 ord=0
+  abs 18924 full cand Swipe mini card hand@17640 inBox=true gate=false max=4 ord=0
+  abs 18924 corner cand Scan placeholder@18901 inBox=true gate=true max=-1 ord=0
+TRUNC @19096 Rules text: closing Type line@18959, Creature stats@19001, Defense stat@19042
+TRUNC @19119 Turn controls: closing Creature portrait card@18789, Scan placeholder@18901
+  abs 19236 full cand Primary button@19187 inBox=false gate=true max=0 ord=undefined
+  abs 19236 full cand Turn controls@19119 inBox=false gate=true max=1 ord=undefined
+  abs 19236 full cand Swipe mini card hand@17640 inBox=false gate=true max=6 ord=undefined
+  abs 19236 corner cand Primary button@19187 inBox=false gate=true max=0 ord=undefined
+  abs 19236 corner cand Turn controls@19119 inBox=false gate=true max=1 ord=undefined
+  abs 19236 corner cand Swipe mini card hand@17640 inBox=false gate=true max=6 ord=undefined
+  abs 19236 any cand Primary button@19187 inBox=true gate=true max=0 ord=undefined
+  abs 19347 full cand list@19335 inBox=true gate=true max=-1 ord=undefined
+  abs 19370 full cand settings@19358 inBox=true gate=true max=-1 ord=undefined
+TRUNC @19403 Game workspace: closing Battle navigation@19251, Game utility controls@19316
+  abs 19447 full cand Battle table@19423 inBox=false gate=true max=-1 ord=0
+  abs 19447 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 19447 full cand Game Desktop@19236 inBox=true gate=false max=1 ord=0
+  abs 19447 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 19447 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 19447 full cand Swipe mini card hand@17640 inBox=false gate=false max=6 ord=0
+  abs 19447 corner cand Battle table@19423 inBox=true gate=true max=-1 ord=0
+  abs 19465 full cand Table plank seam@19447 inBox=false gate=false max=-1 ord=1
+  abs 19465 full cand Battle table@19423 inBox=false gate=true max=0 ord=1
+  abs 19465 full cand Game workspace@19403 inBox=false gate=true max=0 ord=1
+  abs 19465 full cand Game Desktop@19236 inBox=true gate=false max=1 ord=1
+  abs 19465 full cand Primary button@19187 inBox=false gate=true max=0 ord=1
+  abs 19465 full cand Turn controls@19119 inBox=false gate=false max=1 ord=1
+  abs 19465 full cand Swipe mini card hand@17640 inBox=false gate=false max=6 ord=1
+  abs 19465 corner cand Table plank seam@19447 inBox=true gate=false max=-1 ord=1
+  abs 19465 corner cand Battle table@19423 inBox=true gate=true max=0 ord=1
+  abs 19483 full cand Table plank seam@19465 inBox=false gate=false max=-1 ord=2
+  abs 19483 full cand Table plank seam@19447 inBox=false gate=false max=-1 ord=2
+  abs 19483 full cand Battle table@19423 inBox=false gate=true max=1 ord=2
+  abs 19483 full cand Game workspace@19403 inBox=false gate=false max=0 ord=2
+  abs 19483 full cand Game Desktop@19236 inBox=true gate=true max=1 ord=2
+TRUNC @19501 Opponent zone: closing Table plank seam@19447, Table plank seam@19465, Table plank seam@19483
+  abs 19547 full cand Hero portrait placeholder@19522 inBox=false gate=true max=-1 ord=0
+  abs 19547 full cand Opponent zone@19501 inBox=false gate=false max=0 ord=0
+  abs 19547 full cand Battle table@19423 inBox=true gate=false max=3 ord=0
+  abs 19547 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 19547 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=0
+  abs 19547 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 19547 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 19547 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 19547 corner cand Hero portrait placeholder@19522 inBox=true gate=true max=-1 ord=0
+  abs 19564 full cand Silhouette body@19547 inBox=true gate=false max=-1 ord=1
+  abs 19564 full cand Hero portrait placeholder@19522 inBox=true gate=true max=0 ord=1
+  abs 19581 full cand Silhouette head@19564 inBox=false gate=false max=-1 ord=2
+  abs 19581 full cand Silhouette body@19547 inBox=false gate=false max=-1 ord=2
+  abs 19581 full cand Hero portrait placeholder@19522 inBox=true gate=true max=1 ord=2
+TRUNC @19598 Opponent hero: closing Hero portrait placeholder@19522, Silhouette body@19547, Silhouette head@19564, Spark@19581
+  abs 19694 full cand shield@19682 inBox=true gate=true max=-1 ord=undefined
+  abs 19763 full cand heart@19751 inBox=true gate=true max=-1 ord=undefined
+TRUNC @19796 Opponent hand fan: closing Opponent hero@19598, Shield before health@19639, Health badge@19727
+TRUNC @19900 Face down hand card: closing Face down hand card@19815, Deck card back@19835, Card back border@19859, Card crest@19884
+TRUNC @19985 Face down hand card: closing Face down hand card@19900, Deck card back@19920, Card back border@19944, Card crest@19969
+TRUNC @20070 Face down hand card: closing Face down hand card@19985, Deck card back@20005, Card back border@20029, Card crest@20054
+TRUNC @20154 Opponent actions: closing Opponent hand fan@19796, Face down hand card@20070, Deck card back@20089, Card back border@20113, Card crest@20138
+  abs 20250 full cand zap@20238 inBox=true gate=true max=-1 ord=undefined
+  abs 20297 full cand zap@20285 inBox=true gate=true max=-1 ord=undefined
+TRUNC @20308 Opponent deck: closing Opponent actions@20154, Action tokens@20195, Action token@20214, Action token@20261, zap@20285
+TRUNC @20411 Opponent discard: closing Opponent deck@20308, Deck card back@20327, Card back border@20350
+  abs 20466 full cand layers@20454 inBox=true gate=true max=-1 ord=undefined
+TRUNC @20499 Pannable battlefield: closing Opponent zone@19501, Opponent discard@20411, Discard pile@20430
+  abs 20665 full cand Scan placeholder@20642 inBox=false gate=true max=-1 ord=0
+  abs 20665 full cand Creature in play@20592 inBox=false gate=false max=1 ord=0
+  abs 20665 full cand Land slot@20542 inBox=false gate=false max=1 ord=0
+  abs 20665 full cand Opponent land row@20521 inBox=true gate=false max=0 ord=0
+  abs 20665 full cand Pannable battlefield@20499 inBox=false gate=false max=0 ord=0
+  abs 20665 full cand Battle table@19423 inBox=true gate=false max=4 ord=0
+  abs 20665 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 20665 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=0
+  abs 20665 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 20665 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 20665 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 20665 corner cand Scan placeholder@20642 inBox=true gate=true max=-1 ord=0
+TRUNC @20796 Label: closing Board stats@20700, Defense stat@20742
+  abs 20820 full cand Scan placeholder@20642 inBox=false gate=false max=3 ord=2
+  abs 20820 full cand Creature in play@20592 inBox=false gate=true max=1 ord=2
+  abs 20820 full cand Land slot@20542 inBox=false gate=true max=1 ord=2
+  abs 20820 full cand Opponent land row@20521 inBox=true gate=false max=0 ord=2
+  abs 20820 full cand Pannable battlefield@20499 inBox=false gate=false max=0 ord=2
+  abs 20820 full cand Battle table@19423 inBox=true gate=false max=4 ord=2
+  abs 20820 full cand Game workspace@19403 inBox=false gate=false max=0 ord=2
+  abs 20820 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=2
+  abs 20820 full cand Primary button@19187 inBox=false gate=false max=0 ord=2
+  abs 20820 full cand Turn controls@19119 inBox=false gate=true max=1 ord=2
+  abs 20820 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=2
+  abs 20820 corner cand Scan placeholder@20642 inBox=true gate=false max=3 ord=2
+  abs 20820 corner cand Creature in play@20592 inBox=false gate=true max=1 ord=2
+  abs 20820 corner cand Land slot@20542 inBox=false gate=true max=1 ord=2
+  abs 20820 corner cand Opponent land row@20521 inBox=true gate=false max=0 ord=2
+  abs 20820 corner cand Pannable battlefield@20499 inBox=false gate=false max=0 ord=2
+  abs 20820 corner cand Battle table@19423 inBox=true gate=false max=4 ord=2
+  abs 20820 corner cand Game workspace@19403 inBox=false gate=false max=0 ord=2
+  abs 20820 corner cand Game Desktop@19236 inBox=true gate=false max=2 ord=2
+  abs 20820 corner cand Primary button@19187 inBox=false gate=false max=0 ord=2
+  abs 20820 corner cand Turn controls@19119 inBox=false gate=true max=1 ord=2
+  abs 20820 corner cand Swipe mini card hand@17640 inBox=false gate=false max=6 ord=2
+  abs 20820 any cand Scan placeholder@20642 inBox=true gate=false max=3 ord=2
+  abs 20820 any cand Creature in play@20592 inBox=true gate=true max=1 ord=2
+TRUNC @20869 Land slot: closing Land slot@20542, Creature in play@20592, Scan placeholder@20642, Damage preview@20820
+  abs 20989 full cand Scan placeholder@20966 inBox=false gate=true max=-1 ord=0
+  abs 20989 full cand Building in play@20917 inBox=false gate=false max=1 ord=0
+  abs 20989 full cand Land slot@20869 inBox=false gate=false max=1 ord=0
+  abs 20989 full cand Opponent land row@20521 inBox=true gate=false max=1 ord=0
+  abs 20989 full cand Pannable battlefield@20499 inBox=false gate=false max=0 ord=0
+  abs 20989 full cand Battle table@19423 inBox=true gate=false max=4 ord=0
+  abs 20989 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 20989 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=0
+  abs 20989 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 20989 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 20989 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 20989 corner cand Scan placeholder@20966 inBox=true gate=true max=-1 ord=0
+TRUNC @21090 Land slot: closing Land slot@20869, Building in play@20917, Scan placeholder@20966
+  abs 21176 full cand sprout@21164 inBox=true gate=true max=-1 ord=undefined
+TRUNC @21211 Land slot: closing Land slot@21090, Empty drop target@21138
+  abs 21297 full cand sprout@21285 inBox=true gate=true max=-1 ord=undefined
+TRUNC @21332 Own land row: closing Opponent land row@20521, Land slot@21211, Empty drop target@21259
+  abs 21475 full cand Scan placeholder@21452 inBox=false gate=true max=-1 ord=0
+  abs 21475 full cand Creature in play@21403 inBox=false gate=false max=1 ord=0
+  abs 21475 full cand Land slot@21353 inBox=false gate=false max=1 ord=0
+  abs 21475 full cand Own land row@21332 inBox=true gate=false max=0 ord=0
+  abs 21475 full cand Pannable battlefield@20499 inBox=false gate=false max=1 ord=0
+  abs 21475 full cand Battle table@19423 inBox=true gate=false max=4 ord=0
+  abs 21475 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 21475 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=0
+  abs 21475 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 21475 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 21475 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 21475 corner cand Scan placeholder@21452 inBox=true gate=true max=-1 ord=0
+TRUNC @21606 Label: closing Board stats@21510, Defense stat@21552
+TRUNC @21630 Land slot: closing Land slot@21353, Creature in play@21403, Scan placeholder@21452
+  abs 21750 full cand Scan placeholder@21727 inBox=false gate=true max=-1 ord=0
+  abs 21750 full cand Building in play@21678 inBox=false gate=false max=1 ord=0
+  abs 21750 full cand Land slot@21630 inBox=false gate=false max=1 ord=0
+  abs 21750 full cand Own land row@21332 inBox=true gate=false max=1 ord=0
+  abs 21750 full cand Pannable battlefield@20499 inBox=false gate=false max=1 ord=0
+  abs 21750 full cand Battle table@19423 inBox=true gate=false max=4 ord=0
+  abs 21750 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 21750 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=0
+  abs 21750 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 21750 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 21750 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 21750 corner cand Scan placeholder@21727 inBox=true gate=true max=-1 ord=0
+TRUNC @21851 Land slot: closing Land slot@21630, Building in play@21678, Scan placeholder@21727
+  abs 21936 full cand plus@21924 inBox=true gate=true max=-1 ord=undefined
+TRUNC @21971 Land slot: closing Land slot@21851, Empty drop target@21899
+  abs 22057 full cand sprout@22045 inBox=true gate=true max=-1 ord=undefined
+  abs 22092 full cand Empty drop target@22019 inBox=false gate=true max=1 ord=2
+  abs 22092 full cand Land slot@21971 inBox=false gate=true max=1 ord=2
+  abs 22092 full cand Own land row@21332 inBox=false gate=false max=3 ord=2
+  abs 22092 full cand Pannable battlefield@20499 inBox=false gate=true max=1 ord=2
+  abs 22092 full cand Battle table@19423 inBox=true gate=false max=4 ord=2
+  abs 22092 full cand Game workspace@19403 inBox=false gate=false max=0 ord=2
+  abs 22092 full cand Game Desktop@19236 inBox=true gate=false max=2 ord=2
+  abs 22092 full cand Primary button@19187 inBox=false gate=false max=0 ord=2
+  abs 22092 full cand Turn controls@19119 inBox=false gate=true max=1 ord=2
+  abs 22092 full cand Swipe mini card hand@17640 inBox=false gate=false max=6 ord=2
+  abs 22092 corner cand Empty drop target@22019 inBox=true gate=true max=1 ord=2
+  abs 22141 full cand Battlefield seam@22092 inBox=false gate=false max=0 ord=3
+  abs 22141 full cand Empty drop target@22019 inBox=false gate=true max=2 ord=3
+  abs 22141 full cand Land slot@21971 inBox=false gate=false max=1 ord=3
+  abs 22141 full cand Own land row@21332 inBox=false gate=false max=3 ord=3
+  abs 22141 full cand Pannable battlefield@20499 inBox=true gate=false max=1 ord=3
+  abs 22141 full cand Battle table@19423 inBox=true gate=false max=4 ord=3
+  abs 22141 full cand Game workspace@19403 inBox=true gate=false max=0 ord=3
+  abs 22141 full cand Game Desktop@19236 inBox=true gate=true max=2 ord=3
+  abs 22160 full cand Attack preview arc@22141 inBox=false gate=false max=-1 ord=4
+  abs 22160 full cand Battlefield seam@22092 inBox=false gate=false max=0 ord=4
+  abs 22160 full cand Empty drop target@22019 inBox=false gate=false max=2 ord=4
+  abs 22160 full cand Land slot@21971 inBox=true gate=false max=1 ord=4
+  abs 22160 full cand Own land row@21332 inBox=true gate=true max=3 ord=4
+TRUNC @22177 Own hero zone: closing Land slot@21971, Empty drop target@22019, Battlefield seam@22092, Attack preview arc@22141, Attack arrowhead@22160
+  abs 22223 full cand Hero portrait placeholder@22198 inBox=false gate=true max=-1 ord=0
+  abs 22223 full cand Own hero zone@22177 inBox=false gate=false max=0 ord=0
+  abs 22223 full cand Own land row@21332 inBox=true gate=false max=5 ord=0
+  abs 22223 full cand Pannable battlefield@20499 inBox=false gate=false max=1 ord=0
+  abs 22223 full cand Battle table@19423 inBox=true gate=false max=4 ord=0
+  abs 22223 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 22223 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 22223 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 22223 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 22223 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 22223 corner cand Hero portrait placeholder@22198 inBox=true gate=true max=-1 ord=0
+  abs 22240 full cand Silhouette body@22223 inBox=true gate=false max=-1 ord=1
+  abs 22240 full cand Hero portrait placeholder@22198 inBox=true gate=true max=0 ord=1
+  abs 22257 full cand Silhouette head@22240 inBox=false gate=false max=-1 ord=2
+  abs 22257 full cand Silhouette body@22223 inBox=false gate=false max=-1 ord=2
+  abs 22257 full cand Hero portrait placeholder@22198 inBox=true gate=true max=1 ord=2
+TRUNC @22274 Own hero: closing Hero portrait placeholder@22198, Silhouette body@22223, Silhouette head@22240, Spark@22257
+  abs 22370 full cand shield@22358 inBox=true gate=true max=-1 ord=undefined
+  abs 22439 full cand heart@22427 inBox=true gate=true max=-1 ord=undefined
+TRUNC @22472 Action resources: closing Own hero@22274, Shield before health@22315, Health badge@22403
+  abs 22568 full cand zap@22556 inBox=true gate=true max=-1 ord=undefined
+  abs 22615 full cand zap@22603 inBox=true gate=true max=-1 ord=undefined
+TRUNC @22626 Own deck: closing Action resources@22472, Action tokens@22513, Action token@22532, Action token@22579, zap@22603
+TRUNC @22729 Own discard: closing Own deck@22626, Deck card back@22645, Card back border@22668
+TRUNC @22816 Hand tray: closing Pannable battlefield@20499, Own land row@21332, Own hero zone@22177, Own discard@22729, Discard pile@22748
+  abs 22885 full cand Player hand@22840 inBox=true gate=true max=0 ord=1
+  abs 23049 full cand Scan placeholder@23025 inBox=false gate=true max=-1 ord=0
+  abs 23049 full cand Creature portrait card@22908 inBox=false gate=false max=1 ord=0
+  abs 23049 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=0
+  abs 23049 full cand Player hand@22840 inBox=true gate=false max=1 ord=0
+  abs 23049 full cand Hand tray@22816 inBox=true gate=false max=0 ord=0
+  abs 23049 full cand Battle table@19423 inBox=true gate=false max=6 ord=0
+  abs 23049 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 23049 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 23049 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 23049 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 23049 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 23049 corner cand Scan placeholder@23025 inBox=true gate=true max=-1 ord=0
+TRUNC @23254 Rules text: closing Type line@23110, Creature stats@23154, Defense stat@23197
+  abs 23278 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=2
+  abs 23278 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=2
+  abs 23278 full cand Player hand@22840 inBox=true gate=true max=1 ord=2
+  abs 23442 full cand Scan placeholder@23418 inBox=false gate=true max=-1 ord=0
+  abs 23442 full cand Spell portrait card@23301 inBox=false gate=false max=1 ord=0
+  abs 23442 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=0
+  abs 23442 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=0
+  abs 23442 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=0
+  abs 23442 full cand Player hand@22840 inBox=true gate=false max=2 ord=0
+  abs 23442 full cand Hand tray@22816 inBox=true gate=false max=0 ord=0
+  abs 23442 full cand Battle table@19423 inBox=true gate=false max=6 ord=0
+  abs 23442 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 23442 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 23442 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 23442 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 23442 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 23442 corner cand Scan placeholder@23418 inBox=true gate=true max=-1 ord=0
+  abs 23571 full cand Spell portrait card@23301 inBox=false gate=false max=3 ord=3
+  abs 23571 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=3
+  abs 23571 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=3
+  abs 23571 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=3
+  abs 23571 full cand Player hand@22840 inBox=true gate=true max=2 ord=3
+  abs 23728 full cand Scan placeholder@23705 inBox=false gate=true max=-1 ord=0
+  abs 23728 full cand Creature portrait card@23593 inBox=false gate=false max=1 ord=0
+  abs 23728 full cand Fanned hand card@23571 inBox=false gate=false max=0 ord=0
+  abs 23728 full cand Spell portrait card@23301 inBox=false gate=false max=3 ord=0
+  abs 23728 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=0
+  abs 23728 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=0
+  abs 23728 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=0
+  abs 23728 full cand Player hand@22840 inBox=true gate=false max=3 ord=0
+  abs 23728 full cand Hand tray@22816 inBox=true gate=false max=0 ord=0
+  abs 23728 full cand Battle table@19423 inBox=true gate=false max=6 ord=0
+  abs 23728 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 23728 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 23728 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 23728 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 23728 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 23728 corner cand Scan placeholder@23705 inBox=true gate=true max=-1 ord=0
+TRUNC @23923 Rules text: closing Type line@23786, Creature stats@23828, Defense stat@23869
+  abs 23946 full cand Creature portrait card@23593 inBox=false gate=true max=3 ord=4
+  abs 23946 full cand Fanned hand card@23571 inBox=false gate=false max=0 ord=4
+  abs 23946 full cand Spell portrait card@23301 inBox=false gate=true max=3 ord=4
+  abs 23946 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=4
+  abs 23946 full cand Creature portrait card@22908 inBox=false gate=true max=3 ord=4
+  abs 23946 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=4
+  abs 23946 full cand Player hand@22840 inBox=true gate=true max=3 ord=4
+  abs 24110 full cand Scan placeholder@24086 inBox=false gate=true max=-1 ord=0
+  abs 24110 full cand Spell portrait card@23969 inBox=false gate=false max=1 ord=0
+  abs 24110 full cand Fanned hand card@23946 inBox=false gate=false max=0 ord=0
+  abs 24110 full cand Creature portrait card@23593 inBox=false gate=false max=3 ord=0
+  abs 24110 full cand Fanned hand card@23571 inBox=false gate=false max=0 ord=0
+  abs 24110 full cand Spell portrait card@23301 inBox=false gate=false max=3 ord=0
+  abs 24110 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=0
+  abs 24110 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=0
+  abs 24110 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=0
+  abs 24110 full cand Player hand@22840 inBox=true gate=false max=4 ord=0
+  abs 24110 full cand Hand tray@22816 inBox=true gate=false max=0 ord=0
+  abs 24110 full cand Battle table@19423 inBox=true gate=false max=6 ord=0
+  abs 24110 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 24110 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 24110 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 24110 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 24110 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 24110 corner cand Scan placeholder@24086 inBox=true gate=true max=-1 ord=0
+  abs 24239 full cand Spell portrait card@23969 inBox=false gate=false max=3 ord=5
+  abs 24239 full cand Fanned hand card@23946 inBox=false gate=false max=0 ord=5
+  abs 24239 full cand Creature portrait card@23593 inBox=false gate=false max=3 ord=5
+  abs 24239 full cand Fanned hand card@23571 inBox=false gate=false max=0 ord=5
+  abs 24239 full cand Spell portrait card@23301 inBox=false gate=false max=3 ord=5
+  abs 24239 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=5
+  abs 24239 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=5
+  abs 24239 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=5
+  abs 24239 full cand Player hand@22840 inBox=true gate=true max=4 ord=5
+  abs 24403 full cand Scan placeholder@24379 inBox=false gate=true max=-1 ord=0
+  abs 24403 full cand Creature portrait card@24262 inBox=false gate=false max=1 ord=0
+  abs 24403 full cand Fanned hand card@24239 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Spell portrait card@23969 inBox=false gate=false max=3 ord=0
+  abs 24403 full cand Fanned hand card@23946 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Creature portrait card@23593 inBox=false gate=false max=3 ord=0
+  abs 24403 full cand Fanned hand card@23571 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Spell portrait card@23301 inBox=false gate=false max=3 ord=0
+  abs 24403 full cand Fanned hand card@23278 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Creature portrait card@22908 inBox=false gate=false max=3 ord=0
+  abs 24403 full cand Fanned hand card@22885 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Player hand@22840 inBox=true gate=false max=5 ord=0
+  abs 24403 full cand Hand tray@22816 inBox=true gate=false max=0 ord=0
+  abs 24403 full cand Battle table@19423 inBox=true gate=false max=6 ord=0
+  abs 24403 full cand Game workspace@19403 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 24403 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 24403 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 24403 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 24403 corner cand Scan placeholder@24379 inBox=true gate=true max=-1 ord=0
+TRUNC @24608 Rules text: closing Type line@24464, Creature stats@24508, Defense stat@24551
+TRUNC @24632 Battle controls: closing Battle table@19423, Hand tray@22816, Player hand@22840, Fanned hand card@22885, Creature portrait card@22908, Fanned hand card@23278, Spell portrait card@23301, Fanned hand card@23571, Creature portrait card@23593, Fanned hand card@23946, Spell portrait card@23969, Fanned hand card@24239, Creature portrait card@24262
+TRUNC @24763 Label: closing Turn headline@24676, Filter chip@24718
+  abs 24819 full cand swords@24807 inBox=true gate=true max=-1 ord=undefined
+TRUNC @24902 Attack preview detail: closing Turn and phase@24651, Primary button@24852
+TRUNC @25141 Battle log drawer: closing Attack preview detail@24902, Target legend@25050
+  abs 25220 full cand chevron-down@25208 inBox=true gate=true max=-1 ord=undefined
+TRUNC @25231 Label: closing Log heading@25166, chevron-down@25208
+  abs 25459 full cand Secondary button@25412 inBox=false gate=true max=0 ord=undefined
+  abs 25459 full cand Secondary button@25365 inBox=false gate=true max=1 ord=undefined
+  abs 25459 full cand Secondary game controls@25345 inBox=false gate=true max=0 ord=undefined
+  abs 25459 full cand Battle controls@24632 inBox=false gate=true max=3 ord=undefined
+  abs 25459 full cand Game workspace@19403 inBox=false gate=true max=1 ord=undefined
+  abs 25459 full cand Game Desktop@19236 inBox=true gate=true max=3 ord=undefined
+  abs 25534 full cand arrow-left@25522 inBox=true gate=true max=-1 ord=undefined
+TRUNC @25545 Page title: closing Back button@25498, arrow-left@25522
+  abs 25631 full cand Hero portrait placeholder@25606 inBox=false gate=true max=-1 ord=0
+  abs 25631 full cand Account portrait@25587 inBox=false gate=false max=0 ord=0
+  abs 25631 full cand Navigation@25474 inBox=false gate=false max=2 ord=0
+  abs 25631 full cand Lobby Mobile@25459 inBox=true gate=false max=0 ord=0
+  abs 25631 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 25631 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 25631 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 25631 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 25631 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 25631 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 25631 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 25631 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 25631 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 25631 corner cand Hero portrait placeholder@25606 inBox=true gate=true max=-1 ord=0
+  abs 25648 full cand Silhouette body@25631 inBox=true gate=false max=-1 ord=1
+  abs 25648 full cand Hero portrait placeholder@25606 inBox=true gate=true max=0 ord=1
+  abs 25665 full cand Silhouette head@25648 inBox=false gate=false max=-1 ord=2
+  abs 25665 full cand Silhouette body@25631 inBox=false gate=false max=-1 ord=2
+  abs 25665 full cand Hero portrait placeholder@25606 inBox=true gate=true max=1 ord=2
+TRUNC @25682 Mobile lobby content: closing Navigation@25474, Account portrait@25587, Hero portrait placeholder@25606, Silhouette body@25631, Silhouette head@25648, Spark@25665
+  abs 25889 full cand share-2@25877 inBox=true gate=true max=-1 ord=undefined
+  abs 25912 full cand chevron-down@25900 inBox=true gate=true max=-1 ord=undefined
+TRUNC @25923 Label: closing Share and expand@25858, chevron-down@25900
+TRUNC @25945 Player slot: closing Mode switch@25702, Filter chip@25766, Room code drawer toggle@25811
+  abs 25995 full cand Hero portrait placeholder@25970 inBox=false gate=true max=-1 ord=0
+  abs 25995 full cand Player slot@25945 inBox=false gate=false max=0 ord=0
+  abs 25995 full cand Mobile lobby content@25682 inBox=false gate=false max=3 ord=0
+  abs 25995 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 25995 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 25995 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 25995 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 25995 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 25995 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 25995 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 25995 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 25995 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 25995 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 25995 corner cand Hero portrait placeholder@25970 inBox=true gate=true max=-1 ord=0
+  abs 26012 full cand Silhouette body@25995 inBox=true gate=false max=-1 ord=1
+  abs 26012 full cand Hero portrait placeholder@25970 inBox=true gate=true max=0 ord=1
+  abs 26029 full cand Silhouette head@26012 inBox=false gate=false max=-1 ord=2
+  abs 26029 full cand Silhouette body@25995 inBox=false gate=false max=-1 ord=2
+  abs 26029 full cand Hero portrait placeholder@25970 inBox=true gate=true max=1 ord=2
+TRUNC @26046 Player information: closing Hero portrait placeholder@25970, Silhouette body@25995, Silhouette head@26012, Spark@26029
+TRUNC @26150 Player slot: closing Player slot@25945, Player information@26046
+  abs 26200 full cand Hero portrait placeholder@26175 inBox=false gate=true max=-1 ord=0
+  abs 26200 full cand Player slot@26150 inBox=false gate=false max=0 ord=0
+  abs 26200 full cand Mobile lobby content@25682 inBox=false gate=false max=4 ord=0
+  abs 26200 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 26200 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 26200 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 26200 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 26200 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 26200 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 26200 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 26200 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 26200 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 26200 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 26200 corner cand Hero portrait placeholder@26175 inBox=true gate=true max=-1 ord=0
+  abs 26217 full cand Silhouette body@26200 inBox=true gate=false max=-1 ord=1
+  abs 26217 full cand Hero portrait placeholder@26175 inBox=true gate=true max=0 ord=1
+  abs 26234 full cand Silhouette head@26217 inBox=false gate=false max=-1 ord=2
+  abs 26234 full cand Silhouette body@26200 inBox=false gate=false max=-1 ord=2
+  abs 26234 full cand Hero portrait placeholder@26175 inBox=true gate=true max=1 ord=2
+TRUNC @26251 Player information: closing Hero portrait placeholder@26175, Silhouette body@26200, Silhouette head@26217, Spark@26234
+TRUNC @26355 Label: closing Player slot@26150, Player information@26251
+  abs 26427 full cand Hero portrait placeholder@26402 inBox=false gate=true max=-1 ord=0
+  abs 26427 full cand Player slot@26377 inBox=false gate=false max=0 ord=0
+  abs 26427 full cand Mobile lobby content@25682 inBox=false gate=false max=6 ord=0
+  abs 26427 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 26427 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 26427 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 26427 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 26427 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 26427 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 26427 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 26427 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 26427 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 26427 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 26427 corner cand Hero portrait placeholder@26402 inBox=true gate=true max=-1 ord=0
+  abs 26444 full cand Silhouette body@26427 inBox=true gate=false max=-1 ord=1
+  abs 26444 full cand Hero portrait placeholder@26402 inBox=true gate=true max=0 ord=1
+  abs 26461 full cand Silhouette head@26444 inBox=false gate=false max=-1 ord=2
+  abs 26461 full cand Silhouette body@26427 inBox=false gate=false max=-1 ord=2
+  abs 26461 full cand Hero portrait placeholder@26402 inBox=true gate=true max=1 ord=2
+TRUNC @26478 Player information: closing Hero portrait placeholder@26402, Silhouette body@26427, Silhouette head@26444, Spark@26461
+TRUNC @26604 Player slot: closing Player slot@26377, Player information@26478
+  abs 26654 full cand Hero portrait placeholder@26629 inBox=false gate=true max=-1 ord=0
+  abs 26654 full cand Player slot@26604 inBox=false gate=false max=0 ord=0
+  abs 26654 full cand Mobile lobby content@25682 inBox=false gate=false max=7 ord=0
+  abs 26654 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 26654 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 26654 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 26654 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 26654 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 26654 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 26654 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 26654 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 26654 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 26654 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 26654 corner cand Hero portrait placeholder@26629 inBox=true gate=true max=-1 ord=0
+  abs 26671 full cand Silhouette body@26654 inBox=true gate=false max=-1 ord=1
+  abs 26671 full cand Hero portrait placeholder@26629 inBox=true gate=true max=0 ord=1
+  abs 26688 full cand Silhouette head@26671 inBox=false gate=false max=-1 ord=2
+  abs 26688 full cand Silhouette body@26654 inBox=false gate=false max=-1 ord=2
+  abs 26688 full cand Hero portrait placeholder@26629 inBox=true gate=true max=1 ord=2
+TRUNC @26705 Player information: closing Hero portrait placeholder@26629, Silhouette body@26654, Silhouette head@26671, Spark@26688
+TRUNC @26787 Label: closing Player information@26705, Nickname and host@26724
+  abs 26865 full cand chevron-up@26853 inBox=true gate=true max=-1 ord=undefined
+TRUNC @26876 Host controls: closing Chat drawer toggle@26809, chevron-up@26853
+TRUNC @26992 Label: closing Host controls@26876, Primary button@26943
+  abs 27016 full cand Mobile lobby content@25682 inBox=false gate=true max=10 ord=undefined
+  abs 27016 full cand Lobby Mobile@25459 inBox=false gate=true max=1 ord=undefined
+  abs 27016 full cand Secondary button@25412 inBox=false gate=true max=0 ord=undefined
+  abs 27016 full cand Secondary button@25365 inBox=false gate=true max=1 ord=undefined
+  abs 27016 full cand Secondary game controls@25345 inBox=false gate=true max=0 ord=undefined
+  abs 27016 full cand Battle controls@24632 inBox=false gate=true max=3 ord=undefined
+  abs 27016 full cand Game workspace@19403 inBox=false gate=true max=1 ord=undefined
+  abs 27016 full cand Game Desktop@19236 inBox=true gate=true max=3 ord=undefined
+  abs 27091 full cand arrow-left@27079 inBox=true gate=true max=-1 ord=undefined
+TRUNC @27102 Page title: closing Back button@27055, arrow-left@27079
+  abs 27255 full cand Hero portrait placeholder@27230 inBox=false gate=true max=-1 ord=0
+  abs 27255 full cand Account portrait@27211 inBox=false gate=false max=0 ord=0
+  abs 27255 full cand Navigation@27031 inBox=false gate=false max=3 ord=0
+  abs 27255 full cand Lobby Desktop@27016 inBox=true gate=false max=0 ord=0
+  abs 27255 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 27255 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 27255 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 27255 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 27255 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 27255 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 27255 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 27255 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 27255 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 27255 full cand Turn controls@19119 inBox=true gate=false max=1 ord=0
+  abs 27255 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 27255 corner cand Hero portrait placeholder@27230 inBox=true gate=true max=-1 ord=0
+  abs 27272 full cand Silhouette body@27255 inBox=true gate=false max=-1 ord=1
+  abs 27272 full cand Hero portrait placeholder@27230 inBox=true gate=true max=0 ord=1
+  abs 27289 full cand Silhouette head@27272 inBox=false gate=false max=-1 ord=2
+  abs 27289 full cand Silhouette body@27255 inBox=false gate=false max=-1 ord=2
+  abs 27289 full cand Hero portrait placeholder@27230 inBox=true gate=true max=1 ord=2
+TRUNC @27306 Player account: closing Account portrait@27211, Hero portrait placeholder@27230, Silhouette body@27255, Silhouette head@27272, Spark@27289
+TRUNC @27369 Lobby content: closing Navigation@27031, Player account@27306
+TRUNC @27518 Room invitation: closing Mode switch@27409, Filter chip@27473
+  abs 27618 full cand share-2@27606 inBox=true gate=true max=-1 ord=undefined
+TRUNC @27651 Room workspace: closing Lobby toolbar@27389, Room invitation@27518, Secondary button@27581
+  abs 27696 full cand Seating table@27671 inBox=false gate=true max=-1 ord=0
+  abs 27696 full cand Room workspace@27651 inBox=true gate=false max=0 ord=0
+  abs 27696 full cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 27696 full cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 27696 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 27696 full cand Lobby Mobile@25459 inBox=false gate=false max=1 ord=0
+  abs 27696 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 27696 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 27696 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 27696 full cand Battle controls@24632 inBox=false gate=false max=3 ord=0
+  abs 27696 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 27696 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 27696 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 27696 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 27696 full cand Swipe mini card hand@17640 inBox=false gate=false max=6 ord=0
+  abs 27696 corner cand Seating table@27671 inBox=false gate=true max=-1 ord=0
+  abs 27696 corner cand Room workspace@27651 inBox=true gate=false max=0 ord=0
+  abs 27696 corner cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 27696 corner cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 27696 corner cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 27696 corner cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 27696 corner cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 27696 corner cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 27696 corner cand Secondary game controls@25345 inBox=true gate=false max=0 ord=0
+  abs 27696 corner cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 27696 corner cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 27696 corner cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 27696 corner cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 27696 corner cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 27696 corner cand Swipe mini card hand@17640 inBox=false gate=false max=6 ord=0
+  abs 27696 any cand Seating table@27671 inBox=true gate=true max=-1 ord=0
+  abs 27714 full cand Wood seam@27696 inBox=false gate=false max=-1 ord=1
+  abs 27714 full cand Seating table@27671 inBox=false gate=true max=0 ord=1
+  abs 27714 full cand Room workspace@27651 inBox=true gate=true max=0 ord=1
+  abs 27732 full cand Wood seam@27714 inBox=false gate=false max=-1 ord=2
+  abs 27732 full cand Wood seam@27696 inBox=false gate=false max=-1 ord=2
+  abs 27732 full cand Seating table@27671 inBox=false gate=false max=0 ord=2
+  abs 27732 full cand Room workspace@27651 inBox=true gate=true max=1 ord=2
+TRUNC @27750 Opponent team label: closing Seating table@27671, Wood seam@27696, Wood seam@27714, Wood seam@27732
+  abs 27908 full cand Hero portrait placeholder@27883 inBox=false gate=true max=-1 ord=0
+  abs 27908 full cand Player slot@27859 inBox=false gate=false max=0 ord=0
+  abs 27908 full cand Opponent team@27838 inBox=true gate=false max=0 ord=0
+  abs 27908 full cand Room workspace@27651 inBox=true gate=false max=4 ord=0
+  abs 27908 full cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 27908 full cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 27908 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 27908 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 27908 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 27908 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 27908 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 27908 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 27908 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 27908 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 27908 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 27908 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 27908 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 27908 corner cand Hero portrait placeholder@27883 inBox=true gate=true max=-1 ord=0
+  abs 27925 full cand Silhouette body@27908 inBox=true gate=false max=-1 ord=1
+  abs 27925 full cand Hero portrait placeholder@27883 inBox=true gate=true max=0 ord=1
+  abs 27942 full cand Silhouette head@27925 inBox=false gate=false max=-1 ord=2
+  abs 27942 full cand Silhouette body@27908 inBox=false gate=false max=-1 ord=2
+  abs 27942 full cand Hero portrait placeholder@27883 inBox=true gate=true max=1 ord=2
+TRUNC @27959 Player information: closing Hero portrait placeholder@27883, Silhouette body@27908, Silhouette head@27925, Spark@27942
+TRUNC @28063 Player slot: closing Player slot@27859, Player information@27959
+  abs 28112 full cand Hero portrait placeholder@28087 inBox=false gate=true max=-1 ord=0
+  abs 28112 full cand Player slot@28063 inBox=false gate=false max=0 ord=0
+  abs 28112 full cand Opponent team@27838 inBox=true gate=false max=1 ord=0
+  abs 28112 full cand Room workspace@27651 inBox=true gate=false max=4 ord=0
+  abs 28112 full cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 28112 full cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 28112 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 28112 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 28112 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 28112 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 28112 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 28112 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 28112 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 28112 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 28112 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 28112 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 28112 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 28112 corner cand Hero portrait placeholder@28087 inBox=true gate=true max=-1 ord=0
+  abs 28129 full cand Silhouette body@28112 inBox=true gate=false max=-1 ord=1
+  abs 28129 full cand Hero portrait placeholder@28087 inBox=true gate=true max=0 ord=1
+  abs 28146 full cand Silhouette head@28129 inBox=false gate=false max=-1 ord=2
+  abs 28146 full cand Silhouette body@28112 inBox=false gate=false max=-1 ord=2
+  abs 28146 full cand Hero portrait placeholder@28087 inBox=true gate=true max=1 ord=2
+TRUNC @28163 Player information: closing Hero portrait placeholder@28087, Silhouette body@28112, Silhouette head@28129, Spark@28146
+TRUNC @28267 Partnership explanation: closing Opponent team@27838, Player slot@28063, Player information@28163
+TRUNC @28399 Partnership preview: closing Team information@28289, Filter chip@28354
+  abs 28579 full cand Scan placeholder@28556 inBox=false gate=true max=-1 ord=0
+  abs 28579 full cand Landscape content@28535 inBox=false gate=false max=0 ord=0
+  abs 28579 full cand Partnership landscape card@28418 inBox=false gate=false max=1 ord=0
+  abs 28579 full cand Partnership preview@28399 inBox=false gate=false max=0 ord=0
+  abs 28579 full cand Partnership explanation@28267 inBox=true gate=false max=1 ord=0
+  abs 28579 full cand Room workspace@27651 inBox=true gate=false max=5 ord=0
+  abs 28579 full cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 28579 full cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 28579 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 28579 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 28579 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 28579 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 28579 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 28579 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 28579 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 28579 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 28579 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 28579 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 28579 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 28579 corner cand Scan placeholder@28556 inBox=true gate=true max=-1 ord=0
+TRUNC @28730 Own team label: closing Partnership explanation@28267, Partnership preview@28399, Partnership landscape card@28418, Landscape content@28535, Card rules@28640
+TRUNC @28795 Own team: closing Own team label@28730, Filter chip@28750
+  abs 28865 full cand Hero portrait placeholder@28840 inBox=false gate=true max=-1 ord=0
+  abs 28865 full cand Player slot@28816 inBox=false gate=false max=0 ord=0
+  abs 28865 full cand Own team@28795 inBox=true gate=false max=0 ord=0
+  abs 28865 full cand Room workspace@27651 inBox=true gate=false max=7 ord=0
+  abs 28865 full cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 28865 full cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 28865 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 28865 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 28865 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 28865 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 28865 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 28865 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 28865 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 28865 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 28865 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 28865 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 28865 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 28865 corner cand Hero portrait placeholder@28840 inBox=true gate=true max=-1 ord=0
+  abs 28882 full cand Silhouette body@28865 inBox=true gate=false max=-1 ord=1
+  abs 28882 full cand Hero portrait placeholder@28840 inBox=true gate=true max=0 ord=1
+  abs 28899 full cand Silhouette head@28882 inBox=false gate=false max=-1 ord=2
+  abs 28899 full cand Silhouette body@28865 inBox=false gate=false max=-1 ord=2
+  abs 28899 full cand Hero portrait placeholder@28840 inBox=true gate=true max=1 ord=2
+TRUNC @28916 Player information: closing Hero portrait placeholder@28840, Silhouette body@28865, Silhouette head@28882, Spark@28899
+TRUNC @29042 Player slot: closing Player slot@28816, Player information@28916
+  abs 29091 full cand Hero portrait placeholder@29066 inBox=false gate=true max=-1 ord=0
+  abs 29091 full cand Player slot@29042 inBox=false gate=false max=0 ord=0
+  abs 29091 full cand Own team@28795 inBox=true gate=false max=1 ord=0
+  abs 29091 full cand Room workspace@27651 inBox=true gate=false max=7 ord=0
+  abs 29091 full cand Lobby content@27369 inBox=false gate=false max=1 ord=0
+  abs 29091 full cand Lobby Desktop@27016 inBox=true gate=false max=1 ord=0
+  abs 29091 full cand Mobile lobby content@25682 inBox=false gate=false max=10 ord=0
+  abs 29091 full cand Lobby Mobile@25459 inBox=true gate=false max=1 ord=0
+  abs 29091 full cand Secondary button@25412 inBox=false gate=false max=0 ord=0
+  abs 29091 full cand Secondary button@25365 inBox=false gate=false max=1 ord=0
+  abs 29091 full cand Secondary game controls@25345 inBox=false gate=false max=0 ord=0
+  abs 29091 full cand Battle controls@24632 inBox=true gate=false max=3 ord=0
+  abs 29091 full cand Game workspace@19403 inBox=false gate=false max=1 ord=0
+  abs 29091 full cand Game Desktop@19236 inBox=true gate=false max=3 ord=0
+  abs 29091 full cand Primary button@19187 inBox=false gate=false max=0 ord=0
+  abs 29091 full cand Turn controls@19119 inBox=false gate=false max=1 ord=0
+  abs 29091 full cand Swipe mini card hand@17640 inBox=true gate=false max=6 ord=0
+  abs 29091 corner cand Hero portrait placeholder@29066 inBox=true gate=true max=-1 ord=0
+  abs 29108 full cand Silhouette body@29091 inBox=true gate=false max=-1 ord=1
+  abs 29108 full cand Hero portrait placeholder@29066 inBox=true gate=true max=0 ord=1
+  abs 29125 full cand Silhouette head@29108 inBox=false gate=false max=-1 ord=2
+  abs 29125 full cand Silhouette body@29091 inBox=false gate=false max=-1 ord=2
+  abs 29125 full cand Hero portrait placeholder@29066 inBox=true gate=true max=1 ord=2
+TRUNC @29142 Player information: closing Hero portrait placeholder@29066, Silhouette body@29091, Silhouette head@29108, Spark@29125
+TRUNC @29246 Table footer: closing Own team@28795, Player slot@29042, Player information@29142, Nickname and host@29161
+TRUNC @29336 Room chat: closing Swipe mini card hand@17640, Turn controls@19119, Primary button@19187, Game Desktop@19236, Game workspace@19403, Battle controls@24632, Secondary game controls@25345, Secondary button@25365, Secondary button@25412, Lobby Mobile@25459, Mobile lobby content@25682, Lobby Desktop@27016, Lobby content@27369, Room workspace@27651, Table footer@29246, Secondary button@29289
+@29336 Room chat ord=1 -> ROOT | stack: __ROOT__@undefined(max=5) / Room chat@29336(max=-1)
+TRUNC @30010 Chat input: closing Quick emotes@29810, Filter chip@29830, Filter chip@29965
+  abs 30069 full cand send@30057 inBox=true gate=true max=-1 ord=undefined
+TRUNC @30080 Primary button: closing Filter chip@29402, Chat input@30010, send@30057
+  abs 30120 full cand swords@30108 inBox=true gate=true max=-1 ord=undefined
+  abs 30177 full cand Chat heading@29360 inBox=false gate=true max=11 ord=undefined
+  abs 30177 full cand Room chat@29336 inBox=false gate=true max=0 ord=undefined
+  abs 30177 corner cand Chat heading@29360 inBox=true gate=true max=11 ord=undefined
+  abs 30252 full cand arrow-left@30240 inBox=true gate=true max=-1 ord=undefined
+TRUNC @30263 Page title: closing Back button@30216, arrow-left@30240
+  abs 30349 full cand Hero portrait placeholder@30324 inBox=false gate=true max=-1 ord=0
+  abs 30349 full cand Account portrait@30305 inBox=false gate=false max=0 ord=0
+  abs 30349 full cand Navigation@30192 inBox=false gate=false max=2 ord=0
+  abs 30349 full cand Deck Editor Mobile@30177 inBox=true gate=false max=0 ord=0
+  abs 30349 full cand Chat heading@29360 inBox=false gate=false max=11 ord=0
+  abs 30349 full cand Room chat@29336 inBox=false gate=false max=0 ord=0
+  abs 30349 corner cand Hero portrait placeholder@30324 inBox=true gate=true max=-1 ord=0
+  abs 30366 full cand Silhouette body@30349 inBox=true gate=false max=-1 ord=1
+  abs 30366 full cand Hero portrait placeholder@30324 inBox=true gate=true max=0 ord=1
+  abs 30383 full cand Silhouette head@30366 inBox=false gate=false max=-1 ord=2
+  abs 30383 full cand Silhouette body@30349 inBox=false gate=false max=-1 ord=2
+  abs 30383 full cand Hero portrait placeholder@30324 inBox=true gate=true max=1 ord=2
+TRUNC @30400 Mobile editor content: closing Navigation@30192, Account portrait@30305, Hero portrait placeholder@30324, Silhouette body@30349, Silhouette head@30366, Spark@30383
+  abs 30515 full cand pencil@30503 inBox=true gate=true max=-1 ord=undefined
+TRUNC @30526 Collapsed deck list: closing Deck title bar@30420, pencil@30503
+  abs 30615 full cand Hero portrait placeholder@30590 inBox=false gate=true max=-1 ord=0
+  abs 30615 full cand Hero and deck@30571 inBox=false gate=false max=0 ord=0
+  abs 30615 full cand Deck list toggle@30551 inBox=false gate=false max=0 ord=0
+  abs 30615 full cand Collapsed deck list@30526 inBox=false gate=false max=0 ord=0
+  abs 30615 full cand Mobile editor content@30400 inBox=false gate=false max=1 ord=0
+  abs 30615 full cand Deck Editor Mobile@30177 inBox=true gate=false max=1 ord=0
+  abs 30615 full cand Chat heading@29360 inBox=false gate=false max=11 ord=0
+  abs 30615 full cand Room chat@29336 inBox=false gate=false max=0 ord=0
+  abs 30615 corner cand Hero portrait placeholder@30590 inBox=true gate=true max=-1 ord=0
+  abs 30632 full cand Silhouette body@30615 inBox=true gate=false max=-1 ord=1
+  abs 30632 full cand Hero portrait placeholder@30590 inBox=true gate=true max=0 ord=1
+  abs 30649 full cand Silhouette head@30632 inBox=false gate=false max=-1 ord=2
+  abs 30649 full cand Silhouette body@30615 inBox=false gate=false max=-1 ord=2
+  abs 30649 full cand Hero portrait placeholder@30590 inBox=true gate=true max=1 ord=2
+TRUNC @30666 Deck counts: closing Hero portrait placeholder@30590, Silhouette body@30615, Silhouette head@30632, Spark@30649
+TRUNC @30729 chevron-down: closing Hero and deck@30571, Deck counts@30666
+  abs 30741 full cand chevron-down@30729 inBox=true gate=true max=-1 ord=undefined
+TRUNC @30752 Land ratio: closing Deck list toggle@30551, chevron-down@30729
+TRUNC @30800 Cost curve: closing Collapsed deck list@30526, Land ratio@30752, Corn ratio@30786
+TRUNC @31142 Search and filters: closing Cost curve@30800, Histogram@30842, Cost column@31086
+  abs 31198 full cand search@31186 inBox=true gate=true max=-1 ord=undefined
+  abs 31268 full cand sliders-horizontal@31256 inBox=true gate=true max=-1 ord=undefined
+TRUNC @31301 Collection counts: closing Search and filters@31142, Secondary button@31231
+  abs 31541 full cand Scan placeholder@31518 inBox=false gate=true max=-1 ord=0
+  abs 31541 full cand Creature portrait card@31404 inBox=false gate=false max=1 ord=0
+  abs 31541 full cand Gallery row@31385 inBox=true gate=false max=0 ord=0
+  abs 31541 full cand Card grid viewport@31365 inBox=true gate=false max=0 ord=0
+  abs 31541 full cand Mobile editor content@30400 inBox=false gate=false max=5 ord=0
+  abs 31541 full cand Deck Editor Mobile@30177 inBox=true gate=false max=1 ord=0
+  abs 31541 full cand Chat heading@29360 inBox=false gate=false max=11 ord=0
+  abs 31541 full cand Room chat@29336 inBox=false gate=false max=0 ord=0
+  abs 31541 corner cand Scan placeholder@31518 inBox=true gate=true max=-1 ord=0
+TRUNC @31736 Rules text: closing Type line@31599, Creature stats@31641, Defense stat@31682
+  abs 31917 full cand Scan placeholder@31894 inBox=false gate=true max=-1 ord=0
+  abs 31917 full cand Creature portrait card@31782 inBox=false gate=false max=1 ord=0
+  abs 31917 full cand Gallery row@31385 inBox=true gate=false max=1 ord=0
+  abs 31917 full cand Card grid viewport@31365 inBox=true gate=false max=0 ord=0
+  abs 31917 full cand Mobile editor content@30400 inBox=false gate=false max=5 ord=0
+  abs 31917 full cand Deck Editor Mobile@30177 inBox=true gate=false max=1 ord=0
+  abs 31917 full cand Chat heading@29360 inBox=false gate=false max=11 ord=0
+  abs 31917 full cand Room chat@29336 inBox=false gate=false max=0 ord=0
+  abs 31917 corner cand Scan placeholder@31894 inBox=true gate=true max=-1 ord=0
+TRUNC @32112 Rules text: closing Type line@31975, Creature stats@32017, Defense stat@32058
+TRUNC @32158 Gallery row: closing Room chat@29336, Chat heading@29360, Deck Editor Mobile@30177, Mobile editor content@30400, Card grid viewport@31365, Gallery row@31385, Creature portrait card@31782
+@32158 Gallery row ord=1 -> ROOT | stack: __ROOT__@undefined(max=5) / Gallery row@32158(max=-1)
+  abs 32312 full cand Scan placeholder@32289 inBox=false gate=true max=-1 ord=0
+  abs 32312 full cand Creature portrait card@32177 inBox=false gate=false max=1 ord=0
+  abs 32312 full cand Gallery row@32158 inBox=true gate=false max=0 ord=0
+  abs 32312 corner cand Scan placeholder@32289 inBox=true gate=true max=-1 ord=0
+TRUNC @32507 Rules text: closing Type line@32370, Creature stats@32412, Defense stat@32453
+  abs 32688 full cand Scan placeholder@32665 inBox=false gate=true max=-1 ord=0
+  abs 32688 full cand Spell portrait card@32553 inBox=false gate=false max=1 ord=0
+  abs 32688 full cand Gallery row@32158 inBox=true gate=false max=1 ord=0
+  abs 32688 corner cand Scan placeholder@32665 inBox=true gate=true max=-1 ord=0
+  abs 32988 full cand Scan placeholder@32965 inBox=false gate=true max=-1 ord=0
+  abs 32988 full cand Building portrait card@32853 inBox=false gate=false max=1 ord=0
+  abs 32988 full cand Gallery row@32834 inBox=true gate=false max=0 ord=0
+  abs 32988 full cand Gallery row@32158 inBox=true gate=false max=2 ord=0
+  abs 32988 corner cand Scan placeholder@32965 inBox=true gate=true max=-1 ord=0
+  abs 33269 full cand Scan placeholder@33246 inBox=false gate=true max=-1 ord=0
+  abs 33269 full cand Spell portrait card@33134 inBox=false gate=false max=1 ord=0
+  abs 33269 full cand Gallery row@32834 inBox=true gate=false max=1 ord=0
+  abs 33269 full cand Gallery row@32158 inBox=true gate=false max=2 ord=0
+  abs 33269 corner cand Scan placeholder@33246 inBox=true gate=true max=-1 ord=0
+TRUNC @33415 Gallery row: closing Gallery row@32834, Spell portrait card@33134
+  abs 33569 full cand Scan placeholder@33546 inBox=false gate=true max=-1 ord=0
+  abs 33569 full cand Creature portrait card@33434 inBox=false gate=false max=1 ord=0
+  abs 33569 full cand Gallery row@33415 inBox=true gate=false max=0 ord=0
+  abs 33569 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 33569 corner cand Scan placeholder@33546 inBox=true gate=true max=-1 ord=0
+TRUNC @33764 Rules text: closing Type line@33627, Creature stats@33669, Defense stat@33710
+  abs 33945 full cand Scan placeholder@33922 inBox=false gate=true max=-1 ord=0
+  abs 33945 full cand Building portrait card@33810 inBox=false gate=false max=1 ord=0
+  abs 33945 full cand Gallery row@33415 inBox=true gate=false max=1 ord=0
+  abs 33945 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 33945 corner cand Scan placeholder@33922 inBox=true gate=true max=-1 ord=0
+TRUNC @34207 Label: closing Deck actions@34091, Primary button@34158
+  abs 34231 full cand Gallery row@33415 inBox=false gate=true max=7 ord=undefined
+  abs 34231 full cand Gallery row@32158 inBox=false gate=true max=3 ord=undefined
+  abs 34231 corner cand Gallery row@33415 inBox=true gate=true max=7 ord=undefined
+  abs 34306 full cand arrow-left@34294 inBox=true gate=true max=-1 ord=undefined
+TRUNC @34317 Page title: closing Back button@34270, arrow-left@34294
+  abs 34470 full cand Hero portrait placeholder@34445 inBox=false gate=true max=-1 ord=0
+  abs 34470 full cand Account portrait@34426 inBox=false gate=false max=0 ord=0
+  abs 34470 full cand Navigation@34246 inBox=false gate=false max=3 ord=0
+  abs 34470 full cand Deck Editor Desktop@34231 inBox=true gate=false max=0 ord=0
+  abs 34470 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 34470 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 34470 corner cand Hero portrait placeholder@34445 inBox=true gate=true max=-1 ord=0
+  abs 34487 full cand Silhouette body@34470 inBox=true gate=false max=-1 ord=1
+  abs 34487 full cand Hero portrait placeholder@34445 inBox=true gate=true max=0 ord=1
+  abs 34504 full cand Silhouette head@34487 inBox=false gate=false max=-1 ord=2
+  abs 34504 full cand Silhouette body@34470 inBox=false gate=false max=-1 ord=2
+  abs 34504 full cand Hero portrait placeholder@34445 inBox=true gate=true max=1 ord=2
+TRUNC @34521 Player account: closing Account portrait@34426, Hero portrait placeholder@34445, Silhouette body@34470, Silhouette head@34487, Spark@34504
+TRUNC @34584 Editor content: closing Navigation@34246, Player account@34521
+  abs 34682 full cand pencil@34670 inBox=true gate=true max=-1 ord=undefined
+TRUNC @34693 Filter chip: closing Deck name input@34624, pencil@34670
+  abs 34842 full cand check@34830 inBox=true gate=true max=-1 ord=undefined
+TRUNC @34875 Three zone workspace: closing Deck toolbar@34604, Primary button@34803
+  abs 34963 full cand Hero portrait placeholder@34938 inBox=false gate=true max=-1 ord=0
+  abs 34963 full cand Selected hero@34919 inBox=false gate=false max=0 ord=0
+  abs 34963 full cand Deck list@34895 inBox=false gate=false max=0 ord=0
+  abs 34963 full cand Three zone workspace@34875 inBox=true gate=false max=0 ord=0
+  abs 34963 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 34963 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 34963 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 34963 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 34963 corner cand Hero portrait placeholder@34938 inBox=true gate=true max=-1 ord=0
+  abs 34980 full cand Silhouette body@34963 inBox=true gate=false max=-1 ord=1
+  abs 34980 full cand Hero portrait placeholder@34938 inBox=true gate=true max=0 ord=1
+  abs 34997 full cand Silhouette head@34980 inBox=false gate=false max=-1 ord=2
+  abs 34997 full cand Silhouette body@34963 inBox=false gate=false max=-1 ord=2
+  abs 34997 full cand Hero portrait placeholder@34938 inBox=true gate=true max=1 ord=2
+TRUNC @35014 Hero label: closing Hero portrait placeholder@34938, Silhouette body@34963, Silhouette head@34980, Spark@34997
+TRUNC @35077 Divider: closing Selected hero@34919, Hero label@35014
+TRUNC @35331 Card type group: closing Card type group@35091, Deck card row@35133, Deck card row@35265
+TRUNC @35505 Card type group: closing Card type group@35331, Deck card row@35373, Deck card row@35439
+TRUNC @35613 Divider: closing Card type group@35505, Deck card row@35547
+TRUNC @35969 Land ratio: closing Cost curve@35627, Histogram@35669, Cost column@35913
+TRUNC @36081 Card collection: closing Deck list@34895, Land ratio@35969, Land bar@36011
+  abs 36142 full cand search@36130 inBox=true gate=true max=-1 ord=undefined
+TRUNC @36375 Collection total: closing Collection filters@36175, Filter chip@36195, Filter chip@36330
+  abs 36470 full cand info@36458 inBox=true gate=true max=-1 ord=undefined
+  abs 36679 full cand Scan placeholder@36656 inBox=false gate=true max=-1 ord=0
+  abs 36679 full cand Creature portrait card@36542 inBox=false gate=false max=1 ord=0
+  abs 36679 full cand Gallery row@36523 inBox=true gate=false max=0 ord=0
+  abs 36679 full cand Collection grid viewport@36503 inBox=true gate=false max=0 ord=0
+  abs 36679 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 36679 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 36679 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 36679 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 36679 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 36679 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 36679 corner cand Scan placeholder@36656 inBox=true gate=true max=-1 ord=0
+TRUNC @36874 Rules text: closing Type line@36737, Creature stats@36779, Defense stat@36820
+  abs 37032 full cand Scan placeholder@37009 inBox=false gate=true max=-1 ord=0
+  abs 37032 full cand Creature portrait card@36897 inBox=false gate=false max=1 ord=0
+  abs 37032 full cand Gallery row@36523 inBox=true gate=false max=1 ord=0
+  abs 37032 full cand Collection grid viewport@36503 inBox=true gate=false max=0 ord=0
+  abs 37032 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 37032 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 37032 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 37032 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 37032 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 37032 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 37032 corner cand Scan placeholder@37009 inBox=true gate=true max=-1 ord=0
+TRUNC @37227 Rules text: closing Type line@37090, Creature stats@37132, Defense stat@37173
+  abs 37385 full cand Scan placeholder@37362 inBox=false gate=true max=-1 ord=0
+  abs 37385 full cand Creature portrait card@37250 inBox=false gate=false max=1 ord=0
+  abs 37385 full cand Gallery row@36523 inBox=true gate=false max=2 ord=0
+  abs 37385 full cand Collection grid viewport@36503 inBox=true gate=false max=0 ord=0
+  abs 37385 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 37385 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 37385 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 37385 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 37385 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 37385 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 37385 corner cand Scan placeholder@37362 inBox=true gate=true max=-1 ord=0
+TRUNC @37580 Rules text: closing Type line@37443, Creature stats@37485, Defense stat@37526
+  abs 37738 full cand Scan placeholder@37715 inBox=false gate=true max=-1 ord=0
+  abs 37738 full cand Spell portrait card@37603 inBox=false gate=false max=1 ord=0
+  abs 37738 full cand Gallery row@36523 inBox=true gate=false max=3 ord=0
+  abs 37738 full cand Collection grid viewport@36503 inBox=true gate=false max=0 ord=0
+  abs 37738 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 37738 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 37738 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 37738 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 37738 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 37738 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 37738 corner cand Scan placeholder@37715 inBox=true gate=true max=-1 ord=0
+TRUNC @37861 Gallery row: closing Gallery row@36523, Spell portrait card@37603
+  abs 38015 full cand Scan placeholder@37992 inBox=false gate=true max=-1 ord=0
+  abs 38015 full cand Building portrait card@37880 inBox=false gate=false max=1 ord=0
+  abs 38015 full cand Gallery row@37861 inBox=true gate=false max=0 ord=0
+  abs 38015 full cand Collection grid viewport@36503 inBox=true gate=false max=1 ord=0
+  abs 38015 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 38015 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 38015 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 38015 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 38015 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 38015 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 38015 corner cand Scan placeholder@37992 inBox=true gate=true max=-1 ord=0
+  abs 38273 full cand Scan placeholder@38250 inBox=false gate=true max=-1 ord=0
+  abs 38273 full cand Spell portrait card@38138 inBox=false gate=false max=1 ord=0
+  abs 38273 full cand Gallery row@37861 inBox=true gate=false max=1 ord=0
+  abs 38273 full cand Collection grid viewport@36503 inBox=true gate=false max=1 ord=0
+  abs 38273 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 38273 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 38273 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 38273 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 38273 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 38273 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 38273 corner cand Scan placeholder@38250 inBox=true gate=true max=-1 ord=0
+  abs 38531 full cand Scan placeholder@38508 inBox=false gate=true max=-1 ord=0
+  abs 38531 full cand Creature portrait card@38396 inBox=false gate=false max=1 ord=0
+  abs 38531 full cand Gallery row@37861 inBox=true gate=false max=2 ord=0
+  abs 38531 full cand Collection grid viewport@36503 inBox=true gate=false max=1 ord=0
+  abs 38531 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 38531 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 38531 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 38531 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 38531 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 38531 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 38531 corner cand Scan placeholder@38508 inBox=true gate=true max=-1 ord=0
+TRUNC @38726 Rules text: closing Type line@38589, Creature stats@38631, Defense stat@38672
+  abs 38884 full cand Scan placeholder@38861 inBox=false gate=true max=-1 ord=0
+  abs 38884 full cand Building portrait card@38749 inBox=false gate=false max=1 ord=0
+  abs 38884 full cand Gallery row@37861 inBox=true gate=false max=3 ord=0
+  abs 38884 full cand Collection grid viewport@36503 inBox=true gate=false max=1 ord=0
+  abs 38884 full cand Card collection@36081 inBox=false gate=false max=4 ord=0
+  abs 38884 full cand Three zone workspace@34875 inBox=true gate=false max=1 ord=0
+  abs 38884 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 38884 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 38884 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 38884 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 38884 corner cand Scan placeholder@38861 inBox=true gate=true max=-1 ord=0
+TRUNC @39007 Selected card detail: closing Card collection@36081, Collection grid viewport@36503, Gallery row@37861, Building portrait card@38749
+  abs 39085 full cand maximize-2@39073 inBox=true gate=true max=-1 ord=undefined
+TRUNC @39096 Selected scan card: closing Detail heading@39031, maximize-2@39073
+  abs 39252 full cand Scan placeholder@39229 inBox=false gate=true max=-1 ord=0
+  abs 39252 full cand Creature portrait card@39115 inBox=false gate=false max=1 ord=0
+  abs 39252 full cand Selected scan card@39096 inBox=true gate=false max=0 ord=0
+  abs 39252 full cand Selected card detail@39007 inBox=false gate=false max=1 ord=0
+  abs 39252 full cand Three zone workspace@34875 inBox=true gate=false max=2 ord=0
+  abs 39252 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 39252 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 39252 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 39252 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 39252 corner cand Scan placeholder@39229 inBox=true gate=true max=-1 ord=0
+TRUNC @39447 Rules text: closing Type line@39310, Creature stats@39352, Defense stat@39393
+TRUNC @39493 Label: closing Selected scan card@39096, Creature portrait card@39115
+  abs 39754 full cand Secondary button@39707 inBox=false gate=true max=0 ord=undefined
+  abs 39754 full cand Secondary button@39660 inBox=false gate=true max=1 ord=undefined
+  abs 39754 full cand Card edit controls@39640 inBox=false gate=true max=0 ord=undefined
+  abs 39754 full cand Selected card detail@39007 inBox=false gate=true max=7 ord=undefined
+  abs 39754 full cand Three zone workspace@34875 inBox=false gate=true max=2 ord=undefined
+  abs 39754 full cand Editor content@34584 inBox=false gate=true max=1 ord=undefined
+  abs 39754 full cand Deck Editor Desktop@34231 inBox=true gate=true max=1 ord=undefined
+  abs 39829 full cand arrow-left@39817 inBox=true gate=true max=-1 ord=undefined
+TRUNC @39840 Page title: closing Back button@39793, arrow-left@39817
+  abs 39926 full cand Hero portrait placeholder@39901 inBox=false gate=true max=-1 ord=0
+  abs 39926 full cand Account portrait@39882 inBox=false gate=false max=0 ord=0
+  abs 39926 full cand Navigation@39769 inBox=false gate=false max=2 ord=0
+  abs 39926 full cand Deck Selection Mobile@39754 inBox=true gate=false max=0 ord=0
+  abs 39926 full cand Secondary button@39707 inBox=false gate=false max=0 ord=0
+  abs 39926 full cand Secondary button@39660 inBox=false gate=false max=1 ord=0
+  abs 39926 full cand Card edit controls@39640 inBox=false gate=false max=0 ord=0
+  abs 39926 full cand Selected card detail@39007 inBox=false gate=false max=7 ord=0
+  abs 39926 full cand Three zone workspace@34875 inBox=true gate=false max=2 ord=0
+  abs 39926 full cand Editor content@34584 inBox=false gate=false max=1 ord=0
+  abs 39926 full cand Deck Editor Desktop@34231 inBox=true gate=false max=1 ord=0
+  abs 39926 full cand Gallery row@33415 inBox=true gate=false max=7 ord=0
+  abs 39926 full cand Gallery row@32158 inBox=true gate=false max=3 ord=0
+  abs 39926 corner cand Hero portrait placeholder@39901 inBox=true gate=true max=-1 ord=0
+  abs 39943 full cand Silhouette body@39926 inBox=true gate=false max=-1 ord=1
+  abs 39943 full cand Hero portrait placeholder@39901 inBox=true gate=true max=0 ord=1
+  abs 39960 full cand Silhouette head@39943 inBox=false gate=false max=-1 ord=2
+  abs 39960 full cand Silhouette body@39926 inBox=false gate=false max=-1 ord=2
+  abs 39960 full cand Hero portrait placeholder@39901 inBox=true gate=true max=1 ord=2
+TRUNC @39977 Deck selection content: closing Navigation@39769, Account portrait@39882, Hero portrait placeholder@39901, Silhouette body@39926, Silhouette head@39943, Spark@39960
+TRUNC @40171 Vertical deck carousel viewport: closing Deck source tabs@39997, Filter chip@40017, Filter chip@40062, Gallery heading@40107
+TRUNC @40191 All nineteen decks: closing Gallery row@32158, Gallery row@33415, Deck Editor Desktop@34231, Editor content@34584, Three zone workspace@34875, Selected card detail@39007, Card edit controls@39640, Secondary button@39660, Secondary button@39707, Deck Selection Mobile@39754, Deck selection content@39977, Vertical deck carousel viewport@40171
+@40191 All nineteen decks ord=0 -> ROOT | stack: __ROOT__@undefined(max=5) / All nineteen decks@40191(max=-1)
+  abs 40280 full cand Hero portrait placeholder@40255 inBox=false gate=true max=-1 ord=0
+  abs 40280 full cand Deck identity@40235 inBox=false gate=false max=0 ord=0
+  abs 40280 full cand Hero deck@40211 inBox=false gate=false max=0 ord=0
+  abs 40280 full cand All nineteen decks@40191 inBox=true gate=false max=0 ord=0
+  abs 40280 corner cand Hero portrait placeholder@40255 inBox=true gate=true max=-1 ord=0
+  abs 40297 full cand Silhouette body@40280 inBox=true gate=false max=-1 ord=1
+  abs 40297 full cand Hero portrait placeholder@40255 inBox=true gate=true max=0 ord=1
+  abs 40314 full cand Silhouette head@40297 inBox=false gate=false max=-1 ord=2
+  abs 40314 full cand Silhouette body@40280 inBox=false gate=false max=-1 ord=2
+  abs 40314 full cand Hero portrait placeholder@40255 inBox=true gate=true max=1 ord=2
+TRUNC @40331 Filter chip: closing Hero portrait placeholder@40255, Silhouette body@40280, Silhouette head@40297, Spark@40314
+TRUNC @40562 Hero deck: closing Hero deck@40211, Deck identity@40235, Deck summary@40477
+  abs 40631 full cand Hero portrait placeholder@40606 inBox=false gate=true max=-1 ord=0
+  abs 40631 full cand Deck identity@40586 inBox=false gate=false max=0 ord=0
+  abs 40631 full cand Hero deck@40562 inBox=false gate=false max=0 ord=0
+  abs 40631 full cand All nineteen decks@40191 inBox=true gate=false max=1 ord=0
+  abs 40631 corner cand Hero portrait placeholder@40606 inBox=true gate=true max=-1 ord=0
+  abs 40648 full cand Silhouette body@40631 inBox=true gate=false max=-1 ord=1
+  abs 40648 full cand Hero portrait placeholder@40606 inBox=true gate=true max=0 ord=1
+  abs 40665 full cand Silhouette head@40648 inBox=false gate=false max=-1 ord=2
+  abs 40665 full cand Silhouette body@40631 inBox=false gate=false max=-1 ord=2
+  abs 40665 full cand Hero portrait placeholder@40606 inBox=true gate=true max=1 ord=2
+TRUNC @40682 Filter chip: closing Hero portrait placeholder@40606, Silhouette body@40631, Silhouette head@40648, Spark@40665
+TRUNC @40913 Hero deck: closing Hero deck@40562, Deck identity@40586, Deck summary@40828
+  abs 40982 full cand Hero portrait placeholder@40957 inBox=false gate=true max=-1 ord=0
+  abs 40982 full cand Deck identity@40937 inBox=false gate=false max=0 ord=0
+  abs 40982 full cand Hero deck@40913 inBox=false gate=false max=0 ord=0
+  abs 40982 full cand All nineteen decks@40191 inBox=true gate=false max=2 ord=0
+  abs 40982 corner cand Hero portrait placeholder@40957 inBox=true gate=true max=-1 ord=0
+  abs 40999 full cand Silhouette body@40982 inBox=true gate=false max=-1 ord=1
+  abs 40999 full cand Hero portrait placeholder@40957 inBox=true gate=true max=0 ord=1
+  abs 41016 full cand Silhouette head@40999 inBox=false gate=false max=-1 ord=2
+  abs 41016 full cand Silhouette body@40982 inBox=false gate=false max=-1 ord=2
+  abs 41016 full cand Hero portrait placeholder@40957 inBox=true gate=true max=1 ord=2
+TRUNC @41033 Filter chip: closing Hero portrait placeholder@40957, Silhouette body@40982, Silhouette head@40999, Spark@41016
+TRUNC @41264 Hero deck: closing Hero deck@40913, Deck identity@40937, Deck summary@41179
+  abs 41333 full cand Hero portrait placeholder@41308 inBox=false gate=true max=-1 ord=0
+  abs 41333 full cand Deck identity@41288 inBox=false gate=false max=0 ord=0
+  abs 41333 full cand Hero deck@41264 inBox=false gate=false max=0 ord=0
+  abs 41333 full cand All nineteen decks@40191 inBox=true gate=false max=3 ord=0
+  abs 41333 corner cand Hero portrait placeholder@41308 inBox=true gate=true max=-1 ord=0
+  abs 41350 full cand Silhouette body@41333 inBox=true gate=false max=-1 ord=1
+  abs 41350 full cand Hero portrait placeholder@41308 inBox=true gate=true max=0 ord=1
+  abs 41367 full cand Silhouette head@41350 inBox=false gate=false max=-1 ord=2
+  abs 41367 full cand Silhouette body@41333 inBox=false gate=false max=-1 ord=2
+  abs 41367 full cand Hero portrait placeholder@41308 inBox=true gate=true max=1 ord=2
+TRUNC @41384 Filter chip: closing Hero portrait placeholder@41308, Silhouette body@41333, Silhouette head@41350, Spark@41367
+TRUNC @41615 Hero deck: closing Hero deck@41264, Deck identity@41288, Deck summary@41530
+  abs 41684 full cand Hero portrait placeholder@41659 inBox=false gate=true max=-1 ord=0
+  abs 41684 full cand Deck identity@41639 inBox=false gate=false max=0 ord=0
+  abs 41684 full cand Hero deck@41615 inBox=false gate=false max=0 ord=0
+  abs 41684 full cand All nineteen decks@40191 inBox=true gate=false max=4 ord=0
+  abs 41684 corner cand Hero portrait placeholder@41659 inBox=true gate=true max=-1 ord=0
+  abs 41701 full cand Silhouette body@41684 inBox=true gate=false max=-1 ord=1
+  abs 41701 full cand Hero portrait placeholder@41659 inBox=true gate=true max=0 ord=1
+  abs 41718 full cand Silhouette head@41701 inBox=false gate=false max=-1 ord=2
+  abs 41718 full cand Silhouette body@41684 inBox=false gate=false max=-1 ord=2
+  abs 41718 full cand Hero portrait placeholder@41659 inBox=true gate=true max=1 ord=2
+TRUNC @41735 Filter chip: closing Hero portrait placeholder@41659, Silhouette body@41684, Silhouette head@41701, Spark@41718
+TRUNC @41966 Hero deck: closing Hero deck@41615, Deck identity@41639, Deck summary@41881
+  abs 42035 full cand Hero portrait placeholder@42010 inBox=false gate=true max=-1 ord=0
+  abs 42035 full cand Deck identity@41990 inBox=false gate=false max=0 ord=0
+  abs 42035 full cand Hero deck@41966 inBox=false gate=false max=0 ord=0
+  abs 42035 full cand All nineteen decks@40191 inBox=true gate=false max=5 ord=0
+  abs 42035 corner cand Hero portrait placeholder@42010 inBox=true gate=true max=-1 ord=0
+  abs 42052 full cand Silhouette body@42035 inBox=true gate=false max=-1 ord=1
+  abs 42052 full cand Hero portrait placeholder@42010 inBox=true gate=true max=0 ord=1
+  abs 42069 full cand Silhouette head@42052 inBox=false gate=false max=-1 ord=2
+  abs 42069 full cand Silhouette body@42035 inBox=false gate=false max=-1 ord=2
+  abs 42069 full cand Hero portrait placeholder@42010 inBox=true gate=true max=1 ord=2
+TRUNC @42086 Filter chip: closing Hero portrait placeholder@42010, Silhouette body@42035, Silhouette head@42052, Spark@42069
+TRUNC @42317 Hero deck: closing Hero deck@41966, Deck identity@41990, Deck summary@42232
+  abs 42386 full cand Hero portrait placeholder@42361 inBox=false gate=true max=-1 ord=0
+  abs 42386 full cand Deck identity@42341 inBox=false gate=false max=0 ord=0
+  abs 42386 full cand Hero deck@42317 inBox=false gate=false max=0 ord=0
+  abs 42386 full cand All nineteen decks@40191 inBox=true gate=false max=6 ord=0
+  abs 42386 corner cand Hero portrait placeholder@42361 inBox=true gate=true max=-1 ord=0
+  abs 42403 full cand Silhouette body@42386 inBox=true gate=false max=-1 ord=1
+  abs 42403 full cand Hero portrait placeholder@42361 inBox=true gate=true max=0 ord=1
+  abs 42420 full cand Silhouette head@42403 inBox=false gate=false max=-1 ord=2
+  abs 42420 full cand Silhouette body@42386 inBox=false gate=false max=-1 ord=2
+  abs 42420 full cand Hero portrait placeholder@42361 inBox=true gate=true max=1 ord=2
+TRUNC @42437 Filter chip: closing Hero portrait placeholder@42361, Silhouette body@42386, Silhouette head@42403, Spark@42420
+TRUNC @42668 Hero deck: closing Hero deck@42317, Deck identity@42341, Deck summary@42583
+  abs 42737 full cand Hero portrait placeholder@42712 inBox=false gate=true max=-1 ord=0
+  abs 42737 full cand Deck identity@42692 inBox=false gate=false max=0 ord=0
+  abs 42737 full cand Hero deck@42668 inBox=false gate=false max=0 ord=0
+  abs 42737 full cand All nineteen decks@40191 inBox=true gate=false max=7 ord=0
+  abs 42737 corner cand Hero portrait placeholder@42712 inBox=true gate=true max=-1 ord=0
+  abs 42754 full cand Silhouette body@42737 inBox=true gate=false max=-1 ord=1
+  abs 42754 full cand Hero portrait placeholder@42712 inBox=true gate=true max=0 ord=1
+  abs 42771 full cand Silhouette head@42754 inBox=false gate=false max=-1 ord=2
+  abs 42771 full cand Silhouette body@42737 inBox=false gate=false max=-1 ord=2
+  abs 42771 full cand Hero portrait placeholder@42712 inBox=true gate=true max=1 ord=2
+TRUNC @42788 Filter chip: closing Hero portrait placeholder@42712, Silhouette body@42737, Silhouette head@42754, Spark@42771
+TRUNC @43019 Hero deck: closing Hero deck@42668, Deck identity@42692, Deck summary@42934
+  abs 43088 full cand Hero portrait placeholder@43063 inBox=false gate=true max=-1 ord=0
+  abs 43088 full cand Deck identity@43043 inBox=false gate=false max=0 ord=0
+  abs 43088 full cand Hero deck@43019 inBox=false gate=false max=0 ord=0
+  abs 43088 full cand All nineteen decks@40191 inBox=true gate=false max=8 ord=0
+  abs 43088 corner cand Hero portrait placeholder@43063 inBox=true gate=true max=-1 ord=0
+  abs 43105 full cand Silhouette body@43088 inBox=true gate=false max=-1 ord=1
+  abs 43105 full cand Hero portrait placeholder@43063 inBox=true gate=true max=0 ord=1
+  abs 43122 full cand Silhouette head@43105 inBox=false gate=false max=-1 ord=2
+  abs 43122 full cand Silhouette body@43088 inBox=false gate=false max=-1 ord=2
+  abs 43122 full cand Hero portrait placeholder@43063 inBox=true gate=true max=1 ord=2
+TRUNC @43139 Filter chip: closing Hero portrait placeholder@43063, Silhouette body@43088, Silhouette head@43105, Spark@43122
+TRUNC @43370 Hero deck: closing Hero deck@43019, Deck identity@43043, Deck summary@43285
+  abs 43439 full cand Hero portrait placeholder@43414 inBox=false gate=true max=-1 ord=0
+  abs 43439 full cand Deck identity@43394 inBox=false gate=false max=0 ord=0
+  abs 43439 full cand Hero deck@43370 inBox=false gate=false max=0 ord=0
+  abs 43439 full cand All nineteen decks@40191 inBox=true gate=false max=9 ord=0
+  abs 43439 corner cand Hero portrait placeholder@43414 inBox=true gate=true max=-1 ord=0
+  abs 43456 full cand Silhouette body@43439 inBox=true gate=false max=-1 ord=1
+  abs 43456 full cand Hero portrait placeholder@43414 inBox=true gate=true max=0 ord=1
+  abs 43473 full cand Silhouette head@43456 inBox=false gate=false max=-1 ord=2
+  abs 43473 full cand Silhouette body@43439 inBox=false gate=false max=-1 ord=2
+  abs 43473 full cand Hero portrait placeholder@43414 inBox=true gate=true max=1 ord=2
+TRUNC @43490 Filter chip: closing Hero portrait placeholder@43414, Silhouette body@43439, Silhouette head@43456, Spark@43473
+TRUNC @43721 Hero deck: closing Hero deck@43370, Deck identity@43394, Deck summary@43636
+  abs 43790 full cand Hero portrait placeholder@43765 inBox=false gate=true max=-1 ord=0
+  abs 43790 full cand Deck identity@43745 inBox=false gate=false max=0 ord=0
+  abs 43790 full cand Hero deck@43721 inBox=false gate=false max=0 ord=0
+  abs 43790 full cand All nineteen decks@40191 inBox=true gate=false max=10 ord=0
+  abs 43790 corner cand Hero portrait placeholder@43765 inBox=true gate=true max=-1 ord=0
+  abs 43807 full cand Silhouette body@43790 inBox=true gate=false max=-1 ord=1
+  abs 43807 full cand Hero portrait placeholder@43765 inBox=true gate=true max=0 ord=1
+  abs 43824 full cand Silhouette head@43807 inBox=false gate=false max=-1 ord=2
+  abs 43824 full cand Silhouette body@43790 inBox=false gate=false max=-1 ord=2
+  abs 43824 full cand Hero portrait placeholder@43765 inBox=true gate=true max=1 ord=2
+TRUNC @43841 Filter chip: closing Hero portrait placeholder@43765, Silhouette body@43790, Silhouette head@43807, Spark@43824
+TRUNC @44072 Hero deck: closing Hero deck@43721, Deck identity@43745, Deck summary@43987
+  abs 44141 full cand Hero portrait placeholder@44116 inBox=false gate=true max=-1 ord=0
+  abs 44141 full cand Deck identity@44096 inBox=false gate=false max=0 ord=0
+  abs 44141 full cand Hero deck@44072 inBox=false gate=false max=0 ord=0
+  abs 44141 full cand All nineteen decks@40191 inBox=true gate=false max=11 ord=0
+  abs 44141 corner cand Hero portrait placeholder@44116 inBox=true gate=true max=-1 ord=0
+  abs 44158 full cand Silhouette body@44141 inBox=true gate=false max=-1 ord=1
+  abs 44158 full cand Hero portrait placeholder@44116 inBox=true gate=true max=0 ord=1
+  abs 44175 full cand Silhouette head@44158 inBox=false gate=false max=-1 ord=2
+  abs 44175 full cand Silhouette body@44141 inBox=false gate=false max=-1 ord=2
+  abs 44175 full cand Hero portrait placeholder@44116 inBox=true gate=true max=1 ord=2
+TRUNC @44192 Filter chip: closing Hero portrait placeholder@44116, Silhouette body@44141, Silhouette head@44158, Spark@44175
+TRUNC @44423 Hero deck: closing Hero deck@44072, Deck identity@44096, Deck summary@44338
+  abs 44492 full cand Hero portrait placeholder@44467 inBox=false gate=true max=-1 ord=0
+  abs 44492 full cand Deck identity@44447 inBox=false gate=false max=0 ord=0
+  abs 44492 full cand Hero deck@44423 inBox=false gate=false max=0 ord=0
+  abs 44492 full cand All nineteen decks@40191 inBox=true gate=false max=12 ord=0
+  abs 44492 corner cand Hero portrait placeholder@44467 inBox=true gate=true max=-1 ord=0
+  abs 44509 full cand Silhouette body@44492 inBox=true gate=false max=-1 ord=1
+  abs 44509 full cand Hero portrait placeholder@44467 inBox=true gate=true max=0 ord=1
+  abs 44526 full cand Silhouette head@44509 inBox=false gate=false max=-1 ord=2
+  abs 44526 full cand Silhouette body@44492 inBox=false gate=false max=-1 ord=2
+  abs 44526 full cand Hero portrait placeholder@44467 inBox=true gate=true max=1 ord=2
+TRUNC @44543 Filter chip: closing Hero portrait placeholder@44467, Silhouette body@44492, Silhouette head@44509, Spark@44526
+TRUNC @44774 Hero deck: closing Hero deck@44423, Deck identity@44447, Deck summary@44689
+  abs 44843 full cand Hero portrait placeholder@44818 inBox=false gate=true max=-1 ord=0
+  abs 44843 full cand Deck identity@44798 inBox=false gate=false max=0 ord=0
+  abs 44843 full cand Hero deck@44774 inBox=false gate=false max=0 ord=0
+  abs 44843 full cand All nineteen decks@40191 inBox=true gate=false max=13 ord=0
+  abs 44843 corner cand Hero portrait placeholder@44818 inBox=true gate=true max=-1 ord=0
+  abs 44860 full cand Silhouette body@44843 inBox=true gate=false max=-1 ord=1
+  abs 44860 full cand Hero portrait placeholder@44818 inBox=true gate=true max=0 ord=1
+  abs 44877 full cand Silhouette head@44860 inBox=false gate=false max=-1 ord=2
+  abs 44877 full cand Silhouette body@44843 inBox=false gate=false max=-1 ord=2
+  abs 44877 full cand Hero portrait placeholder@44818 inBox=true gate=true max=1 ord=2
+TRUNC @44894 Filter chip: closing Hero portrait placeholder@44818, Silhouette body@44843, Silhouette head@44860, Spark@44877
+TRUNC @45125 Hero deck: closing Hero deck@44774, Deck identity@44798, Deck summary@45040
+  abs 45194 full cand Hero portrait placeholder@45169 inBox=false gate=true max=-1 ord=0
+  abs 45194 full cand Deck identity@45149 inBox=false gate=false max=0 ord=0
+  abs 45194 full cand Hero deck@45125 inBox=false gate=false max=0 ord=0
+  abs 45194 full cand All nineteen decks@40191 inBox=true gate=false max=14 ord=0
+  abs 45194 corner cand Hero portrait placeholder@45169 inBox=true gate=true max=-1 ord=0
+  abs 45211 full cand Silhouette body@45194 inBox=true gate=false max=-1 ord=1
+  abs 45211 full cand Hero portrait placeholder@45169 inBox=true gate=true max=0 ord=1
+  abs 45228 full cand Silhouette head@45211 inBox=false gate=false max=-1 ord=2
+  abs 45228 full cand Silhouette body@45194 inBox=false gate=false max=-1 ord=2
+  abs 45228 full cand Hero portrait placeholder@45169 inBox=true gate=true max=1 ord=2
+TRUNC @45245 Filter chip: closing Hero portrait placeholder@45169, Silhouette body@45194, Silhouette head@45211, Spark@45228
+TRUNC @45476 Hero deck: closing Hero deck@45125, Deck identity@45149, Deck summary@45391
+  abs 45545 full cand Hero portrait placeholder@45520 inBox=false gate=true max=-1 ord=0
+  abs 45545 full cand Deck identity@45500 inBox=false gate=false max=0 ord=0
+  abs 45545 full cand Hero deck@45476 inBox=false gate=false max=0 ord=0
+  abs 45545 full cand All nineteen decks@40191 inBox=true gate=false max=15 ord=0
+  abs 45545 corner cand Hero portrait placeholder@45520 inBox=true gate=true max=-1 ord=0
+  abs 45562 full cand Silhouette body@45545 inBox=true gate=false max=-1 ord=1
+  abs 45562 full cand Hero portrait placeholder@45520 inBox=true gate=true max=0 ord=1
+  abs 45579 full cand Silhouette head@45562 inBox=false gate=false max=-1 ord=2
+  abs 45579 full cand Silhouette body@45545 inBox=false gate=false max=-1 ord=2
+  abs 45579 full cand Hero portrait placeholder@45520 inBox=true gate=true max=1 ord=2
+TRUNC @45596 Filter chip: closing Hero portrait placeholder@45520, Silhouette body@45545, Silhouette head@45562, Spark@45579
+TRUNC @45827 Hero deck: closing Hero deck@45476, Deck identity@45500, Deck summary@45742
+  abs 45896 full cand Hero portrait placeholder@45871 inBox=false gate=true max=-1 ord=0
+  abs 45896 full cand Deck identity@45851 inBox=false gate=false max=0 ord=0
+  abs 45896 full cand Hero deck@45827 inBox=false gate=false max=0 ord=0
+  abs 45896 full cand All nineteen decks@40191 inBox=true gate=false max=16 ord=0
+  abs 45896 corner cand Hero portrait placeholder@45871 inBox=true gate=true max=-1 ord=0
+  abs 45913 full cand Silhouette body@45896 inBox=true gate=false max=-1 ord=1
+  abs 45913 full cand Hero portrait placeholder@45871 inBox=true gate=true max=0 ord=1
+  abs 45930 full cand Silhouette head@45913 inBox=false gate=false max=-1 ord=2
+  abs 45930 full cand Silhouette body@45896 inBox=false gate=false max=-1 ord=2
+  abs 45930 full cand Hero portrait placeholder@45871 inBox=true gate=true max=1 ord=2
+TRUNC @45947 Filter chip: closing Hero portrait placeholder@45871, Silhouette body@45896, Silhouette head@45913, Spark@45930
+TRUNC @46178 Hero deck: closing Hero deck@45827, Deck identity@45851, Deck summary@46093
+  abs 46247 full cand Hero portrait placeholder@46222 inBox=false gate=true max=-1 ord=0
+  abs 46247 full cand Deck identity@46202 inBox=false gate=false max=0 ord=0
+  abs 46247 full cand Hero deck@46178 inBox=false gate=false max=0 ord=0
+  abs 46247 full cand All nineteen decks@40191 inBox=true gate=false max=17 ord=0
+  abs 46247 corner cand Hero portrait placeholder@46222 inBox=true gate=true max=-1 ord=0
+  abs 46264 full cand Silhouette body@46247 inBox=true gate=false max=-1 ord=1
+  abs 46264 full cand Hero portrait placeholder@46222 inBox=true gate=true max=0 ord=1
+  abs 46281 full cand Silhouette head@46264 inBox=false gate=false max=-1 ord=2
+  abs 46281 full cand Silhouette body@46247 inBox=false gate=false max=-1 ord=2
+  abs 46281 full cand Hero portrait placeholder@46222 inBox=true gate=true max=1 ord=2
+TRUNC @46298 Filter chip: closing Hero portrait placeholder@46222, Silhouette body@46247, Silhouette head@46264, Spark@46281
+TRUNC @46529 Hero deck: closing Hero deck@46178, Deck identity@46202, Deck summary@46444
+  abs 46598 full cand Hero portrait placeholder@46573 inBox=false gate=true max=-1 ord=0
+  abs 46598 full cand Deck identity@46553 inBox=false gate=false max=0 ord=0
+  abs 46598 full cand Hero deck@46529 inBox=false gate=false max=0 ord=0
+  abs 46598 full cand All nineteen decks@40191 inBox=true gate=false max=18 ord=0
+  abs 46598 corner cand Hero portrait placeholder@46573 inBox=true gate=true max=-1 ord=0
+  abs 46615 full cand Silhouette body@46598 inBox=true gate=false max=-1 ord=1
+  abs 46615 full cand Hero portrait placeholder@46573 inBox=true gate=true max=0 ord=1
+  abs 46632 full cand Silhouette head@46615 inBox=false gate=false max=-1 ord=2
+  abs 46632 full cand Silhouette body@46598 inBox=false gate=false max=-1 ord=2
+  abs 46632 full cand Hero portrait placeholder@46573 inBox=true gate=true max=1 ord=2
+TRUNC @46649 Filter chip: closing Hero portrait placeholder@46573, Silhouette body@46598, Silhouette head@46615, Spark@46632
+TRUNC @46880 Selected strategy: closing All nineteen decks@40191, Hero deck@46529, Deck identity@46553, Deck summary@46795
+@46880 Selected strategy ord=3 -> ROOT | stack: __ROOT__@undefined(max=5) / Selected strategy@46880(max=-1)
+@46992 Primary button ord=4 -> ROOT | stack: __ROOT__@undefined(max=5) / Primary button@46992(max=-1)
+  abs 47032 full cand swords@47020 inBox=true gate=true max=-1 ord=undefined
+  abs 47089 full cand Primary button@46992 inBox=false gate=true max=5 ord=undefined
+  abs 47089 corner cand Primary button@46992 inBox=false gate=true max=5 ord=undefined
+  abs 47089 any cand Primary button@46992 inBox=true gate=true max=5 ord=undefined
+  abs 47164 full cand arrow-left@47152 inBox=true gate=true max=-1 ord=undefined
+TRUNC @47175 Page title: closing Back button@47128, arrow-left@47152
+  abs 47328 full cand Hero portrait placeholder@47303 inBox=false gate=true max=-1 ord=0
+  abs 47328 full cand Account portrait@47284 inBox=false gate=false max=0 ord=0
+  abs 47328 full cand Navigation@47104 inBox=false gate=false max=3 ord=0
+  abs 47328 full cand Deck Selection Desktop@47089 inBox=true gate=false max=0 ord=0
+  abs 47328 full cand Primary button@46992 inBox=false gate=false max=5 ord=0
+  abs 47328 corner cand Hero portrait placeholder@47303 inBox=true gate=true max=-1 ord=0
+  abs 47345 full cand Silhouette body@47328 inBox=true gate=false max=-1 ord=1
+  abs 47345 full cand Hero portrait placeholder@47303 inBox=true gate=true max=0 ord=1
+  abs 47362 full cand Silhouette head@47345 inBox=false gate=false max=-1 ord=2
+  abs 47362 full cand Silhouette body@47328 inBox=false gate=false max=-1 ord=2
+  abs 47362 full cand Hero portrait placeholder@47303 inBox=true gate=true max=1 ord=2
+TRUNC @47379 Player account: closing Account portrait@47284, Hero portrait placeholder@47303, Silhouette body@47328, Silhouette head@47345, Spark@47362
+TRUNC @47442 Deck selection content: closing Navigation@47104, Player account@47379
+TRUNC @47591 Label: closing Deck source tabs@47482, Filter chip@47501, Filter chip@47546
+TRUNC @47739 Scrollable gallery: closing Gallery heading@47652, Filter chip@47694
+TRUNC @47759 Complete set gallery: closing Primary button@46992, Deck Selection Desktop@47089, Deck selection content@47442, Selection workspace@47613, Deck gallery region@47633, Scrollable gallery@47739
+@47759 Complete set gallery ord=0 -> ROOT | stack: __ROOT__@undefined(max=5) / Complete set gallery@47759(max=-1)
+  abs 47867 full cand Hero portrait placeholder@47842 inBox=false gate=true max=-1 ord=0
+  abs 47867 full cand Deck identity@47822 inBox=false gate=false max=0 ord=0
+  abs 47867 full cand Hero deck@47798 inBox=false gate=false max=0 ord=0
+  abs 47867 full cand Deck row@47779 inBox=true gate=false max=0 ord=0
+  abs 47867 full cand Complete set gallery@47759 inBox=true gate=false max=0 ord=0
+  abs 47867 corner cand Hero portrait placeholder@47842 inBox=true gate=true max=-1 ord=0
+  abs 47884 full cand Silhouette body@47867 inBox=true gate=false max=-1 ord=1
+  abs 47884 full cand Hero portrait placeholder@47842 inBox=true gate=true max=0 ord=1
+  abs 47901 full cand Silhouette head@47884 inBox=false gate=false max=-1 ord=2
+  abs 47901 full cand Silhouette body@47867 inBox=false gate=false max=-1 ord=2
+  abs 47901 full cand Hero portrait placeholder@47842 inBox=true gate=true max=1 ord=2
+TRUNC @47918 Filter chip: closing Hero portrait placeholder@47842, Silhouette body@47867, Silhouette head@47884, Spark@47901
+TRUNC @48064 Hero deck: closing Hero deck@47798, Deck identity@47822
+  abs 48133 full cand Hero portrait placeholder@48108 inBox=false gate=true max=-1 ord=0
+  abs 48133 full cand Deck identity@48088 inBox=false gate=false max=0 ord=0
+  abs 48133 full cand Hero deck@48064 inBox=false gate=false max=0 ord=0
+  abs 48133 full cand Deck row@47779 inBox=true gate=false max=1 ord=0
+  abs 48133 full cand Complete set gallery@47759 inBox=true gate=false max=0 ord=0
+  abs 48133 corner cand Hero portrait placeholder@48108 inBox=true gate=true max=-1 ord=0
+  abs 48150 full cand Silhouette body@48133 inBox=true gate=false max=-1 ord=1
+  abs 48150 full cand Hero portrait placeholder@48108 inBox=true gate=true max=0 ord=1
+  abs 48167 full cand Silhouette head@48150 inBox=false gate=false max=-1 ord=2
+  abs 48167 full cand Silhouette body@48133 inBox=false gate=false max=-1 ord=2
+  abs 48167 full cand Hero portrait placeholder@48108 inBox=true gate=true max=1 ord=2
+TRUNC @48184 Filter chip: closing Hero portrait placeholder@48108, Silhouette body@48133, Silhouette head@48150, Spark@48167
+TRUNC @48330 Hero deck: closing Hero deck@48064, Deck identity@48088
+  abs 48399 full cand Hero portrait placeholder@48374 inBox=false gate=true max=-1 ord=0
+  abs 48399 full cand Deck identity@48354 inBox=false gate=false max=0 ord=0
+  abs 48399 full cand Hero deck@48330 inBox=false gate=false max=0 ord=0
+  abs 48399 full cand Deck row@47779 inBox=true gate=false max=2 ord=0
+  abs 48399 full cand Complete set gallery@47759 inBox=true gate=false max=0 ord=0
+  abs 48399 corner cand Hero portrait placeholder@48374 inBox=true gate=true max=-1 ord=0
+  abs 48416 full cand Silhouette body@48399 inBox=true gate=false max=-1 ord=1
+  abs 48416 full cand Hero portrait placeholder@48374 inBox=true gate=true max=0 ord=1
+  abs 48433 full cand Silhouette head@48416 inBox=false gate=false max=-1 ord=2
+  abs 48433 full cand Silhouette body@48399 inBox=false gate=false max=-1 ord=2
+  abs 48433 full cand Hero portrait placeholder@48374 inBox=true gate=true max=1 ord=2
+TRUNC @48450 Filter chip: closing Hero portrait placeholder@48374, Silhouette body@48399, Silhouette head@48416, Spark@48433
+TRUNC @48596 Hero deck: closing Hero deck@48330, Deck identity@48354
+  abs 48665 full cand Hero portrait placeholder@48640 inBox=false gate=true max=-1 ord=0
+  abs 48665 full cand Deck identity@48620 inBox=false gate=false max=0 ord=0
+  abs 48665 full cand Hero deck@48596 inBox=false gate=false max=0 ord=0
+  abs 48665 full cand Deck row@47779 inBox=true gate=false max=3 ord=0
+  abs 48665 full cand Complete set gallery@47759 inBox=true gate=false max=0 ord=0
+  abs 48665 corner cand Hero portrait placeholder@48640 inBox=true gate=true max=-1 ord=0
+  abs 48682 full cand Silhouette body@48665 inBox=true gate=false max=-1 ord=1
+  abs 48682 full cand Hero portrait placeholder@48640 inBox=true gate=true max=0 ord=1
+  abs 48699 full cand Silhouette head@48682 inBox=false gate=false max=-1 ord=2
+  abs 48699 full cand Silhouette body@48665 inBox=false gate=false max=-1 ord=2
+  abs 48699 full cand Hero portrait placeholder@48640 inBox=true gate=true max=1 ord=2
+TRUNC @48716 Filter chip: closing Hero portrait placeholder@48640, Silhouette body@48665, Silhouette head@48682, Spark@48699
+TRUNC @48862 Deck row: closing Deck row@47779, Hero deck@48596, Deck identity@48620
+  abs 48950 full cand Hero portrait placeholder@48925 inBox=false gate=true max=-1 ord=0
+  abs 48950 full cand Deck identity@48905 inBox=false gate=false max=0 ord=0
+  abs 48950 full cand Hero deck@48881 inBox=false gate=false max=0 ord=0
+  abs 48950 full cand Deck row@48862 inBox=true gate=false max=0 ord=0
+  abs 48950 full cand Complete set gallery@47759 inBox=true gate=false max=1 ord=0
+  abs 48950 corner cand Hero portrait placeholder@48925 inBox=true gate=true max=-1 ord=0
+  abs 48967 full cand Silhouette body@48950 inBox=true gate=false max=-1 ord=1
+  abs 48967 full cand Hero portrait placeholder@48925 inBox=true gate=true max=0 ord=1
+  abs 48984 full cand Silhouette head@48967 inBox=false gate=false max=-1 ord=2
+  abs 48984 full cand Silhouette body@48950 inBox=false gate=false max=-1 ord=2
+  abs 48984 full cand Hero portrait placeholder@48925 inBox=true gate=true max=1 ord=2
+TRUNC @49001 Filter chip: closing Hero portrait placeholder@48925, Silhouette body@48950, Silhouette head@48967, Spark@48984
+TRUNC @49147 Hero deck: closing Hero deck@48881, Deck identity@48905
+  abs 49216 full cand Hero portrait placeholder@49191 inBox=false gate=true max=-1 ord=0
+  abs 49216 full cand Deck identity@49171 inBox=false gate=false max=0 ord=0
+  abs 49216 full cand Hero deck@49147 inBox=false gate=false max=0 ord=0
+  abs 49216 full cand Deck row@48862 inBox=true gate=false max=1 ord=0
+  abs 49216 full cand Complete set gallery@47759 inBox=true gate=false max=1 ord=0
+  abs 49216 corner cand Hero portrait placeholder@49191 inBox=true gate=true max=-1 ord=0
+  abs 49233 full cand Silhouette body@49216 inBox=true gate=false max=-1 ord=1
+  abs 49233 full cand Hero portrait placeholder@49191 inBox=true gate=true max=0 ord=1
+  abs 49250 full cand Silhouette head@49233 inBox=false gate=false max=-1 ord=2
+  abs 49250 full cand Silhouette body@49216 inBox=false gate=false max=-1 ord=2
+  abs 49250 full cand Hero portrait placeholder@49191 inBox=true gate=true max=1 ord=2
+TRUNC @49267 Filter chip: closing Hero portrait placeholder@49191, Silhouette body@49216, Silhouette head@49233, Spark@49250
+TRUNC @49413 Hero deck: closing Hero deck@49147, Deck identity@49171
+  abs 49482 full cand Hero portrait placeholder@49457 inBox=false gate=true max=-1 ord=0
+  abs 49482 full cand Deck identity@49437 inBox=false gate=false max=0 ord=0
+  abs 49482 full cand Hero deck@49413 inBox=false gate=false max=0 ord=0
+  abs 49482 full cand Deck row@48862 inBox=true gate=false max=2 ord=0
+  abs 49482 full cand Complete set gallery@47759 inBox=true gate=false max=1 ord=0
+  abs 49482 corner cand Hero portrait placeholder@49457 inBox=true gate=true max=-1 ord=0
+  abs 49499 full cand Silhouette body@49482 inBox=true gate=false max=-1 ord=1
+  abs 49499 full cand Hero portrait placeholder@49457 inBox=true gate=true max=0 ord=1
+  abs 49516 full cand Silhouette head@49499 inBox=false gate=false max=-1 ord=2
+  abs 49516 full cand Silhouette body@49482 inBox=false gate=false max=-1 ord=2
+  abs 49516 full cand Hero portrait placeholder@49457 inBox=true gate=true max=1 ord=2
+TRUNC @49533 Filter chip: closing Hero portrait placeholder@49457, Silhouette body@49482, Silhouette head@49499, Spark@49516
+TRUNC @49679 Hero deck: closing Hero deck@49413, Deck identity@49437, Filter chip@49533
+  abs 49748 full cand Hero portrait placeholder@49723 inBox=false gate=true max=-1 ord=0
+  abs 49748 full cand Deck identity@49703 inBox=false gate=false max=0 ord=0
+  abs 49748 full cand Hero deck@49679 inBox=false gate=false max=0 ord=0
+  abs 49748 full cand Deck row@48862 inBox=true gate=false max=3 ord=0
+  abs 49748 full cand Complete set gallery@47759 inBox=true gate=false max=1 ord=0
+  abs 49748 corner cand Hero portrait placeholder@49723 inBox=true gate=true max=-1 ord=0
+  abs 49765 full cand Silhouette body@49748 inBox=true gate=false max=-1 ord=1
+  abs 49765 full cand Hero portrait placeholder@49723 inBox=true gate=true max=0 ord=1
+  abs 49782 full cand Silhouette head@49765 inBox=false gate=false max=-1 ord=2
+  abs 49782 full cand Silhouette body@49748 inBox=false gate=false max=-1 ord=2
+  abs 49782 full cand Hero portrait placeholder@49723 inBox=true gate=true max=1 ord=2
+TRUNC @49799 Filter chip: closing Hero portrait placeholder@49723, Silhouette body@49748, Silhouette head@49765, Spark@49782
+TRUNC @49945 Deck row: closing Deck row@48862, Hero deck@49679, Deck identity@49703
+  abs 50033 full cand Hero portrait placeholder@50008 inBox=false gate=true max=-1 ord=0
+  abs 50033 full cand Deck identity@49988 inBox=false gate=false max=0 ord=0
+  abs 50033 full cand Hero deck@49964 inBox=false gate=false max=0 ord=0
+  abs 50033 full cand Deck row@49945 inBox=true gate=false max=0 ord=0
+  abs 50033 full cand Complete set gallery@47759 inBox=true gate=false max=2 ord=0
+  abs 50033 corner cand Hero portrait placeholder@50008 inBox=true gate=true max=-1 ord=0
+  abs 50050 full cand Silhouette body@50033 inBox=true gate=false max=-1 ord=1
+  abs 50050 full cand Hero portrait placeholder@50008 inBox=true gate=true max=0 ord=1
+  abs 50067 full cand Silhouette head@50050 inBox=false gate=false max=-1 ord=2
+  abs 50067 full cand Silhouette body@50033 inBox=false gate=false max=-1 ord=2
+  abs 50067 full cand Hero portrait placeholder@50008 inBox=true gate=true max=1 ord=2
+TRUNC @50084 Filter chip: closing Hero portrait placeholder@50008, Silhouette body@50033, Silhouette head@50050, Spark@50067
+TRUNC @50230 Hero deck: closing Hero deck@49964, Deck identity@49988
+  abs 50299 full cand Hero portrait placeholder@50274 inBox=false gate=true max=-1 ord=0
+  abs 50299 full cand Deck identity@50254 inBox=false gate=false max=0 ord=0
+  abs 50299 full cand Hero deck@50230 inBox=false gate=false max=0 ord=0
+  abs 50299 full cand Deck row@49945 inBox=true gate=false max=1 ord=0
+  abs 50299 full cand Complete set gallery@47759 inBox=true gate=false max=2 ord=0
+  abs 50299 corner cand Hero portrait placeholder@50274 inBox=true gate=true max=-1 ord=0
+  abs 50316 full cand Silhouette body@50299 inBox=true gate=false max=-1 ord=1
+  abs 50316 full cand Hero portrait placeholder@50274 inBox=true gate=true max=0 ord=1
+  abs 50333 full cand Silhouette head@50316 inBox=false gate=false max=-1 ord=2
+  abs 50333 full cand Silhouette body@50299 inBox=false gate=false max=-1 ord=2
+  abs 50333 full cand Hero portrait placeholder@50274 inBox=true gate=true max=1 ord=2
+TRUNC @50350 Filter chip: closing Hero portrait placeholder@50274, Silhouette body@50299, Silhouette head@50316, Spark@50333
+TRUNC @50496 Hero deck: closing Hero deck@50230, Deck identity@50254
+  abs 50565 full cand Hero portrait placeholder@50540 inBox=false gate=true max=-1 ord=0
+  abs 50565 full cand Deck identity@50520 inBox=false gate=false max=0 ord=0
+  abs 50565 full cand Hero deck@50496 inBox=false gate=false max=0 ord=0
+  abs 50565 full cand Deck row@49945 inBox=true gate=false max=2 ord=0
+  abs 50565 full cand Complete set gallery@47759 inBox=true gate=false max=2 ord=0
+  abs 50565 corner cand Hero portrait placeholder@50540 inBox=true gate=true max=-1 ord=0
+  abs 50582 full cand Silhouette body@50565 inBox=true gate=false max=-1 ord=1
+  abs 50582 full cand Hero portrait placeholder@50540 inBox=true gate=true max=0 ord=1
+  abs 50599 full cand Silhouette head@50582 inBox=false gate=false max=-1 ord=2
+  abs 50599 full cand Silhouette body@50565 inBox=false gate=false max=-1 ord=2
+  abs 50599 full cand Hero portrait placeholder@50540 inBox=true gate=true max=1 ord=2
+TRUNC @50616 Filter chip: closing Hero portrait placeholder@50540, Silhouette body@50565, Silhouette head@50582, Spark@50599
+TRUNC @50762 Hero deck: closing Hero deck@50496, Deck identity@50520
+  abs 50831 full cand Hero portrait placeholder@50806 inBox=false gate=true max=-1 ord=0
+  abs 50831 full cand Deck identity@50786 inBox=false gate=false max=0 ord=0
+  abs 50831 full cand Hero deck@50762 inBox=false gate=false max=0 ord=0
+  abs 50831 full cand Deck row@49945 inBox=true gate=false max=3 ord=0
+  abs 50831 full cand Complete set gallery@47759 inBox=true gate=false max=2 ord=0
+  abs 50831 corner cand Hero portrait placeholder@50806 inBox=true gate=true max=-1 ord=0
+  abs 50848 full cand Silhouette body@50831 inBox=true gate=false max=-1 ord=1
+  abs 50848 full cand Hero portrait placeholder@50806 inBox=true gate=true max=0 ord=1
+  abs 50865 full cand Silhouette head@50848 inBox=false gate=false max=-1 ord=2
+  abs 50865 full cand Silhouette body@50831 inBox=false gate=false max=-1 ord=2
+  abs 50865 full cand Hero portrait placeholder@50806 inBox=true gate=true max=1 ord=2
+TRUNC @50882 Filter chip: closing Hero portrait placeholder@50806, Silhouette body@50831, Silhouette head@50848, Spark@50865
+TRUNC @51028 Deck row: closing Deck row@49945, Hero deck@50762, Deck identity@50786
+  abs 51116 full cand Hero portrait placeholder@51091 inBox=false gate=true max=-1 ord=0
+  abs 51116 full cand Deck identity@51071 inBox=false gate=false max=0 ord=0
+  abs 51116 full cand Hero deck@51047 inBox=false gate=false max=0 ord=0
+  abs 51116 full cand Deck row@51028 inBox=true gate=false max=0 ord=0
+  abs 51116 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 51116 corner cand Hero portrait placeholder@51091 inBox=true gate=true max=-1 ord=0
+  abs 51133 full cand Silhouette body@51116 inBox=true gate=false max=-1 ord=1
+  abs 51133 full cand Hero portrait placeholder@51091 inBox=true gate=true max=0 ord=1
+  abs 51150 full cand Silhouette head@51133 inBox=false gate=false max=-1 ord=2
+  abs 51150 full cand Silhouette body@51116 inBox=false gate=false max=-1 ord=2
+  abs 51150 full cand Hero portrait placeholder@51091 inBox=true gate=true max=1 ord=2
+TRUNC @51167 Filter chip: closing Hero portrait placeholder@51091, Silhouette body@51116, Silhouette head@51133, Spark@51150
+TRUNC @51313 Hero deck: closing Hero deck@51047, Deck identity@51071
+  abs 51382 full cand Hero portrait placeholder@51357 inBox=false gate=true max=-1 ord=0
+  abs 51382 full cand Deck identity@51337 inBox=false gate=false max=0 ord=0
+  abs 51382 full cand Hero deck@51313 inBox=false gate=false max=0 ord=0
+  abs 51382 full cand Deck row@51028 inBox=true gate=false max=1 ord=0
+  abs 51382 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 51382 corner cand Hero portrait placeholder@51357 inBox=true gate=true max=-1 ord=0
+  abs 51399 full cand Silhouette body@51382 inBox=true gate=false max=-1 ord=1
+  abs 51399 full cand Hero portrait placeholder@51357 inBox=true gate=true max=0 ord=1
+  abs 51416 full cand Silhouette head@51399 inBox=false gate=false max=-1 ord=2
+  abs 51416 full cand Silhouette body@51382 inBox=false gate=false max=-1 ord=2
+  abs 51416 full cand Hero portrait placeholder@51357 inBox=true gate=true max=1 ord=2
+TRUNC @51433 Filter chip: closing Hero portrait placeholder@51357, Silhouette body@51382, Silhouette head@51399, Spark@51416
+TRUNC @51579 Hero deck: closing Hero deck@51313, Deck identity@51337
+  abs 51648 full cand Hero portrait placeholder@51623 inBox=false gate=true max=-1 ord=0
+  abs 51648 full cand Deck identity@51603 inBox=false gate=false max=0 ord=0
+  abs 51648 full cand Hero deck@51579 inBox=false gate=false max=0 ord=0
+  abs 51648 full cand Deck row@51028 inBox=true gate=false max=2 ord=0
+  abs 51648 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 51648 corner cand Hero portrait placeholder@51623 inBox=true gate=true max=-1 ord=0
+  abs 51665 full cand Silhouette body@51648 inBox=true gate=false max=-1 ord=1
+  abs 51665 full cand Hero portrait placeholder@51623 inBox=true gate=true max=0 ord=1
+  abs 51682 full cand Silhouette head@51665 inBox=false gate=false max=-1 ord=2
+  abs 51682 full cand Silhouette body@51648 inBox=false gate=false max=-1 ord=2
+  abs 51682 full cand Hero portrait placeholder@51623 inBox=true gate=true max=1 ord=2
+TRUNC @51699 Filter chip: closing Hero portrait placeholder@51623, Silhouette body@51648, Silhouette head@51665, Spark@51682
+TRUNC @51845 Hero deck: closing Hero deck@51579, Deck identity@51603, Filter chip@51699
+  abs 51914 full cand Hero portrait placeholder@51889 inBox=false gate=true max=-1 ord=0
+  abs 51914 full cand Deck identity@51869 inBox=false gate=false max=0 ord=0
+  abs 51914 full cand Hero deck@51845 inBox=false gate=false max=0 ord=0
+  abs 51914 full cand Deck row@51028 inBox=true gate=false max=3 ord=0
+  abs 51914 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 51914 corner cand Hero portrait placeholder@51889 inBox=true gate=true max=-1 ord=0
+  abs 51931 full cand Silhouette body@51914 inBox=true gate=false max=-1 ord=1
+  abs 51931 full cand Hero portrait placeholder@51889 inBox=true gate=true max=0 ord=1
+  abs 51948 full cand Silhouette head@51931 inBox=false gate=false max=-1 ord=2
+  abs 51948 full cand Silhouette body@51914 inBox=false gate=false max=-1 ord=2
+  abs 51948 full cand Hero portrait placeholder@51889 inBox=true gate=true max=1 ord=2
+TRUNC @51965 Filter chip: closing Hero portrait placeholder@51889, Silhouette body@51914, Silhouette head@51931, Spark@51948
+TRUNC @52111 Deck row: closing Hero deck@51845, Deck identity@51869
+  abs 52199 full cand Hero portrait placeholder@52174 inBox=false gate=true max=-1 ord=0
+  abs 52199 full cand Deck identity@52154 inBox=false gate=false max=0 ord=0
+  abs 52199 full cand Hero deck@52130 inBox=false gate=false max=0 ord=0
+  abs 52199 full cand Deck row@52111 inBox=true gate=false max=0 ord=0
+  abs 52199 full cand Deck row@51028 inBox=true gate=false max=4 ord=0
+  abs 52199 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 52199 corner cand Hero portrait placeholder@52174 inBox=true gate=true max=-1 ord=0
+  abs 52216 full cand Silhouette body@52199 inBox=true gate=false max=-1 ord=1
+  abs 52216 full cand Hero portrait placeholder@52174 inBox=true gate=true max=0 ord=1
+  abs 52233 full cand Silhouette head@52216 inBox=false gate=false max=-1 ord=2
+  abs 52233 full cand Silhouette body@52199 inBox=false gate=false max=-1 ord=2
+  abs 52233 full cand Hero portrait placeholder@52174 inBox=true gate=true max=1 ord=2
+TRUNC @52250 Filter chip: closing Hero portrait placeholder@52174, Silhouette body@52199, Silhouette head@52216, Spark@52233
+TRUNC @52396 Hero deck: closing Hero deck@52130, Deck identity@52154
+  abs 52465 full cand Hero portrait placeholder@52440 inBox=false gate=true max=-1 ord=0
+  abs 52465 full cand Deck identity@52420 inBox=false gate=false max=0 ord=0
+  abs 52465 full cand Hero deck@52396 inBox=false gate=false max=0 ord=0
+  abs 52465 full cand Deck row@52111 inBox=true gate=false max=1 ord=0
+  abs 52465 full cand Deck row@51028 inBox=true gate=false max=4 ord=0
+  abs 52465 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 52465 corner cand Hero portrait placeholder@52440 inBox=true gate=true max=-1 ord=0
+  abs 52482 full cand Silhouette body@52465 inBox=true gate=false max=-1 ord=1
+  abs 52482 full cand Hero portrait placeholder@52440 inBox=true gate=true max=0 ord=1
+  abs 52499 full cand Silhouette head@52482 inBox=false gate=false max=-1 ord=2
+  abs 52499 full cand Silhouette body@52465 inBox=false gate=false max=-1 ord=2
+  abs 52499 full cand Hero portrait placeholder@52440 inBox=true gate=true max=1 ord=2
+TRUNC @52516 Filter chip: closing Hero portrait placeholder@52440, Silhouette body@52465, Silhouette head@52482, Spark@52499
+TRUNC @52662 Hero deck: closing Hero deck@52396, Deck identity@52420
+  abs 52731 full cand Hero portrait placeholder@52706 inBox=false gate=true max=-1 ord=0
+  abs 52731 full cand Deck identity@52686 inBox=false gate=false max=0 ord=0
+  abs 52731 full cand Hero deck@52662 inBox=false gate=false max=0 ord=0
+  abs 52731 full cand Deck row@52111 inBox=true gate=false max=2 ord=0
+  abs 52731 full cand Deck row@51028 inBox=true gate=false max=4 ord=0
+  abs 52731 full cand Complete set gallery@47759 inBox=true gate=false max=3 ord=0
+  abs 52731 corner cand Hero portrait placeholder@52706 inBox=true gate=true max=-1 ord=0
+  abs 52748 full cand Silhouette body@52731 inBox=true gate=false max=-1 ord=1
+  abs 52748 full cand Hero portrait placeholder@52706 inBox=true gate=true max=0 ord=1
+  abs 52765 full cand Silhouette head@52748 inBox=false gate=false max=-1 ord=2
+  abs 52765 full cand Silhouette body@52731 inBox=false gate=false max=-1 ord=2
+  abs 52765 full cand Hero portrait placeholder@52706 inBox=true gate=true max=1 ord=2
+TRUNC @52782 Filter chip: closing Hero portrait placeholder@52706, Silhouette body@52731, Silhouette head@52748, Spark@52765
+  abs 52928 full cand Deck identity@52686 inBox=false gate=false max=3 ord=1
+  abs 52928 full cand Hero deck@52662 inBox=false gate=true max=0 ord=1
+  abs 52928 full cand Deck row@52111 inBox=false gate=false max=2 ord=1
+  abs 52928 full cand Deck row@51028 inBox=false gate=false max=4 ord=1
+  abs 52928 full cand Complete set gallery@47759 inBox=false gate=false max=3 ord=1
+  abs 52928 corner cand Deck identity@52686 inBox=true gate=false max=3 ord=1
+  abs 52928 corner cand Hero deck@52662 inBox=false gate=true max=0 ord=1
+  abs 52928 corner cand Deck row@52111 inBox=true gate=false max=2 ord=1
+  abs 52928 corner cand Deck row@51028 inBox=true gate=false max=4 ord=1
+  abs 52928 corner cand Complete set gallery@47759 inBox=true gate=false max=3 ord=1
+  abs 52928 any cand Deck identity@52686 inBox=true gate=false max=3 ord=1
+  abs 52928 any cand Hero deck@52662 inBox=true gate=true max=0 ord=1
+  abs 52946 full cand Scroll track@52928 inBox=false gate=false max=-1 ord=2
+  abs 52946 full cand Deck identity@52686 inBox=false gate=false max=3 ord=2
+  abs 52946 full cand Hero deck@52662 inBox=false gate=true max=1 ord=2
+  abs 52946 full cand Deck row@52111 inBox=false gate=false max=2 ord=2
+  abs 52946 full cand Deck row@51028 inBox=false gate=false max=4 ord=2
+  abs 52946 full cand Complete set gallery@47759 inBox=false gate=false max=3 ord=2
+  abs 52946 corner cand Scroll track@52928 inBox=true gate=false max=-1 ord=2
+  abs 52946 corner cand Deck identity@52686 inBox=true gate=false max=3 ord=2
+  abs 52946 corner cand Hero deck@52662 inBox=false gate=true max=1 ord=2
+  abs 52946 corner cand Deck row@52111 inBox=true gate=false max=2 ord=2
+  abs 52946 corner cand Deck row@51028 inBox=true gate=false max=4 ord=2
+  abs 52946 corner cand Complete set gallery@47759 inBox=true gate=false max=3 ord=2
+  abs 52946 any cand Scroll track@52928 inBox=true gate=false max=-1 ord=2
+  abs 52946 any cand Deck identity@52686 inBox=true gate=false max=3 ord=2
+  abs 52946 any cand Hero deck@52662 inBox=true gate=true max=1 ord=2
+TRUNC @52964 Label: closing Complete set gallery@47759, Deck row@51028, Deck row@52111, Hero deck@52662, Deck identity@52686, Scroll track@52928, Scroll thumb@52946
+@52964 Label ord=2 -> ROOT | stack: __ROOT__@undefined(max=5)
+@52986 Selected deck detail ord=1 -> ROOT | stack: __ROOT__@undefined(max=5) / Selected deck detail@52986(max=-1)
+  abs 53087 full cand check-circle-2@53075 inBox=true gate=true max=-1 ord=undefined
+TRUNC @53098 Hero identity: closing Selection status@53010, Filter chip@53030, check-circle-2@53075
+  abs 53142 full cand Hero portrait placeholder@53117 inBox=false gate=true max=-1 ord=0
+  abs 53142 full cand Hero identity@53098 inBox=false gate=false max=0 ord=0
+  abs 53142 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 53142 corner cand Hero portrait placeholder@53117 inBox=true gate=true max=-1 ord=0
+  abs 53159 full cand Silhouette body@53142 inBox=true gate=false max=-1 ord=1
+  abs 53159 full cand Hero portrait placeholder@53117 inBox=true gate=true max=0 ord=1
+  abs 53176 full cand Silhouette head@53159 inBox=false gate=false max=-1 ord=2
+  abs 53176 full cand Silhouette body@53142 inBox=false gate=false max=-1 ord=2
+  abs 53176 full cand Hero portrait placeholder@53117 inBox=true gate=true max=1 ord=2
+TRUNC @53193 Hero name: closing Hero portrait placeholder@53117, Silhouette body@53142, Silhouette head@53159, Spark@53176
+TRUNC @53502 Cost and count: closing Deck composition@53293, Type count@53439
+TRUNC @53734 Primary button: closing Strengths@53625, Filter chip@53644, Filter chip@53689
+  abs 53774 full cand swords@53762 inBox=true gate=true max=-1 ord=undefined
+  abs 53831 full cand Hero identity@53098 inBox=false gate=true max=11 ord=undefined
+  abs 53831 full cand Selected deck detail@52986 inBox=false gate=true max=1 ord=undefined
+  abs 53831 corner cand Hero identity@53098 inBox=true gate=true max=11 ord=undefined
+  abs 53906 full cand sparkles@53894 inBox=true gate=true max=-1 ord=undefined
+TRUNC @53917 Page title: closing Back button@53870, sparkles@53894
+  abs 54003 full cand Hero portrait placeholder@53978 inBox=false gate=true max=-1 ord=0
+  abs 54003 full cand Account portrait@53959 inBox=true gate=false max=0 ord=0
+  abs 54003 full cand Navigation@53846 inBox=false gate=false max=2 ord=0
+  abs 54003 full cand Start Menu Mobile@53831 inBox=true gate=false max=0 ord=0
+  abs 54003 full cand Hero identity@53098 inBox=true gate=false max=11 ord=0
+  abs 54003 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 54003 corner cand Hero portrait placeholder@53978 inBox=true gate=true max=-1 ord=0
+  abs 54020 full cand Silhouette body@54003 inBox=true gate=false max=-1 ord=1
+  abs 54020 full cand Hero portrait placeholder@53978 inBox=true gate=true max=0 ord=1
+  abs 54037 full cand Silhouette head@54020 inBox=false gate=false max=-1 ord=2
+  abs 54037 full cand Silhouette body@54003 inBox=false gate=false max=-1 ord=2
+  abs 54037 full cand Hero portrait placeholder@53978 inBox=true gate=true max=1 ord=2
+TRUNC @54054 Label: closing Hero portrait placeholder@53978, Silhouette body@54003, Silhouette head@54020, Spark@54037
+TRUNC @54076 Menu content: closing Navigation@53846, Account portrait@53959
+  abs 54247 full cand swords@54235 inBox=true gate=true max=-1 ord=undefined
+  abs 54318 full cand users@54306 inBox=true gate=true max=-1 ord=undefined
+TRUNC @54465 Account navigation: closing Library navigation@54351, Secondary button@54371, Secondary button@54418
+TRUNC @54579 Tabletop vignette: closing Primary button@54207, Account navigation@54465, Secondary button@54485, Secondary button@54532
+  abs 54599 full cand Tabletop vignette@54579 inBox=false gate=true max=-1 ord=0
+  abs 54599 full cand Menu content@54076 inBox=false gate=false max=5 ord=0
+  abs 54599 full cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=0
+  abs 54599 full cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 54599 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 54599 corner cand Tabletop vignette@54579 inBox=false gate=true max=-1 ord=0
+  abs 54599 corner cand Menu content@54076 inBox=false gate=false max=5 ord=0
+  abs 54599 corner cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=0
+  abs 54599 corner cand Hero identity@53098 inBox=true gate=false max=11 ord=0
+  abs 54599 corner cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 54599 any cand Tabletop vignette@54579 inBox=true gate=true max=-1 ord=0
+  abs 54763 full cand Scan placeholder@54739 inBox=false gate=true max=-1 ord=0
+  abs 54763 full cand Building portrait card@54622 inBox=false gate=false max=1 ord=0
+  abs 54763 full cand Decorative card@54599 inBox=false gate=false max=0 ord=0
+  abs 54763 full cand Tabletop vignette@54579 inBox=false gate=false max=0 ord=0
+  abs 54763 full cand Menu content@54076 inBox=false gate=false max=5 ord=0
+  abs 54763 full cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=0
+  abs 54763 full cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 54763 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 54763 corner cand Scan placeholder@54739 inBox=false gate=true max=-1 ord=0
+  abs 54763 corner cand Building portrait card@54622 inBox=false gate=false max=1 ord=0
+  abs 54763 corner cand Decorative card@54599 inBox=false gate=false max=0 ord=0
+  abs 54763 corner cand Tabletop vignette@54579 inBox=false gate=false max=0 ord=0
+  abs 54763 corner cand Menu content@54076 inBox=false gate=false max=5 ord=0
+  abs 54763 corner cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=0
+  abs 54763 corner cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 54763 corner cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 54763 any cand Scan placeholder@54739 inBox=true gate=true max=-1 ord=0
+  abs 54892 full cand Building portrait card@54622 inBox=false gate=false max=3 ord=1
+  abs 54892 full cand Decorative card@54599 inBox=false gate=true max=0 ord=1
+  abs 54892 full cand Tabletop vignette@54579 inBox=true gate=true max=0 ord=1
+  abs 55056 full cand Scan placeholder@55032 inBox=false gate=true max=-1 ord=0
+  abs 55056 full cand Spell portrait card@54915 inBox=false gate=false max=1 ord=0
+  abs 55056 full cand Decorative card@54892 inBox=false gate=false max=0 ord=0
+  abs 55056 full cand Building portrait card@54622 inBox=false gate=false max=3 ord=0
+  abs 55056 full cand Decorative card@54599 inBox=false gate=false max=0 ord=0
+  abs 55056 full cand Tabletop vignette@54579 inBox=true gate=false max=1 ord=0
+  abs 55056 full cand Menu content@54076 inBox=false gate=false max=5 ord=0
+  abs 55056 full cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=0
+  abs 55056 full cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 55056 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 55056 corner cand Scan placeholder@55032 inBox=false gate=true max=-1 ord=0
+  abs 55056 corner cand Spell portrait card@54915 inBox=false gate=false max=1 ord=0
+  abs 55056 corner cand Decorative card@54892 inBox=false gate=false max=0 ord=0
+  abs 55056 corner cand Building portrait card@54622 inBox=false gate=false max=3 ord=0
+  abs 55056 corner cand Decorative card@54599 inBox=false gate=false max=0 ord=0
+  abs 55056 corner cand Tabletop vignette@54579 inBox=false gate=false max=1 ord=0
+  abs 55056 corner cand Menu content@54076 inBox=false gate=false max=5 ord=0
+  abs 55056 corner cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=0
+  abs 55056 corner cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 55056 corner cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 55056 any cand Scan placeholder@55032 inBox=true gate=true max=-1 ord=0
+  abs 55185 full cand Spell portrait card@54915 inBox=false gate=false max=3 ord=2
+  abs 55185 full cand Decorative card@54892 inBox=false gate=false max=0 ord=2
+  abs 55185 full cand Building portrait card@54622 inBox=false gate=false max=3 ord=2
+  abs 55185 full cand Decorative card@54599 inBox=false gate=false max=0 ord=2
+  abs 55185 full cand Tabletop vignette@54579 inBox=true gate=true max=1 ord=2
+TRUNC @55252 Footer: closing Tabletop vignette@54579, Decorative card@54599, Building portrait card@54622, Decorative card@54892, Spell portrait card@54915, Mode badge@55185, Filter chip@55207
+  abs 55325 full cand volume-2@55313 inBox=true gate=true max=-1 ord=undefined
+  abs 55358 full cand Sound toggle@55294 inBox=false gate=true max=1 ord=undefined
+  abs 55358 full cand Footer@55252 inBox=false gate=true max=1 ord=undefined
+  abs 55358 full cand Menu content@54076 inBox=false gate=true max=6 ord=undefined
+  abs 55358 full cand Start Menu Mobile@53831 inBox=false gate=true max=1 ord=undefined
+  abs 55358 full cand Hero identity@53098 inBox=false gate=true max=11 ord=undefined
+  abs 55358 full cand Selected deck detail@52986 inBox=false gate=true max=1 ord=undefined
+  abs 55358 corner cand Sound toggle@55294 inBox=true gate=true max=1 ord=undefined
+  abs 55433 full cand sparkles@55421 inBox=true gate=true max=-1 ord=undefined
+TRUNC @55444 Page title: closing Back button@55397, sparkles@55421
+  abs 55597 full cand Hero portrait placeholder@55572 inBox=false gate=true max=-1 ord=0
+  abs 55597 full cand Account portrait@55553 inBox=false gate=false max=0 ord=0
+  abs 55597 full cand Navigation@55373 inBox=false gate=false max=3 ord=0
+  abs 55597 full cand Start Menu Desktop@55358 inBox=true gate=false max=0 ord=0
+  abs 55597 full cand Sound toggle@55294 inBox=false gate=false max=1 ord=0
+  abs 55597 full cand Footer@55252 inBox=false gate=false max=1 ord=0
+  abs 55597 full cand Menu content@54076 inBox=false gate=false max=6 ord=0
+  abs 55597 full cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=0
+  abs 55597 full cand Hero identity@53098 inBox=true gate=false max=11 ord=0
+  abs 55597 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 55597 corner cand Hero portrait placeholder@55572 inBox=true gate=true max=-1 ord=0
+  abs 55614 full cand Silhouette body@55597 inBox=true gate=false max=-1 ord=1
+  abs 55614 full cand Hero portrait placeholder@55572 inBox=true gate=true max=0 ord=1
+  abs 55631 full cand Silhouette head@55614 inBox=false gate=false max=-1 ord=2
+  abs 55631 full cand Silhouette body@55597 inBox=false gate=false max=-1 ord=2
+  abs 55631 full cand Hero portrait placeholder@55572 inBox=true gate=true max=1 ord=2
+TRUNC @55648 Player account: closing Account portrait@55553, Hero portrait placeholder@55572, Silhouette body@55597, Silhouette head@55614, Spark@55631
+TRUNC @55711 Main menu: closing Navigation@55373, Player account@55648
+  abs 55902 full cand swords@55890 inBox=true gate=true max=-1 ord=undefined
+  abs 55973 full cand users@55961 inBox=true gate=true max=-1 ord=undefined
+TRUNC @56120 Account navigation: closing Collection navigation@56006, Secondary button@56073
+TRUNC @56234 Product facts: closing Account navigation@56120, Secondary button@56140, Secondary button@56187
+TRUNC @56443 Tabletop adventure: closing Menu navigation@55731, Menu buttons@55842, Secondary button@55935, Product facts@56234, Game fact@56380
+  abs 56462 full cand Tabletop adventure@56443 inBox=true gate=true max=-1 ord=0
+  abs 56480 full cand Tabletop adventure@56443 inBox=true gate=true max=0 ord=1
+  abs 56498 full cand Tabletop adventure@56443 inBox=true gate=true max=1 ord=2
+  abs 56516 full cand Tabletop adventure@56443 inBox=true gate=true max=2 ord=3
+  abs 56534 full cand Tabletop adventure@56443 inBox=true gate=true max=3 ord=4
+  abs 56552 full cand Tabletop adventure@56443 inBox=true gate=true max=4 ord=5
+  abs 56572 full cand Table mat@56552 inBox=true gate=false max=-1 ord=6
+  abs 56572 full cand Tabletop adventure@56443 inBox=true gate=true max=5 ord=6
+  abs 56684 full cand mountain@56671 inBox=true gate=true max=-1 ord=undefined
+TRUNC @56696 Map tile: closing Map tile@56646, mountain@56671
+  abs 56734 full cand mountain@56721 inBox=true gate=true max=-1 ord=undefined
+TRUNC @56746 Map tile: closing Map tile@56696, mountain@56721
+  abs 56784 full cand mountain@56771 inBox=true gate=true max=-1 ord=undefined
+TRUNC @56796 Map tile: closing Map tile@56746, mountain@56771
+  abs 56834 full cand mountain@56821 inBox=true gate=true max=-1 ord=undefined
+  abs 56846 full cand mountain@56821 inBox=false gate=false max=-1 ord=7
+  abs 56846 full cand Map tile@56796 inBox=false gate=false max=0 ord=7
+  abs 56846 full cand Map lands@56626 inBox=false gate=false max=3 ord=7
+  abs 56846 full cand Map paper@56572 inBox=false gate=false max=1 ord=7
+  abs 56846 full cand Table mat@56552 inBox=true gate=false max=-1 ord=7
+  abs 56846 full cand Tabletop adventure@56443 inBox=true gate=true max=6 ord=7
+  abs 57012 full cand Scan placeholder@56988 inBox=false gate=true max=-1 ord=0
+  abs 57012 full cand Creature portrait card@56869 inBox=false gate=false max=1 ord=0
+  abs 57012 full cand Decorative card@56846 inBox=false gate=false max=0 ord=0
+  abs 57012 full cand mountain@56821 inBox=false gate=true max=-1 ord=0
+  abs 57012 full cand Map tile@56796 inBox=false gate=false max=0 ord=0
+  abs 57012 full cand Map lands@56626 inBox=false gate=false max=3 ord=0
+  abs 57012 full cand Map paper@56572 inBox=false gate=false max=1 ord=0
+  abs 57012 full cand Table mat@56552 inBox=true gate=true max=-1 ord=0
+TRUNC @57031 Scan emblem: closing Creature portrait card@56869, Scan placeholder@56988, Abstract landscape@57012
+TRUNC @57073 Type line: closing Tabletop adventure@56443, Table mat@56552, Map paper@56572, Map lands@56626, Map tile@56796, mountain@56821, Decorative card@56846
+TRUNC @57217 Rules text: closing Type line@57073, Creature stats@57117, Defense stat@57160
+  abs 57265 full cand Main menu@55711 inBox=true gate=false max=4 ord=8
+  abs 57265 full cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=8
+  abs 57265 full cand Sound toggle@55294 inBox=false gate=false max=1 ord=8
+  abs 57265 full cand Footer@55252 inBox=false gate=false max=1 ord=8
+  abs 57265 full cand Menu content@54076 inBox=false gate=false max=6 ord=8
+  abs 57265 full cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=8
+  abs 57265 full cand Hero identity@53098 inBox=false gate=false max=11 ord=8
+  abs 57265 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=8
+  abs 57265 corner cand Main menu@55711 inBox=false gate=false max=4 ord=8
+  abs 57265 corner cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=8
+  abs 57265 corner cand Sound toggle@55294 inBox=true gate=false max=1 ord=8
+  abs 57265 corner cand Footer@55252 inBox=true gate=false max=1 ord=8
+  abs 57265 corner cand Menu content@54076 inBox=true gate=false max=6 ord=8
+  abs 57265 corner cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=8
+  abs 57265 corner cand Hero identity@53098 inBox=true gate=false max=11 ord=8
+  abs 57265 corner cand Selected deck detail@52986 inBox=true gate=false max=1 ord=8
+  abs 57265 any cand Main menu@55711 inBox=true gate=false max=4 ord=8
+  abs 57265 any cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=8
+  abs 57265 any cand Sound toggle@55294 inBox=true gate=false max=1 ord=8
+  abs 57265 any cand Footer@55252 inBox=true gate=false max=1 ord=8
+  abs 57265 any cand Menu content@54076 inBox=true gate=false max=6 ord=8
+  abs 57265 any cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=8
+  abs 57265 any cand Hero identity@53098 inBox=true gate=false max=11 ord=8
+  abs 57265 any cand Selected deck detail@52986 inBox=true gate=false max=1 ord=8
+  abs 57429 full cand Scan placeholder@57405 inBox=false gate=true max=-1 ord=0
+  abs 57429 full cand Building portrait card@57288 inBox=false gate=false max=1 ord=0
+  abs 57429 full cand Decorative card@57265 inBox=false gate=false max=0 ord=0
+  abs 57429 full cand Main menu@55711 inBox=true gate=false max=4 ord=0
+  abs 57429 full cand Start Menu Desktop@55358 inBox=false gate=false max=1 ord=0
+  abs 57429 full cand Sound toggle@55294 inBox=false gate=false max=1 ord=0
+  abs 57429 full cand Footer@55252 inBox=false gate=false max=1 ord=0
+  abs 57429 full cand Menu content@54076 inBox=false gate=false max=6 ord=0
+  abs 57429 full cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=0
+  abs 57429 full cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 57429 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 57429 corner cand Scan placeholder@57405 inBox=false gate=true max=-1 ord=0
+  abs 57429 corner cand Building portrait card@57288 inBox=false gate=false max=1 ord=0
+  abs 57429 corner cand Decorative card@57265 inBox=false gate=false max=0 ord=0
+  abs 57429 corner cand Main menu@55711 inBox=false gate=false max=4 ord=0
+  abs 57429 corner cand Start Menu Desktop@55358 inBox=false gate=false max=1 ord=0
+  abs 57429 corner cand Sound toggle@55294 inBox=false gate=false max=1 ord=0
+  abs 57429 corner cand Footer@55252 inBox=false gate=false max=1 ord=0
+  abs 57429 corner cand Menu content@54076 inBox=false gate=false max=6 ord=0
+  abs 57429 corner cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=0
+  abs 57429 corner cand Hero identity@53098 inBox=false gate=false max=11 ord=0
+  abs 57429 corner cand Selected deck detail@52986 inBox=false gate=false max=1 ord=0
+  abs 57429 any cand Scan placeholder@57405 inBox=true gate=true max=-1 ord=0
+  abs 57582 full cand Building portrait card@57288 inBox=false gate=false max=4 ord=9
+  abs 57582 full cand Decorative card@57265 inBox=false gate=false max=0 ord=9
+  abs 57582 full cand Main menu@55711 inBox=true gate=false max=4 ord=9
+  abs 57582 full cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=9
+  abs 57582 full cand Sound toggle@55294 inBox=false gate=false max=1 ord=9
+  abs 57582 full cand Footer@55252 inBox=false gate=false max=1 ord=9
+  abs 57582 full cand Menu content@54076 inBox=false gate=false max=6 ord=9
+  abs 57582 full cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=9
+  abs 57582 full cand Hero identity@53098 inBox=false gate=false max=11 ord=9
+  abs 57582 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=9
+  abs 57582 corner cand Building portrait card@57288 inBox=true gate=false max=4 ord=9
+  abs 57582 corner cand Decorative card@57265 inBox=true gate=false max=0 ord=9
+  abs 57582 corner cand Main menu@55711 inBox=false gate=false max=4 ord=9
+  abs 57582 corner cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=9
+  abs 57582 corner cand Sound toggle@55294 inBox=true gate=false max=1 ord=9
+  abs 57582 corner cand Footer@55252 inBox=true gate=false max=1 ord=9
+  abs 57582 corner cand Menu content@54076 inBox=true gate=false max=6 ord=9
+  abs 57582 corner cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=9
+  abs 57582 corner cand Hero identity@53098 inBox=true gate=false max=11 ord=9
+  abs 57582 corner cand Selected deck detail@52986 inBox=true gate=false max=1 ord=9
+  abs 57582 any cand Building portrait card@57288 inBox=true gate=false max=4 ord=9
+  abs 57582 any cand Decorative card@57265 inBox=true gate=false max=0 ord=9
+  abs 57582 any cand Main menu@55711 inBox=true gate=false max=4 ord=9
+  abs 57582 any cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=9
+  abs 57582 any cand Sound toggle@55294 inBox=true gate=false max=1 ord=9
+  abs 57582 any cand Footer@55252 inBox=true gate=false max=1 ord=9
+  abs 57582 any cand Menu content@54076 inBox=true gate=false max=6 ord=9
+  abs 57582 any cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=9
+  abs 57582 any cand Hero identity@53098 inBox=true gate=false max=11 ord=9
+  abs 57582 any cand Selected deck detail@52986 inBox=true gate=false max=1 ord=9
+  abs 57659 full cand Adventure sticker@57582 inBox=false gate=false max=1 ord=10
+  abs 57659 full cand Building portrait card@57288 inBox=false gate=false max=4 ord=10
+  abs 57659 full cand Decorative card@57265 inBox=false gate=false max=0 ord=10
+  abs 57659 full cand Main menu@55711 inBox=true gate=false max=4 ord=10
+  abs 57659 full cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=10
+  abs 57659 full cand Sound toggle@55294 inBox=false gate=false max=1 ord=10
+  abs 57659 full cand Footer@55252 inBox=false gate=false max=1 ord=10
+  abs 57659 full cand Menu content@54076 inBox=false gate=false max=6 ord=10
+  abs 57659 full cand Start Menu Mobile@53831 inBox=false gate=false max=1 ord=10
+  abs 57659 full cand Hero identity@53098 inBox=false gate=false max=11 ord=10
+  abs 57659 full cand Selected deck detail@52986 inBox=false gate=false max=1 ord=10
+  abs 57659 corner cand Adventure sticker@57582 inBox=true gate=false max=1 ord=10
+  abs 57659 corner cand Building portrait card@57288 inBox=true gate=false max=4 ord=10
+  abs 57659 corner cand Decorative card@57265 inBox=true gate=false max=0 ord=10
+  abs 57659 corner cand Main menu@55711 inBox=false gate=false max=4 ord=10
+  abs 57659 corner cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=10
+  abs 57659 corner cand Sound toggle@55294 inBox=true gate=false max=1 ord=10
+  abs 57659 corner cand Footer@55252 inBox=true gate=false max=1 ord=10
+  abs 57659 corner cand Menu content@54076 inBox=true gate=false max=6 ord=10
+  abs 57659 corner cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=10
+  abs 57659 corner cand Hero identity@53098 inBox=true gate=false max=11 ord=10
+  abs 57659 corner cand Selected deck detail@52986 inBox=true gate=false max=1 ord=10
+  abs 57659 any cand Adventure sticker@57582 inBox=true gate=false max=1 ord=10
+  abs 57659 any cand Building portrait card@57288 inBox=true gate=false max=4 ord=10
+  abs 57659 any cand Decorative card@57265 inBox=true gate=false max=0 ord=10
+  abs 57659 any cand Main menu@55711 inBox=true gate=false max=4 ord=10
+  abs 57659 any cand Start Menu Desktop@55358 inBox=true gate=false max=1 ord=10
+  abs 57659 any cand Sound toggle@55294 inBox=true gate=false max=1 ord=10
+  abs 57659 any cand Footer@55252 inBox=true gate=false max=1 ord=10
+  abs 57659 any cand Menu content@54076 inBox=true gate=false max=6 ord=10
+  abs 57659 any cand Start Menu Mobile@53831 inBox=true gate=false max=1 ord=10
+  abs 57659 any cand Hero identity@53098 inBox=true gate=false max=11 ord=10
+  abs 57659 any cand Selected deck detail@52986 inBox=true gate=false max=1 ord=10
+TRUNC @57729 Footer: closing Main menu@55711, Decorative card@57265, Building portrait card@57288, Adventure sticker@57582, Multiplayer sticker@57659, Filter chip@57682
+  abs 57847 full cand volume-2@57835 inBox=true gate=true max=-1 ord=undefined
+TOP LEVEL CHILDREN:
+- Group 1 @line 1 3700x7423 children 2 total 25 depth 9
+- Type line @line 489 204x16 children 2 total 11 depth 3
+- Primary button @line 718 350x50 children 1 total 2 depth 1
+- Mobile filters drawer @line 768 390x724 children 2 total 55 depth 5
+- Match outcome specimens @line 1960 876x596 children 2 total 59 depth 6
+- Empty and invalid state row @line 3184 1704x313 children 3 total 39 depth 5
+- Custom hero and settings states @line 3981 1704x391 children 6 total 552 depth 10
+- Pannable battlefield @line 15340 390x330 children 2 total 113 depth 18
+- Swipe mini card hand @line 17640 537x150 children 6 total 569 depth 14
+- Room chat @line 29336 338x654 children 1 total 142 depth 10
+- Gallery row @line 32158 350x240 children 4 total 388 depth 12
+- All nineteen decks @line 40191 350x5420 children 19 total 324 depth 5
+- Selected strategy @line 46880 350x84 children 2 total 5 depth 2
+- Primary button @line 46992 350x50 children 4 total 38 depth 7
+- Complete set gallery @line 47759 920x1074 children 4 total 255 depth 6
+- Label @line 52964 312x15 children 0 total 1 depth 0
+- Selected deck detail @line 52986 392x676 children 2 total 217 depth 14
+- Decorative card @line 57265 206x295 children 1 total 14 depth 4
+- Adventure sticker @line 57582 212x96 children 2 total 3 depth 1
+- Multiplayer sticker @line 57659 194x29 children 1 total 3 depth 2
+TOTAL NODES: 2816 | non-root top items: 20 | maxDepth: 19 | fallbacks: 37 | order violations: 0
+FALLBACK×1 #root Type line@489 ord=2 -> __ROOT__
+FALLBACK×1 #loose Rules text@626 ord=3 -> Defense stat@572
+FALLBACK×1 #loose Label@672 ord=3 -> Creature stats@531
+FALLBACK×1 #root Primary button@718 ord=5 -> __ROOT__
+FALLBACK×1 #root Mobile filters drawer@768 ord=1 -> __ROOT__
+FALLBACK×1 #loose Cost filters@1595 ord=8 -> Filters drawer@809
+FALLBACK×1 #root Match outcome specimens@1960 ord=2 -> __ROOT__
+FALLBACK×1 #root Empty and invalid state row@3184 ord=2 -> __ROOT__
+FALLBACK×1 #root Custom hero and settings states@3981 ord=3 -> __ROOT__
+FALLBACK×1 #loose Bonus hero gallery@4135 ord=2 -> Custom hero selection@4001
+FALLBACK×1 #loose Opponent turn state@6296 ord=4 -> Custom hero and settings states@3981
+FALLBACK×1 #loose Kit section@8876 ord=4 -> Design System and UI Kit@6428
+FALLBACK×1 #loose Label@10992 ord=3 -> Card rules@10833
+FALLBACK×1 #loose Card back specimen@12655 ord=4 -> Resource badge primitives@12317
+FALLBACK×1 #root Pannable battlefield@15340 ord=3 -> __ROOT__
+FALLBACK×1 #loose Own hero zone@16921 ord=4 -> Battlefield seam@16836
+FALLBACK×1 #loose Deck and discard@17369 ord=3 -> Action token@17322
+FALLBACK×1 #root Swipe mini card hand@17640 ord=1 -> __ROOT__
+FALLBACK×1 #loose Turn controls@19119 ord=6 -> Swipe mini card hand@17640
+FALLBACK×1 #loose Opponent zone@19501 ord=3 -> Battle table@19423
+FALLBACK×1 #loose Hand tray@22816 ord=6 -> Battle table@19423
+FALLBACK×1 #loose Player slot@25945 ord=3 -> Mobile lobby content@25682
+FALLBACK×1 #root Room chat@29336 ord=1 -> __ROOT__
+FALLBACK×1 #loose Primary button@30080 ord=10 -> Chat heading@29360
+FALLBACK×1 #root Gallery row@32158 ord=1 -> __ROOT__
+FALLBACK×1 #loose Deck actions@34091 ord=6 -> Gallery row@33415
+FALLBACK×1 #loose Vertical deck carousel viewport@40171 ord=2 -> Deck selection content@39977
+FALLBACK×1 #root All nineteen decks@40191 ord=0 -> __ROOT__
+FALLBACK×1 #loose Deck summary@42583 ord=4 -> Deck identity@42341
+FALLBACK×1 #loose Deck summary@45391 ord=4 -> Deck identity@45149
+FALLBACK×1 #root Selected strategy@46880 ord=3 -> __ROOT__
+FALLBACK×1 #root Primary button@46992 ord=4 -> __ROOT__
+FALLBACK×1 #loose Label@47065 ord=5 -> Primary button@46992
+FALLBACK×1 #root Complete set gallery@47759 ord=0 -> __ROOT__
+FALLBACK×1 #root Label@52964 ord=2 -> __ROOT__
+FALLBACK×1 #root Selected deck detail@52986 ord=1 -> __ROOT__
+FALLBACK×1 #loose Tabletop vignette@54579 ord=5 -> Menu content@54076

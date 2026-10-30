@@ -1,0 +1,59 @@
+TOP LEVEL CHILDREN:
+- Group 1 @line 1 3700x7423 children 2 total 25 depth 9
+- Type line @line 489 204x16 children 2 total 11 depth 3
+- Primary button @line 718 350x50 children 1 total 2 depth 1
+- Mobile filters drawer @line 768 390x724 children 2 total 55 depth 5
+- Match outcome specimens @line 1960 876x596 children 2 total 59 depth 6
+- Empty and invalid state row @line 3184 1704x313 children 3 total 39 depth 5
+- Custom hero and settings states @line 3981 1704x391 children 6 total 552 depth 10
+- Pannable battlefield @line 15340 390x330 children 2 total 113 depth 18
+- Swipe mini card hand @line 17640 537x150 children 6 total 569 depth 14
+- Room chat @line 29336 338x654 children 1 total 142 depth 10
+- Gallery row @line 32158 350x240 children 4 total 388 depth 12
+- All nineteen decks @line 40191 350x5420 children 19 total 324 depth 5
+- Selected strategy @line 46880 350x84 children 2 total 5 depth 2
+- Primary button @line 46992 350x50 children 4 total 38 depth 7
+- Complete set gallery @line 47759 920x1074 children 4 total 255 depth 6
+- Label @line 52964 312x15 children 0 total 1 depth 0
+- Selected deck detail @line 52986 392x676 children 2 total 217 depth 14
+- Decorative card @line 57265 206x295 children 1 total 14 depth 4
+- Adventure sticker @line 57582 212x96 children 2 total 3 depth 1
+- Multiplayer sticker @line 57659 194x29 children 1 total 3 depth 2
+TOTAL NODES: 2816 | non-root top items: 20 | maxDepth: 19 | fallbacks: 37 | order violations: 0
+FALLBACK×1 #root Type line@489 ord=2 -> __ROOT__
+FALLBACK×1 #loose Rules text@626 ord=3 -> Defense stat@572
+FALLBACK×1 #loose Label@672 ord=3 -> Creature stats@531
+FALLBACK×1 #root Primary button@718 ord=5 -> __ROOT__
+FALLBACK×1 #root Mobile filters drawer@768 ord=1 -> __ROOT__
+FALLBACK×1 #loose Cost filters@1595 ord=8 -> Filters drawer@809
+FALLBACK×1 #root Match outcome specimens@1960 ord=2 -> __ROOT__
+FALLBACK×1 #root Empty and invalid state row@3184 ord=2 -> __ROOT__
+FALLBACK×1 #root Custom hero and settings states@3981 ord=3 -> __ROOT__
+FALLBACK×1 #loose Bonus hero gallery@4135 ord=2 -> Custom hero selection@4001
+FALLBACK×1 #loose Opponent turn state@6296 ord=4 -> Custom hero and settings states@3981
+FALLBACK×1 #loose Kit section@8876 ord=4 -> Design System and UI Kit@6428
+FALLBACK×1 #loose Label@10992 ord=3 -> Card rules@10833
+FALLBACK×1 #loose Card back specimen@12655 ord=4 -> Resource badge primitives@12317
+FALLBACK×1 #root Pannable battlefield@15340 ord=3 -> __ROOT__
+FALLBACK×1 #loose Own hero zone@16921 ord=4 -> Battlefield seam@16836
+FALLBACK×1 #loose Deck and discard@17369 ord=3 -> Action token@17322
+FALLBACK×1 #root Swipe mini card hand@17640 ord=1 -> __ROOT__
+FALLBACK×1 #loose Turn controls@19119 ord=6 -> Swipe mini card hand@17640
+FALLBACK×1 #loose Opponent zone@19501 ord=3 -> Battle table@19423
+FALLBACK×1 #loose Hand tray@22816 ord=6 -> Battle table@19423
+FALLBACK×1 #loose Player slot@25945 ord=3 -> Mobile lobby content@25682
+FALLBACK×1 #root Room chat@29336 ord=1 -> __ROOT__
+FALLBACK×1 #loose Primary button@30080 ord=10 -> Chat heading@29360
+FALLBACK×1 #root Gallery row@32158 ord=1 -> __ROOT__
+FALLBACK×1 #loose Deck actions@34091 ord=6 -> Gallery row@33415
+FALLBACK×1 #loose Vertical deck carousel viewport@40171 ord=2 -> Deck selection content@39977
+FALLBACK×1 #root All nineteen decks@40191 ord=0 -> __ROOT__
+FALLBACK×1 #loose Deck summary@42583 ord=4 -> Deck identity@42341
+FALLBACK×1 #loose Deck summary@45391 ord=4 -> Deck identity@45149
+FALLBACK×1 #root Selected strategy@46880 ord=3 -> __ROOT__
+FALLBACK×1 #root Primary button@46992 ord=4 -> __ROOT__
+FALLBACK×1 #loose Label@47065 ord=5 -> Primary button@46992
+FALLBACK×1 #root Complete set gallery@47759 ord=0 -> __ROOT__
+FALLBACK×1 #root Label@52964 ord=2 -> __ROOT__
+FALLBACK×1 #root Selected deck detail@52986 ord=1 -> __ROOT__
+FALLBACK×1 #loose Tabletop vignette@54579 ord=5 -> Menu content@54076

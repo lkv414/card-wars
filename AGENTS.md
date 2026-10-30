@@ -42,5 +42,5 @@ pnpm --filter @card-wars/server smoke:bots   # e2e-смоук 2 на 2 с сер
 
 ## Контент
 
-- Каталог карт вшит в проект (`packages/content`); источник правды — папка [`content/`](content) (545 карт, 25 героев, земли; по JSON на сущность + картинки + `index.json`). Сборка каталога — `pnpm --filter @card-wars/content generate` (`tools/build-catalog.mjs`). Никаких ссылок на конкретные карты в коде правил.
+- Каталог карт вшит в проект (`packages/content`); источник правды — папка [`content/`](content) (544 карты, 25 героев, земли; JSON в `json/`, картинки в `images/`, общий `index.json`). Сборка каталога — `pnpm --filter @card-wars/content generate` (`tools/build-catalog.mjs`). Никаких ссылок на конкретные карты в коде правил.
 - Пресеты колод MVP: герой **Бимо** и герой **Билли** (по колоде на каждого).

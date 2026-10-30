@@ -35,9 +35,9 @@ function statValue(value, id, key) {
   return 0;
 }
 
-const cards = readdirSync(join(contentDir, 'cards'))
+const cards = readdirSync(join(contentDir, 'cards', 'json'))
   .filter((file) => file.endsWith('.json'))
-  .map((file) => readJson(join(contentDir, 'cards', file)))
+  .map((file) => readJson(join(contentDir, 'cards', 'json', file)))
   .map((card) => {
     if (!CARD_TYPES.has(card.typeCategory)) fail(`unknown typeCategory ${card.typeCategory} (${card.id})`);
     if (!LAND_TYPES.has(card.landType)) fail(`unknown landType ${card.landType} (${card.id})`);
@@ -79,9 +79,9 @@ const HERO_ABILITIES = {
   },
 };
 
-const heroes = readdirSync(join(contentDir, 'heroes', 'heroes'))
+const heroes = readdirSync(join(contentDir, 'heroes', 'json'))
   .filter((file) => file.endsWith('.json'))
-  .map((file) => readJson(join(contentDir, 'heroes', 'heroes', file)))
+  .map((file) => readJson(join(contentDir, 'heroes', 'json', file)))
   .filter((hero) => hero.typeCategory === 'hero')
   .map((hero) => {
     const text = hero.description ?? '';

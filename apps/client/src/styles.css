@@ -1722,6 +1722,27 @@ button.danger {
   font-size: 13px;
 }
 
+.ui-v2 .deck-row-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ui-v2 .deck-row-main > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-v2 .deck-row-art {
+  width: 26px;
+  height: 36px;
+  flex: none;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
 .ui-v2 .deck-library {
   min-height: 0;
   display: flex;
@@ -1767,6 +1788,7 @@ button.danger {
 .ui-v2 .catalog-card {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 797 / 1104;
   background: var(--ui-bg-elevated);
   border: 1px solid var(--ui-border);
   border-radius: 14px;
@@ -1787,11 +1809,9 @@ button.danger {
 
 .ui-v2 .catalog-add {
   width: 100%;
-  min-height: 86px;
-  padding: 12px 10px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  height: 100%;
+  padding: 0;
+  display: block;
   border-radius: 0;
   background: transparent;
   color: var(--ui-text);
@@ -1799,11 +1819,27 @@ button.danger {
 }
 
 .ui-v2 .catalog-add:hover:not(:disabled) {
-  background: var(--ui-bg-muted);
+  background: transparent;
+}
+
+.ui-v2 .catalog-add:disabled {
+  cursor: default;
+}
+
+.ui-v2 .catalog-add:disabled .catalog-art {
+  opacity: 0.45;
+}
+
+.ui-v2 .catalog-art {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .ui-v2 .catalog-name {
-  padding-right: 52px;
+  display: block;
+  padding: 12px 52px 12px 10px;
   font-size: 13px;
   font-weight: 800;
   color: var(--ui-heading);
@@ -1856,8 +1892,8 @@ button.danger {
   right: 20px;
   bottom: 20px;
   z-index: 30;
-  width: 300px;
-  max-height: 50vh;
+  width: 340px;
+  max-height: calc(100vh - 40px);
   margin: 0;
   padding: 14px;
   overflow-y: auto;
@@ -1867,6 +1903,18 @@ button.danger {
   border-radius: var(--ui-radius-lg);
   box-shadow: var(--ui-shadow);
   color: var(--ui-text);
+}
+
+.ui-v2 .card-preview-art {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+}
+
+.ui-v2 .card-preview-meta {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
 }
 
 /* --- lobby --- */

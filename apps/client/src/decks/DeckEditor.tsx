@@ -198,8 +198,11 @@ export function DeckEditor({
                 if (!card) return null;
                 return (
                   <div key={cardId} className="deck-row" onMouseEnter={() => setHovered(card)}>
-                    <span>
-                      {card.name} <span className="hint">×{count}</span>
+                    <span className="deck-row-main">
+                      {card.image && <img className="deck-row-art" src={card.image} alt="" loading="lazy" />}
+                      <span>
+                        {card.name} <span className="hint">×{count}</span>
+                      </span>
                     </span>
                     <button className="mini danger" onClick={() => removeCard(cardId)} aria-label={`Убрать ${card.name}`}>
                       −
@@ -258,14 +261,26 @@ export function DeckEditor({
                   onMouseEnter={() => setHovered(card)}
                   onMouseLeave={() => setHovered(null)}
                 >
-                  <button className="catalog-add" disabled={count >= CONFIG.copyLimit} onClick={() => addCard(card)}>
-                    <span className="catalog-name">{card.name}</span>
-                    <span className="hint">
-                      {TYPE_RU[card.type]} · {card.cost}д · {LAND_RU[card.landType]}
-                      {card.type === 'creature' ? ` · ${card.attack ?? '—'}/${card.defense ?? '—'}` : ''}
-                    </span>
-                    {count > 0 && <span className="catalog-count">{count}</span>}
+                  <button
+                    className="catalog-add"
+                    disabled={count >= CONFIG.copyLimit}
+                    onClick={() => addCard(card)}
+                    aria-label={`Добавить ${card.name}`}
+                  >
+                    {card.image ? (
+                      <img
+                        className="catalog-art"
+                        src={card.image}
+                        alt={card.name}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    ) : (
+                      <span className="catalog-name">{card.name}</span>
+                    )}
                   </button>
+                  {count > 0 && <span className="catalog-count">{count}</span>}
                   <div className="catalog-buttons">
                     <button className={`mini ${favorite ? 'fav' : ''}`} onClick={() => toggleFavorite(card.id)} aria-label="В избранное">
                       ★
@@ -289,21 +304,14 @@ export function DeckEditor({
 function CardPreview({ card }: { card: CardData }) {
   return (
     <div className="card-preview ui-card">
-      <b>{card.name}</b>
-      <div className="hint">
-        {TYPE_RU[card.type]} · стоимость {card.cost} · {LAND_RU[card.landType]}
+      {card.image ? <img className="card-preview-art" src={card.image} alt={card.name} /> : <b>{card.name}</b>}
+      <div className="card-preview-meta">
+        <b>{card.name}</b>
+        <div className="hint">
+          {TYPE_RU[card.type]} · стоимость {card.cost} · {LAND_RU[card.landType]}
+          {card.type === 'creature' ? ` · ${card.attack ?? '—'}/${card.defense ?? '—'}` : ''}
+        </div>
       </div>
-      {card.type === 'creature' && (
-        <div>
-          АТК {card.attack ?? '—'} / ЗАЩ {card.defense ?? '—'}
-        </div>
-      )}
-      {card.abilities.map((ability, i) => (
-        <div key={i} className="hint">
-          {ability.kind === 'floop' ? 'ПРИЁМ' : 'Пассивно'}: {ability.text}
-        </div>
-      ))}
-      {card.description && <p className="hint">{card.description}</p>}
     </div>
   );
 }

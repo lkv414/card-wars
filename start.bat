@@ -29,13 +29,15 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo [run] Starting server at http://127.0.0.1:8787
-echo       Press Ctrl+C to stop.
-start "" /b powershell -NoProfile -WindowStyle Hidden -Command "$u='http://127.0.0.1:8787/health'; for($i=0;$i -lt 60;$i++){ try { $r=Invoke-WebRequest -UseBasicParsing $u -TimeoutSec 1; if($r.StatusCode -eq 200){ Start-Process 'http://127.0.0.1:8787/'; break } } catch {}; Start-Sleep -Milliseconds 500 }"
-call pnpm --filter @card-wars/server dev -- --port 8787
+echo [run] Starting server in a separate visible window "Card Wars Server"...
+start "Card Wars Server" cmd /k "cd /d ""%~dp0"" && call pnpm --filter @card-wars/server dev -- --port 8787"
+
+echo       Waiting for http://127.0.0.1:8787 ...
+powershell -NoProfile -Command "$u='http://127.0.0.1:8787/health'; for($i=0;$i -lt 60;$i++){ try { $r=Invoke-WebRequest -UseBasicParsing $u -TimeoutSec 1; if($r.StatusCode -eq 200){ Start-Process 'http://127.0.0.1:8787/'; break } } catch {}; Start-Sleep -Milliseconds 500 }"
 
 echo.
-echo [done] Server stopped.
+echo [done] Server is running in the "Card Wars Server" window.
+echo        Close that window to stop the server session.
 pause
 exit /b 0
 

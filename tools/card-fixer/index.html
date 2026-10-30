@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Card Wars — сверка карт</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Card Wars · сверка карт</div>
+    <div class="controls">
+      <label class="pack-label">Пак
+        <select id="pack"></select>
+      </label>
+      <label class="filter-check"><input id="only-unchecked" type="checkbox"> только непроверенные</label>
+      <input id="search" type="search" placeholder="Поиск по имени или файлу" autocomplete="off">
+      <div class="progress" title="Отмечено проверенными в текущем паке">
+        <span id="progress-text">0 / 0</span>
+        <div class="bar"><i id="progress-bar"></i></div>
+      </div>
+      <button id="undo" class="ghost" type="button">Отменить обмен</button>
+    </div>
+  </header>
+
+  <main>
+    <p class="hint">
+      Клик по двум картам → «Поменять местами». Меняются все поля, кроме <code>file</code> и <code>sha256</code>.
+      <b>✓</b> — отметить проверенной, <b>↻</b> — повернуть картинку, <b>⤢</b> — открыть крупно.
+    </p>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty hidden">Нет карт по фильтру.</div>
+  </main>
+
+  <div id="swap-panel" class="swap-panel hidden">
+    <div id="swap-a" class="swap-col"></div>
+    <div class="swap-actions">
+      <button id="swap-btn" class="primary" type="button">Поменять местами</button>
+      <button id="clear-sel" class="ghost" type="button">Снять выбор</button>
+      <div class="swap-note">Все поля, кроме file и sha256</div>
+    </div>
+    <div id="swap-b" class="swap-col"></div>
+  </div>
+
+  <div id="lightbox" class="lightbox hidden">
+    <button id="lightbox-close" class="lightbox-close" type="button" aria-label="Закрыть">×</button>
+    <div class="lightbox-body">
+      <div id="lightbox-art" class="lightbox-art"></div>
+      <div id="lightbox-meta" class="lightbox-meta"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

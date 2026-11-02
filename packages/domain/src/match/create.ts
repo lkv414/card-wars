@@ -172,6 +172,7 @@ export function createMatch(
     mulliganDecisions: {},
     pending: null,
     abilityUses: {},
+    turnBuffs: [],
     winners: null,
     finishReason: null,
   };

@@ -52,9 +52,10 @@ export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.phase = 'main';
 }
 
-/** Burn leftovers, drop spell visuals, pass to the next team/player. */
+/** Burn leftovers, drop spell visuals and this-turn buffs, pass to the next team/player. */
 export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.castSpells = [];
+  draft.turnBuffs = [];
   for (const pid of draft.activePlayers) player(draft, pid).actions = 0;
 
   const current = draft.activePlayers;

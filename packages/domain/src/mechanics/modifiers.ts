@@ -1,7 +1,7 @@
 import { instance } from '../util';
 import type { Ctx } from '../util';
 import type { CardData, MatchState } from '../types';
-import { opponentZoneFor } from '../zones';
+import { opponentsOf, opponentZoneFor } from '../zones';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type {
@@ -131,7 +131,42 @@ export function conditionsHold(
         break;
       }
       case 'while_distinct_lands': {
-        if (distinctLandTypes(p.lands.map((l) => l.type)) < cond.min) return false;
+        const distinct = distinctLandTypes(p.lands.map((l) => l.type));
+        if (cond.min !== undefined && distinct < cond.min) return false;
+        if (cond.max !== undefined && distinct > cond.max) return false;
+        break;
+      }
+      case 'while_self_flipped': {
+        const src = source.instanceId ? instance(draft, source.instanceId) : null;
+        if (!src || !src.flipped) return false;
+        break;
+      }
+      case 'while_opponents_hand_empty': {
+        const anyCards = opponentsOf(draft, source.player).some(
+          (pid) => draft.players[pid]!.hand.length > 0,
+        );
+        if (anyCards) return false;
+        break;
+      }
+      case 'while_no_other_creatures': {
+        for (const pid of draft.order) {
+          for (const zone of draft.players[pid]!.zones) {
+            if (zone.creature && zone.creature !== source.instanceId) return false;
+          }
+        }
+        break;
+      }
+      case 'while_empty_lands': {
+        const empty = p.zones.filter((z) => !z.creature).length;
+        if (empty < cond.min) return false;
+        break;
+      }
+      case 'while_on_flipped_land': {
+        const id = cond.scope === 'self' ? source.instanceId : targetInstanceId;
+        if (!id) return false;
+        const inst = instance(draft, id);
+        if (inst.zone === null) return false;
+        if (!draft.players[inst.controller]!.lands[inst.zone]!.flipped) return false;
         break;
       }
       case 'while_land_count': {

@@ -1,0 +1,15 @@
+{
+ "cardId": "bmo_card_10",
+ "name": "Лысый бродяга",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": {
+    "op": "discard_top_deck",
+    "count": 1
+   },
+   "text": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса."
+  }
+ ]
+}

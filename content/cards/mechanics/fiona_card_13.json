@@ -1,0 +1,20 @@
+{
+ "cardId": "fiona_card_13",
+ "name": "Пси-фехтовальщик",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 3
+   },
+   "optional": true,
+   "text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу."
+  }
+ ]
+}

@@ -87,7 +87,7 @@ export interface AbilitySpec {
 
 ## 3. Гибрид: EffectSpec + именованные механики
 
-- **EffectSpec** (~25 операций): `deal_damage` (существо/игрок, `pierce`), `heal` (кап 25 — из CONFIG), `draw_cards`, `discard_from_hand` (выбор/случайно), `mill_deck_top`, `return_from_discard` (в руку/в игру, фильтр), `destroy`, `move_creature`, `gain_actions`, `gain_shield`, `freeze_land` / `unfreeze_land` / `flip_land`, `stat_buff` (аура / навсегда / этот ход), `reveal_deck_top`, `reorder_deck_top`, `play_for_free`, `put_card_from_hand_to_deck`, … — расширяется по мере разбора каталога; каждая операция документируется в [MECHANICS.md](./MECHANICS.md).
+- **EffectSpec** (~25 операций): `deal_damage` (существо/игрок, `pierce`, фильтр целей по земле зоны), `heal` (существо — снимает урон; игрок — до maxLives), `draw_cards` (величина/цель-игрок), `discard_top_deck`, `opponent_discards` (величина), `discard_from_hand` (выбор/случайно), `return_from_discard`, `destroy`, `move_creature`, `gain_actions`, `gain_shield`, `freeze_land` / `unfreeze_land` / `flip_land` (вверх/вниз), `stat_buff` (аура / навсегда / этот ход — turnBuffs, сгорают в конце хода), `reveal_deck_top`, `reorder_deck_top`, `play_for_free`, `put_card_from_hand_to_deck`, `win_if_opponents_deck_empty` (герой Билли), … — расширяется по мере разбора каталога; каждая операция документируется в [MECHANICS.md](./MECHANICS.md). Числа-параметры операций (`amount`, `count`) — тоже динамические величины.
 - **Модификаторы стоимости и земель** (сканируются в точке оплаты, docs/MECHANICS-V2.md §2А): `cost_mod` — `±N` к стоимости разыгрываемой карты (self-карта: Остролист −2 при условии, Домик из разного дерева −1 за каждое готовое существо); `land_count_mod` — «считается за дополнительную землю» (Ферма +1 corn).
 - **Динамические величины** `StatAmount`: число | `{ per_discard: { every, amount } }` («за каждые 5 карт в сбросе») | `{ per_target: { target, amount, excludeSelf?, filter? } }` («за каждое применённое существо», «за каждую другую Бочку»); фильтры: `ready` (не флюпнутое), `landType`, `sameCard`.
 - **TargetRef** пополняется `each_building_yours` (Нефтяная Вышка).
@@ -108,7 +108,7 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 
 ## 5. Таргетинг активных способностей
 
-- Способность декларирует `targets: TargetSpec[]` — упорядоченный список требований (`chosen_creature`, `chosen_opponent_creature`, `chosen_opponent`, `chosen_landscape`, `chosen_own_creature`, …). Статические цели (`this_creature`, `adjacent_creature`, `each_*`, `this_lane_*`) в список входов не входят.
+- Способность декларирует `targets: TargetAsk[]` — упорядоченный список требований (`own_creature`, `opponent_creature`, `any_creature`, `lane_creature`, `lane_opponent_creature`, `opponent_player`, `landscape`, `own_hand_card`); дополнительные стоимости (`discardFromHand`, `destroyOwnCreature`, `destroyOwnBuilding`) добавляют свои выборы **перед** объявленными. Статические цели (`this_creature`, `adjacent_creature`, `each_*`, `this_lane_*`) в список входов не входят.
 - Клиент по `targets` рисует последовательный выбор («Цель 1/2…»), отправляет **одну** команду `floop`/`play_card` с `targets: TargetChoice[]` (позиция в массиве = позиция в `targets`).
 - Domain валидирует весь набор **атомарно** до применения: каждый выбор против своего spec (тип, сторона, локация, легальность) → иначе отказ `target_required` / `invalid_choice`, состояние не меняется.
 - `TargetChoice`-протокол расширяет текущий `CommandChoices`; zod — только в protocol-пакете.
@@ -134,7 +134,7 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 
 ## 7. Условия
 
-`ConditionSpec`: `if_discard_count`, `while_discard_count`, `while_undamaged` (scope `self`/`target`), `while_damage_exactly` (scope `self`), `while_lane_empty_opponent`, `while_single_land_type` (Фиона), `while_land_type_present` (Гантер), `if_card_in_discard`, `while_turn_phase`, `per_discard_every` (динамические величины ±N за каждые K) — пополняется по каталогу; значения счётчиков — из CONFIG. Условия аур проверяются **по каждому кандидату-цели** (Мельница процветания: цель не повреждена).
+`ConditionSpec`: `if_discard_count`, `while_discard_count`, `while_undamaged` (scope `self`/`target`), `while_damage_exactly` / `while_damage_at_least` (scope `self`/`target`), `while_lane_empty_opponent`, `while_on_land_type`, `while_on_flipped_land` (Джейк), `while_distinct_lands` (min/max — Фиона, Присмо, Лимонное желе), `while_land_count` (min/max), `while_zone_has_building`, `while_empty_lands` (Лимонграб), `while_self_flipped` (Огненное торнадо), `while_opponents_hand_empty` (Митик), `while_no_other_creatures` (Одинокая панда), `if_card_in_discard`, `while_turn_phase` — пополняется по каталогу. Условия аур проверяются **по каждому кандидату-цели** (Мельница процветания, Марселин).
 
 ## 8. Скрытие информации и события
 

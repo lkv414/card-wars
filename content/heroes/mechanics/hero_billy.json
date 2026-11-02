@@ -1,0 +1,12 @@
+{
+ "heroId": "hero_billy",
+ "name": "Билли",
+ "ability": {
+  "kind": "passive",
+  "trigger": "start_of_turn",
+  "effect": {
+   "op": "win_if_opponents_deck_empty"
+  },
+  "text": "Если к началу твоего хода колода каждого противника опустела — победа."
+ }
+}

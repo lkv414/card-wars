@@ -136,6 +136,62 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'sac-drawer',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'active', additionalCost: { destroyOwnCreature: 1 }, effect: { op: 'draw_cards', count: 1 }, text: 'Уничтожь своё существо >>> тяни карту' },
+    ],
+  }),
+  card({
+    id: 'lane-sniper',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        cost: 1,
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 2 },
+        targets: [{ kind: 'lane_opponent_creature' }],
+        text: 'Потрать 1 действие >>> 2 урона существу противника на этой линии',
+      },
+    ],
+  }),
+  card({
+    id: 'turn-buffer',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'active', effect: { op: 'stat_buff', target: { kind: 'this_creature' }, stat: 'attack', amount: 3, duration: 'this_turn' }, text: 'ПРИЕМ >>> +3 АТК в этот ход' },
+    ],
+  }),
+  card({
+    id: 'turn-chooser',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'start_of_turn',
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 1 },
+        targets: [{ kind: 'opponent_creature' }],
+        text: 'В начале хода — 1 урон выбранному существу противника',
+      },
+    ],
+  }),
+  card({
     id: 'companion-pair',
     type: 'companion',
     cost: 1,

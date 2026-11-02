@@ -89,7 +89,18 @@
   "attack": 0,
   "defense": 10,
   "description": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "discard_top_deck",
+     "count": 1
+    },
+    "text": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса."
+   }
+  ]
  },
  {
   "id": "bmo_card_12",
@@ -148,7 +159,26 @@
   "attack": 1,
   "defense": 10,
   "description": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": 3
+    },
+    "conditions": [
+     {
+      "kind": "while_opponents_hand_empty"
+     }
+    ],
+    "text": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке."
+   }
+  ]
  },
  {
   "id": "bmo_card_18",
@@ -203,7 +233,31 @@
   "attack": 1,
   "defense": 7,
   "description": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     }
+    },
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     }
+    ],
+    "text": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "bmo_card_22",
@@ -339,7 +393,27 @@
   "landType": "swamp",
   "image": "/content/cards/images/bmo_card_36.png",
   "description": "Каждое твое существо получает +1 ATK этот ход за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "this_turn"
+    },
+    "text": "Каждое твое существо получает +1 ATK этот ход за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "bmo_card_38",
@@ -480,7 +554,24 @@
   "attack": 1,
   "defense": 4,
   "description": "В начале своего хода, восстанови 1 HP за каждый различный тип земли под твоим контролем (но не более 25).",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "self_player"
+     },
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     }
+    },
+    "text": "В начале своего хода, восстанови 1 HP за каждый различный тип земли под твоим контролем (но не более 25)."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_10",
@@ -492,7 +583,21 @@
   "attack": 2,
   "defense": 7,
   "description": "Когда Пироклоп вступает в игру, восстанови 1 урон с каждого соседнего существа.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "amount": 1
+    },
+    "text": "Когда Пироклоп вступает в игру, восстанови 1 урон с каждого соседнего существа."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_12",
@@ -547,7 +652,25 @@
   "attack": 2,
   "defense": 7,
   "description": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 1,
+      "scope": "self"
+     }
+    ],
+    "text": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_18",
@@ -623,7 +746,20 @@
   "attack": 0,
   "defense": 6,
   "description": "ПРИЕМ >>> Восстанови себе 1 HP. (Но не более 25.)",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "self_player"
+     },
+     "amount": 1
+    },
+    "text": "ПРИЕМ >>> Восстанови себе 1 HP. (Но не более 25.)"
+   }
+  ]
  },
  {
   "id": "bubblegum_card_22",
@@ -828,7 +964,38 @@
   "landType": "corn",
   "image": "/content/cards/images/cake_card_9.png",
   "description": "Выбранное существо получает +2 ATK в этом ходу за каждое примененное существо под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 2,
+      "filter": {
+       "ready": true
+      }
+     },
+     "duration": "this_turn"
+    },
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Выбранное существо получает +2 ATK в этом ходу за каждое примененное существо под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_11",
@@ -958,7 +1125,26 @@
   "attack": 1,
   "defense": 7,
   "description": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера."
+   }
+  ]
  },
  {
   "id": "cake_card_22",
@@ -1149,7 +1335,23 @@
   "attack": 1,
   "defense": 5,
   "description": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_building_yours"
+      },
+      "amount": 1
+     }
+    },
+    "text": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_33",
@@ -1173,7 +1375,26 @@
   "attack": 1,
   "defense": 5,
   "description": "ПРИЕМ >>> Нанеси 2 урона выбранному существу противника на этой линии.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "targets": [
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Нанеси 2 урона выбранному существу противника на этой линии."
+   }
+  ]
  },
  {
   "id": "cake_card_36",
@@ -1185,7 +1406,31 @@
   "attack": 0,
   "defense": 10,
   "description": "ПРИЕМ >>> Огненное торнадо получает +3 ATK пока применено.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "text": "ПРИЕМ >>> Огненное торнадо получает +3 ATK пока применено."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "conditions": [
+     {
+      "kind": "while_self_flipped"
+     }
+    ],
+    "text": "Огненное торнадо получает +3 ATK пока применено."
+   }
+  ]
  },
  {
   "id": "cake_card_38",
@@ -1197,7 +1442,27 @@
   "attack": 3,
   "defense": 6,
   "description": "Когда лесоруб вступает в игру, нанеси 1 урон противнику за каждое строение под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_building_yours"
+      },
+      "amount": 1
+     }
+    },
+    "text": "Когда лесоруб вступает в игру, нанеси 1 урон противнику за каждое строение под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_40",
@@ -1637,7 +1902,26 @@
   "attack": 1,
   "defense": 5,
   "description": "ПРИЕМ >>> Тяни карту за каждое примененное существо под твоим контролем (включая это).",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "filter": {
+       "ready": true
+      }
+     }
+    },
+    "text": "ПРИЕМ >>> Тяни карту за каждое примененное существо под твоим контролем (включая это)."
+   }
+  ]
  },
  {
   "id": "finn_card_9",
@@ -1748,7 +2032,24 @@
   "attack": 3,
   "defense": 4,
   "description": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этом ходу.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": -10,
+     "duration": "this_turn"
+    },
+    "cost": 1,
+    "text": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этом ходу."
+   }
+  ]
  },
  {
   "id": "finn_card_22",
@@ -1926,7 +2227,23 @@
   "attack": 1,
   "defense": 8,
   "description": "Когда одинокая панда вступает в игру и под твоим контролем нет других существ, тяни карту.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "conditions": [
+     {
+      "kind": "while_no_other_creatures"
+     }
+    ],
+    "text": "Когда одинокая панда вступает в игру и под твоим контролем нет других существ, тяни карту."
+   }
+  ]
  },
  {
   "id": "fiona_card_13",
@@ -1938,7 +2255,23 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "optional": true,
+    "text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу."
+   }
+  ]
  },
  {
   "id": "fiona_card_14",
@@ -2203,7 +2536,23 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Бесполезных болотах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneLandType": "swamp"
+     }
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Бесполезных болотах."
+   }
+  ]
  },
  {
   "id": "ftg_card_3",
@@ -2524,7 +2873,23 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на милой земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneLandType": "good"
+     }
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на милой земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_33",
@@ -2608,7 +2973,30 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда золотой ниндзя вступает в игру, нанеси 1 урон выбранному существу за каждый различный тип земли под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     }
+    },
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Когда золотой ниндзя вступает в игру, нанеси 1 урон выбранному существу за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_40",
@@ -2662,7 +3050,25 @@
   "attack": 1,
   "defense": 1,
   "description": "Когда Капитан Тако вступает в игру, нанеси 1 урон каждому существу не на кукурузной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneLandType": "corn",
+      "negate": true
+     }
+    },
+    "text": "Когда Капитан Тако вступает в игру, нанеси 1 урон каждому существу не на кукурузной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_43",
@@ -2720,7 +3126,23 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Песчаных землях.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneLandType": "sand"
+     }
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Песчаных землях."
+   }
+  ]
  },
  {
   "id": "ftg_card_50",
@@ -3062,7 +3484,23 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Голубых равнинах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneLandType": "blue"
+     }
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Голубых равнинах."
+   }
+  ]
  },
  {
   "id": "ftg_card_76",
@@ -3098,7 +3536,31 @@
   "attack": 0,
   "defense": 7,
   "description": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое соседнее к этой линии Кукурузное поле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_lands",
+      "where": "adjacent",
+      "amount": 1,
+      "landType": "corn"
+     }
+    },
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое соседнее к этой линии Кукурузное поле."
+   }
+  ]
  },
  {
   "id": "ftg_card_79",
@@ -3338,7 +3800,23 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Нанеси 1 Урон каждому существу противника на Кукурузной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneLandType": "corn"
+     }
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 Урон каждому существу противника на Кукурузной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_101",
@@ -3410,7 +3888,21 @@
   "attack": 3,
   "defense": 8,
   "description": "Когда Старик-разбойник вступает в игру, каждый игрок сбрасывает 2 карты.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "each_player"
+     },
+     "count": 2
+    },
+    "text": "Когда Старик-разбойник вступает в игру, каждый игрок сбрасывает 2 карты."
+   }
+  ]
  },
  {
   "id": "ftg_card_108",
@@ -4621,7 +5113,26 @@
   "attack": 2,
   "defense": 10,
   "description": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "amount": 1,
+      "landType": "corn"
+     }
+    },
+    "text": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем."
+   }
+  ]
  },
  {
   "id": "jake_card_23",
@@ -4633,7 +5144,21 @@
   "attack": 1,
   "defense": 10,
   "description": "В начале твоего хода каждый игрок тянет карту.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1,
+     "target": {
+      "kind": "each_player"
+     }
+    },
+    "text": "В начале твоего хода каждый игрок тянет карту."
+   }
+  ]
  },
  {
   "id": "jake_card_25",
@@ -4718,7 +5243,26 @@
   "attack": 1,
   "defense": 4,
   "description": "ПРИЕМ >>> Переверни выбранную землю под твоим контролем лицом вверх.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "down": false
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "ПРИЕМ >>> Переверни выбранную землю под твоим контролем лицом вверх."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_3",
@@ -4864,7 +5408,27 @@
   "attack": 2,
   "defense": 7,
   "description": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контролем.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "amount": 1,
+      "landType": "corn"
+     }
+    },
+    "cost": 1,
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контролем."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_20",
@@ -5141,7 +5705,27 @@
   "attack": 0,
   "defense": 9,
   "description": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 4
+    },
+    "targets": [
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ],
+    "text": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_16",
@@ -5153,7 +5737,17 @@
   "attack": 2,
   "defense": 7,
   "description": "ПРИЕМ >>> Получи 1 Действие в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "gain_actions",
+     "amount": 1
+    },
+    "text": "ПРИЕМ >>> Получи 1 Действие в этом ходу."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_17",
@@ -6079,7 +6673,26 @@
   "landType": "swamp",
   "image": "/content/cards/images/lsp_card_2.png",
   "description": "ПРИЕМ >>> Если у противника нет существа на этой линии, то он сбрасывает карту.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "count": 1
+    },
+    "conditions": [
+     {
+      "kind": "while_lane_empty_opponent"
+     }
+    ],
+    "text": "ПРИЕМ >>> Если у противника нет существа на этой линии, то он сбрасывает карту."
+   }
+  ]
  },
  {
   "id": "lsp_card_3",
@@ -6380,7 +6993,30 @@
   "landType": "swamp",
   "image": "/content/cards/images/marceline_card_2.png",
   "description": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": -1
+     }
+    },
+    "text": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие."
+   },
+   {
+    "kind": "active",
+    "effect": {
+     "op": "gain_actions",
+     "amount": 1
+    },
+    "text": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие."
+   }
+  ]
  },
  {
   "id": "marceline_card_3",
@@ -6988,7 +7624,21 @@
   "attack": 1,
   "defense": 6,
   "description": "Потрать 1 Действие, ПРИЕМ >>>\nНанеси 1 урон каждому существу противника в игре.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1
+    },
+    "cost": 1,
+    "text": "Потрать 1 Действие, ПРИЕМ >>>"
+   }
+  ]
  },
  {
   "id": "monika_card_35",

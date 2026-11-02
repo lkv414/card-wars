@@ -1,0 +1,24 @@
+{
+ "cardId": "jake_2v2_card_19",
+ "name": "Королевский малыш",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": {
+     "kind": "per_lands",
+     "where": "own",
+     "amount": 1,
+     "landType": "corn"
+    }
+   },
+   "cost": 1,
+   "text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контролем."
+  }
+ ]
+}

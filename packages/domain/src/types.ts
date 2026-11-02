@@ -109,6 +109,13 @@ export interface TeamState {
   eliminated: boolean;
 }
 
+export interface TurnBuff {
+  instanceId: string;
+  stat: 'attack' | 'defense';
+  amount: number;
+  grantedOnTurn: number;
+}
+
 export interface MatchState {
   status: MatchStatus;
   phase: Phase;
@@ -130,6 +137,8 @@ export interface MatchState {
   castSpells: string[];
   /** Paused transition awaiting a player's decision (docs/MECHANICS-V2.md §6). */
   pending: PendingChoice | null;
+  /** «Этот ход» stat buffs; cleared at end of turn (docs/MECHANICS-V2.md §3). */
+  turnBuffs: TurnBuff[];
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

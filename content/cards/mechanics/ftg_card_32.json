@@ -1,0 +1,20 @@
+{
+ "cardId": "ftg_card_32",
+ "name": "Желтый гном",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "each_creature_opponent"
+    },
+    "amount": 1,
+    "filter": {
+     "zoneLandType": "good"
+    }
+   },
+   "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на милой земле."
+  }
+ ]
+}

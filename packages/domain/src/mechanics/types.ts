@@ -42,6 +42,10 @@ export type TargetAskKind =
   | 'own_creature'
   | 'opponent_creature'
   | 'any_creature'
+  /** Creature in the source's lane, either side (Док Смерть, Уни-рыцарь). */
+  | 'lane_creature'
+  /** Opponent creature in the source's lane (Острый парень, Песчаный змей). */
+  | 'lane_opponent_creature'
   | 'opponent_player'
   | 'landscape'
   | 'own_hand_card';
@@ -68,6 +72,8 @@ export type TargetRef =
   | { kind: 'each_creature_opponent' }
   | { kind: 'each_creature' }
   | { kind: 'each_building_yours' }
+  | { kind: 'each_player' }
+  | { kind: 'each_opponent_player' }
   | { kind: 'self_player' };
 
 export type StatKey = 'attack' | 'defense';
@@ -82,6 +88,10 @@ export interface TargetFilter {
   sameCard?: boolean;
   /** Only these cards (Мамуля камнепух counts Малышей — data-level cross-reference). */
   cardIds?: string[];
+  /** Match by the target's ZONE land type instead of the card (гномы). */
+  zoneLandType?: LandType;
+  /** Invert the match (Капитан Тако: не на кукурузной земле). */
+  negate?: boolean;
 }
 
 /** Dynamic stat amounts (docs/MECHANICS-V2.md §3). */
@@ -118,12 +128,17 @@ export type ConditionSpec =
   | { kind: 'while_discard_count'; min: number }
   | { kind: 'while_undamaged'; scope: 'self' | 'target' }
   | { kind: 'while_damage_exactly'; amount: number; scope: 'self' | 'target' }
-  | { kind: 'while_damage_at_least'; amount: number; scope: 'self' }
+  | { kind: 'while_damage_at_least'; amount: number; scope: 'self' | 'target' }
   | { kind: 'while_lane_empty_opponent' }
+  | { kind: 'while_self_flipped' }
+  | { kind: 'while_opponents_hand_empty' }
+  | { kind: 'while_no_other_creatures' }
+  | { kind: 'while_empty_lands'; min: number }
+  | { kind: 'while_on_flipped_land'; scope: 'self' | 'target' }
   /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
   | { kind: 'while_on_land_type'; landType: LandType }
   /** At least min distinct land types under control (Лимонное желе). */
-  | { kind: 'while_distinct_lands'; min: number }
+  | { kind: 'while_distinct_lands'; min?: number; max?: number }
   /** Land count of a type under control within [min..max] (Кукурузный пес). */
   | { kind: 'while_land_count'; landType: LandType; min?: number; max?: number }
   /** Own building in the source's zone (Кукурузный чемпион). */
@@ -133,6 +148,10 @@ export type ConditionSpec =
 export interface AdditionalCost {
   /** Discard n cards from own hand (Бимо: «Сбрось карту с руки >>> …»). */
   discardFromHand?: number;
+  /** Sacrifice n own creatures (Док Смерть, Заводской убийца). */
+  destroyOwnCreature?: number;
+  /** Sacrifice n own buildings (Стрелец Дэника). */
+  destroyOwnBuilding?: number;
 }
 
 /**
@@ -140,14 +159,17 @@ export interface AdditionalCost {
  * milestone; unimplemented ops are rejected by the interpreter until coded.
  */
 export type EffectSpec =
-  | { op: 'deal_damage'; target: TargetRef; amount: number; pierce?: boolean }
-  | { op: 'draw_cards'; count: number }
+  | { op: 'deal_damage'; target: TargetRef; amount: StatAmount; pierce?: boolean; filter?: TargetFilter }
+  | { op: 'heal'; target: TargetRef; amount: StatAmount }
+  | { op: 'draw_cards'; count: StatAmount; target?: TargetRef }
+  | { op: 'discard_top_deck'; count: StatAmount }
+  | { op: 'opponent_discards'; target: TargetRef; count: StatAmount }
   | {
       op: 'stat_buff';
       target: TargetRef;
       stat: StatKey;
       amount: StatAmount;
-      duration: 'permanent' | 'aura';
+      duration: 'permanent' | 'aura' | 'this_turn';
       /** Aura target filter (Фея Шепард: только милые существа). */
       filter?: TargetFilter;
       /** Defense floor for the affected creature (Угнетающая пирамида: не ниже 1). */
@@ -155,6 +177,10 @@ export type EffectSpec =
     }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
   | { op: 'gain_actions'; amount: number }
+  /** Turn a land face up (Бигфут) or face down (Воронка, Червь шелухи). */
+  | { op: 'flip_land'; target: TargetRef; down: boolean }
+  /** Win check (герой Билли): all opponents' decks are empty at the trigger point. */
+  | { op: 'win_if_opponents_deck_empty' }
   /** Cost modifier scanned at payment time (Остролист, Домик из разного дерева). */
   | { op: 'cost_mod'; self: true; amount: StatAmount }
   /** «Считается за дополнительную землю» (Ферма). */

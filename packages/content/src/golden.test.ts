@@ -222,6 +222,124 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(computeEff(s, deps, aId).defense).toBe(5 + 1);
   });
 
+  it('Милашка: флюп лечит игрока (жизни 25 → 24 → 25)', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lives = 24;
+      d.round = 2; // флюп запрещён в первом круге для первого игрока
+      d.players.p1!.lands = [
+        { type: 'good', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'bubblegum_card_20');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bubblegum_card_20'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const res2 = applyCommand(res.state, { type: 'floop', player: 'p1', instanceId: res.state.players.p1!.zones[0]!.creature! }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    expect(res2.state.players.p1!.lives).toBe(25);
+  });
+
+  it('Лысый бродяга: в начале хода верхняя карта колоды — в сброс', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'swamp', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'bmo_card_10');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_10'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const deckBefore = res.state.players.p1!.deck.length;
+    const discardBefore = res.state.players.p1!.discard.length;
+    // пропускаем ход p1 и ход p2: снова ход p1 — триггер сработал
+    let s2 = applyCommand(res.state, { type: 'go_battle', player: 'p1' }, deps);
+    expect(s2.ok).toBe(true);
+    if (!s2.ok) return;
+    s2 = applyCommand(s2.state, { type: 'go_battle', player: 'p2' }, deps);
+    expect(s2.ok).toBe(true);
+    if (!s2.ok) return;
+    expect(s2.state.players.p1!.deck.length).toBe(deckBefore - 2); // добор хода + мельница
+    expect(s2.state.players.p1!.discard.length).toBe(discardBefore + 1); // только мельница
+  });
+
+  it('гномы: урон только существам противника на земле нужного типа', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'swamp', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+      d.round = 2; // флюп запрещён в первом круге для первого игрока
+      // существо p2 на болоте (зона 0 зеркальна зоне 3 p1? — ставим p2 напрямую)
+      const p2 = d.players.p2!;
+      const a = p2.deck[0]!;
+      const b = p2.deck[1]!;
+      for (const [id, zone] of [[a, 0], [b, 1]] as const) {
+        d.instances[id]!.location = 'field';
+        d.instances[id]!.zone = zone;
+        d.instances[id]!.slot = 'creature';
+        p2.zones[zone]!.creature = id;
+      }
+      d.players.p2!.lands[0]!.type = 'swamp';
+      d.players.p2!.lands[1]!.type = 'blue';
+    });
+    s = forceToHand(s, 'p1', 'ftg_card_2'); // Голубой гном: ПРИЕМ — 1 урон каждому существу противника на Бесполезных болотах
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ftg_card_2'), zone: 2 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const swampId = res.state.players.p2!.zones[0]!.creature!;
+    const blueId = res.state.players.p2!.zones[1]!.creature!;
+    const gnomeId = res.state.players.p1!.zones[2]!.creature!;
+    const floop = applyCommand(res.state, { type: 'floop', player: 'p1', instanceId: gnomeId }, deps);
+    expect(floop.ok).toBe(true);
+    if (!floop.ok) return;
+    const state = floop.state;
+    expect(state.instances[swampId]!.damage).toBe(1);
+    expect(state.instances[blueId]!.damage).toBe(0);
+  });
+
+  it('герой Бимо: сброс карты с руки >>> 1 урон выбранному существу; раз за ход', () => {
+    let s = newMatch();
+    s = edit(s, (d) => {
+      d.players.p1!.heroId = 'hero_bmo';
+      const p2 = d.players.p2!;
+      const a = p2.deck[0]!;
+      d.instances[a]!.location = 'field';
+      d.instances[a]!.zone = 0;
+      d.instances[a]!.slot = 'creature';
+      p2.zones[0]!.creature = a;
+    });
+    const creatureId = s.players.p2!.zones[0]!.creature!;
+    const discardId = s.players.p1!.hand[0]!;
+    const res = applyCommand(
+      s,
+      { type: 'hero_ability', player: 'p1', targets: [{ kind: 'card', instanceId: discardId }, { kind: 'creature', instanceId: creatureId }] },
+      deps,
+    );
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.state.instances[creatureId]!.damage).toBe(1);
+    expect(res.state.players.p1!.hand).not.toContain(discardId);
+    const again = applyCommand(
+      res.state,
+      { type: 'hero_ability', player: 'p1', targets: [{ kind: 'card', instanceId: res.state.players.p1!.hand[0]! }, { kind: 'creature', instanceId: creatureId }] },
+      deps,
+    );
+    expect(again.ok).toBe(false);
+    if (!again.ok) expect(again.rejected.code).toBe('ability_already_used');
+  });
+
   it('Угнетающая пирамида: −2 DEF существу противника, но не ниже 1', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [

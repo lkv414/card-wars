@@ -19,6 +19,11 @@ export function computeEff(
   const card = cardOf(ctx, inst);
   let attack = (card.attack ?? 0) + inst.bonusAttack;
   let defense = (card.defense ?? 0) + inst.bonusDefense;
+  for (const buff of draft.turnBuffs) {
+    if (buff.instanceId !== instanceId) continue;
+    if (buff.stat === 'attack') attack += buff.amount;
+    else defense += buff.amount;
+  }
   let defenseFloor: number | undefined;
   for (const contribution of auraContributions(draft, ctx, instanceId)) {
     if (contribution.stat === 'attack') attack += contribution.amount;

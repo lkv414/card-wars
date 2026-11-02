@@ -1,0 +1,20 @@
+{
+ "cardId": "cake_card_31",
+ "name": "Попкорн-бабочка",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "draw_cards",
+    "count": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_building_yours"
+     },
+     "amount": 1
+    }
+   },
+   "text": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контролем."
+  }
+ ]
+}

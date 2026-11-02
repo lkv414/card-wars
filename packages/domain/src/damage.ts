@@ -21,6 +21,24 @@ function setLives(draft: Draft<MatchState>, playerId: PlayerId, lives: number): 
   }
 }
 
+/** Heal a player/team up to their max; returns the amount actually restored. */
+export function healPlayer(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  targetId: PlayerId,
+  amount: number,
+): number {
+  if (amount <= 0) return 0;
+  const team = teamOf(draft, targetId);
+  const max = team ? team.maxLives : player(draft, targetId).maxLives;
+  const current = team ? team.lives : player(draft, targetId).lives;
+  const healed = Math.min(amount, max - current);
+  if (healed <= 0) return 0;
+  setLives(draft, targetId, current + healed);
+  emit(ctx, { type: 'lives_changed', player: targetId, delta: healed, lives: current + healed });
+  return healed;
+}
+
 /** Damage to a creature: shield absorbs first (docs/RULES.md «Бой», «Щит»). Death is checked later in batch. */
 export function dealToCreature(
   draft: Draft<MatchState>,

@@ -1,0 +1,18 @@
+{
+ "cardId": "ftg_card_107",
+ "name": "Старик-разбойник",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "opponent_discards",
+    "target": {
+     "kind": "each_player"
+    },
+    "count": 2
+   },
+   "text": "Когда Старик-разбойник вступает в игру, каждый игрок сбрасывает 2 карты."
+  }
+ ]
+}

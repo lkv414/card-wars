@@ -1,0 +1,23 @@
+{
+ "cardId": "bmo_card_17",
+ "name": "Митик",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "each_opponent_player"
+    },
+    "amount": 3
+   },
+   "conditions": [
+    {
+     "kind": "while_opponents_hand_empty"
+    }
+   ],
+   "text": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке."
+  }
+ ]
+}

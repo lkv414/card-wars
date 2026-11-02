@@ -1,0 +1,28 @@
+{
+ "cardId": "cake_card_36",
+ "name": "Огненное торнадо",
+ "abilities": [
+  {
+   "kind": "active",
+   "text": "ПРИЕМ >>> Огненное торнадо получает +3 ATK пока применено."
+  },
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 3,
+    "duration": "aura"
+   },
+   "conditions": [
+    {
+     "kind": "while_self_flipped"
+    }
+   ],
+   "text": "Огненное торнадо получает +3 ATK пока применено."
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "cardId": "bubblegum_card_10",
+ "name": "Пироклоп",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "adjacent_creatures"
+    },
+    "amount": 1
+   },
+   "text": "Когда Пироклоп вступает в игру, восстанови 1 урон с каждого соседнего существа."
+  }
+ ]
+}

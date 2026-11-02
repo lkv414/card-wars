@@ -1,0 +1,18 @@
+{
+ "cardId": "jake_card_23",
+ "name": "Призрак полей",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": {
+    "op": "draw_cards",
+    "count": 1,
+    "target": {
+     "kind": "each_player"
+    }
+   },
+   "text": "В начале твоего хода каждый игрок тянет карту."
+  }
+ ]
+}

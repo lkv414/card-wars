@@ -1,3 +1,4 @@
+import { produce } from 'immer';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, computeEff, createMatch, type Command, type MatchState } from '../index';
 import {
@@ -177,6 +178,86 @@ describe('механики v2: каркас', () => {
       const res = ok(s, { type: 'time_expired', player: P1 });
       expect(res.state.pending).toBeNull();
       expect(res.events.some((e) => e.type === 'choice_resolved' && e.player === P1)).toBe(true);
+    });
+  });
+
+  describe('M3: активы, этот-ход, жертвы', () => {
+    it('доп. стоимость-жертва уничтожает своё существо и исполняет эффект', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const victimId = s.players[P1]!.zones[0]!.creature!;
+      s = forceToHand(s, P1, 'sac-drawer');
+      const sacId = handCardId(s, P1, 'sac-drawer');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: sacId, zone: 1 }).state;
+      s = ok(s, {
+        type: 'floop',
+        player: P1,
+        instanceId: sacId,
+        targets: [{ kind: 'creature', instanceId: victimId }],
+      }).state;
+      expect(s.instances[victimId]!.location).toBe('discard');
+      expect(s.instances[sacId]!.flipped).toBe(true);
+    });
+
+    it('«этот ход» баф действует до конца хода и сгорает', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'turn-buffer');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'turn-buffer'), zone: 0 }).state;
+      const bufferId = s.players[P1]!.zones[0]!.creature!;
+      s = ok(s, { type: 'floop', player: P1, instanceId: bufferId }).state;
+      expect(computeEff(s, deps, bufferId).attack).toBe(1 + 3);
+      expect(s.turnBuffs).toHaveLength(1);
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = ok(s, { type: 'go_battle', player: P2 }).state; // конец хода p1 → сброс бафов
+      expect(s.turnBuffs).toHaveLength(0);
+      expect(computeEff(s, deps, bufferId).attack).toBe(1);
+    });
+
+    it('lane_opponent_creature: цель только враг на этой линии', () => {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'lane-sniper');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'lane-sniper'), zone: 0 }).state;
+      const sniperId = s.players[P1]!.zones[0]!.creature!;
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = forceToHand(s, P2, 'vanilla-corn');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'vanilla-corn'), zone: 3 }).state;
+      s = ok(s, { type: 'go_battle', player: P2 }).state; // круг 2, ход p1
+      const cornId = s.players[P2]!.zones[3]!.creature!;
+      // своя цель — invalid_choice (враг ждётся)
+      const wrong = applyCommand(
+        s,
+        { type: 'floop', player: P1, instanceId: sniperId, targets: [{ kind: 'creature', instanceId: cornId }] },
+        deps,
+      );
+      // corn — противник на зеркальной зоне 3, снайпер в зоне 0: линия не та → invalid_choice
+      expect(wrong.ok).toBe(false);
+      if (!wrong.ok) expect(wrong.rejected.code).toBe('invalid_choice');
+      // ставим существо p2 напротив снайпера нельзя (ход p1) — проверяем через мутацию: переносим corn в зону 0
+      s = produce(s, (d) => {
+        d.players[P2]!.zones[3]!.creature = null;
+        d.instances[cornId]!.zone = 0;
+        d.players[P2]!.zones[0]!.creature = cornId;
+      });
+      s = ok(s, { type: 'floop', player: P1, instanceId: sniperId, targets: [{ kind: 'creature', instanceId: cornId }] }).state;
+      expect(s.instances[cornId]!.damage).toBe(2 + 1); // ответка круга 1 + флюп
+    });
+
+    it('start_of_turn триггер с целью ставит матч в ожидание и разрешается', () => {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'turn-chooser');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'turn-chooser'), zone: 0 }).state;
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = forceToHand(s, P2, 'vanilla-corn');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'vanilla-corn'), zone: 3 }).state;
+      const res = ok(s, { type: 'go_battle', player: P2 }); // ход p2 → конец → ход p1: start_of_turn → pending
+      s = res.state;
+      expect(s.pending).not.toBeNull();
+      expect(s.pending!.player).toBe(P1);
+      const cornId = s.players[P2]!.zones[3]!.creature!;
+      const done = ok(s, { type: 'resolve_choice', player: P1, answer: { targets: [{ kind: 'creature', instanceId: cornId }] } });
+      expect(done.state.pending).toBeNull();
+      expect(done.state.instances[cornId]!.damage).toBe(1 + 1); // ответка круга 1 + триггер
     });
   });
 

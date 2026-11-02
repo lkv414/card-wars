@@ -1,0 +1,23 @@
+{
+ "cardId": "cake_card_20",
+ "name": "Кукурузный тамплиер",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 1
+   },
+   "targets": [
+    {
+     "kind": "own_creature"
+    }
+   ],
+   "text": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера."
+  }
+ ]
+}

@@ -1,0 +1,25 @@
+{
+ "heroId": "hero_bmo",
+ "name": "БиМО",
+ "ability": {
+  "kind": "active",
+  "oncePerTurn": true,
+  "additionalCost": {
+   "discardFromHand": 1
+  },
+  "effect": {
+   "op": "deal_damage",
+   "target": {
+    "kind": "choice",
+    "index": 0
+   },
+   "amount": 1
+  },
+  "targets": [
+   {
+    "kind": "opponent_creature"
+   }
+  ],
+  "text": "Сбрось карту с руки >>> Нанеси 1 урон выбранному существу."
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "cardId": "jake_card_21",
+ "name": "Зернотавр",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "each_opponent_player"
+    },
+    "amount": {
+     "kind": "per_lands",
+     "where": "own",
+     "amount": 1,
+     "landType": "corn"
+    }
+   },
+   "text": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем."
+  }
+ ]
+}

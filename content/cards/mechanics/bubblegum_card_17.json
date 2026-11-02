@@ -1,0 +1,22 @@
+{
+ "cardId": "bubblegum_card_17",
+ "name": "Милозавр Рекс",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "conditions": [
+    {
+     "kind": "while_damage_at_least",
+     "amount": 1,
+     "scope": "self"
+    }
+   ],
+   "text": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту."
+  }
+ ]
+}

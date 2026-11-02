@@ -2,7 +2,9 @@ import type { Draft } from 'immer';
 import { afterEffects } from '../deaths';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
+import { killInstance } from '../damage';
 import { emit, instance, moveId, player } from '../util';
+import { costPicks, costPicksCount, sacrificePicks } from '../mechanics/costs';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
@@ -45,26 +47,17 @@ export function handleHeroAbility(
     throw new DomainError('insufficient_actions', `hero ability costs ${cost} actions`);
   }
 
-  const handCost = ability.additionalCost?.discardFromHand ?? 0;
+  const discardCount = ability.additionalCost?.discardFromHand ?? 0;
+  const costCount = costPicksCount(ability.additionalCost);
   const declaredAsks = ability.targets ?? [];
-  const expectedTargets = handCost + declaredAsks.length;
+  const expectedTargets = costCount + declaredAsks.length;
   if ((targets?.length ?? 0) !== expectedTargets) {
     throw new DomainError('target_required', `hero ability needs ${expectedTargets} targets`);
   }
   const allTargets = targets ?? [];
-  const handPicks: string[] = [];
-  for (const pick of allTargets.slice(0, handCost)) {
-    if (pick.kind !== 'card') {
-      throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
-    }
-    const pickInst = instance(draft, pick.instanceId);
-    if (pickInst.location !== 'hand' || pickInst.controller !== playerId) {
-      throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
-    }
-    handPicks.push(pick.instanceId);
-  }
+  const handPicks = costPicks(allTargets, discardCount, playerId, draft);
   if (declaredAsks.length > 0) {
-    validateChoices(draft, { player: playerId, instanceId: null }, declaredAsks, allTargets.slice(handCost));
+    validateChoices(draft, { player: playerId, instanceId: null }, declaredAsks, allTargets.slice(costCount));
   }
 
   p.actions -= cost;
@@ -80,7 +73,10 @@ export function handleHeroAbility(
       from: 'hand',
     });
   }
-  runAbilityDirect(draft, ctx, { player: playerId, instanceId: null }, ability, allTargets.slice(handCost));
+  for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
+    killInstance(draft, ctx, pickId);
+  }
+  runAbilityDirect(draft, ctx, { player: playerId, instanceId: null }, ability, allTargets.slice(costCount));
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
 
   emit(ctx, { type: 'hero_ability_used', player: playerId, paidActions: cost });

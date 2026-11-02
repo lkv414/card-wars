@@ -1,0 +1,24 @@
+{
+ "cardId": "lady_rainicorn_card_14",
+ "name": "Песчаный змей",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 4
+   },
+   "targets": [
+    {
+     "kind": "lane_opponent_creature"
+    }
+   ],
+   "text": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии."
+  }
+ ]
+}

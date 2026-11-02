@@ -62,6 +62,18 @@ function choiceMatchesAsk(
       );
     case 'any_creature':
       return choice.kind === 'creature' && isFieldCreature(draft, choice.instanceId);
+    case 'lane_creature': {
+      if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
+      const inst = instance(draft, choice.instanceId);
+      const src = source.instanceId ? instance(draft, source.instanceId) : null;
+      return src !== null && inst.zone === src.zone;
+    }
+    case 'lane_opponent_creature': {
+      if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
+      const inst = instance(draft, choice.instanceId);
+      const src = source.instanceId ? instance(draft, source.instanceId) : null;
+      return src !== null && inst.zone === src.zone && isOpponent(draft, source.player, inst.controller);
+    }
     case 'opponent_player':
       return choice.kind === 'player' && isOpponent(draft, source.player, choice.playerId);
     case 'landscape': {
@@ -163,6 +175,10 @@ export function resolveTarget(
       return opponentsOf(draft, source.player).flatMap((pid) => creaturesOf(draft, pid));
     case 'each_creature':
       return draft.order.flatMap((pid) => creaturesOf(draft, pid));
+    case 'each_player':
+      return draft.order.map((pid) => ({ kind: 'player' as const, playerId: pid }));
+    case 'each_opponent_player':
+      return opponentsOf(draft, source.player).map((pid) => ({ kind: 'player' as const, playerId: pid }));
     case 'each_building_yours':
       return buildingsOf(draft, source.player);
     case 'self_player':

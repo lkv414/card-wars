@@ -1,0 +1,26 @@
+{
+ "cardId": "bubblegum_card_7",
+ "name": "Мышь альбинос",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 2,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_damage_exactly",
+      "amount": 2,
+      "scope": "self"
+     }
+    ]
+   },
+   "text": "Пока на Мыши альбиносе ровно 2 Урона, она получает +2 ATK"
+  }
+ ]
+}

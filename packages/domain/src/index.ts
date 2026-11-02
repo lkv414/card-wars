@@ -14,6 +14,7 @@ export * from './zones';
 export { createMatch, type MatchSetup, type PlayerSetup } from './match/create';
 export { applyCommand } from './match/apply';
 export { computeEff } from './stats';
+export { matchingLandCount } from './match/play';
 export { mirrorZoneIndex } from './zones';
 export type {
   AbilitySpec,

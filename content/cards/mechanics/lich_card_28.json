@@ -1,0 +1,20 @@
+{
+ "cardId": "lich_card_28",
+ "name": "Угнетающая пирамида",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_lane_opponent_creature"
+    },
+    "stat": "defense",
+    "amount": -2,
+    "duration": "aura",
+    "floorDefense": 1
+   },
+   "text": "Существо противника на этой линии получает -2 DEF. Показатель DEF существа при этом не может стать меньше 1."
+  }
+ ]
+}

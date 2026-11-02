@@ -1,0 +1,26 @@
+{
+ "cardId": "marceline_card_31",
+ "name": "Бумажный тигр",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 5,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_damage_exactly",
+      "amount": 5,
+      "scope": "self"
+     }
+    ]
+   },
+   "text": "Пока на Бумажном тигре ровно 5 урона, он получает +5 ATK."
+  }
+ ]
+}

@@ -6,6 +6,7 @@ import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueTrigger, runAbilityDirect } from '../mechanics/dispatch';
+import { landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -19,15 +20,15 @@ function requireActiveMain(draft: Draft<MatchState>, playerId: PlayerId): void {
   if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
 }
 
-/** Lands matching a card's land type (docs/RULES.md «Розыгрыш карт»). */
-export function matchingLandCount(draft: Draft<MatchState>, playerId: PlayerId, landType: string): number {
+/** Lands matching a card's land type, including «считается за землю» modifiers (docs/RULES.md «Розыгрыш карт»). */
+export function matchingLandCount(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId, landType: string): number {
   const p = player(draft, playerId);
   let count = 0;
   for (const land of p.lands) {
     if (land.flipped) continue; // face-down land counts as no type
     if (landType === 'rainbow' || land.type === 'rainbow' || land.type === landType) count++;
   }
-  return count;
+  return count + landCountModifier(draft, ctx, playerId, landType);
 }
 
 /**
@@ -52,11 +53,13 @@ export function handlePlayCard(
   }
   const card = cardOf(ctx, inst);
 
-  if (p.actions < card.cost) {
-    throw new DomainError('insufficient_actions', `need ${card.cost} actions, have ${p.actions}`);
+  // Cost modifiers are scanned live (Остролист, Домик из разного дерева — docs/MECHANICS-V2.md §3).
+  const effectiveCost = Math.max(0, card.cost + playedCardCostModifier(draft, ctx, playerId, card, instanceId));
+  if (p.actions < effectiveCost) {
+    throw new DomainError('insufficient_actions', `need ${effectiveCost} actions, have ${p.actions}`);
   }
 
-  if (matchingLandCount(draft, playerId, card.landType) < ctx.config.landRequirementPerCard) {
+  if (matchingLandCount(draft, ctx, playerId, card.landType) < ctx.config.landRequirementPerCard) {
     throw new DomainError(
       'land_requirement_not_met',
       `no land of type ${card.landType} under control`,
@@ -84,7 +87,7 @@ export function handlePlayCard(
         from: 'companion',
       });
     }
-    p.actions -= card.cost;
+    p.actions -= effectiveCost;
     inst.location = 'companion';
     inst.zone = null;
     inst.slot = null;
@@ -108,7 +111,7 @@ export function handlePlayCard(
     for (const ability of casts) {
       validateChoices(draft, { player: playerId, instanceId }, ability.targets, targets);
     }
-    p.actions -= card.cost;
+    p.actions -= effectiveCost;
     emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
     const source = { player: playerId, instanceId };
     for (const ability of casts) {
@@ -158,7 +161,7 @@ export function handlePlayCard(
     emit(ctx, { type: 'card_discarded', player: playerId, instanceId: replaced, cardId: oldInst.cardId, from: 'field' });
   }
 
-  p.actions -= card.cost;
+  p.actions -= effectiveCost;
   inst.location = 'field';
   inst.zone = zone;
   inst.slot = slot;

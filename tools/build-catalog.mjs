@@ -64,13 +64,33 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'draw_cards', 'stat_buff', 'gain_shield', 'gain_actions']);
+const EFFECT_OPS = new Set(['deal_damage', 'draw_cards', 'stat_buff', 'gain_shield', 'gain_actions', 'cost_mod', 'land_count_mod']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event',
 ]);
 const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'opponent_player', 'landscape', 'own_hand_card']);
+const TARGET_REFS = new Set([
+  'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature',
+  'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
+  'each_building_yours', 'self_player',
+]);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target']);
+const CONDITION_KINDS = new Set([
+  'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
+  'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
+  'while_distinct_lands', 'while_land_count', 'while_zone_has_building',
+]);
+
+function checkAmount(amount, where) {
+  if (typeof amount === 'number') return;
+  if (!amount || !AMOUNT_KINDS.has(amount.kind)) fail(`${where}: bad amount ${JSON.stringify(amount)}`);
+}
+
+function checkTargetRef(ref, where) {
+  if (!ref || !TARGET_REFS.has(ref.kind)) fail(`${where}: bad target ${JSON.stringify(ref)}`);
+}
 
 function validateAbility(ability, owner) {
   const where = `${owner} ability`;
@@ -89,10 +109,29 @@ function validateAbility(ability, owner) {
   if (hasEffect) {
     const op = ability.effect.op;
     if (!EFFECT_OPS.has(op)) fail(`${where}: unknown effect op ${op}`);
-    if (op !== 'draw_cards' && op !== 'gain_actions' && !ability.effect.target) fail(`${where}: op ${op} needs a target`);
-    if (op === 'stat_buff' && !['permanent', 'aura'].includes(ability.effect.duration)) {
-      fail(`${where}: stat_buff duration must be permanent|aura`);
+    if (op === 'cost_mod') {
+      if (ability.effect.self !== true) fail(`${where}: cost_mod must be self`);
+      checkAmount(ability.effect.amount, where);
+    } else if (op === 'land_count_mod') {
+      if (!Number.isInteger(ability.effect.amount)) fail(`${where}: land_count_mod needs integer amount`);
+    } else {
+      if (op !== 'draw_cards' && op !== 'gain_actions') {
+        checkTargetRef(ability.effect.target, where);
+        if (op === 'deal_damage' || op === 'gain_shield' || op === 'gain_actions') {
+          if (!Number.isInteger(ability.effect.amount)) fail(`${where}: op ${op} needs integer amount`);
+        }
+        if (op === 'stat_buff') {
+          if (!['attack', 'defense'].includes(ability.effect.stat)) fail(`${where}: stat_buff stat must be attack|defense`);
+          if (!['permanent', 'aura'].includes(ability.effect.duration)) fail(`${where}: stat_buff duration must be permanent|aura`);
+          checkAmount(ability.effect.amount, where);
+        }
+      } else if (!Number.isInteger(ability.effect.count)) {
+        fail(`${where}: draw_cards needs integer count`);
+      }
     }
+  }
+  for (const cond of ability.conditions ?? []) {
+    if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown condition ${cond.kind}`);
   }
   for (const ask of ability.targets ?? []) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);

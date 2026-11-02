@@ -1,0 +1,22 @@
+{
+ "cardId": "cake_card_22",
+ "name": "Друид початка",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "stat": "attack",
+    "amount": 1,
+    "duration": "aura",
+    "filter": {
+     "ready": true
+    }
+   },
+   "text": "Примененное существо под твоим контролем получает +1 ATK."
+  }
+ ]
+}

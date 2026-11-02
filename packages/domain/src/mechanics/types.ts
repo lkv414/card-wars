@@ -2,6 +2,8 @@
 // from the catalog (content/cards/mechanics + content/heroes/mechanics), never
 // hardcoded; handlers are mechanic-level, not card-level.
 
+import type { LandType } from '../types';
+
 export type PlayerId = string;
 
 /** When a passive ability fires (docs/MECHANICS-V2.md §2Б). */
@@ -65,17 +67,67 @@ export type TargetRef =
   | { kind: 'each_creature_yours' }
   | { kind: 'each_creature_opponent' }
   | { kind: 'each_creature' }
+  | { kind: 'each_building_yours' }
   | { kind: 'self_player' };
 
 export type StatKey = 'attack' | 'defense';
 
+/** Filters for per-target dynamic amounts and aura targets (docs/MECHANICS-V2.md §3). */
+export interface TargetFilter {
+  /** Only ready (not flipped) cards: «за каждое применённое существо». */
+  ready?: boolean;
+  /** Only cards of this land type (Матриарх Вайда: Радужные существа). */
+  landType?: LandType;
+  /** Only cards sharing the source's cardId (Бочка, Нефтяная Вышка). */
+  sameCard?: boolean;
+  /** Only these cards (Мамуля камнепух counts Малышей — data-level cross-reference). */
+  cardIds?: string[];
+}
+
+/** Dynamic stat amounts (docs/MECHANICS-V2.md §3). */
+export type StatAmount =
+  | number
+  | { kind: 'per_discard'; every: number; amount: number }
+  | { kind: 'per_damage'; amount: number }
+  /** «за каждый различный тип земли под твоим контролем». */
+  | { kind: 'per_distinct_lands'; amount: number }
+  /** Lands by scope; filters: only empty zones (Пескозавр рекс), only face-down (Смещатель земли). */
+  | {
+      kind: 'per_lands';
+      where: 'own' | 'all' | 'adjacent';
+      landType?: LandType;
+      empty?: boolean;
+      flipped?: boolean;
+      amount: number;
+    }
+  | {
+      kind: 'per_target';
+      target: TargetRef;
+      amount: number;
+      excludeSelf?: boolean;
+      filter?: TargetFilter;
+    };
+
 /**
  * Conditions (docs/MECHANICS-V2.md §7). `if_*` — one-shot at run time,
- * `while_*` — checked on every modifier scan.
+ * `while_*` — checked on every modifier scan. Board-scoped conditions take
+ * the context instance (self / aura target) via the scan.
  */
 export type ConditionSpec =
   | { kind: 'if_discard_count'; min: number }
-  | { kind: 'while_discard_count'; min: number };
+  | { kind: 'while_discard_count'; min: number }
+  | { kind: 'while_undamaged'; scope: 'self' | 'target' }
+  | { kind: 'while_damage_exactly'; amount: number; scope: 'self' | 'target' }
+  | { kind: 'while_damage_at_least'; amount: number; scope: 'self' }
+  | { kind: 'while_lane_empty_opponent' }
+  /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
+  | { kind: 'while_on_land_type'; landType: LandType }
+  /** At least min distinct land types under control (Лимонное желе). */
+  | { kind: 'while_distinct_lands'; min: number }
+  /** Land count of a type under control within [min..max] (Кукурузный пес). */
+  | { kind: 'while_land_count'; landType: LandType; min?: number; max?: number }
+  /** Own building in the source's zone (Кукурузный чемпион). */
+  | { kind: 'while_zone_has_building' };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {
@@ -90,9 +142,23 @@ export interface AdditionalCost {
 export type EffectSpec =
   | { op: 'deal_damage'; target: TargetRef; amount: number; pierce?: boolean }
   | { op: 'draw_cards'; count: number }
-  | { op: 'stat_buff'; target: TargetRef; stat: StatKey; amount: number; duration: 'permanent' | 'aura' }
+  | {
+      op: 'stat_buff';
+      target: TargetRef;
+      stat: StatKey;
+      amount: StatAmount;
+      duration: 'permanent' | 'aura';
+      /** Aura target filter (Фея Шепард: только милые существа). */
+      filter?: TargetFilter;
+      /** Defense floor for the affected creature (Угнетающая пирамида: не ниже 1). */
+      floorDefense?: number;
+    }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
-  | { op: 'gain_actions'; amount: number };
+  | { op: 'gain_actions'; amount: number }
+  /** Cost modifier scanned at payment time (Остролист, Домик из разного дерева). */
+  | { op: 'cost_mod'; self: true; amount: StatAmount }
+  /** «Считается за дополнительную землю» (Ферма). */
+  | { op: 'land_count_mod'; landType?: LandType; amount: number };
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';

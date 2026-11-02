@@ -1,0 +1,37 @@
+{
+ "cardId": "cake_card_14",
+ "name": "Домик из разного дерева",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "cost_mod",
+    "self": true,
+    "amount": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": -1,
+     "filter": {
+      "ready": true
+     }
+    }
+   },
+   "text": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем."
+  },
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_lane_creature"
+    },
+    "stat": "defense",
+    "amount": 5,
+    "duration": "aura"
+   },
+   "text": "Твое существо на этой линии получает +5 DEF."
+  }
+ ]
+}

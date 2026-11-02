@@ -1,0 +1,26 @@
+{
+ "cardId": "bubblegum_card_30",
+ "name": "Хлопковая мышь",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 4,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_damage_exactly",
+      "amount": 4,
+      "scope": "self"
+     }
+    ]
+   },
+   "text": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 ATK."
+  }
+ ]
+}

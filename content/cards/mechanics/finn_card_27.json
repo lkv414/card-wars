@@ -1,0 +1,24 @@
+{
+ "cardId": "finn_card_27",
+ "name": "Нежный Снежный Малыш",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 3,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_lane_empty_opponent"
+     }
+    ]
+   },
+   "text": "+3 АТК пока у противника нет существа на этой линии."
+  }
+ ]
+}

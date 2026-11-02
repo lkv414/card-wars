@@ -1,0 +1,26 @@
+{
+ "cardId": "bubblegum_card_33",
+ "name": "Ангельское сердце",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 3,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_damage_exactly",
+      "amount": 3,
+      "scope": "self"
+     }
+    ]
+   },
+   "text": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 ATK."
+  }
+ ]
+}

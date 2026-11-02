@@ -1,0 +1,19 @@
+{
+ "cardId": "bmo_card_6",
+ "name": "Крепость Крови",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_lane_creature"
+    },
+    "stat": "attack",
+    "amount": 1,
+    "duration": "aura"
+   },
+   "text": "Твое существо получает +1 ATK на этой линии."
+  }
+ ]
+}

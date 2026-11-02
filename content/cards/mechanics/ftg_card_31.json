@@ -1,0 +1,25 @@
+{
+ "cardId": "ftg_card_31",
+ "name": "Лимонное желе",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 3,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_distinct_lands",
+      "min": 3
+     }
+    ]
+   },
+   "text": "Пока мы контролируешь 3 или более различных типов земель, Лимонное желе получает +3 ATK."
+  }
+ ]
+}

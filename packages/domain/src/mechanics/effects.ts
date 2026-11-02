@@ -5,6 +5,7 @@ import { DomainError } from '../errors';
 import { emit, instance, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
+import { resolveStatAmount } from './modifiers';
 import { resolveTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice } from './types';
@@ -41,11 +42,12 @@ export function runEffect(
         throw new DomainError('aura_not_castable', 'aura effects are scanned, never executed');
       }
       const targets = resolveTarget(draft, ctx, effect.target, source, choices);
+      const amount = resolveStatAmount(draft, ctx, source, effect.amount);
       for (const target of targets) {
-        if (target.kind !== 'creature') continue;
+        if (target.kind !== 'creature' && target.kind !== 'building') continue;
         const inst = instance(draft, target.instanceId);
-        if (effect.stat === 'attack') inst.bonusAttack += effect.amount;
-        else inst.bonusDefense += effect.amount;
+        if (effect.stat === 'attack') inst.bonusAttack += amount;
+        else inst.bonusDefense += amount;
         emit(ctx, {
           type: 'bonus_changed',
           instanceId: target.instanceId,

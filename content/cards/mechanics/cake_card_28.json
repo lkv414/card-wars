@@ -1,0 +1,29 @@
+{
+ "cardId": "cake_card_28",
+ "name": "Царица полей",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1,
+     "excludeSelf": true,
+     "filter": {
+      "ready": true
+     }
+    },
+    "duration": "aura"
+   },
+   "text": "Царица полей получает +1 ATK за каждое применное существо под твоим контролем."
+  }
+ ]
+}

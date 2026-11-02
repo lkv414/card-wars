@@ -37,7 +37,22 @@
   "landType": "rainbow",
   "image": "/content/cards/images/bmo_card_6.png",
   "description": "Твое существо получает +1 ATK на этой линии.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "Твое существо получает +1 ATK на этой линии."
+   }
+  ]
  },
  {
   "id": "bmo_card_8",
@@ -47,7 +62,22 @@
   "landType": "rainbow",
   "image": "/content/cards/images/bmo_card_8.png",
   "description": "Твое существо получает +3 DEF на этой линии.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "text": "Твое существо получает +3 DEF на этой линии."
+   }
+  ]
  },
  {
   "id": "bmo_card_10",
@@ -130,7 +160,26 @@
   "attack": 0,
   "defense": 5,
   "description": "+1 ATK за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 ATK за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "bmo_card_19",
@@ -178,7 +227,26 @@
   "attack": 2,
   "defense": 4,
   "description": "+2 DEF за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+2 DEF за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "bmo_card_27",
@@ -202,7 +270,24 @@
   "attack": 3,
   "defense": 10,
   "description": "Если в твоей стопке сброса 10 карт или более, потрать на 2 действия меньше чтобы сыграть Остролиста.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": -2
+    },
+    "conditions": [
+     {
+      "kind": "if_discard_count",
+      "min": 10
+     }
+    ],
+    "text": "Если в твоей стопке сброса 10 карт или более, потрать на 2 действия меньше чтобы сыграть Остролиста."
+   }
+  ]
  },
  {
   "id": "bmo_card_30",
@@ -318,7 +403,28 @@
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_5.png",
   "description": "Пока на твоем существе на этой линии нет урона, оно получает +2 ATK.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_undamaged",
+       "scope": "target"
+      }
+     ]
+    },
+    "text": "Пока на твоем существе на этой линии нет урона, оно получает +2 ATK."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_6",
@@ -340,7 +446,29 @@
   "attack": 2,
   "defense": 7,
   "description": "Пока на Мыши альбиносе ровно 2 Урона, она получает +2 ATK",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 2,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Мыши альбиносе ровно 2 Урона, она получает +2 ATK"
+   }
+  ]
  },
  {
   "id": "bubblegum_card_9",
@@ -376,7 +504,28 @@
   "attack": 1,
   "defense": 9,
   "description": "Пока на Стене шоколада нет урона, она получает +3 ATK.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_undamaged",
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Стене шоколада нет урона, она получает +3 ATK."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_14",
@@ -410,7 +559,29 @@
   "attack": 2,
   "defense": 10,
   "description": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 ATK.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 7,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 7,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 ATK."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_19",
@@ -422,7 +593,25 @@
   "attack": 2,
   "defense": 9,
   "description": "Каждое соседнее милое существо получает +2 DEF.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "defense",
+     "amount": 2,
+     "duration": "aura",
+     "filter": {
+      "landType": "good"
+     }
+    },
+    "text": "Каждое соседнее милое существо получает +2 DEF."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_20",
@@ -494,7 +683,29 @@
   "attack": 1,
   "defense": 8,
   "description": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 ATK.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 4,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 4,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 ATK."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_33",
@@ -506,7 +717,29 @@
   "attack": 0,
   "defense": 7,
   "description": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 ATK.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 3,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 ATK."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_35",
@@ -570,7 +803,22 @@
   "landType": "rainbow",
   "image": "/content/cards/images/cake_card_7.png",
   "description": "Существо противника на этой линии получает -2 DEF.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "stat": "defense",
+     "amount": -2,
+     "duration": "aura"
+    },
+    "text": "Существо противника на этой линии получает -2 DEF."
+   }
+  ]
  },
  {
   "id": "cake_card_9",
@@ -610,7 +858,40 @@
   "landType": "corn",
   "image": "/content/cards/images/cake_card_14.png",
   "description": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем.\nТвое существо на этой линии получает +5 DEF.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": -1,
+      "filter": {
+       "ready": true
+      }
+     }
+    },
+    "text": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": 5,
+     "duration": "aura"
+    },
+    "text": "Твое существо на этой линии получает +5 DEF."
+   }
+  ]
  },
  {
   "id": "cake_card_15",
@@ -620,7 +901,18 @@
   "landType": "corn",
   "image": "/content/cards/images/cake_card_15.png",
   "description": "Ферма считается за дополнительную Кукурузную землю под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "land_count_mod",
+     "landType": "corn",
+     "amount": 1
+    },
+    "text": "Ферма считается за дополнительную Кукурузную землю под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_16",
@@ -678,7 +970,25 @@
   "attack": 1,
   "defense": 8,
   "description": "Примененное существо под твоим контролем получает +1 ATK.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "ready": true
+     }
+    },
+    "text": "Примененное существо под твоим контролем получает +1 ATK."
+   }
+  ]
  },
  {
   "id": "cake_card_24",
@@ -690,7 +1000,45 @@
   "attack": 1,
   "defense": 4,
   "description": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_zone_has_building"
+      }
+     ]
+    },
+    "text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_zone_has_building"
+      }
+     ]
+    },
+    "text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_26",
@@ -702,7 +1050,45 @@
   "attack": 2,
   "defense": 6,
   "description": "Кукурузная Валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_zone_has_building"
+      }
+     ]
+    },
+    "text": "Кукурузная Валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_zone_has_building"
+      }
+     ]
+    },
+    "text": "Кукурузная Валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_28",
@@ -714,7 +1100,32 @@
   "attack": 1,
   "defense": 6,
   "description": "Царица полей получает +1 ATK за каждое применное существо под твоим контролем.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "ready": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Царица полей получает +1 ATK за каждое применное существо под твоим контролем."
+   }
+  ]
  },
  {
   "id": "cake_card_29",
@@ -818,7 +1229,55 @@
   "attack": 1,
   "defense": 5,
   "description": "Каждая Бочка получает +1 ATK и +1 DEF за каждую другую Бочку в игре.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Каждая Бочка получает +1 ATK и +1 DEF за каждую другую Бочку в игре."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Каждая Бочка получает +1 ATK и +1 DEF за каждую другую Бочку в игре."
+   }
+  ]
  },
  {
   "id": "charlie_card_3",
@@ -1262,7 +1721,22 @@
   "attack": 1,
   "defense": 9,
   "description": "Каждое соседнее существо получает +1 АТК.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "Каждое соседнее существо получает +1 АТК."
+   }
+  ]
  },
  {
   "id": "finn_card_21",
@@ -1318,7 +1792,27 @@
   "attack": 1,
   "defense": 2,
   "description": "+3 АТК пока у противника нет существа на этой линии.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_lane_empty_opponent"
+      }
+     ]
+    },
+    "text": "+3 АТК пока у противника нет существа на этой линии."
+   }
+  ]
  },
  {
   "id": "finn_card_29",
@@ -1480,7 +1974,31 @@
   "attack": 1,
   "defense": 7,
   "description": "Матриарх Вайда получает +1 ATK за каждое Радужное существо под твоим контролем.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "filter": {
+       "landType": "rainbow"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Матриарх Вайда получает +1 ATK за каждое Радужное существо под твоим контролем."
+   }
+  ]
  },
  {
   "id": "fiona_card_17",
@@ -1582,7 +2100,31 @@
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_32.png",
   "description": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_building_yours"
+      },
+      "amount": 2,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
+   }
+  ]
  },
  {
   "id": "fiona_card_33",
@@ -1745,7 +2287,25 @@
   "attack": 4,
   "defense": 1,
   "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_10",
@@ -1931,7 +2491,28 @@
   "attack": 0,
   "defense": 6,
   "description": "Пока мы контролируешь 3 или более различных типов земель, Лимонное желе получает +3 ATK.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_distinct_lands",
+       "min": 3
+      }
+     ]
+    },
+    "text": "Пока мы контролируешь 3 или более различных типов земель, Лимонное желе получает +3 ATK."
+   }
+  ]
  },
  {
   "id": "ftg_card_32",
@@ -2051,7 +2632,25 @@
   "attack": 3,
   "defense": 8,
   "description": "Каждое соседнее кукурузное существо получает +1 DEF.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "defense",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "landType": "corn"
+     }
+    },
+    "text": "Каждое соседнее кукурузное существо получает +1 DEF."
+   }
+  ]
  },
  {
   "id": "ftg_card_42",
@@ -2145,7 +2744,25 @@
   "attack": 4,
   "defense": 1,
   "description": "+1 DEF за каждый различный тип земель под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждый различный тип земель под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_52",
@@ -2157,7 +2774,29 @@
   "attack": 2,
   "defense": 10,
   "description": "Пока на Подушке боли ровно 6 урона, она получает +6 ATK.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 6,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 6,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Подушке боли ровно 6 урона, она получает +6 ATK."
+   }
+  ]
  },
  {
   "id": "ftg_card_53",
@@ -2353,7 +2992,29 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_71.png",
   "description": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 ATK.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 3,
+       "scope": "target"
+      }
+     ]
+    },
+    "text": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 ATK."
+   }
+  ]
  },
  {
   "id": "ftg_card_72",
@@ -2461,7 +3122,25 @@
   "attack": 4,
   "defense": 1,
   "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_81",
@@ -2521,7 +3200,27 @@
   "attack": 0,
   "defense": 9,
   "description": "+2 ATK за каждую твою пустую землю.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "amount": 2,
+      "empty": true
+     },
+     "duration": "aura"
+    },
+    "text": "+2 ATK за каждую твою пустую землю."
+   }
+  ]
  },
  {
   "id": "ftg_card_86",
@@ -2723,7 +3422,25 @@
   "attack": 4,
   "defense": 1,
   "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_109",
@@ -3688,7 +4405,27 @@
   "attack": 2,
   "defense": 4,
   "description": "+1 DEF за каждое Кукурузное поле в игре (у всех игроков).",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "amount": 1,
+      "landType": "corn"
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждое Кукурузное поле в игре (у всех игроков)."
+   }
+  ]
  },
  {
   "id": "jake_card_5",
@@ -3700,7 +4437,52 @@
   "attack": 0,
   "defense": 12,
   "description": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "amount": 1,
+      "landType": "corn"
+     },
+     "duration": "aura"
+    },
+    "text": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "amount": 1,
+      "landType": "corn"
+     },
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_land_count",
+       "landType": "corn",
+       "max": 3
+      }
+     ]
+    },
+    "text": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK."
+   }
+  ]
  },
  {
   "id": "jake_card_6",
@@ -3770,7 +4552,32 @@
   "attack": 0,
   "defense": 7,
   "description": "Царь полей получает +1 ATK за каждое другое Кукурузное существо под твоим контролем.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "landType": "corn"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Царь полей получает +1 ATK за каждое другое Кукурузное существо под твоим контролем."
+   }
+  ]
  },
  {
   "id": "jake_card_19",
@@ -3782,7 +4589,27 @@
   "attack": 1,
   "defense": 6,
   "description": "+1 ATK за каждое соседнее Кукурузное поле.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "adjacent",
+      "amount": 1,
+      "landType": "corn"
+     },
+     "duration": "aura"
+    },
+    "text": "+1 ATK за каждое соседнее Кукурузное поле."
+   }
+  ]
  },
  {
   "id": "jake_card_21",
@@ -3967,7 +4794,29 @@
   "attack": 1,
   "defense": 8,
   "description": "Пока у Милашки коалы 4 урона и более, она получает +2 ATK.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_at_least",
+       "amount": 4,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока у Милашки коалы 4 урона и более, она получает +2 ATK."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_15",
@@ -4073,7 +4922,53 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_25.png",
   "description": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "filter": {
+       "landType": "corn"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "filter": {
+       "landType": "corn"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_26",
@@ -4270,7 +5165,31 @@
   "attack": 0,
   "defense": 4,
   "description": "+2 ATK за каждый Домашний кактус под твоим контролем.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 2,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "+2 ATK за каждый Домашний кактус под твоим контролем."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_19",
@@ -4504,7 +5423,25 @@
   "attack": 2,
   "defense": 4,
   "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_19",
@@ -4540,7 +5477,25 @@
   "attack": 4,
   "defense": 1,
   "description": "+1 DEF за каждую различную землю под твоим контролем.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждую различную землю под твоим контролем."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_24",
@@ -4552,7 +5507,25 @@
   "attack": 0,
   "defense": 6,
   "description": "+1 АТК за каждый различный тип земли под твоим контролем.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 АТК за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_26",
@@ -4606,7 +5579,25 @@
   "attack": 1,
   "defense": 9,
   "description": "+1 АТК за каждый различный тип земли под твоим контролем.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 АТК за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_32",
@@ -4866,7 +5857,23 @@
   "landType": "ghost",
   "image": "/content/cards/images/lich_card_28.png",
   "description": "Существо противника на этой линии получает -2 DEF. Показатель DEF существа при этом не может стать меньше 1.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "stat": "defense",
+     "amount": -2,
+     "duration": "aura",
+     "floorDefense": 1
+    },
+    "text": "Существо противника на этой линии получает -2 DEF. Показатель DEF существа при этом не может стать меньше 1."
+   }
+  ]
  },
  {
   "id": "lich_card_29",
@@ -4950,7 +5957,22 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lich_card_40.png",
   "description": "Твоё существо на этой линии получает +1 АТК.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "Твоё существо на этой линии получает +1 АТК."
+   }
+  ]
  },
  {
   "id": "lich_card_42",
@@ -5028,7 +6050,26 @@
   "landType": "swamp",
   "image": "/content/cards/images/lsp_card_1.png",
   "description": "Твое Существо на этой линии получает +1 DEF за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Твое Существо на этой линии получает +1 DEF за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "lsp_card_2",
@@ -5072,7 +6113,26 @@
   "attack": 0,
   "defense": 3,
   "description": "+2 ATK за каждые 5 карт в твоей стпоке сброса.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 2
+     },
+     "duration": "aura"
+    },
+    "text": "+2 ATK за каждые 5 карт в твоей стпоке сброса."
+   }
+  ]
  },
  {
   "id": "lsp_card_8",
@@ -5472,7 +6532,25 @@
   "attack": 0,
   "defense": 10,
   "description": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_damage",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней."
+   }
+  ]
  },
  {
   "id": "marceline_card_25",
@@ -5526,7 +6604,29 @@
   "attack": 2,
   "defense": 9,
   "description": "Пока на Бумажном тигре ровно 5 урона, он получает +5 ATK.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 5,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_damage_exactly",
+       "amount": 5,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока на Бумажном тигре ровно 5 урона, он получает +5 ATK."
+   }
+  ]
  },
  {
   "id": "marceline_card_33",
@@ -5558,7 +6658,25 @@
   "attack": 0,
   "defense": 5,
   "description": "Яросная цыпа получает +1 ATK за каждый урон на ней.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_damage",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Яросная цыпа получает +1 ATK за каждый урон на ней."
+   }
+  ]
  },
  {
   "id": "marceline_card_38",
@@ -5570,7 +6688,25 @@
   "attack": 0,
   "defense": 10,
   "description": "Яросная цыпа получает +1 ATK за каждую единицу урона на ней.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_damage",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Яросная цыпа получает +1 ATK за каждую единицу урона на ней."
+   }
+  ]
  },
  {
   "id": "marceline_card_39",
@@ -5582,7 +6718,25 @@
   "attack": 0,
   "defense": 8,
   "description": "Яростный петух получает +1 ATK за каждую единицу урона на нем.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_damage",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Яростный петух получает +1 ATK за каждую единицу урона на нем."
+   }
+  ]
  },
  {
   "id": "monika_card_1",
@@ -5734,7 +6888,26 @@
   "attack": 3,
   "defense": 7,
   "description": "Существо противника на этой линии получает -1 DEF за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Существо противника на этой линии получает -1 DEF за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "monika_card_28",
@@ -5758,7 +6931,28 @@
   "attack": 1,
   "defense": 5,
   "description": "Когда Крок-эколог на Ледяной земле, он получает +2 ATK.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_on_land_type",
+       "landType": "ice"
+      }
+     ]
+    },
+    "text": "Когда Крок-эколог на Ледяной земле, он получает +2 ATK."
+   }
+  ]
  },
  {
   "id": "monika_card_32",
@@ -5980,7 +7174,33 @@
   "attack": 3,
   "defense": 7,
   "description": "Если на поле присутствует Малыш камнепух под твоим контролем, Мамуля получает +1 ATK за каждого.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "filter": {
+       "cardIds": [
+        "tree_trunks_card_18"
+       ]
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Если на поле присутствует Малыш камнепух под твоим контролем, Мамуля получает +1 ATK за каждого."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_21",

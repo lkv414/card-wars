@@ -1,0 +1,24 @@
+{
+ "cardId": "ftg_card_85",
+ "name": "Пескозавр рекс",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_lands",
+     "where": "own",
+     "amount": 2,
+     "empty": true
+    },
+    "duration": "aura"
+   },
+   "text": "+2 ATK за каждую твою пустую землю."
+  }
+ ]
+}

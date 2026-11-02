@@ -1,0 +1,50 @@
+{
+ "cardId": "jake_2v2_card_25",
+ "name": "Кукурузный гарнизон",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_lane_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1,
+     "filter": {
+      "landType": "corn"
+     }
+    },
+    "duration": "aura"
+   },
+   "text": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем."
+  },
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_lane_creature"
+    },
+    "stat": "defense",
+    "amount": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1,
+     "filter": {
+      "landType": "corn"
+     }
+    },
+    "duration": "aura"
+   },
+   "text": "Твое существо на этой земле получает +1 ATK и +1 DEF за каждого Кукурузного существа под твоим контролем."
+  }
+ ]
+}

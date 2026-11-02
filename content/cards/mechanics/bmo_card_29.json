@@ -1,0 +1,21 @@
+{
+ "cardId": "bmo_card_29",
+ "name": "Остролист",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "cost_mod",
+    "self": true,
+    "amount": -2
+   },
+   "conditions": [
+    {
+     "kind": "if_discard_count",
+     "min": 10
+    }
+   ],
+   "text": "Если в твоей стопке сброса 10 карт или более, потрать на 2 действия меньше чтобы сыграть Остролиста."
+  }
+ ]
+}

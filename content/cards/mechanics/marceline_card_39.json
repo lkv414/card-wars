@@ -1,0 +1,22 @@
+{
+ "cardId": "marceline_card_39",
+ "name": "Яростный петух",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_damage",
+     "amount": 1
+    },
+    "duration": "aura"
+   },
+   "text": "Яростный петух получает +1 ATK за каждую единицу урона на нем."
+  }
+ ]
+}

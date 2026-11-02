@@ -1,0 +1,19 @@
+{
+ "cardId": "cake_card_7",
+ "name": "Великолепная Крепость",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_lane_opponent_creature"
+    },
+    "stat": "defense",
+    "amount": -2,
+    "duration": "aura"
+   },
+   "text": "Существо противника на этой линии получает -2 DEF."
+  }
+ ]
+}

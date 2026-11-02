@@ -9,6 +9,7 @@ import type { TargetAsk, TargetChoice, TargetRef } from './types';
 /** Concrete target after resolution. */
 export type ResolvedTarget =
   | { kind: 'creature'; instanceId: string }
+  | { kind: 'building'; instanceId: string }
   | { kind: 'player'; playerId: PlayerId }
   | { kind: 'land'; playerId: PlayerId; zone: number };
 
@@ -162,6 +163,8 @@ export function resolveTarget(
       return opponentsOf(draft, source.player).flatMap((pid) => creaturesOf(draft, pid));
     case 'each_creature':
       return draft.order.flatMap((pid) => creaturesOf(draft, pid));
+    case 'each_building_yours':
+      return buildingsOf(draft, source.player);
     case 'self_player':
       return [{ kind: 'player', playerId: source.player }];
   }
@@ -172,4 +175,11 @@ function creaturesOf(draft: MatchState, playerId: PlayerId): ResolvedTarget[] {
     .zones.map((z) => z.creature)
     .filter((id): id is string => id !== null)
     .map((id) => ({ kind: 'creature' as const, instanceId: id }));
+}
+
+function buildingsOf(draft: MatchState, playerId: PlayerId): ResolvedTarget[] {
+  return player(draft, playerId)
+    .zones.map((z) => z.building)
+    .filter((id): id is string => id !== null)
+    .map((id) => ({ kind: 'building' as const, instanceId: id }));
 }

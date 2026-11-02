@@ -1,0 +1,26 @@
+{
+ "cardId": "ftg_card_52",
+ "name": "Подушка боли",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": 6,
+    "duration": "aura",
+    "conditions": [
+     {
+      "kind": "while_damage_exactly",
+      "amount": 6,
+      "scope": "self"
+     }
+    ]
+   },
+   "text": "Пока на Подушке боли ровно 6 урона, она получает +6 ATK."
+  }
+ ]
+}

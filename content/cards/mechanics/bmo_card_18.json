@@ -1,0 +1,23 @@
+{
+ "cardId": "bmo_card_18",
+ "name": "Темный ангел",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_discard",
+     "every": 5,
+     "amount": 1
+    },
+    "duration": "aura"
+   },
+   "text": "+1 ATK за каждые 5 карт в твоей стопке сброса."
+  }
+ ]
+}

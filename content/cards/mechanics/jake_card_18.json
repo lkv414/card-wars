@@ -1,0 +1,29 @@
+{
+ "cardId": "jake_card_18",
+ "name": "Царь полей",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1,
+     "excludeSelf": true,
+     "filter": {
+      "landType": "corn"
+     }
+    },
+    "duration": "aura"
+   },
+   "text": "Царь полей получает +1 ATK за каждое другое Кукурузное существо под твоим контролем."
+  }
+ ]
+}

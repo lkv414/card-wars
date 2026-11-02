@@ -70,7 +70,7 @@ export function runQueuedAbility(
   const ability = abilityOf(draft, ctx, qa);
   if (!ability) return; // source left play while queued
   const source: EffectSource = { player: qa.player, instanceId: qa.instanceId };
-  if (!conditionsHold(draft, source, ability)) return;
+  if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
   if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
   else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
 }
@@ -83,7 +83,7 @@ export function runAbilityDirect(
   ability: AbilitySpec,
   choices: TargetChoice[] | undefined,
 ): void {
-  if (!conditionsHold(draft, source, ability)) return;
+  if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
   if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
   else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
 }

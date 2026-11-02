@@ -1,0 +1,30 @@
+{
+ "cardId": "tree_trunks_card_20",
+ "name": "Мамуля камнепух",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_target",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 1,
+     "filter": {
+      "cardIds": [
+       "tree_trunks_card_18"
+      ]
+     }
+    },
+    "duration": "aura"
+   },
+   "text": "Если на поле присутствует Малыш камнепух под твоим контролем, Мамуля получает +1 ATK за каждого."
+  }
+ ]
+}

@@ -10,7 +10,8 @@ import type {
 } from '../index';
 
 // Test fixtures only — the real catalog lives in content/ (packages/content).
-// No rule code may reference these cards; they exercise the data-driven ability format.
+// Ability-less cards: the mechanics v2 system (docs/TECH.md № 2) will bring its
+// own fixtures; these cover the core engine (play, combat, turns, teams).
 
 export const P1 = 'p1';
 export const P2 = 'p2';
@@ -34,7 +35,7 @@ export const defaultConfig: GameConfig = {
 };
 
 function card(partial: Partial<CardData> & Pick<CardData, 'id' | 'type' | 'cost' | 'landType'>): CardData {
-  return { name: partial.id, attack: undefined, defense: undefined, abilities: [], ...partial };
+  return { name: partial.id, attack: undefined, defense: undefined, ...partial };
 }
 
 export const cards: CardData[] = [
@@ -42,208 +43,12 @@ export const cards: CardData[] = [
   card({ id: 'vanilla-corn', type: 'creature', cost: 1, landType: 'corn', attack: 3, defense: 7 }),
   card({ id: 'cheap-rainbow', type: 'creature', cost: 0, landType: 'rainbow', attack: 1, defense: 5 }),
   card({ id: 'big-swamp', type: 'creature', cost: 2, landType: 'swamp', attack: 5, defense: 10 }),
-  card({
-    id: 'floop-draw',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 6,
-    abilities: [{ kind: 'floop', effect: { op: 'draw_cards', count: 1 }, text: 'ПРИЁМ >>> тяни карту' }],
-  }),
-  card({
-    id: 'floop-paid-damage',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 6,
-    abilities: [
-      {
-        kind: 'floop',
-        floopCost: 1,
-        effect: { op: 'deal_damage', target: { kind: 'chosen_opponent_creature' }, amount: 2 },
-        text: 'Потрать 1 действие, ПРИЁМ >>> 2 урона существу противника',
-      },
-    ],
-  }),
-  card({
-    id: 'floop-shield',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 6,
-    abilities: [
-      { kind: 'floop', effect: { op: 'gain_shield', target: { kind: 'this_creature' }, amount: 2 }, text: 'ПРИЁМ >>> щит 2' },
-    ],
-  }),
-  card({
-    id: 'healer',
-    type: 'creature',
-    cost: 1,
-    landType: 'good',
-    attack: 2,
-    defense: 7,
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'on_enters_play',
-        effect: { op: 'heal', target: { kind: 'adjacent_creature' }, amount: 1 },
-        text: 'При входе в игру лечит соседей на 1',
-      },
-    ],
-  }),
-  card({
-    id: 'bomber',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 1,
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'on_death',
-        effect: { op: 'deal_damage', target: { kind: 'each_creature_opponent' }, amount: 1 },
-        text: 'При смерти — 1 урон всем существам противника',
-      },
-    ],
-  }),
-  card({
-    id: 'death-pick',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 1,
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'on_death',
-        effect: { op: 'deal_damage', target: { kind: 'chosen_creature' }, amount: 1 },
-        text: 'При смерти — 1 урон выбранному существу',
-      },
-    ],
-  }),
-  card({
-    id: 'discard-counter',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 6,
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'persistent',
-        effect: {
-          op: 'stat_buff',
-          target: { kind: 'this_creature' },
-          stat: 'attack',
-          amount: { perDiscardEvery: 5, amount: 1 },
-        },
-        text: '+1 АТК за каждые 5 карт в сбросе',
-      },
-    ],
-  }),
-  card({
-    id: 'start-of-turn-mill',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 10,
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'start_of_turn',
-        effect: { op: 'discard_top', count: 1 },
-        text: 'В начале хода — верхняя карта колоды в сброс',
-      },
-    ],
-  }),
-  card({
-    id: 'blood-fortress',
-    type: 'building',
-    cost: 1,
-    landType: 'swamp',
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'persistent',
-        effect: { op: 'stat_buff', target: { kind: 'this_lane_creature' }, stat: 'attack', amount: 1 },
-        text: 'Твоё существо на этой линии: +1 АТК',
-      },
-    ],
-  }),
-  card({
-    id: 'grand-fortress',
-    type: 'building',
-    cost: 1,
-    landType: 'swamp',
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'persistent',
-        effect: { op: 'stat_buff', target: { kind: 'this_lane_opponent_creature' }, stat: 'defense', amount: -2 },
-        text: 'Существо противника на этой линии: −2 ЗАЩ',
-      },
-    ],
-  }),
-  card({
-    id: 'freezer',
-    type: 'building',
-    cost: 1,
-    landType: 'swamp',
-    abilities: [
-      {
-        kind: 'floop',
-        floopCost: 0,
-        effect: { op: 'freeze_landscape', target: { kind: 'chosen_landscape' } },
-        text: 'ПРИЁМ >>> заморозь землю',
-      },
-    ],
-  }),
-  card({
-    id: 'floop-buff-turn',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 6,
-    abilities: [
-      {
-        kind: 'floop',
-        effect: { op: 'stat_buff', target: { kind: 'this_creature' }, stat: 'attack', amount: 3, duration: 'this_turn' },
-        text: 'ПРИЁМ >>> +3 АТК в этот ход',
-      },
-    ],
-  }),
-  card({
-    id: 'spell-destroy',
-    type: 'spell',
-    cost: 2,
-    landType: 'swamp',
-    abilities: [
-      { kind: 'passive', trigger: 'floop', effect: { op: 'destroy', target: { kind: 'chosen_creature' } }, text: 'Уничтожь выбранное существо' },
-    ],
-  }),
-  card({
-    id: 'floop-return',
-    type: 'creature',
-    cost: 1,
-    landType: 'swamp',
-    attack: 1,
-    defense: 6,
-    abilities: [
-      {
-        kind: 'floop',
-        effect: { op: 'return_from_discard', filter: { type: 'creature' }, random: true },
-        text: 'ПРИЁМ >>> верни случайное существо из сброса в руку',
-      },
-    ],
-  }),
+  card({ id: 'vanilla-good', type: 'creature', cost: 1, landType: 'good', attack: 2, defense: 7 }),
+  card({ id: 'vanilla-blue', type: 'creature', cost: 1, landType: 'blue', attack: 2, defense: 8 }),
+  card({ id: 'vanilla-ice', type: 'creature', cost: 1, landType: 'ice', attack: 1, defense: 9 }),
+  card({ id: 'vanilla-sand', type: 'creature', cost: 1, landType: 'sand', attack: 4, defense: 4 }),
+  card({ id: 'plain-fortress', type: 'building', cost: 1, landType: 'swamp', description: 'Строение без способностей' }),
+  card({ id: 'spell-plain', type: 'spell', cost: 1, landType: 'swamp', description: 'Заклинание без способностей' }),
   card({
     id: 'companion-pair',
     type: 'companion',
@@ -251,66 +56,17 @@ export const cards: CardData[] = [
     landType: 'rainbow',
     description: 'Парная карта (фикстура для проверки запрета в 1 на 1)',
   }),
-  card({
-    id: 'spell-damage',
-    type: 'spell',
-    cost: 1,
-    landType: 'swamp',
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'floop',
-        effect: { op: 'deal_damage', target: { kind: 'chosen_creature' }, amount: 3 },
-        text: 'Нанеси 3 урона выбранному существу',
-      },
-    ],
-  }),
-  card({
-    id: 'spell-heal-face',
-    type: 'spell',
-    cost: 1,
-    landType: 'good',
-    abilities: [
-      { kind: 'passive', trigger: 'floop', effect: { op: 'heal', target: { kind: 'self' }, amount: 3 }, text: 'Восстанови 3' },
-    ],
-  }),
-  card({
-    id: 'spell-discard',
-    type: 'spell',
-    cost: 1,
-    landType: 'swamp',
-    abilities: [
-      {
-        kind: 'passive',
-        trigger: 'floop',
-        effect: { op: 'opponent_discards', target: { kind: 'chosen_opponent' }, count: 1 },
-        text: 'Выбранный противник сбрасывает карту',
-      },
-    ],
-  }),
 ];
 
 export const heroes: HeroData[] = [
   {
     id: 'hero-bimo',
     name: 'Бимо',
-    ability: {
-      kind: 'passive',
-      trigger: 'start_of_turn',
-      effect: { op: 'draw_cards', count: 1 },
-      text: 'Дополнительный бесплатный добор в начале хода',
-    },
     text: 'Дополнительный бесплатный добор в начале хода',
   },
   {
     id: 'hero-billy',
     name: 'Билли',
-    ability: {
-      kind: 'passive',
-      trigger: 'start_of_turn',
-      effect: { op: 'win_if_opponents_deck_empty' },
-      text: 'Если к началу твоего хода колода каждого противника опустела — победа',
-    },
     text: 'Если к началу твоего хода колода каждого противника опустела — победа',
   },
 ];
@@ -335,28 +91,28 @@ export function buildDeck(pool: string[]): string[] {
 /** 10 distinct cards per player so decks respect the copy limit. */
 export const P1_POOL = [
   'vanilla-swamp',
+  'vanilla-corn',
   'cheap-rainbow',
   'big-swamp',
-  'floop-draw',
-  'spell-damage',
-  'floop-shield',
-  'discard-counter',
-  'start-of-turn-mill',
-  'blood-fortress',
-  'spell-discard',
+  'vanilla-good',
+  'vanilla-blue',
+  'vanilla-ice',
+  'vanilla-sand',
+  'plain-fortress',
+  'spell-plain',
 ];
 
 export const P2_POOL = [
   'vanilla-corn',
-  'cheap-rainbow',
   'vanilla-swamp',
-  'spell-heal-face',
-  'floop-shield',
-  'healer',
-  'bomber',
-  'grand-fortress',
-  'freezer',
-  'floop-paid-damage',
+  'cheap-rainbow',
+  'big-swamp',
+  'vanilla-good',
+  'vanilla-blue',
+  'vanilla-ice',
+  'vanilla-sand',
+  'spell-plain',
+  'plain-fortress',
 ];
 
 export function makeSetup(options?: {
@@ -433,4 +189,3 @@ export function forceToHand(state: MatchState, playerId: string, cardId: string)
     target.cardId = cardId;
   });
 }
-

@@ -20,12 +20,12 @@ const AGGRESSIVE_P2 = [
   'cheap-rainbow',
   'vanilla-swamp',
   'vanilla-corn',
-  'floop-shield',
-  'spell-heal-face',
-  'freezer',
-  'bomber',
-  'grand-fortress',
-  'floop-paid-damage',
+  'vanilla-good',
+  'vanilla-blue',
+  'vanilla-ice',
+  'vanilla-sand',
+  'plain-fortress',
+  'spell-plain',
 ];
 
 function newGame(seed = 2026): MatchState {

@@ -1,7 +1,6 @@
-import { produce } from 'immer';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, createMatch, type MatchState } from '../index';
-import { catalog, defaultConfig, forceToHand, handCardId, makeSetup, mustOk, P1, P2 } from './helpers';
+import { catalog, defaultConfig, makeSetup, mustOk, P1, P2 } from './helpers';
 
 const deps = { config: defaultConfig, catalog };
 
@@ -104,55 +103,5 @@ describe('ход', () => {
     expect(s.activePlayer).toBe(P1);
     expect(s.turn).toBe(3);
     expect(s.round).toBe(2);
-  });
-
-  it('герой Бимо даёт дополнительный добор в начале хода', () => {
-    const { state } = createMatch(deps, makeSetup({ p1Hero: 'hero-bimo', seed: 7 }));
-    let s = mustOk(applyCommand(state, { type: 'keep_hand', player: P1 }, deps));
-    s = mustOk(applyCommand(s, { type: 'keep_hand', player: P2 }, deps));
-    expect(s.players[P1]!.hand).toHaveLength(7);
-  });
-
-  it('герой Билли побеждает, если колода противника опустела к началу его хода', () => {
-    const { state } = createMatch(deps, makeSetup({ p1Hero: 'hero-billy', seed: 11 }));
-    let s = mustOk(applyCommand(state, { type: 'keep_hand', player: P1 }, deps));
-    s = mustOk(applyCommand(s, { type: 'keep_hand', player: P2 }, deps));
-    // опустошаем колоду p2 напрямую (тест-манипуляция состоянием)
-    s = produce(s, (d) => {
-      const p = d.players[P2]!;
-      for (const id of [...p.deck]) {
-        d.instances[id]!.location = 'discard';
-        p.discard.push(id);
-      }
-      p.deck = [];
-    });
-    expect(s.status).toBe('running'); // проверка ещё не наступала
-    s = mustOk(applyCommand(s, { type: 'go_battle', player: P1 }, deps)); // ход p2
-    const res = applyCommand(s, { type: 'go_battle', player: P2 }, deps);
-    expect(res.ok).toBe(true);
-    if (!res.ok) return;
-    // после хода p2 стартует ход Билли — win-condition сработал внутри той же команды
-    expect(res.state.status).toBe('finished');
-    expect(res.state.winners).toEqual([P1]);
-    expect(res.state.finishReason).toBe('elimination');
-    expect(res.events.some((e) => e.type === 'match_finished')).toBe(true);
-  });
-
-  it('start_of_turn эффект карты срабатывает в начале хода владельца', () => {
-    let s = startedMatch(99);
-    s = forceToHand(s, P1, 'start-of-turn-mill');
-    const deckBefore = s.players[P1]!.deck.length;
-    s = mustOk(applyCommand(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'start-of-turn-mill'), zone: 0 }, deps));
-    // два конца хода → снова ход p1, эффект сработал при старте его хода
-    s = mustOk(applyCommand(s, { type: 'go_battle', player: P1 }, deps));
-    const res2 = applyCommand(s, { type: 'go_battle', player: P2 }, deps);
-    expect(res2.ok).toBe(true);
-    if (!res2.ok) return;
-    s = res2.state;
-    expect(s.activePlayer).toBe(P1);
-    expect(s.players[P1]!.deck.length).toBe(deckBefore - 2); // добор хода + сброс от эффекта
-    expect(
-      res2.events.some((e) => e.type === 'card_discarded' && e.from === 'deck' && e.player === P1),
-    ).toBe(true);
   });
 });

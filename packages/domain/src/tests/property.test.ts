@@ -36,10 +36,6 @@ describe('property-тесты', () => {
       zone: fc.integer({ min: -1, max: 5 }),
       unfreezeWith: instanceIds,
       unfreezeZone: fc.integer({ min: -1, max: 5 }),
-      creature: instanceIds,
-      opponent: players,
-      landscapePlayer: players,
-      landscapeZone: fc.integer({ min: -1, max: 5 }),
     });
 
     fc.assert(
@@ -81,19 +77,14 @@ type Sample = {
   zone: number;
   unfreezeWith: string;
   unfreezeZone: number;
-  creature: string;
-  opponent: string;
-  landscapePlayer: string;
-  landscapeZone: number;
 };
 
 function toCommand(c: Sample): Command {
-  const choices = { creature: c.creature, opponent: c.opponent, landscape: { player: c.landscapePlayer, zone: c.landscapeZone } };
   switch (c.type) {
     case 'play_card':
-      return { type: 'play_card', player: c.player, instanceId: c.instanceId, zone: c.zone, unfreezeWith: c.unfreezeWith, choices };
+      return { type: 'play_card', player: c.player, instanceId: c.instanceId, zone: c.zone, unfreezeWith: c.unfreezeWith };
     case 'floop':
-      return { type: 'floop', player: c.player, instanceId: c.instanceId, choices };
+      return { type: 'floop', player: c.player, instanceId: c.instanceId };
     case 'draw_extra':
       return { type: 'draw_extra', player: c.player };
     case 'discard_from_hand':

@@ -142,10 +142,10 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       handleKeepHand(draft, ctx, command.player);
       return;
     case 'play_card':
-      handlePlayCard(draft, ctx, command.player, command.instanceId, command.zone, command.unfreezeWith, command.choices);
+      handlePlayCard(draft, ctx, command.player, command.instanceId, command.zone, command.unfreezeWith);
       return;
     case 'floop':
-      handleFloop(draft, ctx, command.player, command.instanceId, command.choices);
+      handleFloop(draft, ctx, command.player, command.instanceId);
       return;
     case 'draw_extra': {
       requireActiveMain(draft, command.player);

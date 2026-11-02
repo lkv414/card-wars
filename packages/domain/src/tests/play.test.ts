@@ -33,23 +33,23 @@ describe('розыгрыш карт', () => {
 
   it('требует землю нужного типа', () => {
     let s = startedMatch();
-    // p1: все земли — болото (без радужной), healer требует good
+    // p1: все земли — болото (без радужной), vanilla-good требует good
     s = produce(s, (d) => {
       d.players[P1]!.lands.forEach((land) => {
         land.type = 'swamp';
       });
     });
-    s = forceToHand(s, P1, 'healer');
+    s = forceToHand(s, P1, 'vanilla-good');
     fail(
       s,
-      { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'healer'), zone: 0 },
+      { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-good'), zone: 0 },
       'land_requirement_not_met',
     );
     // радужная земля подходит под любой тип — вернём одну радужной
     s = produce(s, (d) => {
       d.players[P1]!.lands[0]!.type = 'rainbow';
     });
-    s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'healer'), zone: 0 });
+    s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-good'), zone: 0 });
     expect(s.players[P1]!.zones[0]!.creature).not.toBeNull();
   });
 
@@ -66,6 +66,7 @@ describe('розыгрыш карт', () => {
       'land_requirement_not_met',
     );
     // rainbow card is fine while at least one land is not flipped — all flipped here, so also rejected
+    s = forceToHand(s, P1, 'cheap-rainbow');
     fail(
       s,
       { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'cheap-rainbow'), zone: 0 },
@@ -80,8 +81,8 @@ describe('розыгрыш карт', () => {
 
   it('существо и строение занимают разные слоты одной зоны', () => {
     let s = startedMatch();
-    s = forceToHand(s, P1, 'blood-fortress');
-    s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'blood-fortress'), zone: 0 });
+    s = forceToHand(s, P1, 'plain-fortress');
+    s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'plain-fortress'), zone: 0 });
     s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 });
     expect(s.players[P1]!.zones[0]!.building).not.toBeNull();
     expect(s.players[P1]!.zones[0]!.creature).not.toBeNull();
@@ -111,19 +112,10 @@ describe('розыгрыш карт', () => {
 
   it('замороженная земля: розыгрыш только после сброса карты с руки', () => {
     let s = startedMatch();
-    // p2 ставит и флюпает freezer (заморозка земли p1 зоны 0)
-    s = ok(s, { type: 'go_battle', player: P1 });
-    s = forceToHand(s, P2, 'freezer');
-    const freezerId = handCardId(s, P2, 'freezer');
-    s = ok(s, { type: 'play_card', player: P2, instanceId: freezerId, zone: 0 });
-    s = ok(s, {
-      type: 'floop',
-      player: P2,
-      instanceId: freezerId,
-      choices: { landscape: { player: P1, zone: 0 } },
+    // мороз ставится тест-манипуляцией (заморозка даётся способностями — docs/TECH.md № 2)
+    s = produce(s, (d) => {
+      d.players[P1]!.lands[0]!.frozen = true;
     });
-    expect(s.players[P1]!.lands[0]!.frozen).toBe(true);
-    s = ok(s, { type: 'go_battle', player: P2 }); // передаём ход p1
     // ход p1: без сброса — отказ
     s = forceToHand(s, P1, 'vanilla-swamp');
     const target = handCardId(s, P1, 'vanilla-swamp');

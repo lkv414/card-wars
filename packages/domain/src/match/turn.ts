@@ -1,6 +1,5 @@
 import type { Draft } from 'immer';
 import { drawCards } from '../draw';
-import { fireTriggerForPlayer, runHeroAbility } from '../effects/interpreter';
 import type { Ctx } from '../util';
 import { emit, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
@@ -15,7 +14,7 @@ export function lastAliveInOrder(draft: Draft<MatchState>): string {
   throw new Error('no alive players');
 }
 
-/** Untap + automatic draw phase + hero ability + start-of-turn triggers + actions. */
+/** Untap + automatic draw phase + actions. Hero/start-of-turn abilities return with mechanics v2 (docs/TECH.md № 2). */
 function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): void {
   const p = player(draft, pid);
 
@@ -30,11 +29,6 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   draft.phase = 'draw';
   emit(ctx, { type: 'phase_changed', player: pid, phase: 'draw' });
   drawCards(draft, ctx, pid, ctx.config.freeDrawsPerTurn);
-
-  // Hero passive (e.g. an extra free draw), then card start-of-turn triggers.
-  const hero = ctx.catalog.getHero(p.heroId);
-  if (hero) runHeroAbility(draft, ctx, hero, pid);
-  fireTriggerForPlayer(draft, ctx, 'start_of_turn', pid);
 
   draft.phase = 'main';
   emit(ctx, { type: 'phase_changed', player: pid, phase: 'main' });
@@ -55,9 +49,8 @@ export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.phase = 'main';
 }
 
-/** Burn leftovers, drop this-turn buffs and spell visuals, pass to the next team/player. */
+/** Burn leftovers, drop spell visuals, pass to the next team/player. */
 export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
-  draft.tempBuffs = [];
   draft.castSpells = [];
   for (const pid of draft.activePlayers) player(draft, pid).actions = 0;
 

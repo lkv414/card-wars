@@ -1,7 +1,7 @@
 import type { Draft } from 'immer';
 import { dealToCreature, dealToPlayer } from '../damage';
 import { afterEffects } from '../deaths';
-import { computeEff } from '../effects/stats';
+import { computeEff } from '../stats';
 import { opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';

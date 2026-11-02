@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
-import { cards as catalog } from '@card-wars/content';
 import { sendCommand, setQuality, setUi, useGame } from '../../store';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
@@ -8,30 +7,12 @@ export function Hud({ code }: { code: string }) {
   const view = useGame((s) => s.view)!;
   const timer = useGame((s) => s.timer);
   const error = useGame((s) => s.error);
-  const pendingPick = useGame((s) => s.ui.pendingPick);
   const quality = useGame((s) => s.ui.quality);
   const journalOpen = useGame((s) => s.ui.journalOpen);
   const me = view.players[view.me]!;
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
-  const lastAttempt = useRef<Record<string, unknown> | null>(null);
   const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
-
-  // сервер ответил target_required → включаем режим выбора цели в сцене
-  useEffect(() => {
-    if (error?.code !== 'target_required' || !lastAttempt.current) return;
-    const base = lastAttempt.current;
-    const instanceId = typeof base.instanceId === 'string' ? base.instanceId : null;
-    const cardId = instanceId ? findCardIdInView(view, instanceId) : null;
-    const effect = cardId ? catalog.find((c) => c.id === cardId)?.abilities.find((a) => a.effect)?.effect : undefined;
-    const pick = effect && 'target' in effect && effect.target.kind === 'chosen_landscape' ? 'landscape' : 'creature';
-    setUi({ pendingPick: { base, pick } });
-  }, [error]);
-
-  const send = (command: Parameters<typeof sendCommand>[0]) => {
-    lastAttempt.current = command as Record<string, unknown>;
-    sendCommand(command);
-  };
 
   const activeNames = view.activePlayers
     .map((pid) => `${view.players[pid]?.nickname ?? pid}${view.players[pid]?.battleReady ? ' ✓' : ''}`)
@@ -109,13 +90,13 @@ export function Hud({ code }: { code: string }) {
             <>
               <button
                 disabled={view.mode === 'teams' && me.battleReady}
-                onClick={() => send({ type: 'go_battle', player: view.me })}
+                onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
               >
                 {view.mode === 'teams' ? (me.battleReady ? 'Готов' : 'В бой (готовность)') : 'В бой'}
               </button>
               <button
                 disabled={me.actions < CONFIG.extraDrawCost}
-                onClick={() => send({ type: 'draw_extra', player: view.me })}
+                onClick={() => sendCommand({ type: 'draw_extra', player: view.me })}
               >
                 Добор (−{CONFIG.extraDrawCost} действие)
               </button>
@@ -127,19 +108,11 @@ export function Hud({ code }: { code: string }) {
                 Поторопить {view.players[pid]?.nickname ?? ''}
               </button>
             ))}
-          <button onClick={() => confirm('Сдаться?') && send({ type: 'surrender', player: view.me })}>Сдаться</button>
+          <button onClick={() => confirm('Сдаться?') && sendCommand({ type: 'surrender', player: view.me })}>Сдаться</button>
         </div>
       )}
 
-      {pendingPick && (
-        <div className="pending-banner">
-          Выберите {pendingPick.pick === 'creature' ? 'существо на поле' : 'землю'}{' '}
-          <button className="mini" onClick={() => setUi({ pendingPick: null })}>
-            Отмена
-          </button>
-        </div>
-      )}
-      {error && error.code !== 'target_required' && <div className="error-line hud-error">{error.message}</div>}
+      {error && <div className="error-line hud-error">{error.message}</div>}
 
       <div className={`hud-journal ${journalOpen ? '' : 'collapsed'}`}>
         <div className="journal-head">
@@ -166,10 +139,10 @@ export function Hud({ code }: { code: string }) {
                 : 'Оставить руку или перемешать и взять 5 новых'}
             </p>
             <div className="row">
-              <button disabled={me.mulliganDecision !== null} onClick={() => send({ type: 'keep_hand', player: view.me })}>
+              <button disabled={me.mulliganDecision !== null} onClick={() => sendCommand({ type: 'keep_hand', player: view.me })}>
                 Оставить
               </button>
-              <button disabled={me.mulliganDecision !== null} onClick={() => send({ type: 'mulligan', player: view.me })}>
+              <button disabled={me.mulliganDecision !== null} onClick={() => sendCommand({ type: 'mulligan', player: view.me })}>
                 Перемешать
               </button>
             </div>
@@ -213,19 +186,6 @@ function won(view: NonNullable<ReturnType<typeof useGame.getState>['view']>): bo
 
 function phaseRu(phase: string): string {
   return phase === 'main' ? 'основная фаза' : phase === 'draw' ? 'добор' : 'бой';
-}
-
-function findCardIdInView(view: NonNullable<ReturnType<typeof useGame.getState>['view']>, instanceId: string): string | null {
-  for (const hand of view.myHand) if (hand.instanceId === instanceId) return hand.cardId;
-  for (const pid of view.order) {
-    const p = view.players[pid]!;
-    for (const zone of p.zones) {
-      if (zone.creature?.instanceId === instanceId) return zone.creature.cardId;
-      if (zone.building?.instanceId === instanceId) return zone.building.cardId;
-    }
-    if (p.companion?.instanceId === instanceId) return p.companion.cardId;
-  }
-  return null;
 }
 
 function TimerBadge({ remainingMs }: { remainingMs: number }) {

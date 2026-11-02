@@ -170,7 +170,7 @@ export function DeckEditor({
                 </option>
               ))}
             </select>
-            <p className="hint">{hero?.ability.text}</p>
+            <p className="hint">{hero?.text}</p>
           </section>
 
           <section className="deck-side-section">

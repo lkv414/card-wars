@@ -15,7 +15,6 @@ describe('protocol schemas', () => {
       instanceId: 'p1#0',
       zone: 2,
       unfreezeWith: 'p1#1',
-      choices: { creature: 'p2#3' },
     });
     expect(cmd.type).toBe('play_card');
   });

@@ -29,8 +29,6 @@ export function CardMesh({
     view.status === 'running' &&
     view.phase === 'main';
   const canHold = isMe && myMain && !card.flipped;
-  const pendingPick = useGame((s) => s.ui.pendingPick);
-  const pickable = pendingPick?.pick === 'creature';
 
   useFrame(() => {
     if (group.current) {
@@ -65,27 +63,13 @@ export function CardMesh({
     if (holding?.instanceId === card.instanceId) setUi({ holdingFloop: null });
   };
 
-  const handleClick = (event: ThreeEvent<MouseEvent>) => {
-    if (!pendingPick || slot === 'companion') return;
-    event.stopPropagation();
-    const choices = { ...((pendingPick.base.choices as object) ?? {}), creature: card.instanceId };
-    sendCommand({ ...pendingPick.base, choices } as never);
-    setUi({ pendingPick: null });
-  };
-
   return (
     <group position={[0, CARD_T / 2 + 0.4, slotLocalZ(slot)]}>
-      <group ref={group} onClick={handleClick} onPointerDown={startHold} onPointerUp={cancelHold} onPointerOut={cancelHold}>
+      <group ref={group} onPointerDown={startHold} onPointerUp={cancelHold} onPointerOut={cancelHold}>
         <mesh>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
           <meshLambertMaterial map={texture} />
         </mesh>
-        {pickable && (
-          <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[CARD_W + 12, CARD_H + 12]} />
-            <meshBasicMaterial color="#7fd1ff" transparent opacity={0.3} />
-          </mesh>
-        )}
       </group>
       {canHold && (
         <mesh ref={ring} position={[0, 16, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false}>

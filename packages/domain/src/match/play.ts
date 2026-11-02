@@ -1,8 +1,6 @@
 import type { Draft } from 'immer';
 import { afterEffects } from '../deaths';
-import { fireTriggerForInstance, runSpellAbilities } from '../effects/interpreter';
 import { DomainError } from '../errors';
-import type { CommandChoices } from '../commands';
 import type { Ctx } from '../util';
 import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
@@ -31,7 +29,9 @@ export function matchingLandCount(draft: Draft<MatchState>, playerId: PlayerId, 
 
 /**
  * Play a card: creature/building into a zone slot (with frozen-land handling and
- * replacement), or a spell with immediate effect (docs/RULES.md «Розыгрыш карт»).
+ * replacement), or a spell into the discard with a turn-long visual
+ * (docs/RULES.md «Розыгрыш карт»). Card abilities arrive with the mechanics v2
+ * system (docs/TECH.md № 2).
  */
 export function handlePlayCard(
   draft: Draft<MatchState>,
@@ -40,7 +40,6 @@ export function handlePlayCard(
   instanceId: string,
   zone: number | undefined,
   unfreezeWith: string | undefined,
-  choices: CommandChoices | undefined,
 ): void {
   requireActiveMain(draft, playerId);
   const p = player(draft, playerId);
@@ -96,14 +95,12 @@ export function handlePlayCard(
       cardId: card.id,
       replacedInstanceId: replaced ?? null,
     });
-    fireTriggerForInstance(draft, ctx, 'on_enters_play', instanceId, choices);
     afterEffects(draft, ctx);
     return;
   }
 
   if (card.type === 'spell') {
     p.actions -= card.cost;
-    runSpellAbilities(draft, ctx, instanceId, choices);
     inst.location = 'discard';
     moveId(p.hand, p.discard, instanceId);
     draft.castSpells.push(instanceId);
@@ -165,6 +162,5 @@ export function handlePlayCard(
     replacedInstanceId: replaced ?? null,
   });
 
-  fireTriggerForInstance(draft, ctx, 'on_enters_play', instanceId, choices);
   afterEffects(draft, ctx);
 }

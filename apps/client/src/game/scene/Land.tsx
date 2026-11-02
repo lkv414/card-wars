@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { LandType } from '@card-wars/content';
 import type { LandView } from '@card-wars/protocol';
@@ -12,14 +11,10 @@ export function Land({
   land,
   zone,
   isMe,
-  pickable,
-  onPick,
 }: {
   land: LandView;
   zone: number;
   isMe: boolean;
-  pickable: boolean;
-  onPick: (zone: number) => void;
 }) {
   const texture = useMemo(
     () => landTexture(land.type as LandType, land.frozen, land.flipped),
@@ -28,19 +23,13 @@ export function Land({
   const placeMode = useGame((s) => s.ui.dragging !== null && isMe);
   const hovered = useGame((s) => s.ui.draggingOverZone);
 
-  const handleClick = (event: ThreeEvent<MouseEvent>) => {
-    if (!pickable) return;
-    event.stopPropagation();
-    onPick(zone);
-  };
-
-  const highlight = (placeMode && hovered === zone) || pickable;
+  // Выбор земли как цели вернётся с механиками v2 (docs/TECH.md № 2).
+  const highlight = placeMode && hovered === zone;
 
   return (
     <group>
       <mesh
         position={[0, 0.6, 0]}
-        onClick={handleClick}
         onPointerOver={(e) => {
           if (placeMode) {
             e.stopPropagation();
@@ -57,7 +46,7 @@ export function Land({
       {highlight && (
         <mesh position={[0, 1.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[LAND_W + 8, LAND_H + 8]} />
-          <meshBasicMaterial color={pickable ? '#7fd1ff' : '#48bb78'} transparent opacity={0.35} />
+          <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>
       )}
       {/* slot guides: creature toward the centre line, building toward the owner */}

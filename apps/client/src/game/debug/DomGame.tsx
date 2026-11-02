@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import { cards as contentCards, heroes } from '@card-wars/content';
 import type { CardView } from '@card-wars/protocol';
 import { sendCommand, setUi, useGame } from '../../store';
@@ -12,18 +11,6 @@ export function DomGame({ code }: { code: string }) {
   const view = useGame((s) => s.view)!;
   const error = useGame((s) => s.error);
   const selected = useGame((s) => s.ui.selectedHand);
-  const pending = useGame((s) => s.ui.pendingPick);
-  const lastAttempt = useRef<Record<string, unknown> | null>(null);
-
-  useEffect(() => {
-    if (error?.code !== 'target_required' || !lastAttempt.current) return;
-    const base = lastAttempt.current;
-    const instanceId = typeof base.instanceId === 'string' ? base.instanceId : null;
-    const cardId = instanceId ? findCardId(instanceId, view) : null;
-    const effect = cardId ? cardMeta(cardId)?.abilities.find((a) => a.effect)?.effect : undefined;
-    const pick = effect && 'target' in effect && effect.target.kind === 'chosen_landscape' ? 'landscape' : 'creature';
-    setUi({ pendingPick: { base, pick } });
-  }, [error]);
 
   const me = view.players[view.me]!;
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
@@ -32,7 +19,6 @@ export function DomGame({ code }: { code: string }) {
   const selectedMeta = selected ? cardMeta(view.myHand.find((c) => c.instanceId === selected)?.cardId ?? '') : undefined;
 
   const send = (command: Parameters<typeof sendCommand>[0]) => {
-    lastAttempt.current = command as Record<string, unknown>;
     sendCommand(command);
   };
 
@@ -100,8 +86,7 @@ export function DomGame({ code }: { code: string }) {
           })}
         </div>
       </div>
-      {pending && <div className="pending-banner">Выберите {pending.pick === 'creature' ? 'существо' : 'землю'} <button className="mini" onClick={() => setUi({ pendingPick: null })}>Отмена</button></div>}
-      {error && error.code !== 'target_required' && <div className="error-line">{error.message}</div>}
+      {error && <div className="error-line">{error.message}</div>}
       <div className="journal panel">
         {view.journal.slice(-30).map((line, i) => (
           <div key={i} className="log-line">{line}</div>
@@ -124,7 +109,6 @@ function DebugBoard({
   const p = view.players[pid]!;
   const isMe = pid === view.me;
   const myMain = view.activePlayers.includes(view.me) && view.status === 'running' && view.phase === 'main';
-  const pending = useGame((s) => s.ui.pendingPick);
   return (
     <div className={`board ${isMe ? 'mine' : ''} ${view.activePlayers.includes(pid) ? 'active' : ''}`}>
       <div className="board-head">
@@ -143,11 +127,6 @@ function DebugBoard({
               className={`slot ${placeMode && isMe ? 'pickable' : ''}`}
               onClick={() => {
                 if (placeMode && isMe) onZone(i);
-                else if (zone.creature && pending?.pick === 'creature') {
-                  const choices = { ...((pending.base.choices as object) ?? {}), creature: zone.creature.instanceId };
-                  sendCommand({ ...pending.base, choices } as never);
-                  setUi({ pendingPick: null });
-                }
               }}
             >
               {zone.creature ? <Chip card={zone.creature} /> : <span className="hint">{placeMode && isMe ? 'сюда' : '—'}</span>}
@@ -179,20 +158,4 @@ function Chip({ card }: { card: CardView }) {
   );
 }
 
-function findCardId(instanceId: string, view: NonNullable<ReturnType<typeof useGame.getState>['view']>): string | null {
-  const hand = view.myHand.find((c) => c.instanceId === instanceId);
-  if (hand) return hand.cardId;
-  for (const pid of view.order) {
-    for (const zone of view.players[pid]!.zones) {
-      if (zone.creature?.instanceId === instanceId) return zone.creature.cardId;
-      if (zone.building?.instanceId === instanceId) return zone.building.cardId;
-    }
-    if (view.players[pid]!.companion?.instanceId === instanceId) {
-      return view.players[pid]!.companion!.cardId;
-    }
-  }
-  return null;
-}
-
 void heroes;
-void useState;

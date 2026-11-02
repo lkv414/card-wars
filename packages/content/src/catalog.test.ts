@@ -17,7 +17,6 @@ describe('canonical catalog', () => {
       expect(LAND_TYPES, card.id).toContain(card.landType);
       expect(['creature', 'building', 'spell', 'companion'], card.id).toContain(card.type);
       expect(Number.isInteger(card.cost), card.id).toBe(true);
-      expect(card.abilities, card.id).toEqual([]);
       if (card.type === 'creature') {
         expect(typeof card.attack, card.id).toBe('number');
         expect(typeof card.defense, card.id).toBe('number');
@@ -32,7 +31,6 @@ describe('canonical catalog', () => {
     for (const hero of heroes) {
       expect(hero.name.length, hero.id).toBeGreaterThan(0);
       expect(hero.text.length, hero.id).toBeGreaterThan(0);
-      expect(hero.ability.text.length, hero.id).toBeGreaterThan(0);
     }
   });
 

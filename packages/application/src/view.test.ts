@@ -42,8 +42,8 @@ describe('viewFor', () => {
     const s = newMatch();
     const view = viewFor(deps, s, 'p1', { journal: [] });
     expect(view.me).toBe('p1');
-    // 5 стартовых + добор + дополнительный добор героя Бимо
-    expect(view.myHand).toHaveLength(7);
+    // 5 стартовых + добор (способности героев вернутся с механиками v2 — docs/TECH.md № 2)
+    expect(view.myHand).toHaveLength(6);
     // чужая рука представлена только счётчиком (p2 ещё не ходил — добора не было)
     expect(view.players.p2!.handCount).toBe(5);
     // ни один id карты из руки/колоды p2 не встречается в JSON вида

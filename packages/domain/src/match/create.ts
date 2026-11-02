@@ -168,7 +168,6 @@ export function createMatch(
     round: 1,
     rng,
     instances,
-    tempBuffs: [],
     castSpells: [],
     mulliganDecisions: {},
     winners: null,

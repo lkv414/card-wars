@@ -161,8 +161,8 @@ describe('команды 2 на 2', () => {
 
   it('первый круг 2 на 2: без атак и без флюпов', () => {
     let s = newMatch(4, 'teams', 'wall');
-    s = forceToHand(s, P1, 'floop-draw');
-    s = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'floop-draw'), zone: 0 });
+    s = forceToHand(s, P1, 'vanilla-swamp');
+    s = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 });
     const floop = applyCommand(s, { type: 'floop', player: P1, instanceId: s.players[P1]!.zones[0]!.creature! }, deps);
     expect(floop.ok).toBe(false);
     if (!floop.ok) expect(floop.rejected.code).toBe('floop_forbidden_first_turn');

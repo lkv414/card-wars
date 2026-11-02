@@ -1,3 +1,4 @@
+import { produce } from 'immer';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, type Command, type MatchState } from '../index';
 import { catalog, defaultConfig, forceToHand, handCardId, P1, P2 } from './helpers';
@@ -62,59 +63,59 @@ describe('бой', () => {
     expect(s.instances[p2Creature]!.damage).toBeGreaterThan(damageBefore);
   });
 
-  it('существо уничтожается при уроне ≥ защиты и уходит в сброс; on_death срабатывает', () => {
+  it('существо уничтожается при уроне ≥ защиты и уходит в сброс', () => {
     let s = startedMatch();
-    // p1: bomber 1/1 в зоне 3; p2: big-swamp 5/10 в зоне 0 — зеркальная пара
-    s = deploy(s, P1, 'bomber', 3);
+    // p1: vanilla-sand 4/4 в зоне 3; p2: big-swamp 5/10 в зоне 0 — зеркальная пара
+    s = deploy(s, P1, 'vanilla-sand', 3);
     s = ok(s, { type: 'go_battle', player: P1 }).state;
     s = deploy(s, P2, 'big-swamp', 0);
     const res = ok(s, { type: 'go_battle', player: P2 });
     s = res.state;
-    expect(s.players[P1]!.zones[3]!.creature).toBeNull(); // bomber уничтожен
-    const bomberInDiscard = s.players[P1]!.discard.find((i) => s.instances[i]!.cardId === 'bomber');
-    expect(bomberInDiscard).toBeDefined();
-    expect(res.events.some((e) => e.type === 'creature_destroyed' && e.cardId === 'bomber')).toBe(true);
-    // big-swamp: 1 ответный урон от bomber + 1 от его on_death «1 урон всем существам противника»
+    expect(s.players[P1]!.zones[3]!.creature).toBeNull(); // sand уничтожен (5 ≥ 4)
+    const sandInDiscard = s.players[P1]!.discard.find((i) => s.instances[i]!.cardId === 'vanilla-sand');
+    expect(sandInDiscard).toBeDefined();
+    expect(res.events.some((e) => e.type === 'creature_destroyed' && e.cardId === 'vanilla-sand')).toBe(true);
+    // big-swamp получил ответный урон 4 (бой одновременный)
     const bigId = s.players[P2]!.zones[0]!.creature!;
-    expect(s.instances[bigId]!.damage).toBe(2);
+    expect(s.instances[bigId]!.damage).toBe(4);
   });
 
   it('флипнутое существо не нападает, но защищается', () => {
     let s = startedMatch();
-    s = deploy(s, P1, 'floop-draw', 0); // 1/6
+    s = deploy(s, P1, 'vanilla-blue', 0); // 2/8
     // ход p1 круг 1 — флюпить нельзя (первый игрок), пропускаем до круга 2
     s = ok(s, { type: 'go_battle', player: P1 }).state;
     s = deploy(s, P2, 'vanilla-corn', 3);
-    s = ok(s, { type: 'go_battle', player: P2 }).state; // атака p2: floop-draw получил 3
+    s = ok(s, { type: 'go_battle', player: P2 }).state; // атака p2: blue получил 3
     expect(s.activePlayer).toBe(P1);
     expect(s.round).toBe(2);
-    // p1 флюпает (теперь можно) — существо не будет атаковать
-    const floopId = s.players[P1]!.zones[0]!.creature!;
-    s = ok(s, { type: 'floop', player: P1, instanceId: floopId }).state;
-    expect(s.instances[floopId]!.flipped).toBe(true);
+    // механика флипа: помечаем существо флипнутым (способностей-флюпов пока нет, docs/TECH.md № 2)
+    const blueId = s.players[P1]!.zones[0]!.creature!;
+    s = produce(s, (d) => {
+      d.instances[blueId]!.flipped = true;
+    });
     const res = ok(s, { type: 'go_battle', player: P1 });
     s = res.state;
-    // p1 не атаковал: жизни p2 целы; урон существу p2 не вырос (прошлый ответный уже был)
+    // p1 не атаковал: жизни p2 целы; урон corn не вырос (прошлый ответный уже был)
     expect(s.players[P2]!.lives).toBe(25);
-    expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(1);
+    expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(2);
     // но защищаться флипнутое может: p2 атакует снова — ответный урон от флипнутого
     const res2 = ok(s, { type: 'go_battle', player: P2 });
-    expect(res2.state.instances[res2.state.players[P2]!.zones[3]!.creature!]!.damage).toBe(2);
+    expect(res2.state.instances[res2.state.players[P2]!.zones[3]!.creature!]!.damage).toBe(4);
   });
 
   it('щит поглощает урон первым', () => {
     let s = startedMatch();
-    s = deploy(s, P1, 'floop-shield', 0); // 1/6, флюп даст щит 2
+    s = deploy(s, P1, 'vanilla-swamp', 0); // 2/6
     s = ok(s, { type: 'go_battle', player: P1 }).state; // круг 1, p1 не атакует
     s = deploy(s, P2, 'vanilla-corn', 3);
     s = ok(s, { type: 'go_battle', player: P2 }).state; // corn бьёт: 3 урона в плоть
-    // ход p1, круг 2: даём щит (существо станет флипнутым и не будет атаковать)
+    // ход p1, круг 2: выдаём щит напрямую (щит даётся способностями — docs/TECH.md № 2)
     const shieldedId = s.players[P1]!.zones[0]!.creature!;
-    const res = applyCommand(s, { type: 'floop', player: P1, instanceId: shieldedId }, deps);
-    expect(res.ok).toBe(true);
-    if (!res.ok) return;
-    s = res.state;
-    expect(s.instances[shieldedId]!.shield).toBe(2);
+    s = produce(s, (d) => {
+      d.instances[shieldedId]!.shield = 2;
+      d.instances[shieldedId]!.flipped = true; // чтобы p1 не атаковал
+    });
     s = ok(s, { type: 'go_battle', player: P1 }).state; // флипнутое не атакует
     // p2 бьёт снова: 3 урона → 2 в щит, 1 в плоть
     const battle = ok(s, { type: 'go_battle', player: P2 });
@@ -138,7 +139,7 @@ describe('бой', () => {
   it('стройка не нападает', () => {
     let s = startedMatch();
     s = ok(s, { type: 'go_battle', player: P1 }).state;
-    s = deploy(s, P2, 'blood-fortress', 0); // строение, не существо
+    s = deploy(s, P2, 'plain-fortress', 0); // строение, не существо
     s = ok(s, { type: 'go_battle', player: P2 }).state;
     expect(s.players[P1]!.lives).toBe(25);
   });

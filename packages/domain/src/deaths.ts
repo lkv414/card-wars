@@ -1,10 +1,9 @@
 import type { Draft } from 'immer';
 import { killInstance } from './damage';
-import { fireTriggerForInstance } from './effects/interpreter';
 import { finishMatch } from './finish';
 import { emit, inPlayInstanceIds, instance, player } from './util';
 import type { Ctx } from './util';
-import { computeEff } from './effects/stats';
+import { computeEff } from './stats';
 import type { CardData, MatchState, PlayerId } from './types';
 
 /** Creatures on the field with damage >= effective defense. */
@@ -22,8 +21,8 @@ function findDestroyed(draft: Draft<MatchState>, ctx: Ctx): string[] {
 }
 
 /**
- * Resolve destruction to a fixpoint: destroying cards can change auras
- * (and on_death effects can deal more damage), so re-scan until stable.
+ * Resolve destruction to a fixpoint (on-death mechanics return with mechanics v2,
+ * docs/TECH.md № 2; the loop stays for that future).
  */
 export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
   for (let guard = 0; guard < 200; guard++) {
@@ -32,9 +31,6 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
     for (const id of dead) {
       const inst = killInstance(draft, ctx, id);
       emit(ctx, { type: 'creature_destroyed', instanceId: id, cardId: inst.cardId });
-    }
-    for (const id of dead) {
-      fireTriggerForInstance(draft, ctx, 'on_death', id);
     }
   }
 }

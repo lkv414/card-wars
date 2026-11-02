@@ -16,24 +16,14 @@ import {
 import { cardBackTexture, cardTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
-import { sendCommand, setUi, useGame } from '../../store';
 
 /** Половина стола одного игрока: ряд земель, колода/сброс, герой, жизни, парная. */
 export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string; isMe: boolean }) {
   const p = view.players[pid]!;
   const transform = boardTransform(view, pid);
-  const pendingPick = useGame((s) => s.ui.pendingPick);
-  const pendingLandscape = pendingPick?.pick === 'landscape';
   const active = view.activePlayers.includes(pid) && view.status === 'running';
 
   if (!transform) return null;
-
-  const pickLandscape = (zone: number) => {
-    if (!pendingPick || !pendingLandscape) return;
-    const choices = { ...((pendingPick.base.choices as object) ?? {}), landscape: { player: pid, zone } };
-    sendCommand({ ...pendingPick.base, choices } as never);
-    setUi({ pendingPick: null });
-  };
 
   const team = p.teamId ? view.teams?.[p.teamId] ?? null : null;
 
@@ -41,13 +31,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
     <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
       {p.zones.map((zone, i) => (
         <group key={i} position={[zoneX(i), 0, 0]}>
-          <Land
-            land={p.lands[i]!}
-            zone={i}
-            isMe={isMe}
-            pickable={pendingLandscape}
-            onPick={pickLandscape}
-          />
+          <Land land={p.lands[i]!} zone={i} isMe={isMe} />
           {p.lands[i]!.frozen && (
             <group position={[0, 0, -34]}>
               <FrostToken />

@@ -11,11 +11,6 @@ function currentLives(draft: Draft<MatchState>, playerId: PlayerId): number {
   return team ? team.lives : player(draft, playerId).lives;
 }
 
-function maxLivesOf(draft: Draft<MatchState>, playerId: PlayerId): number {
-  const team = teamOf(draft, playerId);
-  return team ? team.maxLives : player(draft, playerId).maxLives;
-}
-
 function setLives(draft: Draft<MatchState>, playerId: PlayerId, lives: number): void {
   const team = teamOf(draft, playerId);
   if (team) {
@@ -74,23 +69,6 @@ export function dealToPlayer(
     toTarget: amount,
   });
   emit(ctx, { type: 'lives_changed', player: targetId, delta: -amount, lives });
-}
-
-/** Heal a player/team up to the cap; returns the amount actually restored. */
-export function healPlayer(
-  draft: Draft<MatchState>,
-  ctx: Ctx,
-  targetId: PlayerId,
-  amount: number,
-): number {
-  if (amount <= 0) return 0;
-  player(draft, targetId);
-  const healed = Math.min(amount, maxLivesOf(draft, targetId) - currentLives(draft, targetId));
-  if (healed <= 0) return 0;
-  const lives = currentLives(draft, targetId) + healed;
-  setLives(draft, targetId, lives);
-  emit(ctx, { type: 'lives_changed', player: targetId, delta: healed, lives });
-  return healed;
 }
 
 /** Remove a card from its zone slot and put it into the discard pile. */

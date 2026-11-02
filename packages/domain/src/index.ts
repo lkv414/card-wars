@@ -13,5 +13,5 @@ export * from './zones';
 
 export { createMatch, type MatchSetup, type PlayerSetup } from './match/create';
 export { applyCommand } from './match/apply';
-export { computeEff } from './effects/stats';
-export { mirrorZoneIndex } from './effects/targets';
+export { computeEff } from './stats';
+export { mirrorZoneIndex } from './zones';

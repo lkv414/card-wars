@@ -49,7 +49,6 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
       cost: card.cost,
       landType: card.landType,
       image: card.image,
-      abilities: [],
     };
     if (card.attack != null) record.attack = statValue(card.attack, card.id, 'attack');
     if (card.defense != null) record.defense = statValue(card.defense, card.id, 'defense');
@@ -63,36 +62,18 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
     return deckA.localeCompare(deckB) || numA - numB;
   });
 
-// Structured hero abilities are engine code, not scan data: keep the two implemented heroes.
-const HERO_ABILITIES = {
-  hero_bmo: {
-    kind: 'passive',
-    trigger: 'start_of_turn',
-    effect: { op: 'draw_cards', count: 1 },
-    text: 'Дополнительный бесплатный добор карты в начале хода',
-  },
-  hero_billy: {
-    kind: 'passive',
-    trigger: 'start_of_turn',
-    effect: { op: 'win_if_opponents_deck_empty' },
-    text: 'Если к началу твоего хода колода каждого противника опустела — победа',
-  },
-};
-
+// Hero data is display-only for now: the ability field returns with mechanics v2
+// (docs/TECH.md № 2), when structured hero mechanics are bound per hero id.
 const heroes = readdirSync(join(contentDir, 'heroes', 'json'))
   .filter((file) => file.endsWith('.json'))
   .map((file) => readJson(join(contentDir, 'heroes', 'json', file)))
   .filter((hero) => hero.typeCategory === 'hero')
-  .map((hero) => {
-    const text = hero.description ?? '';
-    return {
-      id: hero.id,
-      name: hero.name,
-      image: hero.image,
-      ability: HERO_ABILITIES[hero.id] ?? { kind: 'passive', text },
-      text,
-    };
-  })
+  .map((hero) => ({
+    id: hero.id,
+    name: hero.name,
+    image: hero.image,
+    text: hero.description ?? '',
+  }))
   .sort((a, b) => a.id.localeCompare(b.id));
 
 const cardIds = new Set(cards.map((card) => card.id));

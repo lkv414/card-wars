@@ -106,12 +106,6 @@ export type PlayerView = z.infer<typeof PlayerViewSchema>;
 
 // --- Match commands (mirror of the domain Command union; adapter validates then forwards) ---
 
-export const CommandChoicesSchema = z.object({
-  creature: z.string().optional(),
-  opponent: z.string().optional(),
-  landscape: z.object({ player: z.string(), zone: z.number() }).optional(),
-});
-
 export const CommandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('mulligan'), player: z.string() }),
   z.object({ type: z.literal('keep_hand'), player: z.string() }),
@@ -121,13 +115,11 @@ export const CommandSchema = z.discriminatedUnion('type', [
     instanceId: z.string(),
     zone: z.number().optional(),
     unfreezeWith: z.string().optional(),
-    choices: CommandChoicesSchema.optional(),
   }),
   z.object({
     type: z.literal('floop'),
     player: z.string(),
     instanceId: z.string(),
-    choices: CommandChoicesSchema.optional(),
   }),
   z.object({ type: z.literal('draw_extra'), player: z.string() }),
   z.object({
@@ -147,7 +139,6 @@ export const CommandSchema = z.discriminatedUnion('type', [
 ]);
 
 export type Command = z.infer<typeof CommandSchema>;
-export type CommandChoices = z.infer<typeof CommandChoicesSchema>;
 
 // --- Lobby (docs/COMMANDS.md «Лобби») ---
 

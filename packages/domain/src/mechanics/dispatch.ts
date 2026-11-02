@@ -3,7 +3,7 @@ import { DomainError } from '../errors';
 import { emit, instance } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
-import { conditionsHold, forSource } from './modifiers';
+import { conditionsHold, forSource, isTriggerSuppressed } from './modifiers';
 import { runEffect } from './effects';
 import { runMechanic } from './registry';
 import { validateChoices } from './resolve';
@@ -40,6 +40,18 @@ export function enqueueTrigger(
     ) {
       return;
     }
+    // Боевые триггеры — по умолчанию только у нанёсшего урон / атакующего.
+    if (
+      (trigger === 'on_creature_attacks' || trigger === 'on_damage_dealt') &&
+      payload.instanceId &&
+      source.instanceId &&
+      source.instanceId !== payload.instanceId &&
+      !ability.conditions?.some((c) => c.kind === 'if_payload_other')
+    ) {
+      return;
+    }
+    // Подавление (Дворец Костей).
+    if (isTriggerSuppressed(draft, ctx, source, trigger)) return;
     ctx.frame.queue.push({
       player: source.player,
       instanceId: source.instanceId,
@@ -82,7 +94,7 @@ export function runQueuedAbility(
   if (!ability) return; // source left play while queued
   const source: EffectSource = { player: qa.player, instanceId: qa.instanceId };
   if (!conditionsHold(draft, ctx, source, ability.conditions, undefined, qa.payload)) return;
-  if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
+  if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices, qa.payload);
   else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
 }
 

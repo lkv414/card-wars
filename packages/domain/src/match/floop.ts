@@ -8,6 +8,7 @@ import { costPicks, costPicksCount, sacrificePicks } from '../mechanics/costs';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
+import { areActivesSuppressed } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -50,6 +51,9 @@ export function handleFloop(
 
   const card = ctx.catalog.getCard(inst.cardId);
   const actives = (card?.abilities ?? []).filter((a) => a.kind === 'active');
+  if (actives.length > 0 && areActivesSuppressed(draft, ctx, instanceId)) {
+    throw new DomainError('ability_suppressed', 'abilities of this card are suppressed');
+  }
   if (actives.length === 0) {
     throw new DomainError('card_has_no_floop', `card ${card?.id ?? inst.cardId} has no active ability`);
   }

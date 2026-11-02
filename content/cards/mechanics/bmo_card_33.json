@@ -1,0 +1,20 @@
+{
+ "cardId": "bmo_card_33",
+ "name": "Дворец Костей",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "suppress",
+    "target": {
+     "kind": "this_lane_opponent_creature"
+    },
+    "triggers": [
+     "on_enters_play",
+     "on_leave_play"
+    ]
+   },
+   "text": "У существ противника на этой линии не срабатывают эффекты вступления в игру и покидания игры."
+  }
+ ]
+}

@@ -332,6 +332,79 @@ describe('механики v2: каркас', () => {
     });
   });
 
+  describe('M5: подавление, иммунитет, боевые триггеры', () => {
+    it('Дворец-подавитель гасит on_enters_play существа противника на этой линии', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'suppressor');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'suppressor'), zone: 0 }).state;
+      s = ok(s, { type: 'go_battle', player: P1 }).state; // ход p2
+      // зеркальная зона 3 подавлена: добора нет
+      s = produce(s, (d) => {
+        d.players[P2]!.lands[3]!.type = 'swamp';
+      });
+      s = forceToHand(s, P2, 'enter-drawer');
+      const deckBefore = s.players[P2]!.deck.length;
+      let res = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'enter-drawer'), zone: 3 });
+      expect(res.state.players[P2]!.deck.length).toBe(deckBefore);
+      // неподавленная зона 0 — триггер работает
+      s = refillActions(res.state, P2);
+      s = forceToHand(s, P2, 'enter-drawer');
+      res = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'enter-drawer'), zone: 0 });
+      expect(res.events.some((e) => e.type === 'card_drawn' && e.player === P2)).toBe(true);
+    });
+
+    it('подавитель активов запрещает флюп существа противника на этой линии', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'floop-suppressor');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'floop-suppressor'), zone: 0 }).state;
+      s = ok(s, { type: 'go_battle', player: P1 }).state; // ход p2
+      s = produce(s, (d) => {
+        d.players[P2]!.lands[3]!.type = 'swamp';
+      });
+      s = forceToHand(s, P2, 'floop-sniper');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'floop-sniper'), zone: 3 }).state;
+      const sniperId = s.players[P2]!.zones[3]!.creature!;
+      const res = applyCommand(s, { type: 'floop', player: P2, instanceId: sniperId }, deps);
+      expect(res.ok).toBe(false);
+      if (!res.ok) expect(res.rejected.code).toBe('ability_suppressed');
+    });
+
+    it('no_retaliation: по атакующему не дают сдачи', () => {
+      let s = startedMatch();
+      // круг 1: p2 готовит corn в зеркальной зоне 3 и атакует пустую зону p1
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = forceToHand(s, P2, 'vanilla-corn');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'vanilla-corn'), zone: 3 }).state;
+      s = ok(s, { type: 'go_battle', player: P2 }).state; // corn атакует в лицо
+      // круг 2: p1 ставит no-retaliator и атакует corn — сдачи не будет
+      s = forceToHand(s, P1, 'no-retaliator');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'no-retaliator'), zone: 0 }).state;
+      const res = ok(s, { type: 'go_battle', player: P1 });
+      const cornId = res.state.players[P2]!.zones[3]!.creature!;
+      const attackerId = res.state.players[P1]!.zones[0]!.creature!;
+      expect(res.state.instances[cornId]!.damage).toBe(1); // атака прошла
+      expect(res.state.instances[attackerId]!.damage).toBe(0); // сдачи нет
+    });
+
+    it('on_damage_dealt: вампир лечится на нанесённый урон', () => {
+      let s = startedMatch();
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = forceToHand(s, P2, 'vanilla-corn');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'vanilla-corn'), zone: 3 }).state;
+      s = ok(s, { type: 'go_battle', player: P2 }).state; // круг 2, ход p1
+      s = forceToHand(s, P1, 'vampire');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vampire'), zone: 0 }).state;
+      s = produce(s, (d) => {
+        d.instances[s.players[P1]!.zones[0]!.creature!]!.damage = 2;
+      });
+      const res = ok(s, { type: 'go_battle', player: P1 });
+      const vampireId = res.state.players[P1]!.zones[0]!.creature!;
+      const cornId = res.state.players[P2]!.zones[3]!.creature!;
+      expect(res.state.instances[cornId]!.damage).toBe(2); // урон вампира
+      expect(res.state.instances[vampireId]!.damage).toBe(3); // 2 до боя + 3 ответка − 2 лечение
+    });
+  });
+
   describe('способность героя', () => {
     function bimoMatch() {
       const { state } = createMatch(deps, makeSetup({ p1Hero: 'hero-bimo', seed: 5 }));

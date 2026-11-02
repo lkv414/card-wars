@@ -35,7 +35,8 @@ export type RejectCode =
   | 'mechanic_unknown'
   | 'aura_not_castable'
   | 'effect_not_implemented'
-  | 'trigger_storm';
+  | 'trigger_storm'
+  | 'ability_suppressed';
 
 /** Thrown inside a state transition; the producer aborts, so the state stays untouched. */
 export class DomainError extends Error {

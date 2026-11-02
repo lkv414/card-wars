@@ -384,7 +384,23 @@
   "landType": "swamp",
   "image": "/content/cards/images/bmo_card_33.png",
   "description": "У существ противника на этой линии не срабатывают эффекты вступления в игру и покидания игры.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "triggers": [
+      "on_enters_play",
+      "on_leave_play"
+     ]
+    },
+    "text": "У существ противника на этой линии не срабатывают эффекты вступления в игру и покидания игры."
+   }
+  ]
  },
  {
   "id": "bmo_card_34",
@@ -792,7 +808,29 @@
   "attack": 1,
   "defense": 7,
   "description": "Когда Мятный змей наносит урон противнику, можешь восстановить столько же HP (но не более 25).",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "self_player"
+     },
+     "amount": {
+      "kind": "payload_damage"
+     }
+    },
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_to_player"
+     }
+    ],
+    "text": "Когда Мятный змей наносит урон противнику, можешь восстановить столько же HP (но не более 25)."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_25",
@@ -1731,7 +1769,18 @@
   "attack": 3,
   "defense": 6,
   "description": "Каждый раз когда Хрономансер меняет линию, получи 1 действие.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_line_change",
+    "effect": {
+     "op": "gain_actions",
+     "amount": 1
+    },
+    "text": "Каждый раз когда Хрономансер меняет линию, получи 1 действие."
+   }
+  ]
  },
  {
   "id": "charlie_card_19",
@@ -1755,7 +1804,29 @@
   "attack": 1,
   "defense": 8,
   "description": "Каждый раз когда существо под твоим контролем меняет линию, восстанови 2 урона у Биомансера.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_line_change",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": 2
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "text": "Каждый раз когда существо под твоим контролем меняет линию, восстанови 2 урона у Биомансера."
+   }
+  ]
  },
  {
   "id": "charlie_card_22",
@@ -1857,7 +1928,28 @@
   "attack": 2,
   "defense": 6,
   "description": "Пока у Пушистой лисы 4 и более урона, она игнорирует первые 2 урона нанесенные ей существами противника.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "damage_immunity",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": 2,
+     "from": "attacks"
+    },
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ],
+    "text": "Пока у Пушистой лисы 4 и более урона, она игнорирует первые 2 урона нанесенные ей существами противника."
+   }
+  ]
  },
  {
   "id": "charlie_card_36",
@@ -2096,7 +2188,18 @@
   "attack": 3,
   "defense": 9,
   "description": "Когда Мародер Вайда меняет линию во время хода, тяни карту.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_line_change",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "Когда Мародер Вайда меняет линию во время хода, тяни карту."
+   }
+  ]
  },
  {
   "id": "finn_card_19",
@@ -2408,7 +2511,31 @@
   "attack": 2,
   "defense": 10,
   "description": "Существа на этой линии не могут использовать Приемы.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "actives": true
+    },
+    "text": "Существа на этой линии не могут использовать Приемы."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "actives": true
+    },
+    "text": "Существа на этой линии не могут использовать Приемы."
+   }
+  ]
  },
  {
   "id": "fiona_card_16",
@@ -2480,7 +2607,19 @@
   "attack": 2,
   "defense": 7,
   "description": "Каждый раз когда Игривый ретривер атакует, можешь тянуть карту.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "optional": true,
+    "text": "Каждый раз когда Игривый ретривер атакует, можешь тянуть карту."
+   }
+  ]
  },
  {
   "id": "fiona_card_22",
@@ -2605,7 +2744,23 @@
   "attack": 1,
   "defense": 8,
   "description": "Когда Лорд Вампиров наносит урон, он восстанавливает то же количество урона у себя.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": {
+      "kind": "payload_damage"
+     }
+    },
+    "text": "Когда Лорд Вампиров наносит урон, он восстанавливает то же количество урона у себя."
+   }
+  ]
  },
  {
   "id": "fiona_card_38",
@@ -5572,7 +5727,27 @@
   "attack": 1,
   "defense": 6,
   "description": "Когда Зеленый зебрарог атакует, нанеси 1 урон выбранному противнику.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Когда Зеленый зебрарог атакует, нанеси 1 урон выбранному противнику."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_18",
@@ -5584,7 +5759,27 @@
   "attack": 2,
   "defense": 8,
   "description": "Когда Бывалый зебрарог атакует, нанеси 2 урона выбранному противнику.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Когда Бывалый зебрарог атакует, нанеси 2 урона выбранному противнику."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_19",
@@ -5633,7 +5828,22 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "amount": 1
+    },
+    "optional": true,
+    "text": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_22",
@@ -5645,7 +5855,21 @@
   "attack": 2,
   "defense": 7,
   "description": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "amount": 1
+    },
+    "text": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_23",
@@ -6724,7 +6948,19 @@
   "attack": 1,
   "defense": 7,
   "description": "Настолько крутые ребята, что существа противника просто не могут дать им сдачи (не получают урон при нападении на существо противника).",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "no_retaliation",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "Настолько крутые ребята, что существа противника просто не могут дать им сдачи (не получают урон при нападении на существо противника)."
+   }
+  ]
  },
  {
   "id": "lich_card_26",

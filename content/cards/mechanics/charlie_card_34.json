@@ -1,0 +1,25 @@
+{
+ "cardId": "charlie_card_34",
+ "name": "Пушистая лиса",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "damage_immunity",
+    "target": {
+     "kind": "this_creature"
+    },
+    "amount": 2,
+    "from": "attacks"
+   },
+   "conditions": [
+    {
+     "kind": "while_damage_at_least",
+     "amount": 4,
+     "scope": "self"
+    }
+   ],
+   "text": "Пока у Пушистой лисы 4 и более урона, она игнорирует первые 2 урона нанесенные ей существами противника."
+  }
+ ]
+}

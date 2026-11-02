@@ -174,6 +174,7 @@ export function createMatch(
     abilityUses: {},
     turnBuffs: [],
     turnCounters: {},
+    turnModifiers: [],
     winners: null,
     finishReason: null,
   };

@@ -5,6 +5,7 @@ import type { MatchState, PlayerId } from '../types';
 import { opponentsOf, opponentZoneFor } from '../zones';
 import type { EffectSource } from './source';
 import type { TargetAsk, TargetChoice, TargetRef } from './types';
+export type { TargetRef };
 
 /** Concrete target after resolution. */
 export type ResolvedTarget =

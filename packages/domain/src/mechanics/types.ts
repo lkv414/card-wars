@@ -122,7 +122,9 @@ export type StatAmount =
       filter?: TargetFilter;
     }
   /** Turn counters (docs/MECHANICS-V2.md §3): spells cast, creatures entered/died, line changes. */
-  | { kind: 'per_counter'; counter: 'spell_cast' | 'creature_entered' | 'creature_died' | 'line_change'; scope: 'own' | 'all'; amount: number };
+  | { kind: 'per_counter'; counter: 'spell_cast' | 'creature_entered' | 'creature_died' | 'line_change'; scope: 'own' | 'all'; amount: number }
+  /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
+  | { kind: 'payload_damage' };
 
 /**
  * Conditions (docs/MECHANICS-V2.md §7). `if_*` — one-shot at run time,
@@ -146,6 +148,8 @@ export type ConditionSpec =
   | { kind: 'if_payload_land_type'; landType: LandType }
   | { kind: 'if_payload_player_self' }
   | { kind: 'if_payload_other' }
+  /** on_damage_dealt: the damage went to a player (Мятный змей: «урон противнику»). */
+  | { kind: 'if_payload_to_player' }
   /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
   | { kind: 'while_on_land_type'; landType: LandType }
   /** At least min distinct land types under control (Лимонное желе). */
@@ -199,7 +203,17 @@ export type EffectSpec =
   /** Cost modifier scanned at payment time (Остролист, Домик из разного дерева). */
   | { op: 'cost_mod'; self: true; amount: StatAmount }
   /** «Считается за дополнительную землю» (Ферма). */
-  | { op: 'land_count_mod'; landType?: LandType; amount: number };
+  | { op: 'land_count_mod'; landType?: LandType; amount: number }
+  /** Suppress triggers or actives of the covered cards (Дворец Костей, Чародейка Вайда). */
+  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[] }
+  /** Attacking this creature provokes no retaliation (Призрачные бро). */
+  | { op: 'no_retaliation'; target: TargetRef }
+  /** Covered creature ignores the first N damage of each hit (Пушистая лиса). */
+  | { op: 'damage_immunity'; target: TargetRef; amount: number; from?: 'attacks' }
+  /** Damage to the covered creatures goes to the modifier source instead (Ведриния). */
+  | { op: 'damage_redirect'; from: TargetRef; excludeSelf?: boolean }
+  /** Grant a rule modifier for the current turn (floop Ведринии). */
+  | { op: 'grant_modifier'; modifier: EffectSpec };
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';

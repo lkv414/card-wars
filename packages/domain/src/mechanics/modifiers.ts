@@ -2,7 +2,7 @@ import { instance } from '../util';
 import type { Ctx } from '../util';
 import type { CardData, MatchState } from '../types';
 import { opponentsOf, opponentZoneFor } from '../zones';
-import { resolveTarget, type ResolvedTarget } from './resolve';
+import { resolveTarget, type ResolvedTarget, type TargetRef } from './resolve';
 import type { EffectSource } from './source';
 import type {
   AbilitySpec,
@@ -11,6 +11,7 @@ import type {
   StatAmount,
   StatKey,
   TargetFilter,
+  Trigger,
   TriggerPayload,
 } from './types';
 
@@ -84,6 +85,12 @@ export function forSource(
     if (hero?.ability) {
       fn({ player: pid, instanceId: null }, hero.ability, 0);
     }
+  }
+  // Modifiers granted mid-turn by abilities act as pseudo-abilities in scans.
+  for (const granted of draft.turnModifiers) {
+    const inst = draft.instances[granted.instanceId];
+    if (!inst) continue;
+    fn({ player: inst.controller, instanceId: granted.instanceId }, { kind: 'passive', effect: granted.effect, text: '' }, -1);
   }
 }
 
@@ -213,8 +220,10 @@ export function resolveStatAmount(
   ctx: Pick<Ctx, 'config' | 'catalog'>,
   source: EffectSource,
   amount: StatAmount,
+  payload?: TriggerPayload,
 ): number {
   if (typeof amount === 'number') return amount;
+  if (amount.kind === 'payload_damage') return payload?.amount ?? 0;
   const p = draft.players[source.player]!;
   switch (amount.kind) {
     case 'per_discard':
@@ -329,3 +338,106 @@ export function landCountModifier(
 }
 
 export type { ResolvedTarget };
+
+/** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect']);
+
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' }>;
+
+function ruleEffects(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+): Array<{ source: EffectSource; effect: RuleEffect }> {
+  const out: Array<{ source: EffectSource; effect: RuleEffect }> = [];
+  forSource(draft, ctx, (source, ability) => {
+    if (ability.kind !== 'passive' || ability.trigger !== undefined) return;
+    const effect = ability.effect;
+    if (!effect || !MODIFIER_OPS.has(effect.op)) return;
+    if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
+    out.push({ source, effect: effect as RuleEffect });
+  });
+  return out;
+}
+
+function coversInstance(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  source: EffectSource,
+  target: TargetRef,
+  instanceId: string,
+): boolean {
+  const targets = resolveTarget(draft, ctx, target, source, undefined);
+  return targets.some((t) => (t.kind === 'creature' || t.kind === 'building') && t.instanceId === instanceId);
+}
+
+/** Is this trigger suppressed for the source (Дворец Костей)? */
+export function isTriggerSuppressed(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  source: EffectSource,
+  trigger: Trigger,
+): boolean {
+  if (!source.instanceId) return false;
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'suppress' || !effect.triggers?.includes(trigger)) continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, source.instanceId)) return true;
+  }
+  return false;
+}
+
+/** Are this instance's active abilities suppressed (Чародейка Вайда)? */
+export function areActivesSuppressed(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  instanceId: string,
+): boolean {
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'suppress' || !effect.actives) continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, instanceId)) return true;
+  }
+  return false;
+}
+
+/** Sum of damage immunity for the victim (Пушистая лиса). */
+export function damageImmunity(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  victimId: string,
+  fromAttack: boolean,
+): number {
+  let total = 0;
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'damage_immunity') continue;
+    if (effect.from === 'attacks' && !fromAttack) continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, victimId)) total += effect.amount;
+  }
+  return total;
+}
+
+/** Redirect target for the victim, if any (Ведриния-style, granted or printed). */
+export function damageRedirectTarget(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  victimId: string,
+): string | null {
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'damage_redirect') continue;
+    if (effect.excludeSelf && modSource.instanceId === victimId) continue;
+    if (coversInstance(draft, ctx, modSource, effect.from, victimId)) return modSource.instanceId;
+  }
+  return null;
+}
+
+
+/** Does the attacking creature provoke no retaliation (Призрачные бро)? */
+export function hasNoRetaliation(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  attackerId: string,
+): boolean {
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'no_retaliation') continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, attackerId)) return true;
+  }
+  return false;
+}

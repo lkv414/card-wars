@@ -12,7 +12,7 @@ import { enqueueTrigger } from './dispatch';
 import { resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
-import type { EffectSpec, TargetChoice, TargetFilter } from './types';
+import type { EffectSpec, TargetChoice, TargetFilter, TriggerPayload } from './types';
 
 /**
  * Execute one declarative effect (docs/MECHANICS-V2.md §3). Aura specs never
@@ -25,11 +25,12 @@ export function runEffect(
   effect: EffectSpec,
   source: EffectSource,
   choices: TargetChoice[] | undefined,
+  payload?: TriggerPayload,
 ): void {
   switch (effect.op) {
     case 'deal_damage': {
       const targets = resolveTarget(draft, ctx, effect.target, source, choices);
-      const amount = resolveStatAmount(draft, ctx, source, effect.amount);
+      const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload);
       for (const target of targets) {
         if (effect.filter && !targetMatchesFilter(draft, ctx, source, target, effect.filter)) continue;
         if (target.kind === 'creature' || target.kind === 'building') {
@@ -42,7 +43,7 @@ export function runEffect(
     }
     case 'heal': {
       const targets = resolveTarget(draft, ctx, effect.target, source, choices);
-      const amount = resolveStatAmount(draft, ctx, source, effect.amount);
+      const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload);
       for (const target of targets) {
         if (target.kind === 'creature' || target.kind === 'building') {
           const inst = instance(draft, target.instanceId);
@@ -172,6 +173,9 @@ export function runEffect(
     }
     case 'gain_actions':
       player(draft, source.player).actions += effect.amount;
+      return;
+    case 'grant_modifier':
+      draft.turnModifiers.push({ instanceId: source.instanceId ?? '', effect: effect.modifier, grantedOnTurn: draft.turn });
       return;
   }
 }

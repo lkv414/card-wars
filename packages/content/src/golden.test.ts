@@ -384,6 +384,81 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(floop.state.players.p1!.lands[1]!.frozen).toBe(true);
   });
 
+  it('Дворец Костей: у существ противника на линии не срабатывает вход', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'swamp', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'bmo_card_33'); // Дворец Костей (болото)
+    let res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_33'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    s = res.state;
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    expect(gb.ok).toBe(true);
+    if (!gb.ok) return;
+    s = gb.state;
+    // ход p2: ставим существо с on_enters_play в зеркальную зону 3 — подавлено
+    s = edit(s, (d) => {
+      d.players.p2!.lands[0]!.type = 'corn';
+      d.players.p2!.actions = 10;
+    });
+    s = forceToHand(s, 'p2', 'bmo_card_10'); // Лысый бродяга (start_of_turn mill — не подавится), возьмём enter-эффект: bmo_card_12 без способностей
+    // для проверки подавления нужен на самом деле enter-drawer в реальном каталоге:
+    // возьмём jake_card_21 Зернотавр (on_enters_play, урон противнику)
+    s = forceToHand(s, 'p2', 'jake_card_21');
+    const deckBefore = s.players.p2!.deck.length;
+    const livesBefore = s.players.p1!.lives;
+    res = applyCommand(s, { type: 'play_card', player: 'p2', instanceId: handIdOf(s, 'p2', 'jake_card_21'), zone: 3 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    // зернотавр нанёс 0 урона (триггер подавлен) и не нарисовал
+    expect(res.state.players.p1!.lives).toBe(livesBefore);
+    // в неподавленной зоне 2 (не зеркальна Дворцу) триггер сработал бы — проверяем подавление только на линии
+  });
+
+  it('Лорд Вампиров: лечится на нанесённый урон', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'swamp', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+      const p2 = d.players.p2!;
+      const a = p2.deck[0]!;
+      d.instances[a]!.location = 'field';
+      d.instances[a]!.zone = 3;
+      d.instances[a]!.slot = 'creature';
+      p2.zones[3]!.creature = a;
+      d.players.p2!.lands[3]!.type = 'swamp';
+    });
+    s = forceToHand(s, 'p1', 'fiona_card_37'); // Лорд Вампиров
+    let res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'fiona_card_37'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const vampireId = res.state.players.p1!.zones[0]!.creature!;
+    // заменяем существо p2 на известную Желтую сирену 3/9
+    s = edit(res.state, (d) => {
+      d.instances[vampireId]!.damage = 3;
+      d.round = 2;
+      const victimId = d.players.p2!.zones[3]!.creature!;
+      d.instances[victimId]!.cardId = 'bmo_card_12';
+    });
+    const res2 = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    const lord = res2.state.instances[vampireId]!;
+    // 3 до боя + 3 ответки сирены − 1 лечение (вампир ATK 1)
+    expect(lord.damage).toBe(5); // 3 до боя + ответка − лечение по нанесённому
+  });
+
   it('герой Бимо: сброс карты с руки >>> 1 урон выбранному существу; раз за ход', () => {
     let s = newMatch();
     s = edit(s, (d) => {

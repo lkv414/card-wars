@@ -8,6 +8,7 @@ import { emit, instance, player } from '../util';
 import type { MatchState } from '../types';
 import { endTurn, lastAliveInOrder } from './turn';
 import { enqueueTrigger } from '../mechanics/dispatch';
+import { hasNoRetaliation } from '../mechanics/modifiers';
 
 export { mirrorZoneIndex } from '../zones';
 
@@ -51,15 +52,16 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
 
         if (defenderInstanceId) {
           // Simultaneous exchange: both powers are computed before any damage lands.
-          const retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
+          let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
+          if (hasNoRetaliation(draft, ctx, attackerInstanceId)) retaliation = 0;
           enqueueTrigger(draft, ctx, 'on_creature_attacks', {
             instanceId: attackerInstanceId,
             targetInstanceId: defenderInstanceId,
             zone: z,
             amount: attackPower,
           });
-          dealToCreature(draft, ctx, defenderInstanceId, attackPower, attackerInstanceId);
-          dealToCreature(draft, ctx, attackerInstanceId, retaliation, defenderInstanceId);
+          dealToCreature(draft, ctx, defenderInstanceId, attackPower, attackerInstanceId, false, true);
+          dealToCreature(draft, ctx, attackerInstanceId, retaliation, defenderInstanceId, false, true);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
             targetInstanceId: defenderInstanceId,

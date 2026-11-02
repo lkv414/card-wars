@@ -1,0 +1,15 @@
+{
+ "cardId": "charlie_card_18",
+ "name": "Хрономансер",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_line_change",
+   "effect": {
+    "op": "gain_actions",
+    "amount": 1
+   },
+   "text": "Каждый раз когда Хрономансер меняет линию, получи 1 действие."
+  }
+ ]
+}

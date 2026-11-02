@@ -1,0 +1,26 @@
+{
+ "cardId": "charlie_card_20",
+ "name": "Биомансер",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_line_change",
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "this_creature"
+    },
+    "amount": 2
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_player_self"
+    },
+    {
+     "kind": "if_payload_other"
+    }
+   ],
+   "text": "Каждый раз когда существо под твоим контролем меняет линию, восстанови 2 урона у Биомансера."
+  }
+ ]
+}

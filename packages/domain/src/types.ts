@@ -109,6 +109,13 @@ export interface TeamState {
   eliminated: boolean;
 }
 
+/** Modifier granted mid-turn by an ability (Ведриния-style, docs/MECHANICS-V2.md §2А). */
+export interface TurnModifier {
+  instanceId: string;
+  effect: import('./mechanics/types').EffectSpec;
+  grantedOnTurn: number;
+}
+
 export interface TurnBuff {
   instanceId: string;
   stat: 'attack' | 'defense';
@@ -141,6 +148,8 @@ export interface MatchState {
   turnBuffs: TurnBuff[];
   /** Per-turn event counters, key `kind:player`; cleared at end of turn. */
   turnCounters: Record<string, number>;
+  /** Modifiers granted by abilities this turn; cleared at end of turn. */
+  turnModifiers: TurnModifier[];
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

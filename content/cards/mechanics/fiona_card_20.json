@@ -1,0 +1,16 @@
+{
+ "cardId": "fiona_card_20",
+ "name": "Игривый ретривер",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_creature_attacks",
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "optional": true,
+   "text": "Каждый раз когда Игривый ретривер атакует, можешь тянуть карту."
+  }
+ ]
+}

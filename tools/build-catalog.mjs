@@ -64,7 +64,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -76,7 +76,7 @@ const TARGET_REFS = new Set([
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
@@ -84,6 +84,7 @@ const CONDITION_KINDS = new Set([
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_player_self', 'if_payload_other',
+  'if_payload_to_player',
 ]);
 
 function checkAmount(amount, where) {
@@ -128,6 +129,13 @@ function validateAbility(ability, owner) {
     } else if (op === 'destroy' || op === 'freeze_land') {
       checkTargetRef(ability.effect.target, where);
       if (op === 'freeze_land' && typeof ability.effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);
+    } else if (op === 'suppress' || op === 'no_retaliation' || op === 'damage_immunity' || op === 'damage_redirect') {
+      const target = ability.effect.target ?? ability.effect.from;
+      checkTargetRef(target, where);
+      if (op === 'damage_immunity' && !Number.isInteger(ability.effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
+      if (op === 'suppress' && !ability.effect.actives && !ability.effect.triggers) fail(`${where}: suppress needs actives or triggers`);
+    } else if (op === 'grant_modifier') {
+      if (!ability.effect.modifier || !EFFECT_OPS.has(ability.effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
     } else if (op === 'move_creature') {
       checkTargetRef(ability.effect.target, where);
       checkTargetRef(ability.effect.destination, where);

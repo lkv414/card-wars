@@ -213,6 +213,57 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'suppressor',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      { kind: 'passive', effect: { op: 'suppress', target: { kind: 'this_lane_opponent_creature' }, triggers: ['on_enters_play'] }, text: 'Существа противника на этой линии не срабатывают при входе' },
+    ],
+  }),
+  card({
+    id: 'floop-suppressor',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      { kind: 'passive', effect: { op: 'suppress', target: { kind: 'this_lane_opponent_creature' }, actives: true }, text: 'Активы существ противника на этой линии подавлены' },
+    ],
+  }),
+  card({
+    id: 'immuned',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'passive', effect: { op: 'damage_immunity', target: { kind: 'this_creature' }, amount: 2, from: 'attacks' }, text: 'Игнорирует первые 2 урона от атак' },
+    ],
+  }),
+  card({
+    id: 'no-retaliator',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'passive', effect: { op: 'no_retaliation', target: { kind: 'this_creature' } }, text: 'Противник не даёт сдачи' },
+    ],
+  }),
+  card({
+    id: 'vampire',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 2,
+    defense: 6,
+    abilities: [
+      { kind: 'passive', trigger: 'on_damage_dealt', effect: { op: 'heal', target: { kind: 'this_creature' }, amount: { kind: 'payload_damage' } }, text: 'Когда наносит урон — лечит себя на столько же' },
+    ],
+  }),
+  card({
     id: 'turn-chooser',
     type: 'creature',
     cost: 1,

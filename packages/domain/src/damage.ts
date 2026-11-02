@@ -4,6 +4,7 @@ import type { Ctx } from './util';
 import { emit, instance, player } from './util';
 import type { CardInstance, MatchState, PlayerId } from './types';
 import { teamOf } from './zones';
+import { damageImmunity, damageRedirectTarget } from './mechanics/modifiers';
 
 /** Lives live on the team in 2v2; both allies mirror the shared value (docs/RULES.md). */
 function currentLives(draft: Draft<MatchState>, playerId: PlayerId): number {
@@ -39,7 +40,11 @@ export function healPlayer(
   return healed;
 }
 
-/** Damage to a creature: shield absorbs first (docs/RULES.md «Бой», «Щит»). Death is checked later in batch. */
+/**
+ * Damage to a creature: redirects and immunity scanned live (docs/MECHANICS-V2.md
+ * §2А), then shield absorbs first (docs/RULES.md «Бой», «Щит»). Death is checked
+ * later in batch. `fromAttack` gates attack-only immunities.
+ */
 export function dealToCreature(
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -47,12 +52,23 @@ export function dealToCreature(
   amount: number,
   sourceInstanceId: string | null,
   pierce = false,
+  fromAttack = false,
+  depth = 0,
 ): void {
   if (amount <= 0) return;
+  if (depth < 3) {
+    const redirect = damageRedirectTarget(draft, ctx, targetId);
+    if (redirect && redirect !== targetId) {
+      dealToCreature(draft, ctx, redirect, amount, sourceInstanceId, pierce, fromAttack, depth + 1);
+      return;
+    }
+  }
   const inst = instance(draft, targetId);
-  const absorbed = pierce ? 0 : Math.min(inst.shield, amount);
+  const immune = damageImmunity(draft, ctx, targetId, fromAttack);
+  const effective = Math.max(0, amount - immune);
+  const absorbed = pierce ? 0 : Math.min(inst.shield, effective);
   inst.shield -= absorbed;
-  const rest = amount - absorbed;
+  const rest = effective - absorbed;
   inst.damage += rest;
   emit(ctx, {
     type: 'damage_dealt',

@@ -11,7 +11,8 @@
    },
    "conditions": [
     {
-     "kind": "while_no_other_creatures"
+     "kind": "while_no_other_creatures",
+     "scope": "own"
     }
    ],
    "text": "Когда одинокая панда вступает в игру и под твоим контролем нет других существ, тяни карту."

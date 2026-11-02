@@ -8,6 +8,7 @@ import { costPicks, costPicksCount, sacrificePicks } from '../mechanics/costs';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
+import { conditionsHold } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -57,7 +58,7 @@ export function handleHeroAbility(
   const allTargets = targets ?? [];
   const handPicks = costPicks(allTargets, discardCount, playerId, draft);
   if (declaredAsks.length > 0) {
-    validateChoices(draft, { player: playerId, instanceId: null }, declaredAsks, allTargets.slice(costCount));
+    validateChoices(draft, ctx, { player: playerId, instanceId: null }, declaredAsks, allTargets.slice(costCount));
   }
 
   p.actions -= cost;
@@ -76,6 +77,11 @@ export function handleHeroAbility(
   for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
     killInstance(draft, ctx, pickId);
   }
+  // Условие до оплаты (docs/MECHANICS-V2.md §6).
+  if (ability.conditions && ability.conditions.length > 0 && !conditionsHold(draft, ctx, { player: playerId, instanceId: null }, ability.conditions, undefined)) {
+    throw new DomainError('condition_not_met', 'ability conditions are not met');
+  }
+
   runAbilityDirect(draft, ctx, { player: playerId, instanceId: null }, ability, allTargets.slice(costCount));
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
 

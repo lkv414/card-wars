@@ -36,7 +36,8 @@ export type RejectCode =
   | 'aura_not_castable'
   | 'effect_not_implemented'
   | 'trigger_storm'
-  | 'ability_suppressed';
+  | 'ability_suppressed'
+  | 'condition_not_met';
 
 /** Thrown inside a state transition; the producer aborts, so the state stays untouched. */
 export class DomainError extends Error {

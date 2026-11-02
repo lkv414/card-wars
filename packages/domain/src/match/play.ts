@@ -112,7 +112,7 @@ export function handlePlayCard(
     // Spell's own on_cast abilities: targets validated before anything is paid.
     const casts = (card.abilities ?? []).filter((a) => a.trigger === 'on_cast');
     for (const ability of casts) {
-      validateChoices(draft, { player: playerId, instanceId }, ability.targets, targets);
+      validateChoices(draft, ctx, { player: playerId, instanceId }, ability.targets, targets);
     }
     p.actions -= effectiveCost;
     emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
@@ -124,7 +124,13 @@ export function handlePlayCard(
     moveId(p.hand, p.discard, instanceId);
     draft.castSpells.push(instanceId);
     bumpCounter(draft, 'spell_cast', playerId);
-    enqueueTrigger(draft, ctx, 'on_spell_cast', { instanceId, cardId: card.id, player: playerId });
+    const spellTarget = targets?.find((t) => t.kind === 'creature');
+    enqueueTrigger(draft, ctx, 'on_spell_cast', {
+      instanceId,
+      cardId: card.id,
+      player: playerId,
+      targetInstanceId: spellTarget?.instanceId,
+    });
     afterEffects(draft, ctx);
     return;
   }

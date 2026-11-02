@@ -109,6 +109,14 @@ export interface TeamState {
   eliminated: boolean;
 }
 
+/** A temporary land flip scheduled to revert at the owner's next turn start. */
+export interface LandFlipEffect {
+  owner: string;
+  zone: number;
+  down: boolean;
+  grantedOnTurn: number;
+}
+
 /** Modifier granted mid-turn by an ability (Ведриния-style, docs/MECHANICS-V2.md §2А). */
 export interface TurnModifier {
   instanceId: string;
@@ -150,6 +158,8 @@ export interface MatchState {
   turnCounters: Record<string, number>;
   /** Modifiers granted by abilities this turn; cleared at end of turn. */
   turnModifiers: TurnModifier[];
+  /** Temporary land flips (Воронка) reverted at the owner's next turn start. */
+  landFlipEffects: LandFlipEffect[];
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

@@ -15,9 +15,6 @@
    "conditions": [
     {
      "kind": "if_payload_player_self"
-    },
-    {
-     "kind": "if_payload_other"
     }
    ],
    "text": "Каждый раз когда существо под твоим контролем меняет линию, восстанови 2 урона у Биомансера."

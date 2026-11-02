@@ -40,7 +40,7 @@
    },
    "targets": [
     {
-     "kind": "opponent_creature"
+     "kind": "any_creature"
     }
    ],
    "text": "Сбрось карту с руки >>> Нанеси 1 урон выбранному существу."
@@ -94,7 +94,7 @@
      },
      "targets": [
       {
-       "kind": "opponent_creature"
+       "kind": "any_creature"
       }
      ],
      "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу"

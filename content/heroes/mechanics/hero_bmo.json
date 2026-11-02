@@ -17,7 +17,7 @@
   },
   "targets": [
    {
-    "kind": "opponent_creature"
+    "kind": "any_creature"
    }
   ],
   "text": "Сбрось карту с руки >>> Нанеси 1 урон выбранному существу."

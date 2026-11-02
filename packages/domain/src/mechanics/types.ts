@@ -53,10 +53,16 @@ export type TargetAskKind =
   | 'landscape'
   | 'own_hand_card'
   | 'own_building'
-  | 'lane_building';
+  | 'lane_building'
+  /** Own-side land, any type (Бигфут) — combine with filter.landType (Червь шелухи). */
+  | 'own_landscape'
+  /** One adjacent own creature (Защищенный зебрарог). */
+  | 'adjacent_creature';
 
 export interface TargetAsk {
   kind: TargetAskKind;
+  /** Optional constraint validated at choice time (Пси-фехтовальщик: только применённые). */
+  filter?: TargetFilter;
 }
 
 /** Player's answers sent with a command (floop / hero_ability / resolve_choice). */
@@ -77,6 +83,10 @@ export type TargetRef =
   | { kind: 'each_creature_opponent' }
   | { kind: 'each_creature' }
   | { kind: 'this_lane_land' }
+  /** Both lands of the source's lane (Ледяная снегобаба: «обе земли»). */
+  | { kind: 'this_lane_lands' }
+  /** Opponents currently taking their turn (Лейтенант Гриб: «этот противник»). */
+  | { kind: 'active_opponent_players' }
   | { kind: 'each_building_yours' }
   | { kind: 'each_player' }
   | { kind: 'each_opponent_player' }
@@ -142,7 +152,7 @@ export type ConditionSpec =
   | { kind: 'while_lane_empty_opponent' }
   | { kind: 'while_self_flipped' }
   | { kind: 'while_opponents_hand_empty' }
-  | { kind: 'while_no_other_creatures' }
+  | { kind: 'while_no_other_creatures'; scope?: 'own' | 'all' }
   | { kind: 'while_empty_lands'; min: number }
   | { kind: 'while_on_flipped_land'; scope: 'self' | 'target' }
   // Payload conditions: meaningful only inside a trigger (aura scans fail them).
@@ -154,8 +164,10 @@ export type ConditionSpec =
   | { kind: 'if_payload_to_player' }
   /** on_spell_cast: this creature was the spell's target (Привлекательный слон). */
   | { kind: 'if_payload_targeted_self' }
-  /** on_leave_play: the card that left belonged to an opponent (Лейтенант Гриб). */
+  /** on_leave_play: the card that left belonged to an opponent. */
   | { kind: 'if_payload_player_opponent' }
+  /** Current turn belongs to an opponent (Лейтенант Гриб: «во время хода противника»). */
+  | { kind: 'while_opponents_turn' }
   /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
   | { kind: 'while_on_land_type'; landType: LandType }
   /** At least min distinct land types under control (Лимонное желе). */
@@ -198,8 +210,8 @@ export type EffectSpec =
     }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
   | { op: 'gain_actions'; amount: number }
-  /** Turn a land face up (Бигфут) or face down (Воронка, Червь шелухи). */
-  | { op: 'flip_land'; target: TargetRef; down: boolean }
+  /** Turn a land face up (Бигфут) or face down (Червь шелухи); `until` reverts it automatically. */
+  | { op: 'flip_land'; target: TargetRef; down: boolean; until?: 'next_own_turn' }
   | { op: 'destroy'; target: TargetRef }
   /** Move a creature to a player-chosen empty zone (Коготь дракона). */
   | { op: 'move_creature'; target: TargetRef; destination: TargetRef; side: 'own' | 'any' }

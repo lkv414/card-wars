@@ -26,6 +26,17 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   }
   if (p.companion) draft.instances[p.companion]!.flipped = false;
 
+  // Временные перевороты земель (Воронка) возвращаются к началу хода владельца.
+  const expired = draft.landFlipEffects.filter((e) => e.owner === pid && e.grantedOnTurn < draft.turn);
+  for (const expiredFlip of expired) {
+    const land = draft.players[expiredFlip.owner]!.lands[expiredFlip.zone]!;
+    if (land.flipped === expiredFlip.down) {
+      land.flipped = !expiredFlip.down;
+      emit(ctx, { type: 'land_changed', player: expiredFlip.owner, zone: expiredFlip.zone, change: expiredFlip.down ? 'unflipped' : 'flipped' });
+    }
+  }
+  draft.landFlipEffects = draft.landFlipEffects.filter((e) => !(e.owner === pid && e.grantedOnTurn < draft.turn));
+
   // Добор: free draws are automatic (docs/RULES.md, «Ход игрока»).
   draft.phase = 'draw';
   emit(ctx, { type: 'phase_changed', player: pid, phase: 'draw' });

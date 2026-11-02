@@ -40,13 +40,18 @@ export function enqueueTrigger(
     ) {
       return;
     }
-    // Боевые триггеры — по умолчанию только у нанёсшего урон / атакующего.
+    // Боевые триггеры и триггеры движения — по умолчанию только у источника
+    // события; реакции чужих источников — при явных if_payload_other /
+    // if_payload_player_self (Биомансер, Персиковая Джинни).
     if (
-      (trigger === 'on_creature_attacks' || trigger === 'on_damage_dealt') &&
+      (trigger === 'on_creature_attacks' ||
+        trigger === 'on_damage_dealt' ||
+        trigger === 'on_line_change' ||
+        trigger === 'on_flip') &&
       payload.instanceId &&
       source.instanceId &&
       source.instanceId !== payload.instanceId &&
-      !ability.conditions?.some((c) => c.kind === 'if_payload_other')
+      !ability.conditions?.some((c) => c.kind === 'if_payload_other' || c.kind === 'if_payload_player_self')
     ) {
       return;
     }
@@ -140,6 +145,14 @@ export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
     const qa = ctx.frame.queue.shift()!;
     const ability = abilityOf(draft, ctx, qa);
     if (!ability) continue;
+    // Payload-conditions (реакция на конкретное событие) проверяются ДО паузы:
+    // мёртвая реакция не должна останавливать матч вопросом (Привлекательный слон).
+    if (
+      ability.conditions?.some((c) => c.kind.startsWith('if_payload')) &&
+      !conditionsHold(draft, ctx, { player: qa.player, instanceId: qa.instanceId }, ability.conditions, undefined, qa.payload)
+    ) {
+      continue;
+    }
     if (ability.optional) {
       pause(draft, ctx, qa, { kind: 'optional' });
       return;
@@ -216,7 +229,7 @@ export function resolvePending(
     if (!choice) throw new DomainError('target_required', `ask ${pending.ask.askIndex + 1} needs one choice`);
     // Re-validate the whole set against the declared asks (atomic, docs/MECHANICS-V2.md §5).
     const source: EffectSource = { player: pending.player, instanceId: pending.current.instanceId };
-    validateChoices(draft, source, asks, [...pending.ask.collected, choice]);
+    validateChoices(draft, ctx, source, asks, [...pending.ask.collected, choice]);
     pending.ask.collected.push(choice);
     emit(ctx, {
       type: 'choice_resolved',

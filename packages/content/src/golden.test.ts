@@ -480,7 +480,11 @@ describe('golden: ауры и модификаторы (M2)', () => {
       });
     });
     s = forceToHand(s, 'p1', 'lich_card_39');
-    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'lich_card_39') }, deps);
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'lich_card_39'), targets: [
+      { kind: 'creature', instanceId: s.players.p2!.zones[0]!.creature! },
+      { kind: 'creature', instanceId: s.players.p2!.zones[1]!.creature! },
+      { kind: 'creature', instanceId: s.players.p2!.zones[2]!.creature! },
+    ] }, deps);
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     // on_cast: цепочка 3/2/1 по существам противника

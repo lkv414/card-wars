@@ -10,7 +10,8 @@
      "kind": "choice",
      "index": 0
     },
-    "down": true
+    "down": true,
+    "until": "next_own_turn"
    },
    "additionalCost": {
     "discardFromHand": 1

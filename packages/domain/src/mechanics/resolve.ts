@@ -4,7 +4,7 @@ import type { Ctx } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { opponentsOf, opponentZoneFor } from '../zones';
 import type { EffectSource } from './source';
-import type { TargetAsk, TargetChoice, TargetRef } from './types';
+import type { TargetAsk, TargetChoice, TargetFilter, TargetRef } from './types';
 export type { TargetRef };
 
 /** Concrete target after resolution. */
@@ -24,6 +24,7 @@ function isOpponent(draft: MatchState, sourcePlayer: PlayerId, other: PlayerId):
  */
 export function validateChoices(
   draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
   source: EffectSource,
   asks: TargetAsk[] | undefined,
   choices: TargetChoice[] | undefined,
@@ -36,10 +37,30 @@ export function validateChoices(
   if (!asks) return;
   asks.forEach((ask, i) => {
     const choice = choices![i]!;
-    if (!choiceMatchesAsk(draft, source, ask, choice)) {
+    if (!choiceMatchesAsk(draft, source, ask, choice, choices!)) {
       throw new DomainError('invalid_choice', `target ${i + 1} does not match ask ${ask.kind}`);
     }
+    if (ask.filter && !askFilterPasses(draft, ctx, choice, ask.filter)) {
+      throw new DomainError('invalid_choice', `target ${i + 1} violates the ask filter`);
+    }
   });
+}
+
+/** Ask-level filter (docs/MECHANICS-V2.md §5): ready / landType on the chosen card. */
+function askFilterPasses(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  choice: TargetChoice,
+  filter: TargetFilter,
+): boolean {
+  if (choice.kind !== 'creature' && choice.kind !== 'card') return true;
+  const inst = instance(draft, choice.instanceId);
+  if (filter.ready && inst.flipped) return false;
+  if (filter.landType) {
+    const card = ctx.catalog.getCard(inst.cardId);
+    if (!card || card.landType !== filter.landType) return false;
+  }
+  return true;
 }
 
 function choiceMatchesAsk(
@@ -47,6 +68,7 @@ function choiceMatchesAsk(
   source: EffectSource,
   ask: TargetAsk,
   choice: TargetChoice,
+  choices: TargetChoice[],
 ): boolean {
   switch (ask.kind) {
     case 'own_creature':
@@ -66,14 +88,14 @@ function choiceMatchesAsk(
     case 'lane_creature': {
       if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
       const inst = instance(draft, choice.instanceId);
-      const src = source.instanceId ? instance(draft, source.instanceId) : null;
-      return src !== null && inst.zone === src.zone;
+      const lane = laneZone(draft, source, choices);
+      return lane !== null && inst.zone === lane;
     }
     case 'lane_opponent_creature': {
       if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
       const inst = instance(draft, choice.instanceId);
-      const src = source.instanceId ? instance(draft, source.instanceId) : null;
-      return src !== null && inst.zone === src.zone && isOpponent(draft, source.player, inst.controller);
+      const lane = laneZone(draft, source, choices);
+      return lane !== null && inst.zone === lane && isOpponent(draft, source.player, inst.controller);
     }
     case 'opponent_player':
       return choice.kind === 'player' && isOpponent(draft, source.player, choice.playerId);
@@ -82,21 +104,29 @@ function choiceMatchesAsk(
       const p = draft.players[choice.player];
       return Boolean(p && choice.zone >= 0 && choice.zone < p.lands.length);
     }
+    case 'own_landscape': {
+      if (choice.kind !== 'landscape') return false;
+      return choice.player === source.player;
+    }
+    case 'adjacent_creature': {
+      if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
+      const inst = instance(draft, choice.instanceId);
+      const src = source.instanceId ? instance(draft, source.instanceId) : null;
+      if (!src || src.zone === null || inst.controller !== source.player) return false;
+      if (inst.zone === null) return false;
+      return Math.abs(inst.zone - src.zone) === 1;
+    }
     case 'own_building':
-      return (
-        choice.kind === 'creature' &&
-        isFieldCreature(draft, choice.instanceId) === false &&
-        isOwnFieldCard(draft, choice.instanceId, source.player, 'building')
-      );
+      return choice.kind === 'creature' && isOwnFieldCard(draft, choice.instanceId, source.player, 'building');
     case 'lane_building': {
       if (choice.kind !== 'creature') return false;
       const inst = instance(draft, choice.instanceId);
-      const src = source.instanceId ? instance(draft, source.instanceId) : null;
+      const lane = laneZone(draft, source, choices);
       return (
-        src !== null &&
+        lane !== null &&
         inst.location === 'field' &&
         inst.slot === 'building' &&
-        inst.zone === src.zone
+        inst.zone === lane
       );
     }
     case 'own_hand_card': {
@@ -105,6 +135,19 @@ function choiceMatchesAsk(
       return inst.location === 'hand' && inst.controller === source.player;
     }
   }
+}
+
+/**
+ * Lane reference for lane-asks: the source's zone; spells (in hand, zone null)
+ * fall back to the first creature choice (Отрази угроза: «на этой линии»
+ * относительно выбранного существа).
+ */
+function laneZone(draft: MatchState, source: EffectSource, choices: TargetChoice[]): number | null {
+  const src = source.instanceId ? instance(draft, source.instanceId) : null;
+  if (src?.zone != null) return src.zone;
+  const firstCreature = choices.find((c) => c.kind === 'creature');
+  if (firstCreature) return instance(draft, firstCreature.instanceId).zone;
+  return null;
 }
 
 function isOwnFieldCard(draft: MatchState, instanceId: string, playerId: string, slot: 'creature' | 'building'): boolean {
@@ -195,6 +238,19 @@ export function resolveTarget(
     case 'this_lane_land': {
       if (srcZone === null) return [];
       return [{ kind: 'land', playerId: source.player, zone: srcZone }];
+    }
+    case 'this_lane_lands': {
+      if (srcZone === null) return [];
+      const out: ResolvedTarget[] = [{ kind: 'land', playerId: source.player, zone: srcZone }];
+      const opposite = opponentZoneFor(draft, source.player, srcZone);
+      if (opposite) out.push({ kind: 'land', playerId: opposite.player, zone: opposite.zone });
+      return out;
+    }
+    case 'active_opponent_players': {
+      const opponents = opponentsOf(draft, source.player);
+      return draft.activePlayers
+        .filter((pid) => opponents.includes(pid))
+        .map((pid) => ({ kind: 'player' as const, playerId: pid }));
     }
     case 'each_creature_yours':
       return creaturesOf(draft, source.player);

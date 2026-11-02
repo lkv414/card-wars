@@ -8,7 +8,7 @@
    "effect": {
     "op": "freeze_land",
     "target": {
-     "kind": "this_lane_land"
+     "kind": "this_lane_lands"
     },
     "frozen": true
    },

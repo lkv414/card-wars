@@ -162,6 +162,12 @@ export function conditionsHold(
         if (opposite && draft.players[opposite.player]!.zones[opposite.zone]?.creature) return false;
         break;
       }
+      case 'while_opponents_turn': {
+        // Активные игроки — противники источника (docs/MECHANICS-V2.md §7).
+        const opponents = opponentsOf(draft, source.player);
+        if (!draft.activePlayers.some((pid) => opponents.includes(pid))) return false;
+        break;
+      }
       case 'while_on_land_type': {
         const src = source.instanceId ? instance(draft, source.instanceId) : null;
         if (!src || src.zone === null) return false;
@@ -187,7 +193,8 @@ export function conditionsHold(
         break;
       }
       case 'while_no_other_creatures': {
-        for (const pid of draft.order) {
+        const scope = cond.scope ?? 'all';
+        for (const pid of scope === 'own' ? [source.player] : draft.order) {
           for (const zone of draft.players[pid]!.zones) {
             if (zone.creature && zone.creature !== source.instanceId) return false;
           }
@@ -195,13 +202,14 @@ export function conditionsHold(
         break;
       }
       case 'while_empty_lands': {
-        const empty = p.zones.filter((z) => !z.creature).length;
+        // «Пустая земля» = нет никаких карт (существа и строения).
+        const empty = p.zones.filter((z) => !z.creature && !z.building).length;
         if (empty < cond.min) return false;
         break;
       }
       case 'while_on_flipped_land': {
         const id = cond.scope === 'self' ? source.instanceId : targetInstanceId;
-        if (!id) return false;
+        if (!id) break; // target-scoped: checked per candidate
         const inst = instance(draft, id);
         if (inst.zone === null) return false;
         if (!draft.players[inst.controller]!.lands[inst.zone]!.flipped) return false;
@@ -262,7 +270,7 @@ export function resolveStatAmount(
           }
           if (amount.landType && land.type !== amount.landType) return;
           if (amount.flipped && !land.flipped) return;
-          if (amount.empty && other.zones[zone]?.creature) return;
+          if (amount.empty && (other.zones[zone]?.creature || other.zones[zone]?.building)) return;
           count += 1;
         });
       }

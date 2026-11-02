@@ -70,9 +70,9 @@ const TRIGGERS = new Set([
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event',
 ]);
-const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building']);
+const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'adjacent_creature']);
 const TARGET_REFS = new Set([
-  'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature', 'this_lane_land',
+  'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player',
 ]);
@@ -84,7 +84,7 @@ const CONDITION_KINDS = new Set([
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_player_self', 'if_payload_other',
-  'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent',
+  'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
 ]);
 
 function checkAmount(amount, where) {
@@ -120,6 +120,11 @@ function validateAbility(ability, owner) {
   }
   for (const ask of ability.targets ?? []) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
+    if (ask.filter) {
+      for (const key of Object.keys(ask.filter)) {
+        if (!['ready', 'landType'].includes(key)) fail(`${where}: unknown ask filter ${key}`);
+      }
+    }
   }
 }
 
@@ -136,6 +141,7 @@ function validateEffect(effect, where, ability) {
   } else if (op === 'flip_land') {
     checkTargetRef(effect.target, where);
     if (typeof effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
+    if (effect.until !== undefined && effect.until !== 'next_own_turn') fail(`${where}: flip_land until must be next_own_turn`);
   } else if (op === 'destroy' || op === 'freeze_land') {
     checkTargetRef(effect.target, where);
     if (op === 'freeze_land' && typeof effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);

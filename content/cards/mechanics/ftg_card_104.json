@@ -8,19 +8,13 @@
    "effect": {
     "op": "opponent_discards",
     "target": {
-     "kind": "choice",
-     "index": 0
+     "kind": "active_opponent_players"
     },
     "count": 3
    },
    "conditions": [
     {
-     "kind": "if_payload_player_opponent"
-    }
-   ],
-   "targets": [
-    {
-     "kind": "opponent_player"
+     "kind": "while_opponents_turn"
     }
    ],
    "text": "Когда Лейтенант Гриб покидает игру во время хода противника, этот противник сбрасывает 3 карты."

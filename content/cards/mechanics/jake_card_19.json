@@ -12,7 +12,7 @@
     "stat": "attack",
     "amount": {
      "kind": "per_lands",
-     "where": "adjacent",
+     "where": "own",
      "amount": 1,
      "landType": "corn"
     },

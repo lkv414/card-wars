@@ -13,7 +13,7 @@
     "amount": {
      "kind": "per_discard",
      "every": 5,
-     "amount": 1
+     "amount": 2
     },
     "duration": "aura"
    },

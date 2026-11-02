@@ -273,7 +273,7 @@
     },
     "targets": [
      {
-      "kind": "opponent_creature"
+      "kind": "any_creature"
      }
     ],
     "text": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса."
@@ -315,7 +315,7 @@
      "amount": {
       "kind": "per_discard",
       "every": 5,
-      "amount": 1
+      "amount": 2
      },
      "duration": "aura"
     },
@@ -1249,16 +1249,10 @@
     "effect": {
      "op": "heal",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "this_creature"
      },
      "amount": 1
     },
-    "targets": [
-     {
-      "kind": "own_creature"
-     }
-    ],
     "text": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера."
    }
   ]
@@ -1861,9 +1855,6 @@
     "conditions": [
      {
       "kind": "if_payload_player_self"
-     },
-     {
-      "kind": "if_payload_other"
      }
     ],
     "text": "Каждый раз когда существо под твоим контролем меняет линию, восстанови 2 урона у Биомансера."
@@ -2038,6 +2029,9 @@
     "conditions": [
      {
       "kind": "if_payload_targeted_self"
+     },
+     {
+      "kind": "if_payload_player_opponent"
      }
     ],
     "targets": [
@@ -2535,7 +2529,8 @@
     },
     "conditions": [
      {
-      "kind": "while_no_other_creatures"
+      "kind": "while_no_other_creatures",
+      "scope": "own"
      }
     ],
     "text": "Когда одинокая панда вступает в игру и под твоим контролем нет других существ, тяни карту."
@@ -2569,7 +2564,10 @@
     "text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу.",
     "targets": [
      {
-      "kind": "any_creature"
+      "kind": "any_creature",
+      "filter": {
+       "ready": true
+      }
      }
     ]
    }
@@ -3936,7 +3934,7 @@
      },
      "amount": {
       "kind": "per_lands",
-      "where": "adjacent",
+      "where": "own",
       "amount": 1,
       "landType": "corn"
      }
@@ -4322,19 +4320,13 @@
     "effect": {
      "op": "opponent_discards",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "active_opponent_players"
      },
      "count": 3
     },
     "conditions": [
      {
-      "kind": "if_payload_player_opponent"
-     }
-    ],
-    "targets": [
-     {
-      "kind": "opponent_player"
+      "kind": "while_opponents_turn"
      }
     ],
     "text": "Когда Лейтенант Гриб покидает игру во время хода противника, этот противник сбрасывает 3 карты."
@@ -4953,7 +4945,7 @@
     "effect": {
      "op": "freeze_land",
      "target": {
-      "kind": "this_lane_land"
+      "kind": "this_lane_lands"
      },
      "frozen": true
     },
@@ -5564,11 +5556,20 @@
     "effect": {
      "op": "flip_land",
      "target": {
-      "kind": "this_lane_land"
+      "kind": "choice",
+      "index": 0
      },
      "down": true
     },
-    "text": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз."
+    "text": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз.",
+    "targets": [
+     {
+      "kind": "own_landscape",
+      "filter": {
+       "landType": "corn"
+      }
+     }
+    ]
    }
   ]
  },
@@ -5655,7 +5656,7 @@
      "stat": "attack",
      "amount": {
       "kind": "per_lands",
-      "where": "adjacent",
+      "where": "own",
       "amount": 1,
       "landType": "corn"
      },
@@ -5819,7 +5820,7 @@
     },
     "targets": [
      {
-      "kind": "landscape"
+      "kind": "own_landscape"
      }
     ],
     "text": "ПРИЕМ >>> Переверни выбранную землю под твоим контролем лицом вверх."
@@ -6055,12 +6056,18 @@
     "effect": {
      "op": "heal",
      "target": {
-      "kind": "adjacent_creatures"
+      "kind": "choice",
+      "index": 0
      },
      "amount": 1
     },
     "optional": true,
-    "text": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа."
+    "text": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа.",
+    "targets": [
+     {
+      "kind": "adjacent_creature"
+     }
+    ]
    }
   ]
  },
@@ -6887,7 +6894,8 @@
       "kind": "choice",
       "index": 0
      },
-     "down": true
+     "down": true,
+     "until": "next_own_turn"
     },
     "additionalCost": {
      "discardFromHand": 1
@@ -7304,7 +7312,18 @@
       1
      ]
     },
-    "text": "Нанеси урон по цепочке трём существам противника на соседних землях. Первому наносится 3 урона, второму - 2 и третьему - 1."
+    "text": "Нанеси урон по цепочке трём существам противника на соседних землях. Первому наносится 3 урона, второму - 2 и третьему - 1.",
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     },
+     {
+      "kind": "opponent_creature"
+     },
+     {
+      "kind": "opponent_creature"
+     }
+    ]
    }
   ]
  },
@@ -7645,9 +7664,6 @@
     "kind": "active",
     "mechanic": "swap_lanes",
     "targets": [
-     {
-      "kind": "own_creature"
-     },
      {
       "kind": "own_creature"
      }
@@ -8529,7 +8545,7 @@
      "amount": 1
     },
     "cost": 1,
-    "text": "Потрать 1 Действие, ПРИЕМ >>>"
+    "text": "Потрать 1 Действие, ПРИЕМ >>>\nНанеси 1 урон каждому существу противника в игре."
    }
   ]
  },

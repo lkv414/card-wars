@@ -8,7 +8,7 @@ import { costPicks, costPicksCount, sacrificePicks } from '../mechanics/costs';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
-import { areActivesSuppressed, collectGrantedActives } from '../mechanics/modifiers';
+import { areActivesSuppressed, collectGrantedActives, conditionsHold } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -62,6 +62,11 @@ export function handleFloop(
   // One «ПРИЕМ» per card in the original game (docs/MECHANICS-V2.md §4).
   const ability = (actives[0] ?? granted[0])!;
 
+  // Условие проверяется ДО оплаты: мёртвая способность не сжигает флюп и действия.
+  if (ability.conditions && ability.conditions.length > 0 && !conditionsHold(draft, ctx, { player: playerId, instanceId }, ability.conditions, undefined)) {
+    throw new DomainError('condition_not_met', 'ability conditions are not met');
+  }
+
   // Once-per-turn tracking (docs/MECHANICS-V2.md §6).
   const useKey = `${playerId}:${instanceId}:0`;
   if (ability.oncePerTurn && draft.abilityUses[useKey] === draft.turn) {
@@ -85,7 +90,7 @@ export function handleFloop(
   const allTargets = targets ?? [];
   const handPicks = costPicks(allTargets, discardCount, playerId, draft);
   if (declaredAsks.length > 0) {
-    validateChoices(draft, { player: playerId, instanceId }, declaredAsks, allTargets.slice(costCount));
+    validateChoices(draft, ctx, { player: playerId, instanceId }, declaredAsks, allTargets.slice(costCount));
   }
 
   // Apply: pay actions, pay additional cost, run, flip.

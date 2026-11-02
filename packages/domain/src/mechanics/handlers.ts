@@ -8,20 +8,30 @@ import { resolveTarget } from './resolve';
 import type { EffectSource, MechanicHandler } from './registry';
 import type { TargetChoice } from './types';
 
-/** Убей-молния: damage chain[0], chain[1], … across opponent creatures in order. */
+/** Убей-молния: damage chain[0], chain[1], … along three chosen connected creatures. */
 export const chainDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
   params: Record<string, unknown> | undefined,
-  _choices: TargetChoice[] | undefined,
+  choices: TargetChoice[] | undefined,
 ): void => {
   const chain = (params?.chain as number[] | undefined) ?? [];
-  const targets = resolveTarget(draft, ctx, { kind: 'each_creature_opponent' }, source, undefined);
   chain.forEach((amount, i) => {
-    const target = targets[i];
-    if (!target || target.kind !== 'creature') return;
-    dealToCreature(draft, ctx, target.instanceId, amount, source.instanceId);
+    const pick = choices?.[i];
+    if (!pick || pick.kind !== 'creature') {
+      throw new DomainError('invalid_choice', `chain_damage needs ${chain.length} creature choices`);
+    }
+    // «по цепочке … на соседних землях»: соседние цели обязаны примыкать.
+    if (i > 0) {
+      const prev = choices![i - 1]!;
+      const zoneA = instance(draft, (prev as { instanceId: string }).instanceId).zone;
+      const zoneB = instance(draft, pick.instanceId).zone;
+      if (zoneA === null || zoneB === null || Math.abs(zoneA - zoneB) !== 1) {
+        throw new DomainError('invalid_choice', 'chain targets must be on adjacent lanes');
+      }
+    }
+    dealToCreature(draft, ctx, pick.instanceId, amount, source.instanceId);
   });
 };
 
@@ -56,7 +66,7 @@ export const moveDamage: MechanicHandler = (
   });
 };
 
-/** Скелет гастролер: swap the zones of two own field creatures. */
+/** Скелет гастролер: swap the source with one chosen own creature. */
 export const swapLanes: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -64,24 +74,23 @@ export const swapLanes: MechanicHandler = (
   _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
 ): void => {
-  const a = choices?.[0];
-  const b = choices?.[1];
-  if (!a || a.kind !== 'creature' || !b || b.kind !== 'creature') {
-    throw new DomainError('invalid_choice', 'swap_lanes needs two creature choices');
+  const pick = choices?.[0];
+  if (!source.instanceId || !pick || pick.kind !== 'creature') {
+    throw new DomainError('invalid_choice', 'swap_lanes needs one creature choice');
   }
-  const instA = instance(draft, a.instanceId);
-  const instB = instance(draft, b.instanceId);
-  if (instA.controller !== source.player || instB.controller !== source.player) {
-    throw new DomainError('invalid_choice', 'swap_lanes needs own creatures');
+  const instA = instance(draft, source.instanceId);
+  const instB = instance(draft, pick.instanceId);
+  if (instB.controller !== source.player) {
+    throw new DomainError('invalid_choice', 'swap_lanes needs an own creature');
   }
   if (instA.zone === null || instB.zone === null) return;
   const zones = player(draft, source.player).zones;
   const zoneA = instA.zone;
   const zoneB = instB.zone;
-  zones[zoneA]!.creature = b.instanceId;
-  zones[zoneB]!.creature = a.instanceId;
+  zones[zoneA]!.creature = pick.instanceId;
+  zones[zoneB]!.creature = source.instanceId;
   instA.zone = zoneB;
   instB.zone = zoneA;
-  emit(ctx, { type: 'card_moved', player: source.player, instanceId: a.instanceId, fromZone: zoneA, toZone: zoneB });
-  emit(ctx, { type: 'card_moved', player: source.player, instanceId: b.instanceId, fromZone: zoneB, toZone: zoneA });
+  emit(ctx, { type: 'card_moved', player: source.player, instanceId: source.instanceId, fromZone: zoneA, toZone: zoneB });
+  emit(ctx, { type: 'card_moved', player: source.player, instanceId: pick.instanceId, fromZone: zoneB, toZone: zoneA });
 };

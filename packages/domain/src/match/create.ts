@@ -175,6 +175,7 @@ export function createMatch(
     turnBuffs: [],
     turnCounters: {},
     turnModifiers: [],
+    landFlipEffects: [],
     winners: null,
     finishReason: null,
   };

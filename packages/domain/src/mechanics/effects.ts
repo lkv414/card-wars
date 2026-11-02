@@ -147,6 +147,9 @@ export function runEffect(
         const land = draft.players[target.playerId]!.lands[target.zone]!;
         if (land.flipped !== effect.down) continue; // already in the wanted state
         land.flipped = effect.down;
+        if (effect.until === 'next_own_turn') {
+          draft.landFlipEffects.push({ owner: source.player, zone: target.zone, down: effect.down, grantedOnTurn: draft.turn });
+        }
         emit(ctx, { type: 'land_changed', player: target.playerId, zone: target.zone, change: effect.down ? 'flipped' : 'unflipped' });
         enqueueTrigger(draft, ctx, 'on_flip', { player: target.playerId, zone: target.zone });
       }

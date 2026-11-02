@@ -8,12 +8,18 @@
    "effect": {
     "op": "heal",
     "target": {
-     "kind": "adjacent_creatures"
+     "kind": "choice",
+     "index": 0
     },
     "amount": 1
    },
    "optional": true,
-   "text": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа."
+   "text": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа.",
+   "targets": [
+    {
+     "kind": "adjacent_creature"
+    }
+   ]
   }
  ]
 }

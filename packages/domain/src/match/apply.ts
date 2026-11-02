@@ -11,7 +11,7 @@ import { handleHeroAbility } from './hero';
 import { handleKeepHand, handleMulligan } from './mulligan';
 import { handlePlayCard } from './play';
 import { endTurn } from './turn';
-import { resolvePending, skipPending } from '../mechanics/dispatch';
+import { enqueueTrigger, resolvePending, skipPending } from '../mechanics/dispatch';
 import { emit, instance, moveId, player } from '../util';
 import type { Draft } from 'immer';
 import type { Ctx } from '../util';
@@ -222,6 +222,7 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       inst.slot = null;
       p.discard.push(command.instanceId);
       emit(ctx, { type: 'card_discarded', player: command.player, instanceId: command.instanceId, cardId: inst.cardId, from });
+      enqueueTrigger(draft, ctx, 'on_leave_play', { instanceId: command.instanceId, cardId: inst.cardId, player: command.player });
       afterEffects(draft, ctx);
       return;
     }

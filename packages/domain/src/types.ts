@@ -139,6 +139,8 @@ export interface MatchState {
   pending: PendingChoice | null;
   /** «Этот ход» stat buffs; cleared at end of turn (docs/MECHANICS-V2.md §3). */
   turnBuffs: TurnBuff[];
+  /** Per-turn event counters, key `kind:player`; cleared at end of turn. */
+  turnCounters: Record<string, number>;
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

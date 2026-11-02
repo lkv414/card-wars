@@ -10,6 +10,7 @@ export type PlayerId = string;
 export type Trigger =
   | 'on_cast'
   | 'on_enters_play'
+  | 'on_leave_play'
   | 'on_death'
   | 'start_of_turn'
   | 'start_of_next_turn'
@@ -29,6 +30,8 @@ export interface TriggerPayload {
   player?: PlayerId;
   instanceId?: string;
   cardId?: string;
+  /** on_enters_play: the card replaced another card in its zone. */
+  replaced?: boolean;
   targetInstanceId?: string;
   targetPlayer?: PlayerId;
   amount?: number;
@@ -71,6 +74,7 @@ export type TargetRef =
   | { kind: 'each_creature_yours' }
   | { kind: 'each_creature_opponent' }
   | { kind: 'each_creature' }
+  | { kind: 'this_lane_land' }
   | { kind: 'each_building_yours' }
   | { kind: 'each_player' }
   | { kind: 'each_opponent_player' }
@@ -116,7 +120,9 @@ export type StatAmount =
       amount: number;
       excludeSelf?: boolean;
       filter?: TargetFilter;
-    };
+    }
+  /** Turn counters (docs/MECHANICS-V2.md §3): spells cast, creatures entered/died, line changes. */
+  | { kind: 'per_counter'; counter: 'spell_cast' | 'creature_entered' | 'creature_died' | 'line_change'; scope: 'own' | 'all'; amount: number };
 
 /**
  * Conditions (docs/MECHANICS-V2.md §7). `if_*` — one-shot at run time,
@@ -135,6 +141,11 @@ export type ConditionSpec =
   | { kind: 'while_no_other_creatures' }
   | { kind: 'while_empty_lands'; min: number }
   | { kind: 'while_on_flipped_land'; scope: 'self' | 'target' }
+  // Payload conditions: meaningful only inside a trigger (aura scans fail them).
+  | { kind: 'if_payload_replacing' }
+  | { kind: 'if_payload_land_type'; landType: LandType }
+  | { kind: 'if_payload_player_self' }
+  | { kind: 'if_payload_other' }
   /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
   | { kind: 'while_on_land_type'; landType: LandType }
   /** At least min distinct land types under control (Лимонное желе). */
@@ -179,6 +190,10 @@ export type EffectSpec =
   | { op: 'gain_actions'; amount: number }
   /** Turn a land face up (Бигфут) or face down (Воронка, Червь шелухи). */
   | { op: 'flip_land'; target: TargetRef; down: boolean }
+  | { op: 'destroy'; target: TargetRef }
+  /** Move a creature to a player-chosen empty zone (Коготь дракона). */
+  | { op: 'move_creature'; target: TargetRef; destination: TargetRef; side: 'own' | 'any' }
+  | { op: 'freeze_land'; target: TargetRef; frozen: boolean }
   /** Win check (герой Билли): all opponents' decks are empty at the trigger point. */
   | { op: 'win_if_opponents_deck_empty' }
   /** Cost modifier scanned at payment time (Остролист, Домик из разного дерева). */

@@ -64,25 +64,26 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod']);
 const TRIGGERS = new Set([
-  'on_cast', 'on_enters_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
+  'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event',
 ]);
 const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card']);
 const TARGET_REFS = new Set([
-  'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature',
+  'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature', 'this_lane_land',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
   'while_distinct_lands', 'while_land_count', 'while_zone_has_building',
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
+  'if_payload_replacing', 'if_payload_land_type', 'if_payload_player_self', 'if_payload_other',
 ]);
 
 function checkAmount(amount, where) {
@@ -124,6 +125,13 @@ function validateAbility(ability, owner) {
     } else if (op === 'flip_land') {
       checkTargetRef(ability.effect.target, where);
       if (typeof ability.effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
+    } else if (op === 'destroy' || op === 'freeze_land') {
+      checkTargetRef(ability.effect.target, where);
+      if (op === 'freeze_land' && typeof ability.effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);
+    } else if (op === 'move_creature') {
+      checkTargetRef(ability.effect.target, where);
+      checkTargetRef(ability.effect.destination, where);
+      if (!['own', 'any'].includes(ability.effect.side)) fail(`${where}: move_creature side must be own|any`);
     } else if (op === 'gain_actions') {
       if (!Number.isInteger(ability.effect.amount)) fail(`${where}: gain_actions needs integer amount`);
     } else if (op === 'gain_shield') {
@@ -148,6 +156,15 @@ function validateAbility(ability, owner) {
   }
   for (const ask of ability.targets ?? []) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
+  }
+  // A choice-based effect needs declared asks: max choice index + 1.
+  const effectJson = hasEffect ? JSON.stringify(ability.effect) : '';
+  const choiceMatches = [...effectJson.matchAll(/"choice","index":(\d+)/g)];
+  if (choiceMatches.length > 0) {
+    const need = Math.max(...choiceMatches.map((m) => Number(m[1]) + 1));
+    if ((ability.targets?.length ?? 0) < need) {
+      fail(`${where}: effect uses choice(0..${need - 1}) but only ${ability.targets?.length ?? 0} targets declared`);
+    }
   }
 }
 

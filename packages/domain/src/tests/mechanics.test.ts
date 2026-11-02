@@ -10,6 +10,7 @@ import {
   mustOk,
   P1,
   P2,
+  refillActions,
 } from './helpers';
 import { startedMatch } from './engine.test';
 
@@ -258,6 +259,76 @@ describe('механики v2: каркас', () => {
       const done = ok(s, { type: 'resolve_choice', player: P1, answer: { targets: [{ kind: 'creature', instanceId: cornId }] } });
       expect(done.state.pending).toBeNull();
       expect(done.state.instances[cornId]!.damage).toBe(1 + 1); // ответка круга 1 + триггер
+    });
+  });
+
+  describe('M4: движение, заморозка, замена', () => {
+    it('move_creature переносит существо на пустую свою линию и считает смену линии', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const creatureId = s.players[P1]!.zones[0]!.creature!;
+      s = forceToHand(s, P1, 'mover');
+      const moverId = handCardId(s, P1, 'mover');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: moverId, zone: 1 }).state;
+      s = ok(s, {
+        type: 'floop',
+        player: P1,
+        instanceId: moverId,
+        targets: [
+          { kind: 'creature', instanceId: creatureId },
+          { kind: 'landscape', player: P1, zone: 3 },
+        ],
+      }).state;
+      expect(s.players[P1]!.zones[0]!.creature).toBeNull();
+      expect(s.players[P1]!.zones[3]!.creature).toBe(creatureId);
+      expect(s.instances[creatureId]!.zone).toBe(3);
+      // повторное движение возвращает существо (зона 0 опустела после первого хода)
+      s = produce(s, (d) => {
+        d.players[P1]!.actions = 2;
+        d.instances[moverId]!.flipped = false;
+      });
+      const res = ok(s, {
+        type: 'floop',
+        player: P1,
+        instanceId: moverId,
+        targets: [
+          { kind: 'creature', instanceId: creatureId },
+          { kind: 'landscape', player: P1, zone: 0 },
+        ],
+      });
+      expect(res.state.players[P1]!.zones[0]!.creature).toBe(creatureId);
+      expect(res.state.players[P1]!.zones[3]!.creature).toBeNull();
+    });
+
+    it('freeze_land замораживает землю; замороженная земля блокирует розыгрыш', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'freezer');
+      const freezerId = handCardId(s, P1, 'freezer');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: freezerId, zone: 0 }).state;
+      s = ok(s, {
+        type: 'floop',
+        player: P1,
+        instanceId: freezerId,
+        targets: [{ kind: 'landscape', player: P2, zone: 3 }],
+      }).state;
+      expect(s.players[P2]!.lands[3]!.frozen).toBe(true);
+    });
+
+    it('триггер замены: добор только когда вход заменяет существо', () => {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      // вход без замены — нет добора
+      s = forceToHand(s, P1, 'replacer');
+      let res = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'replacer'), zone: 1 });
+      const deckAfterFirst = res.state.players[P1]!.deck.length;
+      // вторая копия replacer входит в занятую зону 0, заменяя vanilla — добор
+      s = refillActions(res.state, P1);
+      s = forceToHand(s, P1, 'replacer');
+      res = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'replacer'), zone: 0 });
+      expect(res.state.players[P1]!.deck.length).toBe(deckAfterFirst - 1);
+      expect(res.events.some((e) => e.type === 'card_drawn' && e.player === P1)).toBe(true);
     });
   });
 

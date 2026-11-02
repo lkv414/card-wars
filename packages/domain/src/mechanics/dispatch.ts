@@ -29,6 +29,17 @@ export function enqueueTrigger(
     // Turn-scoped triggers (start_of_turn, on_draw, …) fire only for the
     // scoped player; board events fire for everyone's abilities.
     if (payload.player && source.player !== payload.player) return;
+    // «Когда эта карта вступает в игру» — только у входящей карты; реакции
+    // других источников требуют явных if_payload_* условий (Персиковая Джинни).
+    if (
+      (trigger === 'on_enters_play' || trigger === 'on_leave_play') &&
+      payload.instanceId &&
+      source.instanceId &&
+      source.instanceId !== payload.instanceId &&
+      !ability.conditions?.some((c) => c.kind === 'if_payload_other')
+    ) {
+      return;
+    }
     ctx.frame.queue.push({
       player: source.player,
       instanceId: source.instanceId,
@@ -70,7 +81,7 @@ export function runQueuedAbility(
   const ability = abilityOf(draft, ctx, qa);
   if (!ability) return; // source left play while queued
   const source: EffectSource = { player: qa.player, instanceId: qa.instanceId };
-  if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
+  if (!conditionsHold(draft, ctx, source, ability.conditions, undefined, qa.payload)) return;
   if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
   else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
 }

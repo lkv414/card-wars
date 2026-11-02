@@ -175,6 +175,44 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'mover',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: { op: 'move_creature', target: { kind: 'choice', index: 0 }, destination: { kind: 'choice', index: 1 }, side: 'own' },
+        targets: [{ kind: 'own_creature' }, { kind: 'landscape' }],
+        text: 'ПРИЕМ >>> перемести своё существо на пустую линию',
+      },
+    ],
+  }),
+  card({
+    id: 'freezer',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'active', effect: { op: 'freeze_land', target: { kind: 'choice', index: 0 }, frozen: true }, targets: [{ kind: 'landscape' }], text: 'ПРИЕМ >>> заморозь землю' },
+    ],
+  }),
+  card({
+    id: 'replacer',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'passive', trigger: 'on_enters_play', effect: { op: 'draw_cards', count: 1 }, conditions: [{ kind: 'if_payload_replacing' }], text: 'При замене — тяни карту' },
+    ],
+  }),
+  card({
     id: 'turn-chooser',
     type: 'creature',
     cost: 1,

@@ -1,0 +1,17 @@
+{
+ "cardId": "gunter_card_32",
+ "name": "Заводской убийца",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "additionalCost": {
+    "destroyOwnCreature": 1
+   },
+   "text": "Уничтожь существо под твоим контролем, ПРИЕМ >>> Вытяни карту."
+  }
+ ]
+}

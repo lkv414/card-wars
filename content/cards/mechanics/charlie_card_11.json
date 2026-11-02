@@ -1,0 +1,24 @@
+{
+ "cardId": "charlie_card_11",
+ "name": "Робомансер",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "this_creature"
+    },
+    "stat": "attack",
+    "amount": {
+     "kind": "per_counter",
+     "counter": "line_change",
+     "scope": "own",
+     "amount": 1
+    },
+    "duration": "aura"
+   },
+   "text": "+1 ATK за каждое существо, сменившее линию во время твоего хода."
+  }
+ ]
+}

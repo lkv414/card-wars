@@ -1,0 +1,18 @@
+{
+ "cardId": "jake_card_11",
+ "name": "Червь шелухи",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "flip_land",
+    "target": {
+     "kind": "this_lane_land"
+    },
+    "down": true
+   },
+   "text": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз."
+  }
+ ]
+}

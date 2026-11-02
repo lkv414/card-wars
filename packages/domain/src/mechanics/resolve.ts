@@ -169,6 +169,10 @@ export function resolveTarget(
       }
       return out;
     }
+    case 'this_lane_land': {
+      if (srcZone === null) return [];
+      return [{ kind: 'land', playerId: source.player, zone: srcZone }];
+    }
     case 'each_creature_yours':
       return creaturesOf(draft, source.player);
     case 'each_creature_opponent':

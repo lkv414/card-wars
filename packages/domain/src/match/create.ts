@@ -173,6 +173,7 @@ export function createMatch(
     pending: null,
     abilityUses: {},
     turnBuffs: [],
+    turnCounters: {},
     winners: null,
     finishReason: null,
   };

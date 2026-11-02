@@ -1,0 +1,30 @@
+{
+ "cardId": "lemongrab_card_19",
+ "name": "Крушитель земли",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "flip_land",
+    "target": {
+     "kind": "this_lane_land"
+    },
+    "down": true
+   },
+   "text": "Когда Крушитель земли вступает в игру, переверни землю на этой линии лицом вниз. Когда он покидает игру, переверни ее лицом вверх."
+  },
+  {
+   "kind": "passive",
+   "trigger": "on_leave_play",
+   "effect": {
+    "op": "flip_land",
+    "target": {
+     "kind": "this_lane_land"
+    },
+    "down": false
+   },
+   "text": "Когда Крушитель земли вступает в игру, переверни землю на этой линии лицом вниз. Когда он покидает игру, переверни ее лицом вверх."
+  }
+ ]
+}

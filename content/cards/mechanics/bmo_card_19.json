@@ -1,0 +1,25 @@
+{
+ "cardId": "bmo_card_19",
+ "name": "Док Смерть",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "destroy",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    }
+   },
+   "additionalCost": {
+    "destroyOwnCreature": 1
+   },
+   "targets": [
+    {
+     "kind": "lane_creature"
+    }
+   ],
+   "text": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии."
+  }
+ ]
+}

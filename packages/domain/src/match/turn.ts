@@ -56,6 +56,7 @@ export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
 export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.castSpells = [];
   draft.turnBuffs = [];
+  draft.turnCounters = {};
   for (const pid of draft.activePlayers) player(draft, pid).actions = 0;
 
   const current = draft.activePlayers;

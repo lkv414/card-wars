@@ -309,6 +309,81 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(state.instances[blueId]!.damage).toBe(0);
   });
 
+  it('Козёл: добор только при входе заменой', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    // вход без замены — без добора
+    s = forceToHand(s, 'p1', 'lsp_card_33');
+    let res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'lsp_card_33'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const deckAfter = res.state.players.p1!.deck.length;
+    // вторая копия входит заменой — добор
+    s = forceToHand(res.state, 'p1', 'lsp_card_33');
+    res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'lsp_card_33'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.state.players.p1!.deck.length).toBe(deckAfter - 1);
+  });
+
+  it('Вождь Вайда: +2 АТК за каждое сыгранное тобой заклинание в этом ходу', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'finn_card_16');
+    let res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'finn_card_16'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const leaderId = res.state.players.p1!.zones[0]!.creature!;
+    const base = catalog.getCard('finn_card_16')?.attack ?? 0;
+    expect(computeEff(res.state, deps, leaderId).attack).toBe(base);
+    // играем заклинание (spell-карта пресета — любая дешёвая)
+    const spell = deckPresets[0]!.deck.map((id) => catalog.getCard(id)!).find((c) => c.type === 'spell' && c.cost <= 2)!;
+    s = forceToHand(res.state, 'p1', spell.id);
+    const castRes = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', spell.id) }, deps);
+    expect(castRes.ok).toBe(true);
+    if (!castRes.ok) return;
+    expect(computeEff(castRes.state, deps, leaderId).attack).toBe(base + 2);
+  });
+
+  it('Ледяной Штурмовик: заморозка выбранной земли за действие', () => {
+    let s = edit(newMatch(), (d) => {
+      d.round = 2;
+      d.players.p1!.lands = [
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'gunter_card_18');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'gunter_card_18'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const floop = applyCommand(
+      res.state,
+      { type: 'floop', player: 'p1', instanceId: res.state.players.p1!.zones[0]!.creature!, targets: [{ kind: 'landscape', player: 'p1', zone: 1 }] },
+      deps,
+    );
+    expect(floop.ok).toBe(true);
+    if (!floop.ok) return;
+    expect(floop.state.players.p1!.lands[1]!.frozen).toBe(true);
+  });
+
   it('герой Бимо: сброс карты с руки >>> 1 урон выбранному существу; раз за ход', () => {
     let s = newMatch();
     s = edit(s, (d) => {

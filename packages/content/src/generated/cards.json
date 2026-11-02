@@ -221,7 +221,28 @@
   "attack": 1,
   "defense": 7,
   "description": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "additionalCost": {
+     "destroyOwnCreature": 1
+    },
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "text": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии."
+   }
+  ]
  },
  {
   "id": "bmo_card_20",
@@ -1101,7 +1122,23 @@
   "attack": 1,
   "defense": 6,
   "description": "Уничтожь Строение под твоим контролем, ПРИЕМ >>> Нанеси 3 урона каждому существу противника.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 3
+    },
+    "additionalCost": {
+     "destroyOwnBuilding": 1
+    },
+    "text": "Уничтожь Строение под твоим контролем, ПРИЕМ >>> Нанеси 3 урона каждому существу противника."
+   }
+  ]
  },
  {
   "id": "cake_card_18",
@@ -1626,7 +1663,27 @@
   "attack": 2,
   "defense": 7,
   "description": "+1 ATK за каждое существо, сменившее линию во время твоего хода.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "line_change",
+      "scope": "own",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 ATK за каждое существо, сменившее линию во время твоего хода."
+   }
+  ]
  },
  {
   "id": "charlie_card_13",
@@ -1890,7 +1947,33 @@
   "attack": 1,
   "defense": 8,
   "description": "ПРИЕМ >>> Отправь существо под твоим контролем на пустую линию.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 1
+     },
+     "side": "own"
+    },
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "ПРИЕМ >>> Отправь существо под твоим контролем на пустую линию."
+   }
+  ]
  },
  {
   "id": "finn_card_7",
@@ -1981,7 +2064,27 @@
   "attack": 2,
   "defense": 10,
   "description": "Вождь Вайда получает +2 АТК за каждое сыгранное тобой заклинание в этом ходу.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "spell_cast",
+      "scope": "own",
+      "amount": 2
+     },
+     "duration": "aura"
+    },
+    "text": "Вождь Вайда получает +2 АТК за каждое сыгранное тобой заклинание в этом ходу."
+   }
+  ]
  },
  {
   "id": "finn_card_17",
@@ -2047,7 +2150,12 @@
      "duration": "this_turn"
     },
     "cost": 1,
-    "text": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этом ходу."
+    "text": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этом ходу.",
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ]
    }
   ]
  },
@@ -2269,7 +2377,12 @@
      "amount": 3
     },
     "optional": true,
-    "text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу."
+    "text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
    }
   ]
  },
@@ -4016,7 +4129,21 @@
   "attack": 1,
   "defense": 5,
   "description": "Когда Ледяной лазутчик вступает в игру, заморозь его землю.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "frozen": true
+    },
+    "text": "Когда Ледяной лазутчик вступает в игру, заморозь его землю."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_2",
@@ -4444,7 +4571,21 @@
   "attack": 3,
   "defense": 5,
   "description": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "frozen": true
+    },
+    "text": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии."
+   }
+  ]
  },
  {
   "id": "gunter_card_15",
@@ -4480,7 +4621,27 @@
   "attack": 2,
   "defense": 7,
   "description": "Потрать 1 действие, ПРИЕМ >>> Заморозь выбранную землю.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "frozen": true
+    },
+    "cost": 1,
+    "text": "Потрать 1 действие, ПРИЕМ >>> Заморозь выбранную землю.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "gunter_card_20",
@@ -4580,7 +4741,20 @@
   "attack": 2,
   "defense": 6,
   "description": "Уничтожь существо под твоим контролем, ПРИЕМ >>> Вытяни карту.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "additionalCost": {
+     "destroyOwnCreature": 1
+    },
+    "text": "Уничтожь существо под твоим контролем, ПРИЕМ >>> Вытяни карту."
+   }
+  ]
  },
  {
   "id": "gunter_card_34",
@@ -5008,7 +5182,21 @@
   "attack": 5,
   "defense": 4,
   "description": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "down": true
+    },
+    "text": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз."
+   }
+  ]
  },
  {
   "id": "jake_card_13",
@@ -5426,7 +5614,12 @@
      }
     },
     "cost": 1,
-    "text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контролем."
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждую Кукурузную землю под твоим контролем.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
    }
   ]
  },
@@ -5865,7 +6058,35 @@
   "attack": 0,
   "defense": 6,
   "description": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "text": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этом ходу."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_37",
@@ -6047,7 +6268,33 @@
   "attack": 1,
   "defense": 6,
   "description": "Когда Крушитель земли вступает в игру, переверни землю на этой линии лицом вниз. Когда он покидает игру, переверни ее лицом вверх.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "down": true
+    },
+    "text": "Когда Крушитель земли вступает в игру, переверни землю на этой линии лицом вниз. Когда он покидает игру, переверни ее лицом вверх."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "down": false
+    },
+    "text": "Когда Крушитель земли вступает в игру, переверни землю на этой линии лицом вниз. Когда он покидает игру, переверни ее лицом вверх."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_21",
@@ -6131,7 +6378,33 @@
   "attack": 2,
   "defense": 8,
   "description": "Когда Рок-н-рольщик вступает в игру, переверни землю на этой линии лицом вниз.\nКогда он покидает игру, переверни ее лицом вверх.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "down": true
+    },
+    "text": "Когда Рок-н-рольщик вступает в игру, переверни землю на этой линии лицом вниз."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "down": false
+    },
+    "text": "Когда он покидает игру, переверни ее лицом вверх."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_28",
@@ -6161,7 +6434,29 @@
   "landType": "corn",
   "image": "/content/cards/images/lemongrab_card_30.png",
   "description": "Сбрось карту, ПРИЕМ >>> Переверни выбранную землю на этой линии лицом вниз до начала твоего следующего хода.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "down": true
+    },
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "Сбрось карту, ПРИЕМ >>> Переверни выбранную землю на этой линии лицом вниз до начала твоего следующего хода."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_31",
@@ -6690,7 +6985,12 @@
       "kind": "while_lane_empty_opponent"
      }
     ],
-    "text": "ПРИЕМ >>> Если у противника нет существа на этой линии, то он сбрасывает карту."
+    "text": "ПРИЕМ >>> Если у противника нет существа на этой линии, то он сбрасывает карту.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ]
    }
   ]
  },
@@ -6881,7 +7181,23 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда Черничная Джинни вступает в игру заменяя существо, тяни две карты.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 2
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_replacing"
+     }
+    ],
+    "text": "Когда Черничная Джинни вступает в игру заменяя существо, тяни две карты."
+   }
+  ]
  },
  {
   "id": "lsp_card_25",
@@ -6905,7 +7221,28 @@
   "attack": 1,
   "defense": 7,
   "description": "Когда Липкий мозг вступает в игру заменяя существо, он получает +2 ATK в этом ход.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_replacing"
+     }
+    ],
+    "text": "Когда Липкий мозг вступает в игру заменяя существо, он получает +2 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "lsp_card_29",
@@ -6917,7 +7254,23 @@
   "attack": 2,
   "defense": 8,
   "description": "Когда Школяр будущего вступает в игру заменяя существо, получи 1 Действие.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "gain_actions",
+     "amount": 1
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_replacing"
+     }
+    ],
+    "text": "Когда Школяр будущего вступает в игру заменяя существо, получи 1 Действие."
+   }
+  ]
  },
  {
   "id": "lsp_card_31",
@@ -6941,7 +7294,23 @@
   "attack": 1,
   "defense": 4,
   "description": "Когда Козел вступает в игру заменяя существо, тяни карту.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_replacing"
+     }
+    ],
+    "text": "Когда Козел вступает в игру заменяя существо, тяни карту."
+   }
+  ]
  },
  {
   "id": "lsp_card_35",
@@ -7512,7 +7881,23 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда Крок-каскадер вступает в игру, тяни карту за каждое существо, которое отправилось в сброс в этом ход.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_counter",
+      "counter": "creature_died",
+      "scope": "all",
+      "amount": 1
+     }
+    },
+    "text": "Когда Крок-каскадер вступает в игру, тяни карту за каждое существо, которое отправилось в сброс в этом ход."
+   }
+  ]
  },
  {
   "id": "monika_card_26",

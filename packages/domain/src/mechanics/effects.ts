@@ -3,6 +3,7 @@ import { drawCards, discardTopDeck, opponentDiscardsRandom } from '../draw';
 import { dealToCreature, dealToPlayer, healPlayer } from '../damage';
 import { DomainError } from '../errors';
 import { finishMatch } from '../finish';
+import { killInstance } from '../damage';
 import { emit, instance, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
@@ -107,6 +108,37 @@ export function runEffect(
       }
       return;
     }
+    case 'destroy': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+        if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        const removed = killInstance(draft, ctx, target.instanceId);
+        emit(ctx, { type: 'creature_destroyed', instanceId: target.instanceId, cardId: removed.cardId });
+      }
+      return;
+    }
+    case 'move_creature': {
+      const movers = resolveTarget(draft, ctx, effect.target, source, choices);
+      const destinations = resolveTarget(draft, ctx, effect.destination, source, choices);
+      const dest = destinations[0];
+      if (!dest || dest.kind !== 'land') {
+        throw new DomainError('invalid_choice', 'move_creature needs a destination zone');
+      }
+      for (const mover of movers) {
+        if (mover.kind !== 'creature') continue;
+        moveCreatureToZone(draft, ctx, mover.instanceId, dest.playerId, dest.zone, effect.side);
+      }
+      return;
+    }
+    case 'freeze_land': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+        if (target.kind !== 'land') continue;
+        const land = draft.players[target.playerId]!.lands[target.zone]!;
+        if (land.frozen === effect.frozen) continue;
+        land.frozen = effect.frozen;
+        emit(ctx, { type: 'land_changed', player: target.playerId, zone: target.zone, change: effect.frozen ? 'frozen' : 'unfrozen' });
+      }
+      return;
+    }
     case 'flip_land': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
         if (target.kind !== 'land') continue;
@@ -142,6 +174,40 @@ export function runEffect(
       player(draft, source.player).actions += effect.amount;
       return;
   }
+}
+
+/** Move one field creature to an empty zone (own or any side) and fire on_line_change. */
+function moveCreatureToZone(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  instanceId: string,
+  destPlayerId: string,
+  zone: number,
+  side: 'own' | 'any',
+): void {
+  const inst = instance(draft, instanceId);
+  if (inst.location !== 'field' || inst.slot !== 'creature' || inst.zone === null) return;
+  // The creature keeps its controller; movement is within the owner's lanes
+  // (side 'any' reserved for future cross-side effects).
+  if (destPlayerId !== inst.controller) return;
+  const owner = draft.players[destPlayerId]!;
+  if (zone < 0 || zone >= owner.zones.length) return;
+  if (zone === inst.zone) return;
+  const target = owner.zones[zone]!;
+  if (target.creature) return; // destination must be empty
+  const fromZone = inst.zone;
+  owner.zones[fromZone]!.creature = null;
+  inst.zone = zone;
+  owner.zones[zone]!.creature = instanceId;
+  emit(ctx, { type: 'card_moved', player: destPlayerId, instanceId, fromZone, toZone: zone });
+  bumpCounter(draft, 'line_change', destPlayerId);
+  enqueueTrigger(draft, ctx, 'on_line_change', { instanceId, player: destPlayerId, zone });
+}
+
+/** Increment a per-turn event counter (key `kind:player`). */
+export function bumpCounter(draft: Draft<MatchState>, kind: string, playerId: string): void {
+  const key = `${kind}:${playerId}`;
+  draft.turnCounters[key] = (draft.turnCounters[key] ?? 0) + 1;
 }
 
 /** Board filter for damage targets: card or zone-land based, invertible. */

@@ -4,7 +4,8 @@ import { finishMatch } from './finish';
 import { emit, inPlayInstanceIds, instance, player } from './util';
 import type { Ctx } from './util';
 import { computeEff } from './stats';
-import { drainTriggers } from './mechanics/dispatch';
+import { drainTriggers, enqueueTrigger } from './mechanics/dispatch';
+import { bumpCounter } from './mechanics/effects';
 import type { CardData, MatchState, PlayerId } from './types';
 
 /** Creatures on the field with damage >= effective defense. */
@@ -32,6 +33,8 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
     for (const id of dead) {
       const inst = killInstance(draft, ctx, id);
       emit(ctx, { type: 'creature_destroyed', instanceId: id, cardId: inst.cardId });
+      bumpCounter(draft, 'creature_died', inst.controller);
+      enqueueTrigger(draft, ctx, 'on_leave_play', { instanceId: id, cardId: inst.cardId, player: inst.controller });
       // on_death enqueued directly: the source is already in the discard, so
       // the live-source scan cannot see it (docs/MECHANICS-V2.md §2Б).
       const card = ctx.catalog.getCard(inst.cardId);

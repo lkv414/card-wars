@@ -11,6 +11,7 @@ import type {
   StatAmount,
   StatKey,
   TargetFilter,
+  TriggerPayload,
 } from './types';
 
 export interface AuraContribution {
@@ -93,11 +94,27 @@ export function conditionsHold(
   source: EffectSource,
   conditions: ConditionSpec[] | undefined,
   targetInstanceId: string | undefined,
+  payload?: TriggerPayload,
 ): boolean {
   if (!conditions) return true;
   const p = draft.players[source.player]!;
   for (const cond of conditions) {
     switch (cond.kind) {
+      case 'if_payload_replacing':
+        if (!payload?.replaced) return false;
+        break;
+      case 'if_payload_land_type': {
+        if (!payload?.cardId) return false;
+        const entered = ctx.catalog.getCard(payload.cardId);
+        if (!entered || entered.landType !== cond.landType) return false;
+        break;
+      }
+      case 'if_payload_player_self':
+        if (!payload?.player || payload.player !== source.player) return false;
+        break;
+      case 'if_payload_other':
+        if (!payload?.instanceId || payload.instanceId === source.instanceId) return false;
+        break;
       case 'if_discard_count':
       case 'while_discard_count':
         if (p.discard.length < cond.min) return false;
@@ -227,6 +244,13 @@ export function resolveStatAmount(
         });
       }
       return count * amount.amount;
+    }
+    case 'per_counter': {
+      let total = 0;
+      for (const pid of amount.scope === 'own' ? [source.player] : draft.order) {
+        total += draft.turnCounters[`${amount.counter}:${pid}`] ?? 0;
+      }
+      return total * amount.amount;
     }
     case 'per_target': {
       const targets = resolveTarget(draft, ctx, amount.target, source, undefined);

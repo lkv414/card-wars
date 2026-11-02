@@ -1,0 +1,18 @@
+{
+ "cardId": "gunter_card_14",
+ "name": "Ледяная снегобаба",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "freeze_land",
+    "target": {
+     "kind": "this_lane_land"
+    },
+    "frozen": true
+   },
+   "text": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии."
+  }
+ ]
+}

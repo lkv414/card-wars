@@ -6,6 +6,7 @@ import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueTrigger, runAbilityDirect } from '../mechanics/dispatch';
+import { bumpCounter } from '../mechanics/effects';
 import { landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
@@ -101,6 +102,8 @@ export function handlePlayCard(
       cardId: card.id,
       replacedInstanceId: replaced ?? null,
     });
+    bumpCounter(draft, 'creature_entered', playerId);
+    enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, replaced: Boolean(replaced) });
     afterEffects(draft, ctx);
     return;
   }
@@ -120,6 +123,7 @@ export function handlePlayCard(
     inst.location = 'discard';
     moveId(p.hand, p.discard, instanceId);
     draft.castSpells.push(instanceId);
+    bumpCounter(draft, 'spell_cast', playerId);
     enqueueTrigger(draft, ctx, 'on_spell_cast', { instanceId, cardId: card.id, player: playerId });
     afterEffects(draft, ctx);
     return;
@@ -151,8 +155,10 @@ export function handlePlayCard(
   // Replacement: the old card goes to the discard pile; its own bonuses are lost with it.
   const zoneState = p.zones[zone]!;
   const replaced = zoneState[slot];
+  let replacedCardId: string | null = null;
   if (replaced) {
     const oldInst = instance(draft, replaced);
+    replacedCardId = oldInst.cardId;
     oldInst.location = 'discard';
     oldInst.zone = null;
     oldInst.slot = null;
@@ -178,7 +184,11 @@ export function handlePlayCard(
     replacedInstanceId: replaced ?? null,
   });
 
-  enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, zone });
-  enqueueTrigger(draft, ctx, 'on_card_played', { instanceId, cardId: card.id, player: playerId, cost: card.cost, zone });
+  bumpCounter(draft, 'creature_entered', playerId);
+  enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, zone, replaced: Boolean(replaced) });
+  enqueueTrigger(draft, ctx, 'on_card_played', { instanceId, cardId: card.id, player: playerId, cost: effectiveCost, zone });
+  if (replaced) {
+    enqueueTrigger(draft, ctx, 'on_leave_play', { instanceId: replaced, cardId: replacedCardId ?? undefined, player: playerId });
+  }
   afterEffects(draft, ctx);
 }

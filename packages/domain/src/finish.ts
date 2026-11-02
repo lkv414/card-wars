@@ -14,5 +14,6 @@ export function finishMatch(
   draft.status = 'finished';
   draft.winners = winners;
   draft.finishReason = reason;
+  draft.pending = null; // a paused choice cannot outlive the match
   emit(ctx, { type: 'match_finished', winners, reason });
 }

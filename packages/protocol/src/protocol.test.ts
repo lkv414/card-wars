@@ -64,6 +64,7 @@ describe('protocol schemas', () => {
       players: {},
       myHand: [],
       castSpells: [],
+      pending: null,
       winners: null,
       finishReason: null,
       journal: [],

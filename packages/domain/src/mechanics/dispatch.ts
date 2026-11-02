@@ -1,0 +1,231 @@
+import type { Draft } from 'immer';
+import { DomainError } from '../errors';
+import { emit, instance } from '../util';
+import type { Ctx } from '../util';
+import type { MatchState } from '../types';
+import { conditionsHold, forSource } from './modifiers';
+import { runEffect } from './effects';
+import { runMechanic } from './registry';
+import { validateChoices } from './resolve';
+import type { EffectSource } from './source';
+import type { AbilitySpec, QueuedAbility, TargetChoice, Trigger, TriggerPayload } from './types';
+
+/**
+ * Trigger queue (docs/MECHANICS-V2.md §2Б/§6): hooks enqueue, `drainTriggers`
+ * runs until empty. An ability that needs the player's input pauses the drain
+ * into `MatchState.pending`; `resolvePending` continues it. Re-entrant hooks
+ * (an ability drawing cards fires on_draw) only append to the running queue.
+ */
+
+/** Collect matching abilities of all live sources into the frame queue. */
+export function enqueueTrigger(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  trigger: Trigger,
+  payload: TriggerPayload = {},
+): void {
+  forSource(draft, ctx, (source, ability, abilityIndex) => {
+    if (ability.kind !== 'passive' || ability.trigger !== trigger) return;
+    // Turn-scoped triggers (start_of_turn, on_draw, …) fire only for the
+    // scoped player; board events fire for everyone's abilities.
+    if (payload.player && source.player !== payload.player) return;
+    ctx.frame.queue.push({
+      player: source.player,
+      instanceId: source.instanceId,
+      cardId: source.instanceId ? instance(draft, source.instanceId).cardId : null,
+      abilityIndex,
+      trigger,
+      payload,
+    });
+  });
+}
+
+function abilityOf(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  qa: QueuedAbility,
+): AbilitySpec | null {
+  if (qa.instanceId) {
+    const inst = draft.instances[qa.instanceId];
+    const cardId = inst?.cardId ?? qa.cardId;
+    if (!cardId) return null;
+    // on_death sources sit in the discard already; other triggers require the
+    // source to still be in play (docs/MECHANICS-V2.md §2Б).
+    if (qa.trigger !== 'on_death') {
+      if (!inst || (inst.location !== 'field' && inst.location !== 'companion')) return null;
+    }
+    return ctx.catalog.getCard(cardId)?.abilities?.[qa.abilityIndex] ?? null;
+  }
+  const hero = ctx.catalog.getHero(draft.players[qa.player]!.heroId);
+  return hero?.ability ?? null;
+}
+
+/** Run one queued ability: conditions checked now, effect or named mechanic. */
+export function runQueuedAbility(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  qa: QueuedAbility,
+  choices: TargetChoice[] | undefined,
+): void {
+  const ability = abilityOf(draft, ctx, qa);
+  if (!ability) return; // source left play while queued
+  const source: EffectSource = { player: qa.player, instanceId: qa.instanceId };
+  if (!conditionsHold(draft, source, ability)) return;
+  if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
+  else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+}
+
+/** Direct execution for player-initiated abilities (floop / hero_ability / on_cast). */
+export function runAbilityDirect(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  ability: AbilitySpec,
+  choices: TargetChoice[] | undefined,
+): void {
+  if (!conditionsHold(draft, source, ability)) return;
+  if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
+  else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+}
+
+/** Process the queue; pauses into MatchState.pending when input is required. */
+export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
+  while (ctx.frame.queue.length > 0) {
+    if (draft.pending) return; // already paused; resumed by resolve_choice
+    if (draft.status === 'finished') {
+      ctx.frame.queue = [];
+      return;
+    }
+    ctx.frame.steps += 1;
+    if (ctx.frame.steps > 500) throw new DomainError('trigger_storm', 'trigger queue exceeded 500 steps');
+    const qa = ctx.frame.queue.shift()!;
+    const ability = abilityOf(draft, ctx, qa);
+    if (!ability) continue;
+    if (ability.optional) {
+      pause(draft, ctx, qa, { kind: 'optional' });
+      return;
+    }
+    if ((ability.targets?.length ?? 0) > 0) {
+      pause(draft, ctx, qa, { kind: 'target', askIndex: 0, collected: [] });
+      return;
+    }
+    runQueuedAbility(draft, ctx, qa, undefined);
+  }
+}
+
+function pause(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  qa: QueuedAbility,
+  ask:
+    | { kind: 'optional' }
+    | { kind: 'target'; askIndex: number; collected: TargetChoice[] },
+): void {
+  const ability = abilityOf(draft, ctx, qa)!;
+  draft.pending = { player: qa.player, ask, current: qa, queue: [...ctx.frame.queue] };
+  ctx.frame.queue = [];
+  if (ask.kind === 'optional') {
+    emit(ctx, { type: 'choice_required', player: qa.player, kind: 'optional' });
+  } else {
+    emit(ctx, {
+      type: 'choice_required',
+      player: qa.player,
+      kind: 'target',
+      askIndex: ask.askIndex,
+      askCount: ability.targets?.length ?? 0,
+    });
+  }
+}
+
+/**
+ * Apply a `resolve_choice` answer and continue the paused transition.
+ * Targets arrive one ask per command; «optional» takes proceed yes/no.
+ */
+export function resolvePending(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  answer: { proceed?: boolean; targets?: TargetChoice[] },
+): void {
+  const pending = draft.pending;
+  if (!pending) throw new DomainError('no_pending_choice', 'nothing is awaited');
+  const ability = abilityOf(draft, ctx, pending.current);
+  if (!ability) {
+    // Source vanished while paused; skip the ability and continue the queue.
+    draft.pending = null;
+    ctx.frame.queue = pending.queue;
+    drainTriggers(draft, ctx);
+    return;
+  }
+
+  let choices: TargetChoice[] | undefined;
+  if (pending.ask.kind === 'optional') {
+    if (answer.proceed !== true) {
+      finishPending(draft, ctx, pending);
+      return;
+    }
+    if ((ability.targets?.length ?? 0) > 0) {
+      pending.ask = { kind: 'target', askIndex: 0, collected: [] };
+      emit(ctx, { type: 'choice_required', player: pending.player, kind: 'target', askIndex: 0, askCount: ability.targets!.length });
+      return;
+    }
+    choices = undefined;
+  } else {
+    const asks = ability.targets ?? [];
+    const ask = asks[pending.ask.askIndex];
+    if (!ask) throw new DomainError('no_pending_choice', 'ask index out of range');
+    const choice = answer.targets?.[0];
+    if (!choice) throw new DomainError('target_required', `ask ${pending.ask.askIndex + 1} needs one choice`);
+    // Re-validate the whole set against the declared asks (atomic, docs/MECHANICS-V2.md §5).
+    const source: EffectSource = { player: pending.player, instanceId: pending.current.instanceId };
+    validateChoices(draft, source, asks, [...pending.ask.collected, choice]);
+    pending.ask.collected.push(choice);
+    emit(ctx, {
+      type: 'choice_resolved',
+      player: pending.player,
+      kind: 'target',
+      askIndex: pending.ask.askIndex,
+    });
+    if (pending.ask.askIndex + 1 < asks.length) {
+      pending.ask.askIndex += 1;
+      emit(ctx, {
+        type: 'choice_required',
+        player: pending.player,
+        kind: 'target',
+        askIndex: pending.ask.askIndex,
+        askCount: asks.length,
+      });
+      return;
+    }
+    choices = pending.ask.collected;
+  }
+
+  finishPending(draft, ctx, pending);
+  runQueuedAbility(draft, ctx, pending.current, choices);
+  drainTriggers(draft, ctx);
+}
+
+function finishPending(draft: Draft<MatchState>, ctx: Ctx, pending: NonNullable<MatchState['pending']>): void {
+  if (pending.ask.kind === 'optional') {
+    emit(ctx, { type: 'choice_resolved', player: pending.player, kind: 'optional' });
+  }
+  draft.pending = null;
+  ctx.frame.queue = pending.queue;
+}
+
+/**
+ * Timer default (docs/MECHANICS-V2.md §6): the awaiting player did not answer
+ * in time — optional abilities are skipped, targeted ones are cancelled; the
+ * rest of the queue drains so the turn never stalls.
+ */
+export function skipPending(draft: Draft<MatchState>, ctx: Ctx): void {
+  if (!draft.pending) return;
+  const pending = draft.pending;
+  if (pending.ask.kind === 'optional') {
+    finishPending(draft, ctx, pending);
+  } else {
+    emit(ctx, { type: 'choice_resolved', player: pending.player, kind: 'target', askIndex: pending.ask.askIndex });
+    draft.pending = null;
+    ctx.frame.queue = pending.queue;
+  }
+  drainTriggers(draft, ctx);
+}

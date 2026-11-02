@@ -96,6 +96,14 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
       return `${cardName(deps, event.cardId)}: щит ${event.shield}`;
     case 'card_moved':
       return `${cardName(deps, state.instances[event.instanceId]?.cardId ?? '')} перемещается: зона ${event.fromZone + 1} → ${event.toZone + 1}`;
+    case 'choice_required':
+      return event.kind === 'optional'
+        ? `${nick(state, event.player)} решает: применить способность?`
+        : `${nick(state, event.player)} выбирает цель (${(event.askIndex ?? 0) + 1}/${event.askCount ?? '?'})`;
+    case 'choice_resolved':
+      return null; // сам факт ответа шумен; следствие видно по событиям эффекта
+    case 'hero_ability_used':
+      return `${nick(state, event.player)} активирует способность героя`;
     case 'battle_ready':
       return `${nick(state, event.player)} готов к бою`;
     case 'timer_expired':

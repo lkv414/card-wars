@@ -30,6 +30,8 @@ describe('property-тесты', () => {
         'surrender',
         'mulligan',
         'keep_hand',
+        'hero_ability',
+        'resolve_choice',
       ) as fc.Arbitrary<Command['type']>,
       player: players,
       instanceId: instanceIds,
@@ -101,6 +103,10 @@ function toCommand(c: Sample): Command {
       return { type: 'mulligan', player: c.player };
     case 'keep_hand':
       return { type: 'keep_hand', player: c.player };
+    case 'hero_ability':
+      return { type: 'hero_ability', player: c.player };
+    case 'resolve_choice':
+      return { type: 'resolve_choice', player: c.player, answer: { proceed: c.zone % 2 === 0 } };
     case 'disconnect_loss':
       return { type: 'disconnect_loss', player: c.player };
   }

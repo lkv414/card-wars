@@ -7,6 +7,7 @@ import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
 import type { MatchState } from '../types';
 import { endTurn, lastAliveInOrder } from './turn';
+import { enqueueTrigger } from '../mechanics/dispatch';
 
 export { mirrorZoneIndex } from '../zones';
 
@@ -22,6 +23,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.phase = 'combat';
   for (const pid of draft.activePlayers) {
     emit(ctx, { type: 'phase_changed', player: pid, phase: 'combat' });
+    enqueueTrigger(draft, ctx, 'start_of_battle_phase', { player: pid });
   }
 
   const firstActive = draft.activePlayers[0]!;
@@ -50,10 +52,36 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         if (defenderInstanceId) {
           // Simultaneous exchange: both powers are computed before any damage lands.
           const retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
+          enqueueTrigger(draft, ctx, 'on_creature_attacks', {
+            instanceId: attackerInstanceId,
+            targetInstanceId: defenderInstanceId,
+            zone: z,
+            amount: attackPower,
+          });
           dealToCreature(draft, ctx, defenderInstanceId, attackPower, attackerInstanceId);
           dealToCreature(draft, ctx, attackerInstanceId, retaliation, defenderInstanceId);
+          enqueueTrigger(draft, ctx, 'on_damage_dealt', {
+            instanceId: attackerInstanceId,
+            targetInstanceId: defenderInstanceId,
+            amount: attackPower,
+          });
+          enqueueTrigger(draft, ctx, 'on_damage_dealt', {
+            instanceId: defenderInstanceId,
+            targetInstanceId: attackerInstanceId,
+            amount: retaliation,
+          });
         } else {
+          enqueueTrigger(draft, ctx, 'on_creature_attacks', {
+            instanceId: attackerInstanceId,
+            zone: z,
+            amount: attackPower,
+          });
           dealToPlayer(draft, ctx, target.player, attackPower, attackerInstanceId);
+          enqueueTrigger(draft, ctx, 'on_damage_dealt', {
+            instanceId: attackerInstanceId,
+            targetPlayer: target.player,
+            amount: attackPower,
+          });
         }
       }
     }

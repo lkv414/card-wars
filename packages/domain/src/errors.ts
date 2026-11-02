@@ -25,7 +25,17 @@ export type RejectCode =
   | 'target_required'
   | 'invalid_choice'
   | 'invalid_setup'
-  | 'unknown_command';
+  | 'unknown_command'
+  // Mechanics v2 (docs/MECHANICS-V2.md)
+  | 'choice_pending'
+  | 'no_pending_choice'
+  | 'not_your_choice'
+  | 'ability_already_used'
+  | 'hero_has_no_ability'
+  | 'mechanic_unknown'
+  | 'aura_not_castable'
+  | 'effect_not_implemented'
+  | 'trigger_storm';
 
 /** Thrown inside a state transition; the producer aborts, so the state stays untouched. */
 export class DomainError extends Error {

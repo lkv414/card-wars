@@ -5,6 +5,9 @@ import type { Ctx } from '../util';
 import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
+import { enqueueTrigger, runAbilityDirect } from '../mechanics/dispatch';
+import { validateChoices } from '../mechanics/resolve';
+import type { TargetChoice } from '../mechanics/types';
 
 function requireActiveMain(draft: Draft<MatchState>, playerId: PlayerId): void {
   if (draft.status === 'finished') throw new DomainError('match_finished', 'match is finished');
@@ -29,9 +32,8 @@ export function matchingLandCount(draft: Draft<MatchState>, playerId: PlayerId, 
 
 /**
  * Play a card: creature/building into a zone slot (with frozen-land handling and
- * replacement), or a spell into the discard with a turn-long visual
- * (docs/RULES.md «Розыгрыш карт»). Card abilities arrive with the mechanics v2
- * system (docs/TECH.md № 2).
+ * replacement), or a spell with on_cast abilities (docs/RULES.md «Розыгрыш карт»,
+ * docs/MECHANICS-V2.md §2Б). Targets arrive with the command.
  */
 export function handlePlayCard(
   draft: Draft<MatchState>,
@@ -40,6 +42,7 @@ export function handlePlayCard(
   instanceId: string,
   zone: number | undefined,
   unfreezeWith: string | undefined,
+  targets: TargetChoice[] | undefined,
 ): void {
   requireActiveMain(draft, playerId);
   const p = player(draft, playerId);
@@ -100,11 +103,21 @@ export function handlePlayCard(
   }
 
   if (card.type === 'spell') {
+    // Spell's own on_cast abilities: targets validated before anything is paid.
+    const casts = (card.abilities ?? []).filter((a) => a.trigger === 'on_cast');
+    for (const ability of casts) {
+      validateChoices(draft, { player: playerId, instanceId }, ability.targets, targets);
+    }
     p.actions -= card.cost;
+    emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
+    const source = { player: playerId, instanceId };
+    for (const ability of casts) {
+      runAbilityDirect(draft, ctx, source, ability, targets);
+    }
     inst.location = 'discard';
     moveId(p.hand, p.discard, instanceId);
     draft.castSpells.push(instanceId);
-    emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
+    enqueueTrigger(draft, ctx, 'on_spell_cast', { instanceId, cardId: card.id, player: playerId });
     afterEffects(draft, ctx);
     return;
   }
@@ -162,5 +175,7 @@ export function handlePlayCard(
     replacedInstanceId: replaced ?? null,
   });
 
+  enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, zone });
+  enqueueTrigger(draft, ctx, 'on_card_played', { instanceId, cardId: card.id, player: playerId, cost: card.cost, zone });
   afterEffects(draft, ctx);
 }

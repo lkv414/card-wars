@@ -3,13 +3,21 @@ import type { CardCatalog } from './catalog';
 import type { GameConfig } from './config';
 import { DomainError } from './errors';
 import type { GameEvent } from './events';
+import type { QueuedAbility } from './mechanics/types';
 import type { CardData, CardInstance, MatchState, PlayerId, PlayerState } from './types';
+
+/** Per-command trigger frame: the queue drains within one applyCommand call. */
+export interface EngineFrame {
+  queue: QueuedAbility[];
+  steps: number;
+}
 
 /** Internal engine context passed through every handler. */
 export interface Ctx {
   config: GameConfig;
   catalog: CardCatalog;
   events: GameEvent[];
+  frame: EngineFrame;
 }
 
 export function emit(ctx: Ctx, event: GameEvent): void {

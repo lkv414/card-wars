@@ -1,0 +1,225 @@
+import { describe, expect, it } from 'vitest';
+import { applyCommand, computeEff, createMatch, type Command, type MatchState } from '../index';
+import {
+  catalog,
+  defaultConfig,
+  forceToHand,
+  handCardId,
+  makeSetup,
+  mustOk,
+  P1,
+  P2,
+} from './helpers';
+import { startedMatch } from './engine.test';
+
+const deps = { config: defaultConfig, catalog };
+
+function ok(s: MatchState, cmd: Command) {
+  const res = applyCommand(s, cmd, deps);
+  if (!res.ok) throw new Error(`${cmd.type}: ${res.rejected.code} — ${res.rejected.message}`);
+  return res;
+}
+
+/** Turn 3: round 2, P1 active — floops and attacks are legal. */
+function round2P1Turn(): MatchState {
+  let s = startedMatch();
+  s = ok(s, { type: 'go_battle', player: P1 }).state;
+  s = ok(s, { type: 'go_battle', player: P2 }).state;
+  return s;
+}
+
+describe('механики v2: каркас', () => {
+  it('аура строения пересчитывается живьём и исчезает при сбросе строения', () => {
+    let s = startedMatch();
+    s = forceToHand(s, P1, 'aura-fortress');
+    s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'aura-fortress'), zone: 0 }).state;
+    s = forceToHand(s, P1, 'vanilla-swamp');
+    const swampId = handCardId(s, P1, 'vanilla-swamp');
+    s = ok(s, { type: 'play_card', player: P1, instanceId: swampId, zone: 0 }).state;
+    expect(computeEff(s, deps, swampId).attack).toBe(2 + 1);
+    const fortressId = s.players[P1]!.zones[0]!.building!;
+    s = ok(s, { type: 'discard_from_field', player: P1, instanceId: fortressId }).state;
+    expect(computeEff(s, deps, swampId).attack).toBe(2);
+  });
+
+  it('on_enters_play срабатывает при розыгрыше существа', () => {
+    let s = startedMatch();
+    s = forceToHand(s, P1, 'enter-drawer');
+    const res = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'enter-drawer'), zone: 0 });
+    expect(res.events.some((e) => e.type === 'card_drawn' && e.player === P1 && e.count === 1)).toBe(true);
+  });
+
+  it('on_cast заклинания исполняется при розыгрыше; карта уходит в сброс', () => {
+    let s = startedMatch();
+    s = forceToHand(s, P1, 'spell-draw');
+    const spellId = handCardId(s, P1, 'spell-draw');
+    const res = ok(s, { type: 'play_card', player: P1, instanceId: spellId });
+    s = res.state;
+    expect(s.instances[spellId]!.location).toBe('discard');
+    expect(s.castSpells).toContain(spellId);
+    expect(res.events.some((e) => e.type === 'spell_cast' && e.instanceId === spellId)).toBe(true);
+    expect(res.events.some((e) => e.type === 'card_drawn' && e.player === P1 && e.count === 1)).toBe(true);
+  });
+
+  describe('флюп с целью', () => {
+    it('без целей — target_required, с чужой целью — invalid_choice, с верной — урон и списание действия', () => {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'floop-sniper');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'floop-sniper'), zone: 0 }).state;
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = forceToHand(s, P2, 'vanilla-corn');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'vanilla-corn'), zone: 3 }).state;
+      s = ok(s, { type: 'go_battle', player: P2 }).state; // круг 2, ход p1
+
+      const sniperId = s.players[P1]!.zones[0]!.creature!;
+      const cornId = s.players[P2]!.zones[3]!.creature!;
+      const noTarget = applyCommand(s, { type: 'floop', player: P1, instanceId: sniperId }, deps);
+      expect(noTarget.ok).toBe(false);
+      if (!noTarget.ok) expect(noTarget.rejected.code).toBe('target_required');
+
+      const wrongTarget = applyCommand(
+        s,
+        { type: 'floop', player: P1, instanceId: sniperId, targets: [{ kind: 'creature', instanceId: sniperId }] },
+        deps,
+      );
+      expect(wrongTarget.ok).toBe(false);
+      if (!wrongTarget.ok) expect(wrongTarget.rejected.code).toBe('invalid_choice');
+
+      s = ok(s, { type: 'floop', player: P1, instanceId: sniperId, targets: [{ kind: 'creature', instanceId: cornId }] }).state;
+      expect(s.instances[cornId]!.damage).toBe(1 + 2); // ответный в круге 1 + урон флюпа
+      expect(s.instances[sniperId]!.flipped).toBe(true);
+      expect(s.players[P1]!.actions).toBe(1); // 2 действия хода − 1 за флюп
+    });
+
+    it('карта без активной способности отклоняется', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const res = applyCommand(
+        s,
+        { type: 'floop', player: P1, instanceId: s.players[P1]!.zones[0]!.creature! },
+        deps,
+      );
+      expect(res.ok).toBe(false);
+      if (!res.ok) expect(res.rejected.code).toBe('card_has_no_floop');
+    });
+  });
+
+  describe('pendingChoice', () => {
+    function dyingScenario(): { s: MatchState; cornId: string; events: ReturnType<typeof ok>['events'] } {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'dying-optional');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'dying-optional'), zone: 0 }).state;
+      s = ok(s, { type: 'go_battle', player: P1 }).state;
+      s = forceToHand(s, P2, 'vanilla-corn');
+      s = ok(s, { type: 'play_card', player: P2, instanceId: handCardId(s, P2, 'vanilla-corn'), zone: 3 }).state;
+      const res = ok(s, { type: 'go_battle', player: P2 }); // бой: corn 3 убивает dying 1/1 → on_death optional
+      return { s: res.state, cornId: res.state.players[P2]!.zones[3]!.creature!, events: res.events };
+    }
+
+    it('опциональный on_death ставит матч в ожидание; другие команды отклонены; skip продолжает партию', () => {
+      const { s, cornId, events } = dyingScenario();
+      expect(s.pending).not.toBeNull();
+      expect(s.pending!.player).toBe(P1);
+      expect(events.some((e) => e.type === 'choice_required' && e.player === P1 && e.kind === 'optional')).toBe(true);
+
+      const blocked = applyCommand(s, { type: 'go_battle', player: P1 }, deps);
+      expect(blocked.ok).toBe(false);
+      if (!blocked.ok) expect(blocked.rejected.code).toBe('choice_pending');
+      const wrongPlayer = applyCommand(s, { type: 'resolve_choice', player: P2, answer: { proceed: false } }, deps);
+      expect(wrongPlayer.ok).toBe(false);
+      if (!wrongPlayer.ok) expect(wrongPlayer.rejected.code).toBe('not_your_choice');
+
+      const res = ok(s, { type: 'resolve_choice', player: P1, answer: { proceed: false } });
+      expect(res.state.pending).toBeNull();
+      expect(res.state.instances[cornId]!.damage).toBe(1); // только ответный урон боя
+      expect(res.events.some((e) => e.type === 'choice_resolved' && e.player === P1)).toBe(true);
+      // партия жива: p1 может завершить ход
+      ok(res.state, { type: 'go_battle', player: P1 });
+    });
+
+    it('proceed применяет эффект опционального триггера', () => {
+      const { s, cornId } = dyingScenario();
+      const res = ok(s, { type: 'resolve_choice', player: P1, answer: { proceed: true } });
+      expect(res.state.pending).toBeNull();
+      expect(res.state.instances[cornId]!.damage).toBe(2); // 1 ответный + 1 от on_death
+    });
+
+    it('целевой on_enters_play ждёт выбор цели и применяет её атомарно', () => {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const swampId = s.players[P1]!.zones[0]!.creature!;
+      s = forceToHand(s, P1, 'enter-chooser');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'enter-chooser'), zone: 1 }).state;
+
+      expect(s.pending).not.toBeNull();
+      expect(s.pending!.ask.kind).toBe('target');
+      const badChoice = applyCommand(
+        s,
+        { type: 'resolve_choice', player: P1, answer: { targets: [{ kind: 'player', playerId: P2 }] } },
+        deps,
+      );
+      expect(badChoice.ok).toBe(false);
+      if (!badChoice.ok) expect(badChoice.rejected.code).toBe('invalid_choice');
+
+      const res = ok(s, {
+        type: 'resolve_choice',
+        player: P1,
+        answer: { targets: [{ kind: 'creature', instanceId: swampId }] },
+      });
+      expect(res.state.pending).toBeNull();
+      expect(res.state.instances[swampId]!.damage).toBe(2);
+    });
+
+    it('таймер снимает ожидание детерминированным дефолтом (skip)', () => {
+      const { s } = dyingScenario();
+      const res = ok(s, { type: 'time_expired', player: P1 });
+      expect(res.state.pending).toBeNull();
+      expect(res.events.some((e) => e.type === 'choice_resolved' && e.player === P1)).toBe(true);
+    });
+  });
+
+  describe('способность героя', () => {
+    function bimoMatch() {
+      const { state } = createMatch(deps, makeSetup({ p1Hero: 'hero-bimo', seed: 5 }));
+      let s = mustOk(applyCommand(state, { type: 'keep_hand', player: P1 }, deps));
+      s = mustOk(applyCommand(s, { type: 'keep_hand', player: P2 }, deps));
+      return s;
+    }
+
+    it('доп. стоимость (сброс карты) + урон игроку; раз за ход', () => {
+      let s = bimoMatch();
+      const discardId = s.players[P1]!.hand[0]!;
+      const res = ok(s, {
+        type: 'hero_ability',
+        player: P1,
+        targets: [{ kind: 'card', instanceId: discardId }, { kind: 'player', playerId: P2 }],
+      });
+      s = res.state;
+      expect(s.players[P2]!.lives).toBe(24);
+      expect(s.players[P1]!.hand).not.toContain(discardId);
+      expect(res.events.some((e) => e.type === 'hero_ability_used' && e.player === P1)).toBe(true);
+
+      const again = applyCommand(
+        s,
+        { type: 'hero_ability', player: P1, targets: [{ kind: 'card', instanceId: s.players[P1]!.hand[0]! }, { kind: 'player', playerId: P2 }] },
+        deps,
+      );
+      expect(again.ok).toBe(false);
+      if (!again.ok) expect(again.rejected.code).toBe('ability_already_used');
+    });
+
+    it('без сброса карты — target_required; у героя без способности — hero_has_no_ability', () => {
+      let s = bimoMatch();
+      const noCost = applyCommand(s, { type: 'hero_ability', player: P1, targets: [{ kind: 'player', playerId: P2 }] }, deps);
+      expect(noCost.ok).toBe(false);
+      if (!noCost.ok) expect(noCost.rejected.code).toBe('target_required');
+
+      s = round2P1Turn();
+      const res = applyCommand(s, { type: 'hero_ability', player: P1 }, deps);
+      expect(res.ok).toBe(false);
+      if (!res.ok) expect(res.rejected.code).toBe('hero_has_no_ability');
+    });
+  });
+});

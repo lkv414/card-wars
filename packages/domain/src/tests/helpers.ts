@@ -8,10 +8,11 @@ import type {
   MatchState,
   PlayerSetup,
 } from '../index';
+import type { AbilitySpec } from '../mechanics/types';
 
 // Test fixtures only — the real catalog lives in content/ (packages/content).
-// Ability-less cards: the mechanics v2 system (docs/TECH.md № 2) will bring its
-// own fixtures; these cover the core engine (play, combat, turns, teams).
+// Vanilla cards cover the core engine (play, combat, turns, teams); ability
+// fixtures exercise the mechanics v2 pipeline (docs/MECHANICS-V2.md).
 
 export const P1 = 'p1';
 export const P2 = 'p2';
@@ -49,6 +50,91 @@ export const cards: CardData[] = [
   card({ id: 'vanilla-sand', type: 'creature', cost: 1, landType: 'sand', attack: 4, defense: 4 }),
   card({ id: 'plain-fortress', type: 'building', cost: 1, landType: 'swamp', description: 'Строение без способностей' }),
   card({ id: 'spell-plain', type: 'spell', cost: 1, landType: 'swamp', description: 'Заклинание без способностей' }),
+  // Mechanics v2 pipeline fixtures (docs/MECHANICS-V2.md §1).
+  card({
+    id: 'aura-fortress',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'stat_buff', target: { kind: 'this_lane_creature' }, stat: 'attack', amount: 1, duration: 'aura' },
+        text: 'Твоё существо на этой линии: +1 АТК',
+      },
+    ],
+  }),
+  card({
+    id: 'enter-drawer',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'passive', trigger: 'on_enters_play', effect: { op: 'draw_cards', count: 1 }, text: 'Когда вступает в игру — тяни карту' },
+    ],
+  }),
+  card({
+    id: 'floop-sniper',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        cost: 1,
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 2 },
+        targets: [{ kind: 'opponent_creature' }],
+        text: 'Потрать 1 действие, ПРИЕМ >>> 2 урона существу противника',
+      },
+    ],
+  }),
+  card({
+    id: 'dying-optional',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 1,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_death',
+        optional: true,
+        effect: { op: 'deal_damage', target: { kind: 'each_creature_opponent' }, amount: 1 },
+        text: 'Когда умирает, можешь нанести 1 урон всем существам противника',
+      },
+    ],
+  }),
+  card({
+    id: 'enter-chooser',
+    type: 'creature',
+    cost: 1,
+    landType: 'good',
+    attack: 1,
+    defense: 5,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_enters_play',
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 2 },
+        targets: [{ kind: 'any_creature' }],
+        text: 'Когда вступает в игру — 2 урона выбранному существу',
+      },
+    ],
+  }),
+  card({
+    id: 'spell-draw',
+    type: 'spell',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      { kind: 'passive', trigger: 'on_cast', effect: { op: 'draw_cards', count: 1 }, text: 'Тяни карту' },
+    ],
+  }),
   card({
     id: 'companion-pair',
     type: 'companion',
@@ -62,7 +148,15 @@ export const heroes: HeroData[] = [
   {
     id: 'hero-bimo',
     name: 'Бимо',
-    text: 'Дополнительный бесплатный добор в начале хода',
+    text: 'Сбрось карту с руки >>> Нанеси 1 урон выбранному противнику. Раз за ход.',
+    ability: {
+      kind: 'active',
+      oncePerTurn: true,
+      additionalCost: { discardFromHand: 1 },
+      effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 1 },
+      targets: [{ kind: 'opponent_player' }],
+      text: 'Сбрось карту с руки >>> Нанеси 1 урон выбранному противнику',
+    },
   },
   {
     id: 'hero-billy',

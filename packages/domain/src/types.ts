@@ -1,12 +1,15 @@
 // Canonical data and state types (docs/CARDS.md, docs/RULES.md, docs/COMMANDS.md).
 
+import type { AbilitySpec, PendingChoice } from './mechanics/types';
+
 export type PlayerId = string;
 
 export type LandType = 'corn' | 'blue' | 'good' | 'ice' | 'sand' | 'swamp' | 'rainbow' | 'ghost';
 
 export type CardType = 'creature' | 'building' | 'spell' | 'companion';
 
-/** Card data (docs/CARDS.md): structural fields only; ability texts live in `description`. */
+/** Card data (docs/CARDS.md): structural fields; structured abilities arrive
+ * from content mechanics (docs/MECHANICS-V2.md §4) and stay optional here. */
 export interface CardData {
   id: string;
   name: string;
@@ -18,6 +21,7 @@ export interface CardData {
   defense?: number;
   image?: string;
   description?: string;
+  abilities?: AbilitySpec[];
   deckSet?: string;
 }
 
@@ -26,6 +30,7 @@ export interface HeroData {
   name: string;
   image?: string;
   text: string;
+  ability?: AbilitySpec;
 }
 
 // --- Match state ---
@@ -123,6 +128,10 @@ export interface MatchState {
   instances: Record<string, CardInstance>;
   /** Spells cast during the current turn (visual "above lands until end of turn"). */
   castSpells: string[];
+  /** Paused transition awaiting a player's decision (docs/MECHANICS-V2.md §6). */
+  pending: PendingChoice | null;
+  /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
+  abilityUses: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;
   winners: PlayerId[] | null;
   finishReason: FinishReason | null;

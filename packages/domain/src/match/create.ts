@@ -170,6 +170,8 @@ export function createMatch(
     instances,
     castSpells: [],
     mulliganDecisions: {},
+    pending: null,
+    abilityUses: {},
     winners: null,
     finishReason: null,
   };

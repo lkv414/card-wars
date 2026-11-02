@@ -1,24 +1,27 @@
 import type { Draft } from 'immer';
+import { afterEffects } from '../deaths';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
-import { instance } from '../util';
+import { emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
+import { runAbilityDirect } from '../mechanics/dispatch';
+import { validateChoices } from '../mechanics/resolve';
+import type { TargetChoice } from '../mechanics/types';
 
 /**
- * Floop: turn (tap) a card and run its floop ability (docs/RULES.md «Ход игрока»).
- * A floop can be used the same turn the card entered play; the first player
- * cannot floop during the very first turn.
- *
- * Mechanics v2 interim state: no structured floop abilities exist yet
- * (docs/TECH.md № 2), so the command is rejected for every card; flip state and
- * the first-round rule stay in place.
+ * Floop: turn (tap) a card and run its active ability (docs/RULES.md «Ход игрока»,
+ * docs/MECHANICS-V2.md §5). A floop can be used the same turn the card entered
+ * play; the first player cannot floop during the very first turn. Targets and
+ * additional-cost picks arrive with the command and are validated atomically
+ * before anything is paid.
  */
 export function handleFloop(
   draft: Draft<MatchState>,
   ctx: Ctx,
   playerId: PlayerId,
   instanceId: string,
+  targets: TargetChoice[] | undefined,
 ): void {
   if (draft.status === 'finished') throw new DomainError('match_finished', 'match is finished');
   if (draft.status !== 'running') throw new DomainError('match_not_running', 'match is not running');
@@ -43,7 +46,67 @@ export function handleFloop(
     throw new DomainError('floop_forbidden_first_turn', 'floop is forbidden in the first round');
   }
 
-  // Mechanics v2 interim state: without structured floop data the engine cannot
-  // know a card has «ПРИЕМ», so every floop is rejected (docs/TECH.md № 2).
-  throw new DomainError('card_has_no_floop', `card ${inst.cardId} has no structured floop ability yet`);
+  const card = ctx.catalog.getCard(inst.cardId);
+  const actives = (card?.abilities ?? []).filter((a) => a.kind === 'active');
+  if (actives.length === 0) {
+    throw new DomainError('card_has_no_floop', `card ${card?.id ?? inst.cardId} has no active ability`);
+  }
+  // One «ПРИЕМ» per card in the original game (docs/MECHANICS-V2.md §4).
+  const ability = actives[0]!;
+
+  // Once-per-turn tracking (docs/MECHANICS-V2.md §6).
+  const useKey = `${playerId}:${instanceId}:0`;
+  if (ability.oncePerTurn && draft.abilityUses[useKey] === draft.turn) {
+    throw new DomainError('ability_already_used', 'ability is once per turn');
+  }
+
+  const p = player(draft, playerId);
+  const cost = ability.cost ?? 0;
+  if (p.actions < cost) {
+    throw new DomainError('insufficient_actions', `floop costs ${cost} actions`);
+  }
+
+  // Atomic validation: additional-cost hand picks first, then declared targets.
+  const handCost = ability.additionalCost?.discardFromHand ?? 0;
+  const declaredAsks = ability.targets ?? [];
+  const expectedTargets = handCost + declaredAsks.length;
+  if ((targets?.length ?? 0) !== expectedTargets) {
+    throw new DomainError('target_required', `ability needs ${expectedTargets} targets`);
+  }
+  const allTargets = targets ?? [];
+  const handPicks: string[] = [];
+  for (const pick of allTargets.slice(0, handCost)) {
+    if (pick.kind !== 'card') {
+      throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
+    }
+    const pickInst = instance(draft, pick.instanceId);
+    if (pickInst.location !== 'hand' || pickInst.controller !== playerId) {
+      throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
+    }
+    handPicks.push(pick.instanceId);
+  }
+  if (declaredAsks.length > 0) {
+    validateChoices(draft, { player: playerId, instanceId }, declaredAsks, allTargets.slice(handCost));
+  }
+
+  // Apply: pay actions, pay additional cost, run, flip.
+  p.actions -= cost;
+  for (const pickId of handPicks) {
+    const pickInst = instance(draft, pickId);
+    pickInst.location = 'discard';
+    moveId(p.hand, p.discard, pickId);
+    emit(ctx, {
+      type: 'card_discarded',
+      player: playerId,
+      instanceId: pickId,
+      cardId: pickInst.cardId,
+      from: 'hand',
+    });
+  }
+  runAbilityDirect(draft, ctx, { player: playerId, instanceId }, ability, allTargets.slice(handCost));
+  if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
+
+  inst.flipped = true;
+  emit(ctx, { type: 'floop_used', player: playerId, instanceId, cardId: card!.id, paidActions: cost });
+  afterEffects(draft, ctx);
 }

@@ -4,6 +4,7 @@ import type { Ctx } from '../util';
 import { emit, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { teamOf } from '../zones';
+import { drainTriggers, enqueueTrigger } from '../mechanics/dispatch';
 
 /** The last non-eliminated player in seating order — the only one attacking in round 1 (docs/RULES.md). */
 export function lastAliveInOrder(draft: Draft<MatchState>): string {
@@ -14,7 +15,7 @@ export function lastAliveInOrder(draft: Draft<MatchState>): string {
   throw new Error('no alive players');
 }
 
-/** Untap + automatic draw phase + actions. Hero/start-of-turn abilities return with mechanics v2 (docs/TECH.md № 2). */
+/** Untap + automatic draw phase + start-of-turn triggers + actions (docs/MECHANICS-V2.md §2Б). */
 function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): void {
   const p = player(draft, pid);
 
@@ -28,11 +29,13 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   // Добор: free draws are automatic (docs/RULES.md, «Ход игрока»).
   draft.phase = 'draw';
   emit(ctx, { type: 'phase_changed', player: pid, phase: 'draw' });
+  enqueueTrigger(draft, ctx, 'start_of_turn', { player: pid });
   drawCards(draft, ctx, pid, ctx.config.freeDrawsPerTurn);
 
   draft.phase = 'main';
   emit(ctx, { type: 'phase_changed', player: pid, phase: 'main' });
   p.actions = ctx.config.actionsPerTurn;
+  drainTriggers(draft, ctx);
 }
 
 /**

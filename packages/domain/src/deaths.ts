@@ -4,6 +4,7 @@ import { finishMatch } from './finish';
 import { emit, inPlayInstanceIds, instance, player } from './util';
 import type { Ctx } from './util';
 import { computeEff } from './stats';
+import { drainTriggers } from './mechanics/dispatch';
 import type { CardData, MatchState, PlayerId } from './types';
 
 /** Creatures on the field with damage >= effective defense. */
@@ -31,6 +32,22 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
     for (const id of dead) {
       const inst = killInstance(draft, ctx, id);
       emit(ctx, { type: 'creature_destroyed', instanceId: id, cardId: inst.cardId });
+      // on_death enqueued directly: the source is already in the discard, so
+      // the live-source scan cannot see it (docs/MECHANICS-V2.md §2Б).
+      const card = ctx.catalog.getCard(inst.cardId);
+      const abilityIndex = card?.abilities?.findIndex(
+        (a) => a.kind === 'passive' && a.trigger === 'on_death',
+      ) ?? -1;
+      if (card && abilityIndex >= 0) {
+        ctx.frame.queue.push({
+          player: inst.controller,
+          instanceId: id,
+          cardId: inst.cardId,
+          abilityIndex,
+          trigger: 'on_death',
+          payload: { instanceId: id, cardId: inst.cardId, player: inst.controller },
+        });
+      }
     }
   }
 }
@@ -69,7 +86,7 @@ export function eliminatePlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: Pl
   emit(ctx, { type: 'player_eliminated', player: playerId });
 }
 
-/** Standard post-effect batch: deaths, then elimination/win check. */
+/** Standard post-effect batch: deaths, elimination/win check, trigger drain. */
 export function afterEffects(draft: Draft<MatchState>, ctx: Ctx): void {
   processDeaths(draft, ctx);
   if (draft.status === 'finished') return;
@@ -98,9 +115,13 @@ export function afterEffects(draft: Draft<MatchState>, ctx: Ctx): void {
       justEliminated.push(pid);
     }
   }
-  if (justEliminated.length === 0) return;
+  if (justEliminated.length === 0) {
+    drainTriggers(draft, ctx);
+    return;
+  }
   const alive = draft.order.filter((pid) => !draft.players[pid]!.eliminated);
   if (alive.length <= 1) {
     finishMatch(draft, ctx, alive, 'elimination');
   }
+  drainTriggers(draft, ctx);
 }

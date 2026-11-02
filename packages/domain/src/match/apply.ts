@@ -7,9 +7,11 @@ import { finishMatch } from '../finish';
 import { isActive, teamOf } from '../zones';
 import { resolveCombat } from './combat';
 import { handleFloop } from './floop';
+import { handleHeroAbility } from './hero';
 import { handleKeepHand, handleMulligan } from './mulligan';
 import { handlePlayCard } from './play';
 import { endTurn } from './turn';
+import { resolvePending, skipPending } from '../mechanics/dispatch';
 import { emit, instance, moveId, player } from '../util';
 import type { Draft } from 'immer';
 import type { Ctx } from '../util';
@@ -26,7 +28,7 @@ export function applyCommand(
   deps: DomainDeps,
 ): ApplyResult {
   const events: Ctx['events'] = [];
-  const ctx: Ctx = { config: deps.config, catalog: deps.catalog, events };
+  const ctx: Ctx = { config: deps.config, catalog: deps.catalog, events, frame: { queue: [], steps: 0 } };
   try {
     const next = produce(state, (draft) => {
       handle(draft, ctx, command);
@@ -134,6 +136,17 @@ function markBattleReady(
 }
 
 function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
+  // While a transition is paused for a decision (docs/MECHANICS-V2.md §6),
+  // only the answer, its timer default, surrender and disconnect commands pass.
+  if (
+    draft.pending &&
+    command.type !== 'resolve_choice' &&
+    command.type !== 'time_expired' &&
+    command.type !== 'surrender' &&
+    command.type !== 'disconnect_loss'
+  ) {
+    throw new DomainError('choice_pending', 'a choice is awaited before other commands');
+  }
   switch (command.type) {
     case 'mulligan':
       handleMulligan(draft, ctx, command.player);
@@ -142,11 +155,23 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       handleKeepHand(draft, ctx, command.player);
       return;
     case 'play_card':
-      handlePlayCard(draft, ctx, command.player, command.instanceId, command.zone, command.unfreezeWith);
+      handlePlayCard(draft, ctx, command.player, command.instanceId, command.zone, command.unfreezeWith, command.targets);
       return;
     case 'floop':
-      handleFloop(draft, ctx, command.player, command.instanceId);
+      handleFloop(draft, ctx, command.player, command.instanceId, command.targets);
       return;
+    case 'hero_ability':
+      handleHeroAbility(draft, ctx, command.player, command.targets);
+      return;
+    case 'resolve_choice': {
+      const pending = draft.pending;
+      if (!pending) throw new DomainError('no_pending_choice', 'nothing is awaited');
+      if (pending.player !== command.player) {
+        throw new DomainError('not_your_choice', `waiting for ${pending.player}`);
+      }
+      resolvePending(draft, ctx, command.answer);
+      return;
+    }
     case 'draw_extra': {
       requireActiveMain(draft, command.player);
       const p = player(draft, command.player);
@@ -204,6 +229,9 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       markBattleReady(draft, ctx, command.player, false);
       return;
     case 'time_expired':
+      // Timer default for a paused choice (docs/MECHANICS-V2.md §6): skip/cancel
+      // the awaited ability, then proceed with the automatic battle transition.
+      if (draft.pending) skipPending(draft, ctx);
       // Automatic transition sent by the adapter's timer state machine (docs/TECH.md).
       markBattleReady(draft, ctx, command.player, true);
       return;

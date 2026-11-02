@@ -114,6 +114,40 @@ export function Hud({ code }: { code: string }) {
 
       {error && <div className="error-line hud-error">{error.message}</div>}
 
+      {view.pending && (
+        <div className="pending-banner">
+          {view.pending.player === view.me ? (
+            <>
+              {view.pending.kind === 'optional'
+                ? 'Применить способность?'
+                : `Выберите цель (${(view.pending.askIndex ?? 0) + 1}${view.pending.askCount ? `/${view.pending.askCount}` : ''})`}
+              {view.pending.kind === 'optional' && (
+                <button
+                  className="mini"
+                  onClick={() => sendCommand({ type: 'resolve_choice', player: view.me, answer: { proceed: true } })}
+                >
+                  Да
+                </button>
+              )}
+              <button
+                className="mini"
+                onClick={() =>
+                  sendCommand({
+                    type: 'resolve_choice',
+                    player: view.me,
+                    answer: view.pending!.kind === 'optional' ? { proceed: false } : {},
+                  })
+                }
+              >
+                Пропустить
+              </button>
+            </>
+          ) : (
+            <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>
+          )}
+        </div>
+      )}
+
       <div className={`hud-journal ${journalOpen ? '' : 'collapsed'}`}>
         <div className="journal-head">
           <b>Журнал</b>

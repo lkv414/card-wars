@@ -1,6 +1,6 @@
 import { computeEff } from '@card-wars/domain';
 import type { DomainDeps, MatchState, PlayerId } from '@card-wars/domain';
-import type { CardView, PlayerPublicView, PlayerView, TeamView } from '@card-wars/protocol';
+import type { CardView, PendingChoiceView, PlayerPublicView, PlayerView, TeamView } from '@card-wars/protocol';
 
 export interface ViewOptions {
   /** Journal lines accumulated by the server (already time-stamped). */
@@ -26,6 +26,24 @@ function cardView(
     flipped: inst.flipped,
     effAttack: eff.attack,
     effDefense: eff.defense,
+  };
+}
+
+/** Which ask of which ability is awaited (total count read from the catalog). */
+function pendingView(deps: DomainDeps, state: MatchState): PendingChoiceView {
+  const pending = state.pending!;
+  let askCount: number | undefined;
+  if (pending.ask.kind === 'target') {
+    const ability = pending.current.instanceId
+      ? deps.catalog.getCard(state.instances[pending.current.instanceId]!.cardId)?.abilities?.[pending.current.abilityIndex]
+      : deps.catalog.getHero(state.players[pending.current.player]!.heroId)?.ability;
+    askCount = ability?.targets?.length;
+  }
+  return {
+    player: pending.player,
+    kind: pending.ask.kind,
+    askIndex: pending.ask.kind === 'target' ? pending.ask.askIndex : undefined,
+    askCount,
   };
 }
 
@@ -105,6 +123,8 @@ export function viewFor(
       cardId: state.instances[id]!.cardId,
       player: state.instances[id]!.controller,
     })),
+    // Fact of awaiting only — the prompt itself is rendered from catalog data.
+    pending: state.pending ? pendingView(deps, state) : null,
     winners: state.winners,
     finishReason: state.finishReason,
     journal: options.journal ?? [],

@@ -15,3 +15,19 @@ export { createMatch, type MatchSetup, type PlayerSetup } from './match/create';
 export { applyCommand } from './match/apply';
 export { computeEff } from './stats';
 export { mirrorZoneIndex } from './zones';
+export type {
+  AbilitySpec,
+  AdditionalCost,
+  ConditionSpec,
+  EffectSpec,
+  PendingChoice,
+  QueuedAbility,
+  StatKey,
+  TargetAsk,
+  TargetAskKind,
+  TargetChoice,
+  TargetRef,
+  Trigger,
+  TriggerPayload,
+} from './mechanics/types';
+export { MECHANICS, type MechanicHandler } from './mechanics/registry';

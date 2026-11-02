@@ -36,4 +36,8 @@ export type GameEvent =
   | { type: 'player_eliminated'; player: PlayerId }
   | { type: 'player_surrendered'; player: PlayerId }
   | { type: 'player_disconnected'; player: PlayerId }
+  /** Mechanics v2 (docs/MECHANICS-V2.md §6): the match awaits one player's decision. */
+  | { type: 'choice_required'; player: PlayerId; kind: 'optional' | 'target'; askIndex?: number; askCount?: number }
+  | { type: 'choice_resolved'; player: PlayerId; kind: 'optional' | 'target'; askIndex?: number }
+  | { type: 'hero_ability_used'; player: PlayerId; paidActions: number }
   | { type: 'match_finished'; winners: PlayerId[]; reason: FinishReason };

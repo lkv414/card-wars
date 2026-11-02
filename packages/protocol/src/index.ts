@@ -8,7 +8,7 @@ export { CONFIG } from './config';
 // Rule constants (deck size, copy limit, …) are validated on the server against
 // CONFIG, not duplicated in these schemas.
 
-export const PROTOCOL_VERSION = 2;
+export const PROTOCOL_VERSION = 3;
 
 // --- Personal view (docs/NETWORK.md «Персональный вид состояния») ---
 
@@ -75,6 +75,14 @@ export const PlayerPublicViewSchema = z.object({
   mulliganDecision: z.enum(['keep', 'mulligan']).nullable(),
 });
 
+/** Paused transition awaiting a decision (docs/MECHANICS-V2.md §6). */
+export const PendingChoiceViewSchema = z.object({
+  player: z.string(),
+  kind: z.enum(['optional', 'target']),
+  askIndex: z.number().optional(),
+  askCount: z.number().optional(),
+});
+
 export const PlayerViewSchema = z.object({
   status: z.enum(['mulligan', 'running', 'finished']),
   phase: z.enum(['draw', 'main', 'combat']),
@@ -90,6 +98,7 @@ export const PlayerViewSchema = z.object({
   players: z.record(z.string(), PlayerPublicViewSchema),
   myHand: z.array(DiscardCardViewSchema),
   castSpells: z.array(SpellViewSchema),
+  pending: PendingChoiceViewSchema.nullable(),
   winners: z.array(z.string()).nullable(),
   finishReason: z.enum(['elimination', 'surrender', 'disconnect']).nullable(),
   journal: z.array(z.string()),
@@ -106,6 +115,18 @@ export type PlayerView = z.infer<typeof PlayerViewSchema>;
 
 // --- Match commands (mirror of the domain Command union; adapter validates then forwards) ---
 
+export const TargetChoiceSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('creature'), instanceId: z.string() }),
+  z.object({ kind: z.literal('player'), playerId: z.string() }),
+  z.object({ kind: z.literal('landscape'), player: z.string(), zone: z.number() }),
+  z.object({ kind: z.literal('card'), instanceId: z.string() }),
+]);
+
+export const ChoiceAnswerSchema = z.object({
+  proceed: z.boolean().optional(),
+  targets: z.array(TargetChoiceSchema).max(8).optional(),
+});
+
 export const CommandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('mulligan'), player: z.string() }),
   z.object({ type: z.literal('keep_hand'), player: z.string() }),
@@ -115,11 +136,23 @@ export const CommandSchema = z.discriminatedUnion('type', [
     instanceId: z.string(),
     zone: z.number().optional(),
     unfreezeWith: z.string().optional(),
+    targets: z.array(TargetChoiceSchema).max(8).optional(),
   }),
   z.object({
     type: z.literal('floop'),
     player: z.string(),
     instanceId: z.string(),
+    targets: z.array(TargetChoiceSchema).max(8).optional(),
+  }),
+  z.object({
+    type: z.literal('hero_ability'),
+    player: z.string(),
+    targets: z.array(TargetChoiceSchema).max(8).optional(),
+  }),
+  z.object({
+    type: z.literal('resolve_choice'),
+    player: z.string(),
+    answer: ChoiceAnswerSchema,
   }),
   z.object({ type: z.literal('draw_extra'), player: z.string() }),
   z.object({
@@ -139,6 +172,9 @@ export const CommandSchema = z.discriminatedUnion('type', [
 ]);
 
 export type Command = z.infer<typeof CommandSchema>;
+export type TargetChoice = z.infer<typeof TargetChoiceSchema>;
+export type ChoiceAnswer = z.infer<typeof ChoiceAnswerSchema>;
+export type PendingChoiceView = z.infer<typeof PendingChoiceViewSchema>;
 
 // --- Lobby (docs/COMMANDS.md «Лобби») ---
 

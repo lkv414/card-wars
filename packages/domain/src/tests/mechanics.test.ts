@@ -405,6 +405,43 @@ describe('механики v2: каркас', () => {
     });
   });
 
+  describe('M6: массивы эффектов, возврат из сброса', () => {
+    it('массив эффектов исполняется по порядку: тяни, затем сбрось', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'array-discarder');
+      const cardId = handCardId(s, P1, 'array-discarder');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: cardId, zone: 0 }).state;
+      const sacrifice = s.players[P1]!.hand[0]!;
+      s = ok(s, {
+        type: 'floop',
+        player: P1,
+        instanceId: s.players[P1]!.zones[0]!.creature!,
+        targets: [{ kind: 'card', instanceId: sacrifice }],
+      }).state;
+      expect(s.players[P1]!.discard.map((i) => s.instances[i]!.cardId)).toContain(s.instances[sacrifice]!.cardId);
+    });
+
+    it('return_from_discard возвращает карту из сброса в руку', () => {
+      let s = round2P1Turn();
+      s = produce(s, (d) => {
+        d.players[P1]!.lands[0]!.type = 'swamp';
+      });
+      s = forceToHand(s, P1, 'returner');
+      const returnerId = handCardId(s, P1, 'returner');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: returnerId, zone: 0 }).state;
+      // кладём верхнюю карту колоды в сброс, затем возвращаем её флюпом
+      const discarded = s.players[P1]!.deck[0]!;
+      s = produce(s, (d) => {
+        const p = d.players[P1]!;
+        p.deck.shift();
+        d.instances[discarded]!.location = 'discard';
+        p.discard.push(discarded);
+      });
+      s = ok(s, { type: 'floop', player: P1, instanceId: s.players[P1]!.zones[0]!.creature! }).state;
+      expect(s.instances[discarded]!.location).toBe('hand');
+    });
+  });
+
   describe('способность героя', () => {
     function bimoMatch() {
       const { state } = createMatch(deps, makeSetup({ p1Hero: 'hero-bimo', seed: 5 }));

@@ -1,0 +1,18 @@
+{
+ "cardId": "bmo_card_38",
+ "name": "Древо-нежить",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "return_from_discard",
+    "count": 1,
+    "filter": {
+     "type": "creature"
+    },
+    "random": true
+   },
+   "text": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в руку."
+  }
+ ]
+}

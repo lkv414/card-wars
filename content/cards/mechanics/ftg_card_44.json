@@ -1,0 +1,22 @@
+{
+ "cardId": "ftg_card_44",
+ "name": "Стрелец Дэн",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "destroy",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    }
+   },
+   "targets": [
+    {
+     "kind": "lane_building"
+    }
+   ],
+   "text": "ПРИЕМ >>> Уничтожь выбранное строение на линии стрельба Дэна."
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "cardId": "tree_trunks_card_7",
+ "name": "Хлопковая Ведриния",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "grant_modifier",
+    "modifier": {
+     "op": "damage_redirect",
+     "from": {
+      "kind": "each_creature_yours"
+     },
+     "excludeSelf": true
+    }
+   },
+   "text": "+1 ATK против болотных и песаных существ (Ведро!)."
+  }
+ ]
+}

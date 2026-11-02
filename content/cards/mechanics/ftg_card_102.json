@@ -1,0 +1,15 @@
+{
+ "cardId": "ftg_card_102",
+ "name": "Призрачный тик",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_leave_play",
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "text": "Когда Призрачный тик покидает игру, тяни нижнюю карту из своей колоды."
+  }
+ ]
+}

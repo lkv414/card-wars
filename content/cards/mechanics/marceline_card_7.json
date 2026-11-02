@@ -1,0 +1,27 @@
+{
+ "cardId": "marceline_card_7",
+ "name": "Унициклоп",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": [
+    {
+     "op": "draw_cards",
+     "count": 1,
+     "target": {
+      "kind": "each_player"
+     }
+    },
+    {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "each_player"
+     },
+     "count": 1
+    }
+   ],
+   "text": "В начале твоего хода каждый игрок тянет карту и затем сбрасывает карту."
+  }
+ ]
+}

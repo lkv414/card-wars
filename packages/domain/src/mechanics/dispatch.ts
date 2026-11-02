@@ -94,8 +94,25 @@ export function runQueuedAbility(
   if (!ability) return; // source left play while queued
   const source: EffectSource = { player: qa.player, instanceId: qa.instanceId };
   if (!conditionsHold(draft, ctx, source, ability.conditions, undefined, qa.payload)) return;
-  if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices, qa.payload);
-  else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+  runAbilityEffect(draft, ctx, ability, source, choices, qa.payload);
+}
+
+/** Run an ability's effect(s) — a single spec or a sequential array. */
+export function runAbilityEffect(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  ability: AbilitySpec,
+  source: EffectSource,
+  choices: TargetChoice[] | undefined,
+  payload?: TriggerPayload,
+): void {
+  if (Array.isArray(ability.effect)) {
+    for (const effect of ability.effect) runEffect(draft, ctx, effect, source, choices, payload);
+  } else if (ability.effect) {
+    runEffect(draft, ctx, ability.effect, source, choices, payload);
+  } else if (ability.mechanic) {
+    runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+  }
 }
 
 /** Direct execution for player-initiated abilities (floop / hero_ability / on_cast). */
@@ -107,8 +124,7 @@ export function runAbilityDirect(
   choices: TargetChoice[] | undefined,
 ): void {
   if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
-  if (ability.effect) runEffect(draft, ctx, ability.effect, source, choices);
-  else if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+  runAbilityEffect(draft, ctx, ability, source, choices);
 }
 
 /** Process the queue; pauses into MatchState.pending when input is required. */

@@ -38,7 +38,7 @@ export function auraContributions(
   forSource(draft, ctx, (source, ability) => {
     if (ability.kind !== 'passive' || ability.trigger !== undefined) return;
     const effect = ability.effect;
-    if (!effect || effect.op !== 'stat_buff' || effect.duration !== 'aura') return;
+    if (!effect || Array.isArray(effect) || effect.op !== 'stat_buff' || effect.duration !== 'aura') return;
     if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
     const targets = resolveTarget(draft, ctx, effect.target, source, undefined);
     for (const target of targets) {
@@ -122,23 +122,37 @@ export function conditionsHold(
       case 'if_payload_other':
         if (!payload?.instanceId || payload.instanceId === source.instanceId) return false;
         break;
+      case 'if_payload_to_player':
+        if (!payload?.targetPlayer) return false;
+        break;
+      case 'if_payload_targeted_self':
+        if (!payload?.targetInstanceId || payload.targetInstanceId !== source.instanceId) return false;
+        break;
+      case 'if_payload_player_opponent':
+        if (!payload?.player || payload.player === source.player) return false;
+        break;
       case 'if_discard_count':
       case 'while_discard_count':
         if (p.discard.length < cond.min) return false;
         break;
       case 'while_undamaged': {
         const id = cond.scope === 'self' ? source.instanceId : targetInstanceId;
-        if (!id || instance(draft, id).damage !== 0) return false;
+        // Target-scoped conditions are checked per candidate later; without a
+        // candidate (source-level scan) they do not fail the ability.
+        if (!id) break;
+        if (instance(draft, id).damage !== 0) return false;
         break;
       }
       case 'while_damage_exactly': {
         const id = cond.scope === 'self' ? source.instanceId : targetInstanceId;
-        if (!id || instance(draft, id).damage !== cond.amount) return false;
+        if (!id) break;
+        if (instance(draft, id).damage !== cond.amount) return false;
         break;
       }
       case 'while_damage_at_least': {
         const id = cond.scope === 'self' ? source.instanceId : targetInstanceId;
-        if (!id || instance(draft, id).damage < cond.amount) return false;
+        if (!id) break;
+        if (instance(draft, id).damage < cond.amount) return false;
         break;
       }
       case 'while_lane_empty_opponent': {
@@ -312,7 +326,8 @@ export function playedCardCostModifier(
   const source: EffectSource = { player: playerId, instanceId: handInstanceId };
   for (const ability of card.abilities ?? []) {
     if (ability.kind !== 'passive' || ability.trigger !== undefined) continue;
-    const effect: EffectSpec | undefined = ability.effect;
+    const single = Array.isArray(ability.effect) ? ability.effect[0] : ability.effect;
+    const effect: EffectSpec | undefined = single;
     if (!effect || effect.op !== 'cost_mod' || !conditionsHold(draft, ctx, source, ability.conditions, undefined)) continue;
     total += resolveStatAmount(draft, ctx, source, effect.amount);
   }
@@ -329,7 +344,8 @@ export function landCountModifier(
   let total = 0;
   forSource(draft, ctx, (source, ability) => {
     if (source.player !== playerId || ability.kind !== 'passive' || ability.trigger !== undefined) return;
-    const effect: EffectSpec | undefined = ability.effect;
+    const single = Array.isArray(ability.effect) ? ability.effect[0] : ability.effect;
+    const effect: EffectSpec | undefined = single;
     if (!effect || effect.op !== 'land_count_mod' || !conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
     if (effect.landType && effect.landType !== landType) return;
     total += effect.amount;
@@ -352,7 +368,7 @@ function ruleEffects(
   forSource(draft, ctx, (source, ability) => {
     if (ability.kind !== 'passive' || ability.trigger !== undefined) return;
     const effect = ability.effect;
-    if (!effect || !MODIFIER_OPS.has(effect.op)) return;
+    if (!effect || Array.isArray(effect) || !MODIFIER_OPS.has(effect.op)) return;
     if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
     out.push({ source, effect: effect as RuleEffect });
   });
@@ -440,4 +456,30 @@ export function hasNoRetaliation(
     if (coversInstance(draft, ctx, modSource, effect.target, attackerId)) return true;
   }
   return false;
+}
+
+
+/** Active abilities granted to this card by live grant_ability auras (Финн). */
+export function collectGrantedActives(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  instanceId: string,
+): AbilitySpec[] {
+  const out: AbilitySpec[] = [];
+  forSource(draft, ctx, (source, ability) => {
+    if (ability.kind !== 'passive' || ability.trigger !== undefined) return;
+    const effect = ability.effect;
+    if (!effect || Array.isArray(effect) || effect.op !== 'grant_ability') return;
+    if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
+    if (effect.ability.kind !== 'active') return;
+    const targets = resolveTarget(draft, ctx, effect.target, source, undefined);
+    for (const target of targets) {
+      if (target.kind !== 'creature' && target.kind !== 'building') continue;
+      if (target.instanceId !== instanceId) continue;
+      // Per-target conditions (Финн: «не получившие урон»).
+      if (!conditionsHold(draft, ctx, source, ability.conditions, target.instanceId)) continue;
+      out.push(effect.ability);
+    }
+  });
+  return out;
 }

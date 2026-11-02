@@ -1,0 +1,18 @@
+{
+ "cardId": "bmo_card_27",
+ "name": "Дьявольский глазастик",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "return_from_discard",
+    "count": 1,
+    "filter": {
+     "cost": 0
+    },
+    "random": true
+   },
+   "text": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в руку."
+  }
+ ]
+}

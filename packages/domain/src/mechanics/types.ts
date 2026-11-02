@@ -2,7 +2,7 @@
 // from the catalog (content/cards/mechanics + content/heroes/mechanics), never
 // hardcoded; handlers are mechanic-level, not card-level.
 
-import type { LandType } from '../types';
+import type { CardType, LandType } from '../types';
 
 export type PlayerId = string;
 
@@ -51,7 +51,9 @@ export type TargetAskKind =
   | 'lane_opponent_creature'
   | 'opponent_player'
   | 'landscape'
-  | 'own_hand_card';
+  | 'own_hand_card'
+  | 'own_building'
+  | 'lane_building';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -150,6 +152,10 @@ export type ConditionSpec =
   | { kind: 'if_payload_other' }
   /** on_damage_dealt: the damage went to a player (Мятный змей: «урон противнику»). */
   | { kind: 'if_payload_to_player' }
+  /** on_spell_cast: this creature was the spell's target (Привлекательный слон). */
+  | { kind: 'if_payload_targeted_self' }
+  /** on_leave_play: the card that left belonged to an opponent (Лейтенант Гриб). */
+  | { kind: 'if_payload_player_opponent' }
   /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
   | { kind: 'while_on_land_type'; landType: LandType }
   /** At least min distinct land types under control (Лимонное желе). */
@@ -213,7 +219,19 @@ export type EffectSpec =
   /** Damage to the covered creatures goes to the modifier source instead (Ведриния). */
   | { op: 'damage_redirect'; from: TargetRef; excludeSelf?: boolean }
   /** Grant a rule modifier for the current turn (floop Ведринии). */
-  | { op: 'grant_modifier'; modifier: EffectSpec };
+  | { op: 'grant_modifier'; modifier: EffectSpec }
+  /** Return cards from own discard to hand (or deck top, lsp_card_25). */
+  | {
+      op: 'return_from_discard';
+      count: StatAmount;
+      filter?: { type?: CardType; landType?: LandType; cost?: number };
+      random?: boolean;
+      to?: 'hand' | 'deck_top';
+    }
+  /** Discard own hand cards (chosen via own_hand_card asks). */
+  | { op: 'discard_from_hand'; count: number }
+  /** Aura-grant of an ability to covered cards (Финн: «получают ПРИЕМ >>> …»). */
+  | { op: 'grant_ability'; target: TargetRef; ability: AbilitySpec };
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';
@@ -225,7 +243,8 @@ export interface AbilitySpec {
   oncePerTurn?: boolean;
   /** «можешь …»: the owning player decides (pendingChoice, docs/MECHANICS-V2.md §6). */
   optional?: boolean;
-  effect?: EffectSpec;
+  /** Declarative effect(s); an array runs sequentially (Голубой тритон: тяни, затем сбрось). */
+  effect?: EffectSpec | EffectSpec[];
   mechanic?: string;
   params?: Record<string, unknown>;
   /** Player-picked targets, in order; actives take them with the command, triggers via pendingChoice. */

@@ -333,7 +333,21 @@
   "attack": 2,
   "defense": 6,
   "description": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в руку.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "filter": {
+      "cost": 0
+     },
+     "random": true
+    },
+    "text": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в руку."
+   }
+  ]
  },
  {
   "id": "bmo_card_29",
@@ -462,7 +476,21 @@
   "attack": 3,
   "defense": 3,
   "description": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в руку.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "filter": {
+      "type": "creature"
+     },
+     "random": true
+    },
+    "text": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в руку."
+   }
+  ]
  },
  {
   "id": "bmo_card_39",
@@ -967,7 +995,21 @@
   "attack": 1,
   "defense": 4,
   "description": "ПРИЕМ >>> Верни строение из стопки сброса себе в руку.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "filter": {
+      "type": "building"
+     },
+     "random": true
+    },
+    "text": "ПРИЕМ >>> Верни строение из стопки сброса себе в руку."
+   }
+  ]
  },
  {
   "id": "cake_card_3",
@@ -1846,7 +1888,26 @@
   "landType": "blue",
   "image": "/content/cards/images/charlie_card_23.png",
   "description": "Перемести 3 и менее урона с существа под твоим контролем на выбранное существо противника на этой линии.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "move_damage",
+    "params": {
+     "max": 3
+    },
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ],
+    "text": "Перемести 3 и менее урона с существа под твоим контролем на выбранное существо противника на этой линии."
+   }
+  ]
  },
  {
   "id": "charlie_card_25",
@@ -1961,7 +2022,32 @@
   "attack": 4,
   "defense": 4,
   "description": "Каждый раз когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_spell_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_targeted_self"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     }
+    ],
+    "text": "Каждый раз когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника."
+   }
+  ]
  },
  {
   "id": "charlie_card_37",
@@ -3276,7 +3362,23 @@
   "attack": 0,
   "defense": 4,
   "description": "Когда Итан Огонек покидает игру, тяни 1 карту за каждую кукурузную землю под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_lands",
+      "where": "own",
+      "landType": "corn",
+      "amount": 1
+     }
+    },
+    "text": "Когда Итан Огонек покидает игру, тяни 1 карту за каждую кукурузную землю под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_41",
@@ -3360,7 +3462,25 @@
   "attack": 2,
   "defense": 6,
   "description": "ПРИЕМ >>> Уничтожь выбранное строение на линии стрельба Дэна.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "lane_building"
+     }
+    ],
+    "text": "ПРИЕМ >>> Уничтожь выбранное строение на линии стрельба Дэна."
+   }
+  ]
  },
  {
   "id": "ftg_card_45",
@@ -3882,7 +4002,27 @@
   "attack": 1,
   "defense": 6,
   "description": "Когда Зеленая змейка покидает игру, нанеси 1 урон выбранному существу на этой линии.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "text": "Когда Зеленая змейка покидает игру, нанеси 1 урон выбранному существу на этой линии."
+   }
+  ]
  },
  {
   "id": "ftg_card_82",
@@ -3894,7 +4034,29 @@
   "attack": 1,
   "defense": 8,
   "description": "Когда существо под твоим контролем покидает игру, восстанови 1 урон с Зеленого короля вечеринок.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": 1
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "text": "Когда существо под твоим контролем покидает игру, восстанови 1 урон с Зеленого короля вечеринок."
+   }
+  ]
  },
  {
   "id": "ftg_card_83",
@@ -4044,7 +4206,28 @@
   "attack": 2,
   "defense": 5,
   "description": "ПРИЕМ >>> Тяни карту. Затем сбрось карту.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "draw_cards",
+      "count": 1
+     },
+     {
+      "op": "discard_from_hand",
+      "count": 1
+     }
+    ],
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ],
+    "text": "ПРИЕМ >>> Тяни карту. Затем сбрось карту."
+   }
+  ]
  },
  {
   "id": "ftg_card_99",
@@ -4108,7 +4291,18 @@
   "attack": 1,
   "defense": 9,
   "description": "Когда Призрачный тик покидает игру, тяни нижнюю карту из своей колоды.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "Когда Призрачный тик покидает игру, тяни нижнюю карту из своей колоды."
+   }
+  ]
  },
  {
   "id": "ftg_card_104",
@@ -4120,7 +4314,32 @@
   "attack": 2,
   "defense": 3,
   "description": "Когда Лейтенант Гриб покидает игру во время хода противника, этот противник сбрасывает 3 карты.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "count": 3
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Когда Лейтенант Гриб покидает игру во время хода противника, этот противник сбрасывает 3 карты."
+   }
+  ]
  },
  {
   "id": "ftg_card_105",
@@ -7072,7 +7291,22 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lich_card_39.png",
   "description": "Нанеси урон по цепочке трём существам противника на соседних землях. Первому наносится 3 урона, второму - 2 и третьему - 1.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "chain_damage",
+    "params": {
+     "chain": [
+      3,
+      2,
+      1
+     ]
+    },
+    "text": "Нанеси урон по цепочке трём существам противника на соседних землях. Первому наносится 3 урона, второму - 2 и третьему - 1."
+   }
+  ]
  },
  {
   "id": "lich_card_40",
@@ -7405,7 +7639,22 @@
   "attack": 0,
   "defense": 8,
   "description": "ПРИЕМ >>> Скелет гастролер и другое существо под твоим контролем меняются линиями друг с другом.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "mechanic": "swap_lanes",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Скелет гастролер и другое существо под твоим контролем меняются линиями друг с другом."
+   }
+  ]
  },
  {
   "id": "lsp_card_23",
@@ -7653,7 +7902,30 @@
   "attack": 1,
   "defense": 10,
   "description": "В начале твоего хода каждый игрок тянет карту и затем сбрасывает карту.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": [
+     {
+      "op": "draw_cards",
+      "count": 1,
+      "target": {
+       "kind": "each_player"
+      }
+     },
+     {
+      "op": "opponent_discards",
+      "target": {
+       "kind": "each_player"
+      },
+      "count": 1
+     }
+    ],
+    "text": "В начале твоего хода каждый игрок тянет карту и затем сбрасывает карту."
+   }
+  ]
  },
  {
   "id": "marceline_card_9",
@@ -8361,7 +8633,23 @@
   "attack": 1,
   "defense": 12,
   "description": "+1 ATK против болотных и песаных существ (Ведро!).\nПрием >>> Весь урон, который должны были получить другие союзные существа, получит она.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "grant_modifier",
+     "modifier": {
+      "op": "damage_redirect",
+      "from": {
+       "kind": "each_creature_yours"
+      },
+      "excludeSelf": true
+     }
+    },
+    "text": "+1 ATK против болотных и песаных существ (Ведро!)."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_8",

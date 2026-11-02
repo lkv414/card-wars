@@ -4,7 +4,8 @@ import { dealToCreature, dealToPlayer, healPlayer } from '../damage';
 import { DomainError } from '../errors';
 import { finishMatch } from '../finish';
 import { killInstance } from '../damage';
-import { emit, instance, player } from '../util';
+import { pickRandom } from '../rng';
+import { emit, instance, moveId, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
@@ -171,6 +172,33 @@ export function runEffect(
       }
       return;
     }
+    case 'return_from_discard': {
+      const count = resolveStatAmount(draft, ctx, source, effect.count, payload);
+      returnCards(draft, ctx, source, effect, count);
+      return;
+    }
+    case 'discard_from_hand': {
+      const asks = effect.count;
+      const picks = (choices ?? []).filter((c) => c.kind === 'card');
+      const p = player(draft, source.player);
+      for (const pick of picks.slice(0, asks)) {
+        const inst = instance(draft, pick.instanceId);
+        if (inst.location !== 'hand' || inst.controller !== source.player) {
+          throw new DomainError('invalid_choice', 'discard_from_hand needs own hand cards');
+        }
+      }
+      for (const pick of picks.slice(0, asks)) {
+        const inst = instance(draft, pick.instanceId);
+        inst.location = 'discard';
+        moveId(p.hand, p.discard, inst.id);
+        emit(ctx, { type: 'card_discarded', player: source.player, instanceId: inst.id, cardId: inst.cardId, from: 'hand' });
+      }
+      return;
+    }
+    case 'grant_ability': {
+      // Aura-grant: read live by the floop gate; nothing to materialise.
+      return;
+    }
     case 'gain_actions':
       player(draft, source.player).actions += effect.amount;
       return;
@@ -206,6 +234,40 @@ function moveCreatureToZone(
   emit(ctx, { type: 'card_moved', player: destPlayerId, instanceId, fromZone, toZone: zone });
   bumpCounter(draft, 'line_change', destPlayerId);
   enqueueTrigger(draft, ctx, 'on_line_change', { instanceId, player: destPlayerId, zone });
+}
+
+/** Return cards from the discard pile (random or first match, filter by data). */
+function returnCards(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  effect: Extract<EffectSpec, { op: 'return_from_discard' }>,
+  count: number,
+): void {
+  const p = player(draft, source.player);
+  for (let i = 0; i < count; i++) {
+    const candidates = p.discard.filter((id) => {
+      const inst = instance(draft, id);
+      const card = ctx.catalog.getCard(inst.cardId);
+      if (!card) return false;
+      if (effect.filter?.type && card.type !== effect.filter.type) return false;
+      if (effect.filter?.landType && card.landType !== effect.filter.landType) return false;
+      if (effect.filter?.cost !== undefined && card.cost !== effect.filter.cost) return false;
+      return true;
+    });
+    const chosen = effect.random ? pickRandom(draft.rng, candidates) : candidates[0];
+    if (!chosen) return;
+    const inst = instance(draft, chosen);
+    p.discard.splice(p.discard.indexOf(chosen), 1);
+    if (effect.to === 'deck_top') {
+      inst.location = 'deck';
+      p.deck.unshift(chosen);
+    } else {
+      inst.location = 'hand';
+      p.hand.push(chosen);
+    }
+    emit(ctx, { type: 'card_returned', player: source.player, instanceId: chosen, cardId: inst.cardId });
+  }
 }
 
 /** Increment a per-turn event counter (key `kind:player`). */

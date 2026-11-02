@@ -1,0 +1,29 @@
+{
+ "cardId": "charlie_card_36",
+ "name": "Привлекательный слон",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_spell_cast",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 2
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_targeted_self"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "opponent_creature"
+    }
+   ],
+   "text": "Каждый раз когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника."
+  }
+ ]
+}

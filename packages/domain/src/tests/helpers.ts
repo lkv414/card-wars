@@ -264,6 +264,33 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'array-discarder',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: [{ op: 'draw_cards', count: 1 }, { op: 'discard_from_hand', count: 1 }],
+        targets: [{ kind: 'own_hand_card' }],
+        text: 'ПРИЕМ >>> тяни карту, затем сбрось карту',
+      },
+    ],
+  }),
+  card({
+    id: 'returner',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'active', effect: { op: 'return_from_discard', count: 1, random: true }, text: 'ПРИЕМ >>> верни случайную карту из сброса' },
+    ],
+  }),
+  card({
     id: 'turn-chooser',
     type: 'creature',
     cost: 1,

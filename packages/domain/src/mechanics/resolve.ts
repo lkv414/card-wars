@@ -82,12 +82,34 @@ function choiceMatchesAsk(
       const p = draft.players[choice.player];
       return Boolean(p && choice.zone >= 0 && choice.zone < p.lands.length);
     }
+    case 'own_building':
+      return (
+        choice.kind === 'creature' &&
+        isFieldCreature(draft, choice.instanceId) === false &&
+        isOwnFieldCard(draft, choice.instanceId, source.player, 'building')
+      );
+    case 'lane_building': {
+      if (choice.kind !== 'creature') return false;
+      const inst = instance(draft, choice.instanceId);
+      const src = source.instanceId ? instance(draft, source.instanceId) : null;
+      return (
+        src !== null &&
+        inst.location === 'field' &&
+        inst.slot === 'building' &&
+        inst.zone === src.zone
+      );
+    }
     case 'own_hand_card': {
       if (choice.kind !== 'card') return false;
       const inst = instance(draft, choice.instanceId);
       return inst.location === 'hand' && inst.controller === source.player;
     }
   }
+}
+
+function isOwnFieldCard(draft: MatchState, instanceId: string, playerId: string, slot: 'creature' | 'building'): boolean {
+  const inst = instance(draft, instanceId);
+  return inst.location === 'field' && inst.slot === slot && inst.controller === playerId;
 }
 
 function isFieldCreature(draft: MatchState, instanceId: string): boolean {

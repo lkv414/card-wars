@@ -1,0 +1,37 @@
+{
+ "heroId": "hero_finn",
+ "name": "Фини",
+ "ability": {
+  "kind": "passive",
+  "effect": {
+   "op": "grant_ability",
+   "target": {
+    "kind": "each_creature_yours"
+   },
+   "ability": {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу"
+   }
+  },
+  "conditions": [
+   {
+    "kind": "while_undamaged",
+    "scope": "target"
+   }
+  ],
+  "text": "Существа под твоим контролем, не получившие урон, получают «ПРИЕМ >>> Нанеси 1 урон выбранному существу»."
+ }
+}

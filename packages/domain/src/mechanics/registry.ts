@@ -2,7 +2,9 @@ import type { Draft } from 'immer';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
+import { chainDamage, moveDamage, swapLanes } from './handlers';
 import type { EffectSource } from './source';
+export type { EffectSource };
 import type { TargetChoice } from './types';
 
 /**
@@ -18,7 +20,11 @@ export type MechanicHandler = (
   choices: TargetChoice[] | undefined,
 ) => void;
 
-export const MECHANICS: Record<string, MechanicHandler> = {};
+export const MECHANICS: Record<string, MechanicHandler> = {
+  chain_damage: chainDamage,
+  move_damage: moveDamage,
+  swap_lanes: swapLanes,
+};
 
 export function runMechanic(
   draft: Draft<MatchState>,

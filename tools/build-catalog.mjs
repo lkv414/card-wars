@@ -64,13 +64,13 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event',
 ]);
-const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card']);
+const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building']);
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature', 'this_lane_land',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
@@ -84,7 +84,7 @@ const CONDITION_KINDS = new Set([
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_player_self', 'if_payload_other',
-  'if_payload_to_player',
+  'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent',
 ]);
 
 function checkAmount(amount, where) {
@@ -107,71 +107,84 @@ function validateAbility(ability, owner) {
   if (ability.cost !== undefined && (ability.kind !== 'active' || !Number.isInteger(ability.cost) || ability.cost < 0)) {
     fail(`${where}: cost is an active-only non-negative integer`);
   }
-  const hasEffect = ability.effect !== undefined;
+  const effects = Array.isArray(ability.effect) ? ability.effect : ability.effect ? [ability.effect] : [];
+  const hasEffect = effects.length > 0;
   const hasMechanic = ability.mechanic !== undefined;
   // Passive: exactly one of effect|mechanic. Active: at most one — a bare
   // «ПРИЕМ» without effect is a tap-only floop (Огненное торнадо).
   if (ability.kind === 'passive' && hasEffect === hasMechanic) fail(`${where}: exactly one of effect|mechanic`);
   if (ability.kind === 'active' && hasEffect && hasMechanic) fail(`${where}: active must not have both effect and mechanic`);
-  if (hasEffect) {
-    const op = ability.effect.op;
-    if (!EFFECT_OPS.has(op)) fail(`${where}: unknown effect op ${op}`);
-    if (op === 'cost_mod') {
-      if (ability.effect.self !== true) fail(`${where}: cost_mod must be self`);
-      checkAmount(ability.effect.amount, where);
-    } else if (op === 'land_count_mod') {
-      if (!Number.isInteger(ability.effect.amount)) fail(`${where}: land_count_mod needs integer amount`);
-    } else if (op === 'win_if_opponents_deck_empty') {
-      // no parameters
-    } else if (op === 'flip_land') {
-      checkTargetRef(ability.effect.target, where);
-      if (typeof ability.effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
-    } else if (op === 'destroy' || op === 'freeze_land') {
-      checkTargetRef(ability.effect.target, where);
-      if (op === 'freeze_land' && typeof ability.effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);
-    } else if (op === 'suppress' || op === 'no_retaliation' || op === 'damage_immunity' || op === 'damage_redirect') {
-      const target = ability.effect.target ?? ability.effect.from;
-      checkTargetRef(target, where);
-      if (op === 'damage_immunity' && !Number.isInteger(ability.effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
-      if (op === 'suppress' && !ability.effect.actives && !ability.effect.triggers) fail(`${where}: suppress needs actives or triggers`);
-    } else if (op === 'grant_modifier') {
-      if (!ability.effect.modifier || !EFFECT_OPS.has(ability.effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
-    } else if (op === 'move_creature') {
-      checkTargetRef(ability.effect.target, where);
-      checkTargetRef(ability.effect.destination, where);
-      if (!['own', 'any'].includes(ability.effect.side)) fail(`${where}: move_creature side must be own|any`);
-    } else if (op === 'gain_actions') {
-      if (!Number.isInteger(ability.effect.amount)) fail(`${where}: gain_actions needs integer amount`);
-    } else if (op === 'gain_shield') {
-      checkTargetRef(ability.effect.target, where);
-      if (!Number.isInteger(ability.effect.amount)) fail(`${where}: gain_shield needs integer amount`);
-    } else if (op === 'opponent_discards') {
-      checkTargetRef(ability.effect.target, where);
-      checkAmount(ability.effect.count, where);
-    } else if (op === 'draw_cards' || op === 'discard_top_deck') {
-      checkAmount(ability.effect.count, where);
-    } else if (op === 'stat_buff') {
-      if (!['attack', 'defense'].includes(ability.effect.stat)) fail(`${where}: stat_buff stat must be attack|defense`);
-      if (!['permanent', 'aura', 'this_turn'].includes(ability.effect.duration)) fail(`${where}: stat_buff duration must be permanent|aura|this_turn`);
-      checkAmount(ability.effect.amount, where);
-    } else {
-      checkTargetRef(ability.effect.target, where);
-      checkAmount(ability.effect.amount, where);
-    }
-  }
+  for (const effect of effects) validateEffect(effect, where, ability);
   for (const cond of ability.conditions ?? []) {
     if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown condition ${cond.kind}`);
   }
   for (const ask of ability.targets ?? []) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
   }
-  // A choice-based effect needs declared asks: max choice index + 1.
-  const effectJson = hasEffect ? JSON.stringify(ability.effect) : '';
+}
+
+function validateEffect(effect, where, ability) {
+  const op = effect.op;
+  if (!EFFECT_OPS.has(op)) fail(`${where}: unknown effect op ${op}`);
+  if (op === 'cost_mod') {
+    if (effect.self !== true) fail(`${where}: cost_mod must be self`);
+    checkAmount(effect.amount, where);
+  } else if (op === 'land_count_mod') {
+    if (!Number.isInteger(effect.amount)) fail(`${where}: land_count_mod needs integer amount`);
+  } else if (op === 'win_if_opponents_deck_empty') {
+    // no parameters
+  } else if (op === 'flip_land') {
+    checkTargetRef(effect.target, where);
+    if (typeof effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
+  } else if (op === 'destroy' || op === 'freeze_land') {
+    checkTargetRef(effect.target, where);
+    if (op === 'freeze_land' && typeof effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);
+  } else if (op === 'suppress' || op === 'no_retaliation' || op === 'damage_immunity' || op === 'damage_redirect') {
+    const target = effect.target ?? effect.from;
+    checkTargetRef(target, where);
+    if (op === 'damage_immunity' && !Number.isInteger(effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
+    if (op === 'suppress' && !effect.actives && !effect.triggers) fail(`${where}: suppress needs actives or triggers`);
+  } else if (op === 'grant_modifier') {
+    if (!effect.modifier || !EFFECT_OPS.has(effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
+  } else if (op === 'grant_ability') {
+    checkTargetRef(effect.target, where);
+    if (!effect.ability || typeof effect.ability !== 'object') fail(`${where}: grant_ability needs an ability`);
+    if (effect.ability && effect.ability.kind !== 'active') fail(`${where}: grant_ability grants an active ability`);
+  } else if (op === 'return_from_discard') {
+    checkAmount(effect.count, where);
+  } else if (op === 'discard_from_hand') {
+    if (!Number.isInteger(effect.count)) fail(`${where}: discard_from_hand needs integer count`);
+  } else if (op === 'move_creature') {
+    checkTargetRef(effect.target, where);
+    checkTargetRef(effect.destination, where);
+    if (!['own', 'any'].includes(effect.side)) fail(`${where}: move_creature side must be own|any`);
+  } else if (op === 'gain_actions') {
+    if (!Number.isInteger(effect.amount)) fail(`${where}: gain_actions needs integer amount`);
+  } else if (op === 'gain_shield') {
+    checkTargetRef(effect.target, where);
+    if (!Number.isInteger(effect.amount)) fail(`${where}: gain_shield needs integer amount`);
+  } else if (op === 'opponent_discards') {
+    checkTargetRef(effect.target, where);
+    checkAmount(effect.count, where);
+  } else if (op === 'draw_cards' || op === 'discard_top_deck') {
+    checkAmount(effect.count, where);
+  } else if (op === 'stat_buff') {
+    if (!['attack', 'defense'].includes(effect.stat)) fail(`${where}: stat_buff stat must be attack|defense`);
+    if (!['permanent', 'aura', 'this_turn'].includes(effect.duration)) fail(`${where}: stat_buff duration must be permanent|aura|this_turn`);
+    checkAmount(effect.amount, where);
+  } else {
+    checkTargetRef(effect.target, where);
+    checkAmount(effect.amount, where);
+  }
+  // A choice-based effect needs declared asks on ITS ability: max index + 1.
+  // Inside grant_ability the asks live on the granted ability.
+  const holder = op === 'grant_ability' ? effect.ability : ability;
+  const effectJson = JSON.stringify(effect);
   const choiceMatches = [...effectJson.matchAll(/"choice","index":(\d+)/g)];
   if (choiceMatches.length > 0) {
     const need = Math.max(...choiceMatches.map((m) => Number(m[1]) + 1));
-    if ((ability.targets?.length ?? 0) < need) {
-      fail(`${where}: effect uses choice(0..${need - 1}) but only ${ability.targets?.length ?? 0} targets declared`);
+    if ((holder.targets?.length ?? 0) < need) {
+      fail(`${where}: effect uses choice(0..${need - 1}) but only ${holder.targets?.length ?? 0} targets declared`);
     }
   }
 }

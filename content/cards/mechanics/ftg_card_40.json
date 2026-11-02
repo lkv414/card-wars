@@ -1,0 +1,20 @@
+{
+ "cardId": "ftg_card_40",
+ "name": "Итан Огонек",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_leave_play",
+   "effect": {
+    "op": "draw_cards",
+    "count": {
+     "kind": "per_lands",
+     "where": "own",
+     "landType": "corn",
+     "amount": 1
+    }
+   },
+   "text": "Когда Итан Огонек покидает игру, тяни 1 карту за каждую кукурузную землю под твоим контролем."
+  }
+ ]
+}

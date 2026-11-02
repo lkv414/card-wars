@@ -1,7 +1,11 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const SRC = '<downloads>/Новый текстовый документ.txt';
-const OUT = '<repo>/design/specs/spec.json';
+const HERE = dirname(fileURLToPath(import.meta.url));
+// Input is a Figma CSS export passed as the first argument (not stored in the repo).
+const SRC = process.argv[2] ?? resolve(HERE, 'source.txt');
+const OUT = process.env.SPEC_OUT ?? resolve(HERE, 'spec.json');
 const DEBUG = process.env.DBG === '1';
 const lines = readFileSync(SRC, 'utf8').split(/\r?\n/);
 
@@ -301,7 +305,7 @@ for (const s of root.children) (function walk(n) {
   }
 })(s);
 
-const out = JSON.stringify(root, (k, v) => (k === 'parentName' ? undefined : v), 1);mkdirSync('<repo>/design/specs', { recursive: true });
+const out = JSON.stringify(root, (k, v) => (k === 'parentName' ? undefined : v), 1);mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, out);
 
 console.log('TOP LEVEL CHILDREN:');

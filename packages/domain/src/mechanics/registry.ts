@@ -2,7 +2,7 @@ import type { Draft } from 'immer';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
-import { chainDamage, copySpell, moveDamage, swapLanes } from './handlers';
+import { chainDamage, copySpell, grantRandomDiscardActive, moveDamage, swapLanes } from './handlers';
 import type { EffectSource } from './source';
 export type { EffectSource };
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -28,6 +28,7 @@ export const MECHANICS: Record<string, MechanicHandler> = {
   move_damage: moveDamage,
   swap_lanes: swapLanes,
   copy_spell: copySpell,
+  grant_random_discard_active: grantRandomDiscardActive,
 };
 
 export function runMechanic(

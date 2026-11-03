@@ -3,6 +3,7 @@ import { dealToCreature } from '../damage';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
+import { pickRandom } from '../rng';
 import type { MatchState } from '../types';
 import { resolveTarget } from './resolve';
 import type { EffectSource, MechanicHandler } from './registry';
@@ -134,4 +135,52 @@ export const copySpell: MechanicHandler = (
     });
   }
   emit(ctx, { type: 'spell_cast', player: answering, instanceId: spellId, cardId, copy: true });
+};
+
+/**
+ * «Теряет все способности и получает Приём случайного существа (с приёмом)
+ * из твоей стопки сброса до конца хода» (docs/MECHANICS-V2.md §3, A6): the
+ * own creature in the source's lane loses its whole text and gains the active
+ * ability of a random discard creature that has one. Both are live modifiers
+ * pushed into `MatchState.turnModifiers` (suppress `all` + `grant_ability`,
+ * duration `this_turn`), so coverage follows the board and expires at the end
+ * of the turn.
+ */
+export const grantRandomDiscardActive: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  if (!source.instanceId) return; // only a field card can define its lane
+  const targets = resolveTarget(draft, ctx, { kind: 'this_lane_own_creature' }, source, undefined);
+  const victimId = targets.find((t) => t.kind === 'creature')?.instanceId;
+  if (!victimId) return; // no own creature in the lane — nothing to swap
+  const p = player(draft, source.player);
+  const candidates = p.discard.filter((id) => {
+    const card = ctx.catalog.getCard(draft.instances[id]!.cardId);
+    return (card?.abilities ?? []).some((a) => a.kind === 'active');
+  });
+  const rolled = pickRandom(draft.rng, candidates);
+  if (!rolled) return; // no discard creature has an active ability
+  const rolledCard = ctx.catalog.getCard(draft.instances[rolled]!.cardId);
+  const active = rolledCard?.abilities?.find((a) => a.kind === 'active');
+  if (!active) return;
+  draft.turnModifiers.push(
+    {
+      instanceId: source.instanceId,
+      effect: { op: 'suppress', all: true, target: { kind: 'this_lane_own_creature' } },
+      grantedOnTurn: draft.turn,
+      duration: 'this_turn',
+    },
+    {
+      instanceId: source.instanceId,
+      effect: { op: 'grant_ability', target: { kind: 'this_lane_own_creature' }, ability: active },
+      grantedOnTurn: draft.turn,
+      duration: 'this_turn',
+    },
+  );
 };

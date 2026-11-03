@@ -81,7 +81,11 @@ export type TargetRef =
   | { kind: 'choice'; index: number }
   | { kind: 'this_creature' }
   | { kind: 'this_lane_creature' }
+  /** Own creature in the source's lane (Школа: «твоё существо на этой линии»). */
+  | { kind: 'this_lane_own_creature' }
   | { kind: 'this_lane_opponent_creature' }
+  /** Opponent buildings in the source's lane (Пес). */
+  | { kind: 'this_lane_opponent_building' }
   | { kind: 'adjacent_creatures' }
   | { kind: 'each_creature_yours' }
   | { kind: 'each_creature_opponent' }
@@ -270,8 +274,9 @@ export type EffectSpec =
   | { op: 'cost_mod'; self: true; amount: StatAmount }
   /** «Считается за дополнительную землю» (Ферма). */
   | { op: 'land_count_mod'; landType?: LandType; amount: number }
-  /** Suppress triggers or actives of the covered cards (Дворец Костей, Чародейка Вайда). */
-  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[] }
+  /** Suppress triggers or actives of the covered cards (Дворец Костей, Чародейка Вайда);
+   *  `all` = «без текста»: actives, triggers and passive modifiers (Пес, Школа). */
+  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[]; all?: boolean }
   /** Attacking this creature provokes no retaliation (Призрачные бро). */
   | { op: 'no_retaliation'; target: TargetRef }
   /** Covered creature ignores the first N damage of each hit (Пушистая лиса). */

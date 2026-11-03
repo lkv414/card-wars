@@ -436,6 +436,34 @@ export const cards: CardData[] = [
       { kind: 'passive', trigger: 'on_cast', effect: { op: 'draw_cards', count: 1 }, text: 'Тяни карту' },
     ],
   }),
+  card({
+    id: 'textless-dog',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: {
+          op: 'grant_modifier',
+          modifier: { op: 'suppress', all: true, target: { kind: 'this_lane_opponent_building' } },
+          duration: 'while_flipped',
+        },
+        text: 'Фикстура Пса: строения противника в линии без текста, пока применён',
+      },
+    ],
+  }),
+  card({
+    id: 'school-building',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      { kind: 'active', mechanic: 'grant_random_discard_active', text: 'Фикстура Школы' },
+    ],
+  }),
 ];
 
 export const heroes: HeroData[] = [

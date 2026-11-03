@@ -245,12 +245,24 @@ export function resolveTarget(
       const id = player(draft, source.player).zones[srcZone]?.creature;
       return id ? [{ kind: 'creature', instanceId: id }] : [];
     }
+    case 'this_lane_own_creature': {
+      if (srcZone === null) return [];
+      const id = player(draft, source.player).zones[srcZone]?.creature;
+      return id ? [{ kind: 'creature', instanceId: id }] : [];
+    }
     case 'this_lane_opponent_creature': {
       if (srcZone === null) return [];
       const target = opponentZoneFor(draft, source.player, srcZone);
       if (!target) return [];
       const id = player(draft, target.player).zones[target.zone]?.creature;
       return id ? [{ kind: 'creature', instanceId: id }] : [];
+    }
+    case 'this_lane_opponent_building': {
+      if (srcZone === null) return [];
+      const target = opponentZoneFor(draft, source.player, srcZone);
+      if (!target) return [];
+      const id = player(draft, target.player).zones[target.zone]?.building;
+      return id ? [{ kind: 'building', instanceId: id }] : [];
     }
     case 'adjacent_creatures': {
       if (srcZone === null) return [];

@@ -72,7 +72,7 @@ const TRIGGERS = new Set([
 ]);
 const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card']);
 const TARGET_REFS = new Set([
-  'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
+  'choice', 'this_creature', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner',
 ]);
@@ -152,7 +152,7 @@ function validateEffect(effect, where, ability) {
     const target = effect.target ?? effect.from;
     checkTargetRef(target, where);
     if (op === 'damage_immunity' && !Number.isInteger(effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
-    if (op === 'suppress' && !effect.actives && !effect.triggers) fail(`${where}: suppress needs actives or triggers`);
+    if (op === 'suppress' && !effect.actives && !effect.triggers && !effect.all) fail(`${where}: suppress needs actives, triggers or all`);
   } else if (op === 'grant_modifier') {
     if (!effect.modifier || !EFFECT_OPS.has(effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
   } else if (op === 'grant_ability') {

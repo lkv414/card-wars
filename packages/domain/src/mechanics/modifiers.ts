@@ -56,8 +56,45 @@ export function auraContributions(
   return out;
 }
 
+/**
+ * Instances whose whole text is suppressed («без текста», suppress `all`):
+ * actives, triggers and passive modifiers all stop (Пес, Школа). Recomputed
+ * live on every forSource pass — coverage follows moves and flips.
+ */
+function mutedInstanceIds(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+): Set<string> {
+  const out = new Set<string>();
+  forSourceRaw(draft, ctx, (source, ability) => {
+    if (ability.kind !== 'passive' || ability.trigger !== undefined) return;
+    const effect = ability.effect;
+    if (!effect || Array.isArray(effect) || effect.op !== 'suppress' || !effect.all) return;
+    if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
+    const targets = resolveTarget(draft, ctx, effect.target, source, undefined);
+    for (const target of targets) {
+      if (target.kind === 'creature' || target.kind === 'building') out.add(target.instanceId);
+    }
+  });
+  return out;
+}
+
 /** Run `fn` for every ability of every live source (field instances + heroes). */
 export function forSource(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  fn: (source: EffectSource, ability: AbilitySpec, abilityIndex: number) => void,
+): void {
+  const muted = mutedInstanceIds(draft, ctx);
+  forSourceRaw(draft, ctx, (source, ability, abilityIndex) => {
+    // «Без текста»: the muted instance contributes nothing (auras, cost mods,
+    // triggers, granted modifiers — docs/MECHANICS-V2.md §3, A6).
+    if (source.instanceId && muted.has(source.instanceId)) return;
+    fn(source, ability, abilityIndex);
+  });
+}
+
+function forSourceRaw(
   draft: MatchState,
   ctx: Pick<Ctx, 'config' | 'catalog'>,
   fn: (source: EffectSource, ability: AbilitySpec, abilityIndex: number) => void,
@@ -486,7 +523,7 @@ export function isTriggerSuppressed(
 ): boolean {
   if (!source.instanceId) return false;
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
-    if (effect.op !== 'suppress' || !effect.triggers?.includes(trigger)) continue;
+    if (effect.op !== 'suppress' || (!effect.triggers?.includes(trigger) && !effect.all)) continue;
     if (coversInstance(draft, ctx, modSource, effect.target, source.instanceId)) return true;
   }
   return false;
@@ -499,7 +536,7 @@ export function areActivesSuppressed(
   instanceId: string,
 ): boolean {
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
-    if (effect.op !== 'suppress' || !effect.actives) continue;
+    if (effect.op !== 'suppress' || (!effect.actives && !effect.all)) continue;
     if (coversInstance(draft, ctx, modSource, effect.target, instanceId)) return true;
   }
   return false;

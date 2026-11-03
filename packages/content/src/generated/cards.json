@@ -2481,7 +2481,14 @@
   "landType": "blue",
   "image": "/content/cards/images/finn_card_22.png",
   "description": "ПРИЕМ >>> Твое существо на этой линии теряет все способности и получает Прием случайного существа (с приемом) из твоей стопки сброса до конца хода.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "mechanic": "grant_random_discard_active",
+    "text": "ПРИЕМ >>> Твое существо на этой линии теряет все способности и получает Прием случайного существа (с приемом) из твоей стопки сброса до конца хода."
+   }
+  ]
  },
  {
   "id": "finn_card_23",
@@ -2973,7 +2980,24 @@
   "attack": 1,
   "defense": 7,
   "description": "ПРИЕМ >>> Строения противника в этой линии без текста пока Пес применен.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "grant_modifier",
+     "modifier": {
+      "op": "suppress",
+      "all": true,
+      "target": {
+       "kind": "this_lane_opponent_building"
+      }
+     },
+     "duration": "while_flipped"
+    },
+    "text": "ПРИЕМ >>> Строения противника в этой линии без текста пока Пес применен."
+   }
+  ]
  },
  {
   "id": "fiona_card_37",

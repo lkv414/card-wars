@@ -989,3 +989,82 @@ describe('golden: Связь — копирование заклинания (co
     expect(again.rejected.code).toBe('no_pending_choice');
   });
 });
+
+describe('golden: без текста и подмена способностей (A6)', () => {
+  function place(s: MatchState, playerId: string, zone: number, slot: 'creature' | 'building', cardId: string, damage = 0): MatchState {
+    return edit(s, (d) => {
+      const p = d.players[playerId]!;
+      const id = p.deck[0]!;
+      p.deck = p.deck.filter((x) => x !== id);
+      d.instances[id]!.cardId = cardId;
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = zone;
+      d.instances[id]!.slot = slot;
+      d.instances[id]!.damage = damage;
+      d.instances[id]!.playedTurn = d.turn;
+      p.zones[zone]![slot] = id;
+    });
+  }
+
+  function toDiscard(s: MatchState, playerId: string, cardId: string): MatchState {
+    return edit(s, (d) => {
+      const p = d.players[playerId]!;
+      const id = p.deck.find((i) => d.instances[i]!.cardId === cardId) ?? p.deck[0]!;
+      if (!d.instances[id] || d.instances[id]!.cardId !== cardId) d.instances[id]!.cardId = cardId;
+      p.deck = p.deck.filter((x) => x !== id);
+      d.instances[id]!.location = 'discard';
+      p.discard.push(id);
+    });
+  }
+
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('Пес: строение противника в линии без текста, пока применён', () => {
+    let s = round2(newMatch());
+    // Зеркальная линия: зона 0 p1 ↔ зона 3 p2. Крепость Крови (+1 ATK линии) и существо p2.
+    s = place(s, 'p2', 3, 'building', 'bmo_card_6');
+    s = place(s, 'p2', 3, 'creature', 'bmo_card_12'); // 3/9
+    s = place(s, 'p1', 0, 'creature', 'bmo_card_13');
+    const victimId = s.players.p2!.zones[3]!.creature!;
+    expect(computeEff(s, deps, victimId).attack).toBe(3 + 1);
+
+    s = forceToHand(s, 'p1', 'fiona_card_35');
+    const resPlay = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'fiona_card_35'), zone: 0 }, deps);
+    if (!resPlay.ok) throw new Error(`play: ${resPlay.rejected.code}: ${resPlay.rejected.message}`);
+    s = resPlay.state;
+    const dogId = s.players.p1!.zones[0]!.creature!;
+    const resFloop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: dogId }, deps);
+    if (!resFloop.ok) throw new Error(`floop: ${resFloop.rejected.code}: ${resFloop.rejected.message}`);
+    s = resFloop.state;
+    expect(computeEff(s, deps, victimId).attack).toBe(3); // «без текста»
+  });
+
+  it('Школа: существо линии получает приём случайного существа из сброса до конца хода', () => {
+    let s = round2(newMatch());
+    // Раненое существо без способностей + донор приёма (Кукурузный тамплиер: лечит 1) в сбросе.
+    s = place(s, 'p1', 0, 'creature', 'bmo_card_12', 2);
+    s = toDiscard(s, 'p1', 'cake_card_20');
+    s = forceToHand(s, 'p1', 'finn_card_22');
+    const resPlay = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'finn_card_22'), zone: 0 }, deps);
+    if (!resPlay.ok) throw new Error(`play: ${resPlay.rejected.code}: ${resPlay.rejected.message}`);
+    s = resPlay.state;
+    const schoolId = s.players.p1!.zones[0]!.building!;
+    const victimId = s.players.p1!.zones[0]!.creature!;
+    const resFloop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: schoolId }, deps);
+    if (!resFloop.ok) throw new Error(`floop school: ${resFloop.rejected.code}: ${resFloop.rejected.message}`);
+    s = resFloop.state;
+    // У существа нет своего приёма: флюп возможен только из-за выданного (лечение 1).
+    const resGrant = applyCommand(s, { type: 'floop', player: 'p1', instanceId: victimId }, deps);
+    if (!resGrant.ok) throw new Error(`floop grant: ${resGrant.rejected.code}: ${resGrant.rejected.message}`);
+    s = resGrant.state;
+    expect(s.instances[victimId]!.damage).toBe(1); // выданный приём вылечил 1
+  });
+});

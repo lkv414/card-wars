@@ -53,14 +53,16 @@ export function handleFloop(
   const actives = (card?.abilities ?? []).filter((a) => a.kind === 'active');
   // Granted actives (Финн: «получают ПРИЕМ >>> …») come from live grant_ability auras.
   const granted = collectGrantedActives(draft, ctx, instanceId);
-  if (actives.length > 0 && areActivesSuppressed(draft, ctx, instanceId)) {
+  const suppressed = areActivesSuppressed(draft, ctx, instanceId);
+  if (actives.length > 0 && suppressed && granted.length === 0) {
     throw new DomainError('ability_suppressed', 'abilities of this card are suppressed');
   }
   if (actives.length === 0 && granted.length === 0) {
     throw new DomainError('card_has_no_floop', `card ${card?.id ?? inst.cardId} has no active ability`);
   }
-  // One «ПРИЕМ» per card in the original game (docs/MECHANICS-V2.md §4).
-  const ability = (actives[0] ?? granted[0])!;
+  // One «ПРИЕМ» per card in the original game (docs/MECHANICS-V2.md §4);
+  // a suppressed text leaves only the granted ability usable (Школа).
+  const ability = (suppressed ? granted[0] : (actives[0] ?? granted[0]))!;
 
   // Условие проверяется ДО оплаты: мёртвая способность не сжигает флюп и действия.
   if (ability.conditions && ability.conditions.length > 0 && !conditionsHold(draft, ctx, { player: playerId, instanceId }, ability.conditions, undefined)) {

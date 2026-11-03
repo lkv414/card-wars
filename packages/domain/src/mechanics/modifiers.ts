@@ -1,6 +1,7 @@
 import { instance } from '../util';
 import type { Ctx } from '../util';
 import type { CardData, MatchState } from '../types';
+import { teamOf } from '../zones';
 import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import { resolveTarget, type ResolvedTarget, type TargetRef } from './resolve';
 import type { EffectSource } from './source';
@@ -393,6 +394,26 @@ export function conditionsHold(
           }
         }
         if (tokens < cond.min) return false;
+        break;
+      }
+      case 'while_zone_has_flipped_creature': {
+        const src = source.instanceId ? instance(draft, source.instanceId) : null;
+        if (!src || src.zone === null) return false;
+        const id = draft.players[source.player]!.zones[src.zone]!.creature;
+        if (!id || !draft.instances[id]!.flipped) return false;
+        break;
+      }
+      case 'while_lives_at_most': {
+        const team = teamOf(draft, source.player);
+      const lives = team ? team.lives : draft.players[source.player]!.lives;
+      if (lives > cond.max) return false;
+        break;
+      }
+      case 'while_opponent_creatures_at_most': {
+        const count = opponentsOf(draft, source.player).reduce(
+          (sum, pid) => sum + draft.players[pid]!.zones.filter((z) => z.creature).length, 0,
+        );
+        if (count > cond.max) return false;
         break;
       }
       case 'while_zone_has_creature': {

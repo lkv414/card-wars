@@ -1,0 +1,29 @@
+{
+  "cardId": "gunter_card_2",
+  "name": "Магазин для отдыха",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "this_lane_land"
+        },
+        "side": "own"
+      },
+      "text": "ПРИЕМ >>> Перемести неактивное существо под твоим контролем на эту землю (если она пустая).",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "flipped": true
+          }
+        }
+      ]
+    }
+  ]
+}

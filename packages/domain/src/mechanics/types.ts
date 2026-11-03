@@ -52,6 +52,8 @@ export type TargetAskKind =
   | 'opponent_player'
   /** Any alive player (Кристалл силы: «выбранный игрок»). */
   | 'any_player'
+  /** An opponent's building (Призрачный шмяк). */
+  | 'opponent_building'
   | 'landscape'
   | 'own_hand_card'
   | 'own_building'
@@ -267,7 +269,13 @@ export type ConditionSpec =
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' }
   /** Own creature in the source's zone (Теневая пирамида). */
-  | { kind: 'while_zone_has_creature' };
+  | { kind: 'while_zone_has_creature' }
+  /** Own flipped creature in the source's zone (Заманчивое Спа). */
+  | { kind: 'while_zone_has_flipped_creature' }
+  /** Owner's lives at most N (Магокражка). */
+  | { kind: 'while_lives_at_most'; max: number }
+  /** Opponents control at most N creatures (Зомбанан). */
+  | { kind: 'while_opponent_creatures_at_most'; max: number };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {

@@ -1,0 +1,44 @@
+{
+  "cardId": "tree_trunks_card_33",
+  "name": "Коровушка",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+      "conditions": [
+        {
+          "kind": "while_own_card_in_play",
+          "cardId": "tree_trunks_card_16"
+        }
+      ]
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+      "conditions": [
+        {
+          "kind": "while_own_card_in_play",
+          "cardId": "tree_trunks_card_16"
+        }
+      ]
+    }
+  ]
+}

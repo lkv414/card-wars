@@ -1,0 +1,25 @@
+{
+  "cardId": "lemongrab_card_39",
+  "name": "Свободное падение",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "all",
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Каждое твое существо получаем +1 АТК в этом ходу за каждое существо введённое в игру в этом ходу."
+    }
+  ]
+}

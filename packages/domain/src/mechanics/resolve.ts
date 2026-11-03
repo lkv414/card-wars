@@ -140,6 +140,11 @@ function choiceMatchesAsk(
       if (inst.zone === null) return false;
       return Math.abs(inst.zone - src.zone) === 1;
     }
+    case 'opponent_building': {
+      if (choice.kind !== 'creature') return false;
+      const inst = instance(draft, choice.instanceId);
+      return inst.location === 'field' && inst.slot === 'building' && isOpponent(draft, source.player, inst.controller);
+    }
     case 'own_building':
       return choice.kind === 'creature' && isOwnFieldCard(draft, choice.instanceId, source.player, 'building');
     case 'lane_building': {

@@ -1,0 +1,39 @@
+{
+  "cardId": "charlie_card_25",
+  "name": "Сшитый ленивец",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK.",
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 4,
+          "scope": "self"
+        }
+      ]
+    }
+  ]
+}

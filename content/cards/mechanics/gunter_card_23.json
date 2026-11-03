@@ -1,0 +1,20 @@
+{
+  "cardId": "gunter_card_23",
+  "name": "Заманчивое Спа",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Если в начале твоей фазы Сражения, у тебя под контролем есть неактивное существо на этой земле, вытяни карту.",
+      "conditions": [
+        {
+          "kind": "while_zone_has_flipped_creature"
+        }
+      ]
+    }
+  ]
+}

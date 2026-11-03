@@ -1,0 +1,36 @@
+{
+  "cardId": "gunter_card_26",
+  "name": "Последний раунд!",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 2,
+          "excludeSelf": true,
+          "filter": {
+            "flipped": true
+          }
+        },
+        "duration": "this_turn"
+      },
+      "text": "Выбранное существо под твоим контролем получает +2 ATK за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
+}

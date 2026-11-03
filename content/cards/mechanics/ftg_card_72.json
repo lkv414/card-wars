@@ -1,0 +1,19 @@
+{
+ "cardId": "ftg_card_72",
+ "name": "Дейви Бонз",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "attack_mod",
+    "target": {
+     "kind": "this_creature"
+    },
+    "vs": "defenderZone",
+    "landType": "sand",
+    "atkBonus": 2
+   },
+   "text": "Дейви Бонз получает +2 ATK пока защищается от существ на песчаной земле."
+  }
+ ]
+}

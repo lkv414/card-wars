@@ -1,0 +1,24 @@
+{
+ "cardId": "charlie_card_29",
+ "name": "Легкий жираф",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "attack_mod",
+    "target": {
+     "kind": "this_creature"
+    },
+    "face": true
+   },
+   "conditions": [
+    {
+     "kind": "while_damage_at_least",
+     "amount": 4,
+     "scope": "self"
+    }
+   ],
+   "text": "Пока у Легкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника."
+  }
+ ]
+}

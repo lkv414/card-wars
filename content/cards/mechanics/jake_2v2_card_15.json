@@ -1,0 +1,24 @@
+{
+ "cardId": "jake_2v2_card_15",
+ "name": "Обнимашный еж",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "attack_mod",
+    "target": {
+     "kind": "this_creature"
+    },
+    "face": true
+   },
+   "conditions": [
+    {
+     "kind": "while_damage_at_least",
+     "amount": 4,
+     "scope": "self"
+    }
+   ],
+   "text": "Пока у ЛОбнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника."
+  }
+ ]
+}

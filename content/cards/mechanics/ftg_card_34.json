@@ -1,0 +1,19 @@
+{
+ "cardId": "ftg_card_34",
+ "name": "Пиратский медведь",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": {
+    "op": "attack_mod",
+    "target": {
+     "kind": "this_creature"
+    },
+    "vs": "ownZone",
+    "landType": "swamp",
+    "multiplier": 3
+   },
+   "text": "Когда Пиратский медведь на бесполезных болотах, он наносит тройной урон."
+  }
+ ]
+}

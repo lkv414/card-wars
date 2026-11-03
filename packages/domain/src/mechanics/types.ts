@@ -294,6 +294,20 @@ export type EffectSpec =
   | { op: 'return_to_owner'; target: TargetRef }
   /** Covered cards also count as this land type (Кроха слон — радужным; город). */
   | { op: 'counts_as'; target: TargetRef; landType: LandType }
+  /**
+   * Combat modifier for the covered attacker (A3): тройной урон / бонус АТК
+   * на удар / удар в лицо — при совпадении земли зоны атакующего (`ownZone`)
+   * или защищающегося (`defenderZone`) с `landType`.
+   */
+  | {
+      op: 'attack_mod';
+      target: TargetRef;
+      vs?: 'ownZone' | 'defenderZone';
+      landType?: LandType;
+      multiplier?: number;
+      atkBonus?: number;
+      face?: boolean;
+    }
   /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
   | { op: 'reveal_deck_top'; count: number }
   /**

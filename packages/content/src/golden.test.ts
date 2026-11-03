@@ -31,7 +31,12 @@ const config: GameConfig = {
   companionMaxInPlay: 1,
   copyLimit: 4,
 };
-const deps = { config, catalog: catalog as CardCatalog };
+const deps = {
+  config,
+  catalog: catalog as CardCatalog,
+  events: [] as never[],
+  frame: { queue: [], steps: 0 },
+};
 
 function newMatch(): MatchState {
   const preset = deckPresets[0]!;
@@ -489,9 +494,9 @@ describe('golden: ауры и модификаторы (M2)', () => {
     if (!res.ok) return;
     // on_cast: цепочка 3/2/1 по существам противника
     const ids = [0, 1, 2].map((z) => res.state.players.p2!.zones[z]!.creature!);
-    expect(res.state.instances[ids[0]]!.damage).toBe(3);
-    expect(res.state.instances[ids[1]]!.damage).toBe(2);
-    expect(res.state.instances[ids[2]]!.damage).toBe(1);
+    expect(res.state.instances[ids[0]!]!.damage).toBe(3);
+    expect(res.state.instances[ids[1]!]!.damage).toBe(2);
+    expect(res.state.instances[ids[2]!]!.damage).toBe(1);
   });
 
   it('герой Финн: неповреждённые существа получают ПРИЕМ и наносят 1 урон', () => {
@@ -757,6 +762,87 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(floop.state.instances[deckTop]!.location).toBe('deck');
   });
 
+  it('Пиратский медведь: тройной урон на болотах (своя земля)', () => {
+    let s = edit(newMatch(), (d) => {
+      d.round = 2;
+      d.players.p1!.lands = [
+        { type: 'swamp', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+      const p2 = d.players.p2!;
+      const a = p2.deck[0]!;
+      d.instances[a]!.cardId = 'bmo_card_12'; // 3/9
+      d.instances[a]!.location = 'field';
+      d.instances[a]!.zone = 3; // зеркало p1 zone 0
+      d.instances[a]!.slot = 'creature';
+      p2.zones[3]!.creature = a;
+      p2.lands[3]!.type = 'corn';
+    });
+    s = forceToHand(s, 'p1', 'ftg_card_34'); // Пиратский медведь 1/3 corn
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ftg_card_34'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const bearId = res.state.players.p1!.zones[0]!.creature!;
+    const res2 = applyCommand(res.state, { type: 'go_battle', player: 'p1' }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    const sirenId = res2.state.players.p2!.zones[3]!.creature!;
+    // 1 ATK × 3 (свой медведь на болоте) = 3
+    expect(res2.state.instances[sirenId]!.damage).toBe(3);
+    // ответка сирены 3 по медведю (def 3 → мёртв? нет, def 3, damage 3 → мёртв)
+    // медведь умер → жизни p1 не тронуты
+    void bearId;
+  });
+
+  it('Легкий жираф: при 4 урона бьёт в лицо вместо существа', () => {
+    let s = edit(newMatch(), (d) => {
+      d.round = 2;
+      d.players.p1!.lands = [
+        { type: 'good', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+      const p2 = d.players.p2!;
+      const a = p2.deck[0]!;
+      d.instances[a]!.cardId = 'bmo_card_12'; // 3/9
+      d.instances[a]!.location = 'field';
+      d.instances[a]!.zone = 3;
+      d.instances[a]!.slot = 'creature';
+      p2.zones[3]!.creature = a;
+    });
+    s = forceToHand(s, 'p1', 'charlie_card_29'); // жираф 1/8
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'charlie_card_29'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const giraffeId = res.state.players.p1!.zones[0]!.creature!;
+    const victimId = res.state.players.p2!.zones[3]!.creature!;
+    // до порога — обычный бой: существо получает 1
+    let res2 = applyCommand(res.state, { type: 'go_battle', player: 'p1' }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    expect(res2.state.instances[victimId]!.damage).toBe(1);
+    expect(res2.state.players.p2!.lives).toBe(25);
+    // накидываем урон до 4 и бьём ещё раз (через полный оборот хода)
+    s = edit(res2.state, (d) => {
+      d.instances[giraffeId]!.damage = 4;
+    });
+    // p2 go_battle → круг 3, ход p1
+    res2 = applyCommand(s, { type: 'go_battle', player: 'p2' }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    res2 = applyCommand(res2.state, { type: 'go_battle', player: 'p1' }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    // урон в лицо: жизни p2 -1, существо не получило нового урона
+    expect(res2.state.players.p2!.lives).toBe(24);
+    expect(res2.state.instances[victimId]!.damage).toBe(2); // 1 (ответка круг 2) + 0 (лицо в круге 3)
+  });
+
   it('герой Бимо: сброс карты с руки >>> 1 урон выбранному существу; раз за ход', () => {
     let s = newMatch();
     s = edit(s, (d) => {
@@ -775,6 +861,7 @@ describe('golden: ауры и модификаторы (M2)', () => {
       { type: 'hero_ability', player: 'p1', targets: [{ kind: 'card', instanceId: discardId }, { kind: 'creature', instanceId: creatureId }] },
       deps,
     );
+    if (!res.ok) console.log('BIMO REJECTED:', res.rejected);
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     expect(res.state.instances[creatureId]!.damage).toBe(1);

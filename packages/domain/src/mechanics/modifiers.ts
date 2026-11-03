@@ -439,9 +439,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -583,5 +583,20 @@ export function collectGrantedActives(
       out.push(effect.ability);
     }
   });
+  return out;
+}
+
+
+/** Combat modifiers of the attacking creature (A3: тройной урон, бонус, в лицо). */
+export function attackMods(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  attackerId: string,
+): Array<Extract<RuleEffect, { op: 'attack_mod' }>> {
+  const out: Array<Extract<RuleEffect, { op: 'attack_mod' }>> = [];
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'attack_mod') continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, attackerId)) out.push(effect);
+  }
   return out;
 }

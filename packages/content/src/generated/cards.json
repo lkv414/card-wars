@@ -415,7 +415,22 @@
   "attack": 2,
   "defense": 8,
   "description": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "ownZone",
+     "landType": "corn",
+     "multiplier": 3
+    },
+    "text": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон."
+   }
+  ]
  },
  {
   "id": "bmo_card_33",
@@ -2001,7 +2016,27 @@
   "attack": 1,
   "defense": 8,
   "description": "Пока у Легкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "face": true
+    },
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ],
+    "text": "Пока у Легкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника."
+   }
+  ]
  },
  {
   "id": "charlie_card_31",
@@ -3237,7 +3272,22 @@
   "attack": 3,
   "defense": 6,
   "description": "Камнеспрут получает +1 ATK пока атакует существ на песчаных землях.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "defenderZone",
+     "landType": "sand",
+     "atkBonus": 1
+    },
+    "text": "Камнеспрут получает +1 ATK пока атакует существ на песчаных землях."
+   }
+  ]
  },
  {
   "id": "ftg_card_25",
@@ -3382,7 +3432,22 @@
   "attack": 1,
   "defense": 3,
   "description": "Когда Пиратский медведь на бесполезных болотах, он наносит тройной урон.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "ownZone",
+     "landType": "swamp",
+     "multiplier": 3
+    },
+    "text": "Когда Пиратский медведь на бесполезных болотах, он наносит тройной урон."
+   }
+  ]
  },
  {
   "id": "ftg_card_35",
@@ -3971,7 +4036,22 @@
   "attack": 1,
   "defense": 4,
   "description": "Дейви Бонз получает +2 ATK пока защищается от существ на песчаной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "defenderZone",
+     "landType": "sand",
+     "atkBonus": 2
+    },
+    "text": "Дейви Бонз получает +2 ATK пока защищается от существ на песчаной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_73",
@@ -6202,7 +6282,27 @@
   "attack": 3,
   "defense": 8,
   "description": "Пока у ЛОбнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "face": true
+    },
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ],
+    "text": "Пока у ЛОбнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_17",

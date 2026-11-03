@@ -9,7 +9,7 @@ import { emit, instance, player } from '../util';
 import type { MatchState } from '../types';
 import { endTurn, lastAliveInOrder } from './turn';
 import { enqueueTrigger } from '../mechanics/dispatch';
-import { hasNoRetaliation } from '../mechanics/modifiers';
+import { attackMods, hasNoRetaliation } from '../mechanics/modifiers';
 
 export { mirrorZoneIndex } from '../zones';
 
@@ -51,7 +51,25 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         const defenderInstanceId = defender.zones[target.zone]?.creature ?? null;
         const attackPower = computeEff(draft, ctx, attackerInstanceId).attack;
 
-        if (defenderInstanceId) {
+        // Боевые модификаторы атакующего (A3, docs/MECHANICS-V2.md §2А):
+        // тройной урон / бонус АТК по земле зоны, удар «в лицо».
+        const attackerLand = attackerInstance.zone !== null
+          ? player(draft, attackerId).lands[attackerInstance.zone]!.type
+          : null;
+        let attackPowerMod = attackPower;
+        let faceDamage = false;
+        for (const mod of attackMods(draft, ctx, attackerInstanceId)) {
+          if (mod.vs === 'ownZone' && mod.landType && attackerLand !== mod.landType) continue;
+          if (mod.vs === 'defenderZone' && mod.landType) {
+            if (!defenderInstanceId) continue;
+            if (defender.lands[target.zone]!.type !== mod.landType) continue;
+          }
+          if (mod.face) faceDamage = true;
+          if (mod.atkBonus) attackPowerMod += mod.atkBonus;
+          if (mod.multiplier) attackPowerMod *= mod.multiplier;
+        }
+
+        if (defenderInstanceId && !faceDamage) {
           // Simultaneous exchange: both powers are computed before any damage lands.
           bumpCounter(draft, 'creature_attack', attackerId);
           let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
@@ -61,9 +79,9 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             player: attackerInstance.controller,
             targetInstanceId: defenderInstanceId,
             zone: z,
-            amount: attackPower,
+            amount: attackPowerMod,
           });
-          dealToCreature(draft, ctx, defenderInstanceId, attackPower, attackerInstanceId, false, true);
+          dealToCreature(draft, ctx, defenderInstanceId, attackPowerMod, attackerInstanceId, false, true);
           dealToCreature(draft, ctx, attackerInstanceId, retaliation, defenderInstanceId, false, true);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
@@ -82,7 +100,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             instanceId: attackerInstanceId,
             player: attackerInstance.controller,
             zone: z,
-            amount: attackPower,
+            amount: attackPowerMod,
           });
           dealToPlayer(draft, ctx, target.player, attackPower, attackerInstanceId);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {

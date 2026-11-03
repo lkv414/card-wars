@@ -64,7 +64,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -163,6 +163,11 @@ function validateEffect(effect, where, ability) {
     checkAmount(effect.count, where);
   } else if (op === 'return_to_owner') {
     checkTargetRef(effect.target, where);
+  } else if (op === 'attack_mod') {
+    checkTargetRef(effect.target, where);
+    if (effect.vs && !['ownZone', 'defenderZone'].includes(effect.vs)) fail(`${where}: attack_mod vs must be ownZone|defenderZone`);
+    if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: attack_mod landType invalid`);
+    if (!effect.multiplier && !effect.atkBonus && !effect.face) fail(`${where}: attack_mod needs multiplier|atkBonus|face`);
   } else if (op === 'counts_as') {
     checkTargetRef(effect.target, where);
     if (!LAND_TYPES.has(effect.landType)) fail(`${where}: counts_as needs a land type`);

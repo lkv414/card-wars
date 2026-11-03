@@ -50,7 +50,37 @@
   "id": "hero_bubblegum",
   "name": "Принцесса Жвачка",
   "image": "/content/heroes/images/hero_bubblegum.png",
-  "text": "Один раз за ход можешь нанести 1 урон своему существу. Это существо получает +1 АТК в этом ходу."
+  "text": "Один раз за ход можешь нанести 1 урон своему существу. Это существо получает +1 АТК в этом ходу.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "effect": [
+    {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "own_creature"
+    }
+   ],
+   "text": "Один раз за ход можешь нанести 1 урон своему существу. Это существо получает +1 АТК в этом ходу."
+  }
  },
  {
   "id": "hero_cake",
@@ -62,7 +92,32 @@
   "id": "hero_charlie",
   "name": "Чари",
   "image": "/content/heroes/images/hero_charlie.png",
-  "text": "Один раз за свой ход можешь переместить существо под твоим контролем на соседнюю пустую линию."
+  "text": "Один раз за свой ход можешь переместить существо под твоим контролем на соседнюю пустую линию.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "move_creature",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "destination": {
+     "kind": "choice",
+     "index": 1
+    },
+    "side": "own"
+   },
+   "targets": [
+    {
+     "kind": "own_creature"
+    },
+    {
+     "kind": "landscape"
+    }
+   ],
+   "text": "Один раз за свой ход можешь переместить существо под своим контролем на соседнюю пустую линию."
+  }
  },
  {
   "id": "hero_cosmic_owl",
@@ -97,15 +152,15 @@
        "kind": "any_creature"
       }
      ],
+     "conditions": [
+      {
+       "kind": "while_undamaged",
+       "scope": "self"
+      }
+     ],
      "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу"
     }
    },
-   "conditions": [
-    {
-     "kind": "while_undamaged",
-     "scope": "target"
-    }
-   ],
    "text": "Существа под твоим контролем, не получившие урон, получают «ПРИЕМ >>> Нанеси 1 урон выбранному существу»."
   }
  },
@@ -134,14 +189,32 @@
      "max": 1
     }
    ],
-   "text": "Когда под твоим контролем только один тип земли, у твоих Радужных существ +1 АТК."
+   "text": "Если под твоим контролем только один тип земли, у твоих Радужных существ +1 АТК."
   }
  },
  {
   "id": "hero_grand_prix",
   "name": "Гран При",
   "image": "/content/heroes/images/hero_grand_prix.png",
-  "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_replacing"
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
  },
  {
   "id": "hero_gunter",
@@ -191,14 +264,11 @@
     },
     "stat": "attack",
     "amount": 2,
-    "duration": "aura"
-   },
-   "conditions": [
-    {
-     "kind": "while_on_flipped_land",
-     "scope": "target"
+    "duration": "aura",
+    "filter": {
+     "zoneFlipped": true
     }
-   ],
+   },
    "text": "Существа под твоим контролем, лежащие на повернутых лицом вниз землях, получают +2 АТК."
   }
  },
@@ -206,7 +276,32 @@
   "id": "hero_jake_2v2",
   "name": "Джейк 2х2",
   "image": "/content/heroes/images/hero_jake_2v2.png",
-  "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях."
+  "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_damage_dealt",
+   "oncePerTurn": true,
+   "optional": true,
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 1
+   },
+   "targets": [
+    {
+     "kind": "any_creature"
+    }
+   ],
+   "conditions": [
+    {
+     "kind": "if_payload_other"
+    }
+   ],
+   "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях."
+  }
  },
  {
   "id": "hero_lady_rainicorn",
@@ -242,13 +337,59 @@
   "id": "hero_lsp",
   "name": "Принцесса Пупырка",
   "image": "/content/heroes/images/hero_lsp.png",
-  "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_replacing"
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
  },
  {
   "id": "hero_magic_man",
   "name": "Волшебный чел",
   "image": "/content/heroes/images/hero_magic_man.png",
-  "text": "Когда играешь карту стоимостью ровно 2, нанеси 2 урона существу под контролем противника."
+  "text": "Когда играешь карту стоимостью ровно 2, нанеси 2 урона существу под контролем противника.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 2
+   },
+   "targets": [
+    {
+     "kind": "opponent_creature"
+    }
+   ],
+   "conditions": [
+    {
+     "kind": "if_payload_cost",
+     "min": 2,
+     "max": 2
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "Когда играешь карту стоимостью ровно 2, нанеси 2 урона существу под контролем противника."
+  }
  },
  {
   "id": "hero_marceline",
@@ -280,7 +421,27 @@
   "id": "hero_monika",
   "name": "Монука",
   "image": "/content/heroes/images/hero_monika.png",
-  "text": "Раз за свой ход можешь повернуть применённое существо."
+  "text": "Раз за свой ход можешь повернуть применённое существо.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "unflip",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    }
+   },
+   "targets": [
+    {
+     "kind": "own_creature",
+     "filter": {
+      "flipped": true
+     }
+    }
+   ],
+   "text": "Раз за свой ход можешь повернуть применённое существо."
+  }
  },
  {
   "id": "hero_prismo",

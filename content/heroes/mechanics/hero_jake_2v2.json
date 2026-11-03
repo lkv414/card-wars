@@ -1,0 +1,29 @@
+{
+  "heroId": "hero_jake_2v2",
+  "name": "Джейк 2х2",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "oncePerTurn": true,
+    "optional": true,
+    "effect": {
+      "op": "deal_damage",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      },
+      "amount": 1
+    },
+    "targets": [
+      {
+        "kind": "any_creature"
+      }
+    ],
+    "conditions": [
+      {
+        "kind": "if_payload_other"
+      }
+    ],
+    "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях."
+  }
+}

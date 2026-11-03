@@ -1,0 +1,29 @@
+{
+  "heroId": "hero_charlie",
+  "name": "Чари",
+  "ability": {
+    "kind": "active",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "move_creature",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      },
+      "destination": {
+        "kind": "choice",
+        "index": 1
+      },
+      "side": "own"
+    },
+    "targets": [
+      {
+        "kind": "own_creature"
+      },
+      {
+        "kind": "landscape"
+      }
+    ],
+    "text": "Один раз за свой ход можешь переместить существо под своим контролем на соседнюю пустую линию."
+  }
+}

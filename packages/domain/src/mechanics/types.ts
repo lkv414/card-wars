@@ -150,6 +150,8 @@ export interface TargetFilter {
   flipped?: boolean;
   /** Match by the target's ZONE land type instead of the card (гномы). */
   zoneLandType?: LandType;
+  /** Match creatures standing on a face-down land (герой Джейк). */
+  zoneFlipped?: boolean;
   /** Match creatures standing on a land with ice tokens (Пингвин, Мороженник, Гантер). */
   zoneToken?: boolean;
   /** Invert the match (Капитан Тако: не на кукурузной земле). */
@@ -216,8 +218,10 @@ export type ConditionSpec =
   | { kind: 'if_payload_other' }
   /** Current match phase. */
   | { kind: 'while_phase'; phase: 'draw' | 'main' | 'combat' }
-  /** on_damage_dealt/on_creature_attacks: payload instance is a creature. */
+  /** on_damage_dealt/on_creature_enters: payload instance is a creature. */
   | { kind: 'if_payload_creature' }
+  /** on_enters_play: the entered card is a building (Кейк). */
+  | { kind: 'if_payload_building' }
   /** on_damage_dealt: the payload instance belongs to an enemy team and is a creature. */
   | { kind: 'if_payload_enemy_creature' }
   /** on_damage_dealt/on_creature_attacks: the payload has a damaged creature target. */

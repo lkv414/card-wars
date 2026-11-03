@@ -1,0 +1,22 @@
+{
+  "heroId": "hero_lsp",
+  "name": "Принцесса Пупырка",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_card_played",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "draw_cards",
+      "count": 1
+    },
+    "conditions": [
+      {
+        "kind": "if_payload_replacing"
+      },
+      {
+        "kind": "if_payload_player_self"
+      }
+    ],
+    "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
+}

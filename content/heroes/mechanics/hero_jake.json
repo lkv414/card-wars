@@ -1,23 +1,20 @@
 {
- "heroId": "hero_jake",
- "name": "Джейк",
- "ability": {
-  "kind": "passive",
-  "effect": {
-   "op": "stat_buff",
-   "target": {
-    "kind": "each_creature_yours"
-   },
-   "stat": "attack",
-   "amount": 2,
-   "duration": "aura"
-  },
-  "conditions": [
-   {
-    "kind": "while_on_flipped_land",
-    "scope": "target"
-   }
-  ],
-  "text": "Существа под твоим контролем, лежащие на повернутых лицом вниз землях, получают +2 АТК."
- }
+  "heroId": "hero_jake",
+  "name": "Джейк",
+  "ability": {
+    "kind": "passive",
+    "effect": {
+      "op": "stat_buff",
+      "target": {
+        "kind": "each_creature_yours"
+      },
+      "stat": "attack",
+      "amount": 2,
+      "duration": "aura",
+      "filter": {
+        "zoneFlipped": true
+      }
+    },
+    "text": "Существа под твоим контролем, лежащие на повернутых лицом вниз землях, получают +2 АТК."
+  }
 }

@@ -429,6 +429,10 @@ function targetMatchesFilter(
     const zoneLand = inst.zone !== null ? owner.lands[inst.zone]!.type : null;
     if (zoneLand !== filter.zoneLandType) match = false;
   }
+  if (match && filter.zoneFlipped) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || !owner.lands[inst.zone]!.flipped) match = false;
+  }
   if (match && filter.zoneToken) {
     const owner = draft.players[inst.controller]!;
     if (inst.zone === null || owner.lands[inst.zone]!.iceTokens <= 0) match = false;

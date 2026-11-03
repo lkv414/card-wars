@@ -1,0 +1,24 @@
+{
+  "heroId": "hero_monika",
+  "name": "Монука",
+  "ability": {
+    "kind": "active",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "unflip",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      }
+    },
+    "targets": [
+      {
+        "kind": "own_creature",
+        "filter": {
+          "flipped": true
+        }
+      }
+    ],
+    "text": "Раз за свой ход можешь повернуть применённое существо."
+  }
+}

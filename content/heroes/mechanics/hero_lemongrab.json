@@ -1,22 +1,22 @@
 {
- "heroId": "hero_lemongrab",
- "name": "ЛимошВат",
- "ability": {
-  "kind": "passive",
-  "trigger": "start_of_battle_phase",
-  "effect": {
-   "op": "heal",
-   "target": {
-    "kind": "self_player"
-   },
-   "amount": 1
-  },
-  "conditions": [
-   {
-    "kind": "while_empty_lands",
-    "min": 1
-   }
-  ],
-  "text": "В начале своей фазы Сражения, если у тебя 1 или более пустых земель, получи 1 HP. (Не превышая 25.)"
- }
+  "heroId": "hero_lemongrab",
+  "name": "ЛимошВат",
+  "ability": {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+      "op": "heal",
+      "target": {
+        "kind": "self_player"
+      },
+      "amount": 1
+    },
+    "conditions": [
+      {
+        "kind": "while_empty_lands",
+        "min": 1
+      }
+    ],
+    "text": "В начале своей фазы Сражения, если у тебя 1 или более пустых земель, получи 1 HP. (Не превышая 25.)"
+  }
 }

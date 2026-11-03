@@ -213,6 +213,12 @@ export function conditionsHold(
         if (!isEnemy) return false;
         break;
       }
+      case 'if_payload_building': {
+        if (!payload?.instanceId) return false;
+        const inst = draft.instances[payload.instanceId];
+        if (!inst || inst.slot !== 'building') return false;
+        break;
+      }
       case 'if_payload_creature': {
         if (!payload?.instanceId) return false;
         const inst = draft.instances[payload.instanceId];
@@ -503,6 +509,10 @@ function targetMatchesFilter(
   if (filter.zoneToken) {
     const owner = draft.players[inst.controller]!;
     if (inst.zone === null || owner.lands[inst.zone]!.iceTokens <= 0) return false;
+  }
+  if (filter.zoneFlipped) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || !owner.lands[inst.zone]!.flipped) return false;
   }
   return true;
 }

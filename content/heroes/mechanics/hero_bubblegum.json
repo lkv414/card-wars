@@ -1,0 +1,34 @@
+{
+  "heroId": "hero_bubblegum",
+  "name": "Принцесса Жвачка",
+  "ability": {
+    "kind": "active",
+    "oncePerTurn": true,
+    "effect": [
+      {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn"
+      }
+    ],
+    "targets": [
+      {
+        "kind": "own_creature"
+      }
+    ],
+    "text": "Один раз за ход можешь нанести 1 урон своему существу. Это существо получает +1 АТК в этом ходу."
+  }
+}

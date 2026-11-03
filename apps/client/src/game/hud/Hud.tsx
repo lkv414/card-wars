@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { sendCommand, setQuality, setUi, useGame } from '../../store';
+import { cards as catalog } from '@card-wars/content';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
 export function Hud({ code }: { code: string }) {
@@ -13,6 +14,9 @@ export function Hud({ code }: { code: string }) {
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
   const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
+  const revealedForMe = view.revealed[view.me] ?? [];
+  const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
+  const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
 
   const activeNames = view.activePlayers
     .map((pid) => `${view.players[pid]?.nickname ?? pid}${view.players[pid]?.battleReady ? ' ✓' : ''}`)
@@ -144,6 +148,31 @@ export function Hud({ code }: { code: string }) {
             </>
           ) : (
             <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>
+          )}
+          {revealedForPendingPlayer.length > 0 && (
+            <div className="revealed-picker" aria-label="Открытые карты">
+              {revealedForPendingPlayer.map((card) =>
+                view.pending?.player === view.me ? (
+                  <button
+                    key={card.instanceId}
+                    className="mini revealed-card"
+                    onClick={() =>
+                      sendCommand({
+                        type: 'resolve_choice',
+                        player: view.me,
+                        answer: { targets: [{ kind: 'card', instanceId: card.instanceId }] },
+                      })
+                    }
+                  >
+                    {cardNameById(card.cardId)}
+                  </button>
+                ) : (
+                  <span key={card.instanceId} className="revealed-card spectator">
+                    {cardNameById(card.cardId)}
+                  </span>
+                ),
+              )}
+            </div>
           )}
         </div>
       )}

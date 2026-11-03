@@ -629,6 +629,76 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(res2.state.players.p1!.lands[0]!.flipped).toBe(false);
   });
 
+  it('Газы Огрa: флюп открывает 3 карты, выбор раскладывает их (курсор в массиве)', () => {
+    let s = edit(newMatch(), (d) => {
+      d.round = 2;
+      d.players.p1!.lands = [
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'bmo_card_4'); // Газы Огрa — spell with a lazy chain
+    const gasesId = handIdOf(s, 'p1', 'bmo_card_4');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: gasesId }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const deckBefore = res.state.players.p1!.deck.length;
+    // pause: a revealed card must be picked; the window is public
+    expect(res.state.pending).not.toBeNull();
+    const window = res.state.revealed.p1 ?? [];
+    expect(window).toHaveLength(3);
+    // pick the first revealed card (deck_bottom)
+    const picked = window[0]!;
+    const res2 = applyCommand(res.state, {
+      type: 'resolve_choice',
+      player: 'p1',
+      answer: { targets: [{ kind: 'card', instanceId: picked }] },
+    }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    expect(res2.state.pending).toBeNull();
+    expect(res2.state.revealed.p1).toBeUndefined();
+    // выбранная — вниз колоды, остальные две — в сброс
+    expect(res2.state.players.p1!.deck).toContain(picked);
+    expect(res2.state.instances[picked]!.location).toBe('deck');
+    const discardIds = res2.state.players.p1!.discard;
+    for (const rest of window.filter((x) => x !== picked)) {
+      expect(discardIds).toContain(rest);
+      expect(res2.state.instances[rest]!.location).toBe('discard');
+    }
+    void deckBefore;
+  });
+
+  it('Газы Огрa: таймер отменяет выбор и очищает вскрытие без перемещения карт', () => {
+    let s = edit(newMatch(), (d) => {
+      d.round = 2;
+      d.players.p1!.lands = [
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'bmo_card_4');
+    const gasesId = handIdOf(s, 'p1', 'bmo_card_4');
+    const beforeDeck = [...s.players.p1!.deck];
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: gasesId }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(Object.keys(res.state.revealed)).toHaveLength(1);
+    const skipped = applyCommand(res.state, { type: 'time_expired', player: 'p1' }, deps);
+    expect(skipped.ok).toBe(true);
+    if (!skipped.ok) return;
+    expect(skipped.state.revealed).toEqual({});
+    expect(skipped.state.pending).toBeNull();
+    // the revealed cards stay on top of the deck in their original order
+    expect(skipped.state.players.p1!.deck.slice(0, 3)).toEqual(beforeDeck.slice(0, 3));
+  });
+
   it('герой Бимо: сброс карты с руки >>> 1 урон выбранному существу; раз за ход', () => {
     let s = newMatch();
     s = edit(s, (d) => {

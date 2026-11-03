@@ -412,11 +412,16 @@ describe('механики v2: каркас', () => {
       const cardId = handCardId(s, P1, 'array-discarder');
       s = ok(s, { type: 'play_card', player: P1, instanceId: cardId, zone: 0 }).state;
       const sacrifice = s.players[P1]!.hand[0]!;
-      s = ok(s, {
+      const activated = ok(s, {
         type: 'floop',
         player: P1,
         instanceId: s.players[P1]!.zones[0]!.creature!,
-        targets: [{ kind: 'card', instanceId: sacrifice }],
+      });
+      expect(activated.state.pending).not.toBeNull();
+      s = ok(activated.state, {
+        type: 'resolve_choice',
+        player: P1,
+        answer: { targets: [{ kind: 'card', instanceId: sacrifice }] },
       }).state;
       expect(s.players[P1]!.discard.map((i) => s.instances[i]!.cardId)).toContain(s.instances[sacrifice]!.cardId);
     });

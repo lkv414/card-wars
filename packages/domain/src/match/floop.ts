@@ -79,17 +79,22 @@ export function handleFloop(
     throw new DomainError('insufficient_actions', `floop costs ${cost} actions`);
   }
 
-  // Atomic validation: additional-cost hand picks first, then declared targets.
+  // Atomic validation: additional-cost picks first; interactive arrays collect
+  // their ability choices during resolution (docs/MECHANICS-V2.md §6).
+  const interactiveArray = Array.isArray(ability.effect);
   const discardCount = ability.additionalCost?.discardFromHand ?? 0;
   const costCount = costPicksCount(ability.additionalCost);
   const declaredAsks = ability.targets ?? [];
-  const expectedTargets = costCount + declaredAsks.length;
+  const expectedTargets = costCount + (interactiveArray ? 0 : declaredAsks.length);
   if ((targets?.length ?? 0) !== expectedTargets) {
-    throw new DomainError('target_required', `ability needs ${expectedTargets} targets`);
+    throw new DomainError(
+      'target_required',
+      interactiveArray ? 'ability takes its choices during resolution' : `ability needs ${expectedTargets} targets`,
+    );
   }
   const allTargets = targets ?? [];
   const handPicks = costPicks(allTargets, discardCount, playerId, draft);
-  if (declaredAsks.length > 0) {
+  if (!interactiveArray && declaredAsks.length > 0) {
     validateChoices(draft, ctx, { player: playerId, instanceId }, declaredAsks, allTargets.slice(costCount));
   }
 
@@ -110,7 +115,15 @@ export function handleFloop(
   for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
     killInstance(draft, ctx, pickId);
   }
-  runAbilityDirect(draft, ctx, { player: playerId, instanceId }, ability, allTargets.slice(costCount));
+  const abilityIndex = (card?.abilities ?? []).indexOf(ability);
+  runAbilityDirect(
+    draft,
+    ctx,
+    { player: playerId, instanceId },
+    ability,
+    interactiveArray ? [] : allTargets.slice(costCount),
+    { player: playerId, instanceId, cardId: card!.id, abilityIndex: Math.max(0, abilityIndex) },
+  );
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
 
   inst.flipped = true;

@@ -59,7 +59,9 @@ export type TargetAskKind =
   /** One adjacent own creature (Защищенный зебрарог). */
   | 'adjacent_creature'
   /** One creature on an adjacent lane, either side (Пляжная мумия). */
-  | 'adjacent_any_creature';
+  | 'adjacent_any_creature'
+  /** One card of the current revealed window (Газы Огрa). */
+  | 'revealed_card';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -247,7 +249,14 @@ export type EffectSpec =
   /** Aura-grant of an ability to covered cards (Финн: «получают ПРИЕМ >>> …»). */
   | { op: 'grant_ability'; target: TargetRef; ability: AbilitySpec }
   /** Return a field card to its owner's hand (Пляжная мумия, желе-карты). */
-  | { op: 'return_to_owner'; target: TargetRef };
+  | { op: 'return_to_owner'; target: TargetRef }
+  /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
+  | { op: 'reveal_deck_top'; count: number }
+  /**
+   * Consume the revealed window (Газы Огрa): one revealed card via ask,
+   * destination per `to`; the rest of the window per `rest`.
+   */
+  | { op: 'resolve_revealed'; target: TargetRef; to: 'deck_bottom' | 'hand'; rest?: 'discard' };
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';
@@ -278,18 +287,27 @@ export interface QueuedAbility {
   cardId: string | null;
   abilityIndex: number;
   trigger?: Trigger;
+  /** Pre-collected command choices, carried into the trigger queue when available. */
+  choices?: TargetChoice[];
   payload?: TriggerPayload;
 }
 
-/** A paused transition waiting for one player's decision (docs/MECHANICS-V2.md §6). */
+/**
+ * A paused transition waiting for one player's decision (docs/MECHANICS-V2.md §6).
+ * `effect_step` pauses MID-effect-array: `collected` grows per step, and
+ * `resumeEffects` holds the not-yet-run tail (pure data — re-run on resolve).
+ */
 export interface PendingChoice {
   player: PlayerId;
   ask:
     | { kind: 'optional' }
-    | { kind: 'target'; askIndex: number; collected: TargetChoice[] };
+    | { kind: 'target'; askIndex: number; collected: TargetChoice[] }
+    | { kind: 'effect_step'; askIndex: number; collected: TargetChoice[] };
   current: QueuedAbility;
   /** Remaining queued abilities to run after this one resolves. */
   queue: QueuedAbility[];
+  /** Remaining effect steps of a paused array (mechanics v2 §6, interactive chains). */
+  resumeEffects?: EffectSpec[];
 }
 
 /** Raised when an ability needs the owning player's input mid-transition. */

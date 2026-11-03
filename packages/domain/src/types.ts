@@ -166,6 +166,8 @@ export interface MatchState {
   turnModifiers: TurnModifier[];
   /** Temporary land flips (Воронка) reverted at the owner's next turn start. */
   landFlipEffects: LandFlipEffect[];
+  /** Revealed deck window (Газы Огрa): card ids, public until consumed. */
+  revealed: Record<string, string[]>;
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

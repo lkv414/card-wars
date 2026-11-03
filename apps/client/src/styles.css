@@ -111,6 +111,24 @@ header {
   margin: 6px 0;
 }
 
+.revealed-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.revealed-card {
+  min-height: 32px;
+}
+
+.revealed-card.spectator {
+  padding: 6px 10px;
+  color: #f2e6bd;
+  border: 1px solid #5a4a1a;
+  border-radius: 6px;
+}
+
 .boards {
   display: grid;
   gap: 10px;

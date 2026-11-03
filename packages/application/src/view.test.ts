@@ -56,6 +56,17 @@ describe('viewFor', () => {
     }
   });
 
+  it('пробрасывает публичное вскрытие колоды в вид', () => {
+    const s = newMatch();
+    const instanceId = s.players.p1!.deck[0]!;
+    const edited = JSON.parse(JSON.stringify(s)) as MatchState;
+    edited.revealed = { p1: [instanceId] };
+    const view = viewFor(deps, edited, 'p2');
+    expect(view.revealed.p1).toEqual([
+      { instanceId, cardId: s.instances[instanceId]!.cardId },
+    ]);
+  });
+
   it('сброс и поле открыты, эффективные статы посчитаны', () => {
     const s = newMatch();
     const handId = s.players.p1!.hand[0]!;
@@ -110,6 +121,8 @@ describe('journalLines', () => {
     if (!res.ok) return;
     const lines = journalLines(deps, res.state, res.events);
     expect(lines.some((l) => l.includes('Ход 2') && l.includes('Билли'))).toBe(true);
+    const revealEvent = [{ type: 'cards_revealed' as const, player: 'p1' as const, cardIds: [s.players.p1!.deck[0]!] }];
+    expect(journalLines(deps, s, revealEvent)[0]).toContain('открывает');
     const started = journalLines(deps, s, [{ type: 'match_started', players: [
       { id: 'p1', nickname: 'Бимо', heroId: 'hero_bmo' },
       { id: 'p2', nickname: 'Билли', heroId: 'hero_billy' },

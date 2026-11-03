@@ -8,7 +8,7 @@ import { runEffect } from './effects';
 import { runMechanic } from './registry';
 import { validateChoices } from './resolve';
 import type { EffectSource } from './source';
-import type { AbilitySpec, PlayerId, QueuedAbility, TargetChoice, Trigger, TriggerPayload } from './types';
+import type { AbilitySpec, PlayerId, QueuedAbility, TargetChoice, Trigger, TriggerPayload, EffectSpec } from './types';
 
 /**
  * Trigger queue (docs/MECHANICS-V2.md §2Б/§6): hooks enqueue, `drainTriggers`
@@ -102,9 +102,10 @@ function abilityOf(
     const inst = draft.instances[qa.instanceId];
     const cardId = inst?.cardId ?? qa.cardId;
     if (!cardId) return null;
-    // on_death / on_leave_play sources sit in the discard already; other
-    // triggers require the source to still be in play (docs/MECHANICS-V2.md §2Б).
-    if (qa.trigger !== 'on_death' && qa.trigger !== 'on_leave_play') {
+    // on_death / on_leave_play / on_cast sources may be out of play already
+    // (spell goes to discard on cast); other triggers require the source to
+    // still be in play (docs/MECHANICS-V2.md §2Б).
+    if (qa.trigger !== 'on_death' && qa.trigger !== 'on_leave_play' && qa.trigger !== 'on_cast') {
       if (!inst || (inst.location !== 'field' && inst.location !== 'companion')) return null;
     }
     return ctx.catalog.getCard(cardId)?.abilities?.[qa.abilityIndex] ?? null;
@@ -124,10 +125,10 @@ export function runQueuedAbility(
   if (!ability) return; // source left play while queued
   const source: EffectSource = { player: qa.player, instanceId: qa.instanceId };
   if (!conditionsHold(draft, ctx, source, ability.conditions, undefined, qa.payload)) return;
-  runAbilityEffect(draft, ctx, ability, source, choices, qa.payload);
+  runAbilityEffect(draft, ctx, ability, source, choices, qa.payload, qa);
 }
 
-/** Run an ability's effect(s) — a single spec or a sequential array. */
+/** Run an ability's effect(s) — a single spec or a sequential array with lazy choices. */
 export function runAbilityEffect(
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -135,14 +136,89 @@ export function runAbilityEffect(
   source: EffectSource,
   choices: TargetChoice[] | undefined,
   payload?: TriggerPayload,
+  origin?: QueuedAbility,
 ): void {
-  if (Array.isArray(ability.effect)) {
-    for (const effect of ability.effect) runEffect(draft, ctx, effect, source, choices, payload);
-  } else if (ability.effect) {
-    runEffect(draft, ctx, ability.effect, source, choices, payload);
-  } else if (ability.mechanic) {
-    runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+  const steps = Array.isArray(ability.effect) ? ability.effect : ability.effect ? [ability.effect] : [];
+  if (steps.length > 0) {
+    runSteps(draft, ctx, ability, source, steps, choices ?? [], payload, origin);
+    return;
   }
+  if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+}
+
+/**
+ * Sequential steps with LAZY choice collection (docs/MECHANICS-V2.md §6):
+ * each step runs when its choices are satisfied; otherwise the transition
+ * pauses with `effect_step` and the remaining tail (pure data) resumes on
+ * resolve_choice.
+ */
+function runSteps(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  ability: AbilitySpec,
+  source: EffectSource,
+  steps: EffectSpec[],
+  collected: TargetChoice[],
+  payload: TriggerPayload | undefined,
+  origin: QueuedAbility | undefined,
+): void {
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i]!;
+    const need = effectChoiceNeed(step);
+    if (need > collected.length) {
+      const asks = ability.targets ?? [];
+      const nextAskIndex = collected.length;
+      if (!asks[nextAskIndex]) {
+        throw new DomainError('target_required', `step ${i + 1} needs ${need - collected.length} more target(s)`);
+      }
+      if (origin) {
+        draft.pending = {
+          player: source.player,
+          ask: { kind: 'effect_step', askIndex: nextAskIndex, collected },
+          current: origin,
+          queue: ctx.frame.queue,
+          resumeEffects: steps.slice(i),
+        };
+        ctx.frame.queue = [];
+        emit(ctx, {
+          type: 'choice_required',
+          player: source.player,
+          kind: 'target',
+          askIndex: nextAskIndex,
+          askCount: asks.length,
+        });
+        return;
+      }
+      // Command-driven ability without pre-collected choices: reject.
+      throw new DomainError('target_required', `step ${i + 1} needs ${need - collected.length} more target(s)`);
+    }
+    runEffect(draft, ctx, step, source, collected, payload);
+  }
+}
+
+/**
+ * Number of choices an effect consumes. Explicit `choice` TargetRefs and the
+ * implicit hand picks of `discard_from_hand` both consume declared asks.
+ */
+function effectChoiceNeed(effect: EffectSpec): number {
+  let max = -1;
+  const visit = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      for (const item of value) visit(item);
+      return;
+    }
+    if (value === null || typeof value !== 'object') return;
+    const record = value as Record<string, unknown>;
+    if (record.kind === 'choice' && typeof record.index === 'number') {
+      max = Math.max(max, record.index);
+    }
+    for (const item of Object.values(record)) visit(item);
+  };
+  visit(effect);
+  if (effect.op === 'discard_from_hand') {
+    return Math.max(max + 1, effect.count);
+  }
+  return max + 1;
 }
 
 /** Direct execution for player-initiated abilities (floop / hero_ability / on_cast). */
@@ -152,9 +228,10 @@ export function runAbilityDirect(
   source: EffectSource,
   ability: AbilitySpec,
   choices: TargetChoice[] | undefined,
+  origin?: QueuedAbility,
 ): void {
   if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
-  runAbilityEffect(draft, ctx, ability, source, choices);
+  runAbilityEffect(draft, ctx, ability, source, choices, undefined, origin);
 }
 
 /** Process the queue; pauses into MatchState.pending when input is required. */
@@ -178,9 +255,28 @@ export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
     ) {
       continue;
     }
+    // Pre-collected command targets: apply directly (validated atomically at
+    // command validation); interactive arrays always pause inside the steps.
+    if (qa.choices && !ability.optional && !Array.isArray(ability.effect)) {
+      validateChoices(
+        draft,
+        ctx,
+        { player: qa.player, instanceId: qa.instanceId },
+        ability.targets,
+        qa.choices,
+      );
+      runQueuedAbility(draft, ctx, qa, qa.choices);
+      continue;
+    }
     if (ability.optional) {
       pause(draft, ctx, qa, { kind: 'optional' });
       return;
+    }
+    // Interactive arrays collect their choices through effect_step where each
+    // effect needs them; declared targets are not pre-asked up front.
+    if (Array.isArray(ability.effect)) {
+      runQueuedAbility(draft, ctx, qa, undefined);
+      continue;
     }
     if ((ability.targets?.length ?? 0) > 0) {
       pause(draft, ctx, qa, { kind: 'target', askIndex: 0, collected: [] });
@@ -228,8 +324,30 @@ export function resolvePending(
   const ability = abilityOf(draft, ctx, pending.current);
   if (!ability) {
     // Source vanished while paused; skip the ability and continue the queue.
+    delete draft.revealed[pending.player];
     draft.pending = null;
     ctx.frame.queue = pending.queue;
+    drainTriggers(draft, ctx);
+    return;
+  }
+
+  if (pending.ask.kind === 'effect_step') {
+    const asks = ability.targets ?? [];
+    const ask = asks[pending.ask.askIndex];
+    if (!ask) throw new DomainError('no_pending_choice', 'ask index out of range');
+    const choice = answer.targets?.[0];
+    if (!choice) throw new DomainError('target_required', `ask ${pending.ask.askIndex + 1} needs one choice`);
+    validateChoices(draft, ctx, { player: pending.player, instanceId: pending.current.instanceId }, [ask], [choice]);
+    const collected = [...pending.ask.collected, choice];
+    emit(ctx, {
+      type: 'choice_resolved',
+      player: pending.player,
+      kind: 'target',
+      askIndex: pending.ask.askIndex,
+    });
+    const resumeEffects = pending.resumeEffects ?? [];
+    finishPending(draft, ctx, pending);
+    runSteps(draft, ctx, ability, { player: pending.player, instanceId: pending.current.instanceId }, resumeEffects, collected, undefined, pending.current);
     drainTriggers(draft, ctx);
     return;
   }
@@ -238,6 +356,12 @@ export function resolvePending(
   if (pending.ask.kind === 'optional') {
     if (answer.proceed !== true) {
       finishPending(draft, ctx, pending);
+      return;
+    }
+    if (Array.isArray(ability.effect)) {
+      finishPending(draft, ctx, pending);
+      runQueuedAbility(draft, ctx, pending.current, undefined);
+      drainTriggers(draft, ctx);
       return;
     }
     if ((ability.targets?.length ?? 0) > 0) {
@@ -300,7 +424,14 @@ export function skipPending(draft: Draft<MatchState>, ctx: Ctx): void {
   if (pending.ask.kind === 'optional') {
     finishPending(draft, ctx, pending);
   } else {
-    emit(ctx, { type: 'choice_resolved', player: pending.player, kind: 'target', askIndex: pending.ask.askIndex });
+    emit(ctx, {
+      type: 'choice_resolved',
+      player: pending.player,
+      kind: 'target',
+      askIndex: pending.ask.askIndex,
+    });
+    // The cards stay in the deck in their original order; clear the public window.
+    delete draft.revealed[pending.player];
     draft.pending = null;
     ctx.frame.queue = pending.queue;
   }

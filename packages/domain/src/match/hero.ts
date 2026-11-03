@@ -48,16 +48,17 @@ export function handleHeroAbility(
     throw new DomainError('insufficient_actions', `hero ability costs ${cost} actions`);
   }
 
+  const interactiveArray = Array.isArray(ability.effect);
   const discardCount = ability.additionalCost?.discardFromHand ?? 0;
   const costCount = costPicksCount(ability.additionalCost);
   const declaredAsks = ability.targets ?? [];
-  const expectedTargets = costCount + declaredAsks.length;
+  const expectedTargets = costCount + (interactiveArray ? 0 : declaredAsks.length);
   if ((targets?.length ?? 0) !== expectedTargets) {
-    throw new DomainError('target_required', `hero ability needs ${expectedTargets} targets`);
+    throw new DomainError('target_required', interactiveArray ? 'ability takes its choices during resolution' : `hero ability needs ${expectedTargets} targets`);
   }
   const allTargets = targets ?? [];
   const handPicks = costPicks(allTargets, discardCount, playerId, draft);
-  if (declaredAsks.length > 0) {
+  if (!interactiveArray && declaredAsks.length > 0) {
     validateChoices(draft, ctx, { player: playerId, instanceId: null }, declaredAsks, allTargets.slice(costCount));
   }
 
@@ -82,7 +83,12 @@ export function handleHeroAbility(
     throw new DomainError('condition_not_met', 'ability conditions are not met');
   }
 
-  runAbilityDirect(draft, ctx, { player: playerId, instanceId: null }, ability, allTargets.slice(costCount));
+  runAbilityDirect(draft, ctx, { player: playerId, instanceId: null }, ability, interactiveArray ? [] : allTargets.slice(costCount), {
+    player: playerId,
+    instanceId: null,
+    cardId: null,
+    abilityIndex: 0,
+  });
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
 
   emit(ctx, { type: 'hero_ability_used', player: playerId, paidActions: cost });

@@ -5,7 +5,7 @@ import type { Ctx } from '../util';
 import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
-import { enqueueLeavePlay, enqueueTrigger, runAbilityDirect } from '../mechanics/dispatch';
+import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter } from '../mechanics/effects';
 import { landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
@@ -109,22 +109,37 @@ export function handlePlayCard(
   }
 
   if (card.type === 'spell') {
-    // Spell's own on_cast abilities: targets validated before anything is paid.
+    // Spell's own on_cast abilities: validate non-interactive targets atomically.
     const casts = (card.abilities ?? []).filter((a) => a.trigger === 'on_cast');
     for (const ability of casts) {
+      if (Array.isArray(ability.effect) || ability.optional) continue;
       validateChoices(draft, ctx, { player: playerId, instanceId }, ability.targets, targets);
     }
     p.actions -= effectiveCost;
     emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
-    const source = { player: playerId, instanceId };
-    for (const ability of casts) {
-      runAbilityDirect(draft, ctx, source, ability, targets);
-    }
     inst.location = 'discard';
     moveId(p.hand, p.discard, instanceId);
     draft.castSpells.push(instanceId);
     bumpCounter(draft, 'spell_cast', playerId);
     const spellTarget = targets?.find((t) => t.kind === 'creature');
+    for (const ability of casts) {
+      const abilityIndex = (card.abilities ?? []).indexOf(ability);
+      const hasPrecollected = !Array.isArray(ability.effect) && !ability.optional;
+      ctx.frame.queue.push({
+        player: playerId,
+        instanceId,
+        cardId: card.id,
+        abilityIndex: Math.max(0, abilityIndex),
+        trigger: 'on_cast',
+        choices: hasPrecollected ? targets : undefined,
+        payload: {
+          instanceId,
+          cardId: card.id,
+          player: playerId,
+          targetInstanceId: spellTarget?.instanceId,
+        },
+      });
+    }
     enqueueTrigger(draft, ctx, 'on_spell_cast', {
       instanceId,
       cardId: card.id,

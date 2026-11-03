@@ -219,6 +219,48 @@ export function runEffect(
       }
       return;
     }
+    case 'reveal_deck_top': {
+      const p = player(draft, source.player);
+      const count = Math.min(effect.count, p.deck.length);
+      const window: string[] = [];
+      for (let i = 0; i < count; i++) window.push(p.deck[i]!);
+      draft.revealed[source.player] = window;
+      emit(ctx, { type: 'cards_revealed', player: source.player, cardIds: window });
+      return;
+    }
+    case 'resolve_revealed': {
+      const window = draft.revealed[source.player] ?? [];
+      // The revealed_card ask validates the pick on resolve_choice; the choice index
+      // declared in this effect is how the lazy pipeline knows it is awaited.
+      const pick = (choices ?? []).find((c): c is Extract<TargetChoice, { kind: 'card' }> => c.kind === 'card');
+      if (!pick || !window.includes(pick.instanceId)) {
+        throw new DomainError('invalid_choice', 'resolve_revealed needs a card of the revealed window');
+      }
+      const p = player(draft, source.player);
+      const id = pick.instanceId;
+      // Remove the picked card from the window and the deck.
+      draft.revealed[source.player] = window.filter((x) => x !== id);
+      const deckIndex = p.deck.indexOf(id);
+      if (deckIndex >= 0) p.deck.splice(deckIndex, 1);
+      const inst = instance(draft, id);
+      if (effect.to === 'hand') {
+        inst.location = 'hand';
+        p.hand.push(id);
+      } else {
+        p.deck.push(id); // bottom of deck
+      }
+      // Rest of the window is discarded.
+      for (const restId of draft.revealed[source.player] ?? []) {
+        const restInst = instance(draft, restId);
+        const restIndex = p.deck.indexOf(restId);
+        if (restIndex >= 0) p.deck.splice(restIndex, 1);
+        restInst.location = 'discard';
+        p.discard.push(restId);
+        emit(ctx, { type: 'card_discarded', player: source.player, instanceId: restId, cardId: restInst.cardId, from: 'deck' });
+      }
+      delete draft.revealed[source.player];
+      return;
+    }
     case 'grant_ability': {
       // Aura-grant: read live by the floop gate; nothing to materialise.
       return;

@@ -1,6 +1,6 @@
 import { computeEff } from '@card-wars/domain';
 import type { DomainDeps, MatchState, PlayerId } from '@card-wars/domain';
-import type { CardView, PendingChoiceView, PlayerPublicView, PlayerView, TeamView } from '@card-wars/protocol';
+import type { CardView, PendingChoiceView, PlayerPublicView, PlayerView, RevealedCardView, TeamView } from '@card-wars/protocol';
 
 export interface ViewOptions {
   /** Journal lines accumulated by the server (already time-stamped). */
@@ -29,20 +29,27 @@ function cardView(
   };
 }
 
+/** Ability referenced by a pending choice (cards or the hero), tolerating missing sources. */
+function pendingAbility(deps: DomainDeps, state: MatchState) {
+  const pending = state.pending;
+  if (!pending) return undefined;
+  const current = pending.current;
+  if (current.instanceId) {
+    const cardId = state.instances[current.instanceId]?.cardId ?? current.cardId;
+    return cardId ? deps.catalog.getCard(cardId)?.abilities?.[current.abilityIndex] : undefined;
+  }
+  return deps.catalog.getHero(state.players[current.player]!.heroId)?.ability;
+}
+
 /** Which ask of which ability is awaited (total count read from the catalog). */
 function pendingView(deps: DomainDeps, state: MatchState): PendingChoiceView {
   const pending = state.pending!;
-  let askCount: number | undefined;
-  if (pending.ask.kind === 'target') {
-    const ability = pending.current.instanceId
-      ? deps.catalog.getCard(state.instances[pending.current.instanceId]!.cardId)?.abilities?.[pending.current.abilityIndex]
-      : deps.catalog.getHero(state.players[pending.current.player]!.heroId)?.ability;
-    askCount = ability?.targets?.length;
-  }
+  const kind = pending.ask.kind;
+  const askCount = kind === 'optional' ? undefined : pendingAbility(deps, state)?.targets?.length;
   return {
     player: pending.player,
-    kind: pending.ask.kind,
-    askIndex: pending.ask.kind === 'target' ? pending.ask.askIndex : undefined,
+    kind,
+    askIndex: kind === 'target' || kind === 'effect_step' ? pending.ask.askIndex : undefined,
     askCount,
   };
 }
@@ -104,6 +111,15 @@ export function viewFor(
   const myPlayer = state.players[me];
   if (!myPlayer) throw new Error(`viewFor: unknown player ${me}`);
 
+  const revealed: Record<string, RevealedCardView[]> = {};
+  for (const [pid, cardIds] of Object.entries(state.revealed)) {
+    if (cardIds.length === 0) continue;
+    revealed[pid] = cardIds.map((instanceId) => ({
+      instanceId,
+      cardId: state.instances[instanceId]!.cardId,
+    }));
+  }
+
   return {
     status: state.status,
     phase: state.phase,
@@ -124,6 +140,8 @@ export function viewFor(
       player: state.instances[id]!.controller,
     })),
     // Fact of awaiting only — the prompt itself is rendered from catalog data.
+    // Public: reveal effects expose the selected cards to both sides.
+    revealed,
     pending: state.pending ? pendingView(deps, state) : null,
     winners: state.winners,
     finishReason: state.finishReason,

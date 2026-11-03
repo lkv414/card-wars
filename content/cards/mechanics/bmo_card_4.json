@@ -1,0 +1,31 @@
+{
+ "cardId": "bmo_card_4",
+ "name": "Газы Огрa",
+ "abilities": [
+  {
+   "kind": "passive",
+   "effect": [
+    {
+     "op": "reveal_deck_top",
+     "count": 3
+    },
+    {
+     "op": "resolve_revealed",
+     "to": "deck_bottom",
+     "rest": "discard",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    }
+   ],
+   "targets": [
+    {
+     "kind": "revealed_card"
+    }
+   ],
+   "text": "Открой 3 карты сверху своей колоды. Одну положи вниз своей колоды, остальные две сбрось.",
+   "trigger": "on_cast"
+  }
+ ]
+}

@@ -46,6 +46,12 @@ export const SpellViewSchema = z.object({
   player: z.string(),
 });
 
+/** A card exposed by a reveal effect; public while the resolution awaits its pick. */
+export const RevealedCardViewSchema = z.object({
+  instanceId: z.string(),
+  cardId: z.string(),
+});
+
 export const TeamViewSchema = z.object({
   id: z.string(),
   playerIds: z.array(z.string()),
@@ -78,7 +84,7 @@ export const PlayerPublicViewSchema = z.object({
 /** Paused transition awaiting a decision (docs/MECHANICS-V2.md §6). */
 export const PendingChoiceViewSchema = z.object({
   player: z.string(),
-  kind: z.enum(['optional', 'target']),
+  kind: z.enum(['optional', 'target', 'effect_step']),
   askIndex: z.number().optional(),
   askCount: z.number().optional(),
 });
@@ -98,6 +104,8 @@ export const PlayerViewSchema = z.object({
   players: z.record(z.string(), PlayerPublicViewSchema),
   myHand: z.array(DiscardCardViewSchema),
   castSpells: z.array(SpellViewSchema),
+  /** Public revealed deck windows, keyed by player id (e.g. Газы Огрa). */
+  revealed: z.record(z.string(), z.array(RevealedCardViewSchema)),
   pending: PendingChoiceViewSchema.nullable(),
   winners: z.array(z.string()).nullable(),
   finishReason: z.enum(['elimination', 'surrender', 'disconnect']).nullable(),
@@ -109,6 +117,7 @@ export type CardView = z.infer<typeof CardViewSchema>;
 export type ZoneView = z.infer<typeof ZoneViewSchema>;
 export type DiscardCardView = z.infer<typeof DiscardCardViewSchema>;
 export type SpellView = z.infer<typeof SpellViewSchema>;
+export type RevealedCardView = z.infer<typeof RevealedCardViewSchema>;
 export type TeamView = z.infer<typeof TeamViewSchema>;
 export type PlayerPublicView = z.infer<typeof PlayerPublicViewSchema>;
 export type PlayerView = z.infer<typeof PlayerViewSchema>;

@@ -136,6 +136,11 @@ function choiceMatchesAsk(
         inst.zone === lane
       );
     }
+    case 'revealed_card': {
+      if (choice.kind !== 'card') return false;
+      const window = draft.revealed[source.player] ?? [];
+      return window.includes(choice.instanceId);
+    }
     case 'own_hand_card': {
       if (choice.kind !== 'card') return false;
       const inst = instance(draft, choice.instanceId);

@@ -1,0 +1,18 @@
+{
+  "cardId": "ftg_card_59",
+  "name": "Дух дерева",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "defense_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "landType": "corn",
+        "atkBonus": 2
+      },
+      "text": "Дух дерева получает +2 ATK пока защищается от существ на кукурузных полях."
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { dealToCreature, dealToPlayer } from '../damage';
 import { afterEffects } from '../deaths';
 import { computeEff } from '../stats';
 import { bumpCounter } from '../mechanics/effects';
-import { attacksSuppressed } from '../mechanics/modifiers';
+import { attacksSuppressed, defenseMods } from '../mechanics/modifiers';
 import { opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
@@ -76,6 +76,14 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
           // Simultaneous exchange: both powers are computed before any damage lands.
           bumpCounter(draft, 'creature_attack', attackerId);
           let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
+          // Боевой контекст защитника (A8): «+N АТК пока защищается от существ
+          // на X земле» — земля ЗОНЫ АТАКУЮЩЕГО.
+          const attackerZoneLandType = attackerInstance.zone !== null
+            ? player(draft, attackerInstance.controller).lands[attackerInstance.zone]!.type
+            : null;
+          for (const mod of defenseMods(draft, ctx, defenderInstanceId, attackerZoneLandType)) {
+            retaliation += mod.atkBonus;
+          }
           if (hasNoRetaliation(draft, ctx, attackerInstanceId)) retaliation = 0;
           enqueueTrigger(draft, ctx, 'on_creature_attacks', {
             instanceId: attackerInstanceId,

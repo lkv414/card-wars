@@ -1179,3 +1179,51 @@ describe('golden: ледяные жетоны — хвост (A7.1)', () => {
     expect(res.state.players.p1!.zones[0]!.creature).not.toBeNull();
   });
 });
+
+describe('golden: боевой контекст защитника (A8)', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('Привидение: +2 АТК к сдаче против атакующих с бесполезных болот', () => {
+    let s = edit(round2(newMatch()), (d) => {
+      // p1: Привидение в зоне 0 (повёрнуто — только защищается);
+      // p2: болотный атакующий в зеркальной зоне 3.
+      const p1 = d.players.p1!;
+      const sid = p1.deck[0]!;
+      p1.deck = p1.deck.filter((x) => x !== sid);
+      d.instances[sid]!.cardId = 'ftg_card_57'; // 1/4
+      d.instances[sid]!.location = 'field';
+      d.instances[sid]!.zone = 0;
+      d.instances[sid]!.slot = 'creature';
+      d.instances[sid]!.flipped = true;
+      p1.zones[0]!.creature = sid;
+      const p2 = d.players.p2!;
+      const aid = p2.deck[0]!;
+      p2.deck = p2.deck.filter((x) => x !== aid);
+      d.instances[aid]!.cardId = 'bmo_card_13'; // 1/9 — само по себе слабое
+      d.instances[aid]!.location = 'field';
+      d.instances[aid]!.zone = 3;
+      d.instances[aid]!.slot = 'creature';
+      p2.zones[3]!.creature = aid;
+      // Ландшафт зоны 3 p2 — болото (пресет p2: good-тема → ставим болото явно).
+      d.players.p2!.lands[3] = { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 };
+    });
+    const ghostId = s.players.p1!.zones[0]!.creature!;
+    const attackerId = s.players.p2!.zones[3]!.creature!;
+    // Обмен в бою p2 (раунд 3): Привидение получает 1, сдача = 1 + 2 (болотный атакующий) = 3.
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      if (!res.ok) throw new Error(`battle ${pid}: ${res.rejected.code}: ${res.rejected.message}`);
+      s = res.state;
+    }
+    expect(s.instances[ghostId]!.damage).toBe(1);
+    expect(s.instances[attackerId]!.damage).toBe(3);
+  });
+});

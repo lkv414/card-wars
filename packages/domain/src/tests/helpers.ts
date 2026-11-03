@@ -535,6 +535,37 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'defender-spirit',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'defense_mod', target: { kind: 'this_creature' }, landType: 'corn', atkBonus: 2 },
+        text: 'Фикстура духа: +2 АТК при защите от существ на кукурузе',
+      },
+    ],
+  }),
+  card({
+    id: 'defender-kin',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'defense_mod', target: { kind: 'this_creature' }, atkBonus: 2 },
+        conditions: [{ kind: 'while_own_card_in_play', cardId: 'kin-source' }],
+        text: 'Фикстура родича: +2 АТК при защите, пока свой источник в игре',
+      },
+    ],
+  }),
+  card({
     id: 'gate-creature',
     type: 'creature',
     cost: 1,

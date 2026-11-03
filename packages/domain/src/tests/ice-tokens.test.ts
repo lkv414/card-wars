@@ -226,3 +226,86 @@ describe('ледяные жетоны: хвост (A7.1)', () => {
     expect(s.players[P1]!.lands[2]!.frozen).toBe(true);
   });
 });
+
+describe('боевой контекст защитника (defense_mod)', () => {
+  function cornAttacker(s: MatchState): MatchState {
+    return edit(s, (d) => {
+      const p = d.players[P2]!;
+      const id = p.deck[0]!;
+      p.deck = p.deck.filter((x) => x !== id);
+      d.instances[id]!.cardId = 'vanilla-corn'; // 3/7 на кукурузной земле P2 (зона 3)
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 3;
+      d.instances[id]!.slot = 'creature';
+      d.instances[id]!.playedTurn = d.turn;
+      p.zones[3]!.creature = id;
+    });
+  }
+
+  it('сдача усиливается, если атакующий стоит на земле нужного типа', () => {
+    // Зеркальная линия: зона 0 P1 ↔ зона 3 P2. Дух повернут — только защищается.
+    let s = round2(startedIcy());
+    s = placeInZone(s, P1, 0, 'defender-spirit');
+    const spiritId = s.players[P1]!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.instances[spiritId]!.flipped = true;
+    });
+    s = cornAttacker(s);
+    s = edit(s, (d) => {
+      d.players[P2]!.lands[3]!.type = 'corn'; // атакующий стоит на кукурузе
+    });
+    // Дух 1/6: получает 3 урона, сдача = 1 + 2 (атакующий на кукурузе) = 3.
+    s = battle(s, P1);
+    s = battle(s, P2);
+    expect(s.instances[spiritId]!.damage).toBe(3);
+    expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(3);
+  });
+
+  it('сдача без бонуса, если земля атакующего не совпала', () => {
+    let s = round2(startedIcy());
+    s = placeInZone(s, P1, 0, 'defender-spirit');
+    const spiritId = s.players[P1]!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.instances[spiritId]!.flipped = true;
+    });
+    s = cornAttacker(s);
+    s = edit(s, (d) => {
+      d.players[P2]!.lands[3]!.type = 'swamp'; // атакующий не на кукурузе
+    });
+    s = battle(s, P1);
+    s = battle(s, P2);
+    expect(s.instances[spiritId]!.damage).toBe(3);
+    expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(1);
+  });
+
+  it('условие while_own_card_in_play: бонус только пока свой источник в игре', () => {
+    let s = round2(startedIcy());
+    s = placeInZone(s, P1, 0, 'defender-kin');
+    const kinId = s.players[P1]!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.instances[kinId]!.flipped = true;
+    });
+    s = cornAttacker(s);
+    // Источника нет: сдача = 1.
+    s = battle(s, P1);
+    s = battle(s, P2);
+    expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(1);
+    // Ставим строение-источник и лечим родича — в новом обмене сдача = 3.
+    s = edit(s, (d) => {
+      const p = d.players[P1]!;
+      const id = p.deck[0]!;
+      p.deck = p.deck.filter((x) => x !== id);
+      d.instances[id]!.cardId = 'kin-source';
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 1;
+      d.instances[id]!.slot = 'building';
+      d.instances[id]!.playedTurn = d.turn;
+      p.zones[1]!.building = id;
+      d.instances[kinId]!.damage = 0;
+      d.instances[kinId]!.flipped = true; // остаётся повёрнутым — только защищается
+    });
+    s = battle(s, P1);
+    s = battle(s, P2);
+    expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(1 + 3);
+  });
+});

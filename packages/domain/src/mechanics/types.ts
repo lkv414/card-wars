@@ -244,6 +244,8 @@ export type ConditionSpec =
   | { kind: 'while_zone_ice_token' }
   /** It is the source owner's turn (Плавучий Дворец Льда). */
   | { kind: 'while_own_turn' }
+  /** Own field card with this id is in play (Малыш камнепух при своей Мамуле). */
+  | { kind: 'while_own_card_in_play'; cardId: string }
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' };
 
@@ -324,6 +326,12 @@ export type EffectSpec =
   | { op: 'return_to_owner'; target: TargetRef }
   /** Covered cards also count as this land type (Кроха слон — радужным; город). */
   | { op: 'counts_as'; target: TargetRef; landType: LandType }
+  /**
+   * Combat modifier for the covered DEFENDER (A8): «+N АТК пока защищается» —
+   * бонус к сдаче (retaliation) при совпадении земли ЗОНЫ АТАКУЮЩЕГО с
+   * `landType` (Привидение, Духи). Applies only inside the combat exchange.
+   */
+  | { op: 'defense_mod'; target: TargetRef; landType?: LandType; atkBonus: number }
   /**
    * Combat modifier for the covered attacker (A3): тройной урон / бонус АТК
    * на удар / удар в лицо — при совпадении земли зоны атакующего (`ownZone`)

@@ -283,6 +283,14 @@ export function conditionsHold(
       case 'while_own_turn':
         if (!draft.activePlayers.includes(source.player)) return false;
         break;
+      case 'while_own_card_in_play': {
+        const inPlay = p.zones.some((zone) => {
+          const id = zone.creature ?? zone.building;
+          return id !== null && draft.instances[id]!.cardId === cond.cardId;
+        });
+        if (!inPlay) return false;
+        break;
+      }
       case 'while_no_tokens_in_play': {
         const total = draft.order.reduce((sum, pid) => sum + draft.players[pid]!.lands.reduce((s, l) => s + l.iceTokens, 0), 0);
         if (total > 0) return false;
@@ -524,9 +532,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -691,6 +699,22 @@ export function collectGrantedActives(
   return out;
 }
 
+
+/** Combat modifiers of the DEFENDING creature (A8: «+N АТК пока защищается»). */
+export function defenseMods(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  defenderId: string,
+  attackerZoneLand: string | null,
+): Array<Extract<RuleEffect, { op: 'defense_mod' }>> {
+  const out: Array<Extract<RuleEffect, { op: 'defense_mod' }>> = [];
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'defense_mod') continue;
+    if (effect.landType && effect.landType !== attackerZoneLand) continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, defenderId, undefined)) out.push(effect);
+  }
+  return out;
+}
 
 /** Combat modifiers of the attacking creature (A3: тройной урон, бонус, в лицо). */
 export function attackMods(

@@ -64,7 +64,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'remove_token', 'transfer_token']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -87,7 +87,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
   'if_payload_ally', 'if_payload_creature', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
-  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token',
+  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play',
 ]);
 
 function checkAmount(amount, where) {
@@ -145,6 +145,10 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.target, where);
     if (typeof effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
     if (effect.until !== undefined && effect.until !== 'next_own_turn') fail(`${where}: flip_land until must be next_own_turn`);
+  } else if (op === 'defense_mod') {
+    checkTargetRef(effect.target, where);
+    if (!Number.isInteger(effect.atkBonus)) fail(`${where}: defense_mod needs integer atkBonus`);
+    if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: defense_mod landType invalid`);
   } else if (op === 'remove_token') {
     checkTargetRef(effect.target, where);
   } else if (op === 'transfer_token') {

@@ -3896,7 +3896,21 @@
   "attack": 1,
   "defense": 4,
   "description": "Привидение получает +2 ATK пока защищается от существ на бесполезных болотах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "defense_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "landType": "swamp",
+     "atkBonus": 2
+    },
+    "text": "Привидение получает +2 ATK пока защищается от существ на бесполезных болотах."
+   }
+  ]
  },
  {
   "id": "ftg_card_58",
@@ -3908,7 +3922,21 @@
   "attack": 1,
   "defense": 4,
   "description": "Дух ведьмы получает +2 ATK пока защищается от существ на голубых равнинах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "defense_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "landType": "blue",
+     "atkBonus": 2
+    },
+    "text": "Дух ведьмы получает +2 ATK пока защищается от существ на голубых равнинах."
+   }
+  ]
  },
  {
   "id": "ftg_card_59",
@@ -3920,7 +3948,21 @@
   "attack": 1,
   "defense": 4,
   "description": "Дух дерева получает +2 ATK пока защищается от существ на кукурузных полях.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "defense_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "landType": "corn",
+     "atkBonus": 2
+    },
+    "text": "Дух дерева получает +2 ATK пока защищается от существ на кукурузных полях."
+   }
+  ]
  },
  {
   "id": "ftg_card_60",
@@ -4089,11 +4131,10 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
+     "op": "defense_mod",
      "target": {
       "kind": "this_creature"
      },
-     "vs": "defenderZone",
      "landType": "sand",
      "atkBonus": 2
     },
@@ -9725,7 +9766,26 @@
   "attack": 1,
   "defense": 7,
   "description": "Если на поле присутствует Мамуля камнепух под твоим контролем, при защите Малыш получает +2 ATK.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "defense_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "atkBonus": 2
+    },
+    "conditions": [
+     {
+      "kind": "while_own_card_in_play",
+      "cardId": "tree_trunks_card_20"
+     }
+    ],
+    "text": "Если на поле присутствует Мамуля камнепух под твоим контролем, при защите Малыш получает +2 ATK."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_20",

@@ -1297,3 +1297,46 @@ describe('golden: ходы-состояния (A10)', () => {
     expect(resCreature.state.players.p1!.actions).toBe(before); // 2 − 2 → 0
   });
 });
+
+describe('golden: новые биты массовых батчей', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('С добрым утром!: разворачивает все свои существа', () => {
+    let s = edit(round2(newMatch()), (d) => {
+      const p1 = d.players.p1!;
+      const id = p1.deck[0]!;
+      d.instances[id]!.cardId = 'bmo_card_12';
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 0;
+      d.instances[id]!.slot = 'creature';
+      d.instances[id]!.flipped = true; // «применён»
+      p1.zones[0]!.creature = id;
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'gunter_card_24');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'gunter_card_24') }, deps);
+    if (!res.ok) throw new Error(`cast: ${res.rejected.code}: ${res.rejected.message}`);
+    const creatureId = res.state.players.p1!.zones[0]!.creature!;
+    expect(res.state.instances[creatureId]!.flipped).toBe(false);
+  });
+
+  it('Полюс холода: замораживает все земли противника', () => {
+    let s = edit(round2(newMatch()), (d) => {
+      d.players.p1!.lands[0] = { type: 'ice', frozen: false, flipped: false, iceTokens: 1 };
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'ice_king_card_24');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ice_king_card_24') }, deps);
+    if (!res.ok) throw new Error(`cast: ${res.rejected.code}: ${res.rejected.message}`);
+    expect(res.state.players.p2!.lands.every((l) => l.frozen)).toBe(true);
+    expect(res.state.players.p1!.lands[0]!.frozen).toBe(false);
+  });
+});

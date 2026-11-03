@@ -281,6 +281,11 @@ export function resolveTarget(
       if (!payload?.player || payload.zone === undefined || payload.zone === null) return [];
       return [{ kind: 'land', playerId: payload.player, zone: payload.zone }];
     }
+    case 'payload_zone_own_creatures': {
+      if (!payload?.player || payload.zone === undefined || payload.zone === null) return [];
+      const id = draft.players[payload.player]!.zones[payload.zone]?.creature;
+      return id ? [{ kind: 'creature', instanceId: id }] : [];
+    }
     case 'adjacent_own_land': {
       if (srcZone === null) return [];
       const zones = player(draft, source.player).zones;

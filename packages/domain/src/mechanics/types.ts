@@ -112,6 +112,8 @@ export type TargetRef =
   | { kind: 'each_opponent_land' }
   /** The land of the trigger payload's zone (Морозильник: «его земля»). */
   | { kind: 'payload_zone_land' }
+  /** Creatures of the payload player standing in the payload zone (Кейк). */
+  | { kind: 'payload_zone_own_creatures' }
   /** The instance the trigger payload is about (e.g. attacker). */
   | { kind: 'triggering_instance' }
   /** Partner of the player in the trigger payload (2v2). */

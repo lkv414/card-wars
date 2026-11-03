@@ -1,0 +1,24 @@
+{
+  "heroId": "hero_cake",
+  "name": "Кейк",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+      "op": "heal",
+      "target": {
+        "kind": "payload_zone_own_creatures"
+      },
+      "amount": 2
+    },
+    "conditions": [
+      {
+        "kind": "if_payload_building"
+      },
+      {
+        "kind": "if_payload_player_self"
+      }
+    ],
+    "text": "Каждый раз, когда вступает в игру строение под твоим контролем, восстанови 2 HP каждому существу под твоим контролем со строением на этой земле."
+  }
+}

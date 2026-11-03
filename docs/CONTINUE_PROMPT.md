@@ -13,8 +13,8 @@
 
 ## Текущее состояние
 
-- **Покрытие**: 201/544 карт + 9/25 героев структурированы и работают
-- **Тесты**: 215 зелёных (150 domain, 41 content, 15 server, 5 application, 4 protocol)
+- **Покрытие**: 331/544 карт + 17/25 героев структурированы и работают
+- **Тесты**: 217 зелёных (150 domain, 43 content, 15 server, 5 application, 4 protocol)
 - **Отчёт покрытия** после каждой генерации: `pnpm --filter @card-wars/content generate` печатает «mechanics: cards N/544 structured»
 
 ## Что уже реализовано в движке
@@ -33,6 +33,7 @@
 - Боевой контекст защитника (A8): операция defense_mod («+N АТК пока защищается», матчинг по земле зоны атакующего, только retaliation), условие while_own_card_in_play { cardId }
 - Дебаффы АТК (A9): stat_buff.floorAttack («минимум 0» — ауры и this_turn-бафы)
 - Ходы-состояния (A10): grant_discount (расходуемая скидка следующего розыгрыша, MatchState.discounts), ban_spells_next_turn (Дух ниндзя: armed→active по ходам жертвы, гейт spells_banned)
+- Массовые батчи A–F: op unflip, рефы each_opponent_land/payload_zone_land/payload_zone_own_creatures, ask any_player/opponent_building, StatAmount target_hand_size/per_counter.every, фильтры undamaged/flipped/zoneFlipped, условия while_zone_has_creature/while_zone_has_flipped_creature/while_lives_at_most/while_opponent_creatures_at_most/while_own_creature_on_land_type, обобщённый play-gate по conditions-only пассивкам, move_damage params.self, swap_lanes params.opponent
 - pendingChoice: optional, target (мульти-ask с отложенным сбором через effect_step), resolve_choice, таймер-дефолт (skipPending), bot-ответ time_expired
 - Кура данных: content/cards/mechanics/*.json + content/heroes/mechanics/*.json → build-catalog.mjs валидирует (ops, triggers, asks, refs, amounts, conditions, фильтры, choice-vs-targets) и печатает отчёт покрытия
 

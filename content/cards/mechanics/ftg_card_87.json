@@ -1,0 +1,31 @@
+{
+  "cardId": "ftg_card_87",
+  "name": "Портал в никуда",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        },
+        "side": "any"
+      },
+      "text": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне).",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

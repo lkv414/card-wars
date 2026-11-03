@@ -1,0 +1,20 @@
+{
+  "cardId": "ftg_card_38",
+  "name": "Золотой шакал",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника.",
+      "additionalCost": {
+        "discardFromHand": 1
+      }
+    }
+  ]
+}

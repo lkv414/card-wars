@@ -74,7 +74,7 @@ export const swapLanes: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  _params: Record<string, unknown> | undefined,
+  params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
 ): void => {
   const pick = choices?.[0];
@@ -83,8 +83,9 @@ export const swapLanes: MechanicHandler = (
   }
   const instA = instance(draft, source.instanceId);
   const instB = instance(draft, pick.instanceId);
-  if (instB.controller !== source.player) {
-    throw new DomainError('invalid_choice', 'swap_lanes needs an own creature');
+  const allowOpponent = params?.opponent === true;
+  if (allowOpponent ? instB.controller === source.player : instB.controller !== source.player) {
+    throw new DomainError('invalid_choice', allowOpponent ? 'swap_lanes needs an opponent creature' : 'swap_lanes needs an own creature');
   }
   if (instA.zone === null || instB.zone === null) return;
   const zones = player(draft, source.player).zones;

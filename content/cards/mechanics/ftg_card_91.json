@@ -1,0 +1,25 @@
+{
+  "cardId": "ftg_card_91",
+  "name": "Песчаная пирамида",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_lane_creature"
+          }
+        },
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_lane_opponent_creature"
+          }
+        }
+      ],
+      "text": "Потрать 2 Действия >>> Верни каждое существо на этой линии в руку своему владельцу. (Влияет на обоих игроков.)",
+      "cost": 2
+    }
+  ]
+}

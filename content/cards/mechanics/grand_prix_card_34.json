@@ -1,0 +1,36 @@
+{
+  "cardId": "grand_prix_card_34",
+  "name": "Камнекраб регулировщик",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "triggering_instance"
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 0
+        },
+        "side": "any"
+      },
+      "text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию.",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "if_payload_targeted_self"
+        },
+        {
+          "kind": "if_payload_creature"
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

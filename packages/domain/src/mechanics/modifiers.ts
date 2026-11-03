@@ -395,6 +395,12 @@ export function conditionsHold(
         if (tokens < cond.min) return false;
         break;
       }
+      case 'while_zone_has_creature': {
+        const src = source.instanceId ? instance(draft, source.instanceId) : null;
+        if (!src || src.zone === null) return false;
+        if (!draft.players[source.player]!.zones[src.zone]!.creature) return false;
+        break;
+      }
       case 'while_zone_has_building': {
         const src = source.instanceId ? instance(draft, source.instanceId) : null;
         if (!src || src.zone === null) return false;

@@ -265,7 +265,9 @@ export type ConditionSpec =
   /** Own field card with this id is in play (Малыш камнепух при своей Мамуле). */
   | { kind: 'while_own_card_in_play'; cardId: string }
   /** Own building in the source's zone (Кукурузный чемпион). */
-  | { kind: 'while_zone_has_building' };
+  | { kind: 'while_zone_has_building' }
+  /** Own creature in the source's zone (Теневая пирамида). */
+  | { kind: 'while_zone_has_creature' };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {

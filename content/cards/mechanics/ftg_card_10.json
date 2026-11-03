@@ -1,0 +1,22 @@
+{
+  "cardId": "ftg_card_10",
+  "name": "Волшебник-гастролер",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "mechanic": "swap_lanes",
+        "params": {
+          "opponent": true
+        }
+      },
+      "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами.",
+      "targets": [
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ]
+    }
+  ]
+}

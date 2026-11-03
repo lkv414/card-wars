@@ -80,7 +80,7 @@ const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands',
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
-  'while_distinct_lands', 'while_land_count', 'while_zone_has_building',
+  'while_distinct_lands', 'while_land_count', 'while_zone_has_building', 'while_zone_has_creature',
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',

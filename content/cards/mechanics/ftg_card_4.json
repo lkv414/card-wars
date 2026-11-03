@@ -1,0 +1,11 @@
+{
+  "cardId": "ftg_card_4",
+  "name": "Призрак Джинни",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": { "op": "grant_discount", "cardType": "spell", "amount": -2 },
+      "text": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 2 меньше."
+    }
+  ]
+}

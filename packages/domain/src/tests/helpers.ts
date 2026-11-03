@@ -535,6 +535,43 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'ghost-jinni',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'active', effect: { op: 'grant_discount', cardType: 'spell', amount: -2 }, text: 'Фикстура Джинни' },
+    ],
+  }),
+  card({
+    id: 'coffin',
+    type: 'spell',
+    cost: 0,
+    landType: 'swamp',
+    abilities: [
+      { kind: 'passive', trigger: 'on_cast', effect: { op: 'grant_discount', cardType: 'creature', amount: -2 }, text: 'Фикстура гроба' },
+    ],
+  }),
+  card({
+    id: 'ninja',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_damage_dealt',
+        effect: { op: 'ban_spells_next_turn' },
+        conditions: [{ kind: 'if_payload_to_player' }, { kind: 'if_payload_opponent_target' }],
+        text: 'Фикстура ниндзя',
+      },
+    ],
+  }),
+  card({
     id: 'debuff-post',
     type: 'building',
     cost: 1,

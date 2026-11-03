@@ -168,6 +168,11 @@ export interface MatchState {
   turnCounters: Record<string, number>;
   /** Modifiers granted by abilities this turn; cleared at end of turn. */
   turnModifiers: TurnModifier[];
+  /** Consumable play discounts this turn (docs/MECHANICS-V2.md §3, A10). */
+  discounts: Array<{ player: PlayerId; cardType: 'spell' | 'creature' | 'building'; amount: number; grantedOnTurn: number }>;
+  /** Spell-play bans armed by damage (Дух ниндзя); activated at the victim's turn start. */
+  spellBansArmed: PlayerId[];
+  spellBansActive: Array<{ player: PlayerId; turn: number }>;
   /** Temporary land flips (Воронка) reverted at the owner's next turn start. */
   landFlipEffects: LandFlipEffect[];
   /** Revealed deck window (Газы Огрa): card ids, public until consumed. */

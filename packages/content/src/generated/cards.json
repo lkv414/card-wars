@@ -3128,7 +3128,18 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 2 меньше.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "grant_discount",
+     "cardType": "spell",
+     "amount": -2
+    },
+    "text": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 2 меньше."
+   }
+  ]
  },
  {
   "id": "ftg_card_5",
@@ -3140,7 +3151,25 @@
   "attack": 2,
   "defense": 7,
   "description": "Когда Дух ниндзя наносит урон противнику, этот противник не может играть заклинания во время своего следующего хода.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "effect": {
+     "op": "ban_spells_next_turn"
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_to_player"
+     },
+     {
+      "kind": "if_payload_opponent_target"
+     }
+    ],
+    "text": "Когда Дух ниндзя наносит урон противнику, этот противник не может играть заклинания во время своего следующего хода."
+   }
+  ]
  },
  {
   "id": "ftg_card_6",
@@ -7432,7 +7461,19 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lady_rainicorn_card_38.png",
   "description": "Следующее существо сыгранное тобой в этом ход стоит на 2 действия меньше.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "grant_discount",
+     "cardType": "creature",
+     "amount": -2
+    },
+    "text": "Следующее существо сыгранное тобой в этом ход стоит на 2 действия меньше."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_1",
@@ -7522,7 +7563,28 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_12.png",
   "description": "Переверни выбранную землю лицом вниз до начала твоего следующего хода.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "down": true,
+     "until": "next_own_turn"
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "Переверни выбранную землю лицом вниз до начала твоего следующего хода."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_14",

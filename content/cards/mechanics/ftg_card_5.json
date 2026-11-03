@@ -1,0 +1,16 @@
+{
+  "cardId": "ftg_card_5",
+  "name": "Дух ниндзя",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": { "op": "ban_spells_next_turn" },
+      "conditions": [
+        { "kind": "if_payload_to_player" },
+        { "kind": "if_payload_opponent_target" }
+      ],
+      "text": "Когда Дух ниндзя наносит урон противнику, этот противник не может играть заклинания во время своего следующего хода."
+    }
+  ]
+}

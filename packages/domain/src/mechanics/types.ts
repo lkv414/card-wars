@@ -290,6 +290,10 @@ export type EffectSpec =
   /** Move a creature to a player-chosen empty zone (Коготь дракона). */
   | { op: 'move_creature'; target: TargetRef; destination: TargetRef; side: 'own' | 'any' }
   | { op: 'freeze_land'; target: TargetRef; frozen: boolean }
+  /** Next matching play this turn costs `amount` less (Призрак Джинни, Непустой гроб). */
+  | { op: 'grant_discount'; cardType: 'spell' | 'creature' | 'building'; amount: number }
+  /** The player damaged by this trigger cannot play spells on their next turn (Дух ниндзя). */
+  | { op: 'ban_spells_next_turn' }
   /** Remove one ice token from the target land (Снежок, Ледяной банк). */
   | { op: 'remove_token'; target: TargetRef }
   /** Move one ice token between two lands (Коктейль): target → destination. */

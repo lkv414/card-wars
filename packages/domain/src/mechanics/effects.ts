@@ -142,6 +142,23 @@ export function runEffect(
       }
       return;
     }
+    case 'grant_discount': {
+      draft.discounts.push({
+        player: source.player,
+        cardType: effect.cardType,
+        amount: effect.amount,
+        grantedOnTurn: draft.turn,
+      });
+      return;
+    }
+    case 'ban_spells_next_turn': {
+      // Дух ниндзя: the damaged player (payload.targetPlayer) is armed; the ban
+      // activates at their turn start.
+      const victim = payload?.targetPlayer;
+      if (!victim) return;
+      if (!draft.spellBansArmed.includes(victim)) draft.spellBansArmed.push(victim);
+      return;
+    }
     case 'remove_token': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'land') continue;

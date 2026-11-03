@@ -1258,3 +1258,42 @@ describe('golden: дебаффы АТК (A9)', () => {
     expect(computeEff(s, deps, weakId).attack).toBe(1);
   });
 });
+
+describe('golden: ходы-состояния (A10)', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('Призрак Джинни: следующее заклинание стоит на 2 меньше', () => {
+    let s = round2(newMatch());
+    s = forceToHand(s, 'p1', 'ftg_card_4');
+    const resPlay = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ftg_card_4'), zone: 0 }, deps);
+    if (!resPlay.ok) throw new Error(`play: ${resPlay.rejected.code}: ${resPlay.rejected.message}`);
+    s = resPlay.state;
+    const jinniId = s.players.p1!.zones[0]!.creature!;
+    const resFloop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: jinniId }, deps);
+    if (!resFloop.ok) throw new Error(`floop: ${resFloop.rejected.code}: ${resFloop.rejected.message}`);
+    s = resFloop.state;
+    expect(s.discounts).toHaveLength(1);
+    // Непустой гроб (стоимость 0) + скидка: бесплатен, скидка списывается.
+    s = forceToHand(s, 'p1', 'lady_rainicorn_card_38');
+    const resCast = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'lady_rainicorn_card_38') }, deps);
+    if (!resCast.ok) throw new Error(`cast: ${resCast.rejected.code}: ${resCast.rejected.message}`);
+    s = resCast.state;
+    // Скидка Джинни списана, гроб выдал свою — на существо.
+    expect(s.discounts).toHaveLength(1);
+    expect(s.discounts[0]!.cardType).toBe('creature');
+    // Скидка гроба: следующее существо дешевле на 2 действия.
+    s = forceToHand(s, 'p1', 'bmo_card_12'); // стоимость 2
+    const before = s.players.p1!.actions;
+    const resCreature = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 1 }, deps);
+    if (!resCreature.ok) throw new Error(`creature: ${resCreature.rejected.code}: ${resCreature.rejected.message}`);
+    expect(resCreature.state.players.p1!.actions).toBe(before); // 2 − 2 → 0
+  });
+});

@@ -37,6 +37,13 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   }
   draft.landFlipEffects = draft.landFlipEffects.filter((e) => !(e.owner === pid && e.grantedOnTurn < draft.turn));
 
+  // Запрет заклинаний (Дух ниндзя): armed бан активируется на этот ход.
+  if (draft.spellBansArmed.includes(pid)) {
+    draft.spellBansArmed = draft.spellBansArmed.filter((x) => x !== pid);
+    draft.spellBansActive = draft.spellBansActive.filter((b) => b.player !== pid);
+    draft.spellBansActive.push({ player: pid, turn: draft.turn });
+  }
+
   // Добор: free draws are automatic (docs/RULES.md, «Ход игрока»).
   draft.phase = 'draw';
   emit(ctx, { type: 'phase_changed', player: pid, phase: 'draw' });
@@ -69,6 +76,12 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.turnBuffs = [];
   draft.turnCounters = {};
   draft.turnModifiers = [];
+  draft.discounts = []; // «в этот ход» — скидки сгорают вместе с ходом
+  draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn === draft.turn);
+  // Активный бан заканчивается вместе с ходом, под конец снимаем полностью.
+  if (draft.spellBansActive.some((b) => b.turn === draft.turn)) {
+    draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn !== draft.turn);
+  }
   for (const pid of draft.activePlayers) player(draft, pid).actions = 0;
 
   const current = draft.activePlayers;

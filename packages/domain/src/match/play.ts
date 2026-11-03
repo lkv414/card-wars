@@ -7,7 +7,7 @@ import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter } from '../mechanics/effects';
-import { landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
+import { consumeDiscount, landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -109,6 +109,10 @@ export function handlePlayCard(
   }
 
   if (card.type === 'spell') {
+    // Запрет заклинаний (Дух ниндзя, docs/MECHANICS-V2.md §3 A10).
+    if (draft.spellBansActive.some((b) => b.player === playerId && b.turn === draft.turn)) {
+      throw new DomainError('spells_banned', 'spells cannot be played this turn');
+    }
     // Spell's own on_cast abilities: validate non-interactive targets atomically.
     const casts = (card.abilities ?? []).filter((a) => a.trigger === 'on_cast');
     for (const ability of casts) {
@@ -116,6 +120,7 @@ export function handlePlayCard(
       validateChoices(draft, ctx, { player: playerId, instanceId }, ability.targets, targets);
     }
     p.actions -= effectiveCost;
+    consumeDiscount(draft, playerId, 'spell');
     emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
     inst.location = 'discard';
     moveId(p.hand, p.discard, instanceId);
@@ -197,6 +202,7 @@ export function handlePlayCard(
   }
 
   p.actions -= effectiveCost;
+  consumeDiscount(draft, playerId, card.type === 'creature' ? 'creature' : 'building');
   inst.location = 'field';
   inst.zone = zone;
   inst.slot = slot;

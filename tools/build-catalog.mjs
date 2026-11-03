@@ -64,7 +64,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -145,6 +145,11 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.target, where);
     if (typeof effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
     if (effect.until !== undefined && effect.until !== 'next_own_turn') fail(`${where}: flip_land until must be next_own_turn`);
+  } else if (op === 'grant_discount') {
+    if (!['spell', 'creature', 'building'].includes(effect.cardType)) fail(`${where}: grant_discount cardType invalid`);
+    if (!Number.isInteger(effect.amount)) fail(`${where}: grant_discount needs integer amount`);
+  } else if (op === 'ban_spells_next_turn') {
+    // no parameters
   } else if (op === 'defense_mod') {
     checkTargetRef(effect.target, where);
     if (!Number.isInteger(effect.atkBonus)) fail(`${where}: defense_mod needs integer atkBonus`);

@@ -510,7 +510,26 @@ export function playedCardCostModifier(
     if (!effect || effect.op !== 'cost_mod' || !conditionsHold(draft, ctx, source, ability.conditions, undefined)) continue;
     total += resolveStatAmount(draft, ctx, source, effect.amount);
   }
+  // Расходуемые скидки следующего розыгрыша (Призрак Джинни, Непустой гроб).
+  for (const discount of draft.discounts) {
+    if (discount.player !== playerId || discount.cardType !== card.type) continue;
+    if (discount.grantedOnTurn !== draft.turn) continue;
+    total += discount.amount;
+    break; // «следующее» — ровно одна скидка на розыгрыш
+  }
   return total;
+}
+
+/** Consume the discount used by a successful play (docs/MECHANICS-V2.md §3, A10). */
+export function consumeDiscount(
+  draft: MatchState,
+  playerId: string,
+  cardType: 'spell' | 'creature' | 'building',
+): void {
+  const index = draft.discounts.findIndex(
+    (d) => d.player === playerId && d.cardType === cardType && d.grantedOnTurn === draft.turn,
+  );
+  if (index >= 0) draft.discounts.splice(index, 1);
 }
 
 /** Sum of «считается за дополнительную землю» contributions for a land type. */

@@ -13,8 +13,8 @@
 
 ## Текущее состояние
 
-- **Покрытие**: 194/544 карт + 9/25 героев структурированы и работают
-- **Тесты**: 201 зелёный (138 domain, 39 content, 15 server, 5 application, 4 protocol)
+- **Покрытие**: 197/544 карт + 9/25 героев структурированы и работают
+- **Тесты**: 204 зелёных (139 domain, 40 content, 15 server, 5 application, 4 protocol)
 - **Отчёт покрытия** после каждой генерации: `pnpm --filter @card-wars/content generate` печатает «mechanics: cards N/544 structured»
 
 ## Что уже реализовано в движке
@@ -31,6 +31,7 @@
 - AbilitySpec.oncePerGame («в первый раз…»), условие if_payload_cost; TargetRef: this_lane_own_creature, this_lane_opponent_building
 - Ледяные жетоны (A7+A7.1): LandState.iceTokens (ледяные земли стартуют с 1 — docs/RULES.md), ops remove_token/transfer_token, условия while_lane_ice_token/while_own_turn/while_no_tokens_in_play/while_zone_ice_token (play-gate), per_lands.token+where:'choice', фильтр zoneToken, suppress.attacks+filter, рефы each_creature_of_choice_player/adjacent_own_land, механики token_bonus_damage, событие token_changed
 - Боевой контекст защитника (A8): операция defense_mod («+N АТК пока защищается», матчинг по земле зоны атакующего, только retaliation), условие while_own_card_in_play { cardId }
+- Дебаффы АТК (A9): stat_buff.floorAttack («минимум 0» — ауры и this_turn-бафы)
 - pendingChoice: optional, target (мульти-ask с отложенным сбором через effect_step), resolve_choice, таймер-дефолт (skipPending), bot-ответ time_expired
 - Кура данных: content/cards/mechanics/*.json + content/heroes/mechanics/*.json → build-catalog.mjs валидирует (ops, triggers, asks, refs, amounts, conditions, фильтры, choice-vs-targets) и печатает отчёт покрытия
 

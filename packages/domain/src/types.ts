@@ -53,6 +53,8 @@ export interface LandState {
   type: LandType;
   frozen: boolean;
   flipped: boolean;
+  /** Ice tokens (docs/RULES.md «Земли»): icy lands enter play with one. */
+  iceTokens: number;
 }
 
 export interface ZoneState {

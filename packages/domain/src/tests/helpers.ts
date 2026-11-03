@@ -456,6 +456,85 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'transfer-token',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'active',
+        effect: { op: 'transfer_token', target: { kind: 'choice', index: 0 }, destination: { kind: 'choice', index: 1 } },
+        targets: [{ kind: 'landscape' }, { kind: 'landscape' }],
+        text: 'Фикстура Коктейля',
+      },
+    ],
+  }),
+  card({
+    id: 'snowball',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: [
+          { op: 'remove_token', target: { kind: 'this_lane_land' } },
+          { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 3 },
+        ],
+        targets: [{ kind: 'any_creature' }],
+        text: 'Фикстура Снежка',
+      },
+    ],
+  }),
+  card({
+    id: 'racer',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'stat_buff', target: { kind: 'this_creature' }, stat: 'attack', amount: 4, duration: 'aura' },
+        conditions: [{ kind: 'while_lane_ice_token', min: 2 }],
+        text: 'Фикстура гонщика',
+      },
+    ],
+  }),
+  card({
+    id: 'sapper',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'stat_buff', target: { kind: 'this_creature' }, stat: 'attack', amount: { kind: 'per_lands', where: 'own', token: true, amount: 1 }, duration: 'aura' },
+        text: 'Фикстура диверсанта',
+      },
+    ],
+  }),
+  card({
+    id: 'penguin',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'stat_buff', target: { kind: 'each_creature' }, stat: 'attack', amount: -1, duration: 'aura', filter: { zoneToken: true } },
+        text: 'Фикстура пингвина',
+      },
+    ],
+  }),
+  card({
     id: 'school-building',
     type: 'building',
     cost: 1,

@@ -136,6 +136,8 @@ export interface TargetFilter {
   cardIds?: string[];
   /** Match by the target's ZONE land type instead of the card (гномы). */
   zoneLandType?: LandType;
+  /** Match creatures standing on a land with ice tokens (Пингвин, Мороженник, Гантер). */
+  zoneToken?: boolean;
   /** Invert the match (Капитан Тако: не на кукурузной земле). */
   negate?: boolean;
 }
@@ -154,6 +156,8 @@ export type StatAmount =
       landType?: LandType;
       empty?: boolean;
       flipped?: boolean;
+      /** Only lands carrying ice tokens (Ледяной диверсант, Ослепительная Люси). */
+      token?: boolean;
       amount: number;
     }
   | {
@@ -226,6 +230,8 @@ export type ConditionSpec =
   | { kind: 'while_distinct_lands'; min?: number; max?: number }
   /** Land count of a type under control within [min..max] (Кукурузный пес). */
   | { kind: 'while_land_count'; landType: LandType; min?: number; max?: number }
+  /** The source's lane has at least `min` lands with ice tokens (Ледяной гонщик). */
+  | { kind: 'while_lane_ice_token'; min: number }
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' };
 
@@ -268,6 +274,10 @@ export type EffectSpec =
   /** Move a creature to a player-chosen empty zone (Коготь дракона). */
   | { op: 'move_creature'; target: TargetRef; destination: TargetRef; side: 'own' | 'any' }
   | { op: 'freeze_land'; target: TargetRef; frozen: boolean }
+  /** Remove one ice token from the target land (Снежок, Ледяной банк). */
+  | { op: 'remove_token'; target: TargetRef }
+  /** Move one ice token between two lands (Коктейль): target → destination. */
+  | { op: 'transfer_token'; target: TargetRef; destination: TargetRef }
   /** Win check (герой Билли): all opponents' decks are empty at the trigger point. */
   | { op: 'win_if_opponents_deck_empty' }
   /** Cost modifier scanned at payment time (Остролист, Домик из разного дерева). */

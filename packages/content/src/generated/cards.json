@@ -4935,7 +4935,34 @@
   "landType": "ice",
   "image": "/content/cards/images/grand_prix_card_9.png",
   "description": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "remove_token",
+      "target": {
+       "kind": "this_lane_land"
+      }
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 3
+     }
+    ],
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_10",
@@ -5051,7 +5078,32 @@
   "attack": 1,
   "defense": 8,
   "description": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую землю.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "transfer_token",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 1
+     }
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     },
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую землю."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_23",
@@ -5262,7 +5314,24 @@
   "landType": "rainbow",
   "image": "/content/cards/images/gunter_card_4.png",
   "description": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 2,
+     "filter": {
+      "zoneToken": true
+     }
+    },
+    "text": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками."
+   }
+  ]
  },
  {
   "id": "gunter_card_9",
@@ -5332,7 +5401,28 @@
   "attack": 2,
   "defense": 6,
   "description": "+4 ATK, если обе земли на этой линии имеют Ледяные жетоны.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 4,
+     "duration": "aura"
+    },
+    "conditions": [
+     {
+      "kind": "while_lane_ice_token",
+      "min": 2
+     }
+    ],
+    "text": "+4 ATK, если обе земли на этой линии имеют Ледяные жетоны."
+   }
+  ]
  },
  {
   "id": "gunter_card_16",
@@ -5344,7 +5434,27 @@
   "attack": 1,
   "defense": 7,
   "description": "Ледяной диверсант получает +1 ATK за каждую землю с ледяным жетоном.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "token": true,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Ледяной диверсант получает +1 ATK за каждую землю с ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "gunter_card_18",
@@ -5388,7 +5498,34 @@
   "attack": 1,
   "defense": 8,
   "description": "Удали Ледяной жетон с земли Снежка >>> Нанеси 3 урона выбранному существу.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "remove_token",
+      "target": {
+       "kind": "this_lane_land"
+      }
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 3
+     }
+    ],
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Удали Ледяной жетон с земли Снежка >>> Нанеси 3 урона выбранному существу."
+   }
+  ]
  },
  {
   "id": "gunter_card_22",
@@ -5595,7 +5732,25 @@
   "attack": 1,
   "defense": 8,
   "description": "Существа на землях с ледяным жетоном получают -1 АТК.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": -1,
+     "duration": "aura",
+     "filter": {
+      "zoneToken": true
+     }
+    },
+    "text": "Существа на землях с ледяным жетоном получают -1 АТК."
+   }
+  ]
  },
  {
   "id": "ice_king_card_10",
@@ -5607,7 +5762,24 @@
   "attack": 1,
   "defense": 10,
   "description": "В начале своего хода нанеси 1 урон каждому существу на земле с ледяным жетоном.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1,
+     "filter": {
+      "zoneToken": true
+     }
+    },
+    "text": "В начале своего хода нанеси 1 урон каждому существу на земле с ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "ice_king_card_12",
@@ -5643,7 +5815,22 @@
   "attack": 4,
   "defense": 4,
   "description": "ПРИЕМ >>> Тяни карту за каждую землю с ледяным жетоном под контролем игроков.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_lands",
+      "where": "all",
+      "token": true,
+      "amount": 1
+     }
+    },
+    "text": "ПРИЕМ >>> Тяни карту за каждую землю с ледяным жетоном под контролем игроков."
+   }
+  ]
  },
  {
   "id": "ice_king_card_18",
@@ -5667,7 +5854,25 @@
   "attack": 2,
   "defense": 7,
   "description": "ПРИЕМ >>> Восстанови 1 Урон с каждого своего существа за каждую землю с ледяным жетоном под контролем игроков.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "token": true,
+      "amount": 1
+     }
+    },
+    "text": "ПРИЕМ >>> Восстанови 1 Урон с каждого своего существа за каждую землю с ледяным жетоном под контролем игроков."
+   }
+  ]
  },
  {
   "id": "ice_king_card_21",
@@ -5691,7 +5896,27 @@
   "attack": 2,
   "defense": 9,
   "description": "Ослепительная Люси получает +1 АТК за каждую землю с ледяным жетоном под контролем игроков.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "token": true,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Ослепительная Люси получает +1 АТК за каждую землю с ледяным жетоном под контролем игроков."
+   }
+  ]
  },
  {
   "id": "ice_king_card_24",

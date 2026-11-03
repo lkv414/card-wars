@@ -141,7 +141,7 @@ export function createMatch(
       deck: shuffled,
       hand,
       discard: [],
-      lands: p.lands.map((type) => ({ type, frozen: false, flipped: false })),
+      lands: p.lands.map((type) => ({ type, frozen: false, flipped: false, iceTokens: type === 'ice' ? 1 : 0 })),
       zones: Array.from({ length: config.landsPerPlayer }, () => ({ creature: null, building: null })),
       companion: null,
       actions: 0,

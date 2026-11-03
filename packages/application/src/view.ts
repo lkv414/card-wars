@@ -81,7 +81,7 @@ export function viewFor(
       maxLives: p.maxLives,
       actions: p.actions,
       connected: options.connected?.[pid] ?? true,
-      lands: p.lands.map((land) => ({ type: land.type, frozen: land.frozen, flipped: land.flipped })),
+      lands: p.lands.map((land) => ({ type: land.type, frozen: land.frozen, flipped: land.flipped, iceTokens: land.iceTokens })),
       zones: p.zones.map((zone) => ({
         creature: zone.creature ? cardView(deps, state, zone.creature) : null,
         building: zone.building ? cardView(deps, state, zone.building) : null,

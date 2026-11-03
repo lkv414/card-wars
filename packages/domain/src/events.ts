@@ -28,6 +28,7 @@ export type GameEvent =
   | { type: 'card_discarded'; player: PlayerId; instanceId: string; cardId: string; from: 'hand' | 'field' | 'companion' | 'deck' }
   | { type: 'card_returned'; player: PlayerId; instanceId: string; cardId: string }
   | { type: 'land_changed'; player: PlayerId; zone: number; change: 'frozen' | 'unfrozen' | 'flipped' | 'unflipped' }
+  | { type: 'token_changed'; player: PlayerId; zone: number; iceTokens: number }
   | { type: 'bonus_changed'; instanceId: string; cardId: string; bonusAttack: number; bonusDefense: number }
   | { type: 'shield_changed'; instanceId: string; cardId: string; shield: number }
   | { type: 'card_moved'; player: PlayerId; instanceId: string; fromZone: number; toZone: number }

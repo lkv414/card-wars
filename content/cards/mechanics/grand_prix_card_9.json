@@ -1,0 +1,15 @@
+{
+  "cardId": "grand_prix_card_9",
+  "name": "Ледяной банк",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        { "op": "remove_token", "target": { "kind": "this_lane_land" } },
+        { "op": "deal_damage", "target": { "kind": "choice", "index": 0 }, "amount": 3 }
+      ],
+      "targets": [{ "kind": "opponent_player" }],
+      "text": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику."
+    }
+  ]
+}

@@ -94,10 +94,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Крепость Крови: +1 ATK существу своей линии, живой пересчёт', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -122,10 +122,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Темный ангел: +1 ATK за каждые 5 карт в сбросе', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -149,10 +149,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Остролист: стоимость −2 при 10+ картах в сбросе', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -165,10 +165,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     // с условием: 10 карт в сбросе → 0 действий
     let s2 = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       const p = d.players.p1!;
@@ -188,10 +188,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Ферма: считается за дополнительную Кукурузную землю', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'corn', frozen: false, flipped: true },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'corn', frozen: false, flipped: true, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
     });
     expect(matchingLandCount(s, deps, 'p1', 'corn')).toBe(0); // перевёрнутая не считается
@@ -232,10 +232,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
       d.players.p1!.lives = 24;
       d.round = 2; // флюп запрещён в первом круге для первого игрока
       d.players.p1!.lands = [
-        { type: 'good', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'good', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -252,10 +252,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Лысый бродяга: в начале хода верхняя карта колоды — в сброс', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -279,10 +279,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('гномы: урон только существам противника на земле нужного типа', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       d.round = 2; // флюп запрещён в первом круге для первого игрока
@@ -317,10 +317,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Козёл: добор только при входе заменой', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -341,10 +341,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Вождь Вайда: +2 АТК за каждое сыгранное тобой заклинание в этом ходу', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -368,10 +368,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -392,10 +392,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Дворец Костей: у существ противника на линии не срабатывает вход', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -430,10 +430,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Лорд Вампиров: лечится на нанесённый урон', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       const p2 = d.players.p2!;
@@ -468,10 +468,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       const p2 = d.players.p2!;
@@ -504,10 +504,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
       d.round = 2;
       d.players.p1!.heroId = 'hero_finn';
       d.players.p1!.lands = [
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       const p2 = d.players.p2!;
@@ -539,10 +539,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'good', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'good', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -573,10 +573,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'good', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'good', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -613,10 +613,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'corn', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'corn', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -638,10 +638,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -681,10 +681,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -707,10 +707,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Кроха слон: считается также Радужным для фильтров (Матриарх)', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
     });
@@ -735,10 +735,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       // заклинание bmo_card_36 в сброс
@@ -766,10 +766,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       const p2 = d.players.p2!;
@@ -801,10 +801,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
     let s = edit(newMatch(), (d) => {
       d.round = 2;
       d.players.p1!.lands = [
-        { type: 'good', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
-        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'good', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 },
       ];
       d.players.p1!.actions = 10;
       const p2 = d.players.p2!;
@@ -878,10 +878,10 @@ describe('golden: ауры и модификаторы (M2)', () => {
   it('Угнетающая пирамида: −2 DEF существу противника, но не ниже 1', () => {
     let s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
-        { type: 'swamp', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
-        { type: 'blue', frozen: false, flipped: false },
+        { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
+        { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
       ];
       const p1 = d.players.p1!;
       const b = p1.deck[0]!;
@@ -944,8 +944,8 @@ describe('golden: Связь — копирование заклинания (co
         d.instances[id]!.slot = 'creature';
         p.zones[0]!.creature = id;
       }
-      d.players.p1!.lands[0] = { type: 'swamp', frozen: false, flipped: false };
-      d.players.p1!.lands[3] = { type: 'rainbow', frozen: false, flipped: false };
+      d.players.p1!.lands[0] = { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 };
+      d.players.p1!.lands[3] = { type: 'rainbow', frozen: false, flipped: false, iceTokens: 0 };
       d.players.p1!.actions = 10;
     });
     s = forceToHand(s, 'p1', 'charlie_card_4');
@@ -1066,5 +1066,57 @@ describe('golden: без текста и подмена способностей
     if (!resGrant.ok) throw new Error(`floop grant: ${resGrant.rejected.code}: ${resGrant.rejected.message}`);
     s = resGrant.state;
     expect(s.instances[victimId]!.damage).toBe(1); // выданный приём вылечил 1
+  });
+});
+
+describe('golden: ледяные жетоны', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('Ледяной банк: снимает жетон с линии и наносит 3 урона противнику', () => {
+    let s = edit(round2(newMatch()), (d) => {
+      d.players.p1!.lands[0] = { type: 'ice', frozen: false, flipped: false, iceTokens: 1 };
+    });
+    s = forceToHand(s, 'p1', 'grand_prix_card_9');
+    const resPlay = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'grand_prix_card_9'), zone: 0 }, deps);
+    if (!resPlay.ok) throw new Error(`play: ${resPlay.rejected.code}: ${resPlay.rejected.message}`);
+    s = resPlay.state;
+    const bankId = s.players.p1!.zones[0]!.building!;
+    const resFloop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: bankId }, deps);
+    if (!resFloop.ok) throw new Error(`floop: ${resFloop.rejected.code}: ${resFloop.rejected.message}`);
+    s = resFloop.state;
+    expect(s.pending?.ask.kind).toBe('effect_step');
+    const lives = s.teams === null ? s.players.p2!.lives : 0;
+    const resTarget = applyCommand(s, { type: 'resolve_choice', player: 'p1', answer: { targets: [{ kind: 'player', playerId: 'p2' }] } }, deps);
+    if (!resTarget.ok) throw new Error(`target: ${resTarget.rejected.code}: ${resTarget.rejected.message}`);
+    s = resTarget.state;
+    expect(s.players.p1!.lands[0]!.iceTokens).toBe(0); // жетон снят
+    if (s.teams === null) expect(s.players.p2!.lives).toBe(lives - 3);
+  });
+
+  it('Гантер: существа на землях с жетонами получают +1 АТК', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.heroId = 'hero_gunter';
+      d.players.p1!.lands[0] = { type: 'ice', frozen: false, flipped: false, iceTokens: 1 };
+    });
+    s = edit(s, (d) => {
+      const p = d.players.p1!;
+      const id = p.deck[0]!;
+      p.deck = p.deck.filter((x) => x !== id);
+      d.instances[id]!.cardId = 'bmo_card_12'; // 3/9
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 0;
+      d.instances[id]!.slot = 'creature';
+      p.zones[0]!.creature = id;
+    });
+    const creatureId = s.players.p1!.zones[0]!.creature!;
+    expect(computeEff(s, deps, creatureId).attack).toBe(3 + 1);
   });
 });

@@ -37,7 +37,8 @@ export type RejectCode =
   | 'effect_not_implemented'
   | 'trigger_storm'
   | 'ability_suppressed'
-  | 'condition_not_met';
+  | 'condition_not_met'
+  | 'no_ice_token';
 
 /** Thrown inside a state transition; the producer aborts, so the state stays untouched. */
 export class DomainError extends Error {

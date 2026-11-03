@@ -1,0 +1,12 @@
+{
+  "cardId": "gunter_card_4",
+  "name": "Снежная лавина",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": { "op": "deal_damage", "target": { "kind": "each_creature_opponent" }, "amount": 2, "filter": { "zoneToken": true } },
+      "text": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками."
+    }
+  ]
+}

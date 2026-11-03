@@ -1,0 +1,9 @@
+{
+  "heroId": "hero_gunter",
+  "name": "Гантер",
+  "ability": {
+    "kind": "passive",
+    "effect": { "op": "stat_buff", "target": { "kind": "each_creature_yours" }, "stat": "attack", "amount": 1, "duration": "aura", "filter": { "zoneToken": true } },
+    "text": "Существа под твоим контролем на землях с Ледяными фишками получают +1 АТК."
+  }
+}

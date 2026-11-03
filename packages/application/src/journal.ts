@@ -60,6 +60,8 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
       return event.copy
         ? `${nick(state, event.player)} копирует заклинание ${cardName(deps, event.cardId)}`
         : `${nick(state, event.player)} читает заклинание ${cardName(deps, event.cardId)}`;
+    case 'token_changed':
+      return `Ледяных жетонов на земле ${event.zone + 1} ${nick(state, event.player)}: ${event.iceTokens}`;
     case 'floop_used': {
       const paid = event.paidActions > 0 ? ` (−${event.paidActions} действие)` : '';
       return `${nick(state, event.player)} флюпает ${cardName(deps, event.cardId)}${paid}`;

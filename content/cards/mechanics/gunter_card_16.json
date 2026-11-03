@@ -1,0 +1,11 @@
+{
+  "cardId": "gunter_card_16",
+  "name": "Ледяной диверсант",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": { "op": "stat_buff", "target": { "kind": "this_creature" }, "stat": "attack", "amount": { "kind": "per_lands", "where": "own", "token": true, "amount": 1 }, "duration": "aura" },
+      "text": "Ледяной диверсант получает +1 ATK за каждую землю с ледяным жетоном."
+    }
+  ]
+}

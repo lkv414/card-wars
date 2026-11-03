@@ -1,0 +1,11 @@
+{
+  "cardId": "ice_king_card_20",
+  "name": "Снежный ангел",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": { "op": "heal", "target": { "kind": "each_creature_yours" }, "amount": { "kind": "per_lands", "where": "all", "token": true, "amount": 1 } },
+      "text": "ПРИЕМ >>> Восстанови 1 Урон с каждого своего существа за каждую землю с ледяным жетоном под контролем игроков."
+    }
+  ]
+}

@@ -339,6 +339,26 @@ export function conditionsHold(
         if (cond.max !== undefined && count > cond.max) return false;
         break;
       }
+      case 'while_lane_ice_token': {
+        const src = source.instanceId ? instance(draft, source.instanceId) : null;
+        if (!src || src.zone === null) return false;
+        let tokens = 0;
+        for (const pid of draft.order) {
+          const other = draft.players[pid]!;
+          if (other.zones.length !== draft.players[source.player]!.zones.length) continue;
+          for (const zone of [src.zone]) {
+            // Своя земля линии; зеркальная — у каждого противника напротив.
+            tokens += other.lands[zone]?.iceTokens ?? 0;
+            if (pid !== source.player) continue;
+            const mirror = other.zones.length - 1 - zone;
+            for (const enemyId of opponentsOf(draft, source.player)) {
+              tokens += draft.players[enemyId]!.lands[mirror]?.iceTokens ?? 0;
+            }
+          }
+        }
+        if (tokens < cond.min) return false;
+        break;
+      }
       case 'while_zone_has_building': {
         const src = source.instanceId ? instance(draft, source.instanceId) : null;
         if (!src || src.zone === null) return false;
@@ -396,6 +416,7 @@ export function resolveStatAmount(
           if (amount.landType && land.type !== amount.landType) return;
           if (amount.flipped && !land.flipped) return;
           if (amount.empty && (other.zones[zone]?.creature || other.zones[zone]?.building)) return;
+          if (amount.token && land.iceTokens <= 0) return;
           count += 1;
         });
       }
@@ -434,6 +455,10 @@ function targetMatchesFilter(
     if (card.id !== ownCardId) return false;
   }
   if (filter.cardIds && !filter.cardIds.includes(card.id)) return false;
+  if (filter.zoneToken) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || owner.lands[inst.zone]!.iceTokens <= 0) return false;
+  }
   return true;
 }
 

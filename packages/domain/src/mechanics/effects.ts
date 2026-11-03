@@ -141,6 +141,36 @@ export function runEffect(
       }
       return;
     }
+    case 'remove_token': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'land') continue;
+        const land = draft.players[target.playerId]!.lands[target.zone]!;
+        if (land.iceTokens <= 0) {
+          throw new DomainError('no_ice_token', `land ${target.zone} of ${target.playerId} has no ice token`);
+        }
+        land.iceTokens -= 1;
+        emit(ctx, { type: 'token_changed', player: target.playerId, zone: target.zone, iceTokens: land.iceTokens });
+      }
+      return;
+    }
+    case 'transfer_token': {
+      const from = resolveTarget(draft, ctx, effect.target, source, choices, payload).find((t) => t.kind === 'land');
+      const to = resolveTarget(draft, ctx, effect.destination, source, choices, payload).find((t) => t.kind === 'land');
+      if (!from || !to) return;
+      if (from.playerId === to.playerId && from.zone === to.zone) {
+        throw new DomainError('invalid_choice', 'transfer_token needs two different lands');
+      }
+      const fromLand = draft.players[from.playerId]!.lands[from.zone]!;
+      if (fromLand.iceTokens <= 0) {
+        throw new DomainError('no_ice_token', `land ${from.zone} of ${from.playerId} has no ice token`);
+      }
+      fromLand.iceTokens -= 1;
+      const toLand = draft.players[to.playerId]!.lands[to.zone]!;
+      toLand.iceTokens += 1;
+      emit(ctx, { type: 'token_changed', player: from.playerId, zone: from.zone, iceTokens: fromLand.iceTokens });
+      emit(ctx, { type: 'token_changed', player: to.playerId, zone: to.zone, iceTokens: toLand.iceTokens });
+      return;
+    }
     case 'flip_land': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'land') continue;
@@ -368,6 +398,10 @@ function targetMatchesFilter(
     const owner = draft.players[inst.controller]!;
     const zoneLand = inst.zone !== null ? owner.lands[inst.zone]!.type : null;
     if (zoneLand !== filter.zoneLandType) match = false;
+  }
+  if (match && filter.zoneToken) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || owner.lands[inst.zone]!.iceTokens <= 0) match = false;
   }
   if (match && filter.sameCard) {
     const ownCardId = source.instanceId ? instance(draft, source.instanceId).cardId : undefined;

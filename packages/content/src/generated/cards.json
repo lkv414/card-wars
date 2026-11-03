@@ -2338,7 +2338,42 @@
   "attack": 0,
   "defense": 8,
   "description": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura"
+    },
+    "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK.",
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "charlie_card_27",
@@ -3951,7 +3986,23 @@
   "attack": 3,
   "defense": 3,
   "description": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами.",
+    "targets": [
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ],
+    "mechanic": "swap_lanes",
+    "params": {
+     "opponent": true
+    }
+   }
+  ]
  },
  {
   "id": "ftg_card_12",
@@ -4406,7 +4457,30 @@
   "attack": 2,
   "defense": 7,
   "description": "Потрать 1 Действие >>> Нанеси 1 урон выбранному существу на этой линии за каждый различный тип земли под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     }
+    },
+    "text": "Потрать 1 Действие >>> Нанеси 1 урон выбранному существу на этой линии за каждый различный тип земли под твоим контролем.",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_38",
@@ -4418,7 +4492,23 @@
   "attack": 1,
   "defense": 4,
   "description": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1
+    },
+    "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника.",
+    "additionalCost": {
+     "discardFromHand": 1
+    }
+   }
+  ]
  },
  {
   "id": "ftg_card_39",
@@ -5441,7 +5531,25 @@
   "attack": 2,
   "defense": 7,
   "description": "Соседние Кукурузные существа получают +1 ATK.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "landType": "corn"
+     }
+    },
+    "text": "Соседние Кукурузные существа получают +1 ATK."
+   }
+  ]
  },
  {
   "id": "ftg_card_84",
@@ -5495,7 +5603,20 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_86.png",
   "description": "Верни всех своих существ в игре себе в руку (включая украденных существ).",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "each_creature_yours"
+     }
+    },
+    "text": "Верни всех своих существ в игре себе в руку (включая украденных существ)."
+   }
+  ]
  },
  {
   "id": "ftg_card_87",
@@ -5505,7 +5626,34 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_87.png",
   "description": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне).",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 1
+     },
+     "side": "any"
+    },
+    "text": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне).",
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_88",
@@ -5515,7 +5663,26 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_88.png",
   "description": "Верни выбранное существо его владельцу в руку.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "Верни выбранное существо его владельцу в руку.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_89",
@@ -5575,7 +5742,28 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_91.png",
   "description": "Потрать 2 Действия >>> Верни каждое существо на этой линии в руку своему владельцу. (Влияет на обоих игроков.)",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "this_lane_creature"
+      }
+     },
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "this_lane_opponent_creature"
+      }
+     }
+    ],
+    "text": "Потрать 2 Действия >>> Верни каждое существо на этой линии в руку своему владельцу. (Влияет на обоих игроков.)",
+    "cost": 2
+   }
+  ]
  },
  {
   "id": "ftg_card_92",
@@ -5966,7 +6154,33 @@
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_114.png",
   "description": "Потрать 1 Действие >>> Выбранное Существо на этой линии получает +1 ATK в этом ходу за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "this_turn"
+    },
+    "text": "Потрать 1 Действие >>> Выбранное Существо на этой линии получает +1 ATK в этом ходу за каждые 5 карт в твоей стопке сброса.",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_116",
@@ -5976,7 +6190,33 @@
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_116.png",
   "description": "ПРИЕМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "draw_cards",
+      "count": 1
+     },
+     {
+      "op": "discard_from_hand",
+      "count": 1
+     }
+    ],
+    "text": "ПРИЕМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "while_zone_has_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_1",
@@ -6022,7 +6262,40 @@
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_3.png",
   "description": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "heal",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 1
+     },
+     {
+      "op": "heal",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "amount": 1
+     }
+    ],
+    "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "lane_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_4",
@@ -6525,7 +6798,35 @@
   "attack": 2,
   "defense": 9,
   "description": "Каждый раз когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "text": "Каждый раз когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_32",
@@ -6569,7 +6870,32 @@
   "attack": 1,
   "defense": 5,
   "description": "Каждый раз когда Камнекраб регулировщик получает урон от существа, он наносит столько же урона этому же существу.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "triggering_instance"
+     },
+     "amount": {
+      "kind": "payload_damage",
+      "amount": 1
+     }
+    },
+    "text": "Каждый раз когда Камнекраб получает урон от существа, он наносит столько же урона этому же существу.",
+    "conditions": [
+     {
+      "kind": "if_payload_targeted_self"
+     },
+     {
+      "kind": "if_payload_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_34",
@@ -6581,7 +6907,39 @@
   "attack": 2,
   "defense": 10,
   "description": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "triggering_instance"
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 0
+     },
+     "side": "any"
+    },
+    "text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_targeted_self"
+     },
+     {
+      "kind": "if_payload_creature"
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "grand_prix_card_36",
@@ -6653,7 +7011,32 @@
   "landType": "rainbow",
   "image": "/content/cards/images/gunter_card_2.png",
   "description": "ПРИЕМ >>> Перемести неактивное существо под твоим контролем на эту землю (если она пустая).",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "this_lane_land"
+     },
+     "side": "own"
+    },
+    "text": "ПРИЕМ >>> Перемести неактивное существо под твоим контролем на эту землю (если она пустая).",
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "flipped": true
+      }
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "gunter_card_3",
@@ -6975,7 +7358,23 @@
   "landType": "blue",
   "image": "/content/cards/images/gunter_card_23.png",
   "description": "Если в начале твоей фазы Сражения, у тебя под контролем есть неактивное существо на этой земле, вытяни карту.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "Если в начале твоей фазы Сражения, у тебя под контролем есть неактивное существо на этой земле, вытяни карту.",
+    "conditions": [
+     {
+      "kind": "while_zone_has_flipped_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "gunter_card_24",
@@ -7008,7 +7407,48 @@
   "landType": "blue",
   "image": "/content/cards/images/gunter_card_25.png",
   "description": "Сыграй только, если под твоим контролем не более 1 существа и у тебя не более 15 HP. Перемести выбранное существо на выбранную линию под твоим контролем.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_no_other_creatures",
+      "scope": "own"
+     },
+     {
+      "kind": "while_lives_at_most",
+      "max": 15
+     }
+    ],
+    "text": "Сыграй только, если под твоим контролем не более 1 существа и у тебя не более 15 HP."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 1
+     },
+     "side": "own"
+    },
+    "text": "Перемести выбранное существо на выбранную линию под твоим контролем.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "gunter_card_26",
@@ -7018,7 +7458,39 @@
   "landType": "blue",
   "image": "/content/cards/images/gunter_card_26.png",
   "description": "Выбранное существо под твоим контролем получает +2 ATK за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 2,
+      "excludeSelf": true,
+      "filter": {
+       "flipped": true
+      }
+     },
+     "duration": "this_turn"
+    },
+    "text": "Выбранное существо под твоим контролем получает +2 ATK за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "gunter_card_28",
@@ -9280,7 +9752,21 @@
   "attack": 0,
   "defense": 5,
   "description": "Когда Бабах покидает игру нанеси 1 урон каждому соседнему существу.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "amount": 1
+    },
+    "text": "Когда Бабах покидает игру нанеси 1 урон каждому соседнему существу."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_9",
@@ -9830,7 +10316,28 @@
   "landType": "sand",
   "image": "/content/cards/images/lemongrab_card_39.png",
   "description": "Каждое твое существо получаем +1 АТК в этом ходу за каждое существо введённое в игру в этом ходу.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "creature_entered",
+      "scope": "all",
+      "amount": 1
+     },
+     "duration": "this_turn"
+    },
+    "text": "Каждое твое существо получаем +1 АТК в этом ходу за каждое существо введённое в игру в этом ходу."
+   }
+  ]
  },
  {
   "id": "lich_card_1",
@@ -10082,7 +10589,28 @@
   "attack": 1,
   "defense": 6,
   "description": "Если у противника под контролем находится 2 существа или меньше, получаем +1 АТК.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "Если у противника под контролем находится 2 существа или меньше, получаем +1 АТК.",
+    "conditions": [
+     {
+      "kind": "while_opponent_creatures_at_most",
+      "max": 2
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lich_card_28",
@@ -10128,7 +10656,26 @@
   "landType": "ghost",
   "image": "/content/cards/images/lich_card_30.png",
   "description": "Уничтожь выбранное строение противника.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "Уничтожь выбранное строение противника.",
+    "targets": [
+     {
+      "kind": "opponent_building"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lich_card_32",
@@ -12224,7 +12771,47 @@
   "attack": 1,
   "defense": 3,
   "description": "Ей просто норм.\n+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": 2,
+     "duration": "aura"
+    },
+    "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+    "conditions": [
+     {
+      "kind": "while_own_card_in_play",
+      "cardId": "tree_trunks_card_16"
+     }
+    ]
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+    "conditions": [
+     {
+      "kind": "while_own_card_in_play",
+      "cardId": "tree_trunks_card_16"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_35",

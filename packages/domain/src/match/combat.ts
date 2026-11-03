@@ -3,6 +3,7 @@ import { dealToCreature, dealToPlayer } from '../damage';
 import { afterEffects } from '../deaths';
 import { computeEff } from '../stats';
 import { bumpCounter } from '../mechanics/effects';
+import { attacksSuppressed } from '../mechanics/modifiers';
 import { opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
@@ -44,6 +45,8 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         if (!attackerInstanceId) continue;
         const attackerInstance = instance(draft, attackerInstanceId);
         if (attackerInstance.flipped) continue;
+        // «Не могут атаковать» (Морозильная камера, docs/MECHANICS-V2.md §3).
+        if (attacksSuppressed(draft, ctx, attackerInstanceId)) continue;
 
         const target = opponentZoneFor(draft, attackerId, z);
         if (!target) continue;

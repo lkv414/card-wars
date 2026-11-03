@@ -1,0 +1,14 @@
+{
+  "cardId": "marceline_card_11",
+  "name": "Принцесса Банши",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "effect": { "op": "remove_token", "target": { "kind": "choice", "index": 0 } },
+      "targets": [{ "kind": "landscape" }],
+      "text": "Когда Принцесса Банши вступает в игру, можешь убрать жетон с соседней земли."
+    }
+  ]
+}

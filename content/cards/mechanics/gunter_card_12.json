@@ -1,0 +1,11 @@
+{
+  "cardId": "gunter_card_12",
+  "name": "Ледяной душегуб",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [{ "kind": "while_zone_ice_token" }],
+      "text": "Ледяной душегуб вступает в игру только на земле с ледяным жетоном."
+    }
+  ]
+}

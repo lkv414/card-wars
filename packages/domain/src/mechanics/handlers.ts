@@ -184,3 +184,29 @@ export const grantRandomDiscardActive: MechanicHandler = (
     },
   );
 };
+
+/**
+ * «Нанеси N урона … если на земле с Ледяным жетоном — вместо N — M»
+ * (docs/MECHANICS-V2.md §3, A7.1): base damage to the chosen creature, plus a
+ * bonus while the victim stands on a land with ice tokens (Замороженное сердце
+ * pattern: amount 1, bonus 2).
+ */
+export const tokenBonusDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const amount = (params?.amount as number | undefined) ?? 1;
+  const bonus = (params?.bonus as number | undefined) ?? 0;
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') {
+    throw new DomainError('invalid_choice', 'token_bonus_damage needs one creature choice');
+  }
+  const victim = instance(draft, pick.instanceId);
+  const onToken = victim.zone !== null && player(draft, victim.controller).lands[victim.zone]!.iceTokens > 0;
+  dealToCreature(draft, ctx, pick.instanceId, onToken ? amount + bonus : amount, source.instanceId);
+};

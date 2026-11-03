@@ -80,6 +80,10 @@ export type TargetChoice =
 export type TargetRef =
   | { kind: 'choice'; index: number }
   | { kind: 'this_creature' }
+  /** Every creature of the player chosen by choice[0] (Вафля). */
+  | { kind: 'each_creature_of_choice_player' }
+  /** Own lands adjacent to the source's zone (Банши: «соседняя земля»). */
+  | { kind: 'adjacent_own_land' }
   | { kind: 'this_lane_creature' }
   /** Own creature in the source's lane (Школа: «твоё существо на этой линии»). */
   | { kind: 'this_lane_own_creature' }
@@ -152,7 +156,7 @@ export type StatAmount =
   /** Lands by scope; filters: only empty zones (Пескозавр рекс), only face-down (Смещатель земли). */
   | {
       kind: 'per_lands';
-      where: 'own' | 'all' | 'adjacent';
+      where: 'own' | 'all' | 'adjacent' | 'choice';
       landType?: LandType;
       empty?: boolean;
       flipped?: boolean;
@@ -169,6 +173,8 @@ export type StatAmount =
     }
   /** Turn counters (docs/MECHANICS-V2.md §3): spells cast, creatures entered/died, line changes, team/ally events. */
   | { kind: 'per_counter'; counter: TurnCounterKind; scope: 'own' | 'all' | 'team' | 'teammate'; amount: number }
+  /** Players controlling at least one land with an ice token (Капитан мороженка). */
+  | { kind: 'per_token_players'; amount: number }
   /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
   | { kind: 'payload_damage' };
 
@@ -232,6 +238,12 @@ export type ConditionSpec =
   | { kind: 'while_land_count'; landType: LandType; min?: number; max?: number }
   /** The source's lane has at least `min` lands with ice tokens (Ледяной гонщик). */
   | { kind: 'while_lane_ice_token'; min: number }
+  /** No ice tokens anywhere in play (Снежная полоса препятствий). */
+  | { kind: 'while_no_tokens_in_play' }
+  /** The zone this card ENTERS PLAY on carries an ice token (Ледяной душегуб, play-gate). */
+  | { kind: 'while_zone_ice_token' }
+  /** It is the source owner's turn (Плавучий Дворец Льда). */
+  | { kind: 'while_own_turn' }
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' };
 
@@ -285,8 +297,9 @@ export type EffectSpec =
   /** «Считается за дополнительную землю» (Ферма). */
   | { op: 'land_count_mod'; landType?: LandType; amount: number }
   /** Suppress triggers or actives of the covered cards (Дворец Костей, Чародейка Вайда);
-   *  `all` = «без текста»: actives, triggers and passive modifiers (Пес, Школа). */
-  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[]; all?: boolean }
+   *  `all` = «без текста»: actives, triggers and passive modifiers (Пес, Школа);
+   *  `attacks` = «не могут атаковать» (Морозильная камера); `filter` narrows coverage. */
+  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[]; all?: boolean; attacks?: boolean; filter?: TargetFilter }
   /** Attacking this creature provokes no retaliation (Призрачные бро). */
   | { op: 'no_retaliation'; target: TargetRef }
   /** Covered creature ignores the first N damage of each hit (Пушистая лиса). */

@@ -1120,3 +1120,62 @@ describe('golden: ледяные жетоны', () => {
     expect(computeEff(s, deps, creatureId).attack).toBe(3 + 1);
   });
 });
+
+describe('golden: ледяные жетоны — хвост (A7.1)', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('Замороженное сердце: 1 урона, а на жетонной земле — 3', () => {
+    let s = edit(round2(newMatch()), (d) => {
+      d.players.p1!.lands[0] = { type: 'ice', frozen: false, flipped: false, iceTokens: 1 };
+    });
+    s = edit(s, (d) => {
+      const p1 = d.players.p1!;
+      const plain = p1.deck[0]!;
+      p1.deck = p1.deck.filter((x) => x !== plain);
+      d.instances[plain]!.cardId = 'bmo_card_12';
+      d.instances[plain]!.location = 'field';
+      d.instances[plain]!.zone = 2;
+      d.instances[plain]!.slot = 'creature';
+      p1.zones[2]!.creature = plain;
+      const icy = p1.deck[0]!;
+      p1.deck = p1.deck.filter((x) => x !== icy);
+      d.instances[icy]!.cardId = 'bmo_card_12';
+      d.instances[icy]!.location = 'field';
+      d.instances[icy]!.zone = 0;
+      d.instances[icy]!.slot = 'creature';
+      p1.zones[0]!.creature = icy;
+    });
+    s = forceToHand(s, 'p1', 'ice_king_card_37');
+    const plainId = s.players.p1!.zones[2]!.creature!;
+    const res1 = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ice_king_card_37'), targets: [{ kind: 'creature', instanceId: plainId }] }, deps);
+    if (!res1.ok) throw new Error(`cast plain: ${res1.rejected.code}: ${res1.rejected.message}`);
+    expect(res1.state.instances[plainId]!.damage).toBe(1);
+
+    s = forceToHand(res1.state, 'p1', 'ice_king_card_37');
+    const icyId = s.players.p1!.zones[0]!.creature!;
+    const res2 = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ice_king_card_37'), targets: [{ kind: 'creature', instanceId: icyId }] }, deps);
+    if (!res2.ok) throw new Error(`cast icy: ${res2.rejected.code}: ${res2.rejected.message}`);
+    expect(res2.state.instances[icyId]!.damage).toBe(3);
+  });
+
+  it('Ледяной душегуб: входит в игру только на жетонную землю', () => {
+    let s = edit(round2(newMatch()), (d) => {
+      d.players.p1!.lands[0] = { type: 'ice', frozen: false, flipped: false, iceTokens: 1 };
+    });
+    s = forceToHand(s, 'p1', 'gunter_card_12');
+    const denied = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'gunter_card_12'), zone: 2 }, deps);
+    expect(denied.ok).toBe(false);
+    if (!denied.ok) expect(denied.rejected.code).toBe('condition_not_met');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'gunter_card_12'), zone: 0 }, deps);
+    if (!res.ok) throw new Error(`play icy: ${res.rejected.code}: ${res.rejected.message}`);
+    expect(res.state.players.p1!.zones[0]!.creature).not.toBeNull();
+  });
+});

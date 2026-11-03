@@ -1,0 +1,12 @@
+{
+  "cardId": "gunter_card_9",
+  "name": "Плавучий Дворец Льда",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": { "op": "stat_buff", "target": { "kind": "this_lane_creature" }, "stat": "attack", "amount": { "kind": "per_lands", "where": "all", "token": true, "amount": 1 }, "duration": "aura" },
+      "conditions": [{ "kind": "while_own_turn" }],
+      "text": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном."
+    }
+  ]
+}

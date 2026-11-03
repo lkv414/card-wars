@@ -535,6 +535,93 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'gate-creature',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      { kind: 'passive', conditions: [{ kind: 'while_zone_ice_token' }], text: 'Фикстура душегуба' },
+    ],
+  }),
+  card({
+    id: 'freezer-building',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'suppress', target: { kind: 'this_lane_opponent_creature' }, attacks: true, actives: true, filter: { zoneToken: true } },
+        text: 'Фикстура камеры',
+      },
+    ],
+  }),
+  card({
+    id: 'waffle',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'start_of_battle_phase',
+        effect: { op: 'deal_damage', target: { kind: 'each_creature_of_choice_player' }, amount: 1 },
+        targets: [{ kind: 'opponent_player' }],
+        conditions: [{ kind: 'while_lane_ice_token', min: 1 }],
+        text: 'Фикстура Вафли',
+      },
+    ],
+  }),
+  card({
+    id: 'icelady',
+    type: 'spell',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_cast',
+        effect: { op: 'opponent_discards', target: { kind: 'choice', index: 0 }, count: { kind: 'per_lands', where: 'choice', token: true, amount: 1 } },
+        targets: [{ kind: 'opponent_player' }],
+        text: 'Фикстура Ледяной леди',
+      },
+    ],
+  }),
+  card({
+    id: 'frozen-heart',
+    type: 'spell',
+    cost: 0,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_cast',
+        mechanic: 'token_bonus_damage',
+        params: { amount: 1, bonus: 2 },
+        targets: [{ kind: 'any_creature' }],
+        text: 'Фикстура Замороженного сердца',
+      },
+    ],
+  }),
+  card({
+    id: 'obstacle',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'active',
+        effect: { op: 'freeze_land', target: { kind: 'this_lane_lands' }, frozen: true },
+        conditions: [{ kind: 'while_no_tokens_in_play' }],
+        text: 'Фикстура полосы препятствий',
+      },
+    ],
+  }),
+  card({
     id: 'school-building',
     type: 'building',
     cost: 1,

@@ -58,6 +58,10 @@ function askFilterPasses(
   const inst = instance(draft, choice.instanceId);
   if (filter.ready && inst.flipped) return false;
   if (filter.landType && !landTypeMatches(draft, ctx, choice.instanceId, filter.landType)) return false;
+  if (filter.zoneToken) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || owner.lands[inst.zone]!.iceTokens <= 0) return false;
+  }
   return true;
 }
 
@@ -249,6 +253,25 @@ export function resolveTarget(
       if (srcZone === null) return [];
       const id = player(draft, source.player).zones[srcZone]?.creature;
       return id ? [{ kind: 'creature', instanceId: id }] : [];
+    }
+    case 'each_creature_of_choice_player': {
+      const picked = choices?.find((c) => c.kind === 'player');
+      if (!picked) return [];
+      const out: ResolvedTarget[] = [];
+      for (const zone of draft.players[picked.playerId]!.zones) {
+        if (zone.creature) out.push({ kind: 'creature', instanceId: zone.creature });
+      }
+      return out;
+    }
+    case 'adjacent_own_land': {
+      if (srcZone === null) return [];
+      const zones = player(draft, source.player).zones;
+      const out: ResolvedTarget[] = [];
+      for (const z of [srcZone - 1, srcZone + 1]) {
+        if (z < 0 || z >= zones.length) continue;
+        out.push({ kind: 'land', playerId: source.player, zone: z });
+      }
+      return out;
     }
     case 'this_lane_opponent_creature': {
       if (srcZone === null) return [];

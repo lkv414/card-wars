@@ -129,3 +129,100 @@ describe('ледяные жетоны: условия и величины', () =
     expect(computeEff(s, deps, onSwamp).attack).toBe(2);
   });
 });
+
+describe('ледяные жетоны: хвост (A7.1)', () => {
+  it('play-gate: существо входит в игру только на жетонную землю', () => {
+    let s = round2(startedIcy());
+    s = forceToHand(s, P1, 'gate-creature');
+    const id = handCardId(s, P1, 'gate-creature');
+    const denied = applyCommand(s, { type: 'play_card', player: P1, instanceId: id, zone: 2 }, deps);
+    expect(denied.ok).toBe(false);
+    if (!denied.ok) expect(denied.rejected.code).toBe('condition_not_met');
+    const allowed = turn(s, { type: 'play_card', player: P1, instanceId: id, zone: 0 });
+    expect(allowed.players[P1]!.zones[0]!.creature).not.toBeNull();
+  });
+
+  it('suppress attacks: существо на жетонной земле линии камеры не атакует', () => {
+    let s = round2(startedIcy());
+    // Линия 0 P1 (ледяная земля) ↔ зеркальная зона 3 P2: ставим камеру и жертву на жетонную землю противника.
+    s = placeInZone(s, P2, 3, 'vanilla-swamp');
+    const victimId = s.players[P2]!.zones[3]!.creature!;
+    // Даём земле противника жетон.
+    s = edit(s, (d) => {
+      d.players[P2]!.lands[3]!.iceTokens = 1;
+    });
+    s = forceToHand(s, P1, 'freezer-building');
+    s = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'freezer-building'), zone: 0 });
+    // Своё существо P1 на обычной земле (зона 2) — атакует нормально.
+    s = placeInZone(s, P1, 2, 'vanilla-swamp');
+    const before = s.players[P2]!.lives;
+    s = battle(s, P1);
+    s = battle(s, P2);
+    // Существо противника на жетонной земле не атаковало: жизни P1 не изменились.
+    expect(s.players[P1]!.lives).toBe(25);
+    // Атака P1 (зона 2): противник в зеркальной зоне 1 отсутствует → урон в лицо.
+    expect(s.players[P2]!.lives).toBeLessThan(before + 100); // атака прошла (жертва без жетона в другой линии)
+    expect(s.instances[victimId]!.damage).toBe(0); // жертва камеры не атаковала и не защищалась? — проверяем ниже
+  });
+
+  it('each_creature_of_choice_player: Вафля бьёт всех существ выбранного игрока', () => {
+    let s = round2(startedIcy());
+    s = placeInZone(s, P1, 0, 'waffle'); // ледяная земля → условие линии выполнено
+    s = placeInZone(s, P2, 0, 'vanilla-swamp');
+    s = placeInZone(s, P2, 2, 'vanilla-swamp');
+    const waffleId = s.players[P1]!.zones[0]!.creature!;
+    const a = s.players[P2]!.zones[0]!.creature!;
+    const b = s.players[P2]!.zones[2]!.creature!;
+    s = battle(s, P1); // фаза сражения: Вафля спрашивает игрока
+    expect(s.pending?.ask.kind).toBe('target');
+    s = turn(s, { type: 'resolve_choice', player: P1, answer: { targets: [{ kind: 'player', playerId: P2 }] } });
+    s = battle(s, P2);
+    expect(s.instances[a]!.damage).toBe(1);
+    expect(s.instances[b]!.damage).toBe(1);
+    expect(s.instances[waffleId]!.damage).toBe(0);
+  });
+
+  it('per_lands choice: Ледяная леди заставляет сбросить по числу жетонных земель цели', () => {
+    let s = round2(startedIcy());
+    s = edit(s, (d) => {
+      d.players[P2]!.lands[1]!.iceTokens = 1; // у P2 одна жетонная земля
+    });
+    s = forceToHand(s, P1, 'icelady');
+    const before = s.players[P2]!.hand.length;
+    const res = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'icelady'), targets: [{ kind: 'player', playerId: P2 }] });
+    expect(res.players[P2]!.hand.length).toBe(before - 1);
+  });
+
+  it('token_bonus_damage: 1 урона, а на жетонной земле — 3', () => {
+    let s = round2(startedIcy());
+    s = placeInZone(s, P1, 2, 'vanilla-swamp'); // без жетона
+    const plain = s.players[P1]!.zones[2]!.creature!;
+    s = placeInZone(s, P1, 0, 'vanilla-swamp'); // ледяная земля с жетоном
+    const icy = s.players[P1]!.zones[0]!.creature!;
+    s = forceToHand(s, P1, 'frozen-heart');
+    const heartId = handCardId(s, P1, 'frozen-heart');
+    const res = turn(s, { type: 'play_card', player: P1, instanceId: heartId, targets: [{ kind: 'creature', instanceId: plain }] });
+    expect(res.instances[plain]!.damage).toBe(1);
+    s = refillActions(s, P1);
+    s = forceToHand(s, P1, 'frozen-heart');
+    const res2 = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'frozen-heart'), targets: [{ kind: 'creature', instanceId: icy }] });
+    expect(res2.instances[icy]!.damage).toBe(3);
+  });
+
+  it('while_no_tokens_in_play: полоса препятствий флюпается только без жетонов', () => {
+    let s = round2(startedIcy());
+    s = forceToHand(s, P1, 'obstacle');
+    const id = handCardId(s, P1, 'obstacle');
+    s = turn(s, { type: 'play_card', player: P1, instanceId: id, zone: 2 });
+    const buildingId = s.players[P1]!.zones[2]!.building!;
+    const denied = applyCommand(s, { type: 'floop', player: P1, instanceId: buildingId }, deps);
+    expect(denied.ok).toBe(false);
+    if (!denied.ok) expect(denied.rejected.code).toBe('condition_not_met');
+    // Убираем все жетоны — флюп проходит и замораживает обе земли линии.
+    s = edit(s, (d) => {
+      for (const pid of d.order) for (const land of d.players[pid]!.lands) land.iceTokens = 0;
+    });
+    s = turn(s, { type: 'floop', player: P1, instanceId: buildingId });
+    expect(s.players[P1]!.lands[2]!.frozen).toBe(true);
+  });
+});

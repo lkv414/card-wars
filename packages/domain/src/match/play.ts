@@ -174,6 +174,13 @@ export function handlePlayCard(
     emit(ctx, { type: 'land_changed', player: playerId, zone, change: 'unfrozen' });
   }
 
+  // Play-gate (docs/MECHANICS-V2.md §3, A7.1): «вступает в игру только на земле
+  // с ледяным жетоном» — a while_zone_ice_token condition on the card's own
+  // ability restricts the entry zone (Ледяной душегуб).
+  if (card.abilities?.some((a) => a.conditions?.some((c) => c.kind === 'while_zone_ice_token')) && p.lands[zone]!.iceTokens <= 0) {
+    throw new DomainError('condition_not_met', 'this card enters play only on a land with an ice token');
+  }
+
   // Replacement: the old card goes to the discard pile; its own bonuses are lost with it.
   const zoneState = p.zones[zone]!;
   const replaced = zoneState[slot];

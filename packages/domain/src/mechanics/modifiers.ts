@@ -280,6 +280,14 @@ export function conditionsHold(
         if (opposite && draft.players[opposite.player]!.zones[opposite.zone]?.creature) return false;
         break;
       }
+      case 'while_own_turn':
+        if (!draft.activePlayers.includes(source.player)) return false;
+        break;
+      case 'while_no_tokens_in_play': {
+        const total = draft.order.reduce((sum, pid) => sum + draft.players[pid]!.lands.reduce((s, l) => s + l.iceTokens, 0), 0);
+        if (total > 0) return false;
+        break;
+      }
       case 'while_opponents_turn': {
         // Активные игроки — противники источника (docs/MECHANICS-V2.md §7).
         const opponents = opponentsOf(draft, source.player);
@@ -388,6 +396,7 @@ export function resolveStatAmount(
   source: EffectSource,
   amount: StatAmount,
   payload?: TriggerPayload,
+  choices?: import('./types').TargetChoice[],
 ): number {
   if (typeof amount === 'number') return amount;
   if (amount.kind === 'payload_damage') return payload?.amount ?? 0;
@@ -405,7 +414,11 @@ export function resolveStatAmount(
       let count = 0;
       const src = source.instanceId ? instance(draft, source.instanceId) : null;
       const ownZoneCount = src ? draft.players[source.player]!.zones.length : 0;
-      for (const pid of amount.where === 'own' ? [source.player] : draft.order) {
+      const choicePlayer = amount.where === 'choice'
+        ? choices?.find((c) => c.kind === 'player')?.playerId
+        : undefined;
+      if (amount.where === 'choice' && !choicePlayer) return 0;
+      for (const pid of amount.where === 'own' ? [source.player] : amount.where === 'choice' ? [choicePlayer!] : draft.order) {
         const other = draft.players[pid]!;
         other.lands.forEach((land, zone) => {
           if (amount.where === 'adjacent') {
@@ -424,6 +437,8 @@ export function resolveStatAmount(
     }
     case 'per_counter':
       return counterValue(draft, amount.counter, amount.scope, source.player) * amount.amount;
+    case 'per_token_players':
+      return draft.order.filter((pid) => draft.players[pid]!.lands.some((l) => l.iceTokens > 0)).length * amount.amount;
     case 'per_target': {
       const targets = resolveTarget(draft, ctx, amount.target, source, undefined);
       let count = 0;
@@ -534,9 +549,16 @@ function coversInstance(
   source: EffectSource,
   target: TargetRef,
   instanceId: string,
+  filter?: TargetFilter,
 ): boolean {
   const targets = resolveTarget(draft, ctx, target, source, undefined);
-  return targets.some((t) => (t.kind === 'creature' || t.kind === 'building') && t.instanceId === instanceId);
+  return targets.some(
+    (t) =>
+      (t.kind === 'creature' || t.kind === 'building') &&
+      t.instanceId === instanceId &&
+      // Coverage may be narrowed by a target filter (Морозильная камера: zoneToken).
+      (!filter || targetMatchesFilter(draft, ctx, source, instanceId, filter)),
+  );
 }
 
 /** Is this trigger suppressed for the source (Дворец Костей)? */
@@ -549,7 +571,7 @@ export function isTriggerSuppressed(
   if (!source.instanceId) return false;
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'suppress' || (!effect.triggers?.includes(trigger) && !effect.all)) continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, source.instanceId)) return true;
+    if (coversInstance(draft, ctx, modSource, effect.target, source.instanceId, effect.filter)) return true;
   }
   return false;
 }
@@ -562,7 +584,20 @@ export function areActivesSuppressed(
 ): boolean {
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'suppress' || (!effect.actives && !effect.all)) continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, instanceId)) return true;
+    if (coversInstance(draft, ctx, modSource, effect.target, instanceId, undefined)) return true;
+  }
+  return false;
+}
+
+/** Is this attacker banned from attacking (Морозильная камера)? */
+export function attacksSuppressed(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  attackerId: string,
+): boolean {
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'suppress' || (!effect.attacks && !effect.all)) continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, attackerId, undefined)) return true;
   }
   return false;
 }
@@ -578,7 +613,7 @@ export function damageImmunity(
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'damage_immunity') continue;
     if (effect.from === 'attacks' && !fromAttack) continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, victimId)) total += effect.amount;
+    if (coversInstance(draft, ctx, modSource, effect.target, victimId, undefined)) total += effect.amount;
   }
   return total;
 }
@@ -610,7 +645,7 @@ export function countsAsTypes(
   const out: string[] = [];
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'counts_as') continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, instanceId)) {
+    if (coversInstance(draft, ctx, modSource, effect.target, instanceId, undefined)) {
       out.push(effect.landType);
     }
   }
@@ -625,7 +660,7 @@ export function hasNoRetaliation(
 ): boolean {
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'no_retaliation') continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, attackerId)) return true;
+    if (coversInstance(draft, ctx, modSource, effect.target, attackerId, undefined)) return true;
   }
   return false;
 }
@@ -666,7 +701,7 @@ export function attackMods(
   const out: Array<Extract<RuleEffect, { op: 'attack_mod' }>> = [];
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'attack_mod') continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, attackerId)) out.push(effect);
+    if (coversInstance(draft, ctx, modSource, effect.target, attackerId, undefined)) out.push(effect);
   }
   return out;
 }

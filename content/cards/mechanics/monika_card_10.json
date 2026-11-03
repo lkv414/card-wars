@@ -1,0 +1,13 @@
+{
+  "cardId": "monika_card_10",
+  "name": "Ледяная бомбардировка",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": { "op": "destroy", "target": { "kind": "choice", "index": 0 } },
+      "targets": [{ "kind": "any_creature", "filter": { "zoneToken": true } }],
+      "text": "Уничтожь выбранное существо на земле с Ледяным жетоном."
+    }
+  ]
+}

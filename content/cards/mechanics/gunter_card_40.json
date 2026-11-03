@@ -1,0 +1,12 @@
+{
+  "cardId": "gunter_card_40",
+  "name": "Снежная полоса препятствий",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": { "op": "freeze_land", "target": { "kind": "this_lane_lands" }, "frozen": true },
+      "conditions": [{ "kind": "while_no_tokens_in_play" }],
+      "text": "ПРИЕМ >>> Заморозь обе земли на этой линии. Используй только если нет Ледяных жетонов в игре."
+    }
+  ]
+}

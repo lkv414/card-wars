@@ -72,11 +72,11 @@ const TRIGGERS = new Set([
 ]);
 const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card']);
 const TARGET_REFS = new Set([
-  'choice', 'this_creature', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
+  'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
@@ -87,7 +87,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
   'if_payload_ally', 'if_payload_creature', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
-  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token',
+  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token',
 ]);
 
 function checkAmount(amount, where) {
@@ -115,7 +115,7 @@ function validateAbility(ability, owner) {
   const hasMechanic = ability.mechanic !== undefined;
   // Passive: exactly one of effect|mechanic. Active: at most one — a bare
   // «ПРИЕМ» without effect is a tap-only floop (Огненное торнадо).
-  if (ability.kind === 'passive' && hasEffect === hasMechanic) fail(`${where}: exactly one of effect|mechanic`);
+  if (ability.kind === 'passive' && hasEffect === hasMechanic && !(ability.conditions?.length > 0)) fail(`${where}: exactly one of effect|mechanic (or a conditions-only play gate)`);
   if (ability.kind === 'active' && hasEffect && hasMechanic) fail(`${where}: active must not have both effect and mechanic`);
   for (const effect of effects) validateEffect(effect, where, ability);
   for (const cond of ability.conditions ?? []) {
@@ -125,7 +125,7 @@ function validateAbility(ability, owner) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
     if (ask.filter) {
       for (const key of Object.keys(ask.filter)) {
-        if (!['ready', 'landType'].includes(key)) fail(`${where}: unknown ask filter ${key}`);
+        if (!['ready', 'landType', 'zoneToken'].includes(key)) fail(`${where}: unknown ask filter ${key}`);
       }
     }
   }
@@ -157,7 +157,7 @@ function validateEffect(effect, where, ability) {
     const target = effect.target ?? effect.from;
     checkTargetRef(target, where);
     if (op === 'damage_immunity' && !Number.isInteger(effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
-    if (op === 'suppress' && !effect.actives && !effect.triggers && !effect.all) fail(`${where}: suppress needs actives, triggers or all`);
+    if (op === 'suppress' && !effect.actives && !effect.triggers && !effect.all && !effect.attacks) fail(`${where}: suppress needs actives, triggers, all or attacks`);
   } else if (op === 'grant_modifier') {
     if (!effect.modifier || !EFFECT_OPS.has(effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
   } else if (op === 'grant_ability') {

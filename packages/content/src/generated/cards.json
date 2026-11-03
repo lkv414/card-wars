@@ -5006,7 +5006,32 @@
   "attack": 2,
   "defense": 7,
   "description": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_of_choice_player"
+     },
+     "amount": 1
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "while_lane_ice_token",
+      "min": 1
+     }
+    ],
+    "text": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_14",
@@ -5018,7 +5043,33 @@
   "attack": 1,
   "defense": 7,
   "description": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 2 урона выбранному противнику.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "while_lane_ice_token",
+      "min": 1
+     }
+    ],
+    "text": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 2 урона выбранному противнику."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_15",
@@ -5341,7 +5392,32 @@
   "landType": "ice",
   "image": "/content/cards/images/gunter_card_9.png",
   "description": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "token": true,
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "conditions": [
+     {
+      "kind": "while_own_turn"
+     }
+    ],
+    "text": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "gunter_card_10",
@@ -5363,7 +5439,18 @@
   "attack": 2,
   "defense": 6,
   "description": "Ледяной душегуб вступает в игру только на земле с ледяным жетоном.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_zone_ice_token"
+     }
+    ],
+    "text": "Ледяной душегуб вступает в игру только на земле с ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "gunter_card_14",
@@ -5672,7 +5759,25 @@
   "landType": "rainbow",
   "image": "/content/cards/images/gunter_card_40.png",
   "description": "ПРИЕМ >>> Заморозь обе земли на этой линии. Используй только если нет Ледяных жетонов в игре.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_lands"
+     },
+     "frozen": true
+    },
+    "conditions": [
+     {
+      "kind": "while_no_tokens_in_play"
+     }
+    ],
+    "text": "ПРИЕМ >>> Заморозь обе земли на этой линии. Используй только если нет Ледяных жетонов в игре."
+   }
+  ]
  },
  {
   "id": "ice_king_card_1",
@@ -5956,7 +6061,32 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_29.png",
   "description": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "count": {
+      "kind": "per_lands",
+      "where": "choice",
+      "token": true,
+      "amount": 1
+     }
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем."
+   }
+  ]
  },
  {
   "id": "ice_king_card_31",
@@ -5976,7 +6106,39 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_32.png",
   "description": "Существа на землях с ледяными жетонами на этой линии, не могут атаковать или использовать способности.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "attacks": true,
+     "actives": true,
+     "filter": {
+      "zoneToken": true
+     }
+    },
+    "text": "Существа на землях с ледяными жетонами на этой линии не могут атаковать или использовать способности."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "attacks": true,
+     "actives": true,
+     "filter": {
+      "zoneToken": true
+     }
+    },
+    "text": "Существа на землях с ледяными жетонами на этой линии не могут атаковать или использовать способности."
+   }
+  ]
  },
  {
   "id": "ice_king_card_35",
@@ -5997,7 +6159,24 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ice_king_card_37.png",
   "description": "Нанеси 1 Урон выбранному существу. Если это существо на земле с Ледным жетоном, то вместо 1 нанеси 3 Урона.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "token_bonus_damage",
+    "params": {
+     "amount": 1,
+     "bonus": 2
+    },
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Нанеси 1 Урон выбранному существу. Если это существо на земле с Ледным жетоном, то вместо 1 нанеси 3 Урона."
+   }
+  ]
  },
  {
   "id": "ice_king_card_40",
@@ -8674,7 +8853,27 @@
   "attack": 2,
   "defense": 7,
   "description": "Когда Принцесса Банши вступает в игру, можешь убрать жетон с соседней земли.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "optional": true,
+    "effect": {
+     "op": "remove_token",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "Когда Принцесса Банши вступает в игру, можешь убрать жетон с соседней земли."
+   }
+  ]
  },
  {
   "id": "marceline_card_13",
@@ -8686,7 +8885,27 @@
   "attack": 3,
   "defense": 9,
   "description": "Когда Королева Банши вступает в игру, можешь удалить жетон с соседней земли.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "optional": true,
+    "effect": {
+     "op": "remove_token",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "Когда Королева Банши вступает в игру, можешь удалить жетон с соседней земли."
+   }
+  ]
  },
  {
   "id": "marceline_card_14",
@@ -9034,7 +9253,29 @@
   "landType": "ice",
   "image": "/content/cards/images/monika_card_10.png",
   "description": "Уничтожь выбранное существо на земле с Ледяным жетоном.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "any_creature",
+      "filter": {
+       "zoneToken": true
+      }
+     }
+    ],
+    "text": "Уничтожь выбранное существо на земле с Ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "monika_card_11",
@@ -9056,7 +9297,30 @@
   "attack": 3,
   "defense": 9,
   "description": "Когда Бригадир десерт атакует, нанеси 2 урона выбранному Существу противника на замле с Ледяным жетоном.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "targets": [
+     {
+      "kind": "opponent_creature",
+      "filter": {
+       "zoneToken": true
+      }
+     }
+    ],
+    "text": "Когда Бригадир десерт атакует, нанеси 2 урона выбранному Существу противника на замле с Ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "monika_card_13",
@@ -9080,7 +9344,21 @@
   "attack": 4,
   "defense": 8,
   "description": "Капитан мороженка стоит на 1 меньше за каждого игрока чьи земли с Ледяным жетоном.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": {
+      "kind": "per_token_players",
+      "amount": -1
+     }
+    },
+    "text": "Капитан мороженка стоит на 1 меньше за каждого игрока чьи земли с Ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "monika_card_21",

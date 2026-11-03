@@ -31,7 +31,7 @@ export function runEffect(
   switch (effect.op) {
     case 'deal_damage': {
       const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
-      const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload);
+      const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload, choices);
       for (const target of targets) {
         if (effect.filter && !targetMatchesFilter(draft, ctx, source, target, effect.filter)) continue;
         if (target.kind === 'creature' || target.kind === 'building') {
@@ -44,7 +44,7 @@ export function runEffect(
     }
     case 'heal': {
       const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
-      const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload);
+      const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload, choices);
       for (const target of targets) {
         if (target.kind === 'creature' || target.kind === 'building') {
           const inst = instance(draft, target.instanceId);
@@ -58,7 +58,7 @@ export function runEffect(
       return;
     }
     case 'draw_cards': {
-      const count = resolveStatAmount(draft, ctx, source, effect.count);
+      const count = resolveStatAmount(draft, ctx, source, effect.count, undefined, choices);
       if (count <= 0) return;
       if (effect.target) {
         for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
@@ -70,12 +70,12 @@ export function runEffect(
       return;
     }
     case 'discard_top_deck': {
-      const count = resolveStatAmount(draft, ctx, source, effect.count);
+      const count = resolveStatAmount(draft, ctx, source, effect.count, undefined, choices);
       discardTopDeck(draft, ctx, source.player, count);
       return;
     }
     case 'opponent_discards': {
-      const count = resolveStatAmount(draft, ctx, source, effect.count);
+      const count = resolveStatAmount(draft, ctx, source, effect.count, undefined, choices);
       if (count <= 0) return;
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind === 'player') opponentDiscardsRandom(draft, ctx, target.playerId, count);
@@ -87,7 +87,7 @@ export function runEffect(
         throw new DomainError('aura_not_castable', 'aura effects are scanned, never executed');
       }
       const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
-      const amount = resolveStatAmount(draft, ctx, source, effect.amount);
+      const amount = resolveStatAmount(draft, ctx, source, effect.amount, undefined, choices);
       for (const target of targets) {
         if (target.kind !== 'creature' && target.kind !== 'building') continue;
         const inst = instance(draft, target.instanceId);
@@ -206,7 +206,7 @@ export function runEffect(
       return;
     }
     case 'return_from_discard': {
-      const count = resolveStatAmount(draft, ctx, source, effect.count, payload);
+      const count = resolveStatAmount(draft, ctx, source, effect.count, payload, choices);
       returnCards(draft, ctx, source, effect, count);
       return;
     }

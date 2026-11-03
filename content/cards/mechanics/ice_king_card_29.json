@@ -1,0 +1,13 @@
+{
+  "cardId": "ice_king_card_29",
+  "name": "Ледяная леди",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": { "op": "opponent_discards", "target": { "kind": "choice", "index": 0 }, "count": { "kind": "per_lands", "where": "choice", "token": true, "amount": 1 } },
+      "targets": [{ "kind": "opponent_player" }],
+      "text": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем."
+    }
+  ]
+}

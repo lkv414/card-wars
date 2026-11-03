@@ -46,11 +46,16 @@ function pendingView(deps: DomainDeps, state: MatchState): PendingChoiceView {
   const pending = state.pending!;
   const kind = pending.ask.kind;
   const askCount = kind === 'optional' ? undefined : pendingAbility(deps, state)?.targets?.length;
+  const current = pending.current;
   return {
     player: pending.player,
     kind,
     askIndex: kind === 'target' || kind === 'effect_step' ? pending.ask.askIndex : undefined,
     askCount,
+    // Способность напечатана на карте/листе героя — публичная информация.
+    cardId: current.cardId ?? undefined,
+    instanceId: current.instanceId,
+    abilityIndex: current.abilityIndex,
   };
 }
 

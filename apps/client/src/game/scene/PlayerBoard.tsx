@@ -31,7 +31,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
     <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
       {p.zones.map((zone, i) => (
         <group key={i} position={[zoneX(i), 0, 0]}>
-          <Land land={p.lands[i]!} zone={i} isMe={isMe} />
+          <Land land={p.lands[i]!} zone={i} isMe={isMe} pid={pid} view={view} />
           {p.lands[i]!.frozen && (
             <group position={[0, 0, -34]}>
               <FrostToken />

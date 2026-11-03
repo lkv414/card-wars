@@ -87,6 +87,10 @@ export const PendingChoiceViewSchema = z.object({
   kind: z.enum(['optional', 'target', 'effect_step']),
   askIndex: z.number().optional(),
   askCount: z.number().optional(),
+  /** Which ability is awaited — public (printed on the card / hero sheet). */
+  cardId: z.string().optional(),
+  instanceId: z.string().nullable().optional(),
+  abilityIndex: z.number().optional(),
 });
 
 export const PlayerViewSchema = z.object({

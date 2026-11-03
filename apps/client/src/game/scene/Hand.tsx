@@ -6,6 +6,7 @@ import { cards as catalog } from '@card-wars/content';
 import { CARD_H, CARD_T, CARD_W, HAND, myBoardTransform, zoneFromWorld } from './layout';
 import { cardTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
+import { pick } from '../targeting';
 
 /**
  * Рука — 3D-веер внизу экрана (docs/UI-3D.md «Рука (решено: 3D)»).
@@ -177,6 +178,21 @@ function HandCard({
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
+    // Режим выбора целей: рука отдаётся как own_hand_card.
+    const targeting = useGame.getState().ui.targeting;
+    if (targeting) {
+      const ask = targeting.asks[targeting.askIndex];
+      if (ask && ask.kind === 'own_hand_card') {
+        const result = pick(view, targeting, { kind: 'card', instanceId });
+        if (result.accepted && result.command) {
+          sendCommand(result.command);
+          setUi({ targeting: result.nextState ?? null });
+        } else if (result.accepted && result.nextState) {
+          setUi({ targeting: result.nextState });
+        }
+      }
+      return;
+    }
     if (!playable) return;
     if (event.delta > 8) return; // это завершение драга, а не клик
     if (isDirect) {

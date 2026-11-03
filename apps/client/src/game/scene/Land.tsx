@@ -5,16 +5,24 @@ import type { LandView } from '@card-wars/protocol';
 import { CARD_H, CARD_W, LAND_H, LAND_W, slotLocalZ } from './layout';
 import { landTexture } from './textures';
 import { useGame } from '../../store';
+import { sendCommand, setUi } from '../../store';
+import { pick, validTargets } from '../targeting';
+import type { ThreeEvent } from '@react-three/fiber';
+import type { PlayerView } from '@card-wars/protocol';
 
 /** Земля: лежачий тайл 92×129 с двумя слотами; замороженная/перевёрнутая — оверлеи (docs/UI-3D.md). */
 export function Land({
   land,
   zone,
   isMe,
+  pid,
+  view,
 }: {
   land: LandView;
   zone: number;
   isMe: boolean;
+  pid: string;
+  view: PlayerView;
 }) {
   const texture = useMemo(
     () => landTexture(land.type as LandType, land.frozen, land.flipped),
@@ -23,13 +31,34 @@ export function Land({
   const placeMode = useGame((s) => s.ui.dragging !== null && isMe);
   const hovered = useGame((s) => s.ui.draggingOverZone);
 
-  // Выбор земли как цели вернётся с механиками v2 (docs/TECH.md № 2).
-  const highlight = placeMode && hovered === zone;
+  // Выбор земли как цели (docs/MECHANICS-V2.md §5) + подсветка размещения.
+  const targeting = useGame((st) => st.ui.targeting);
+  const currentAsk = targeting ? targeting.asks[targeting.askIndex] : undefined;
+  const isLandTarget = targeting && currentAsk && currentAsk.kind.includes('landscape')
+    ? validTargets(view, currentAsk, targeting.sourceInstanceId, targeting.collected)
+      .some((c) => c.kind === 'landscape' && c.player === pid && c.zone === zone)
+    : false;
+  const highlight = (placeMode && hovered === zone) || isLandTarget;
+
+  const handleClick = (event: ThreeEvent<MouseEvent>) => {
+    if (!targeting || !currentAsk || !isLandTarget) return;
+    event.stopPropagation();
+    const ui = useGame.getState().ui;
+    const result = pick(view, ui.targeting!, { kind: 'landscape', player: pid, zone });
+    if (!result.accepted) return;
+    if (result.command) {
+      sendCommand(result.command);
+      setUi({ targeting: result.nextState ?? null });
+    } else if (result.nextState) {
+      setUi({ targeting: result.nextState });
+    }
+  };
 
   return (
     <group>
       <mesh
         position={[0, 0.6, 0]}
+        onClick={handleClick}
         onPointerOver={(e) => {
           if (placeMode) {
             e.stopPropagation();

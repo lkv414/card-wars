@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { GameEvent } from '@card-wars/protocol';
 import type { LobbyCommand, LobbyView, PlayerView, TimerInfo } from '@card-wars/protocol';
 import type { Command } from '@card-wars/protocol';
+import type { TargetingState } from './game/targeting';
 
 // Client state (docs/TECH.md «Клиент»): the snapshot is the single source of
 // truth for the scene; events only feed animations and the log. UI state
@@ -16,6 +17,7 @@ export interface UiState {
   dragging: string | null;
   draggingOverZone: number | null;
   holdingFloop: { instanceId: string; startedAt: number } | null;
+  targeting: TargetingState | null;
   journalOpen: boolean;
 }
 
@@ -52,6 +54,7 @@ export const useGame = create<GameStore>(() => ({
     dragging: null,
     draggingOverZone: null,
     holdingFloop: null,
+    targeting: null,
     journalOpen: false,
   },
   sendCommand: () => {},

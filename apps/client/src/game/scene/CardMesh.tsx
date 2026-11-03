@@ -5,6 +5,7 @@ import type { CardView, PlayerView } from '@card-wars/protocol';
 import { CARD_H, CARD_T, CARD_W, FROST_D, TOKEN_D, TOKEN_T, slotLocalZ } from './layout';
 import { cardTexture, frostTexture, tokenTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
+import { activeAbilityOf, pick, startForActive, validTargets } from '../targeting';
 
 const HOLD_MS = 1500; // флюп — зажать карту на 1,5 секунды (docs/UI-3D.md «Взаимодействие»)
 
@@ -47,11 +48,42 @@ export function CardMesh({
         material.opacity = 0.35 + progress * 0.6;
         if (progress >= 1) {
           setUi({ holdingFloop: null });
+          // ПРИЕМ с целями — вход в режим таргетинга вместо отправки.
+          const ability = activeAbilityOf(card.cardId);
+          if (ability && (ability.targets?.length ?? 0) > 0) {
+            const state = startForActive(view, 'floop', card.instanceId, card.cardId);
+            if (state) {
+              setUi({ targeting: state });
+              return;
+            }
+          }
           sendCommand({ type: 'floop', player: view.me, instanceId: card.instanceId });
         }
       }
     }
   });
+
+  // Режим выбора целей: клик по валидному существу отдаёт его таргетингу.
+  const targeting = useGame((st) => st.ui.targeting);
+  const currentAsk = targeting ? targeting.asks[targeting.askIndex] : undefined;
+  const isTarget = targeting && currentAsk && currentAsk.kind.includes('creature')
+    ? validTargets(view, currentAsk, targeting.sourceInstanceId, targeting.collected)
+      .some((c) => c.kind === 'creature' && c.instanceId === card.instanceId)
+    : false;
+
+  const handleClick = (event: ThreeEvent<MouseEvent>) => {
+    if (!targeting || !isTarget) return;
+    event.stopPropagation();
+    const ui = useGame.getState().ui;
+    const result = pick(view, ui.targeting!, { kind: 'creature', instanceId: card.instanceId });
+    if (!result.accepted) return;
+    if (result.command) {
+      sendCommand(result.command);
+      setUi({ targeting: result.nextState ?? null });
+    } else if (result.nextState) {
+      setUi({ targeting: result.nextState });
+    }
+  };
 
   const startHold = (event: ThreeEvent<PointerEvent>) => {
     if (!canHold) return;
@@ -65,7 +97,7 @@ export function CardMesh({
 
   return (
     <group position={[0, CARD_T / 2 + 0.4, slotLocalZ(slot)]}>
-      <group ref={group} onPointerDown={startHold} onPointerUp={cancelHold} onPointerOut={cancelHold}>
+      <group ref={group} onClick={handleClick} onPointerDown={startHold} onPointerUp={cancelHold} onPointerOut={cancelHold}>
         <mesh>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
           <meshLambertMaterial map={texture} />
@@ -75,6 +107,12 @@ export function CardMesh({
         <mesh ref={ring} position={[0, 16, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
           <ringGeometry args={[46, 54, 40]} />
           <meshBasicMaterial color="#48d9a0" transparent opacity={0.5} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+      {isTarget && (
+        <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[CARD_W + 12, CARD_H + 12]} />
+          <meshBasicMaterial color="#7fd1ff" transparent opacity={0.3} />
         </mesh>
       )}
       {card.damage > 0 && <DamageTokens damage={card.damage} />}

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { sendCommand, setQuality, setUi, useGame } from '../../store';
+import { pick, startForActive, startForPending, validTargets } from '../targeting';
+import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
@@ -14,6 +16,44 @@ export function Hud({ code }: { code: string }) {
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
   const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
+  const targeting = useGame((st) => st.ui.targeting);
+  const myHero = heroCatalog.find((h) => h.id === me.heroId);
+  const heroActive = myHero?.ability && myHero.ability.kind === 'active' ? myHero.ability : null;
+
+  useEffect(() => {
+    const ui = useGame.getState().ui;
+    if (view.pending && view.pending.player === view.me && view.pending.kind === 'target' && !ui.targeting) {
+      const state = startForPending(view, view.pending);
+      if (state) setUi({ targeting: state });
+    }
+    if (!view.pending && ui.targeting && ui.targeting.mode === 'pending') {
+      setUi({ targeting: null });
+    }
+  }, [view.pending, view]);
+
+  const targetingPick = (candidate: Parameters<typeof pick>[2]) => {
+    const ui = useGame.getState().ui;
+    if (!ui.targeting) return;
+    const result = pick(view, ui.targeting, candidate);
+    if (!result.accepted) return;
+    if (result.command) {
+      sendCommand(result.command);
+      setUi({ targeting: result.nextState ?? null });
+    } else if (result.nextState) {
+      setUi({ targeting: result.nextState });
+    }
+  };
+
+  const startHeroAbility = () => {
+    if (!heroActive) return;
+    const state = startForActive(view, 'hero_ability', null, me.heroId);
+    if (state) {
+      setUi({ targeting: state });
+      sendCommand(state.base as Parameters<typeof sendCommand>[0]);
+    } else {
+      sendCommand({ type: 'hero_ability', player: view.me });
+    }
+  };
   const revealedForMe = view.revealed[view.me] ?? [];
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
   const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
@@ -118,6 +158,16 @@ export function Hud({ code }: { code: string }) {
 
       {error && <div className="error-line hud-error">{error.message}</div>}
 
+      {targeting && targeting.mode === 'active' && (
+        <div className="pending-banner">
+          <span>
+            {targeting.label} — цель {targeting.askIndex + 1}/{targeting.asks.length}
+          </span>
+          <button className="mini" onClick={() => setUi({ targeting: null })}>
+            Отмена
+          </button>
+        </div>
+      )}
       {view.pending && (
         <div className="pending-banner">
           {view.pending.player === view.me ? (
@@ -145,6 +195,21 @@ export function Hud({ code }: { code: string }) {
               >
                 Пропустить
               </button>
+              {(() => {
+                if (view.pending!.kind !== 'target') return null;
+                const ability = view.pending!.cardId
+                  ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
+                  : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+                const ask = ability?.targets?.[view.pending!.askIndex ?? 0];
+                if (!ask || ask.kind !== 'opponent_player') return null;
+                return view.order
+                  .filter((pid) => pid !== view.me)
+                  .map((pid) => (
+                    <button key={pid} className="mini" onClick={() => targetingPick({ kind: 'player', playerId: pid })}>
+                      {view.players[pid]?.nickname ?? pid}
+                    </button>
+                  ));
+              })()}
             </>
           ) : (
             <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>

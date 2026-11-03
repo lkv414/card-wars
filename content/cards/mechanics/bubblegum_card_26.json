@@ -1,0 +1,21 @@
+{
+  "cardId": "bubblegum_card_26",
+  "name": "Майонезный ангел",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        }
+      },
+      "text": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела.",
+      "cost": 1
+    }
+  ]
+}

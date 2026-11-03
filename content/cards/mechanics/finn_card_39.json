@@ -1,0 +1,15 @@
+{
+  "cardId": "finn_card_39",
+  "name": "Сопли гнома",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": 3
+      },
+      "text": "Тяни 3 карты."
+    }
+  ]
+}

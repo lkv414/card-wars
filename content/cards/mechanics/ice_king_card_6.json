@@ -1,0 +1,18 @@
+{
+  "cardId": "ice_king_card_6",
+  "name": "Ледяной дракон",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_lands"
+        },
+        "frozen": true
+      },
+      "text": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
+      "cost": 1
+    }
+  ]
+}

@@ -7,7 +7,7 @@ import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter } from '../mechanics/effects';
-import { consumeDiscount, landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
+import { conditionsHold, consumeDiscount, landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -179,11 +179,23 @@ export function handlePlayCard(
     emit(ctx, { type: 'land_changed', player: playerId, zone, change: 'unfrozen' });
   }
 
-  // Play-gate (docs/MECHANICS-V2.md §3, A7.1): «вступает в игру только на земле
-  // с ледяным жетоном» — a while_zone_ice_token condition on the card's own
-  // ability restricts the entry zone (Ледяной душегуб).
-  if (card.abilities?.some((a) => a.conditions?.some((c) => c.kind === 'while_zone_ice_token')) && p.lands[zone]!.iceTokens <= 0) {
-    throw new DomainError('condition_not_met', 'this card enters play only on a land with an ice token');
+  // Play-gate (docs/MECHANICS-V2.md §3): a conditions-only passive restricts
+  // where/how the card may be played — «вступает в игру только на земле с
+  // ледяным жетоном» (Ледяной душегуб), «играй только если …» (Пламенная мышь,
+  // Костяная палочка). Zone conditions read the chosen zone.
+  for (const ability of card.abilities ?? []) {
+    if (ability.kind !== 'passive' || ability.effect !== undefined || ability.mechanic !== undefined) continue;
+    for (const cond of ability.conditions ?? []) {
+      if (cond.kind === 'while_zone_ice_token') {
+        if (p.lands[zone]!.iceTokens <= 0) {
+          throw new DomainError('condition_not_met', 'this card enters play only on a land with an ice token');
+        }
+        continue;
+      }
+      if (!conditionsHold(draft, ctx, { player: playerId, instanceId: null }, [cond], undefined)) {
+        throw new DomainError('condition_not_met', `play condition not met: ${cond.kind}`);
+      }
+    }
   }
 
   // Replacement: the old card goes to the discard pile; its own bonuses are lost with it.

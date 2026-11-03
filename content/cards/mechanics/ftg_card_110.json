@@ -1,0 +1,22 @@
+{
+  "cardId": "ftg_card_110",
+  "name": "Брекиты Огрa",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        }
+      },
+      "text": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
+}

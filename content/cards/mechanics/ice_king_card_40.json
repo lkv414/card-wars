@@ -1,0 +1,24 @@
+{
+  "cardId": "ice_king_card_40",
+  "name": "Снежный бизнес",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии.",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

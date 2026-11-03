@@ -1,0 +1,23 @@
+{
+  "cardId": "gunter_card_10",
+  "name": "Пурга",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_lands"
+        },
+        "frozen": true
+      },
+      "text": "Выбери линию и заморозь обе земли на ней.",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

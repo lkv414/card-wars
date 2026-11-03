@@ -2,7 +2,7 @@ import { DomainError } from '../errors';
 import { instance, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState, PlayerId } from '../types';
-import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
+import { alivePlayerIds, opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import type { EffectSource } from './source';
 import { countsAsTypes } from './modifiers';
 import type { TargetAsk, TargetChoice, TargetFilter, TargetRef } from './types';
@@ -114,6 +114,8 @@ function choiceMatchesAsk(
     }
     case 'opponent_player':
       return choice.kind === 'player' && isOpponent(draft, source.player, choice.playerId);
+    case 'any_player':
+      return choice.kind === 'player' && alivePlayerIds(draft).includes(choice.playerId);
     case 'landscape': {
       if (choice.kind !== 'landscape') return false;
       const p = draft.players[choice.player];
@@ -260,6 +262,13 @@ export function resolveTarget(
       const out: ResolvedTarget[] = [];
       for (const zone of draft.players[picked.playerId]!.zones) {
         if (zone.creature) out.push({ kind: 'creature', instanceId: zone.creature });
+      }
+      return out;
+    }
+    case 'each_opponent_land': {
+      const out: ResolvedTarget[] = [];
+      for (const pid of opponentsOf(draft, source.player)) {
+        draft.players[pid]!.lands.forEach((_, zone) => out.push({ kind: 'land', playerId: pid, zone }));
       }
       return out;
     }

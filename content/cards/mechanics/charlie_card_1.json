@@ -1,0 +1,33 @@
+{
+  "cardId": "charlie_card_1",
+  "name": "Фирменное рукопожатие",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "self_player"
+          },
+          "amount": 5
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 5
+        }
+      ],
+      "text": "Нанеси 5 урона себе и выбранному противнику.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ]
+    }
+  ]
+}

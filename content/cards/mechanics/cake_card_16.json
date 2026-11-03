@@ -1,0 +1,24 @@
+{
+  "cardId": "cake_card_16",
+  "name": "Космонаперсток",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "self_player"
+          },
+          "amount": 2
+        },
+        {
+          "op": "gain_actions",
+          "amount": 1
+        }
+      ],
+      "text": "Потеряй 2 здоровья, получи 1 действие."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "cardId": "grand_prix_card_15",
+  "name": "Сэндвич с мороженым",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_lands"
+        },
+        "frozen": true
+      },
+      "text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней.",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

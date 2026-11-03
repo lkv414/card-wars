@@ -1,0 +1,24 @@
+{
+  "cardId": "bubblegum_card_3",
+  "name": "Голубая сахарная вата",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "Восстанови до 3 Урона с выбранного существа под твоим контролем.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
+}

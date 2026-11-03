@@ -1,0 +1,23 @@
+{
+  "cardId": "lemongrab_card_9",
+  "name": "Зона Высадки",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Выбри свое существо и верни его на руку.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
+}

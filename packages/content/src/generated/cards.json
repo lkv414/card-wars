@@ -17,7 +17,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/bmo_card_2.png",
   "description": "Верни случайное болотное существо из своей стопки сброса себе в руку.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "random": true,
+     "filter": {
+      "type": "creature",
+      "landType": "swamp"
+     }
+    },
+    "text": "Верни случайное болотное существо из своей стопки сброса себе в руку."
+   }
+  ]
  },
  {
   "id": "bmo_card_4",
@@ -317,7 +333,23 @@
   "attack": 2,
   "defense": 7,
   "description": "Потрать 1 действие >>> Верни случайное болотное существо из своей стопки сброса себе в руку.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "random": true,
+     "filter": {
+      "type": "creature",
+      "landType": "swamp"
+     }
+    },
+    "text": "Потрать 1 действие >>> Верни случайное болотное существо из своей стопки сброса себе в руку.",
+    "cost": 1
+   }
+  ]
  },
  {
   "id": "bmo_card_25",
@@ -476,7 +508,31 @@
   "landType": "swamp",
   "image": "/content/cards/images/bmo_card_35.png",
   "description": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "count": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     }
+    },
+    "text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "bmo_card_36",
@@ -574,7 +630,27 @@
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_3.png",
   "description": "Восстанови до 3 Урона с выбранного существа под твоим контролем.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "text": "Восстанови до 3 Урона с выбранного существа под твоим контролем.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "bubblegum_card_5",
@@ -912,7 +988,24 @@
   "attack": 3,
   "defense": 7,
   "description": "Потрать 1 Действие >>> Восстанови весь урон с Ангела шоколада.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": {
+      "kind": "per_damage",
+      "amount": 1
+     }
+    },
+    "text": "Потрать 1 Действие >>> Восстанови весь урон с Ангела шоколада.",
+    "cost": 1
+   }
+  ]
  },
  {
   "id": "bubblegum_card_26",
@@ -924,7 +1017,24 @@
   "attack": 2,
   "defense": 6,
   "description": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": {
+      "kind": "per_damage",
+      "amount": 1
+     }
+    },
+    "text": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела.",
+    "cost": 1
+   }
+  ]
  },
  {
   "id": "bubblegum_card_28",
@@ -1232,7 +1342,27 @@
   "landType": "rainbow",
   "image": "/content/cards/images/cake_card_16.png",
   "description": "Потеряй 2 здоровья, получи 1 действие.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "self_player"
+      },
+      "amount": 2
+     },
+     {
+      "op": "gain_actions",
+      "amount": 1
+     }
+    ],
+    "text": "Потеряй 2 здоровья, получи 1 действие."
+   }
+  ]
  },
  {
   "id": "cake_card_17",
@@ -1635,7 +1765,36 @@
   "landType": "rainbow",
   "image": "/content/cards/images/charlie_card_1.png",
   "description": "Нанеси 5 урона себе и выбранному противнику.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "self_player"
+      },
+      "amount": 5
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 5
+     }
+    ],
+    "text": "Нанеси 5 урона себе и выбранному противнику.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "charlie_card_2",
@@ -1821,7 +1980,31 @@
   "attack": 2,
   "defense": 6,
   "description": "В начале своего хода можешь переместить Геомансера на пустую землю под твоим контролем.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "this_creature"
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 0
+     },
+     "side": "own"
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "В начале своего хода можешь переместить Геомансера на пустую землю под своим контролем."
+   }
+  ]
  },
  {
   "id": "charlie_card_11",
@@ -2167,7 +2350,38 @@
   "landType": "good",
   "image": "/content/cards/images/charlie_card_37.png",
   "description": "Уничтожь выбранное существо под твоим контролем, и затем уничтожь выбранное существо противника на этой линии.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "destroy",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "destroy",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      }
+     }
+    ],
+    "text": "Уничтожь выбранное существо под твоим контролем, и затем уничтожь выбранное существо противника на этой линии.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "charlie_card_38",
@@ -2355,7 +2569,25 @@
   "attack": 1,
   "defense": 11,
   "description": "+2 АТК каждому Примененному существу под твоим контролем.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "filter": {
+      "ready": true
+     }
+    },
+    "text": "+2 АТК каждому Примененному существу под твоим контролем."
+   }
+  ]
  },
  {
   "id": "finn_card_16",
@@ -2552,7 +2784,34 @@
   "landType": "rainbow",
   "image": "/content/cards/images/finn_card_29.png",
   "description": "Перемести одно из своих существ на одну из своих пустых линий.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 1
+     },
+     "side": "own"
+    },
+    "text": "Перемести одно из своих существ на одну из своих пустых линий.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "finn_card_31",
@@ -2572,7 +2831,21 @@
   "landType": "rainbow",
   "image": "/content/cards/images/finn_card_32.png",
   "description": "Наносит 1 Урон каждому существу противника.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1
+    },
+    "text": "Наносит 1 Урон каждому существу противника."
+   }
+  ]
  },
  {
   "id": "finn_card_34",
@@ -2582,7 +2855,32 @@
   "landType": "rainbow",
   "image": "/content/cards/images/finn_card_34.png",
   "description": "Выбери существо Голубых равнин под твоим контролем, оно получит +2 АТК в этом ходу.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "text": "Выбери существо Голубых равнин под твоим контролем, оно получит +2 АТК в этом ходу.",
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "landType": "blue"
+      }
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "finn_card_39",
@@ -2592,7 +2890,18 @@
   "landType": "blue",
   "image": "/content/cards/images/finn_card_39.png",
   "description": "Тяни 3 карты.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "draw_cards",
+     "count": 3
+    },
+    "text": "Тяни 3 карты."
+   }
+  ]
  },
  {
   "id": "fiona_card_2",
@@ -2602,7 +2911,32 @@
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_2.png",
   "description": "Тяни 4 карты, затем сбрось 2 карты.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "draw_cards",
+      "count": 4
+     },
+     {
+      "op": "discard_from_hand",
+      "count": 2
+     }
+    ],
+    "text": "Тяни 4 карты, затем сбрось 2 карты.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "own_hand_card"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "fiona_card_4",
@@ -2830,7 +3164,25 @@
   "attack": 1,
   "defense": 10,
   "description": "Твои Радужные существа получают +1 ATK.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "landType": "rainbow"
+     }
+    },
+    "text": "Твои Радужные существа получают +1 ATK."
+   }
+  ]
  },
  {
   "id": "fiona_card_20",
@@ -3497,7 +3849,18 @@
   "attack": 0,
   "defense": 8,
   "description": "Солнечный король считается за дополнительную кукурузную землю под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "land_count_mod",
+     "landType": "corn",
+     "amount": 1
+    },
+    "text": "Солнечный король считается за дополнительную кукурузную землю под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_34",
@@ -3536,7 +3899,25 @@
   "attack": 4,
   "defense": 1,
   "description": "+1 DEF за каждый различный тип земли под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_36",
@@ -3749,7 +4130,45 @@
   "attack": 0,
   "defense": 0,
   "description": "Кукурузные рыцари получают +1 ATK и +2 DEF за каждое Кукурузное поле под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "landType": "corn",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "Кукурузные рыцари получают +1 ATK за каждое Кукурузное поле под твоим контролем."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "landType": "corn",
+      "amount": 2
+     },
+     "duration": "aura"
+    },
+    "text": "Кукурузные рыцари получают +2 DEF за каждое Кукурузное поле под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_48",
@@ -4071,7 +4490,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_66.png",
   "description": "Каждое твое существо получает +2 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_67",
@@ -4127,7 +4562,27 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_70.png",
   "description": "Нанеси 2 урона выбранному существу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "text": "Нанеси 2 урона выбранному существу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_71",
@@ -4833,7 +5288,25 @@
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_110.png",
   "description": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "self_player"
+     },
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     }
+    },
+    "text": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса."
+   }
+  ]
  },
  {
   "id": "ftg_card_111",
@@ -5058,7 +5531,44 @@
   "landType": "ice",
   "image": "/content/cards/images/grand_prix_card_10.png",
   "description": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "freeze_land",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "frozen": true
+     },
+     {
+      "op": "freeze_land",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "frozen": true
+     },
+     {
+      "op": "draw_cards",
+      "count": 1
+     }
+    ],
+    "text": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту.",
+    "targets": [
+     {
+      "kind": "landscape"
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_11",
@@ -5167,7 +5677,26 @@
   "attack": 2,
   "defense": 7,
   "description": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_lands"
+     },
+     "frozen": true
+    },
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней.",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_16",
@@ -5421,7 +5950,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/gunter_card_1.png",
   "description": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника).",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    },
+    "text": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника)."
+   }
+  ]
  },
  {
   "id": "gunter_card_2",
@@ -5513,7 +6058,26 @@
   "landType": "ice",
   "image": "/content/cards/images/gunter_card_10.png",
   "description": "Выбери линию и заморозь обе земли на ней.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_lands"
+     },
+     "frozen": true
+    },
+    "text": "Выбери линию и заморозь обе земли на ней.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "gunter_card_12",
@@ -5911,7 +6475,21 @@
   "attack": 2,
   "defense": 10,
   "description": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_lands"
+     },
+     "frozen": true
+    },
+    "text": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
+    "cost": 1
+   }
+  ]
  },
  {
   "id": "ice_king_card_8",
@@ -6127,7 +6705,33 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_26.png",
   "description": "Заморозь выбранную землю, затем тяни карту.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "freeze_land",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "frozen": true
+     },
+     {
+      "op": "draw_cards",
+      "count": 1
+     }
+    ],
+    "text": "Заморозь выбранную землю, затем тяни карту.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ice_king_card_28",
@@ -6137,7 +6741,40 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_28.png",
   "description": "Заморозь две выбранные земли.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "freeze_land",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "frozen": true
+     },
+     {
+      "op": "freeze_land",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "frozen": true
+     }
+    ],
+    "text": "Заморозь две выбранные земли.",
+    "targets": [
+     {
+      "kind": "landscape"
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ice_king_card_29",
@@ -6272,7 +6909,27 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_40.png",
   "description": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "frozen": true
+    },
+    "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии.",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "jake_card_1",
@@ -7183,7 +7840,19 @@
   "landType": "sand",
   "image": "/content/cards/images/lady_rainicorn_card_1.png",
   "description": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владельцу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "text": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владельцу."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_3",
@@ -7193,7 +7862,23 @@
   "landType": "sand",
   "image": "/content/cards/images/lady_rainicorn_card_3.png",
   "description": "Тяни карту за каждую свою пустую линию.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_lands",
+      "where": "own",
+      "empty": true,
+      "amount": 1
+     }
+    },
+    "text": "Тяни карту за каждую свою пустую линию."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_6",
@@ -7367,7 +8052,29 @@
   "attack": 1,
   "defense": 8,
   "description": "+2 ATK если под твоим контролем Голубые равнины.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura"
+    },
+    "text": "+2 ATK если под твоим контролем Голубые равнины.",
+    "conditions": [
+     {
+      "kind": "while_land_count",
+      "landType": "blue",
+      "min": 1
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_23",
@@ -7543,7 +8250,26 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_9.png",
   "description": "Выбри свое существо и верни его на руку.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "Выбри свое существо и верни его на руку.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lemongrab_card_11",
@@ -7553,7 +8279,35 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_11.png",
   "description": "Выбранное существо под твоим контролем получет -5 АТК в этом ход.\nТяни карту.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "stat": "attack",
+      "amount": -5,
+      "duration": "this_turn"
+     },
+     {
+      "op": "draw_cards",
+      "count": 1
+     }
+    ],
+    "text": "Выбранное существо под твоим контролем получет -5 АТК в этом ходу. Тяни карту.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lemongrab_card_12",
@@ -8459,7 +9213,33 @@
   "landType": "swamp",
   "image": "/content/cards/images/lsp_card_3.png",
   "description": "Выбранное существо под твоим контролем получает +1 ATK в этом ход за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     },
+     "duration": "this_turn"
+    },
+    "text": "Выбранное существо под твоим контролем получает +1 ATK в этом ход за каждые 5 карт в твоей стопке сброса.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lsp_card_4",
@@ -8514,7 +9294,26 @@
   "attack": 1,
   "defense": 6,
   "description": "Сбрось карту >>> Геркулаз получает +4 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 4,
+     "duration": "this_turn"
+    },
+    "text": "Сбрось карту >>> Геркулаз получает +4 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "oncePerTurn": true
+   }
+  ]
  },
  {
   "id": "lsp_card_10",
@@ -8526,7 +9325,29 @@
   "attack": 1,
   "defense": 6,
   "description": "Сбрось карту >>> Нанеси 1 урон другому существу на этой линии. (Используй любое количество раз в каждый свой ход.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "text": "Сбрось карту >>> Нанеси 1 урон другому существу на этой линии. (Используй любое количество раз в каждый свой ход.)",
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "additionalCost": {
+     "discardFromHand": 1
+    }
+   }
+  ]
  },
  {
   "id": "lsp_card_12",
@@ -8538,7 +9359,24 @@
   "attack": 2,
   "defense": 8,
   "description": "Сбрось карту >>> Нанеси 1 Урон каждому существу противника. (Используй только один раз в каждый свой ход.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1
+    },
+    "text": "Сбрось карту >>> Нанеси 1 Урон каждому существу противника. (Используй только один раз в каждый свой ход.)",
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "oncePerTurn": true
+   }
+  ]
  },
  {
   "id": "lsp_card_13",
@@ -8562,7 +9400,24 @@
   "attack": 2,
   "defense": 7,
   "description": "Сбрось карту >>> Восстанови 1 Урон с Лысого заседателя. (Используй только один раз в каждый свой ход.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": 1
+    },
+    "text": "Сбрось карту >>> Восстанови 1 Урон с Лысого заседателя. (Используй только один раз в каждый свой ход.)",
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "oncePerTurn": true
+   }
+  ]
  },
  {
   "id": "lsp_card_16",
@@ -8594,7 +9449,27 @@
   "landType": "blue",
   "image": "/content/cards/images/lsp_card_18.png",
   "description": "Выбранный игрок тянет 5 карт.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "draw_cards",
+     "count": 5,
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "Выбранный игрок тянет 5 карт.",
+    "targets": [
+     {
+      "kind": "any_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lsp_card_19",
@@ -8604,7 +9479,34 @@
   "landType": "blue",
   "image": "/content/cards/images/lsp_card_19.png",
   "description": "Выбранное существо под твоим контролем получает +2 ATK в этом ход, за каждое заклинание (включая это) сыгранное мобой в этом ход.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "spell_cast",
+      "scope": "own",
+      "amount": 2
+     },
+     "duration": "this_turn"
+    },
+    "text": "Выбранное существо под твоим контролем получает +2 ATK в этом ход, за каждое заклинание (включая это) сыгранное тобой в этом ход.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lsp_card_21",
@@ -8835,7 +9737,26 @@
   "attack": 0,
   "defense": 5,
   "description": "Сбрось карту >>> Хороший песик получает +2 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "text": "Сбрось карту >>> Хороший песик получает +2 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "oncePerTurn": true
+   }
+  ]
  },
  {
   "id": "lsp_card_37",

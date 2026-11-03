@@ -1,0 +1,29 @@
+{
+  "cardId": "fiona_card_2",
+  "name": "Великолепный грамофон",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "draw_cards",
+          "count": 4
+        },
+        {
+          "op": "discard_from_hand",
+          "count": 2
+        }
+      ],
+      "text": "Тяни 4 карты, затем сбрось 2 карты.",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "own_hand_card"
+        }
+      ]
+    }
+  ]
+}

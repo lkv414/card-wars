@@ -142,6 +142,16 @@ export function runEffect(
       }
       return;
     }
+    case 'unflip': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'creature') continue;
+        const inst = instance(draft, target.instanceId);
+        if (!inst.flipped) continue;
+        inst.flipped = false;
+        emit(ctx, { type: 'floop_used', player: inst.controller, instanceId: target.instanceId, cardId: inst.cardId, paidActions: 0 });
+      }
+      return;
+    }
     case 'grant_discount': {
       draft.discounts.push({
         player: source.player,

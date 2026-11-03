@@ -50,6 +50,8 @@ export type TargetAskKind =
   /** Opponent creature in the source's lane (Острый парень, Песчаный змей). */
   | 'lane_opponent_creature'
   | 'opponent_player'
+  /** Any alive player (Кристалл силы: «выбранный игрок»). */
+  | 'any_player'
   | 'landscape'
   | 'own_hand_card'
   | 'own_building'
@@ -104,6 +106,8 @@ export type TargetRef =
   | { kind: 'teammate_player' }
   /** Enemy team, represented by its first alive player (team lives are shared). */
   | { kind: 'opponent_team' }
+  /** Every land of every opponent (Полюс холода). */
+  | { kind: 'each_opponent_land' }
   /** The instance the trigger payload is about (e.g. attacker). */
   | { kind: 'triggering_instance' }
   /** Partner of the player in the trigger payload (2v2). */
@@ -172,7 +176,9 @@ export type StatAmount =
       filter?: TargetFilter;
     }
   /** Turn counters (docs/MECHANICS-V2.md §3): spells cast, creatures entered/died, line changes, team/ally events. */
-  | { kind: 'per_counter'; counter: TurnCounterKind; scope: 'own' | 'all' | 'team' | 'teammate'; amount: number }
+  | { kind: 'per_counter'; counter: TurnCounterKind; scope: 'own' | 'all' | 'team' | 'teammate'; amount: number; every?: number }
+  /** Hand size of the player chosen by choice[0] (Поля кошмаров, Фермер-кочевник). */
+  | { kind: 'target_hand_size'; amount: number }
   /** Players controlling at least one land with an ice token (Капитан мороженка). */
   | { kind: 'per_token_players'; amount: number }
   /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
@@ -244,6 +250,8 @@ export type ConditionSpec =
   | { kind: 'while_zone_ice_token' }
   /** It is the source owner's turn (Плавучий Дворец Льда). */
   | { kind: 'while_own_turn' }
+  /** An own creature stands on a land of this type (Костяная палочка, play-gate). */
+  | { kind: 'while_own_creature_on_land_type'; landType: LandType }
   /** Own field card with this id is in play (Малыш камнепух при своей Мамуле). */
   | { kind: 'while_own_card_in_play'; cardId: string }
   /** Own building in the source's zone (Кукурузный чемпион). */
@@ -352,6 +360,8 @@ export type EffectSpec =
       atkBonus?: number;
       face?: boolean;
     }
+  /** Un-flip a flipped (applied) own creature (Архитектор разума, Моника). */
+  | { op: 'unflip'; target: TargetRef }
   /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
   | { op: 'reveal_deck_top'; count: number }
   /**

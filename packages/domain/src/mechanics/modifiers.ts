@@ -283,6 +283,17 @@ export function conditionsHold(
         if (opposite && draft.players[opposite.player]!.zones[opposite.zone]?.creature) return false;
         break;
       }
+      case 'while_own_creature_on_land_type': {
+        const found = p.zones.some((zone) => {
+          const id = zone.creature;
+          if (!id) return false;
+          const inst = instance(draft, id);
+          if (inst.zone === null) return false;
+          return p.lands[inst.zone]!.type === cond.landType;
+        });
+        if (!found) return false;
+        break;
+      }
       case 'while_own_turn':
         if (!draft.activePlayers.includes(source.player)) return false;
         break;
@@ -446,8 +457,14 @@ export function resolveStatAmount(
       }
       return count * amount.amount;
     }
-    case 'per_counter':
-      return counterValue(draft, amount.counter, amount.scope, source.player) * amount.amount;
+    case 'per_counter': {
+      const value = counterValue(draft, amount.counter, amount.scope, source.player);
+      return Math.floor(value / (amount.every ?? 1)) * amount.amount;
+    }
+    case 'target_hand_size': {
+      const picked = choices?.find((c) => c.kind === 'player');
+      return picked ? draft.players[picked.playerId]!.hand.length * amount.amount : 0;
+    }
     case 'per_token_players':
       return draft.order.filter((pid) => draft.players[pid]!.lands.some((l) => l.iceTokens > 0)).length * amount.amount;
     case 'per_target': {

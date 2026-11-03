@@ -1,0 +1,20 @@
+{
+  "cardId": "gunter_card_1",
+  "name": "Крышесносная кола",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn"
+      },
+      "text": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника)."
+    }
+  ]
+}

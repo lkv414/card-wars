@@ -1,0 +1,18 @@
+{
+  "cardId": "finn_card_32",
+  "name": "Заумный Шторм Крови",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "Наносит 1 Урон каждому существу противника."
+    }
+  ]
+}

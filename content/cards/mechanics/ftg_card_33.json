@@ -1,0 +1,15 @@
+{
+  "cardId": "ftg_card_33",
+  "name": "Солнечный король",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "land_count_mod",
+        "landType": "corn",
+        "amount": 1
+      },
+      "text": "Солнечный король считается за дополнительную кукурузную землю под твоим контролем."
+    }
+  ]
+}

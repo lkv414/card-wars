@@ -1,0 +1,16 @@
+{
+  "cardId": "lady_rainicorn_card_1",
+  "name": "Песчаный сфинкс",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "this_lane_creature"
+        }
+      },
+      "text": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владельцу."
+    }
+  ]
+}

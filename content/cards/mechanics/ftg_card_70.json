@@ -1,0 +1,24 @@
+{
+  "cardId": "ftg_card_70",
+  "name": "Цельнометаллическая ракетка",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "text": "Нанеси 2 урона выбранному существу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
+}

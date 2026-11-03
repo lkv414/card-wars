@@ -1,0 +1,20 @@
+{
+  "cardId": "lady_rainicorn_card_3",
+  "name": "Фолианкх",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_lands",
+          "where": "own",
+          "empty": true,
+          "amount": 1
+        }
+      },
+      "text": "Тяни карту за каждую свою пустую линию."
+    }
+  ]
+}

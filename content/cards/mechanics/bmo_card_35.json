@@ -1,0 +1,28 @@
+{
+  "cardId": "bmo_card_35",
+  "name": "Абрака Амадеус",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "count": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        }
+      },
+      "text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ]
+    }
+  ]
+}

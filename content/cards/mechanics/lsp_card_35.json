@@ -1,0 +1,23 @@
+{
+  "cardId": "lsp_card_35",
+  "name": "Хороший песик",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Сбрось карту >>> Хороший песик получает +2 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
+}

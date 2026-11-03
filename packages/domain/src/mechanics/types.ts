@@ -37,7 +37,7 @@ export interface TriggerPayload {
   amount?: number;
   count?: number;
   cost?: number;
-  zone?: number;
+  zone?: number | null;
 }
 
 /** Target asks: what the player must pick, in declared order (docs/MECHANICS-V2.md §5). */
@@ -231,7 +231,7 @@ export type EffectSpec =
   /** Damage to the covered creatures goes to the modifier source instead (Ведриния). */
   | { op: 'damage_redirect'; from: TargetRef; excludeSelf?: boolean }
   /** Grant a rule modifier for the current turn (floop Ведринии). */
-  | { op: 'grant_modifier'; modifier: EffectSpec }
+  | { op: 'grant_modifier'; modifier: EffectSpec; duration?: 'this_turn' | 'while_flipped' }
   /** Return cards from own discard to hand (or deck top, lsp_card_25). */
   | {
       op: 'return_from_discard';

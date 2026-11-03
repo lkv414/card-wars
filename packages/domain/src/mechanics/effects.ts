@@ -30,7 +30,7 @@ export function runEffect(
 ): void {
   switch (effect.op) {
     case 'deal_damage': {
-      const targets = resolveTarget(draft, ctx, effect.target, source, choices);
+      const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
       const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload);
       for (const target of targets) {
         if (effect.filter && !targetMatchesFilter(draft, ctx, source, target, effect.filter)) continue;
@@ -43,7 +43,7 @@ export function runEffect(
       return;
     }
     case 'heal': {
-      const targets = resolveTarget(draft, ctx, effect.target, source, choices);
+      const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
       const amount = resolveStatAmount(draft, ctx, source, effect.amount, payload);
       for (const target of targets) {
         if (target.kind === 'creature' || target.kind === 'building') {
@@ -61,7 +61,7 @@ export function runEffect(
       const count = resolveStatAmount(draft, ctx, source, effect.count);
       if (count <= 0) return;
       if (effect.target) {
-        for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+        for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
           if (target.kind === 'player') drawCards(draft, ctx, target.playerId, count);
         }
         return;
@@ -77,7 +77,7 @@ export function runEffect(
     case 'opponent_discards': {
       const count = resolveStatAmount(draft, ctx, source, effect.count);
       if (count <= 0) return;
-      for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind === 'player') opponentDiscardsRandom(draft, ctx, target.playerId, count);
       }
       return;
@@ -86,7 +86,7 @@ export function runEffect(
       if (effect.duration === 'aura') {
         throw new DomainError('aura_not_castable', 'aura effects are scanned, never executed');
       }
-      const targets = resolveTarget(draft, ctx, effect.target, source, choices);
+      const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
       const amount = resolveStatAmount(draft, ctx, source, effect.amount);
       for (const target of targets) {
         if (target.kind !== 'creature' && target.kind !== 'building') continue;
@@ -111,7 +111,7 @@ export function runEffect(
       return;
     }
     case 'destroy': {
-      for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'creature' && target.kind !== 'building') continue;
         const removed = killInstance(draft, ctx, target.instanceId);
         emit(ctx, { type: 'creature_destroyed', instanceId: target.instanceId, cardId: removed.cardId });
@@ -119,8 +119,8 @@ export function runEffect(
       return;
     }
     case 'move_creature': {
-      const movers = resolveTarget(draft, ctx, effect.target, source, choices);
-      const destinations = resolveTarget(draft, ctx, effect.destination, source, choices);
+      const movers = resolveTarget(draft, ctx, effect.target, source, choices, payload);
+      const destinations = resolveTarget(draft, ctx, effect.destination, source, choices, payload);
       const dest = destinations[0];
       if (!dest || dest.kind !== 'land') {
         throw new DomainError('invalid_choice', 'move_creature needs a destination zone');
@@ -132,7 +132,7 @@ export function runEffect(
       return;
     }
     case 'freeze_land': {
-      for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'land') continue;
         const land = draft.players[target.playerId]!.lands[target.zone]!;
         if (land.frozen === effect.frozen) continue;
@@ -142,10 +142,10 @@ export function runEffect(
       return;
     }
     case 'flip_land': {
-      for (const target of resolveTarget(draft, ctx, effect.target, source, choices)) {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'land') continue;
         const land = draft.players[target.playerId]!.lands[target.zone]!;
-        if (land.flipped !== effect.down) continue; // already in the wanted state
+        if (land.flipped === effect.down) continue; // already in the wanted state
         land.flipped = effect.down;
         if (effect.until === 'next_own_turn') {
           draft.landFlipEffects.push({ owner: source.player, zone: target.zone, down: effect.down, grantedOnTurn: draft.turn });
@@ -166,7 +166,7 @@ export function runEffect(
       return;
     }
     case 'gain_shield': {
-      const targets = resolveTarget(draft, ctx, effect.target, source, choices);
+      const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
       for (const target of targets) {
         if (target.kind !== 'creature') continue;
         const inst = instance(draft, target.instanceId);
@@ -206,7 +206,12 @@ export function runEffect(
       player(draft, source.player).actions += effect.amount;
       return;
     case 'grant_modifier':
-      draft.turnModifiers.push({ instanceId: source.instanceId ?? '', effect: effect.modifier, grantedOnTurn: draft.turn });
+      draft.turnModifiers.push({
+        instanceId: source.instanceId ?? '',
+        effect: effect.modifier,
+        grantedOnTurn: draft.turn,
+        duration: effect.duration ?? 'this_turn',
+      });
       return;
   }
 }

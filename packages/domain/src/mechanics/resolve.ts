@@ -186,9 +186,12 @@ export function resolveTarget(
   ref: TargetRef,
   source: EffectSource,
   choices: TargetChoice[] | undefined,
+  payload?: import('./types').TriggerPayload,
 ): ResolvedTarget[] {
+  // A card that just left play has zone null — on_leave_play triggers carry the
+  // last zone in the payload (Крушитель земли, Зеленая змейка).
   const src = source.instanceId ? instance(draft, source.instanceId) : null;
-  const srcZone = src?.zone ?? null;
+  const srcZone = src?.zone ?? (source.instanceId ? payload?.zone ?? null : null);
   const choice = ref.kind === 'choice' ? choices?.[ref.index] : undefined;
 
   switch (ref.kind) {

@@ -12,7 +12,8 @@
       "kind": "each_creature_yours"
      },
      "excludeSelf": true
-    }
+    },
+    "duration": "while_flipped"
    },
    "text": "+1 ATK против болотных и песаных существ (Ведро!)."
   }

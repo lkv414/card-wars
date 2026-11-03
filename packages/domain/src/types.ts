@@ -117,11 +117,17 @@ export interface LandFlipEffect {
   grantedOnTurn: number;
 }
 
-/** Modifier granted mid-turn by an ability (Ведриния-style, docs/MECHANICS-V2.md §2А). */
+/**
+ * Modifier granted mid-turn by an ability (docs/MECHANICS-V2.md §2А).
+ * Identity: the granting instance + the effect itself; `duration` controls
+ * lifetime — `this_turn` (default) clears at end of turn, `while_flipped`
+ * applies only while the granting card is tapped (Ведриния).
+ */
 export interface TurnModifier {
   instanceId: string;
   effect: import('./mechanics/types').EffectSpec;
   grantedOnTurn: number;
+  duration: 'this_turn' | 'while_flipped';
 }
 
 export interface TurnBuff {

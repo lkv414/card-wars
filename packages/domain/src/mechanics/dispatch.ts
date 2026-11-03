@@ -8,7 +8,7 @@ import { runEffect } from './effects';
 import { runMechanic } from './registry';
 import { validateChoices } from './resolve';
 import type { EffectSource } from './source';
-import type { AbilitySpec, QueuedAbility, TargetChoice, Trigger, TriggerPayload } from './types';
+import type { AbilitySpec, PlayerId, QueuedAbility, TargetChoice, Trigger, TriggerPayload } from './types';
 
 /**
  * Trigger queue (docs/MECHANICS-V2.md §2Б/§6): hooks enqueue, `drainTriggers`
@@ -16,6 +16,31 @@ import type { AbilitySpec, QueuedAbility, TargetChoice, Trigger, TriggerPayload 
  * into `MatchState.pending`; `resolvePending` continues it. Re-entrant hooks
  * (an ability drawing cards fires on_draw) only append to the running queue.
  */
+
+/**
+ * Enqueue on_leave_play for a card that is ALREADY out of play (the live-source
+ * scan cannot see it). Finds the ability index in the card data directly.
+ */
+export function enqueueLeavePlay(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  instanceId: string,
+  cardId: string,
+  playerId: PlayerId,
+  zone: number | null,
+): void {
+  const card = ctx.catalog.getCard(cardId);
+  const abilityIndex = card?.abilities?.findIndex((a) => a.kind === 'passive' && a.trigger === 'on_leave_play') ?? -1;
+  if (!card || abilityIndex < 0) return;
+  ctx.frame.queue.push({
+    player: playerId,
+    instanceId,
+    cardId,
+    abilityIndex,
+    trigger: 'on_leave_play',
+    payload: { instanceId, cardId, player: playerId, zone },
+  });
+}
 
 /** Collect matching abilities of all live sources into the frame queue. */
 export function enqueueTrigger(
@@ -77,9 +102,9 @@ function abilityOf(
     const inst = draft.instances[qa.instanceId];
     const cardId = inst?.cardId ?? qa.cardId;
     if (!cardId) return null;
-    // on_death sources sit in the discard already; other triggers require the
-    // source to still be in play (docs/MECHANICS-V2.md §2Б).
-    if (qa.trigger !== 'on_death') {
+    // on_death / on_leave_play sources sit in the discard already; other
+    // triggers require the source to still be in play (docs/MECHANICS-V2.md §2Б).
+    if (qa.trigger !== 'on_death' && qa.trigger !== 'on_leave_play') {
       if (!inst || (inst.location !== 'field' && inst.location !== 'companion')) return null;
     }
     return ctx.catalog.getCard(cardId)?.abilities?.[qa.abilityIndex] ?? null;

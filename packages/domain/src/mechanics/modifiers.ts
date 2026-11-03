@@ -90,6 +90,7 @@ export function forSource(
   for (const granted of draft.turnModifiers) {
     const inst = draft.instances[granted.instanceId];
     if (!inst) continue;
+    if (granted.duration === 'while_flipped' && !inst.flipped) continue;
     fn({ player: inst.controller, instanceId: granted.instanceId }, { kind: 'passive', effect: granted.effect, text: '' }, -1);
   }
 }

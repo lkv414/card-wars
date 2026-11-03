@@ -1,0 +1,24 @@
+{
+  "cardId": "marceline_card_27",
+  "name": "Пентапластырь",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 5
+      },
+      "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше).",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
+}

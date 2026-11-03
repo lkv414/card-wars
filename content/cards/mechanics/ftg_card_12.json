@@ -1,0 +1,38 @@
+{
+  "cardId": "ftg_card_12",
+  "name": "Лапа пумы",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "unflip",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "stat": "attack",
+          "amount": 2,
+          "duration": "this_turn"
+        }
+      ],
+      "text": "Подготовь неактивное Существо под твоим контролем. Оно получает +2 ATK в этом ход.",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "flipped": true
+          }
+        }
+      ]
+    }
+  ]
+}

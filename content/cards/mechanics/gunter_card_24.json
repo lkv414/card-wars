@@ -1,0 +1,17 @@
+{
+  "cardId": "gunter_card_24",
+  "name": "С добрым утром!",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "unflip",
+        "target": {
+          "kind": "each_creature_yours"
+        }
+      },
+      "text": "Подготовь каждое существо под своим контролем."
+    }
+  ]
+}

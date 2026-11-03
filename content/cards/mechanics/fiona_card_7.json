@@ -1,0 +1,23 @@
+{
+  "cardId": "fiona_card_7",
+  "name": "Браслет дружбы",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Поменяй любое количество урона между двумя существами под твоим контролем.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "mechanic": "move_damage",
+      "params": {
+        "max": 99
+      }
+    }
+  ]
+}

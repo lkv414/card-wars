@@ -125,7 +125,7 @@ function validateAbility(ability, owner) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
     if (ask.filter) {
       for (const key of Object.keys(ask.filter)) {
-        if (!['ready', 'landType', 'zoneToken'].includes(key)) fail(`${where}: unknown ask filter ${key}`);
+        if (!['ready', 'landType', 'zoneToken', 'flipped', 'undamaged'].includes(key)) fail(`${where}: unknown ask filter ${key}`);
       }
     }
   }

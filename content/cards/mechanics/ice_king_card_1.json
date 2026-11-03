@@ -1,0 +1,24 @@
+{
+  "cardId": "ice_king_card_1",
+  "name": "Альфа-йети",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "+3 АТК пока твой противник не контролирует существо на этой линии.",
+      "conditions": [
+        {
+          "kind": "while_lane_empty_opponent"
+        }
+      ]
+    }
+  ]
+}

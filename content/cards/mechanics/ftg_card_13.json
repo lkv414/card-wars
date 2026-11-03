@@ -1,0 +1,19 @@
+{
+  "cardId": "ftg_card_13",
+  "name": "Розовая сахарная вата",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "vs": "defenderZone",
+        "landType": "sand",
+        "atkBonus": 2
+      },
+      "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле."
+    }
+  ]
+}

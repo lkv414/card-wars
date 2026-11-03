@@ -144,6 +144,10 @@ export interface TargetFilter {
   sameCard?: boolean;
   /** Only these cards (Мамуля камнепух counts Малышей — data-level cross-reference). */
   cardIds?: string[];
+  /** Only creatures without damage (Пирогошторм). */
+  undamaged?: boolean;
+  /** Only flipped («неактивные») creatures (Лапа пумы). */
+  flipped?: boolean;
   /** Match by the target's ZONE land type instead of the card (гномы). */
   zoneLandType?: LandType;
   /** Match creatures standing on a land with ice tokens (Пингвин, Мороженник, Гантер). */

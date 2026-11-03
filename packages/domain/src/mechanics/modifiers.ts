@@ -490,6 +490,8 @@ function targetMatchesFilter(
 ): boolean {
   const inst = instance(draft, instanceId);
   if (filter.ready && inst.flipped) return false;
+  if (filter.flipped === true && !inst.flipped) return false;
+  if (filter.undamaged === true && inst.damage > 0) return false;
   const card: CardData | undefined = ctx.catalog.getCard(inst.cardId);
   if (!card) return false;
   if (filter.landType && card.landType !== filter.landType && !countsAsTypes(draft, ctx, instanceId).includes(filter.landType)) return false;

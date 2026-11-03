@@ -1,0 +1,19 @@
+{
+  "cardId": "ftg_card_60",
+  "name": "Морская ведьма",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "vs": "defenderZone",
+        "landType": "swamp",
+        "atkBonus": 1
+      },
+      "text": "Морская ведьма получает +1 ATK пока атакует существ на бесполезных болотах."
+    }
+  ]
+}

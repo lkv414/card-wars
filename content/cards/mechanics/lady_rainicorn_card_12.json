@@ -1,0 +1,28 @@
+{
+  "cardId": "lady_rainicorn_card_12",
+  "name": "Мариачи",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "all",
+          "amount": 1
+        }
+      },
+      "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо вступившее в игру в этом ходу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
+}

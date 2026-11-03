@@ -418,6 +418,8 @@ function targetMatchesFilter(
   const card = ctx.catalog.getCard(inst.cardId);
   let match = true;
   if (filter.ready && inst.flipped) match = false;
+  if (match && filter.flipped === true && !inst.flipped) match = false;
+  if (match && filter.undamaged === true && inst.damage > 0) match = false;
   if (match && filter.landType && (!card || card.landType !== filter.landType)) {
     // «считается …» overrides (Кроха слон — радужным)
     match = countsAsTypes(draft, ctx, target.instanceId).includes(filter.landType);

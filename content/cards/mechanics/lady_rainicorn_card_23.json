@@ -1,0 +1,18 @@
+{
+  "cardId": "lady_rainicorn_card_23",
+  "name": "Песчаный глазастик",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature"
+        },
+        "amount": 1
+      },
+      "text": "Когда Песчаный глазастик вступает в игру, нанеси 1 урон каждому существу в игре, (включая каждое твое существо)."
+    }
+  ]
+}

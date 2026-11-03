@@ -652,7 +652,26 @@
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_1.png",
   "description": "Каждое твое существо без урона на нем получает +2 ATK в этом ходу.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn",
+     "filter": {
+      "undamaged": true
+     }
+    },
+    "text": "Каждое твое существо без урона на нем получает +2 ATK в этом ходу."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_2",
@@ -662,7 +681,26 @@
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_2.png",
   "description": "Существа под твоим контролем не получают урон от существ противника в этом ходу.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "grant_modifier",
+     "modifier": {
+      "op": "damage_immunity",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 999,
+      "from": "attacks"
+     },
+     "duration": "this_turn"
+    },
+    "text": "Существа под твоим контролем не получают урон от существ противника в этом ходу."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_3",
@@ -2090,7 +2128,76 @@
   "attack": 0,
   "defense": 8,
   "description": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой линии.\nПотрать 1 действие >>> Перемести Пиромансера на пустую землю под твоим контролем.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "text": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой линии.",
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     }
+    ]
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_line_change",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "text": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой линии.",
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     }
+    ]
+   },
+   {
+    "kind": "active",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "this_creature"
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 0
+     },
+     "side": "own"
+    },
+    "text": "Потрать 1 действие >>> Перемести Пиромансера на пустую землю под своим контролем.",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "charlie_card_15",
@@ -2455,7 +2562,34 @@
   "attack": 2,
   "defense": 7,
   "description": "Если в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "text": "Если в начале твоего хода у Ласковой овечки 4 урона и более, нанеси 2 урона выбранному существу противника на этой линии.",
+    "targets": [
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "finn_card_1",
@@ -2479,7 +2613,20 @@
   "attack": 2,
   "defense": 7,
   "description": "Твои существа на соседних линиях не могут быть атакованы.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "attacks": true
+    },
+    "text": "Твои существа на соседних линиях не могут быть атакованы."
+   }
+  ]
  },
  {
   "id": "finn_card_5",
@@ -2807,7 +2954,26 @@
   "attack": 1,
   "defense": 4,
   "description": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "flip_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "down": true
+    },
+    "text": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "finn_card_27",
@@ -3083,7 +3249,26 @@
   "landType": "rainbow",
   "image": "/content/cards/images/fiona_card_7.png",
   "description": "Поменяй любое количество урона между двумя существами под твоим контролем.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "text": "Поменяй любое количество урона между двумя существами под твоим контролем.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "mechanic": "move_damage",
+    "params": {
+     "max": 99
+    }
+   }
+  ]
  },
  {
   "id": "fiona_card_9",
@@ -3776,7 +3961,41 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_12.png",
   "description": "Подготовь неактивное Существо под твоим контролем. Оно получает +2 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "unflip",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "stat": "attack",
+      "amount": 2,
+      "duration": "this_turn"
+     }
+    ],
+    "text": "Подготовь неактивное Существо под твоим контролем. Оно получает +2 ATK в этом ход.",
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "flipped": true
+      }
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_13",
@@ -3786,7 +4005,22 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_13.png",
   "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "sand",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_14",
@@ -3796,7 +4030,22 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_14.png",
   "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Кукурузной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "corn",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Кукурузной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_15",
@@ -3913,7 +4162,26 @@
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_27.png",
   "description": "Каждое твое существо на бесполезных болотах получает +2 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn",
+     "filter": {
+      "zoneLandType": "swamp"
+     }
+    },
+    "text": "Каждое твое существо на бесполезных болотах получает +2 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_28",
@@ -3923,7 +4191,22 @@
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_28.png",
   "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на голубых равнинах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "blue",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на голубых равнинах."
+   }
+  ]
  },
  {
   "id": "ftg_card_29",
@@ -3933,7 +4216,22 @@
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_29.png",
   "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на милых землях.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "good",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существ на милых землях."
+   }
+  ]
  },
  {
   "id": "ftg_card_30",
@@ -4479,7 +4777,22 @@
   "landType": "good",
   "image": "/content/cards/images/ftg_card_53.png",
   "description": "Каждое твое существо получает +2 ATK, пока атакует существ на бесполезных болотах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "swamp",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на бесполезных болотах."
+   }
+  ]
  },
  {
   "id": "ftg_card_54",
@@ -4489,7 +4802,22 @@
   "landType": "good",
   "image": "/content/cards/images/ftg_card_54.png",
   "description": "Каждое твое существо получает +2 ATK, пока атакует существ на кукурузной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "corn",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на кукурузной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_55",
@@ -4589,7 +4917,22 @@
   "attack": 3,
   "defense": 6,
   "description": "Морская ведьма получает +1 ATK пока атакует существ на бесполезных болотах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "defenderZone",
+     "landType": "swamp",
+     "atkBonus": 1
+    },
+    "text": "Морская ведьма получает +1 ATK пока атакует существ на бесполезных болотах."
+   }
+  ]
  },
  {
   "id": "ftg_card_61",
@@ -4601,7 +4944,22 @@
   "attack": 3,
   "defense": 6,
   "description": "Приодетый волк получает +1 ATK пока атакует существ на кукурузных полях.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "defenderZone",
+     "landType": "corn",
+     "atkBonus": 1
+    },
+    "text": "Приодетый волк получает +1 ATK пока атакует существ на кукурузных полях."
+   }
+  ]
  },
  {
   "id": "ftg_card_62",
@@ -4613,7 +4971,22 @@
   "attack": 3,
   "defense": 6,
   "description": "Красавчик Тимми получает +1 ATK пока атакует существ на песчаных землях.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "vs": "defenderZone",
+     "landType": "sand",
+     "atkBonus": 1
+    },
+    "text": "Красавчик Тимми получает +1 ATK пока атакует существ на песчаных землях."
+   }
+  ]
  },
  {
   "id": "ftg_card_63",
@@ -5152,7 +5525,22 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_89.png",
   "description": "Каждое твое существо получает +2 ATK, пока атакует существ на Голубых равнинах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "blue",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Голубых равнинах."
+   }
+  ]
  },
  {
   "id": "ftg_card_90",
@@ -5162,7 +5550,22 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_90.png",
   "description": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "swamp",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах."
+   }
+  ]
  },
  {
   "id": "ftg_card_91",
@@ -5279,7 +5682,27 @@
   "attack": 2,
   "defense": 6,
   "description": "Если Рыболов вступает в игру на Голубые равнины, то нанеси 2 Урона каждому противнику.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": 2
+    },
+    "text": "Если Рыболов вступает в игру на Голубые равнины, то нанеси 2 Урона каждому противнику.",
+    "conditions": [
+     {
+      "kind": "while_on_land_type",
+      "landType": "blue"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_102",
@@ -5493,7 +5916,22 @@
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_112.png",
   "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "sand",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_113",
@@ -5503,7 +5941,22 @@
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_113.png",
   "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Милой земле.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "vs": "defenderZone",
+     "landType": "good",
+     "atkBonus": 2
+    },
+    "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Милой земле."
+   }
+  ]
  },
  {
   "id": "ftg_card_114",
@@ -6532,7 +6985,20 @@
   "landType": "blue",
   "image": "/content/cards/images/gunter_card_24.png",
   "description": "Подготовь каждое существо под твоим контролем.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "unflip",
+     "target": {
+      "kind": "each_creature_yours"
+     }
+    },
+    "text": "Подготовь каждое существо под своим контролем."
+   }
+  ]
  },
  {
   "id": "gunter_card_25",
@@ -6677,7 +7143,27 @@
   "attack": 3,
   "defense": 2,
   "description": "+3 АТК пока твой противник не контролирует существо на этой линии.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "text": "+3 АТК пока твой противник не контролирует существо на этой линии.",
+    "conditions": [
+     {
+      "kind": "while_lane_empty_opponent"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ice_king_card_3",
@@ -6701,7 +7187,27 @@
   "attack": 2,
   "defense": 9,
   "description": "+3 АТК пока твой противник не контролирует существо на этой линии.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "text": "+3 АТК пока твой противник не контролирует существо на этой линии.",
+    "conditions": [
+     {
+      "kind": "while_lane_empty_opponent"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ice_king_card_6",
@@ -8187,7 +8693,19 @@
   "attack": 1,
   "defense": 8,
   "description": "Когда Кормежник вступает в игру, следующее существо введенное в игру в этом ход будет стоить на 1 меньше.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "grant_discount",
+     "cardType": "creature",
+     "amount": -1
+    },
+    "text": "Когда Кормежник вступает в игру, следующее существо введенное в игру в этом ход будет стоить на 1 меньше."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_34",
@@ -8298,7 +8816,35 @@
   "attack": 1,
   "defense": 12,
   "description": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 ATK в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "text": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 ATK в этом ходу.",
+    "conditions": [
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     },
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_8",
@@ -8310,7 +8856,30 @@
   "attack": 0,
   "defense": 12,
   "description": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "opponent_team"
+     },
+     "amount": 1
+    },
+    "text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику.",
+    "conditions": [
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     },
+     {
+      "kind": "if_payload_player_self"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_10",
@@ -8322,7 +8891,32 @@
   "attack": 2,
   "defense": 10,
   "description": "Когда песчаное существо вступает в игру во время твоего хода (включая Акулу), оно получает +1 ATK в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "triggering_instance"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    },
+    "text": "Когда песчаное существо вступает в игру во время твоего хода (включая Акулу), оно получает +1 ATK в этом ходу.",
+    "conditions": [
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     },
+     {
+      "kind": "if_payload_player_self"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_12",
@@ -8334,7 +8928,31 @@
   "attack": 2,
   "defense": 9,
   "description": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо вступившее в игру в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_counter",
+      "counter": "creature_entered",
+      "scope": "all",
+      "amount": 1
+     }
+    },
+    "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо вступившее в игру в этом ходу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_14",
@@ -8494,7 +9112,21 @@
   "attack": 3,
   "defense": 6,
   "description": "Когда Песчаный глазастик вступает в игру, нанеси 1 урон каждому существу в игре, (включая каждое твое существо).",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature"
+     },
+     "amount": 1
+    },
+    "text": "Когда Песчаный глазастик вступает в игру, нанеси 1 урон каждому существу в игре, (включая каждое твое существо)."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_25",
@@ -10677,7 +11309,27 @@
   "landType": "good",
   "image": "/content/cards/images/marceline_card_27.png",
   "description": "Восстанови ровно 5 урона с существа под твоим контрлем (ни больше, ни меньше).",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 5
+    },
+    "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше).",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "marceline_card_29",
@@ -10863,7 +11515,36 @@
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_7.png",
   "description": "Твое Существо на этой линии получает +3 ATK.\nВ начале каждого своего хода, сбрось карту.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "text": "Твое Существо на этой линии получает +3 ATK."
+   },
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "discard_from_hand",
+     "count": 1
+    },
+    "text": "В начале каждого своего хода, сбрось карту.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "monika_card_8",

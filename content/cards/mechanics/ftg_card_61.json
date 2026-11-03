@@ -1,0 +1,19 @@
+{
+  "cardId": "ftg_card_61",
+  "name": "Приодетый Волк",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "vs": "defenderZone",
+        "landType": "corn",
+        "atkBonus": 1
+      },
+      "text": "Приодетый волк получает +1 ATK пока атакует существ на кукурузных полях."
+    }
+  ]
+}

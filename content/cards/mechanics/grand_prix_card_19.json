@@ -1,0 +1,25 @@
+{
+  "cardId": "grand_prix_card_19",
+  "name": "Замороженный патрилег",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "text": "Когда Замороженный патрилег вступает в игру, можешь Заморозить Землю на этой линии.",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "cardId": "ice_king_card_12",
+  "name": "Мороженная рыба",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "optional": true,
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "if_payload_creature"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "cardId": "jake_card_13",
+  "name": "Легион уховерток",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

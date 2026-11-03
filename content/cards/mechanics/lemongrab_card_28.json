@@ -1,0 +1,25 @@
+{
+  "cardId": "lemongrab_card_28",
+  "name": "Лавина таиса",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "flipped": true,
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Каждое твое существо получаем +1 АТК в этом ходу за каждую землю в игре, перевернутую лицом вниз."
+    }
+  ]
+}

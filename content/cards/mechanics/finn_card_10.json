@@ -1,0 +1,27 @@
+{
+  "cardId": "finn_card_10",
+  "name": "Архитектор разума",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "unflip",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Когда Архитектор разума вступает в игру, можешь повернуть примененное существо под своим контролем.",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "ready": false
+          }
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

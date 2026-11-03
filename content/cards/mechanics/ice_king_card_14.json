@@ -1,0 +1,26 @@
+{
+  "cardId": "ice_king_card_14",
+  "name": "Защищенный Водила",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетоном.",
+      "targets": [
+        {
+          "kind": "any_creature",
+          "filter": {
+            "zoneToken": true
+          }
+        }
+      ]
+    }
+  ]
+}

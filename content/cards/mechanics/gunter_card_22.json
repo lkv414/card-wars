@@ -1,0 +1,18 @@
+{
+  "cardId": "gunter_card_22",
+  "name": "Морозильник",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "payload_zone_land"
+        },
+        "frozen": true
+      },
+      "text": "Когда Морозильник покидает игру, заморозь его землю."
+    }
+  ]
+}

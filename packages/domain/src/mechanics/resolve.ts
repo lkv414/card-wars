@@ -272,6 +272,10 @@ export function resolveTarget(
       }
       return out;
     }
+    case 'payload_zone_land': {
+      if (!payload?.player || payload.zone === undefined || payload.zone === null) return [];
+      return [{ kind: 'land', playerId: payload.player, zone: payload.zone }];
+    }
     case 'adjacent_own_land': {
       if (srcZone === null) return [];
       const zones = player(draft, source.player).zones;

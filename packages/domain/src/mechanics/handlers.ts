@@ -40,13 +40,15 @@ export const chainDamage: MechanicHandler = (
 export const moveDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
-  _source: EffectSource,
+  source: EffectSource,
   params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
 ): void => {
   const max = (params?.max as number | undefined) ?? 3;
-  const from = choices?.[0];
-  const to = choices?.[1];
+  // params.self: damage moves from the source creature itself (Ангел-болот Банши).
+  const fromId = params?.self === true ? source.instanceId : undefined;
+  const from = fromId ? { kind: 'creature' as const, instanceId: fromId } : choices?.[0];
+  const to = params?.self === true ? choices?.[0] : choices?.[1];
   if (!from || from.kind !== 'creature' || !to || to.kind !== 'creature') {
     throw new DomainError('invalid_choice', 'move_damage needs two creature choices');
   }

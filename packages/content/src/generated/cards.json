@@ -7,7 +7,37 @@
   "landType": "rainbow",
   "image": "/content/cards/images/bmo_card_1.png",
   "description": "Играй только если под твоим контролем есть существо болотных земель.\nВыбранный противник сбрасывает карту.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_own_creature_on_land_type",
+      "landType": "swamp"
+     }
+    ],
+    "text": "Играй только если под твоим контролем есть существо болотных земель."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "count": 1
+    },
+    "text": "Выбранный противник сбрасывает карту.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "bmo_card_2",
@@ -190,7 +220,19 @@
   "attack": 4,
   "defense": 4,
   "description": "Играй Пламенную мышь только если у тебя 10 или более карт в стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_discard_count",
+      "min": 10
+     }
+    ],
+    "text": "Играй Пламенную мышь только если у тебя 10 или более карт в стопке сброса."
+   }
+  ]
  },
  {
   "id": "bmo_card_17",
@@ -2545,7 +2587,30 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда Архитектор разума вступает в игру, можешь повернуть примененное существо под твоим контролем.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "unflip",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "Когда Архитектор разума вступает в игру, можешь повернуть примененное существо под своим контролем.",
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "ready": false
+      }
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "finn_card_12",
@@ -2946,7 +3011,34 @@
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_4.png",
   "description": "Восстанови 2 урона с каждого существа под твоим контролем. Существа под твоим контролем теряют свой тип земли и становятся Радужными на этом ходу.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "heal",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 2
+     },
+     {
+      "op": "grant_modifier",
+      "modifier": {
+       "op": "counts_as",
+       "target": {
+        "kind": "each_creature_yours"
+       },
+       "landType": "rainbow"
+      },
+      "duration": "this_turn"
+     }
+    ],
+    "text": "Восстанови 2 урона с каждого существа под твоим контролем. Существа под твоим контролем теряют свой тип земли и становятся Радужными на этом ходу."
+   }
+  ]
  },
  {
   "id": "fiona_card_5",
@@ -2956,7 +3048,32 @@
   "landType": "rainbow",
   "image": "/content/cards/images/fiona_card_5.png",
   "description": "Нанеси 1 урон выбранному существу за каждую вытянутую тобой карту в этом ходу.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_counter",
+      "counter": "cards_drawn",
+      "scope": "own",
+      "amount": 1
+     }
+    },
+    "text": "Нанеси 1 урон выбранному существу за каждую вытянутую тобой карту в этом ходу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "fiona_card_7",
@@ -3387,7 +3504,35 @@
   "landType": "rainbow",
   "image": "/content/cards/images/fiona_card_38.png",
   "description": "Выбранное существо получает +1 ATK за каждые 2 вытянутые тобой карты в этом ходу.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "cards_drawn",
+      "scope": "own",
+      "amount": 1,
+      "every": 2
+     },
+     "duration": "this_turn"
+    },
+    "text": "Выбранное существо получает +1 ATK за каждые 2 вытянутые тобой карты в этом ходу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "fiona_card_40",
@@ -3397,7 +3542,29 @@
   "landType": "rainbow",
   "image": "/content/cards/images/fiona_card_40.png",
   "description": "Каждое существо, под твоим контролем получает +2 ATK в этом ходу. Тяни 2 карты.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "stat": "attack",
+      "amount": 2,
+      "duration": "this_turn"
+     },
+     {
+      "op": "draw_cards",
+      "count": 2
+     }
+    ],
+    "text": "Каждое существо, под твоим контролем получает +2 ATK в этом ходу. Тяни 2 карты."
+   }
+  ]
  },
  {
   "id": "ftg_card_1",
@@ -5732,7 +5899,28 @@
   "attack": 1,
   "defense": 6,
   "description": "Когда Замороженный патрилег вступает в игру, можешь Заморозить Землю на этой линии.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "frozen": true
+    },
+    "text": "Когда Замороженный патрилег вступает в игру, можешь Заморозить Землю на этой линии.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "grand_prix_card_21",
@@ -5781,7 +5969,23 @@
   "attack": 2,
   "defense": 5,
   "description": "Когда Мягкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "gain_actions",
+     "amount": 1
+    },
+    "text": "Когда Мягкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
+    "conditions": [
+     {
+      "kind": "while_lane_empty_opponent"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_24",
@@ -5880,7 +6084,27 @@
   "attack": 1,
   "defense": 7,
   "description": "+1 АТК за каждую землю Бесполезных болотом в игре.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "landType": "swamp",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 АТК за каждую землю Бесполезных болотом в игре."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_33",
@@ -6274,7 +6498,21 @@
   "attack": 4,
   "defense": 7,
   "description": "Когда Морозильник покидает игру, заморозь его землю.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "payload_zone_land"
+     },
+     "frozen": true
+    },
+    "text": "Когда Морозильник покидает игру, заморозь его землю."
+   }
+  ]
  },
  {
   "id": "gunter_card_23",
@@ -6560,7 +6798,36 @@
   "attack": 1,
   "defense": 8,
   "description": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "optional": true,
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "frozen": true
+    },
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_creature"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
+   }
+  ]
  },
  {
   "id": "ice_king_card_14",
@@ -6572,7 +6839,29 @@
   "attack": 0,
   "defense": 5,
   "description": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетоном.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "text": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетоном.",
+    "targets": [
+     {
+      "kind": "any_creature",
+      "filter": {
+       "zoneToken": true
+      }
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ice_king_card_16",
@@ -6653,7 +6942,22 @@
   "attack": 2,
   "defense": 7,
   "description": "ПРИЕМ >>> Каждое соседнее существо получает +2 АТК.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "text": "ПРИЕМ >>> Каждое соседнее существо получает +2 АТК."
+   }
+  ]
  },
  {
   "id": "ice_king_card_23",
@@ -6695,7 +6999,21 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_24.png",
   "description": "Заморозь каждую землю твоего противника.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "each_opponent_land"
+     },
+     "frozen": true
+    },
+    "text": "Заморозь каждую землю твоего противника."
+   }
+  ]
  },
  {
   "id": "ice_king_card_26",
@@ -7052,7 +7370,30 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_card_7.png",
   "description": "Наносят 1 урон противнику за каждую карту в его руке.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "target_hand_size",
+      "amount": 1
+     }
+    },
+    "text": "Наносят 1 урон противнику за каждую карту в его руке.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "jake_card_11",
@@ -7099,7 +7440,27 @@
   "attack": 2,
   "defense": 8,
   "description": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "jake_card_15",
@@ -7257,7 +7618,29 @@
   "landType": "rainbow",
   "image": "/content/cards/images/jake_card_28.png",
   "description": "Каждое твое Кукурузное существо получает +1 ATK в этом ходу за каждый уникальный тип земель под твоим контролем.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_distinct_lands",
+      "amount": 1
+     },
+     "duration": "this_turn",
+     "filter": {
+      "landType": "corn"
+     }
+    },
+    "text": "Каждое твое Кукурузное существо получает +1 ATK в этом ходу за каждый уникальный тип земель под твоим контролем."
+   }
+  ]
  },
  {
   "id": "jake_card_29",
@@ -7277,7 +7660,32 @@
   "landType": "rainbow",
   "image": "/content/cards/images/jake_card_31.png",
   "description": "Наносит 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "landType": "corn",
+      "amount": 1
+     }
+    },
+    "text": "Наносит 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "jake_card_36",
@@ -8478,7 +8886,27 @@
   "attack": 1,
   "defense": 7,
   "description": "+2 АТК за каждую землю в игре, перевернутую лицом вниз.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "flipped": true,
+      "amount": 2
+     },
+     "duration": "aura"
+    },
+    "text": "+2 АТК за каждую землю в игре, перевернутую лицом вниз."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_23",
@@ -8586,7 +9014,28 @@
   "landType": "corn",
   "image": "/content/cards/images/lemongrab_card_28.png",
   "description": "Каждое твое существо получаем +1 АТК в этом ходу за каждую землю в игре, перевернутую лицом вниз.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "flipped": true,
+      "amount": 1
+     },
+     "duration": "this_turn"
+    },
+    "text": "Каждое твое существо получаем +1 АТК в этом ходу за каждую землю в игре, перевернутую лицом вниз."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_29",
@@ -8671,7 +9120,27 @@
   "attack": 2,
   "defense": 10,
   "description": "+2 АТК за каждую землю в игре перевернутую лицом вниз.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_lands",
+      "where": "all",
+      "flipped": true,
+      "amount": 2
+     },
+     "duration": "aura"
+    },
+    "text": "+2 АТК за каждую землю в игре перевернутую лицом вниз."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_33",
@@ -8741,7 +9210,18 @@
   "attack": 1,
   "defense": 7,
   "description": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 1 меньше.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "grant_discount",
+     "cardType": "spell",
+     "amount": -1
+    },
+    "text": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 1 меньше."
+   }
+  ]
  },
  {
   "id": "lich_card_3",
@@ -8753,7 +9233,31 @@
   "attack": 2,
   "defense": 9,
   "description": "Прозрачный вышибала получает бонус +1 АТК за каждое другое призрачное существо на соседних землях.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "adjacent_creatures"
+      },
+      "amount": 1,
+      "filter": {
+       "landType": "ghost"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Прозрачный вышибала получает бонус +1 АТК за каждое другое призрачное существо на соседних землях."
+   }
+  ]
  },
  {
   "id": "lich_card_5",
@@ -8861,7 +9365,32 @@
   "attack": 2,
   "defense": 4,
   "description": "\"Добрый вечер!\"\n+1 DEF, если на поле есть ещё один Прячный скелет.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "«Добрый вечер!» +1 DEF, если на поле есть ещё один Прячный скелет."
+   }
+  ]
  },
  {
   "id": "lich_card_19",
@@ -9128,7 +9657,32 @@
   "attack": 2,
   "defense": 4,
   "description": "\"Добрый вечер!\"\n\n+1 DEF, если на поле есть ещё один Прямный скелет.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "«Добрый вечер!»  +1 DEF, если на поле есть ещё один Прямный скелет."
+   }
+  ]
  },
  {
   "id": "lich_card_48",
@@ -9987,7 +10541,23 @@
   "attack": 2,
   "defense": 7,
   "description": "Потрать 1 Действие >>> Перемести весь урон с этого существа на выбранное существо.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "active",
+    "text": "Потрать 1 Действие >>> Перемести весь урон с этого существа на выбранное существо.",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "mechanic": "move_damage",
+    "params": {
+     "self": true
+    }
+   }
+  ]
  },
  {
   "id": "marceline_card_15",
@@ -10440,7 +11010,23 @@
   "attack": 2,
   "defense": 5,
   "description": "Когда Мяжкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "gain_actions",
+     "amount": 1
+    },
+    "text": "Когда Мяжкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
+    "conditions": [
+     {
+      "kind": "while_lane_empty_opponent"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "monika_card_24",

@@ -108,6 +108,8 @@ export type TargetRef =
   | { kind: 'opponent_team' }
   /** Every land of every opponent (Полюс холода). */
   | { kind: 'each_opponent_land' }
+  /** The land of the trigger payload's zone (Морозильник: «его земля»). */
+  | { kind: 'payload_zone_land' }
   /** The instance the trigger payload is about (e.g. attacker). */
   | { kind: 'triggering_instance' }
   /** Partner of the player in the trigger payload (2v2). */

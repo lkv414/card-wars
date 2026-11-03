@@ -74,7 +74,7 @@ const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature'
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
-  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'each_opponent_land',
+  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'each_opponent_land',
 ]);
 const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size']);
 const CONDITION_KINDS = new Set([

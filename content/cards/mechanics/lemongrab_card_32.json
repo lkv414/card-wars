@@ -1,0 +1,24 @@
+{
+  "cardId": "lemongrab_card_32",
+  "name": "Смещатель земли",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "flipped": true,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 АТК за каждую землю в игре перевернутую лицом вниз."
+    }
+  ]
+}

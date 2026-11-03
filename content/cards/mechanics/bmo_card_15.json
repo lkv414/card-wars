@@ -1,0 +1,16 @@
+{
+  "cardId": "bmo_card_15",
+  "name": "Пламенная мышь",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_discard_count",
+          "min": 10
+        }
+      ],
+      "text": "Играй Пламенную мышь только если у тебя 10 или более карт в стопке сброса."
+    }
+  ]
+}

@@ -699,6 +699,64 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(skipped.state.players.p1!.deck.slice(0, 3)).toEqual(beforeDeck.slice(0, 3));
   });
 
+  it('Кроха слон: считается также Радужным для фильтров (Матриарх)', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands = [
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+    });
+    // Матриарх Вайда — +1 ATK за каждое Радужное существо
+    s = forceToHand(s, 'p1', 'fiona_card_16');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'fiona_card_16'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const matriarchId = res.state.players.p1!.zones[0]!.creature!;
+    const base = catalog.getCard('fiona_card_16')?.attack ?? 0;
+    // Кроха слон (blue) — считается Радужным → +1
+    s = forceToHand(res.state, 'p1', 'fiona_card_14');
+    const res2 = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'fiona_card_14'), zone: 1 }, deps);
+    expect(res2.ok).toBe(true);
+    if (!res2.ok) return;
+    const elephantId = res2.state.players.p1!.zones[1]!.creature!;
+    expect(computeEff(res2.state, deps, matriarchId).attack).toBe(base + 1);
+    void elephantId;
+  });
+
+  it('Смотритель небес: заклинание из сброса наверх колоды', () => {
+    let s = edit(newMatch(), (d) => {
+      d.round = 2;
+      d.players.p1!.lands = [
+        { type: 'blue', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+        { type: 'rainbow', frozen: false, flipped: false },
+      ];
+      d.players.p1!.actions = 10;
+      // заклинание bmo_card_36 в сброс
+      const spellId = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      d.instances[spellId]!.cardId = 'bmo_card_36';
+      d.instances[spellId]!.location = 'discard';
+      d.players.p1!.discard.push(spellId);
+    });
+    s = forceToHand(s, 'p1', 'finn_card_9');
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'finn_card_9'), zone: 0 }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const floop = applyCommand(res.state, { type: 'floop', player: 'p1', instanceId: res.state.players.p1!.zones[0]!.creature! }, deps);
+    expect(floop.ok).toBe(true);
+    if (!floop.ok) return;
+    expect(floop.state.instances.p1 === undefined ? true : true).toBe(true);
+    // наверх колоды — первая карта колоды = bmo_card_36
+    const deckTop = floop.state.players.p1!.deck[0]!;
+    expect(floop.state.instances[deckTop]!.cardId).toBe('bmo_card_36');
+    expect(floop.state.instances[deckTop]!.location).toBe('deck');
+  });
+
   it('герой Бимо: сброс карты с руки >>> 1 урон выбранному существу; раз за ход', () => {
     let s = newMatch();
     s = edit(s, (d) => {

@@ -383,7 +383,7 @@ function targetMatchesFilter(
   if (filter.ready && inst.flipped) return false;
   const card: CardData | undefined = ctx.catalog.getCard(inst.cardId);
   if (!card) return false;
-  if (filter.landType && card.landType !== filter.landType) return false;
+  if (filter.landType && card.landType !== filter.landType && !countsAsTypes(draft, ctx, instanceId).includes(filter.landType)) return false;
   if (filter.sameCard) {
     const ownCardId = source.instanceId ? instance(draft, source.instanceId).cardId : undefined;
     if (card.id !== ownCardId) return false;
@@ -439,9 +439,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -527,6 +527,25 @@ export function damageRedirectTarget(
   return null;
 }
 
+
+/**
+ * Land types the instance additionally counts as (Кроха слон — радужным;
+ * Очаровательный город — существа линии радужными). Live scan, §2А.
+ */
+export function countsAsTypes(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  instanceId: string,
+): string[] {
+  const out: string[] = [];
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'counts_as') continue;
+    if (coversInstance(draft, ctx, modSource, effect.target, instanceId)) {
+      out.push(effect.landType);
+    }
+  }
+  return out;
+}
 
 /** Does the attacking creature provoke no retaliation (Призрачные бро)? */
 export function hasNoRetaliation(

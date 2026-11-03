@@ -10,7 +10,7 @@ import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
-import { resolveStatAmount } from './modifiers';
+import { countsAsTypes, resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice, TargetFilter, TriggerPayload } from './types';
@@ -360,7 +360,10 @@ function targetMatchesFilter(
   const card = ctx.catalog.getCard(inst.cardId);
   let match = true;
   if (filter.ready && inst.flipped) match = false;
-  if (match && filter.landType && (!card || card.landType !== filter.landType)) match = false;
+  if (match && filter.landType && (!card || card.landType !== filter.landType)) {
+    // «считается …» overrides (Кроха слон — радужным)
+    match = countsAsTypes(draft, ctx, target.instanceId).includes(filter.landType);
+  }
   if (match && filter.zoneLandType) {
     const owner = draft.players[inst.controller]!;
     const zoneLand = inst.zone !== null ? owner.lands[inst.zone]!.type : null;

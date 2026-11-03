@@ -4,6 +4,7 @@ import type { Ctx } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import type { EffectSource } from './source';
+import { countsAsTypes } from './modifiers';
 import type { TargetAsk, TargetChoice, TargetFilter, TargetRef } from './types';
 export type { TargetRef };
 
@@ -56,11 +57,21 @@ function askFilterPasses(
   if (choice.kind !== 'creature' && choice.kind !== 'card') return true;
   const inst = instance(draft, choice.instanceId);
   if (filter.ready && inst.flipped) return false;
-  if (filter.landType) {
-    const card = ctx.catalog.getCard(inst.cardId);
-    if (!card || card.landType !== filter.landType) return false;
-  }
+  if (filter.landType && !landTypeMatches(draft, ctx, choice.instanceId, filter.landType)) return false;
   return true;
+}
+
+/** Card land type plus «считается …» overrides (Кроха слон, город). */
+function landTypeMatches(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  instanceId: string,
+  landType: string,
+): boolean {
+  const inst = instance(draft, instanceId);
+  const card = ctx.catalog.getCard(inst.cardId);
+  if (card && card.landType === landType) return true;
+  return countsAsTypes(draft, ctx, instanceId).includes(landType);
 }
 
 function choiceMatchesAsk(

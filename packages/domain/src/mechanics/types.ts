@@ -292,6 +292,8 @@ export type EffectSpec =
   | { op: 'grant_ability'; target: TargetRef; ability: AbilitySpec }
   /** Return a field card to its owner's hand (Пляжная мумия, желе-карты). */
   | { op: 'return_to_owner'; target: TargetRef }
+  /** Covered cards also count as this land type (Кроха слон — радужным; город). */
+  | { op: 'counts_as'; target: TargetRef; landType: LandType }
   /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
   | { op: 'reveal_deck_top'; count: number }
   /**

@@ -2245,7 +2245,22 @@
   "attack": 2,
   "defense": 5,
   "description": "ПРИЕМ >>> Помести заклинание из своей стопки сброса наверх своей колоды.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "filter": {
+      "type": "spell"
+     },
+     "random": true,
+     "to": "deck_top"
+    },
+    "text": "ПРИЕМ >>> Помести заклинание из своей стопки сброса наверх своей колоды."
+   }
+  ]
  },
  {
   "id": "finn_card_10",
@@ -2640,7 +2655,20 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда в игре, Кроха слон считается также Радужным существом.\n(В дополнении к Равнинному существу.)",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "counts_as",
+     "target": {
+      "kind": "this_creature"
+     },
+     "landType": "rainbow"
+    },
+    "text": "Когда в игре, Кроха слон считается также Радужным существом."
+   }
+  ]
  },
  {
   "id": "fiona_card_15",
@@ -2806,7 +2834,20 @@
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_30.png",
   "description": "Все существа на этой линии теряют свой тип Земли и становятся Радужными существами.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "counts_as",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "landType": "rainbow"
+    },
+    "text": "Все существа на этой линии теряют свой тип Земли и становятся Радужными существами."
+   }
+  ]
  },
  {
   "id": "fiona_card_31",

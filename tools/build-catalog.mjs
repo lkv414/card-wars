@@ -205,6 +205,8 @@ function validateEffect(effect, where, ability) {
     if (!['attack', 'defense'].includes(effect.stat)) fail(`${where}: stat_buff stat must be attack|defense`);
     if (!['permanent', 'aura', 'this_turn'].includes(effect.duration)) fail(`${where}: stat_buff duration must be permanent|aura|this_turn`);
     checkAmount(effect.amount, where);
+    if (effect.floorAttack !== undefined && !Number.isInteger(effect.floorAttack)) fail(`${where}: stat_buff floorAttack must be an integer`);
+    if (effect.floorDefense !== undefined && !Number.isInteger(effect.floorDefense)) fail(`${where}: stat_buff floorDefense must be an integer`);
   } else {
     checkTargetRef(effect.target, where);
     checkAmount(effect.amount, where);

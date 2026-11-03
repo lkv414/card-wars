@@ -4062,7 +4062,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_68.png",
   "description": "Каждое существо противника получает -1 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "stat": "attack",
+     "amount": -1,
+     "duration": "this_turn"
+    },
+    "text": "Каждое существо противника получает -1 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_69",
@@ -7516,7 +7532,37 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_14.png",
   "description": "Каждое существо на этой линии получаем -1 АТК (минимум 0).",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": -1,
+     "duration": "aura",
+     "floorAttack": 0
+    },
+    "text": "Каждое существо на этой линии получаем -1 АТК (минимум 0)."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "stat": "attack",
+     "amount": -1,
+     "duration": "aura",
+     "floorAttack": 0
+    },
+    "text": "Каждое существо на этой линии получаем -1 АТК (минимум 0)."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_15",
@@ -9597,7 +9643,24 @@
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_37.png",
   "description": "Существа противника получают -2 ATK в этом ход (минимум 0).",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "stat": "attack",
+     "amount": -2,
+     "duration": "this_turn",
+     "floorAttack": 0
+    },
+    "text": "Существа противника получают -2 ATK в этом ход (минимум 0)."
+   }
+  ]
  },
  {
   "id": "monika_card_38",

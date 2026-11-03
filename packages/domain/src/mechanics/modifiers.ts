@@ -21,6 +21,8 @@ export interface AuraContribution {
   amount: number;
   /** Defense floor applied by this aura (Угнетающая пирамида: DEF не ниже 1). */
   floorDefense?: number;
+  /** Attack floor applied by this aura (Аванпост попугаев: АТК не ниже 0). */
+  floorAttack?: number;
 }
 
 /**
@@ -50,6 +52,7 @@ export function auraContributions(
         stat: effect.stat,
         amount: resolveStatAmount(draft, ctx, source, effect.amount),
         floorDefense: effect.floorDefense,
+        floorAttack: effect.floorAttack,
       });
     }
   });

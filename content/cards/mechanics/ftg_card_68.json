@@ -1,0 +1,12 @@
+{
+  "cardId": "ftg_card_68",
+  "name": "Мастер маскировки",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": { "op": "stat_buff", "target": { "kind": "each_creature_opponent" }, "stat": "attack", "amount": -1, "duration": "this_turn" },
+      "text": "Каждое существо противника получает -1 ATK в этом ход."
+    }
+  ]
+}

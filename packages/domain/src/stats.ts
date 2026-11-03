@@ -19,19 +19,25 @@ export function computeEff(
   const card = cardOf(ctx, inst);
   let attack = (card.attack ?? 0) + inst.bonusAttack;
   let defense = (card.defense ?? 0) + inst.bonusDefense;
+  let attackFloor: number | undefined;
   for (const buff of draft.turnBuffs) {
     if (buff.instanceId !== instanceId) continue;
-    if (buff.stat === 'attack') attack += buff.amount;
-    else defense += buff.amount;
+    if (buff.stat === 'attack') {
+      attack += buff.amount;
+      if (buff.floorAttack !== undefined) attackFloor = Math.max(attackFloor ?? -Infinity, buff.floorAttack);
+    } else defense += buff.amount;
   }
   let defenseFloor: number | undefined;
   for (const contribution of auraContributions(draft, ctx, instanceId)) {
-    if (contribution.stat === 'attack') attack += contribution.amount;
-    else defense += contribution.amount;
+    if (contribution.stat === 'attack') {
+      attack += contribution.amount;
+      if (contribution.floorAttack !== undefined) attackFloor = Math.max(attackFloor ?? -Infinity, contribution.floorAttack);
+    } else defense += contribution.amount;
     if (contribution.floorDefense !== undefined) {
       defenseFloor = Math.max(defenseFloor ?? 0, contribution.floorDefense);
     }
   }
+  if (attackFloor !== undefined) attack = Math.max(attack, attackFloor);
   if (defenseFloor !== undefined) defense = Math.max(defense, defenseFloor);
   return { attack, defense };
 }

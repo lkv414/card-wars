@@ -1227,3 +1227,34 @@ describe('golden: боевой контекст защитника (A8)', () => 
     expect(s.instances[attackerId]!.damage).toBe(3);
   });
 });
+
+describe('golden: дебаффы АТК (A9)', () => {
+  it('Затопление: −2 АТК существам противника в этот ход, минимум 0', () => {
+    let s = edit(newMatch(), (d) => {
+      const p2 = d.players.p2!;
+      for (const [zone, cardId, atk] of [[0, 'bmo_card_12', 3], [1, 'bmo_card_13', 1]] as const) {
+        const id = p2.deck[0]!;
+        p2.deck = p2.deck.filter((x) => x !== id);
+        d.instances[id]!.cardId = cardId;
+        d.instances[id]!.location = 'field';
+        d.instances[id]!.zone = zone;
+        d.instances[id]!.slot = 'creature';
+        p2.zones[zone]!.creature = id;
+      }
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'monika_card_37');
+    const strongId = s.players.p2!.zones[0]!.creature!; // АТК 3
+    const weakId = s.players.p2!.zones[1]!.creature!; // АТК 1
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'monika_card_37') }, deps);
+    if (!res.ok) throw new Error(`cast: ${res.rejected.code}: ${res.rejected.message}`);
+    s = res.state;
+    expect(computeEff(s, deps, strongId).attack).toBe(3 - 2); // 1
+    expect(computeEff(s, deps, weakId).attack).toBe(0); // 1 − 2, минимум 0
+    // В конце хода бафы сгорают.
+    s = edit(s, (d) => {
+      d.turnBuffs = [];
+    });
+    expect(computeEff(s, deps, weakId).attack).toBe(1);
+  });
+});

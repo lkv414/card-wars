@@ -97,6 +97,7 @@ export function runEffect(
             stat: effect.stat,
             amount,
             grantedOnTurn: draft.turn,
+            floorAttack: effect.floorAttack,
           });
         } else if (effect.stat === 'attack') inst.bonusAttack += amount;
         else inst.bonusDefense += amount;

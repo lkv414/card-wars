@@ -535,6 +535,19 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'debuff-post',
+    type: 'building',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'passive',
+        effect: { op: 'stat_buff', target: { kind: 'this_lane_creature' }, stat: 'attack', amount: -2, duration: 'aura', floorAttack: 0 },
+        text: 'Фикстура аванпоста: −2 АТК линии (минимум 0)',
+      },
+    ],
+  }),
+  card({
     id: 'defender-spirit',
     type: 'creature',
     cost: 1,

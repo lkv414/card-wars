@@ -279,6 +279,8 @@ export type EffectSpec =
       filter?: TargetFilter;
       /** Defense floor for the affected creature (Угнетающая пирамида: не ниже 1). */
       floorDefense?: number;
+      /** Attack floor: «минимум 0» у дебаффов (Затопление, Аванпост попугаев). */
+      floorAttack?: number;
     }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
   | { op: 'gain_actions'; amount: number }

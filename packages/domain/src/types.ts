@@ -137,6 +137,8 @@ export interface TurnBuff {
   stat: 'attack' | 'defense';
   amount: number;
   grantedOnTurn: number;
+  /** Attack floor for a debuff («минимум 0», Затопление). */
+  floorAttack?: number;
 }
 
 export interface MatchState {

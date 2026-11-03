@@ -309,3 +309,17 @@ describe('боевой контекст защитника (defense_mod)', () =>
     expect(s.instances[s.players[P2]!.zones[3]!.creature!]!.damage).toBe(1 + 3);
   });
 });
+
+describe('floorAttack — «минимум 0» у дебаффов', () => {
+  it('аура не опускает АТК ниже пола; вне линии дебаффа стат не тронут', () => {
+    let s = round2(startedIcy());
+    s = placeInZone(s, P1, 0, 'vanilla-swamp'); // АТК 2 → 0 (пол)
+    const floored = s.players[P1]!.zones[0]!.creature!;
+    s = forceToHand(s, P1, 'debuff-post');
+    s = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'debuff-post'), zone: 0 });
+    expect(computeEff(s, deps, floored).attack).toBe(0); // 2 − 2, минимум 0
+    s = placeInZone(s, P1, 2, 'cheap-rainbow'); // АТК 1, вне линии аванпоста
+    const freeId = s.players[P1]!.zones[2]!.creature!;
+    expect(computeEff(s, deps, freeId).attack).toBe(1);
+  });
+});

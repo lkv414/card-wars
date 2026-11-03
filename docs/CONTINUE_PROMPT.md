@@ -13,8 +13,8 @@
 
 ## Текущее состояние
 
-- **Покрытие**: 190/544 карт + 9/25 героев структурированы и работают
-- **Тесты**: 197 зелёных (135 domain, 38 content, 15 server, 5 application, 4 protocol)
+- **Покрытие**: 194/544 карт + 9/25 героев структурированы и работают
+- **Тесты**: 201 зелёный (138 domain, 39 content, 15 server, 5 application, 4 protocol)
 - **Отчёт покрытия** после каждой генерации: `pnpm --filter @card-wars/content generate` печатает «mechanics: cards N/544 structured»
 
 ## Что уже реализовано в движке
@@ -29,7 +29,8 @@
 - Именованные механики (реестр): chain_damage, move_damage, swap_lanes, copy_spell (Связь: копия заклинания партнёром, цели по targets оригинала; MechanicHandler получает payload и beneficiary), grant_random_discard_active (Школа: suppress-all + выданный приём из сброса через turnModifiers)
 - suppress с флагом all («без текста»): фильтр в forSource — заглушённые инстансы не отдают способностей/модификаторов; флюп-гейт разрешает флюп выданной способности при подавленных своих
 - AbilitySpec.oncePerGame («в первый раз…»), условие if_payload_cost; TargetRef: this_lane_own_creature, this_lane_opponent_building
-- Ледяные жетоны (A7): LandState.iceTokens (ледяные земли стартуют с 1 — docs/RULES.md), ops remove_token/transfer_token, условие while_lane_ice_token, per_lands.token, фильтр zoneToken, событие token_changed
+- Ледяные жетоны (A7+A7.1): LandState.iceTokens (ледяные земли стартуют с 1 — docs/RULES.md), ops remove_token/transfer_token, условия while_lane_ice_token/while_own_turn/while_no_tokens_in_play/while_zone_ice_token (play-gate), per_lands.token+where:'choice', фильтр zoneToken, suppress.attacks+filter, рефы each_creature_of_choice_player/adjacent_own_land, механики token_bonus_damage, событие token_changed
+- Боевой контекст защитника (A8): операция defense_mod («+N АТК пока защищается», матчинг по земле зоны атакующего, только retaliation), условие while_own_card_in_play { cardId }
 - pendingChoice: optional, target (мульти-ask с отложенным сбором через effect_step), resolve_choice, таймер-дефолт (skipPending), bot-ответ time_expired
 - Кура данных: content/cards/mechanics/*.json + content/heroes/mechanics/*.json → build-catalog.mjs валидирует (ops, triggers, asks, refs, amounts, conditions, фильтры, choice-vs-targets) и печатает отчёт покрытия
 
@@ -42,8 +43,7 @@
 ## Бэклог (371 карта + 17 героев) — по убыванию приоритета
 
 1. **Остатки льда (4 шт., нужны отдельные механизмы)**: Ледяной залп (мульти-перенос жетонов «любое количество»), Поддержка-компаньон (правило розыгрыша существ на жетонные земли команды), Ледяной лимонад (лечение ровно N существ), hero_ice_king (+1 АТК при первой атаке пустой линии — расширение A3 combat-контекста).
-2. **Боевые ауры защитника**: «+2 АТК пока защищается от существ на X земле» (Привидение, Дух ведьмы/дерева) — при условии «защищается от» нужен defenderZone-контекст для retaliation-аур.
-3. **Ауры на базовые статы противника** (Угнетающая пирамида −2 DEF уже есть), «−1 ATK всем существам противника в этом ходу» (Мастер маскировки).
+2. **Ауры на базовые статы противника** (Угнетающая пирамида −2 DEF уже есть), «−1 ATK всем существам противника в этом ходу» (Мастер маскировки).
 4. **Игровые ходы-состояния** — «следующее заклинание стоит на 2 меньше» (Призрак Джинни), «нельзя играть заклинания в следующий ход» (Дух ниндзя), «не может быть атаковано/выбрано до следующего хода» (Пещера одиночества) — статусы с длительностью, нужен R2-full (идентичность перманентных баффов).
 5. **Поиск/peek** (Вырубка леса, Гидромансер, Любопытный чувачок, Смотритель небес — последний уже сделан) — reveal-окно уже есть, нужен play_from_reveal.
 6. **Hero уникальные** — Охотница-волшебница (слово в названии), Рикардио (плата жизнями), Моника («повернуть применённое»), tree_trunks (слово «Пирог»), strong_susan (урон = стоимость жертвы), bubblegum («раз за ход урон своему существу → +1 ATK»).

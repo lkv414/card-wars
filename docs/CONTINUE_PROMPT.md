@@ -13,8 +13,8 @@
 
 ## Текущее состояние
 
-- **Покрытие**: 162/544 карт + 8/25 героев структурированы и работают
-- **Тесты**: 152 зелёных (98 domain, 31 content, 15 server, 5 application, 4 protocol)
+- **Покрытие**: 166/544 карт + 8/25 героев структурированы и работают
+- **Тесты**: 172 зелёных (114 domain, 34 content, 15 server, 5 application, 4 protocol)
 - **Отчёт покрытия** после каждой генерации: `pnpm --filter @card-wars/content generate` печатает «mechanics: cards N/544 structured»
 
 ## Что уже реализовано в движке
@@ -26,7 +26,9 @@
 - Условия: if/while_discard_count, while_undamaged (self/target), while_damage_exactly/at_least (self/target), while_lane_empty_opponent, while_on_land_type, while_on_flipped_land (self/target), while_distinct_lands (min/max), while_land_count, while_zone_has_building, while_empty_lands, while_self_flipped, while_opponents_hand_empty, while_no_other_creatures (scope own/all), while_opponents_turn, if_payload_* (replacing/land_type/player_self/other/to_player/targeted_self/player_opponent)
 - Цели (TargetAsk): own_creature, opponent_creature, any_creature, lane_creature, lane_opponent_creature, opponent_player, landscape, own_landscape, own_hand_card, own_building, lane_building, adjacent_creature, adjacent_any_creature, revealed_card — все с опциональными фильтрами (ready/landType)
 - Цели-рефы (TargetRef): choice, this_creature, this_lane_creature, this_lane_opponent_creature, adjacent_creatures, each_creature_yours/opponent/all, each_building_yours, each_player, each_opponent_player, self_player, this_lane_land, this_lane_lands, active_opponent_players
-- Именованные механики (реестр): chain_damage, move_damage, swap_lanes
+- Именованные механики (реестр): chain_damage, move_damage, swap_lanes, copy_spell (Связь: копия заклинания партнёром, цели по targets оригинала; MechanicHandler получает payload и beneficiary), grant_random_discard_active (Школа: suppress-all + выданный приём из сброса через turnModifiers)
+- suppress с флагом all («без текста»): фильтр в forSource — заглушённые инстансы не отдают способностей/модификаторов; флюп-гейт разрешает флюп выданной способности при подавленных своих
+- AbilitySpec.oncePerGame («в первый раз…»), условие if_payload_cost; TargetRef: this_lane_own_creature, this_lane_opponent_building
 - pendingChoice: optional, target (мульти-ask с отложенным сбором через effect_step), resolve_choice, таймер-дефолт (skipPending), bot-ответ time_expired
 - Кура данных: content/cards/mechanics/*.json + content/heroes/mechanics/*.json → build-catalog.mjs валидирует (ops, triggers, asks, refs, amounts, conditions, фильтры, choice-vs-targets) и печатает отчёт покрытия
 
@@ -36,16 +38,14 @@
 - Hud — баннер с отменой, кнопки-цели для player/revealed, кнопка «Герой»
 - CardMesh/Land/Hand — клик по подсвеченной цели отдаёт её таргетингу
 
-## Бэклог (373 карты + 17 героев) — по убыванию приоритета
+## Бэклог (371 карта + 17 героев) — по убыванию приоритета
 
-1. **Связь** (charlie_card_4, компаньон 2v2) — копирование заклинания с новой целью. Нужен named mechanic `copy_spell` + взаимодействие с on_spell_cast.
-2. **A6 — замены способностей**: Школа («теряет все способности, получает Приём случайного существа из сброса»), Пес («строения противника без текста»). Требует R2-full: перманентные баффы с sourceInstanceId + возможность снять/подменить способности инстанса.
-3. **Ледяные жетоны** (~10 карт Гантера/Айс Кинга): LandState += iceTokens; ops add/remove/transfer_token; карты Ледяной банк, Мороженник, Ослепительная Люси, Перенос жетона (Коктейль), Усталый библиотекарь/воин (подготовка при смене линии — on_line_change уже есть).
-4. **Боевые ауры защитника**: «+2 АТК пока защищается от существ на X земле» (Привидение, Дух ведьмы/дерева) — при условии «защищается от» нужен defenderZone-контекст для retaliation-аур.
-5. **Ауры на базовые статы противника** (Угнетающая пирамида −2 DEF уже есть), «−1 ATK всем существам противника в этом ходу» (Мастер маскировки).
-6. **Игровые ходы-состояния** — «следующее заклинание стоит на 2 меньше» (Призрак Джинни), «нельзя играть заклинания в следующий ход» (Дух ниндзя), «не может быть атаковано/выбрано до следующего хода» (Пещера одиночества) — статусы с длительностью, нужен R2-full (идентичность перманентных баффов).
-7. **Поиск/peek** (Вырубка леса, Гидромансер, Любопытный чувачок, Смотритель небес — последний уже сделан) — reveal-окно уже есть, нужен play_from_reveal.
-8. **Hero уникальные** — Охотница-волшебница (слово в названии), Рикардио (плата жизнями), Моника («повернуть применённое»), tree_trunks (слово «Пирог»), strong_susan (урон = стоимость жертвы), bubblegum («раз за ход урон своему существу → +1 ATK»).
+1. **Ледяные жетоны** (~10 карт Гантера/Айс Кинга): LandState += iceTokens; ops add/remove/transfer_token; карты Ледяной банк, Мороженник, Ослепительная Люси, Перенос жетона (Коктейль), Усталый библиотекарь/воин (подготовка при смене линии — on_line_change уже есть).
+2. **Боевые ауры защитника**: «+2 АТК пока защищается от существ на X земле» (Привидение, Дух ведьмы/дерева) — при условии «защищается от» нужен defenderZone-контекст для retaliation-аур.
+3. **Ауры на базовые статы противника** (Угнетающая пирамида −2 DEF уже есть), «−1 ATK всем существам противника в этом ходу» (Мастер маскировки).
+4. **Игровые ходы-состояния** — «следующее заклинание стоит на 2 меньше» (Призрак Джинни), «нельзя играть заклинания в следующий ход» (Дух ниндзя), «не может быть атаковано/выбрано до следующего хода» (Пещера одиночества) — статусы с длительностью, нужен R2-full (идентичность перманентных баффов).
+5. **Поиск/peek** (Вырубка леса, Гидромансер, Любопытный чувачок, Смотритель небес — последний уже сделан) — reveal-окно уже есть, нужен play_from_reveal.
+6. **Hero уникальные** — Охотница-волшебница (слово в названии), Рикардио (плата жизнями), Моника («повернуть применённое»), tree_trunks (слово «Пирог»), strong_susan (урон = стоимость жертвы), bubblegum («раз за ход урон своему существу → +1 ATK»).
 
 ## Правила работы
 

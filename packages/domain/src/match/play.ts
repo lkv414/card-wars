@@ -206,6 +206,7 @@ export function handlePlayCard(
   });
 
   bumpCounter(draft, 'creature_entered', playerId);
+  if (card.type === 'creature' && card.cost >= 2) bumpCounter(draft, 'creature_cost_2_plus_played', playerId);
   enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, zone, replaced: Boolean(replaced) });
   enqueueTrigger(draft, ctx, 'on_card_played', { instanceId, cardId: card.id, player: playerId, cost: effectiveCost, zone });
   if (replaced) {

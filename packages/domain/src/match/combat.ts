@@ -2,6 +2,7 @@ import type { Draft } from 'immer';
 import { dealToCreature, dealToPlayer } from '../damage';
 import { afterEffects } from '../deaths';
 import { computeEff } from '../stats';
+import { bumpCounter } from '../mechanics/effects';
 import { opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
@@ -52,10 +53,12 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
 
         if (defenderInstanceId) {
           // Simultaneous exchange: both powers are computed before any damage lands.
+          bumpCounter(draft, 'creature_attack', attackerId);
           let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
           if (hasNoRetaliation(draft, ctx, attackerInstanceId)) retaliation = 0;
           enqueueTrigger(draft, ctx, 'on_creature_attacks', {
             instanceId: attackerInstanceId,
+            player: attackerInstance.controller,
             targetInstanceId: defenderInstanceId,
             zone: z,
             amount: attackPower,
@@ -64,23 +67,27 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
           dealToCreature(draft, ctx, attackerInstanceId, retaliation, defenderInstanceId, false, true);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
+            player: attackerInstance.controller,
             targetInstanceId: defenderInstanceId,
             amount: attackPower,
           });
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: defenderInstanceId,
+            player: instance(draft, defenderInstanceId).controller,
             targetInstanceId: attackerInstanceId,
             amount: retaliation,
           });
         } else {
           enqueueTrigger(draft, ctx, 'on_creature_attacks', {
             instanceId: attackerInstanceId,
+            player: attackerInstance.controller,
             zone: z,
             amount: attackPower,
           });
           dealToPlayer(draft, ctx, target.player, attackPower, attackerInstanceId);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
+            player: attackerInstance.controller,
             targetPlayer: target.player,
             amount: attackPower,
           });
@@ -90,7 +97,5 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
   }
 
   afterEffects(draft, ctx);
-  if (draft.status !== 'finished') {
-    endTurn(draft, ctx);
-  }
+  // Stay in the combat phase; applyCommand finalises the turn once no choice is pending.
 }

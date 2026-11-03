@@ -1720,7 +1720,37 @@
   "landType": "swamp",
   "image": "/content/cards/images/charlie_card_6.png",
   "description": "В начале фазы сражения твоей или твоего партнера, если твой партнер вытянул 3 или более карт в этот ход, другой партнер может тянуть карту.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "optional": true,
+    "pendingFor": "payload_partner",
+    "conditions": [
+     {
+      "kind": "if_payload_ally"
+     },
+     {
+      "kind": "if_payload_other"
+     },
+     {
+      "kind": "while_counter_at_least",
+      "counter": "cards_drawn",
+      "scope": "teammate",
+      "min": 3
+     }
+    ],
+    "effect": {
+     "op": "draw_cards",
+     "target": {
+      "kind": "payload_partner"
+     },
+     "count": 1
+    },
+    "text": "В начале фазы сражения твоей или твоего партнера, если твой партнер вытянул 3 или более карт в этот ход, другой партнер может тянуть карту."
+   }
+  ]
  },
  {
   "id": "charlie_card_7",
@@ -4696,7 +4726,37 @@
   "landType": "sand",
   "image": "/content/cards/images/grand_prix_card_8.png",
   "description": "В начале фазы сражения твоей или твоего партнера, если ты или партнер сыграл существо стоимостью 2 и более в этот ход, другой партнер может тянуть карту.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "optional": true,
+    "pendingFor": "payload_partner",
+    "conditions": [
+     {
+      "kind": "if_payload_ally"
+     },
+     {
+      "kind": "if_payload_other"
+     },
+     {
+      "kind": "while_counter_at_least",
+      "counter": "creature_cost_2_plus_played",
+      "scope": "team",
+      "min": 1
+     }
+    ],
+    "effect": {
+     "op": "draw_cards",
+     "target": {
+      "kind": "payload_partner"
+     },
+     "count": 1
+    },
+    "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер сыграл существо стоимостью 2 и более в этот ход, другой партнер может тянуть карту."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_9",
@@ -4844,7 +4904,32 @@
   "landType": "ice",
   "image": "/content/cards/images/grand_prix_card_24.png",
   "description": "Каждый раз когда существо противника наносит урон твоей Команде, нанеси 1 уон Команде противника.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "conditions": [
+     {
+      "kind": "if_payload_enemy_creature"
+     },
+     {
+      "kind": "if_payload_team_target"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "opponent_team"
+     },
+     "amount": 1
+    },
+    "text": "Каждый раз когда существо противника наносит урон твоей Команде, нанеси 1 уон Команде противника."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_25",

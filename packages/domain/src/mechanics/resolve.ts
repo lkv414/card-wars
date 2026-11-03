@@ -2,7 +2,7 @@ import { DomainError } from '../errors';
 import { instance, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState, PlayerId } from '../types';
-import { opponentsOf, opponentZoneFor } from '../zones';
+import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import type { EffectSource } from './source';
 import type { TargetAsk, TargetChoice, TargetFilter, TargetRef } from './types';
 export type { TargetRef };
@@ -157,6 +157,8 @@ function choiceMatchesAsk(
 function laneZone(draft: MatchState, source: EffectSource, choices: TargetChoice[]): number | null {
   const src = source.instanceId ? instance(draft, source.instanceId) : null;
   if (src?.zone != null) return src.zone;
+  const firstLandscape = choices.find((c) => c.kind === 'landscape');
+  if (firstLandscape) return firstLandscape.zone;
   const firstCreature = choices.find((c) => c.kind === 'creature');
   if (firstCreature) return instance(draft, firstCreature.instanceId).zone;
   return null;
@@ -273,6 +275,25 @@ export function resolveTarget(
       return opponentsOf(draft, source.player).flatMap((pid) => creaturesOf(draft, pid));
     case 'each_creature':
       return draft.order.flatMap((pid) => creaturesOf(draft, pid));
+    case 'teammate_player':
+      return teammatesOf(draft, source.player).map((playerId) => ({ kind: 'player' as const, playerId }));
+    case 'opponent_team': {
+      const teamId = draft.players[source.player]?.teamId;
+      if (!teamId) return [];
+      const enemy = draft.order.find(
+        (pid) => pid !== source.player && draft.players[pid]?.teamId !== teamId && !draft.players[pid]!.eliminated,
+      );
+      return enemy ? [{ kind: 'player' as const, playerId: enemy }] : [];
+    }
+    case 'triggering_instance':
+      return payload?.instanceId && draft.instances[payload.instanceId]
+        ? [{ kind: 'creature' as const, instanceId: payload.instanceId }]
+        : [];
+    case 'payload_partner': {
+      if (!payload?.player) return [];
+      const partners = teammatesOf(draft, payload.player);
+      return partners.map((playerId) => ({ kind: 'player' as const, playerId }));
+    }
     case 'each_player':
       return draft.order.map((pid) => ({ kind: 'player' as const, playerId: pid }));
     case 'each_opponent_player':

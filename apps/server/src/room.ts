@@ -732,7 +732,15 @@ export class Room extends DurableObject {
       botId = bot.playerId;
       command = { type: 'keep_hand', player: botId };
     } else if (match.status === 'running') {
-      for (const pid of match.activePlayers) {
+      // A paused transition (docs/MECHANICS-V2.md §6) awaiting a bot: regular
+      // commands are rejected while a choice is pending, so the bot answers
+      // with the deterministic timer default instead (skip/cancel + «В бой»).
+      const pendingOwner = match.pending?.player;
+      if (pendingOwner && this.sessionOf(state, pendingOwner)?.isBot) {
+        botId = pendingOwner;
+        command = { type: 'time_expired', player: pendingOwner };
+      }
+      for (const pid of match.pending ? [] : match.activePlayers) {
         const session = this.sessionOf(state, pid);
         if (!session?.isBot || match.players[pid]!.battleReady) continue;
         botId = pid;

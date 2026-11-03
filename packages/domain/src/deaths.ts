@@ -107,7 +107,10 @@ export function afterEffects(draft: Draft<MatchState>, ctx: Ctx): void {
         aliveTeams.flatMap((team) => [...team.playerIds]),
         'elimination',
       );
+      drainTriggers(draft, ctx);
+      return;
     }
+    drainTriggers(draft, ctx);
     return;
   }
 

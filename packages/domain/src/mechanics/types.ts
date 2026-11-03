@@ -92,11 +92,33 @@ export type TargetRef =
   /** Opponents currently taking their turn (Лейтенант Гриб: «этот противник»). */
   | { kind: 'active_opponent_players' }
   | { kind: 'each_building_yours' }
+  /** The only other player on the source's team (2v2). */
+  | { kind: 'teammate_player' }
+  /** Enemy team, represented by its first alive player (team lives are shared). */
+  | { kind: 'opponent_team' }
+  /** The instance the trigger payload is about (e.g. attacker). */
+  | { kind: 'triggering_instance' }
+  /** Partner of the player in the trigger payload (2v2). */
+  | { kind: 'payload_partner' }
   | { kind: 'each_player' }
   | { kind: 'each_opponent_player' }
   | { kind: 'self_player' };
 
 export type StatKey = 'attack' | 'defense';
+
+/** Serializable turn-event counters, keyed by player/team in MatchState. */
+export type TurnCounterKind =
+  | 'spell_cast'
+  | 'creature_entered'
+  | 'creature_died'
+  | 'line_change'
+  | 'cards_drawn'
+  | 'creature_cost_2_plus_played'
+  | 'damage_dealt_to_enemy'
+  | 'creature_attack';
+
+/** Scope used by turn-counter reads/writes. */
+export type CounterScope = 'own' | 'team' | 'teammate';
 
 /** Filters for per-target dynamic amounts and aura targets (docs/MECHANICS-V2.md §3). */
 export interface TargetFilter {
@@ -137,8 +159,8 @@ export type StatAmount =
       excludeSelf?: boolean;
       filter?: TargetFilter;
     }
-  /** Turn counters (docs/MECHANICS-V2.md §3): spells cast, creatures entered/died, line changes. */
-  | { kind: 'per_counter'; counter: 'spell_cast' | 'creature_entered' | 'creature_died' | 'line_change'; scope: 'own' | 'all'; amount: number }
+  /** Turn counters (docs/MECHANICS-V2.md §3): spells cast, creatures entered/died, line changes, team/ally events. */
+  | { kind: 'per_counter'; counter: TurnCounterKind; scope: 'own' | 'all' | 'team' | 'teammate'; amount: number }
   /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
   | { kind: 'payload_damage' };
 
@@ -164,12 +186,32 @@ export type ConditionSpec =
   | { kind: 'if_payload_land_type'; landType: LandType }
   | { kind: 'if_payload_player_self' }
   | { kind: 'if_payload_other' }
+  /** Current match phase. */
+  | { kind: 'while_phase'; phase: 'draw' | 'main' | 'combat' }
+  /** on_damage_dealt/on_creature_attacks: payload instance is a creature. */
+  | { kind: 'if_payload_creature' }
+  /** on_damage_dealt: the payload instance belongs to an enemy team and is a creature. */
+  | { kind: 'if_payload_enemy_creature' }
+  /** on_damage_dealt/on_creature_attacks: the payload has a damaged creature target. */
+  | { kind: 'if_payload_targets_creature' }
   /** on_damage_dealt: the damage went to a player (Мятный змей: «урон противнику»). */
   | { kind: 'if_payload_to_player' }
+  /** Payload target belongs to an enemy team (on_damage_dealt/on_spell_cast). */
+  | { kind: 'if_payload_opponent_target' }
   /** on_spell_cast: this creature was the spell's target (Привлекательный слон). */
   | { kind: 'if_payload_targeted_self' }
   /** on_leave_play: the card that left belonged to an opponent. */
   | { kind: 'if_payload_player_opponent' }
+  /** on_damage_dealt: the damaging source is the source owner's teammate. */
+  /** Payload source belongs to the same team as the source (ally, including self). */
+  | { kind: 'if_payload_ally' }
+  /** Payload target belongs to the source's team (self or ally). */
+  | { kind: 'if_payload_team_target' }
+  | { kind: 'if_payload_teammate' }
+  /** Team/own turn-event counter is above threshold. */
+  | { kind: 'while_counter_at_least'; counter: TurnCounterKind; min: number; scope?: CounterScope }
+  /** Team/own turn-event counter is at most threshold («ничего не сыграно»). */
+  | { kind: 'while_counter_at_most'; counter: TurnCounterKind; max: number; scope?: CounterScope }
   /** Current turn belongs to an opponent (Лейтенант Гриб: «во время хода противника»). */
   | { kind: 'while_opponents_turn' }
   /** Source sits on a land of this type (Крок-эколог на Ледяной земле). */
@@ -272,6 +314,8 @@ export interface AbilitySpec {
   effect?: EffectSpec | EffectSpec[];
   mechanic?: string;
   params?: Record<string, unknown>;
+  /** Player designated to receive the pendingChoice when the ability is volunteered. */
+  pendingFor?: 'controller' | 'payload_partner';
   /** Player-picked targets, in order; actives take them with the command, triggers via pendingChoice. */
   targets?: TargetAsk[];
   conditions?: ConditionSpec[];
@@ -287,6 +331,8 @@ export interface QueuedAbility {
   cardId: string | null;
   abilityIndex: number;
   trigger?: Trigger;
+  /** Player designated to receive the pendingChoice (defaults to qa.player). */
+  beneficiary?: PlayerId;
   /** Pre-collected command choices, carried into the trigger queue when available. */
   choices?: TargetChoice[];
   payload?: TriggerPayload;

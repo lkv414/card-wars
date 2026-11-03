@@ -1,7 +1,7 @@
 import { instance } from '../util';
 import type { Ctx } from '../util';
 import type { CardData, MatchState } from '../types';
-import { opponentsOf, opponentZoneFor } from '../zones';
+import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import { resolveTarget, type ResolvedTarget, type TargetRef } from './resolve';
 import type { EffectSource } from './source';
 import type {
@@ -13,6 +13,7 @@ import type {
   TargetFilter,
   Trigger,
   TriggerPayload,
+  CounterScope,
 } from './types';
 
 export interface AuraContribution {
@@ -95,6 +96,23 @@ export function forSource(
   }
 }
 
+/** Sum turn counters for a scope ('own', 'team', 'teammate', 'all'). */
+export function counterValue(
+  draft: MatchState,
+  counter: string,
+  scope: CounterScope | 'all',
+  sourcePlayer: string,
+): number {
+  const players = scope === 'own'
+    ? [sourcePlayer]
+    : scope === 'team'
+      ? [sourcePlayer, ...teammatesOf(draft, sourcePlayer)]
+      : scope === 'teammate'
+        ? teammatesOf(draft, sourcePlayer)
+        : draft.order;
+  return players.reduce((sum, pid) => sum + (draft.turnCounters[`${counter}:${pid}`] ?? 0), 0);
+}
+
 /** `if_*`/`while_*` conditions; board scopes read the context instance. */
 export function conditionsHold(
   draft: MatchState,
@@ -107,6 +125,7 @@ export function conditionsHold(
   if (!conditions) return true;
   const p = draft.players[source.player]!;
   for (const cond of conditions) {
+
     switch (cond.kind) {
       case 'if_payload_replacing':
         if (!payload?.replaced) return false;
@@ -121,7 +140,50 @@ export function conditionsHold(
         if (!payload?.player || payload.player !== source.player) return false;
         break;
       case 'if_payload_other':
-        if (!payload?.instanceId || payload.instanceId === source.instanceId) return false;
+        if (payload?.instanceId && payload.instanceId === source.instanceId) return false;
+        break;
+      case 'if_payload_teammate':
+        if (!payload?.player) return false;
+        if (!teammatesOf(draft, source.player).includes(payload.player)) return false;
+        break;
+      case 'if_payload_ally': {
+        if (!payload?.player) return false;
+        if (!sameTeam(draft, source.player, payload.player)) return false;
+        break;
+      }
+      case 'if_payload_team_target': {
+        const targetId = payload?.targetPlayer
+          ?? (payload?.targetInstanceId ? instance(draft, payload.targetInstanceId).controller : undefined);
+        if (!targetId || !sameTeam(draft, source.player, targetId)) return false;
+        break;
+      }
+      case 'if_payload_opponent_target': {
+        const targetId = payload?.targetPlayer
+          ?? (payload?.targetInstanceId ? instance(draft, payload.targetInstanceId).controller : undefined);
+        if (!targetId) return false;
+        const isEnemy = opponentsOf(draft, source.player).includes(targetId);
+        if (!isEnemy) return false;
+        break;
+      }
+      case 'if_payload_creature': {
+        if (!payload?.instanceId) return false;
+        const inst = draft.instances[payload.instanceId];
+        if (!inst || inst.slot !== 'creature') return false;
+        break;
+      }
+      case 'if_payload_enemy_creature': {
+        if (!payload?.instanceId) return false;
+        const inst = draft.instances[payload.instanceId];
+        if (!inst || inst.slot !== 'creature') return false;
+        if (!opponentsOf(draft, source.player).includes(inst.controller)) return false;
+        break;
+      }
+      case 'if_payload_targets_creature':
+        if (!payload?.targetInstanceId) return false;
+        if (draft.instances[payload.targetInstanceId]?.slot !== 'creature') return false;
+        break;
+      case 'while_phase':
+        if (draft.phase !== cond.phase) return false;
         break;
       case 'if_payload_to_player':
         if (!payload?.targetPlayer) return false;
@@ -132,6 +194,16 @@ export function conditionsHold(
       case 'if_payload_player_opponent':
         if (!payload?.player || payload.player === source.player) return false;
         break;
+      case 'while_counter_at_least': {
+        const value = counterValue(draft, cond.counter, cond.scope ?? 'team', source.player);
+        if (value < cond.min) return false;
+        break;
+      }
+      case 'while_counter_at_most': {
+        const value = counterValue(draft, cond.counter, cond.scope ?? 'team', source.player);
+        if (value > cond.max) return false;
+        break;
+      }
       case 'if_discard_count':
       case 'while_discard_count':
         if (p.discard.length < cond.min) return false;
@@ -233,6 +305,13 @@ export function conditionsHold(
   return true;
 }
 
+function sameTeam(draft: MatchState, a: string, b: string): boolean {
+  if (a === b) return true;
+  const ta = draft.players[a]?.teamId;
+  const tb = draft.players[b]?.teamId;
+  return ta !== undefined && ta !== null && ta === tb;
+}
+
 function distinctLandTypes(types: string[]): number {
   return new Set(types).size;
 }
@@ -277,13 +356,8 @@ export function resolveStatAmount(
       }
       return count * amount.amount;
     }
-    case 'per_counter': {
-      let total = 0;
-      for (const pid of amount.scope === 'own' ? [source.player] : draft.order) {
-        total += draft.turnCounters[`${amount.counter}:${pid}`] ?? 0;
-      }
-      return total * amount.amount;
-    }
+    case 'per_counter':
+      return counterValue(draft, amount.counter, amount.scope, source.player) * amount.amount;
     case 'per_target': {
       const targets = resolveTarget(draft, ctx, amount.target, source, undefined);
       let count = 0;

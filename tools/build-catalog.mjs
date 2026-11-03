@@ -74,7 +74,7 @@ const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature'
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'this_lane_creature', 'this_lane_opponent_creature', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
-  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player',
+  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner',
 ]);
 const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage']);
 const CONDITION_KINDS = new Set([
@@ -85,6 +85,9 @@ const CONDITION_KINDS = new Set([
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_player_self', 'if_payload_other',
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
+  'if_payload_ally', 'if_payload_creature', 'if_payload_enemy_creature', 'if_payload_targets_creature',
+  'if_payload_team_target', 'if_payload_opponent_target',
+  'while_phase', 'while_counter_at_least', 'while_counter_at_most',
 ]);
 
 function checkAmount(amount, where) {

@@ -1,0 +1,23 @@
+{
+ "cardId": "grand_prix_card_8",
+ "name": "Подмога",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_battle_phase",
+   "optional": true,
+   "pendingFor": "payload_partner",
+   "conditions": [
+    { "kind": "if_payload_ally" },
+    { "kind": "if_payload_other" },
+    { "kind": "while_counter_at_least", "counter": "creature_cost_2_plus_played", "scope": "team", "min": 1 }
+   ],
+   "effect": {
+    "op": "draw_cards",
+    "target": { "kind": "payload_partner" },
+    "count": 1
+   },
+   "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер сыграл существо стоимостью 2 и более в этот ход, другой партнер может тянуть карту."
+  }
+ ]
+}

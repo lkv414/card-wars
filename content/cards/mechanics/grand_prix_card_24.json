@@ -1,0 +1,21 @@
+{
+ "cardId": "grand_prix_card_24",
+ "name": "Товарищество",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_damage_dealt",
+   "conditions": [
+    { "kind": "if_payload_enemy_creature" },
+    { "kind": "if_payload_team_target" },
+    { "kind": "if_payload_other" }
+   ],
+   "effect": {
+    "op": "deal_damage",
+    "target": { "kind": "opponent_team" },
+    "amount": 1
+   },
+   "text": "Каждый раз когда существо противника наносит урон твоей Команде, нанеси 1 уон Команде противника."
+  }
+ ]
+}

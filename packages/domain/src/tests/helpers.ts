@@ -314,6 +314,67 @@ export const cards: CardData[] = [
     landType: 'rainbow',
     description: 'Парная карта (фикстура для проверки запрета в 1 на 1)',
   }),
+  card({
+    id: 'companion-ally-draw',
+    type: 'companion',
+    cost: 1,
+    landType: 'swamp',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'start_of_battle_phase',
+        optional: true,
+        pendingFor: 'payload_partner',
+        conditions: [
+          { kind: 'if_payload_ally' },
+          { kind: 'if_payload_other' },
+          { kind: 'while_counter_at_least', counter: 'cards_drawn', scope: 'teammate', min: 3 },
+        ],
+        effect: { op: 'draw_cards', target: { kind: 'payload_partner' }, count: 1 },
+        text: 'Фикстура Вклада',
+      },
+    ],
+  }),
+  card({
+    id: 'companion-support-draw',
+    type: 'companion',
+    cost: 1,
+    landType: 'corn',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'start_of_battle_phase',
+        optional: true,
+        pendingFor: 'payload_partner',
+        conditions: [
+          { kind: 'if_payload_ally' },
+          { kind: 'if_payload_other' },
+          { kind: 'while_counter_at_least', counter: 'creature_cost_2_plus_played', scope: 'team', min: 1 },
+        ],
+        effect: { op: 'draw_cards', target: { kind: 'payload_partner' }, count: 1 },
+        text: 'Фикстура Подмоги',
+      },
+    ],
+  }),
+  card({
+    id: 'companion-team-retaliation',
+    type: 'companion',
+    cost: 2,
+    landType: 'ice',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_damage_dealt',
+        conditions: [
+          { kind: 'if_payload_enemy_creature' },
+          { kind: 'if_payload_team_target' },
+          { kind: 'if_payload_other' },
+        ],
+        effect: { op: 'deal_damage', target: { kind: 'opponent_team' }, amount: 1 },
+        text: 'Фикстура Товарищества',
+      },
+    ],
+  }),
 ];
 
 export const heroes: HeroData[] = [

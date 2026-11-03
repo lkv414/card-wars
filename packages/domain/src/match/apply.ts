@@ -32,6 +32,9 @@ export function applyCommand(
   try {
     const next = produce(state, (draft) => {
       handle(draft, ctx, command);
+      if (draft.status === 'running' && draft.phase === 'combat' && !draft.pending) {
+        endTurn(draft, ctx);
+      }
     });
     return { ok: true, state: next, events };
   } catch (error) {
@@ -232,8 +235,11 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       return;
     case 'time_expired':
       // Timer default for a paused choice (docs/MECHANICS-V2.md §6): skip/cancel
-      // the awaited ability, then proceed with the automatic battle transition.
-      if (draft.pending) skipPending(draft, ctx);
+      // the awaited ability, then resume the (possibly combat) transition.
+      if (draft.pending) {
+        skipPending(draft, ctx);
+        return;
+      }
       // Automatic transition sent by the adapter's timer state machine (docs/TECH.md).
       markBattleReady(draft, ctx, command.player, true);
       return;

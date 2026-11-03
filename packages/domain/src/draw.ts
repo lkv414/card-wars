@@ -4,6 +4,7 @@ import type { Ctx } from './util';
 import { emit, instance, moveId, player } from './util';
 import type { MatchState, PlayerId } from './types';
 import { enqueueTrigger } from './mechanics/dispatch';
+import { bumpCounter } from './mechanics/effects';
 
 /** Draw n cards from the deck top; draws what is left when the deck runs out. */
 export function drawCards(
@@ -19,6 +20,9 @@ export function drawCards(
     const inst = instance(draft, id);
     inst.location = 'hand';
     p.hand.push(id);
+  }
+  for (let i = 0; i < drawn; i += 1) {
+    bumpCounter(draft, 'cards_drawn', playerId);
   }
   if (drawn > 0) {
     emit(ctx, { type: 'card_drawn', player: playerId, count: drawn });

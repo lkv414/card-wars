@@ -3,6 +3,7 @@ import { DomainError } from '../errors';
 import { emit, instance } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
+import { teammatesOf } from '../zones';
 import { conditionsHold, forSource, isTriggerSuppressed } from './modifiers';
 import { runEffect } from './effects';
 import { runMechanic } from './registry';
@@ -38,8 +39,22 @@ export function enqueueLeavePlay(
     cardId,
     abilityIndex,
     trigger: 'on_leave_play',
+    beneficiary: playerId,
     payload: { instanceId, cardId, player: playerId, zone },
   });
+}
+
+/** Which player answers a volunteered ability (default: the source controller). */
+function beneficiaryOf(
+  draft: MatchState,
+  ability: AbilitySpec,
+  payload: TriggerPayload | undefined,
+  fallback: PlayerId,
+): PlayerId {
+  if (ability.pendingFor !== 'payload_partner') return fallback;
+  const actor = payload?.player;
+  if (!actor) return fallback;
+  return teammatesOf(draft, actor)[0] ?? fallback;
 }
 
 /** Collect matching abilities of all live sources into the frame queue. */
@@ -51,9 +66,15 @@ export function enqueueTrigger(
 ): void {
   forSource(draft, ctx, (source, ability, abilityIndex) => {
     if (ability.kind !== 'passive' || ability.trigger !== trigger) return;
-    // Turn-scoped triggers (start_of_turn, on_draw, …) fire only for the
-    // scoped player; board events fire for everyone's abilities.
-    if (payload.player && source.player !== payload.player) return;
+    // Turn-scoped triggers (start_of_turn, on_draw, …) normally fire only for the
+    // scoped player; companion reactions may opt into ally events via if_payload_ally.
+    if (
+      payload.player &&
+      source.player !== payload.player &&
+      !ability.conditions?.some((c) => c.kind === 'if_payload_ally' || c.kind === 'if_payload_other')
+    ) {
+      return;
+    }
     // «Когда эта карта вступает в игру» — только у входящей карты; реакции
     // других источников требуют явных if_payload_* условий (Персиковая Джинни).
     if (
@@ -61,13 +82,12 @@ export function enqueueTrigger(
       payload.instanceId &&
       source.instanceId &&
       source.instanceId !== payload.instanceId &&
-      !ability.conditions?.some((c) => c.kind === 'if_payload_other')
+      !ability.conditions?.some((c) => c.kind === 'if_payload_other' || c.kind === 'if_payload_player_self')
     ) {
       return;
     }
     // Боевые триггеры и триггеры движения — по умолчанию только у источника
-    // события; реакции чужих источников — при явных if_payload_other /
-    // if_payload_player_self (Биомансер, Персиковая Джинни).
+    // события; реакции чужих источников — при явных if_payload_*-условиях.
     if (
       (trigger === 'on_creature_attacks' ||
         trigger === 'on_damage_dealt' ||
@@ -82,8 +102,10 @@ export function enqueueTrigger(
     }
     // Подавление (Дворец Костей).
     if (isTriggerSuppressed(draft, ctx, source, trigger)) return;
+    const beneficiary = beneficiaryOf(draft, ability, payload, source.player);
     ctx.frame.queue.push({
       player: source.player,
+      beneficiary,
       instanceId: source.instanceId,
       cardId: source.instanceId ? instance(draft, source.instanceId).cardId : null,
       abilityIndex,
@@ -173,7 +195,7 @@ function runSteps(
       }
       if (origin) {
         draft.pending = {
-          player: source.player,
+          player: origin.beneficiary ?? source.player,
           ask: { kind: 'effect_step', askIndex: nextAskIndex, collected },
           current: origin,
           queue: ctx.frame.queue,
@@ -182,7 +204,7 @@ function runSteps(
         ctx.frame.queue = [];
         emit(ctx, {
           type: 'choice_required',
-          player: source.player,
+          player: origin.beneficiary ?? source.player,
           kind: 'target',
           askIndex: nextAskIndex,
           askCount: asks.length,
@@ -234,6 +256,15 @@ export function runAbilityDirect(
   runAbilityEffect(draft, ctx, ability, source, choices, undefined, origin);
 }
 
+/** Mark a triggered once-per-turn ability as used, before any optional pause. */
+function markOncePerTurn(draft: Draft<MatchState>, qa: QueuedAbility): boolean {
+  const sourceKey = qa.instanceId ?? 'hero';
+  const key = `${qa.player}:${sourceKey}:${qa.abilityIndex}`;
+  if (draft.abilityUses[key] === draft.turn) return false;
+  draft.abilityUses[key] = draft.turn;
+  return true;
+}
+
 /** Process the queue; pauses into MatchState.pending when input is required. */
 export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
   while (ctx.frame.queue.length > 0) {
@@ -255,6 +286,7 @@ export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
     ) {
       continue;
     }
+    if (ability.oncePerTurn && !markOncePerTurn(draft, qa)) continue;
     // Pre-collected command targets: apply directly (validated atomically at
     // command validation); interactive arrays always pause inside the steps.
     if (qa.choices && !ability.optional && !Array.isArray(ability.effect)) {
@@ -286,6 +318,11 @@ export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
   }
 }
 
+/** The source that owns the ability, independent of who answers its pendingChoice. */
+function effectSourceOf(qa: QueuedAbility): EffectSource {
+  return { player: qa.player, instanceId: qa.instanceId };
+}
+
 function pause(
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -295,14 +332,15 @@ function pause(
     | { kind: 'target'; askIndex: number; collected: TargetChoice[] },
 ): void {
   const ability = abilityOf(draft, ctx, qa)!;
-  draft.pending = { player: qa.player, ask, current: qa, queue: [...ctx.frame.queue] };
+  const pendingPlayer = qa.beneficiary ?? qa.player;
+  draft.pending = { player: pendingPlayer, ask, current: qa, queue: [...ctx.frame.queue] };
   ctx.frame.queue = [];
   if (ask.kind === 'optional') {
-    emit(ctx, { type: 'choice_required', player: qa.player, kind: 'optional' });
+    emit(ctx, { type: 'choice_required', player: pendingPlayer, kind: 'optional' });
   } else {
     emit(ctx, {
       type: 'choice_required',
-      player: qa.player,
+      player: pendingPlayer,
       kind: 'target',
       askIndex: ask.askIndex,
       askCount: ability.targets?.length ?? 0,
@@ -324,7 +362,7 @@ export function resolvePending(
   const ability = abilityOf(draft, ctx, pending.current);
   if (!ability) {
     // Source vanished while paused; skip the ability and continue the queue.
-    delete draft.revealed[pending.player];
+    delete draft.revealed[pending.current.player];
     draft.pending = null;
     ctx.frame.queue = pending.queue;
     drainTriggers(draft, ctx);
@@ -337,7 +375,8 @@ export function resolvePending(
     if (!ask) throw new DomainError('no_pending_choice', 'ask index out of range');
     const choice = answer.targets?.[0];
     if (!choice) throw new DomainError('target_required', `ask ${pending.ask.askIndex + 1} needs one choice`);
-    validateChoices(draft, ctx, { player: pending.player, instanceId: pending.current.instanceId }, [ask], [choice]);
+    const source = effectSourceOf(pending.current);
+    validateChoices(draft, ctx, source, [ask], [choice]);
     const collected = [...pending.ask.collected, choice];
     emit(ctx, {
       type: 'choice_resolved',
@@ -347,7 +386,7 @@ export function resolvePending(
     });
     const resumeEffects = pending.resumeEffects ?? [];
     finishPending(draft, ctx, pending);
-    runSteps(draft, ctx, ability, { player: pending.player, instanceId: pending.current.instanceId }, resumeEffects, collected, undefined, pending.current);
+    runSteps(draft, ctx, ability, source, resumeEffects, collected, undefined, pending.current);
     drainTriggers(draft, ctx);
     return;
   }
@@ -377,7 +416,7 @@ export function resolvePending(
     const choice = answer.targets?.[0];
     if (!choice) throw new DomainError('target_required', `ask ${pending.ask.askIndex + 1} needs one choice`);
     // Re-validate the whole set against the declared asks (atomic, docs/MECHANICS-V2.md §5).
-    const source: EffectSource = { player: pending.player, instanceId: pending.current.instanceId };
+    const source = effectSourceOf(pending.current);
     validateChoices(draft, ctx, source, asks, [...pending.ask.collected, choice]);
     pending.ask.collected.push(choice);
     emit(ctx, {

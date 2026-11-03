@@ -375,6 +375,67 @@ export const cards: CardData[] = [
       },
     ],
   }),
+  card({
+    id: 'companion-copier',
+    type: 'companion',
+    cost: 1,
+    landType: 'rainbow',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_spell_cast',
+        optional: true,
+        oncePerGame: true,
+        pendingFor: 'payload_partner',
+        mechanic: 'copy_spell',
+        conditions: [
+          { kind: 'if_payload_ally' },
+          { kind: 'if_payload_land_type', landType: 'rainbow' },
+          { kind: 'if_payload_cost', max: 0 },
+        ],
+        text: 'Фикстура Связи',
+      },
+    ],
+  }),
+  card({
+    id: 'spell-bolt-0',
+    type: 'spell',
+    cost: 0,
+    landType: 'rainbow',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_cast',
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 2 },
+        targets: [{ kind: 'any_creature' }],
+        text: '2 урона выбранному существу',
+      },
+    ],
+  }),
+  card({
+    id: 'spell-bolt-1',
+    type: 'spell',
+    cost: 1,
+    landType: 'rainbow',
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_cast',
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 2 },
+        targets: [{ kind: 'any_creature' }],
+        text: '2 урона выбранному существу',
+      },
+    ],
+  }),
+  card({
+    id: 'spell-swamp-0',
+    type: 'spell',
+    cost: 0,
+    landType: 'swamp',
+    abilities: [
+      { kind: 'passive', trigger: 'on_cast', effect: { op: 'draw_cards', count: 1 }, text: 'Тяни карту' },
+    ],
+  }),
 ];
 
 export const heroes: HeroData[] = [

@@ -1,0 +1,13 @@
+{
+  "cardId": "lsp_card_37",
+  "name": "Сила трусов",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": { "op": "stat_buff", "target": { "kind": "choice", "index": 0 }, "stat": "attack", "amount": 2, "duration": "this_turn" },
+      "targets": [{ "kind": "own_creature", "filter": { "landType": "swamp" } }],
+      "text": "Выбранное Болотное существо под твоим контролем получает +2 ATK в этом ход."
+    }
+  ]
+}

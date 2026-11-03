@@ -57,7 +57,9 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
       return `${nick(state, event.player)} разыгрывает парную карту ${cardName(deps, event.cardId)}${replaced}`;
     }
     case 'spell_cast':
-      return `${nick(state, event.player)} читает заклинание ${cardName(deps, event.cardId)}`;
+      return event.copy
+        ? `${nick(state, event.player)} копирует заклинание ${cardName(deps, event.cardId)}`
+        : `${nick(state, event.player)} читает заклинание ${cardName(deps, event.cardId)}`;
     case 'floop_used': {
       const paid = event.paidActions > 0 ? ` (−${event.paidActions} действие)` : '';
       return `${nick(state, event.player)} флюпает ${cardName(deps, event.cardId)}${paid}`;

@@ -903,3 +903,89 @@ describe('golden: ауры и модификаторы (M2)', () => {
     expect(computeEff(s, deps, victimId).defense).toBe(Math.max(1, 9 - 2));
   });
 });
+
+describe('golden: Связь — копирование заклинания (copy_spell, 2v2)', () => {
+  function newTeamMatch(): MatchState {
+    const preset = deckPresets[0]!;
+    const other = deckPresets[1]!;
+    const { state } = createMatch(deps, {
+      players: ['p1', 'p2', 'p3', 'p4'].map((id, i) => ({
+        id,
+        nickname: `P${i + 1}`,
+        heroId: i % 2 === 0 ? preset.heroId : other.heroId,
+        deck: i % 2 === 0 ? [...preset.deck] : [...other.deck],
+        lands: i % 2 === 0 ? [...preset.lands] : [...other.lands],
+      })),
+      seed: 42,
+      mode: 'teams',
+      teamVariant: 'wall',
+    });
+    let s = state;
+    for (const pid of state.order) {
+      const res = applyCommand(s, { type: 'keep_hand', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('партнёр копирует радужное заклинание стоимости 0 и усиливает своё существо', () => {
+    let s = newTeamMatch();
+    // Болотные существа обеим сторонам (цели заклинания и его копии).
+    s = edit(s, (d) => {
+      for (const pid of ['p1', 'p2'] as const) {
+        const p = d.players[pid]!;
+        const id = p.deck[0]!;
+        p.deck = p.deck.filter((x) => x !== id); // карта уходит с верха колоды
+        d.instances[id]!.cardId = 'bmo_card_13'; // 1/9, swamp
+        d.instances[id]!.location = 'field';
+        d.instances[id]!.zone = 0;
+        d.instances[id]!.slot = 'creature';
+        p.zones[0]!.creature = id;
+      }
+      d.players.p1!.lands[0] = { type: 'swamp', frozen: false, flipped: false };
+      d.players.p1!.lands[3] = { type: 'rainbow', frozen: false, flipped: false };
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'charlie_card_4');
+    s = forceToHand(s, 'p1', 'lsp_card_37');
+
+    const resCompanion = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'charlie_card_4') }, deps);
+    expect(resCompanion.ok).toBe(true);
+    if (!resCompanion.ok) return;
+    s = resCompanion.state;
+    expect(s.players.p1!.companion).not.toBeNull();
+
+    const p1Creature = s.players.p1!.zones[0]!.creature!;
+    const p2Creature = s.players.p2!.zones[0]!.creature!;
+    const resCast = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'lsp_card_37'), targets: [{ kind: 'creature', instanceId: p1Creature }] }, deps);
+    if (!resCast.ok) throw new Error(`cast: ${resCast.rejected.code}: ${resCast.rejected.message}`);
+    expect(resCast.ok).toBe(true);
+    s = resCast.state;
+    // Оригинал применён: +2 ATK болотному существу P1; партнёр P2 решает, копировать ли.
+    expect(computeEff(s, deps, p1Creature).attack).toBe(1 + 2);
+    expect(s.pending?.player).toBe('p2');
+    expect(s.pending?.ask.kind).toBe('optional');
+
+    const resProceed = applyCommand(s, { type: 'resolve_choice', player: 'p2', answer: { proceed: true } }, deps);
+    expect(resProceed.ok).toBe(true);
+    if (!resProceed.ok) return;
+    s = resProceed.state;
+    expect(s.pending?.player).toBe('p2');
+    expect(s.pending?.ask.kind).toBe('target');
+
+    const resCopy = applyCommand(s, { type: 'resolve_choice', player: 'p2', answer: { targets: [{ kind: 'creature', instanceId: p2Creature }] } }, deps);
+    expect(resCopy.ok).toBe(true);
+    if (!resCopy.ok) return;
+    s = resCopy.state;
+    expect(s.pending).toBeNull();
+    expect(computeEff(s, deps, p2Creature).attack).toBe(1 + 2);
+    expect(resProceed.events.some((e) => e.type === 'spell_cast' && e.player === 'p2' && e.copy === true)).toBe(true);
+    // «В первый раз»: повторное предложение не приходит.
+    const again = applyCommand(s, { type: 'resolve_choice', player: 'p2', answer: { proceed: true } }, deps);
+    expect(again.ok).toBe(false);
+    if (again.ok) return;
+    expect(again.rejected.code).toBe('no_pending_choice');
+  });
+});

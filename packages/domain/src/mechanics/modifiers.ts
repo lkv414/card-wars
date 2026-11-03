@@ -136,6 +136,14 @@ export function conditionsHold(
         if (!entered || entered.landType !== cond.landType) return false;
         break;
       }
+      case 'if_payload_cost': {
+        if (!payload?.cardId) return false;
+        const cost = ctx.catalog.getCard(payload.cardId)?.cost;
+        if (cost === undefined) return false;
+        if (cond.min !== undefined && cost < cond.min) return false;
+        if (cond.max !== undefined && cost > cond.max) return false;
+        break;
+      }
       case 'if_payload_player_self':
         if (!payload?.player || payload.player !== source.player) return false;
         break;

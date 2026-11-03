@@ -1,0 +1,20 @@
+{
+  "cardId": "charlie_card_4",
+  "name": "Связь",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "optional": true,
+      "oncePerGame": true,
+      "pendingFor": "payload_partner",
+      "mechanic": "copy_spell",
+      "conditions": [
+        { "kind": "if_payload_ally" },
+        { "kind": "if_payload_land_type", "landType": "rainbow" },
+        { "kind": "if_payload_cost", "max": 0 }
+      ],
+      "text": "В первый раз когда ты или твой партнёр сыграете Радужное заклинание стоимостью 0 во время своего хода, другой партнёр может скопировать его и выбрать новую цель."
+    }
+  ]
+}

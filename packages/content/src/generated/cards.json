@@ -1715,7 +1715,31 @@
   "landType": "rainbow",
   "image": "/content/cards/images/charlie_card_4.png",
   "description": "В первый раз когда ты или твой партнёр сыграете Радужное заклинание стоимостью 0 во время своего хода, другой партнёр может скопировать его и выбрать новую цель.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_spell_cast",
+    "optional": true,
+    "oncePerGame": true,
+    "pendingFor": "payload_partner",
+    "mechanic": "copy_spell",
+    "conditions": [
+     {
+      "kind": "if_payload_ally"
+     },
+     {
+      "kind": "if_payload_land_type",
+      "landType": "rainbow"
+     },
+     {
+      "kind": "if_payload_cost",
+      "max": 0
+     }
+    ],
+    "text": "В первый раз когда ты или твой партнёр сыграете Радужное заклинание стоимостью 0 во время своего хода, другой партнёр может скопировать его и выбрать новую цель."
+   }
+  ]
  },
  {
   "id": "charlie_card_5",
@@ -8244,7 +8268,32 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lsp_card_37.png",
   "description": "Выбранное Болотное существо под твоим контролем получает +2 ATK в этом ход.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "landType": "swamp"
+      }
+     }
+    ],
+    "text": "Выбранное Болотное существо под твоим контролем получает +2 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "lsp_card_39",

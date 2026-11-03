@@ -38,6 +38,7 @@ export interface AbilitySpec {
   additionalCost?: AdditionalCost; // «Сбрось карту…», «уничтожь существо под своим контролем…»
   oncePerTurn?: boolean;
   optional?: boolean;              // «можешь …»
+  oncePerGame?: boolean;           // «В первый раз …»: одна активация за партию
   effect?: EffectSpec;             // вариант А: декларативная операция
   mechanic?: string;               // вариант Б: именованная механика + params
   params?: Record<string, JsonValue>;
@@ -91,7 +92,8 @@ export interface AbilitySpec {
 - **Модификаторы стоимости и земель** (сканируются в точке оплаты, docs/MECHANICS-V2.md §2А): `cost_mod` — `±N` к стоимости разыгрываемой карты (self-карта: Остролист −2 при условии, Домик из разного дерева −1 за каждое готовое существо); `land_count_mod` — «считается за дополнительную землю» (Ферма +1 corn).
 - **Динамические величины** `StatAmount`: число | `{ per_discard: { every, amount } }` («за каждые 5 карт в сбросе») | `{ per_target: { target, amount, excludeSelf?, filter? } }` («за каждое применённое существо», «за каждую другую Бочку»); фильтры: `ready` (не флюпнутое), `landType`, `sameCard`.
 - **TargetRef** пополняется `each_building_yours` (Нефтяная Вышка).
-- **Именованные механики**: `packages/domain/src/mechanics/registry.ts` = `Record<string, MechanicHandler>`; сигнатура `(draft, ctx, source, params, choices) => void`. Один файл на механику, юнит-тест на механику, **никаких имён карт** в коде. Первая партия: `damage_chain` (Убей-молния), `move_damage` (Отрази угрозу), `copy_spell` (Связь), `replace_floop` (Школа), `reveal_until` (Остров голово-краба).
+- **Именованные механики**: `packages/domain/src/mechanics/registry.ts` = `Record<string, MechanicHandler>`; сигнатура `(draft, ctx, source, params, choices, payload) => void` (`payload` — событие триггера, нужно механикам-реакциям вроде `copy_spell`). Один файл на механику, юнит-тест на механику, **никаких имён карт** в коде. Реализованы: `chain_damage` (Убей-молния), `move_damage` (Отрази угрозу), `swap_lanes` (Скелет гастролер), `copy_spell` (Связь). Планируются: `replace_floop` (Школа), `reveal_until` (Остров голово-краба).
+- **`copy_spell`** (реакция `on_spell_cast`): копирует заклинание из payload — кладёт в очередь триггеров его собственные `on_cast`-шаги от имени отвечающего игрока (`pendingFor: 'payload_partner'` → «другой партнёр»). Цели копии спрашиваются штатным pendingChoice-механизмом против `targets` скопированного заклинания (новая цель обязана быть легальна для копирующего). Копия бесплатна, не двигает карты и не увеличивает счётчики хода; исходник в сбросе — идентичность инстанса переиспользуется (для заклинаний это безопасно: `this_creature`-рефов у заклинаний нет).
 - Способность использует **ровно одно**: `effect` или `mechanic+params` (валидация сборки).
 
 ## 4. Данные и сборка
@@ -136,7 +138,7 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 
 ## 7. Условия
 
-`ConditionSpec`: `if_discard_count`, `while_discard_count`, `while_undamaged` (scope `self`/`target`), `while_damage_exactly` / `while_damage_at_least` (scope `self`/`target`), `while_lane_empty_opponent`, `while_on_land_type`, `while_on_flipped_land` (Джейк), `while_distinct_lands` (min/max — Фиона, Присмо, Лимонное желе), `while_land_count` (min/max), `while_zone_has_building`, `while_empty_lands` (Лимонграб), `while_self_flipped` (Огненное торнадо), `while_opponents_hand_empty` (Митик), `while_no_other_creatures` (Одинокая панда), `if_payload_*` — условия по триггеру-событию (замена, тип вошедшей карты, «под твоим контролем», «другого»), `if_card_in_discard`, `while_turn_phase` — пополняется по каталогу. Условия аур проверяются **по каждому кандидату-цели** (Мельница процветания, Марселин).
+`ConditionSpec`: `if_discard_count`, `while_discard_count`, `while_undamaged` (scope `self`/`target`), `while_damage_exactly` / `while_damage_at_least` (scope `self`/`target`), `while_lane_empty_opponent`, `while_on_land_type`, `while_on_flipped_land` (Джейк), `while_distinct_lands` (min/max — Фиона, Присмо, Лимонное желе), `while_land_count` (min/max), `while_zone_has_building`, `while_empty_lands` (Лимонграб), `while_self_flipped` (Огненное торнадо), `while_opponents_hand_empty` (Митик), `while_no_other_creatures` (Одинокая панда), `if_payload_*` — условия по триггеру-событию (замена, тип вошедшей карты, «под твоим контролем», «другого», `if_payload_cost` — печатная стоимость карты события в [min..max]), `if_card_in_discard`, `while_turn_phase` — пополняется по каталогу. Payload `on_spell_cast`/`on_card_played` несёт стоимость карты события. Условия аур проверяются **по каждому кандидату-цели** (Мельница процветания, Марселин).
 
 ## 8. Скрытие информации и события
 

@@ -2,10 +2,10 @@ import type { Draft } from 'immer';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
-import { chainDamage, moveDamage, swapLanes } from './handlers';
+import { chainDamage, copySpell, moveDamage, swapLanes } from './handlers';
 import type { EffectSource } from './source';
 export type { EffectSource };
-import type { TargetChoice } from './types';
+import type { PlayerId, TargetChoice, TriggerPayload } from './types';
 
 /**
  * Named mechanics (docs/MECHANICS-V2.md §3): reusable rule handlers bound from
@@ -18,12 +18,16 @@ export type MechanicHandler = (
   source: EffectSource,
   params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
+  payload: TriggerPayload | undefined,
+  /** Player answering the ability's pendingChoice when volunteered (2v2), else source.player. */
+  beneficiary: PlayerId,
 ) => void;
 
 export const MECHANICS: Record<string, MechanicHandler> = {
   chain_damage: chainDamage,
   move_damage: moveDamage,
   swap_lanes: swapLanes,
+  copy_spell: copySpell,
 };
 
 export function runMechanic(
@@ -33,8 +37,10 @@ export function runMechanic(
   source: EffectSource,
   params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
+  payload: TriggerPayload | undefined,
+  beneficiary: PlayerId,
 ): void {
   const handler = MECHANICS[name];
   if (!handler) throw new DomainError('mechanic_unknown', `unknown mechanic "${name}"`);
-  handler(draft, ctx, source, params, choices);
+  handler(draft, ctx, source, params, choices, payload, beneficiary);
 }

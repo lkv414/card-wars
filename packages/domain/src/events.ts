@@ -19,7 +19,7 @@ export type GameEvent =
   | { type: 'card_drawn'; player: PlayerId; count: number }
   | { type: 'card_played'; player: PlayerId; instanceId: string; cardId: string; zone: number; slot: 'creature' | 'building'; replacedInstanceId: string | null }
   | { type: 'companion_played'; player: PlayerId; instanceId: string; cardId: string; replacedInstanceId: string | null }
-  | { type: 'spell_cast'; player: PlayerId; instanceId: string; cardId: string }
+  | { type: 'spell_cast'; player: PlayerId; instanceId: string; cardId: string; copy?: boolean }
   | { type: 'floop_used'; player: PlayerId; instanceId: string; cardId: string; paidActions: number }
   | { type: 'damage_dealt'; sourceInstanceId: string | null; targetInstanceId: string | null; targetPlayer: PlayerId | null; amount: number; absorbedByShield: number; toTarget: number }
   | { type: 'creature_healed'; instanceId: string; amount: number }

@@ -165,7 +165,9 @@ export function runAbilityEffect(
     runSteps(draft, ctx, ability, source, steps, choices ?? [], payload, origin);
     return;
   }
-  if (ability.mechanic) runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices);
+  if (ability.mechanic) {
+    runMechanic(draft, ctx, ability.mechanic, source, ability.params, choices, payload, origin?.beneficiary ?? source.player);
+  }
 }
 
 /**
@@ -265,6 +267,15 @@ function markOncePerTurn(draft: Draft<MatchState>, qa: QueuedAbility): boolean {
   return true;
 }
 
+/** «В первый раз …»: a once-per-game ability is used only once per match. */
+function markOncePerGame(draft: Draft<MatchState>, qa: QueuedAbility): boolean {
+  const sourceKey = qa.instanceId ?? 'hero';
+  const key = `${qa.player}:${sourceKey}:${qa.abilityIndex}`;
+  if (draft.abilityUses[key] !== undefined) return false;
+  draft.abilityUses[key] = draft.turn;
+  return true;
+}
+
 /** Process the queue; pauses into MatchState.pending when input is required. */
 export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
   while (ctx.frame.queue.length > 0) {
@@ -287,6 +298,7 @@ export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
       continue;
     }
     if (ability.oncePerTurn && !markOncePerTurn(draft, qa)) continue;
+    if (ability.oncePerGame && !markOncePerGame(draft, qa)) continue;
     // Pre-collected command targets: apply directly (validated atomically at
     // command validation); interactive arrays always pause inside the steps.
     if (qa.choices && !ability.optional && !Array.isArray(ability.effect)) {

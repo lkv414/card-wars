@@ -184,6 +184,8 @@ export type ConditionSpec =
   // Payload conditions: meaningful only inside a trigger (aura scans fail them).
   | { kind: 'if_payload_replacing' }
   | { kind: 'if_payload_land_type'; landType: LandType }
+  /** The event card's printed cost lies within [min..max] (Связь: «стоимостью 0»). */
+  | { kind: 'if_payload_cost'; min?: number; max?: number }
   | { kind: 'if_payload_player_self' }
   | { kind: 'if_payload_other' }
   /** Current match phase. */
@@ -326,6 +328,8 @@ export interface AbilitySpec {
   oncePerTurn?: boolean;
   /** «можешь …»: the owning player decides (pendingChoice, docs/MECHANICS-V2.md §6). */
   optional?: boolean;
+  /** «В первый раз …»: activates once per match (docs/MECHANICS-V2.md §1). */
+  oncePerGame?: boolean;
   /** Declarative effect(s); an array runs sequentially (Голубой тритон: тяни, затем сбрось). */
   effect?: EffectSpec | EffectSpec[];
   mechanic?: string;

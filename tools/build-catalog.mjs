@@ -83,7 +83,7 @@ const CONDITION_KINDS = new Set([
   'while_distinct_lands', 'while_land_count', 'while_zone_has_building',
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
-  'if_payload_replacing', 'if_payload_land_type', 'if_payload_player_self', 'if_payload_other',
+  'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
   'if_payload_ally', 'if_payload_creature', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',

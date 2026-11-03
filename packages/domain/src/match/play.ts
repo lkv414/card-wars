@@ -145,6 +145,7 @@ export function handlePlayCard(
       cardId: card.id,
       player: playerId,
       targetInstanceId: spellTarget?.instanceId,
+      cost: card.cost, // printed cost (Связь: «заклинание стоимостью 0»)
     });
     afterEffects(draft, ctx);
     return;

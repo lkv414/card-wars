@@ -6,7 +6,7 @@ import { emit, instance, player } from '../util';
 import type { MatchState } from '../types';
 import { resolveTarget } from './resolve';
 import type { EffectSource, MechanicHandler } from './registry';
-import type { TargetChoice } from './types';
+import type { PlayerId, TargetChoice, TriggerPayload } from './types';
 
 /** Убей-молния: damage chain[0], chain[1], … along three chosen connected creatures. */
 export const chainDamage: MechanicHandler = (
@@ -93,4 +93,45 @@ export const swapLanes: MechanicHandler = (
   instB.zone = zoneA;
   emit(ctx, { type: 'card_moved', player: source.player, instanceId: source.instanceId, fromZone: zoneA, toZone: zoneB });
   emit(ctx, { type: 'card_moved', player: source.player, instanceId: pick.instanceId, fromZone: zoneB, toZone: zoneA });
+};
+
+/**
+ * Copy a cast spell (docs/MECHANICS-V2.md §3): re-enqueue the spell's own
+ * `on_cast` steps on behalf of the answering player (the partner, via
+ * `pendingFor: 'payload_partner'`). Targets are asked by the regular
+ * pendingChoice flow against the copied spell's own `targets`, so the new
+ * target must be legal for the copying player. The copy is free, moves no
+ * cards and does not bump turn counters; the original instance stays in the
+ * discard pile (spells have no `this_creature` refs, so the identity reuse is
+ * safe).
+ */
+export const copySpell: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  _source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
+  payload: TriggerPayload | undefined,
+  beneficiary: PlayerId,
+): void => {
+  const spellId = payload?.instanceId;
+  const cardId = payload?.cardId;
+  if (!spellId || !cardId) return; // nothing to copy
+  const card = ctx.catalog.getCard(cardId);
+  const casts = (card?.abilities ?? [])
+    .map((ability, abilityIndex) => ({ ability, abilityIndex }))
+    .filter(({ ability }) => ability.kind === 'passive' && ability.trigger === 'on_cast');
+  const answering = beneficiary; // «другой партнёр», not the companion's owner
+  for (const { ability, abilityIndex } of casts) {
+    ctx.frame.queue.push({
+      player: answering,
+      beneficiary: answering,
+      instanceId: spellId,
+      cardId,
+      abilityIndex,
+      trigger: 'on_cast',
+      payload: { instanceId: spellId, cardId, player: answering },
+    });
+  }
+  emit(ctx, { type: 'spell_cast', player: answering, instanceId: spellId, cardId, copy: true });
 };

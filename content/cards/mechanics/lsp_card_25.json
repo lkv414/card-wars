@@ -1,0 +1,23 @@
+{
+ "cardId": "lsp_card_25",
+ "name": "Виноградная Джинни",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "return_from_discard",
+    "count": 1,
+    "random": true,
+    "to": "deck_top"
+   },
+   "optional": true,
+   "conditions": [
+    {
+     "kind": "if_payload_replacing"
+    }
+   ],
+   "text": "Когда Виноградная Джинни вступает в игру заменяя существо, можешь положить карту из стопки сброса на верх своей колоды."
+  }
+ ]
+}

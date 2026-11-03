@@ -1,0 +1,21 @@
+{
+ "cardId": "ftg_card_76",
+ "name": "Лаймовое желе",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "draw_cards",
+    "count": 2
+   },
+   "conditions": [
+    {
+     "kind": "while_distinct_lands",
+     "min": 3
+    }
+   ],
+   "text": "Если под твоим контролем 3 и более различных типов земель, то когда Лаймовое желе вступает в игру, тяни 2 карты."
+  }
+ ]
+}

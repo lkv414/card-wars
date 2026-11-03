@@ -2916,7 +2916,26 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "conditions": [
+     {
+      "kind": "while_distinct_lands",
+      "min": 3
+     }
+    ],
+    "text": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу."
+   }
+  ]
  },
  {
   "id": "ftg_card_4",
@@ -3540,7 +3559,27 @@
   "attack": 2,
   "defense": 6,
   "description": "Если под твоим контролем 3 или более различных типов земель, то когда Клубничное желе вступает в игру, восстанови 4 урона с каждого существа под твоим контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "amount": 4
+    },
+    "conditions": [
+     {
+      "kind": "while_distinct_lands",
+      "min": 3
+     }
+    ],
+    "text": "Если под твоим контролем 3 или более различных типов земель, то когда Клубничное желе вступает в игру, восстанови 4 урона с каждого существа под твоим контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_51",
@@ -3898,7 +3937,24 @@
   "attack": 2,
   "defense": 6,
   "description": "Если под твоим контролем 3 и более различных типов земель, то когда Лаймовое желе вступает в игру, тяни 2 карты.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "draw_cards",
+     "count": 2
+    },
+    "conditions": [
+     {
+      "kind": "while_distinct_lands",
+      "min": 3
+     }
+    ],
+    "text": "Если под твоим контролем 3 и более различных типов земель, то когда Лаймовое желе вступает в игру, тяни 2 карты."
+   }
+  ]
  },
  {
   "id": "ftg_card_77",
@@ -3910,7 +3966,25 @@
   "attack": 0,
   "defense": 7,
   "description": "ПРИЕМ >>> Верни существо на соседней линии в руку владельцу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "adjacent_any_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Верни существо на соседней линии в руку владельцу."
+   }
+  ]
  },
  {
   "id": "ftg_card_78",
@@ -4337,7 +4411,27 @@
   "attack": 2,
   "defense": 6,
   "description": "Если под твоим контролем 3 различных типа земель, то когда Апельсиновое желе вступает в игру нанеси 3 урона своему противнику.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": 3
+    },
+    "conditions": [
+     {
+      "kind": "while_distinct_lands",
+      "min": 3
+     }
+    ],
+    "text": "Если под твоим контролем 3 различных типа земель, то когда Апельсиновое желе вступает в игру нанеси 3 урона своему противнику."
+   }
+  ]
  },
  {
   "id": "ftg_card_106",
@@ -5843,7 +5937,33 @@
   "attack": 2,
   "defense": 8,
   "description": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "lane_building"
+     }
+    ],
+    "text": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_5",
@@ -7704,7 +7824,26 @@
   "attack": 1,
   "defense": 6,
   "description": "Когда Виноградная Джинни вступает в игру заменяя существо, можешь положить карту из стопки сброса на верх своей колоды.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "return_from_discard",
+     "count": 1,
+     "random": true,
+     "to": "deck_top"
+    },
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_replacing"
+     }
+    ],
+    "text": "Когда Виноградная Джинни вступает в игру заменяя существо, можешь положить карту из стопки сброса на верх своей колоды."
+   }
+  ]
  },
  {
   "id": "lsp_card_27",
@@ -7777,7 +7916,32 @@
   "attack": 2,
   "defense": 7,
   "description": "Когда Тупица в наушниках вступает в игру заменяя существо, нанеси 3 урона другому существу на этой линии.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_replacing"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "text": "Когда Тупица в наушниках вступает в игру заменяя существо, нанеси 3 урона другому существу на этой линии."
+   }
+  ]
  },
  {
   "id": "lsp_card_33",

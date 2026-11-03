@@ -1,0 +1,22 @@
+{
+ "cardId": "ftg_card_77",
+ "name": "Пляжная мумия",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "return_to_owner",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    }
+   },
+   "targets": [
+    {
+     "kind": "adjacent_any_creature"
+    }
+   ],
+   "text": "ПРИЕМ >>> Верни существо на соседней линии в руку владельцу."
+  }
+ ]
+}

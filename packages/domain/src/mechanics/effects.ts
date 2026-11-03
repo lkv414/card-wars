@@ -9,7 +9,7 @@ import { emit, instance, moveId, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
-import { enqueueTrigger } from './dispatch';
+import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
 import { resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
@@ -195,6 +195,27 @@ export function runEffect(
         inst.location = 'discard';
         moveId(p.hand, p.discard, inst.id);
         emit(ctx, { type: 'card_discarded', player: source.player, instanceId: inst.id, cardId: inst.cardId, from: 'hand' });
+      }
+      return;
+    }
+    case 'return_to_owner': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        const inst = instance(draft, target.instanceId);
+        if (inst.location !== 'field' && inst.location !== 'companion') continue;
+        const prevZone = inst.zone;
+        if (inst.zone !== null && inst.slot) {
+          const zoneOwner = draft.players[inst.controller]!;
+          if (zoneOwner.zones[inst.zone]![inst.slot] === target.instanceId) zoneOwner.zones[inst.zone]![inst.slot] = null;
+        }
+        if (inst.location === 'companion') draft.players[inst.controller]!.companion = null;
+        inst.location = 'hand';
+        inst.zone = null;
+        inst.slot = null;
+        inst.flipped = false;
+        draft.players[inst.controller]!.hand.push(target.instanceId);
+        emit(ctx, { type: 'card_returned', player: inst.controller, instanceId: target.instanceId, cardId: inst.cardId });
+        enqueueLeavePlay(draft, ctx, target.instanceId, inst.cardId, inst.controller, prevZone);
       }
       return;
     }

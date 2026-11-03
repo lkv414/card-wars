@@ -57,7 +57,9 @@ export type TargetAskKind =
   /** Own-side land, any type (Бигфут) — combine with filter.landType (Червь шелухи). */
   | 'own_landscape'
   /** One adjacent own creature (Защищенный зебрарог). */
-  | 'adjacent_creature';
+  | 'adjacent_creature'
+  /** One creature on an adjacent lane, either side (Пляжная мумия). */
+  | 'adjacent_any_creature';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -243,7 +245,9 @@ export type EffectSpec =
   /** Discard own hand cards (chosen via own_hand_card asks). */
   | { op: 'discard_from_hand'; count: number }
   /** Aura-grant of an ability to covered cards (Финн: «получают ПРИЕМ >>> …»). */
-  | { op: 'grant_ability'; target: TargetRef; ability: AbilitySpec };
+  | { op: 'grant_ability'; target: TargetRef; ability: AbilitySpec }
+  /** Return a field card to its owner's hand (Пляжная мумия, желе-карты). */
+  | { op: 'return_to_owner'; target: TargetRef };
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';

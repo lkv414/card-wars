@@ -108,6 +108,13 @@ function choiceMatchesAsk(
       if (choice.kind !== 'landscape') return false;
       return choice.player === source.player;
     }
+    case 'adjacent_any_creature': {
+      if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
+      const inst = instance(draft, choice.instanceId);
+      const src = source.instanceId ? instance(draft, source.instanceId) : null;
+      if (!src || src.zone === null || inst.zone === null) return false;
+      return Math.abs(inst.zone - src.zone) === 1;
+    }
     case 'adjacent_creature': {
       if (choice.kind !== 'creature' || !isFieldCreature(draft, choice.instanceId)) return false;
       const inst = instance(draft, choice.instanceId);

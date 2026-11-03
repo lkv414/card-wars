@@ -1,0 +1,30 @@
+{
+ "cardId": "jake_2v2_card_4",
+ "name": "Сшитая белка",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": {
+    "op": "destroy",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    }
+   },
+   "conditions": [
+    {
+     "kind": "while_damage_at_least",
+     "amount": 4,
+     "scope": "self"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "lane_building"
+    }
+   ],
+   "text": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии."
+  }
+ ]
+}

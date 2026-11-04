@@ -4002,7 +4002,27 @@
   "attack": 1,
   "defense": 5,
   "description": "Вский раз когда ты тянешь карту, Голубой король вечеринок получает +1 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "cards_drawn",
+      "scope": "own",
+      "amount": 1
+     },
+     "duration": "this_turn"
+    },
+    "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 ATK в этот ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_2",
@@ -4150,7 +4170,23 @@
   "attack": 5,
   "defense": 6,
   "description": "Черничный пироклоп стоит на 1 меньше за каждое сыгранное заклинание в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": {
+      "kind": "per_counter",
+      "counter": "spell_cast",
+      "scope": "all",
+      "amount": -1
+     }
+    },
+    "text": "Черничный пироклоп стоит на 1 меньше за каждое сыгранное заклинание в этом ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_9",

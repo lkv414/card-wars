@@ -1,0 +1,24 @@
+{
+  "cardId": "ftg_card_1",
+  "name": "Голубой король Вечеринок",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "cards_drawn",
+          "scope": "own",
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 ATK в этот ход."
+    }
+  ]
+}

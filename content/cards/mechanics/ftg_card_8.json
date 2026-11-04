@@ -1,0 +1,20 @@
+{
+  "cardId": "ftg_card_8",
+  "name": "Черничный пироклоп",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_counter",
+          "counter": "spell_cast",
+          "scope": "all",
+          "amount": -1
+        }
+      },
+      "text": "Черничный пироклоп стоит на 1 меньше за каждое сыгранное заклинание в этом ход."
+    }
+  ]
+}

@@ -7,19 +7,102 @@ import { killInstance } from '../damage';
 import { pickRandom, rngInt } from '../rng';
 import { emit, instance, moveId, player } from '../util';
 import type { Ctx } from '../util';
-import type { MatchState } from '../types';
+import type { CardData, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
 import { countsAsTypes, resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
-import type { EffectSpec, TargetChoice, TargetFilter, TriggerPayload } from './types';
+import type { EffectSpec, TargetChoice, TargetFilter, TargetRef, TriggerPayload } from './types';
+
+/** Shared free-play of a card (play_revealed / play_from_hand): spell → on_cast,
+ *  companion → slot, creature/building → destination land. */
+function playFreeCard(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  choices: TargetChoice[] | undefined,
+  payload: TriggerPayload | undefined,
+  playedId: string,
+  card: CardData,
+  destination: TargetRef | undefined,
+): void {
+  const p = player(draft, source.player);
+  const inst = instance(draft, playedId);
+  if (card.type === 'spell') {
+        inst.location = 'discard';
+        p.discard.push(playedId);
+        emit(ctx, { type: 'spell_cast', player: source.player, instanceId: playedId, cardId: card.id });
+        draft.castSpells.push(playedId);
+        bumpCounter(draft, 'spell_cast', source.player);
+        const casts = (card.abilities ?? []).filter((a) => a.kind === 'passive' && a.trigger === 'on_cast');
+        for (const ability of casts) {
+          const abilityIndex = (card.abilities ?? []).indexOf(ability);
+          ctx.frame.queue.push({
+            player: source.player,
+            instanceId: playedId,
+            cardId: card.id,
+            abilityIndex: Math.max(0, abilityIndex),
+            trigger: 'on_cast',
+            payload: { instanceId: playedId, cardId: card.id, player: source.player },
+          });
+        }
+        return;
+      }
+      if (card.type === 'companion') {
+        const replaced = p.companion;
+        if (replaced) {
+          const oldInst = instance(draft, replaced);
+          oldInst.location = 'discard';
+          oldInst.zone = null;
+          oldInst.slot = null;
+          p.discard.push(replaced);
+          p.companion = null;
+          emit(ctx, { type: 'card_discarded', player: source.player, instanceId: replaced, cardId: oldInst.cardId, from: 'companion' });
+        }
+        inst.location = 'companion';
+        inst.zone = null;
+        inst.slot = null;
+        inst.playedTurn = draft.turn;
+        p.companion = playedId;
+        emit(ctx, { type: 'companion_played', player: source.player, instanceId: playedId, cardId: card.id, replacedInstanceId: replaced ?? null });
+        bumpCounter(draft, 'creature_entered', source.player);
+        enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId: playedId, cardId: card.id, player: source.player, replaced: Boolean(replaced) });
+        return;
+      }
+      // Creature or building: destination required.
+      const dest = destination
+        ? resolveTarget(draft, ctx, destination, source, choices, payload).find((d) => d.kind === 'land')
+        : (choices ?? []).map((c) => (c.kind === 'landscape' ? { kind: 'land' as const, playerId: c.player, zone: c.zone } : null)).find((d) => d !== null);
+      if (!dest || dest.kind !== 'land') {
+        throw new DomainError('target_required', 'play_revealed needs a destination land');
+      }
+      const owner = draft.players[dest.playerId]!;
+      if (dest.zone < 0 || dest.zone >= owner.zones.length) {
+        throw new DomainError('invalid_choice', 'destination zone out of range');
+      }
+      const slot: 'creature' | 'building' = card.type === 'building' ? 'building' : 'creature';
+      if (owner.zones[dest.zone]![slot]) {
+        throw new DomainError('invalid_choice', `destination zone ${dest.zone} is occupied`);
+      }
+      inst.location = 'field';
+      inst.zone = dest.zone;
+      inst.slot = slot;
+      inst.playedTurn = draft.turn;
+      owner.zones[dest.zone]![slot] = playedId;
+      emit(ctx, { type: 'card_played', player: source.player, instanceId: playedId, cardId: card.id, zone: dest.zone, slot, replacedInstanceId: null });
+      bumpCounter(draft, 'creature_entered', source.player);
+      if (card.type === 'creature' && card.cost >= 2) bumpCounter(draft, 'creature_cost_2_plus_played', source.player);
+      enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId: playedId, cardId: card.id, player: source.player, zone: dest.zone });
+      return;
+}
 
 /**
  * Execute one declarative effect (docs/MECHANICS-V2.md §3). Aura specs never
  * reach the interpreter — they are scanned by modifiers.ts; the union grows
  * per milestone and unknown ops are rejected explicitly.
  */
+
 export function runEffect(
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -324,6 +407,24 @@ export function runEffect(
       }
       return;
     }
+    case 'play_from_hand': {
+      const p = player(draft, source.player);
+      const pick = (choices ?? []).find((c): c is Extract<TargetChoice, { kind: 'card' }> => c.kind === 'card');
+      if (!pick) throw new DomainError('invalid_choice', 'play_from_hand needs a hand card');
+      const handInst = instance(draft, pick.instanceId);
+      const handCard = ctx.catalog.getCard(handInst.cardId);
+      if (!handCard || handInst.location !== 'hand' || handInst.controller !== source.player) {
+        throw new DomainError('invalid_choice', 'play_from_hand needs your hand card');
+      }
+      if (effect.maxCost !== undefined && handCard.cost > effect.maxCost) {
+        throw new DomainError('invalid_choice', `card costs more than ${effect.maxCost}`);
+      }
+      if (effect.match?.type && handCard.type !== effect.match.type) {
+        throw new DomainError('invalid_choice', `card is not a ${effect.match.type}`);
+      }
+      playFreeCard(draft, ctx, source, choices, payload, pick.instanceId, handCard, effect.destination);
+      return;
+    }
     case 'play_revealed': {
       const p = player(draft, source.player);
       const window = draft.revealed[source.player] ?? [];
@@ -346,71 +447,7 @@ export function runEffect(
       if (!card) return;
       const deckIdx = p.deck.indexOf(playedId);
       if (deckIdx >= 0) p.deck.splice(deckIdx, 1);
-      if (card.type === 'spell') {
-        inst.location = 'discard';
-        p.discard.push(playedId);
-        emit(ctx, { type: 'spell_cast', player: source.player, instanceId: playedId, cardId: card.id });
-        draft.castSpells.push(playedId);
-        bumpCounter(draft, 'spell_cast', source.player);
-        const casts = (card.abilities ?? []).filter((a) => a.kind === 'passive' && a.trigger === 'on_cast');
-        for (const ability of casts) {
-          const abilityIndex = (card.abilities ?? []).indexOf(ability);
-          ctx.frame.queue.push({
-            player: source.player,
-            instanceId: playedId,
-            cardId: card.id,
-            abilityIndex: Math.max(0, abilityIndex),
-            trigger: 'on_cast',
-            payload: { instanceId: playedId, cardId: card.id, player: source.player },
-          });
-        }
-        return;
-      }
-      if (card.type === 'companion') {
-        const replaced = p.companion;
-        if (replaced) {
-          const oldInst = instance(draft, replaced);
-          oldInst.location = 'discard';
-          oldInst.zone = null;
-          oldInst.slot = null;
-          p.discard.push(replaced);
-          p.companion = null;
-          emit(ctx, { type: 'card_discarded', player: source.player, instanceId: replaced, cardId: oldInst.cardId, from: 'companion' });
-        }
-        inst.location = 'companion';
-        inst.zone = null;
-        inst.slot = null;
-        inst.playedTurn = draft.turn;
-        p.companion = playedId;
-        emit(ctx, { type: 'companion_played', player: source.player, instanceId: playedId, cardId: card.id, replacedInstanceId: replaced ?? null });
-        bumpCounter(draft, 'creature_entered', source.player);
-        enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId: playedId, cardId: card.id, player: source.player, replaced: Boolean(replaced) });
-        return;
-      }
-      // Creature or building: destination required.
-      const dest = effect.destination
-        ? resolveTarget(draft, ctx, effect.destination, source, choices, payload).find((d) => d.kind === 'land')
-        : (choices ?? []).map((c) => (c.kind === 'landscape' ? { kind: 'land' as const, playerId: c.player, zone: c.zone } : null)).find((d) => d !== null);
-      if (!dest || dest.kind !== 'land') {
-        throw new DomainError('target_required', 'play_revealed needs a destination land');
-      }
-      const owner = draft.players[dest.playerId]!;
-      if (dest.zone < 0 || dest.zone >= owner.zones.length) {
-        throw new DomainError('invalid_choice', 'destination zone out of range');
-      }
-      const slot: 'creature' | 'building' = card.type === 'building' ? 'building' : 'creature';
-      if (owner.zones[dest.zone]![slot]) {
-        throw new DomainError('invalid_choice', `destination zone ${dest.zone} is occupied`);
-      }
-      inst.location = 'field';
-      inst.zone = dest.zone;
-      inst.slot = slot;
-      inst.playedTurn = draft.turn;
-      owner.zones[dest.zone]![slot] = playedId;
-      emit(ctx, { type: 'card_played', player: source.player, instanceId: playedId, cardId: card.id, zone: dest.zone, slot, replacedInstanceId: null });
-      bumpCounter(draft, 'creature_entered', source.player);
-      if (card.type === 'creature' && card.cost >= 2) bumpCounter(draft, 'creature_cost_2_plus_played', source.player);
-      enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId: playedId, cardId: card.id, player: source.player, zone: dest.zone });
+      playFreeCard(draft, ctx, source, choices, payload, playedId, card, effect.destination);
       return;
     }
     case 'resolve_revealed': {

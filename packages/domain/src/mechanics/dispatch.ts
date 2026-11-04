@@ -242,6 +242,10 @@ function effectChoiceNeed(effect: EffectSpec): number {
   if (effect.op === 'discard_from_hand') {
     return Math.max(max + 1, effect.count);
   }
+  if (effect.op === 'play_from_hand') {
+    // implicit hand-card pick (ask own_hand_card) + declared destination choice
+    return Math.max(max + 1, 1);
+  }
   return max + 1;
 }
 

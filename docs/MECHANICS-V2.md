@@ -213,6 +213,10 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 - Условия: `if_payload_killer_self`, `if_payload_zone_matches_self` (жертва на линии источника).
 - Механики: `half_def_damage` (урон = половина макс. DEF, округляя вверх), `min_max_def_damage` (2 — наименьший DEF в игре, 1 — наибольший), `sacrifice_cost_damage` (уничтожить своё существо → урон всем существам противника = его стоимости, Сильная Сьюзан).
 
+## Группа G10 — бесплатный розыгрыш с руки
+
+- **`play_from_hand`** { maxCost?, match?, destination? }: играет выбранную карту руки (ask `own_hand_card`) бесплатно при стоимости ≤ maxCost и совпадении с match; существо/строение — в `destination` (реф или ask `landscape`), заклинание — читает `on_cast`, компаньон — в слот. Неявный выбор карты руки учитывается в effectChoiceNeed (как у `discard_from_hand`).
+
 ## Открытые вопросы реализации
 
 - Состав опций `AdditionalCost` (какие «доп. стоимости» встречаются в каталоге) — при разборе M3.

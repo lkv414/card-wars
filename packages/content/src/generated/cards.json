@@ -5580,7 +5580,26 @@
   "attack": 1,
   "defense": 7,
   "description": "Каждый раз когда противник тянет карту, нанеси ему 1 урон.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_draw",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "payload_player"
+     },
+     "amount": 1
+    },
+    "text": "Каждый раз когда противник тянет карту, нанеси ему 1 урон.",
+    "conditions": [
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_74",
@@ -7422,7 +7441,30 @@
   "attack": 2,
   "defense": 6,
   "description": "Когда песочный краб пират вступает в игру, можешь бесплатно сыграть существо стоимостью 1.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "play_from_hand",
+     "maxCost": 1,
+     "match": {
+      "type": "creature"
+     }
+    },
+    "text": "Когда песочный краб пират вступает в игру, можешь бесплатно сыграть существо стоимостью 1.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "landscape"
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "grand_prix_card_38",
@@ -9770,7 +9812,41 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_40.png",
   "description": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл существ в этот ход, другой партнер может бесплатно сыграть существо стоимостью 1 или менее.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+     "op": "play_from_hand",
+     "maxCost": 1,
+     "match": {
+      "type": "creature"
+     }
+    },
+    "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл существ в этот ход, другой партнер может бесплатно сыграть существо стоимостью 1 или менее.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "landscape"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_ally"
+     },
+     {
+      "kind": "while_counter_at_most",
+      "counter": "creature_entered",
+      "scope": "team",
+      "max": 0
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_1",
@@ -12837,7 +12913,38 @@
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_8.png",
   "description": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+     "op": "play_from_hand",
+     "maxCost": 1,
+     "match": {
+      "type": "spell"
+     }
+    },
+    "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "if_payload_ally"
+     },
+     {
+      "kind": "while_counter_at_most",
+      "counter": "spell_cast",
+      "scope": "team",
+      "max": 0
+     }
+    ],
+    "optional": true
+   }
+  ]
  },
  {
   "id": "monika_card_9",

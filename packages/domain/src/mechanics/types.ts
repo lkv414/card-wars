@@ -422,6 +422,8 @@ export type EffectSpec =
   | { op: 'reveal_until'; max: number; match?: { type?: CardType; landType?: LandType; cardIds?: string[] } }
   /** Play the last revealed card for free; the rest of the window shuffles back. */
   | { op: 'play_revealed'; destination?: TargetRef }
+  /** Play a hand card for free (cost ≤ maxCost, match filter) (Краб пират, Синхронизация). */
+  | { op: 'play_from_hand'; maxCost?: number; match?: { type?: import('../types').CardType }; destination?: TargetRef }
   /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
   | { op: 'reveal_deck_top'; count: number }
   /**

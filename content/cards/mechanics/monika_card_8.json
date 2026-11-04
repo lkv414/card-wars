@@ -1,0 +1,35 @@
+{
+  "cardId": "monika_card_8",
+  "name": "Синхронизация",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "effect": {
+        "op": "play_from_hand",
+        "maxCost": 1,
+        "match": {
+          "type": "spell"
+        }
+      },
+      "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее.",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "if_payload_ally"
+        },
+        {
+          "kind": "while_counter_at_most",
+          "counter": "spell_cast",
+          "scope": "team",
+          "max": 0
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

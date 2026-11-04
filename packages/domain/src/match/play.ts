@@ -135,6 +135,7 @@ export function handlePlayCard(
       pickInst.location = 'discard';
       moveId(p.hand, p.discard, pickId);
       emit(ctx, { type: 'card_discarded', player: playerId, instanceId: pickId, cardId: pickInst.cardId, from: 'hand' });
+      bumpCounter(draft, 'cards_discarded', playerId);
     }
     for (const pickId of floopPicks) {
       instance(draft, pickId).flipped = true;
@@ -199,6 +200,7 @@ export function handlePlayCard(
     moveId(p.hand, p.discard, unfreezeWith);
     p.lands[zone]!.frozen = false;
     emit(ctx, { type: 'card_discarded', player: playerId, instanceId: unfreezeWith, cardId: unfreezeInst.cardId, from: 'hand' });
+    bumpCounter(draft, 'cards_discarded', playerId);
     emit(ctx, { type: 'land_changed', player: playerId, zone, change: 'unfrozen' });
   }
 

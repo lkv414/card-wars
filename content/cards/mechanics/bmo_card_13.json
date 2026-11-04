@@ -1,0 +1,20 @@
+{
+  "cardId": "bmo_card_13",
+  "name": "Зеленая сирена",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "Уничтожь Зеленую сирену >>> Нанеси 1 урон каждому существу противника.",
+      "additionalCost": {
+        "destroySelf": true
+      }
+    }
+  ]
+}

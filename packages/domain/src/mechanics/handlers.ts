@@ -1,8 +1,10 @@
 import type { Draft } from 'immer';
-import { dealToCreature } from '../damage';
+import { dealToCreature, dealToPlayer, killInstance } from '../damage';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
+import { drawCards } from '../draw';
 import { emit, instance, player } from '../util';
+import { opponentsOf } from '../zones';
 import { pickRandom } from '../rng';
 import type { MatchState } from '../types';
 import { resolveTarget } from './resolve';
@@ -212,4 +214,139 @@ export const tokenBonusDamage: MechanicHandler = (
   const victim = instance(draft, pick.instanceId);
   const onToken = victim.zone !== null && player(draft, victim.controller).lands[victim.zone]!.iceTokens > 0;
   dealToCreature(draft, ctx, pick.instanceId, onToken ? amount + bonus : amount, source.instanceId);
+};
+
+/** «Положи верхнюю карту колоды в сброс. Нанеси урон каждому существу равный её стоимости» (Зеленый тритон). */
+export const discardTopDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const p = player(draft, source.player);
+  const topId = p.deck[0];
+  if (!topId) return;
+  p.deck.splice(0, 1);
+  const topInst = instance(draft, topId);
+  topInst.location = 'discard';
+  p.discard.push(topId);
+  emit(ctx, { type: 'card_discarded', player: source.player, instanceId: topId, cardId: topInst.cardId, from: 'deck' });
+  const cost = ctx.catalog.getCard(topInst.cardId)?.cost ?? 0;
+  for (const pid of draft.order) {
+    for (const zone of draft.players[pid]!.zones) {
+      if (zone.creature) dealToCreature(draft, ctx, zone.creature, cost, source.instanceId);
+    }
+  }
+};
+
+/** «Верни выбранное существо владельцу в руку. Получи действия равные её стоимости» (Теплый прием). */
+export const returnCostActions: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'return_cost_actions needs a creature');
+  const inst = instance(draft, pick.instanceId);
+  const cost = ctx.catalog.getCard(inst.cardId)?.cost ?? 0;
+  const owner = player(draft, inst.controller);
+  inst.location = 'hand';
+  if (inst.zone !== null && inst.slot) {
+    draft.players[inst.controller]!.zones[inst.zone]![inst.slot] = null;
+  }
+  inst.zone = null;
+  inst.slot = null;
+  owner.hand.push(pick.instanceId);
+  emit(ctx, { type: 'card_returned', player: inst.controller, instanceId: pick.instanceId, cardId: inst.cardId });
+  player(draft, source.player).actions += cost;
+};
+
+/** «Уничтожь выбранное существо противника. Каждый противник тянет столько карт, сколько оно стоило» (Горячая подача). */
+export const destroyDrawCost: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'destroy_draw_cost needs a creature');
+  const inst = instance(draft, pick.instanceId);
+  const cost = ctx.catalog.getCard(inst.cardId)?.cost ?? 0;
+  killInstance(draft, ctx, pick.instanceId);
+  for (const pid of opponentsOf(draft, source.player)) {
+    drawCards(draft, ctx, pid, cost);
+  }
+};
+
+/** «Выбранный противник сбрасывает до N карт, затем получает урон за каждую сброшенную» (Пощечина Ведьмы). */
+export const discardThenDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const count = (params?.count as number | undefined) ?? 5;
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'player') throw new DomainError('invalid_choice', 'discard_then_damage needs a player');
+  const victim = player(draft, pick.playerId);
+  let discarded = 0;
+  for (let i = 0; i < count && victim.hand.length > 0; i++) {
+    const id = pickRandom(draft.rng, victim.hand);
+    if (!id) break;
+    const inst = instance(draft, id);
+    inst.location = 'discard';
+    victim.hand.splice(victim.hand.indexOf(id), 1);
+    victim.discard.push(id);
+    discarded += 1;
+    emit(ctx, { type: 'card_discarded', player: pick.playerId, instanceId: id, cardId: inst.cardId, from: 'hand' });
+  }
+  if (discarded > 0) dealToPlayer(draft, ctx, pick.playerId, discarded, source.instanceId);
+};
+
+/** «Сбрось N верхних карт колоды. За каждое заклинание среди них выбранный игрок сбрасывает карту» (Костяная рука). */
+export const millSpellDiscard: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const count = (params?.count as number | undefined) ?? 3;
+  const p = player(draft, source.player);
+  let spells = 0;
+  for (let i = 0; i < count && p.deck.length > 0; i++) {
+    const id = p.deck.shift()!;
+    const inst = instance(draft, id);
+    inst.location = 'discard';
+    p.discard.push(id);
+    if (ctx.catalog.getCard(inst.cardId)?.type === 'spell') spells += 1;
+    emit(ctx, { type: 'card_discarded', player: source.player, instanceId: id, cardId: inst.cardId, from: 'deck' });
+  }
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'player') throw new DomainError('invalid_choice', 'mill_spell_discard needs a player');
+  const victim = player(draft, pick.playerId);
+  for (let i = 0; i < spells && victim.hand.length > 0; i++) {
+    const id = pickRandom(draft.rng, victim.hand);
+    if (!id) break;
+    const inst = instance(draft, id);
+    inst.location = 'discard';
+    victim.hand.splice(victim.hand.indexOf(id), 1);
+    victim.discard.push(id);
+    emit(ctx, { type: 'card_discarded', player: pick.playerId, instanceId: id, cardId: inst.cardId, from: 'hand' });
+  }
 };

@@ -1,0 +1,21 @@
+{
+  "cardId": "lsp_card_13",
+  "name": "Костяная рука",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "mechanic": "mill_spell_discard",
+        "params": {
+          "count": 3
+        }
+      },
+      "text": "ПРИЕМ >>> Сбрось 3 верхние карты своей колоды. За каждое заклинание сброшенное таким образом, выбранный игрок сбрасывает карту.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ]
+    }
+  ]
+}

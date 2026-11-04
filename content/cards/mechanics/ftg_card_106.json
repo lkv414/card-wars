@@ -1,0 +1,26 @@
+{
+  "cardId": "ftg_card_106",
+  "name": "Корнишон",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "Уничтожь Корнишон >>> Нанеси 3 Урона выбранному существу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "additionalCost": {
+        "destroySelf": true
+      }
+    }
+  ]
+}

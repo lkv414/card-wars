@@ -8,6 +8,7 @@ import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../me
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
+import { bumpCounter } from '../mechanics/effects';
 import { areActivesSuppressed, collectGrantedActives, conditionsHold } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
@@ -113,6 +114,7 @@ export function handleFloop(
       cardId: pickInst.cardId,
       from: 'hand',
     });
+    bumpCounter(draft, 'cards_discarded', playerId);
   }
   for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
     killInstance(draft, ctx, pickId);
@@ -133,6 +135,10 @@ export function handleFloop(
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
 
   inst.flipped = true;
+  // «Уничтожь [эту карту] >>> …» — самопожертвование после эффекта.
+  if (ability.additionalCost?.destroySelf) {
+    killInstance(draft, ctx, instanceId);
+  }
   emit(ctx, { type: 'floop_used', player: playerId, instanceId, cardId: card!.id, paidActions: cost });
   afterEffects(draft, ctx);
 }

@@ -253,6 +253,7 @@ export function runEffect(
         inst.location = 'discard';
         moveId(p.hand, p.discard, inst.id);
         emit(ctx, { type: 'card_discarded', player: source.player, instanceId: inst.id, cardId: inst.cardId, from: 'hand' });
+        bumpCounter(draft, 'cards_discarded', source.player);
       }
       return;
     }

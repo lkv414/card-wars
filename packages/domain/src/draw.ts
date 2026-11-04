@@ -64,5 +64,6 @@ export function opponentDiscardsRandom(
     inst.location = 'discard';
     moveId(p.hand, p.discard, id);
     emit(ctx, { type: 'card_discarded', player: playerId, instanceId: id, cardId: inst.cardId, from: 'hand' });
+    bumpCounter(draft, 'cards_discarded', playerId);
   }
 }

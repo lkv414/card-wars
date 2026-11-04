@@ -131,6 +131,7 @@ export type TurnCounterKind =
   | 'creature_died'
   | 'line_change'
   | 'cards_drawn'
+  | 'cards_discarded'
   | 'creature_cost_2_plus_played'
   | 'damage_dealt_to_enemy'
   | 'creature_attack';
@@ -285,6 +286,8 @@ export interface AdditionalCost {
   discardFromHand?: number;
   /** Floop (apply) n own ready creatures (Вырубка леса: «примени существо»). */
   floopOwnCreature?: number;
+  /** Destroy this very card as the cost (Зеленая сирена: «Уничтожь сирену >>> …»). */
+  destroySelf?: boolean;
   /** Sacrifice n own creatures (Док Смерть, Заводской убийца). */
   destroyOwnCreature?: number;
   /** Sacrifice n own buildings (Стрелец Дэника). */

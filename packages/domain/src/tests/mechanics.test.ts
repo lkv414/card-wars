@@ -180,6 +180,35 @@ describe('механики v2: каркас', () => {
       expect(res.state.pending).toBeNull();
       expect(res.events.some((e) => e.type === 'choice_resolved' && e.player === P1)).toBe(true);
     });
+
+    it('триггерная способность с двумя целями собирает их по одной', () => {
+      let s = startedMatch();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const swampId = s.players[P1]!.zones[0]!.creature!;
+      s = forceToHand(s, P1, 'enter-two-asks');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'enter-two-asks'), zone: 1 }).state;
+
+      expect(s.pending).not.toBeNull();
+      expect(s.pending!.ask.kind).toBe('target');
+      expect(s.pending!.ask.kind === 'target' && s.pending!.ask.askIndex).toBe(0);
+      // первая цель — существо
+      const first = ok(s, {
+        type: 'resolve_choice',
+        player: P1,
+        answer: { targets: [{ kind: 'creature', instanceId: swampId }] },
+      }).state;
+      expect(first.pending).not.toBeNull();
+      expect(first.pending!.ask.kind === 'target' && first.pending!.ask.askIndex).toBe(1);
+      // вторая цель — земля
+      const second = ok(first, {
+        type: 'resolve_choice',
+        player: P1,
+        answer: { targets: [{ kind: 'landscape', player: P1, zone: 1 }] },
+      }).state;
+      expect(second.pending).toBeNull();
+      expect(second.instances[swampId]!.damage).toBe(2);
+    });
   });
 
   describe('M3: активы, этот-ход, жертвы', () => {

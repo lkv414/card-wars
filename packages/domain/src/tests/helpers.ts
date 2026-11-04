@@ -127,6 +127,23 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'enter-two-asks',
+    type: 'creature',
+    cost: 1,
+    landType: 'good',
+    attack: 1,
+    defense: 5,
+    abilities: [
+      {
+        kind: 'passive',
+        trigger: 'on_enters_play',
+        effect: { op: 'deal_damage', target: { kind: 'choice', index: 0 }, amount: 2 },
+        targets: [{ kind: 'any_creature' }, { kind: 'landscape' }],
+        text: 'Когда вступает в игру — 2 урона выбранному существу (две цели)',
+      },
+    ],
+  }),
+  card({
     id: 'spell-draw',
     type: 'spell',
     cost: 1,

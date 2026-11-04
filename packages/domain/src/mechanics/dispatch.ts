@@ -431,9 +431,16 @@ export function resolvePending(
     if (!ask) throw new DomainError('no_pending_choice', 'ask index out of range');
     const choice = answer.targets?.[0];
     if (!choice) throw new DomainError('target_required', `ask ${pending.ask.askIndex + 1} needs one choice`);
-    // Re-validate the whole set against the declared asks (atomic, docs/MECHANICS-V2.md §5).
+    // Валидируем собранную ПРЕФИКС-часть набора: ответы приходят по одному
+    // (docs/MECHANICS-V2.md §6), поэтому сверяем ask[0..askIndex] с собранными.
     const source = effectSourceOf(pending.current);
-    validateChoices(draft, ctx, source, asks, [...pending.ask.collected, choice]);
+    validateChoices(
+      draft,
+      ctx,
+      source,
+      asks.slice(0, pending.ask.askIndex + 1),
+      [...pending.ask.collected, choice],
+    );
     pending.ask.collected.push(choice);
     emit(ctx, {
       type: 'choice_resolved',

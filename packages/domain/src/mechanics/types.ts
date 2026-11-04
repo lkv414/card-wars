@@ -436,7 +436,14 @@ type EffectOp =
   /** Play the last revealed card for free; the rest of the window shuffles back. */
   | { op: 'play_revealed'; destination?: TargetRef }
   /** Play a hand card for free (cost ≤ maxCost, match filter) (Краб пират, Синхронизация). */
-  | { op: 'play_from_hand'; maxCost?: number; match?: { type?: import('../types').CardType }; destination?: TargetRef }
+  | {
+      op: 'play_from_hand';
+      /** The hand card to play (ask own_hand_card). */
+      target?: TargetRef;
+      maxCost?: number;
+      match?: { type?: import('../types').CardType };
+      destination?: TargetRef;
+    }
   /**
    * Play a card from a discard pile for free (Поднятие мертвых, Лунный урожай,
    * Последний шанс). The chosen card leaves the discard pile and enters play;
@@ -445,6 +452,8 @@ type EffectOp =
    */
   | {
       op: 'play_from_discard';
+      /** The discard card to play (ask own_discard_card / any_discard_card). */
+      target?: TargetRef;
       /** Restrict the pick (Лунный урожай — только строение). */
       match?: { type?: import('../types').CardType; maxCost?: number; cardIds?: string[] };
       /** Whose discard pile the card is taken from. */

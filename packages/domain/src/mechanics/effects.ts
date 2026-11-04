@@ -1,4 +1,4 @@
-import type { Draft } from 'immer';
+﻿import type { Draft } from 'immer';
 import { drawCards, discardTopDeck, opponentDiscardsRandom } from '../draw';
 import { dealToCreature, dealToPlayer, healPlayer } from '../damage';
 import { DomainError } from '../errors';
@@ -14,6 +14,24 @@ import { countsAsTypes, conditionsHold, resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice, TargetFilter, TargetRef, TriggerPayload } from './types';
+
+/**
+ * The card instance chosen for a card-play effect (play_from_hand /
+ * play_from_discard): the explicit `target` ref (a `choice` index into the
+ * collected answers) or, without a ref, the first card answer collected.
+ */
+function resolveCardChoice(
+  target: TargetRef | undefined,
+  choices: TargetChoice[] | undefined,
+): { instanceId: string } | null {
+  if (target) {
+    if (target.kind !== 'choice') return null;
+    const choice = choices?.[target.index];
+    return choice && choice.kind === 'card' ? { instanceId: choice.instanceId } : null;
+  }
+  const pick = (choices ?? []).find((c): c is Extract<TargetChoice, { kind: 'card' }> => c.kind === 'card');
+  return pick ?? null;
+}
 
 /** Shared free-play of a card (play_revealed / play_from_hand): spell → on_cast,
  *  companion → slot, creature/building → destination land. */
@@ -416,8 +434,7 @@ export function runEffect(
       return;
     }
     case 'play_from_hand': {
-      const p = player(draft, source.player);
-      const pick = (choices ?? []).find((c): c is Extract<TargetChoice, { kind: 'card' }> => c.kind === 'card');
+      const pick = resolveCardChoice(effect.target, choices);
       if (!pick) throw new DomainError('invalid_choice', 'play_from_hand needs a hand card');
       const handInst = instance(draft, pick.instanceId);
       const handCard = ctx.catalog.getCard(handInst.cardId);
@@ -436,7 +453,7 @@ export function runEffect(
     case 'play_from_discard': {
       // Карта выбрана из сброса (own_discard_card / any_discard_card) и играется
       // бесплатно: существо/строение → в землю, заклинание → on_cast.
-      const pick = (choices ?? []).find((c): c is Extract<TargetChoice, { kind: 'card' }> => c.kind === 'card');
+      const pick = resolveCardChoice(effect.target, choices);
       if (!pick) throw new DomainError('invalid_choice', 'play_from_discard needs a discard card');
       const inst = instance(draft, pick.instanceId);
       const card = ctx.catalog.getCard(inst.cardId);

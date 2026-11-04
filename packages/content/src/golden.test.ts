@@ -1408,3 +1408,98 @@ describe('golden: условия на уровне эффекта (stat_buff.con
     expect(computeEff(withBuilding, deps, placed.id).defense).toBe(6);
   });
 });
+
+describe('golden: игра из сброса (play_from_discard)', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  /** Кладёт верхнюю карту колоды P1 в сброс с заданной cardId. */
+  function toDiscard(s: MatchState, cardId: string): { state: MatchState; id: string } {
+    const next = edit(s, (d) => {
+      const p1 = d.players.p1!;
+      const id = p1.deck[0]!;
+      p1.deck.shift();
+      d.instances[id]!.cardId = cardId;
+      d.instances[id]!.location = 'discard';
+      d.instances[id]!.zone = null;
+      d.instances[id]!.slot = null;
+      p1.discard.push(id);
+      p1.actions = 10;
+    });
+    return { state: next, id: next.players.p1!.discard[next.players.p1!.discard.length - 1]! };
+  }
+
+  it('Поднятие мертвых: возвращает существо из сброса в игру', () => {
+    let s = round2(newMatch());
+    s = edit(s, (d) => {
+      d.players.p1!.lands[0] = { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 };
+      d.players.p1!.lands[1] = { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 };
+    });
+    const discarded = toDiscard(s, 'ftg_card_85'); // существо
+    s = discarded.state;
+    s = forceToHand(s, 'p1', 'ftg_card_111');
+    const cast = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ftg_card_111') }, deps);
+    if (!cast.ok) throw new Error(`cast: ${cast.rejected.code}: ${cast.rejected.message}`);
+    expect(cast.state.pending).not.toBeNull();
+    // 1) карта из сброса
+    const first = applyCommand(
+      cast.state,
+      { type: 'resolve_choice', player: 'p1', answer: { targets: [{ kind: 'card', instanceId: discarded.id }] } },
+      deps,
+    );
+    if (!first.ok) throw new Error(`pick: ${first.rejected.code}: ${first.rejected.message}`);
+    expect(first.state.pending).not.toBeNull();
+    // 2) земля
+    const second = applyCommand(
+      first.state,
+      { type: 'resolve_choice', player: 'p1', answer: { targets: [{ kind: 'landscape', player: 'p1', zone: 1 }] } },
+      deps,
+    );
+    if (!second.ok) throw new Error(`land: ${second.rejected.code}: ${second.rejected.message}`);
+    expect(second.state.pending).toBeNull();
+    // существо из сброса в игре
+    expect(second.state.instances[discarded.id]!.location).toBe('field');
+    expect(second.state.players.p1!.zones[1]!.creature).toBe(discarded.id);
+    expect(second.state.players.p1!.discard).not.toContain(discarded.id);
+  });
+
+  it('Древний школяр: действие только при строении на своей линии', () => {
+    let s = round2(newMatch());
+    // существо + строение на одной линии → действие выдаётся
+    const withBuilding = edit(s, (d) => {
+      const p1 = d.players.p1!;
+      const creatureId = p1.deck[0]!;
+      p1.deck.shift();
+      d.instances[creatureId]!.cardId = 'finn_card_1';
+      d.instances[creatureId]!.location = 'field';
+      d.instances[creatureId]!.zone = 0;
+      d.instances[creatureId]!.slot = 'creature';
+      p1.zones[0]!.creature = creatureId;
+      const buildingId = p1.deck[0]!;
+      p1.deck.shift();
+      d.instances[buildingId]!.cardId = 'ftg_card_38';
+      d.instances[buildingId]!.location = 'field';
+      d.instances[buildingId]!.zone = 0;
+      d.instances[buildingId]!.slot = 'building';
+      p1.zones[0]!.building = buildingId;
+      p1.actions = 10;
+    });
+    // карта в сброс — «случайная Радужная карта» (rainbow)
+    const rainbow = toDiscard(withBuilding, 'bmo_card_12');
+    s = rainbow.state;
+    const actionsBefore = s.players.p1!.actions;
+    const floop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: s.players.p1!.zones[0]!.creature! }, deps);
+    if (!floop.ok) throw new Error(`floop: ${floop.rejected.code}: ${floop.rejected.message}`);
+    // радужная карта вернулась в руку
+    expect(floop.state.instances[rainbow.id]!.location).toBe('hand');
+    // действие получено (строение на линии есть)
+    expect(floop.state.players.p1!.actions).toBe(actionsBefore + 1);
+  });
+});

@@ -317,7 +317,11 @@ export const cards: CardData[] = [
     abilities: [
       {
         kind: 'active',
-        effect: { op: 'play_from_discard' },
+        effect: {
+          op: 'play_from_discard',
+          target: { kind: 'choice', index: 0 },
+          destination: { kind: 'choice', index: 1 },
+        },
         targets: [
           { kind: 'own_discard_card', filter: { cardType: 'creature', maxCost: 2 } },
           { kind: 'landscape' },

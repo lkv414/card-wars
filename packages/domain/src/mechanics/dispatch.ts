@@ -247,7 +247,7 @@ function effectChoiceNeed(effect: EffectSpec): number {
     return Math.max(max + 1, 1);
   }
   if (effect.op === 'play_from_discard') {
-    // implicit discard-card pick (ask own_discard_card/any_discard_card) + destination
+    // discard-card pick (ask own_discard_card / any_discard_card) + destination
     return Math.max(max + 1, 1);
   }
   return max + 1;

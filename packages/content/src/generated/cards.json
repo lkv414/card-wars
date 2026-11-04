@@ -1407,9 +1407,19 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "play_from_discard"
-    },
+    "effect": [
+     {
+      "op": "play_from_discard",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 1
+      }
+     }
+    ],
     "text": "Верни строение из стопки сброса в игру.",
     "targets": [
      {
@@ -2820,7 +2830,33 @@
   "attack": 1,
   "defense": 7,
   "description": "ПРИЕМ >>> Верни случайную Радужную карту из своей стопки сброса себе в руку. Если на этой линии контролируешь строение, получи 1 действие.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "return_from_discard",
+      "count": 1,
+      "random": true,
+      "filter": {
+       "landType": "rainbow"
+      },
+      "to": "hand"
+     },
+     {
+      "op": "gain_actions",
+      "amount": 1,
+      "conditions": [
+       {
+        "kind": "while_zone_has_building"
+       }
+      ]
+     }
+    ],
+    "text": "ПРИЕМ >>> Верни случайную Радужную карту из своей стопки сброса себе в руку. Если на этой линии контролируешь строение, получи 1 действие."
+   }
+  ]
  },
  {
   "id": "finn_card_3",
@@ -4724,7 +4760,30 @@
   "attack": 2,
   "defense": 2,
   "description": "ПРИЕМ >>> Положи строение со своей руки на эту линию (если на ней нет строения).",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "play_from_hand",
+     "match": {
+      "type": "building"
+     },
+     "destination": {
+      "kind": "this_lane_land"
+     }
+    },
+    "text": "ПРИЕМ >>> Положи строение со своей руки на эту линию (если на ней нет строения).",
+    "targets": [
+     {
+      "kind": "own_hand_card",
+      "filter": {
+       "cardType": "building"
+      }
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_37",
@@ -6611,9 +6670,19 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "play_from_discard"
-    },
+    "effect": [
+     {
+      "op": "play_from_discard",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 1
+      }
+     }
+    ],
     "text": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
     "targets": [
      {
@@ -11579,7 +11648,52 @@
   "landType": "ghost",
   "image": "/content/cards/images/lich_card_37.png",
   "description": "Уничтожь своё существо без урона на нём, затем возьми и бесплатно сыграй любое существо из твоего сброса или сброса противника.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "destroy",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "play_from_discard",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 2
+      },
+      "from": "any"
+     }
+    ],
+    "text": "Уничтожь своё существо без урона на нём, затем возьми и бесплатно сыграй любое существо из твоего сброса или сброса противника.",
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "undamaged": true
+      }
+     },
+     {
+      "kind": "any_discard_card",
+      "filter": {
+       "cardType": "creature"
+      }
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "lich_card_39",

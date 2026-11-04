@@ -314,6 +314,11 @@ export function conditionsHold(
         if (!inPlay) return false;
         break;
       }
+      case 'while_played_land_type': {
+        const hit = draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.landType === cond.landType);
+        if (!hit) return false;
+        break;
+      }
       case 'if_payload_zone_land_type': {
         if (!payload?.player || payload.zone === undefined || payload.zone === null) return false;
         const land = draft.players[payload.player]!.lands[payload.zone];

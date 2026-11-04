@@ -1,0 +1,15 @@
+{
+  "cardId": "monika_card_13",
+  "name": "Офицер ириска",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_freeze",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Каждый раз когда земля замораживается, тяни карту."
+    }
+  ]
+}

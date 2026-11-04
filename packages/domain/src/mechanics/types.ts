@@ -22,7 +22,8 @@ export type Trigger =
   | 'on_spell_cast'
   | 'on_card_played'
   | 'start_of_battle_phase'
-  | 'on_companion_event';
+  | 'on_companion_event'
+  | 'on_freeze';
 
 /** What a triggered ability observes (queued with the ability). */
 export interface TriggerPayload {
@@ -275,6 +276,8 @@ export type ConditionSpec =
   | { kind: 'while_own_card_in_play'; cardId: string; minDamage?: number }
   /** The payload card's landing zone land type (Бриллиантовый Дэн). */
   | { kind: 'if_payload_zone_land_type'; landType: LandType }
+  /** A card of this land type was played this turn (Младший школяр). */
+  | { kind: 'while_played_land_type'; landType: LandType }
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' }
   /** Own creature in the source's zone (Теневая пирамида). */

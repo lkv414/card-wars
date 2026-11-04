@@ -452,3 +452,18 @@ export const splashDamage: MechanicHandler = (
     }
   }
 };
+
+/** «Нанеси 1 урон противнику за каждую карту в его руке» (Поля кошмаров-стиль, Фермер-кочевник). */
+export const damagePerHand: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  for (const pid of opponentsOf(draft, source.player)) {
+    dealToPlayer(draft, ctx, pid, draft.players[pid]!.hand.length, source.instanceId);
+  }
+};

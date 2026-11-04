@@ -2,7 +2,7 @@ import type { Draft } from 'immer';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
-import { chainDamage, copySpell, damageUntilDef, destroyDrawCost, discardThenDamage, discardTopDamage, grantRandomDiscardActive, laneOrFaceDamage, millSpellDiscard, moveDamage, returnCostActions, splashDamage, swapCreatures, swapLanes, tokenBonusDamage } from './handlers';
+import { chainDamage, copySpell, damageUntilDef, destroyDrawCost, discardThenDamage, discardTopDamage, grantRandomDiscardActive, damagePerHand, laneOrFaceDamage, millSpellDiscard, moveDamage, returnCostActions, splashDamage, swapCreatures, swapLanes, tokenBonusDamage } from './handlers';
 import type { EffectSource } from './source';
 export type { EffectSource };
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -39,6 +39,7 @@ export const MECHANICS: Record<string, MechanicHandler> = {
   swap_creatures: swapCreatures,
   damage_until_def: damageUntilDef,
   splash_damage: splashDamage,
+  damage_per_hand: damagePerHand,
 };
 
 export function runMechanic(

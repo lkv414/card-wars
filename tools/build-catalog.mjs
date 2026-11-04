@@ -65,10 +65,11 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
 const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'grant_protection']);
+const TRIGGERS2 = null;
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
-  'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event',
+  'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze',
 ]);
 const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player']);
 const TARGET_REFS = new Set([
@@ -80,7 +81,7 @@ const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands',
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
-  'while_distinct_lands', 'while_land_count', 'while_zone_has_building', 'while_zone_has_creature', 'while_zone_has_flipped_creature', 'while_lives_at_most', 'while_opponent_creatures_at_most', 'if_payload_zone_land_type',
+  'while_distinct_lands', 'while_land_count', 'while_zone_has_building', 'while_zone_has_creature', 'while_zone_has_flipped_creature', 'while_lives_at_most', 'while_opponent_creatures_at_most', 'while_played_land_type', 'if_payload_zone_land_type',
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',

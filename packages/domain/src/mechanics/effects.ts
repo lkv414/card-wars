@@ -139,6 +139,7 @@ export function runEffect(
         if (land.frozen === effect.frozen) continue;
         land.frozen = effect.frozen;
         emit(ctx, { type: 'land_changed', player: target.playerId, zone: target.zone, change: effect.frozen ? 'frozen' : 'unfrozen' });
+        if (effect.frozen) enqueueTrigger(draft, ctx, 'on_freeze', { player: target.playerId, zone: target.zone });
       }
       return;
     }

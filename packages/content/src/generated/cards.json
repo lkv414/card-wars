@@ -3478,7 +3478,28 @@
   "attack": 1,
   "defense": 6,
   "description": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 ATK в этом ходу.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "this_turn"
+    },
+    "text": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 ATK в этом ходу.",
+    "conditions": [
+     {
+      "kind": "while_played_land_type",
+      "landType": "rainbow"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "fiona_card_11",
@@ -8564,7 +8585,27 @@
   "landType": "ice",
   "image": "/content/cards/images/ice_king_card_31.png",
   "description": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_freeze",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ice_king_card_32",
@@ -8686,7 +8727,15 @@
   "attack": 2,
   "defense": 12,
   "description": "Когда Фермер-кочевник покидает игру, нанеси 1 урон противнику за каждую карту в его руке.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "mechanic": "damage_per_hand",
+    "text": "Когда Фермер-кочевник покидает игру, нанеси 1 урон противнику за каждую карту в его руке."
+   }
+  ]
  },
  {
   "id": "jake_card_3",
@@ -12741,7 +12790,18 @@
   "attack": 2,
   "defense": 9,
   "description": "Каждый раз когда земля замораживается, тяни карту.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_freeze",
+    "effect": {
+     "op": "draw_cards",
+     "count": 1
+    },
+    "text": "Каждый раз когда земля замораживается, тяни карту."
+   }
+  ]
  },
  {
   "id": "monika_card_14",

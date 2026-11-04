@@ -1,0 +1,12 @@
+{
+  "cardId": "jake_card_1",
+  "name": "Фермер-кочевник",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "mechanic": "damage_per_hand",
+      "text": "Когда Фермер-кочевник покидает игру, нанеси 1 урон противнику за каждую карту в его руке."
+    }
+  ]
+}

@@ -564,6 +564,84 @@ describe('механики v2: каркас', () => {
       );
       expect(good.ok).toBe(true);
     });
+
+    it('remove_from_game убирает из сброса все карты с выбранным названием', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'name-remover');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'name-remover'), zone: 0 }).state;
+      // две карты одного названия и одна другая — в сброс P1
+      const ids: string[] = [];
+      s = produce(s, (d) => {
+        const p = d.players[P1]!;
+        for (const cardId of ['vanilla-swamp', 'vanilla-swamp', 'vanilla-corn']) {
+          const id = p.deck.shift()!;
+          d.instances[id]!.cardId = cardId;
+          d.instances[id]!.location = 'discard';
+          p.discard.push(id);
+          ids.push(id);
+        }
+      });
+      const res = applyCommand(
+        s,
+        {
+          type: 'floop',
+          player: P1,
+          instanceId: s.players[P1]!.zones[0]!.creature!,
+          targets: [
+            { kind: 'card', instanceId: ids[0]! },
+            { kind: 'player', playerId: P1 },
+          ],
+        },
+        deps,
+      );
+      expect(res.ok).toBe(true);
+      if (!res.ok) return;
+      // карты ушли из сброса выбранного игрока (P1) и больше не в игре
+      expect(res.state.players[P1]!.discard).not.toContain(ids[0]!);
+      expect(res.state.players[P1]!.discard).not.toContain(ids[1]!);
+      expect(res.state.instances[ids[0]!]!.location).toBe('removed');
+      expect(res.state.instances[ids[1]!]!.location).toBe('removed');
+      // карта с другим названием осталась
+      expect(res.state.players[P1]!.discard).toContain(ids[2]!);
+      expect(res.state.instances[ids[2]!]!.location).toBe('discard');
+    });
+
+    it('remove_from_game берёт сброс ВЫБРАННОГО игрока', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'name-remover');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'name-remover'), zone: 0 }).state;
+      // одинаковое название в сбросах обоих игроков
+      const p1Card = s.players[P1]!.deck[0]!;
+      const p2Card = s.players[P2]!.deck[0]!;
+      s = produce(s, (d) => {
+        for (const [pid, id] of [[P1, p1Card], [P2, p2Card]] as const) {
+          const p = d.players[pid]!;
+          p.deck.shift();
+          d.instances[id]!.cardId = 'vanilla-swamp';
+          d.instances[id]!.location = 'discard';
+          p.discard.push(id);
+        }
+      });
+      const res = applyCommand(
+        s,
+        {
+          type: 'floop',
+          player: P1,
+          instanceId: s.players[P1]!.zones[0]!.creature!,
+          targets: [
+            { kind: 'card', instanceId: p1Card },
+            { kind: 'player', playerId: P2 },
+          ],
+        },
+        deps,
+      );
+      expect(res.ok).toBe(true);
+      if (!res.ok) return;
+      // убран только сброс выбранного игрока (P2)
+      expect(res.state.players[P2]!.discard).not.toContain(p2Card);
+      expect(res.state.instances[p2Card]!.location).toBe('removed');
+      expect(res.state.players[P1]!.discard).toContain(p1Card);
+    });
   });
 
   describe('способность героя', () => {

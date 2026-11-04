@@ -200,6 +200,21 @@ export function validTargets(
           .filter((c) => !ask.filter || discardCardPasses(c.cardId, ask.filter))
           .map((c) => ({ kind: 'card' as const, instanceId: c.instanceId })),
       );
+    case 'visible_card':
+      // Публичные карты: всё, что в игре, плюс все стопки сброса.
+      return view.order.flatMap((pid) => {
+        const p = view.players[pid]!;
+        const onField = p.zones.flatMap((z) =>
+          [z.creature?.instanceId, z.building?.instanceId].filter((id): id is string => Boolean(id)),
+        );
+        const cards = [
+          ...onField.map((instanceId) => ({ instanceId, cardId: findCardId(view, instanceId) ?? '' })),
+          ...p.discard,
+        ];
+        return cards
+          .filter((c) => !ask.filter || discardCardPasses(c.cardId, ask.filter))
+          .map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
+      });
     case 'revealed_card':
       return (view.revealed?.[view.me] ?? []).map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
     default:

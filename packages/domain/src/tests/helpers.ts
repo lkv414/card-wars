@@ -348,6 +348,26 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'name-remover',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: {
+          op: 'remove_from_game',
+          from: { kind: 'choice', index: 1 },
+          name: { kind: 'choice', index: 0 },
+        },
+        targets: [{ kind: 'visible_card' }, { kind: 'any_player' }],
+        text: 'ПРИЕМ >>> выбери название карты и игрока',
+      },
+    ],
+  }),
+  card({
     id: 'turn-chooser',
     type: 'creature',
     cost: 1,

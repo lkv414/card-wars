@@ -196,6 +196,12 @@ function choiceMatchesAsk(
       const inst = instance(draft, choice.instanceId);
       return inst.location === 'discard';
     }
+    case 'visible_card': {
+      // Публичная карта: в игре или в любой стопке сброса (Громила).
+      if (choice.kind !== 'card') return false;
+      const inst = instance(draft, choice.instanceId);
+      return inst.location === 'field' || inst.location === 'companion' || inst.location === 'discard';
+    }
   }
 }
 
@@ -359,6 +365,13 @@ export function resolveTarget(
       if (!target) return [];
       const id = player(draft, target.player).zones[target.zone]?.building;
       return id ? [{ kind: 'building', instanceId: id }] : [];
+    }
+    case 'this_lane_opponent_land': {
+      // Встречная земля линии источника (Крок-зачинщик).
+      if (srcZone === null) return [];
+      const target = opponentZoneFor(draft, source.player, srcZone);
+      if (!target) return [];
+      return [{ kind: 'land', playerId: target.player, zone: target.zone }];
     }
     case 'adjacent_creatures': {
       if (srcZone === null) return [];

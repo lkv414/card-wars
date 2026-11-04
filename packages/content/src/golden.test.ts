@@ -1503,3 +1503,55 @@ describe('golden: игра из сброса (play_from_discard)', () => {
     expect(floop.state.players.p1!.actions).toBe(actionsBefore + 1);
   });
 });
+
+describe('golden: захват контроля (move_creature.capture)', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  it('Крок-зачинщик: существо противника перемещается на линию Крок-зачинщика', () => {
+    let s = round2(newMatch());
+    // существо P2 в зоне 1; встречная зона 0 линии P1 (зона 3 P2) свободна
+    const enemy = edit(s, (d) => {
+      const p2 = d.players.p2!;
+      const id = p2.deck[0]!;
+      p2.deck.shift();
+      d.instances[id]!.cardId = 'ftg_card_85';
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 1;
+      d.instances[id]!.slot = 'creature';
+      p2.zones[1]!.creature = id;
+      d.players.p1!.lands[0] = { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 };
+      d.players.p1!.actions = 10;
+    });
+    const enemyId = enemy.players.p2!.zones[1]!.creature!;
+    // Крок-зачинщик разыгрывается P1 на зону 0 — его on_enters_play срабатывает
+    const inHand = forceToHand(enemy, 'p1', 'monika_card_33');
+    const cast = applyCommand(
+      inHand,
+      { type: 'play_card', player: 'p1', instanceId: handIdOf(inHand, 'p1', 'monika_card_33'), zone: 0 },
+      deps,
+    );
+    if (!cast.ok) throw new Error(`play: ${cast.rejected.code}: ${cast.rejected.message}`);
+    // триггер сработал — ждём выбор цели
+    expect(cast.state.pending).not.toBeNull();
+    const resolved = applyCommand(
+      cast.state,
+      { type: 'resolve_choice', player: 'p1', answer: { targets: [{ kind: 'creature', instanceId: enemyId }] } },
+      deps,
+    );
+    if (!resolved.ok) throw new Error(`resolve: ${resolved.rejected.code}: ${resolved.rejected.message}`);
+    // существо противника перешло на свою сторону линии Крок-зачинщика (зона 3 у P2)
+    const movedTo = resolved.state.players.p2!.zones.findIndex((z) => z.creature === enemyId);
+    expect(movedTo).toBe(3);
+    expect(resolved.state.players.p2!.zones[1]!.creature).toBeNull();
+    // контроль не меняется — существо остаётся у противника
+    expect(resolved.state.instances[enemyId]!.controller).toBe('p2');
+  });
+});

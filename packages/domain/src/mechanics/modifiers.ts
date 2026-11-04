@@ -452,6 +452,12 @@ export function conditionsHold(
         if (!p.zones[src.zone]!.building) return false;
         break;
       }
+      case 'while_zone_has_no_creature': {
+        const src = source.instanceId ? instance(draft, source.instanceId) : null;
+        if (!src || src.zone === null) return false;
+        if (p.zones[src.zone]!.creature) return false;
+        break;
+      }
     }
   }
   return true;

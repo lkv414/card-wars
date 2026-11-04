@@ -6627,7 +6627,32 @@
   "attack": 1,
   "defense": 8,
   "description": "ПРИЕМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "remove_from_game",
+     "from": {
+      "kind": "choice",
+      "index": 1
+     },
+     "name": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "text": "ПРИЕМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
+    "targets": [
+     {
+      "kind": "visible_card"
+     },
+     {
+      "kind": "any_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_110",
@@ -7424,7 +7449,45 @@
   "landType": "sand",
   "image": "/content/cards/images/grand_prix_card_29.png",
   "description": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "play_from_hand",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 2
+      }
+     }
+    ],
+    "text": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно.",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_30",
@@ -9865,7 +9928,46 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_26.png",
   "description": "Потрать 1 Действие, ПРИЕМ >>> Если эта земля пустует, сыграй на нее Кормежника из стопки сброса бесплатно. Если Амбар с сеном покидает игру, уничтожь Кормежника на этой земле.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": {
+     "op": "play_from_discard",
+     "match": {
+      "cardIds": [
+       "jake_2v2_card_30"
+      ]
+     },
+     "destination": {
+      "kind": "this_lane_land"
+     }
+    },
+    "text": "ПРИЕМ >>> Если эта земля пустует, сыграй на нее Кормежника из стопки сброса бесплатно.",
+    "conditions": [
+     {
+      "kind": "while_zone_has_no_creature"
+     }
+    ]
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "filter": {
+      "cardIds": [
+       "jake_2v2_card_30"
+      ]
+     }
+    },
+    "text": "Если Амбар с сеном покидает игру, уничтожь Кормежника на этой земле."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_28",
@@ -13439,7 +13541,30 @@
   "attack": 5,
   "defense": 3,
   "description": "Когда Крок-зачинщик вступает в игру, передвинь выбранное существо противника на линию Крок-зачинщика (если она пуста).",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "this_lane_opponent_land"
+     },
+     "side": "any"
+    },
+    "text": "Когда Крок-зачинщик вступает в игру, передвинь выбранное существо противника на линию Крок-зачинщика (если она пуста).",
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "monika_card_34",

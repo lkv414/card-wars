@@ -78,7 +78,9 @@ export function Hud({ code }: { code: string }) {
       }
       return null;
     })();
-    if (!askInfo || (askInfo.kind !== 'own_discard_card' && askInfo.kind !== 'any_discard_card')) return null;
+    if (!askInfo || (askInfo.kind !== 'own_discard_card' && askInfo.kind !== 'any_discard_card' && askInfo.kind !== 'visible_card')) {
+      return null;
+    }
     const filter = askInfo.filter;
     const pools: Array<{ label: string; cards: Array<{ instanceId: string; cardId: string }> }> = [];
     const usable = (cardId: string): boolean => {

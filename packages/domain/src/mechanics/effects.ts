@@ -7,13 +7,33 @@ import { killInstance } from '../damage';
 import { pickRandom, rngInt } from '../rng';
 import { emit, instance, moveId, player } from '../util';
 import type { Ctx } from '../util';
-import type { CardData, MatchState } from '../types';
+import type { CardData, CardInstance, CardType, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
 import { countsAsTypes, conditionsHold, resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice, TargetFilter, TargetRef, TriggerPayload } from './types';
+
+/** The first card of the owner's discard pile matching the effect's filter. */
+function firstDiscardMatch(
+  draft: Draft<MatchState>,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  playerId: string,
+  match: { type?: CardType; maxCost?: number; cardIds?: string[] } | undefined,
+): CardInstance | null {
+  const p = draft.players[playerId]!;
+  for (const id of p.discard) {
+    const inst = draft.instances[id]!;
+    const card = ctx.catalog.getCard(inst.cardId);
+    if (!card) continue;
+    if (match?.type && card.type !== match.type) continue;
+    if (match?.maxCost !== undefined && card.cost > match.maxCost) continue;
+    if (match?.cardIds && !match.cardIds.includes(card.id)) continue;
+    return inst;
+  }
+  return null;
+}
 
 /**
  * The card instance chosen for a card-play effect (play_from_hand /
@@ -220,9 +240,38 @@ export function runEffect(
       }
       return;
     }
+    case 'remove_from_game': {
+      // Громила: удалить из игры все карты с выбранным названием из сброса
+      // выбранного игрока.
+      const owner = resolveTarget(draft, ctx, effect.from, source, choices, payload).find(
+        (t): t is { kind: 'player'; playerId: string } => t.kind === 'player',
+      );
+      if (!owner) throw new DomainError('invalid_choice', 'remove_from_game needs a player choice');
+      const nameRef = effect.name;
+      if (nameRef.kind !== 'choice') throw new DomainError('invalid_choice', 'remove_from_game needs a card choice');
+      const nameChoice = choices?.[nameRef.index];
+      if (!nameChoice || nameChoice.kind !== 'card') {
+        throw new DomainError('invalid_choice', 'remove_from_game needs a card choice');
+      }
+      const nameCard = ctx.catalog.getCard(instance(draft, nameChoice.instanceId).cardId);
+      if (!nameCard) throw new DomainError('invalid_choice', 'remove_from_game needs a known card');
+      const p = draft.players[owner.playerId]!;
+      for (const id of [...p.discard]) {
+        const inst = instance(draft, id);
+        const card = ctx.catalog.getCard(inst.cardId);
+        if (!card || card.name !== nameCard.name) continue;
+        p.discard.splice(p.discard.indexOf(id), 1);
+        inst.location = 'removed';
+        inst.zone = null;
+        inst.slot = null;
+        emit(ctx, { type: 'card_removed', player: owner.playerId, instanceId: id, cardId: card.id });
+      }
+      return;
+    }
     case 'destroy': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        if (effect.filter && !targetMatchesFilter(draft, ctx, source, target, effect.filter)) continue;
         const removed = killInstance(draft, ctx, target.instanceId);
         emit(ctx, { type: 'creature_destroyed', instanceId: target.instanceId, cardId: removed.cardId });
       }
@@ -453,9 +502,13 @@ export function runEffect(
     case 'play_from_discard': {
       // Карта выбрана из сброса (own_discard_card / any_discard_card) и играется
       // бесплатно: существо/строение → в землю, заклинание → on_cast.
-      const pick = resolveCardChoice(effect.target, choices);
-      if (!pick) throw new DomainError('invalid_choice', 'play_from_discard needs a discard card');
-      const inst = instance(draft, pick.instanceId);
+      // Без явной ссылки берётся ПЕРВАЯ подходящая карта своей стопки сброса
+      // («сыграй Кормежника из сброса» — Амбар с сеном).
+      const picked = resolveCardChoice(effect.target, choices);
+      const inst = picked
+        ? instance(draft, picked.instanceId)
+        : firstDiscardMatch(draft, ctx, source.player, effect.match);
+      if (!inst) throw new DomainError('invalid_choice', 'play_from_discard needs a discard card');
       const card = ctx.catalog.getCard(inst.cardId);
       if (!card || inst.location !== 'discard') {
         throw new DomainError('invalid_choice', 'play_from_discard needs a card from a discard pile');
@@ -475,11 +528,11 @@ export function runEffect(
         throw new DomainError('invalid_choice', 'card does not match');
       }
       // Из сброса — в игру: карта покидает стопку сброса.
-      owner.discard.splice(owner.discard.indexOf(pick.instanceId), 1);
+      owner.discard.splice(owner.discard.indexOf(inst.id), 1);
       // Карта из чужого сброса переходит под контроль владельца способности.
       inst.controller = source.player;
       inst.location = 'removed';
-      playFreeCard(draft, ctx, source, choices, payload, pick.instanceId, card, effect.destination);
+      playFreeCard(draft, ctx, source, choices, payload, inst.id, card, effect.destination);
       return;
     }
     case 'play_revealed': {
@@ -670,5 +723,6 @@ function targetMatchesFilter(
     const ownCardId = source.instanceId ? instance(draft, source.instanceId).cardId : undefined;
     if (!card || card.id !== ownCardId) match = false;
   }
+  if (match && filter.cardIds && (!card || !filter.cardIds.includes(card.id))) match = false;
   return filter.negate ? !match : match;
 }

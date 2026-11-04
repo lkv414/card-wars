@@ -72,7 +72,13 @@ export type TargetAskKind =
   /** One card of the owner's own discard pile (Поднятие мертвых, Лунный урожай). */
   | 'own_discard_card'
   /** One card of any player's discard pile (Последний шанс — «твоего сброса или сброса противника»). */
-  | 'any_discard_card';
+  | 'any_discard_card'
+  /**
+   * One publicly visible card — in play or in any discard pile (Громила:
+   * «выбери название карты»). Discard piles are public by the rules, so the
+   * choice never reveals hidden information.
+   */
+  | 'visible_card';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -98,6 +104,12 @@ export type TargetRef =
   | { kind: 'this_lane_creature' }
   /** Own creature in the source's lane (Школа: «твоё существо на этой линии»). */
   | { kind: 'this_lane_own_creature' }
+  /**
+   * The opponent's land in the source's lane — the zone facing the source
+   * (Крок-зачинщик: «передвинь существо противника на линию Крок-зачинщика,
+   * если она пуста»).
+   */
+  | { kind: 'this_lane_opponent_land' }
   | { kind: 'this_lane_opponent_creature' }
   /** Opponent buildings in the source's lane (Пес). */
   | { kind: 'this_lane_opponent_building' }
@@ -302,6 +314,8 @@ export type ConditionSpec =
   | { kind: 'while_played_land_type'; landType: LandType }
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' }
+  /** The source's zone holds NO creature (Амбар с сеном: «если эта земля пустует»). */
+  | { kind: 'while_zone_has_no_creature' }
   /** Own creature in the source's zone (Теневая пирамида). */
   | { kind: 'while_zone_has_creature' }
   /** Own flipped creature in the source's zone (Заманчивое Спа). */
@@ -359,7 +373,21 @@ type EffectOp =
   | { op: 'gain_actions'; amount: number }
   /** Turn a land face up (Бигфут) or face down (Червь шелухи); `until` reverts it automatically. */
   | { op: 'flip_land'; target: TargetRef; down: boolean; until?: 'next_own_turn' }
-  | { op: 'destroy'; target: TargetRef }
+  | { op: 'destroy'; target: TargetRef; /** Narrow the destruction (Громила: карта с этим названием). */
+      filter?: TargetFilter }
+  /**
+   * Remove cards from the game (location `removed`) — Громила: «удали из игры
+   * каждую карту с таким названием из стопки сброса выбранного игрока».
+   * `name` matches the printed card name exactly; `from` selects the discard
+   * pile of the chosen player.
+   */
+  | {
+      op: 'remove_from_game';
+      /** The discard pile owner (a player choice). */
+      from: TargetRef;
+      /** Printed card name to remove (a card choice → its catalog name). */
+      name: TargetRef;
+    }
   /** Move a creature to a player-chosen empty zone (Коготь дракона). */
   | { op: 'move_creature'; target: TargetRef; destination: TargetRef; side: 'own' | 'any' }
   | { op: 'freeze_land'; target: TargetRef; frozen: boolean }

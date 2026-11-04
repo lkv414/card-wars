@@ -26,6 +26,8 @@ export type GameEvent =
   | { type: 'lives_changed'; player: PlayerId; delta: number; lives: number }
   | { type: 'creature_destroyed'; instanceId: string; cardId: string }
   | { type: 'card_discarded'; player: PlayerId; instanceId: string; cardId: string; from: 'hand' | 'field' | 'companion' | 'deck' }
+  /** The card left the game entirely (Громила: «удали из игры»). */
+  | { type: 'card_removed'; player: PlayerId; instanceId: string; cardId: string }
   | { type: 'card_returned'; player: PlayerId; instanceId: string; cardId: string }
   | { type: 'land_changed'; player: PlayerId; zone: number; change: 'frozen' | 'unfrozen' | 'flipped' | 'unflipped' }
   | { type: 'token_changed'; player: PlayerId; zone: number; iceTokens: number }

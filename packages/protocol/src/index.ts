@@ -133,6 +133,8 @@ export const TargetChoiceSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('player'), playerId: z.string() }),
   z.object({ kind: z.literal('landscape'), player: z.string(), zone: z.number() }),
   z.object({ kind: z.literal('card'), instanceId: z.string() }),
+  /** «Восстанови или нанеси урон» — выбор лечения/урона. */
+  z.object({ kind: z.literal('mode'), mode: z.enum(['heal', 'damage']) }),
 ]);
 
 export const ChoiceAnswerSchema = z.object({

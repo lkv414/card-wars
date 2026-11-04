@@ -1,0 +1,31 @@
+{
+ "cardId": "bubblegum_card_39",
+ "name": "Зеленая сахарная вата",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_cast",
+   "effect": {
+    "op": "heal_or_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "mode": {
+     "kind": "choice",
+     "index": 1
+    },
+    "amount": 1
+   },
+   "text": "Восстанови или нанеси 1 Урон выбранному существу.",
+   "targets": [
+    {
+     "kind": "any_creature"
+    },
+    {
+     "kind": "heal_or_damage"
+    }
+   ]
+  }
+ ]
+}

@@ -78,7 +78,12 @@ export type TargetAskKind =
    * «выбери название карты»). Discard piles are public by the rules, so the
    * choice never reveals hidden information.
    */
-  | 'visible_card';
+  | 'visible_card'
+  /**
+   * The player's pick between healing and dealing damage («Восстанови или
+   * нанеси 1 урон» — Зелёная сахарная вата, Милая мельница).
+   */
+  | 'heal_or_damage';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -91,7 +96,9 @@ export type TargetChoice =
   | { kind: 'creature'; instanceId: string }
   | { kind: 'player'; playerId: PlayerId }
   | { kind: 'landscape'; player: PlayerId; zone: number }
-  | { kind: 'card'; instanceId: string };
+  | { kind: 'card'; instanceId: string }
+  /** «Восстанови или нанеси урон» — игрок выбирает режим. */
+  | { kind: 'mode'; mode: 'heal' | 'damage' };
 
 /** How an effect picks its targets: static board relations or a player choice by ask index. */
 export type TargetRef =
@@ -387,6 +394,29 @@ type EffectOp =
       from: TargetRef;
       /** Printed card name to remove (a card choice → its catalog name). */
       name: TargetRef;
+    }
+  /**
+   * Heal or damage a creature, as the player chooses («Восстанови или нанеси
+   * 1 урон» — Зелёная сахарная вата). `mode` points at the ask that carries
+   * the player's pick; the amount is the same for both branches.
+   */
+  | {
+      op: 'heal_or_damage';
+      target: TargetRef;
+      /** The `heal_or_damage` ask holding the player's choice. */
+      mode: TargetRef;
+      amount: number;
+    }
+  /**
+   * Hand a card from the owner's hand to the given player («передай карту в
+   * руку своему партнёру» — Дай пять!, Королевский тур).
+   */
+  | {
+      op: 'give_card';
+      /** The card in hand to pass (ask own_hand_card). */
+      card: TargetRef;
+      /** The receiver (ask any_player). */
+      to: TargetRef;
     }
   /** Move a creature to a player-chosen empty zone (Коготь дракона). */
   | { op: 'move_creature'; target: TargetRef; destination: TargetRef; side: 'own' | 'any' }

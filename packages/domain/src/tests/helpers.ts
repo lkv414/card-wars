@@ -368,6 +368,47 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'candy-heel',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: {
+          op: 'heal_or_damage',
+          target: { kind: 'choice', index: 0 },
+          mode: { kind: 'choice', index: 1 },
+          amount: 1,
+        },
+        targets: [{ kind: 'any_creature' }, { kind: 'heal_or_damage' }],
+        text: 'ПРИЕМ >>> восстанови или нанеси 1 урон выбранному существу',
+      },
+    ],
+  }),
+  card({
+    id: 'giver',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: {
+          op: 'give_card',
+          card: { kind: 'choice', index: 0 },
+          to: { kind: 'choice', index: 1 },
+        },
+        targets: [{ kind: 'own_hand_card' }, { kind: 'any_player' }],
+        text: 'ПРИЕМ >>> передай карту из руки игроку',
+      },
+    ],
+  }),
+  card({
     id: 'turn-chooser',
     type: 'creature',
     cost: 1,

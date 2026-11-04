@@ -240,6 +240,50 @@ export function runEffect(
       }
       return;
     }
+    case 'give_card': {
+      // Передача карты с руки другому игроку (Дай пять!).
+      const cardChoice = resolveCardChoice(effect.card, choices);
+      if (!cardChoice) throw new DomainError('invalid_choice', 'give_card needs a hand card');
+      const inst = instance(draft, cardChoice.instanceId);
+      if (inst.location !== 'hand' || inst.controller !== source.player) {
+        throw new DomainError('invalid_choice', 'give_card needs your hand card');
+      }
+      const receiver = resolveTarget(draft, ctx, effect.to, source, choices, payload).find(
+        (t): t is { kind: 'player'; playerId: string } => t.kind === 'player',
+      );
+      if (!receiver) throw new DomainError('invalid_choice', 'give_card needs a player choice');
+      const from = player(draft, source.player);
+      const to = player(draft, receiver.playerId);
+      from.hand.splice(from.hand.indexOf(inst.id), 1);
+      inst.location = 'hand';
+      inst.controller = receiver.playerId;
+      to.hand.push(inst.id);
+      emit(ctx, { type: 'card_returned', player: receiver.playerId, instanceId: inst.id, cardId: inst.cardId });
+      return;
+    }
+    case 'heal_or_damage': {
+      // «Восстанови или нанеси N урона» — режим выбирает игрок (ask heal_or_damage).
+      if (effect.mode.kind !== 'choice') {
+        throw new DomainError('invalid_choice', 'heal_or_damage needs a mode choice');
+      }
+      const modeChoice = choices?.[effect.mode.index];
+      if (!modeChoice || modeChoice.kind !== 'mode') {
+        throw new DomainError('invalid_choice', 'heal_or_damage needs a mode choice');
+      }
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        if (modeChoice.mode === 'heal') {
+          const inst = instance(draft, target.instanceId);
+          const healed = Math.min(effect.amount, inst.damage);
+          if (healed <= 0) continue;
+          inst.damage -= healed;
+          emit(ctx, { type: 'creature_healed', instanceId: target.instanceId, amount: healed });
+          continue;
+        }
+        dealToCreature(draft, ctx, target.instanceId, effect.amount, source.instanceId, false);
+      }
+      return;
+    }
     case 'remove_from_game': {
       // Громила: удалить из игры все карты с выбранным названием из сброса
       // выбранного игрока.

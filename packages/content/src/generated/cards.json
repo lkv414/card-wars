@@ -1279,7 +1279,34 @@
   "landType": "rainbow",
   "image": "/content/cards/images/bubblegum_card_39.png",
   "description": "Восстанови или нанеси 1 Урон выбранному существу.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "heal_or_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "mode": {
+      "kind": "choice",
+      "index": 1
+     },
+     "amount": 1
+    },
+    "text": "Восстанови или нанеси 1 Урон выбранному существу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     },
+     {
+      "kind": "heal_or_damage"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "cake_card_1",
@@ -2779,7 +2806,36 @@
   "landType": "good",
   "image": "/content/cards/images/charlie_card_39.png",
   "description": "ПРИЕМ >>> Восстанови или нанеси урон своему существу на этой земле, если у него 4 урона.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal_or_damage",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "mode": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "text": "ПРИЕМ >>> Восстанови или нанеси урон своему существу на этой земле, если у него 4 урона.",
+    "targets": [
+     {
+      "kind": "heal_or_damage"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "while_damage_exactly",
+      "amount": 4,
+      "scope": "self"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "charlie_card_40",
@@ -5255,7 +5311,30 @@
   "landType": "good",
   "image": "/content/cards/images/ftg_card_55.png",
   "description": "Потрать 1 Действие >>> Восстанови или нанеси 2 урона своему существу на этой линии.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": {
+     "op": "heal_or_damage",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "mode": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 2
+    },
+    "text": "Потрать 1 Действие >>> Восстанови или нанеси 2 урона своему существу на этой линии.",
+    "targets": [
+     {
+      "kind": "heal_or_damage"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_57",
@@ -6880,7 +6959,53 @@
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_2.png",
   "description": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать какрту в руку своему партнеру.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "heal_or_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "mode": {
+       "kind": "choice",
+       "index": 1
+      },
+      "amount": 1
+     },
+     {
+      "op": "give_card",
+      "card": {
+       "kind": "choice",
+       "index": 2
+      },
+      "to": {
+       "kind": "choice",
+       "index": 3
+      }
+     }
+    ],
+    "text": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать какрту в руку своему партнеру.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     },
+     {
+      "kind": "heal_or_damage"
+     },
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "any_player"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "grand_prix_card_3",
@@ -12953,7 +13078,29 @@
   "landType": "good",
   "image": "/content/cards/images/marceline_card_26.png",
   "description": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal_or_damage",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "mode": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "text": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии.",
+    "targets": [
+     {
+      "kind": "heal_or_damage"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "marceline_card_27",

@@ -202,6 +202,8 @@ function choiceMatchesAsk(
       const inst = instance(draft, choice.instanceId);
       return inst.location === 'field' || inst.location === 'companion' || inst.location === 'discard';
     }
+    case 'heal_or_damage':
+      return choice.kind === 'mode';
   }
 }
 

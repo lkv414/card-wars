@@ -215,6 +215,12 @@ export function validTargets(
           .filter((c) => !ask.filter || discardCardPasses(c.cardId, ask.filter))
           .map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
       });
+    case 'heal_or_damage':
+      // Выбор режима: лечение или урон.
+      return [
+        { kind: 'mode' as const, mode: 'heal' as const },
+        { kind: 'mode' as const, mode: 'damage' as const },
+      ];
     case 'revealed_card':
       return (view.revealed?.[view.me] ?? []).map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
     default:

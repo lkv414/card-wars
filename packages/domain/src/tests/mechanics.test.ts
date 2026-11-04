@@ -642,6 +642,83 @@ describe('механики v2: каркас', () => {
       expect(res.state.instances[p2Card]!.location).toBe('removed');
       expect(res.state.players[P1]!.discard).toContain(p1Card);
     });
+
+    it('heal_or_damage: игрок выбирает лечение или урон', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const swampId = s.players[P1]!.zones[0]!.creature!;
+      // наносим урон заранее, чтобы было что лечить
+      s = produce(s, (d) => {
+        d.instances[swampId]!.damage = 3;
+      });
+      s = forceToHand(s, P1, 'candy-heel');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'candy-heel'), zone: 1 }).state;
+      const helperId = s.players[P1]!.zones[1]!.creature!;
+      // ВЫБОР: лечение
+      const healed = applyCommand(
+        s,
+        {
+          type: 'floop',
+          player: P1,
+          instanceId: helperId,
+          targets: [
+            { kind: 'creature', instanceId: swampId },
+            { kind: 'mode', mode: 'heal' },
+          ],
+        },
+        deps,
+      );
+      expect(healed.ok).toBe(true);
+      if (!healed.ok) return;
+      expect(healed.state.instances[swampId]!.damage).toBe(2);
+      // ВЫБОР: урон
+      s = produce(healed.state, (d) => {
+        d.instances[helperId]!.flipped = false;
+      });
+      const damaged = applyCommand(
+        s,
+        {
+          type: 'floop',
+          player: P1,
+          instanceId: helperId,
+          targets: [
+            { kind: 'creature', instanceId: swampId },
+            { kind: 'mode', mode: 'damage' },
+          ],
+        },
+        deps,
+      );
+      expect(damaged.ok).toBe(true);
+      if (!damaged.ok) return;
+      expect(damaged.state.instances[swampId]!.damage).toBe(3);
+    });
+
+    it('give_card: карта из руки переходит к выбранному игроку', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'giver');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'giver'), zone: 0 }).state;
+      const giverId = s.players[P1]!.zones[0]!.creature!;
+      const cardId = s.players[P1]!.hand[0]!;
+      const res = applyCommand(
+        s,
+        {
+          type: 'floop',
+          player: P1,
+          instanceId: giverId,
+          targets: [
+            { kind: 'card', instanceId: cardId },
+            { kind: 'player', playerId: P2 },
+          ],
+        },
+        deps,
+      );
+      expect(res.ok).toBe(true);
+      if (!res.ok) return;
+      expect(res.state.players[P1]!.hand).not.toContain(cardId);
+      expect(res.state.players[P2]!.hand).toContain(cardId);
+      expect(res.state.instances[cardId]!.controller).toBe(P2);
+    });
   });
 
   describe('способность героя', () => {

@@ -64,14 +64,14 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage']);
 const TRIGGERS2 = null;
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze',
 ]);
-const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card', 'visible_card']);
+const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card', 'visible_card', 'heal_or_damage']);
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_opponent_land', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
@@ -179,6 +179,13 @@ function validateEffect(effect, where, ability) {
   } else if (op === 'remove_from_game') {
     checkTargetRef(effect.from, where);
     checkTargetRef(effect.name, where);
+  } else if (op === 'heal_or_damage') {
+    checkTargetRef(effect.target, where);
+    checkTargetRef(effect.mode, where);
+    if (!Number.isInteger(effect.amount) || effect.amount < 0) fail(`${where}: heal_or_damage needs a non-negative integer amount`);
+  } else if (op === 'give_card') {
+    checkTargetRef(effect.card, where);
+    checkTargetRef(effect.to, where);
   } else if (op === 'destroy' || op === 'freeze_land') {
     checkTargetRef(effect.target, where);
     if (op === 'freeze_land' && typeof effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);

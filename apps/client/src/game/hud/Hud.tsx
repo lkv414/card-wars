@@ -278,6 +278,30 @@ export function Hud({ code }: { code: string }) {
                   ));
               })()}
               {discardPickers}
+              {(() => {
+                // «Восстанови или нанеси урон» — выбор режима.
+                const askKind = (() => {
+                  if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
+                    const ability = view.pending.cardId
+                      ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
+                      : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+                    return ability?.targets?.[view.pending.askIndex ?? 0]?.kind;
+                  }
+                  if (targeting) return targeting.asks[targeting.askIndex]?.kind;
+                  return undefined;
+                })();
+                if (askKind !== 'heal_or_damage') return null;
+                return (
+                  <>
+                    <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'heal' })}>
+                      Восстанови
+                    </button>
+                    <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'damage' })}>
+                      Нанеси урон
+                    </button>
+                  </>
+                );
+              })()}
             </>
           ) : (
             <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>

@@ -283,6 +283,8 @@ export type ConditionSpec =
 export interface AdditionalCost {
   /** Discard n cards from own hand (Бимо: «Сбрось карту с руки >>> …»). */
   discardFromHand?: number;
+  /** Floop (apply) n own ready creatures (Вырубка леса: «примени существо»). */
+  floopOwnCreature?: number;
   /** Sacrifice n own creatures (Док Смерть, Заводской убийца). */
   destroyOwnCreature?: number;
   /** Sacrifice n own buildings (Стрелец Дэника). */
@@ -384,13 +386,17 @@ export type EffectSpec =
     }
   /** Un-flip a flipped (applied) own creature (Архитектор разума, Моника). */
   | { op: 'unflip'; target: TargetRef }
+  /** Reveal own deck top until a matching card (or max) (Вырубка леса, Гидромансер). */
+  | { op: 'reveal_until'; max: number; match?: { type?: CardType; landType?: LandType; cardIds?: string[] } }
+  /** Play the last revealed card for free; the rest of the window shuffles back. */
+  | { op: 'play_revealed'; destination?: TargetRef }
   /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
   | { op: 'reveal_deck_top'; count: number }
   /**
    * Consume the revealed window (Газы Огрa): one revealed card via ask,
    * destination per `to`; the rest of the window per `rest`.
    */
-  | { op: 'resolve_revealed'; target: TargetRef; to: 'deck_bottom' | 'hand'; rest?: 'discard' };
+  | { op: 'resolve_revealed'; target: TargetRef; to: 'deck_bottom' | 'hand' | 'deck_top'; rest?: 'discard' | 'deck' };
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';

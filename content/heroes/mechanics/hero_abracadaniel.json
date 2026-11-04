@@ -1,0 +1,30 @@
+{
+  "heroId": "hero_abracadaniel",
+  "name": "Абракаданиэль",
+  "ability": {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+      {
+        "op": "reveal_until",
+        "max": 1,
+        "match": {
+          "landType": "rainbow"
+        }
+      },
+      {
+        "op": "play_revealed",
+        "destination": {
+          "kind": "choice",
+          "index": 0
+        }
+      }
+    ],
+    "targets": [
+      {
+        "kind": "landscape"
+      }
+    ],
+    "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её."
+  }
+}

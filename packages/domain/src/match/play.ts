@@ -1,5 +1,6 @@
 import type { Draft } from 'immer';
 import { afterEffects } from '../deaths';
+import { killInstance } from '../damage';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import { cardOf, emit, instance, moveId, player } from '../util';
@@ -8,6 +9,7 @@ import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter } from '../mechanics/effects';
 import { conditionsHold, consumeDiscount, landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
+import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../mechanics/costs';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
 
@@ -115,11 +117,32 @@ export function handlePlayCard(
     }
     // Spell's own on_cast abilities: validate non-interactive targets atomically.
     const casts = (card.abilities ?? []).filter((a) => a.trigger === 'on_cast');
+    // Additional cost picks come BEFORE declared asks (docs/MECHANICS-V2.md §5).
+    const costAbility = casts.find((a) => a.additionalCost);
+    const costSpec = costAbility?.additionalCost;
+    const costCount = costPicksCount(costSpec);
+    const declared = targets ?? [];
     for (const ability of casts) {
       if (Array.isArray(ability.effect) || ability.optional) continue;
-      validateChoices(draft, ctx, { player: playerId, instanceId }, ability.targets, targets);
+      validateChoices(draft, ctx, { player: playerId, instanceId }, ability.targets, declared.slice(costCount));
     }
+    const handPicks = costPicks(declared, costSpec?.discardFromHand ?? 0, playerId, draft);
+    const floopPicks = floopCostPicks(declared, costSpec?.discardFromHand ?? 0, costSpec, draft, playerId);
+    const killPicks = sacrificePicks(declared, costSpec?.discardFromHand ?? 0, costSpec, draft, ctx, playerId);
     p.actions -= effectiveCost;
+    for (const pickId of handPicks) {
+      const pickInst = instance(draft, pickId);
+      pickInst.location = 'discard';
+      moveId(p.hand, p.discard, pickId);
+      emit(ctx, { type: 'card_discarded', player: playerId, instanceId: pickId, cardId: pickInst.cardId, from: 'hand' });
+    }
+    for (const pickId of floopPicks) {
+      instance(draft, pickId).flipped = true;
+      emit(ctx, { type: 'floop_used', player: playerId, instanceId: pickId, cardId: instance(draft, pickId).cardId, paidActions: 0 });
+    }
+    for (const pickId of killPicks) {
+      killInstance(draft, ctx, pickId);
+    }
     consumeDiscount(draft, playerId, 'spell');
     emit(ctx, { type: 'spell_cast', player: playerId, instanceId, cardId: card.id });
     inst.location = 'discard';

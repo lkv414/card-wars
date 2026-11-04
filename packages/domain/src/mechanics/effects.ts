@@ -4,7 +4,7 @@ import { dealToCreature, dealToPlayer, healPlayer } from '../damage';
 import { DomainError } from '../errors';
 import { finishMatch } from '../finish';
 import { killInstance } from '../damage';
-import { pickRandom } from '../rng';
+import { pickRandom, rngInt } from '../rng';
 import { emit, instance, moveId, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
@@ -286,6 +286,122 @@ export function runEffect(
       emit(ctx, { type: 'cards_revealed', player: source.player, cardIds: window });
       return;
     }
+    case 'reveal_until': {
+      const p = player(draft, source.player);
+      const window = draft.revealed[source.player] ?? [];
+      const match = effect.match;
+      const isMatch = (cardId: string): boolean => {
+        if (!match) return true;
+        const card = ctx.catalog.getCard(cardId);
+        if (!card) return false;
+        if (match.type && card.type !== match.type) return false;
+        if (match.landType && card.landType !== match.landType) return false;
+        if (match.cardIds && !match.cardIds.includes(card.id)) return false;
+        return true;
+      };
+      let cursor = window.length;
+      let found = window.some((id) => isMatch(draft.instances[id]!.cardId));
+      while (!found && cursor < effect.max && cursor < p.deck.length) {
+        const id = p.deck[cursor]!;
+        window.push(id);
+        cursor += 1;
+        found = isMatch(draft.instances[id]!.cardId);
+      }
+      draft.revealed[source.player] = window;
+      if (window.length > 0) {
+        emit(ctx, { type: 'cards_revealed', player: source.player, cardIds: window });
+      }
+      return;
+    }
+    case 'play_revealed': {
+      const p = player(draft, source.player);
+      const window = draft.revealed[source.player] ?? [];
+      const playedId = window[window.length - 1];
+      const rest = window.slice(0, -1);
+      // The rest of the window shuffles back into the deck (RNG, «перемешай»).
+      draft.revealed[source.player] = [];
+      delete draft.revealed[source.player];
+      const deckRest = rest.filter((id) => p.deck.includes(id));
+      for (const id of deckRest) {
+        const idx = p.deck.indexOf(id);
+        if (idx >= 0) p.deck.splice(idx, 1);
+      }
+      for (const id of deckRest) {
+        p.deck.splice(rngInt(draft.rng, p.deck.length + 1), 0, id);
+      }
+      if (!playedId) return; // nothing matched — window shuffled back
+      const inst = instance(draft, playedId);
+      const card = ctx.catalog.getCard(inst.cardId);
+      if (!card) return;
+      const deckIdx = p.deck.indexOf(playedId);
+      if (deckIdx >= 0) p.deck.splice(deckIdx, 1);
+      if (card.type === 'spell') {
+        inst.location = 'discard';
+        p.discard.push(playedId);
+        emit(ctx, { type: 'spell_cast', player: source.player, instanceId: playedId, cardId: card.id });
+        draft.castSpells.push(playedId);
+        bumpCounter(draft, 'spell_cast', source.player);
+        const casts = (card.abilities ?? []).filter((a) => a.kind === 'passive' && a.trigger === 'on_cast');
+        for (const ability of casts) {
+          const abilityIndex = (card.abilities ?? []).indexOf(ability);
+          ctx.frame.queue.push({
+            player: source.player,
+            instanceId: playedId,
+            cardId: card.id,
+            abilityIndex: Math.max(0, abilityIndex),
+            trigger: 'on_cast',
+            payload: { instanceId: playedId, cardId: card.id, player: source.player },
+          });
+        }
+        return;
+      }
+      if (card.type === 'companion') {
+        const replaced = p.companion;
+        if (replaced) {
+          const oldInst = instance(draft, replaced);
+          oldInst.location = 'discard';
+          oldInst.zone = null;
+          oldInst.slot = null;
+          p.discard.push(replaced);
+          p.companion = null;
+          emit(ctx, { type: 'card_discarded', player: source.player, instanceId: replaced, cardId: oldInst.cardId, from: 'companion' });
+        }
+        inst.location = 'companion';
+        inst.zone = null;
+        inst.slot = null;
+        inst.playedTurn = draft.turn;
+        p.companion = playedId;
+        emit(ctx, { type: 'companion_played', player: source.player, instanceId: playedId, cardId: card.id, replacedInstanceId: replaced ?? null });
+        bumpCounter(draft, 'creature_entered', source.player);
+        enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId: playedId, cardId: card.id, player: source.player, replaced: Boolean(replaced) });
+        return;
+      }
+      // Creature or building: destination required.
+      const dest = effect.destination
+        ? resolveTarget(draft, ctx, effect.destination, source, choices, payload).find((d) => d.kind === 'land')
+        : (choices ?? []).map((c) => (c.kind === 'landscape' ? { kind: 'land' as const, playerId: c.player, zone: c.zone } : null)).find((d) => d !== null);
+      if (!dest || dest.kind !== 'land') {
+        throw new DomainError('target_required', 'play_revealed needs a destination land');
+      }
+      const owner = draft.players[dest.playerId]!;
+      if (dest.zone < 0 || dest.zone >= owner.zones.length) {
+        throw new DomainError('invalid_choice', 'destination zone out of range');
+      }
+      const slot: 'creature' | 'building' = card.type === 'building' ? 'building' : 'creature';
+      if (owner.zones[dest.zone]![slot]) {
+        throw new DomainError('invalid_choice', `destination zone ${dest.zone} is occupied`);
+      }
+      inst.location = 'field';
+      inst.zone = dest.zone;
+      inst.slot = slot;
+      inst.playedTurn = draft.turn;
+      owner.zones[dest.zone]![slot] = playedId;
+      emit(ctx, { type: 'card_played', player: source.player, instanceId: playedId, cardId: card.id, zone: dest.zone, slot, replacedInstanceId: null });
+      bumpCounter(draft, 'creature_entered', source.player);
+      if (card.type === 'creature' && card.cost >= 2) bumpCounter(draft, 'creature_cost_2_plus_played', source.player);
+      enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId: playedId, cardId: card.id, player: source.player, zone: dest.zone });
+      return;
+    }
     case 'resolve_revealed': {
       const window = draft.revealed[source.player] ?? [];
       // The revealed_card ask validates the pick on resolve_choice; the choice index
@@ -304,11 +420,15 @@ export function runEffect(
       if (effect.to === 'hand') {
         inst.location = 'hand';
         p.hand.push(id);
+      } else if (effect.to === 'deck_top') {
+        p.deck.splice(p.deck.indexOf(id), 1);
+        p.deck.unshift(id);
       } else {
         p.deck.push(id); // bottom of deck
       }
-      // Rest of the window is discarded.
+      // Rest of the window: discarded (default) or kept in the deck (reorder).
       for (const restId of draft.revealed[source.player] ?? []) {
+        if (effect.to === 'deck_top' && effect.rest === 'deck') continue;
         const restInst = instance(draft, restId);
         const restIndex = p.deck.indexOf(restId);
         if (restIndex >= 0) p.deck.splice(restIndex, 1);

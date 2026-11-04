@@ -3,7 +3,33 @@
   "id": "hero_abracadaniel",
   "name": "Абракаданиэль",
   "image": "/content/heroes/images/hero_abracadaniel.png",
-  "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её."
+  "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её.",
+  "ability": {
+   "kind": "active",
+   "cost": 1,
+   "effect": [
+    {
+     "op": "reveal_until",
+     "max": 1,
+     "match": {
+      "landType": "rainbow"
+     }
+    },
+    {
+     "op": "play_revealed",
+     "destination": {
+      "kind": "choice",
+      "index": 0
+     }
+    }
+   ],
+   "targets": [
+    {
+     "kind": "landscape"
+    }
+   ],
+   "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её."
+  }
  },
  {
   "id": "hero_billy",
@@ -143,7 +169,68 @@
   "id": "hero_cosmic_owl",
   "name": "Космическая сова",
   "image": "/content/heroes/images/hero_cosmic_owl.png",
-  "text": "Потрать 1 действие >>> Посмотри и измени порядок 4х верхних карт своей колоды."
+  "text": "Потрать 1 действие >>> Посмотри и измени порядок 4х верхних карт своей колоды.",
+  "ability": {
+   "kind": "active",
+   "cost": 1,
+   "effect": [
+    {
+     "op": "reveal_deck_top",
+     "count": 4
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 1
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 2
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 3
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "revealed_card"
+    },
+    {
+     "kind": "revealed_card"
+    },
+    {
+     "kind": "revealed_card"
+    },
+    {
+     "kind": "revealed_card"
+    }
+   ],
+   "text": "Потрать 1 действие >>> Посмотри и измени порядок 4х верхних карт своей колоды."
+  }
  },
  {
   "id": "hero_finn",

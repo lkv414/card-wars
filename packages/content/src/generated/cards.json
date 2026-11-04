@@ -1835,7 +1835,38 @@
   "landType": "corn",
   "image": "/content/cards/images/cake_card_40.png",
   "description": "Дополнительная стоимость: примени существо под твоим контролем.\nПросмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "additionalCost": {
+     "floopOwnCreature": 1
+    },
+    "effect": [
+     {
+      "op": "reveal_until",
+      "max": 40,
+      "match": {
+       "type": "building"
+      }
+     },
+     {
+      "op": "play_revealed",
+      "destination": {
+       "kind": "choice",
+       "index": 0
+      }
+     }
+    ],
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "Дополнительная стоимость: примени существо под твоим контролем. Просмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду."
+   }
+  ]
  },
  {
   "id": "charlie_card_1",
@@ -2221,7 +2252,29 @@
   "attack": 3,
   "defense": 6,
   "description": "Когда Гидромансер вступает в игру, можешь найти Подмогу и сыграть ее бесплатно. Просмотренные карты смешай со своей колодой.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "optional": true,
+    "effect": [
+     {
+      "op": "reveal_until",
+      "max": 40,
+      "match": {
+       "cardIds": [
+        "grand_prix_card_8"
+       ]
+      }
+     },
+     {
+      "op": "play_revealed"
+     }
+    ],
+    "text": "Когда Гидромансер вступает в игру, можешь найти Подмогу и сыграть ее бесплатно. Просмотренные карты смешай со своей колодой."
+   }
+  ]
  },
  {
   "id": "charlie_card_18",
@@ -5088,7 +5141,41 @@
   "attack": 1,
   "defense": 4,
   "description": "В начале своего хода можешь вернуть Мисс Муми в руку владельцу. Если сделаешь это, выбранное Песчаное Существо под твоим контролем получает +1 DEF.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "this_creature"
+      }
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "stat": "defense",
+      "amount": 1,
+      "duration": "this_turn"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "landType": "sand"
+      }
+     }
+    ],
+    "text": "В начале своего хода можешь вернуть Мисс Муми в руку владельцу. Если сделаешь это, выбранное Песчаное Существо под твоим контролем получает +1 DEF."
+   }
+  ]
  },
  {
   "id": "ftg_card_64",
@@ -5182,7 +5269,33 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_69.png",
   "description": "Открой верхние 2 карты своей колоды. Можешь положить открытые Кукурузные карты себе в руку, остальные сбрось.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "reveal_deck_top",
+      "count": 2
+     },
+     {
+      "op": "resolve_revealed",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "to": "hand"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "revealed_card"
+     }
+    ],
+    "text": "Открой верхние 2 карты своей колоды. Можешь положить открытые Кукурузные карты себе в руку, остальные сбрось."
+   }
+  ]
  },
  {
   "id": "ftg_card_70",
@@ -5830,7 +5943,34 @@
   "attack": 1,
   "defense": 8,
   "description": "В начале своего хода посмотри верхнюю крту своей колоды. Можешь положить ее вниз своей колоды.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "effect": [
+     {
+      "op": "reveal_deck_top",
+      "count": 1
+     },
+     {
+      "op": "resolve_revealed",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "to": "deck_bottom"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "revealed_card"
+     }
+    ],
+    "text": "В начале своего хода посмотри верхнюю крту своей колоды. Можешь положить ее вниз своей колоды."
+   }
+  ]
  },
  {
   "id": "ftg_card_100",
@@ -6766,7 +6906,29 @@
   "landType": "sand",
   "image": "/content/cards/images/grand_prix_card_26.png",
   "description": "Потрать 1 действие, ПРИЕМ >>> Если эта земля пустая, то открывай карты с верху своей колоды до тех пор, пока не найдешь Существо, сыграй его бесплатно на эту землю и замешай открытые карты обратно в свою колоду.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+     {
+      "op": "reveal_until",
+      "max": 40,
+      "match": {
+       "type": "creature"
+      }
+     },
+     {
+      "op": "play_revealed",
+      "destination": {
+       "kind": "this_lane_land"
+      }
+     }
+    ],
+    "text": "Потрать 1 действие, ПРИЕМ >>> Если эта земля пустая, то открывай карты с верху своей колоды до тех пор, пока не найдешь Существо, сыграй его бесплатно на эту землю и замешай открытые карты обратно в свою колоду."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_27",
@@ -10282,7 +10444,27 @@
   "attack": 3,
   "defense": 3,
   "description": "В начале своего хода можешь вернуть Муми Ба в руку его владельца. Если сделаешь это, тяни две карты.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "this_creature"
+      }
+     },
+     {
+      "op": "draw_cards",
+      "count": 2
+     }
+    ],
+    "text": "В начале своего хода можешь вернуть Муми Ба в руку его владельца. Если сделаешь это, тяни две карты."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_36",
@@ -10294,7 +10476,32 @@
   "attack": 2,
   "defense": 4,
   "description": "В начале своего хода можешь вернуть Пескомага в руку его владельца. Если сделаешь это, каждое существо под твоим контролем получаем +1 в этом ход.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "this_creature"
+      }
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "stat": "attack",
+      "amount": 1,
+      "duration": "this_turn"
+     }
+    ],
+    "text": "В начале своего хода можешь вернуть Пескомага в руку его владельца. Если сделаешь это, каждое существо под твоим контролем получаем +1 в этом ход."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_37",

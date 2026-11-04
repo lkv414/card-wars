@@ -1,0 +1,38 @@
+{
+  "cardId": "ftg_card_63",
+  "name": "Мисс Муми",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "stat": "defense",
+          "amount": 1,
+          "duration": "this_turn"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "landType": "sand"
+          }
+        }
+      ],
+      "text": "В начале своего хода можешь вернуть Мисс Муми в руку владельцу. Если сделаешь это, выбранное Песчаное Существо под твоим контролем получает +1 DEF."
+    }
+  ]
+}

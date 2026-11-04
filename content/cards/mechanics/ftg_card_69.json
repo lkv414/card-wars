@@ -1,0 +1,30 @@
+{
+  "cardId": "ftg_card_69",
+  "name": "Невероятное яйцо",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "reveal_deck_top",
+          "count": 2
+        },
+        {
+          "op": "resolve_revealed",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "to": "hand"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "revealed_card"
+        }
+      ],
+      "text": "Открой верхние 2 карты своей колоды. Можешь положить открытые Кукурузные карты себе в руку, остальные сбрось."
+    }
+  ]
+}

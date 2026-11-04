@@ -1,0 +1,35 @@
+{
+  "cardId": "cake_card_40",
+  "name": "Вырубка леса",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "additionalCost": {
+        "floopOwnCreature": 1
+      },
+      "effect": [
+        {
+          "op": "reveal_until",
+          "max": 40,
+          "match": {
+            "type": "building"
+          }
+        },
+        {
+          "op": "play_revealed",
+          "destination": {
+            "kind": "choice",
+            "index": 0
+          }
+        }
+      ],
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Дополнительная стоимость: примени существо под твоим контролем. Просмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду."
+    }
+  ]
+}

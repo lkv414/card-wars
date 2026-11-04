@@ -9,7 +9,7 @@ import type { TargetChoice } from './types';
 /** Number of player picks the additional cost requires (before declared targets). */
 export function costPicksCount(cost: AdditionalCost | undefined): number {
   if (!cost) return 0;
-  return (cost.discardFromHand ?? 0) + (cost.destroyOwnCreature ?? 0) + (cost.destroyOwnBuilding ?? 0);
+  return (cost.discardFromHand ?? 0) + (cost.destroyOwnCreature ?? 0) + (cost.destroyOwnBuilding ?? 0) + (cost.floopOwnCreature ?? 0);
 }
 
 /** Validate and collect the discard part of the additional cost. */
@@ -27,6 +27,31 @@ export function costPicks(
     const inst = instance(draft, pick.instanceId);
     if (inst.location !== 'hand' || inst.controller !== playerId) {
       throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
+    }
+    picks.push(pick.instanceId);
+  }
+  return picks;
+}
+
+/** Validate the «примени существо» picks: own READY field creatures. */
+export function floopCostPicks(
+  targets: TargetChoice[],
+  discardCount: number,
+  cost: AdditionalCost | undefined,
+  draft: MatchState,
+  playerId: PlayerId,
+): string[] {
+  const count = cost?.floopOwnCreature ?? 0;
+  if (count === 0) return [];
+  const start = discardCount + (cost?.destroyOwnCreature ?? 0) + (cost?.destroyOwnBuilding ?? 0);
+  const picks: string[] = [];
+  for (const pick of targets.slice(start, start + count)) {
+    if (pick.kind !== 'creature') {
+      throw new DomainError('invalid_choice', 'floop cost needs an own ready creature');
+    }
+    const inst = instance(draft, pick.instanceId);
+    if (inst.location !== 'field' || inst.controller !== playerId || inst.slot !== 'creature' || inst.flipped) {
+      throw new DomainError('invalid_choice', 'floop cost needs an own ready creature');
     }
     picks.push(pick.instanceId);
   }

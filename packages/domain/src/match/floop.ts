@@ -4,7 +4,7 @@ import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import { killInstance } from '../damage';
 import { emit, instance, moveId, player } from '../util';
-import { costPicks, costPicksCount, sacrificePicks } from '../mechanics/costs';
+import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../mechanics/costs';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
@@ -116,6 +116,10 @@ export function handleFloop(
   }
   for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
     killInstance(draft, ctx, pickId);
+  }
+  for (const pickId of floopCostPicks(allTargets, discardCount, ability.additionalCost, draft, playerId)) {
+    instance(draft, pickId).flipped = true;
+    emit(ctx, { type: 'floop_used', player: playerId, instanceId: pickId, cardId: instance(draft, pickId).cardId, paidActions: 0 });
   }
   const abilityIndex = (card?.abilities ?? []).indexOf(ability);
   runAbilityDirect(

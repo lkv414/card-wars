@@ -341,6 +341,12 @@ export type EffectSpec =
       floorDefense?: number;
       /** Attack floor: «минимум 0» у дебаффов (Затопление, Аванпост попугаев). */
       floorAttack?: number;
+      /**
+       * Conditions of THIS effect, checked per candidate target
+       * (Мисс Пушинка: «пока ровно 7 урона»; Кукурузный чемпион: «если на
+       * этой земле строение»). Evaluated live — re-read on every stat scan.
+       */
+      conditions?: ConditionSpec[];
     }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
   | { op: 'gain_actions'; amount: number }

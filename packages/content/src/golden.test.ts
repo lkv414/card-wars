@@ -1340,3 +1340,71 @@ describe('golden: новые биты массовых батчей', () => {
     expect(res.state.players.p1!.lands[0]!.frozen).toBe(false);
   });
 });
+
+describe('golden: условия на уровне эффекта (stat_buff.conditions)', () => {
+  function round2(s: MatchState): MatchState {
+    for (const pid of ['p1', 'p2'] as const) {
+      const res = applyCommand(s, { type: 'go_battle', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (!res.ok) throw new Error(res.rejected.message);
+      s = res.state;
+    }
+    return s;
+  }
+
+  /** Поставить карту в поле P1 на зону 0 с заданным уроном. */
+  function placeCreature(s: MatchState, cardId: string, damage = 0): { state: MatchState; id: string } {
+    const next = edit(s, (d) => {
+      const p1 = d.players.p1!;
+      const id = p1.deck[0]!;
+      p1.deck.shift();
+      d.instances[id]!.cardId = cardId;
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 0;
+      d.instances[id]!.slot = 'creature';
+      d.instances[id]!.damage = damage;
+      p1.zones[0]!.creature = id;
+      p1.actions = 10;
+    });
+    return { state: next, id: next.players.p1!.zones[0]!.creature! };
+  }
+
+  it('Мисс Пушинка: +7 ATK только пока на ней ровно 7 урона', () => {
+    let s = round2(newMatch());
+    const placed = placeCreature(s, 'bubblegum_card_18', 0);
+    s = placed.state;
+    expect(computeEff(s, deps, placed.id).attack).toBe(2); // печатный ATK, условие не выполнено
+    // ровно 7 урона — аура включается
+    const exact = edit(s, (d) => {
+      d.instances[placed.id]!.damage = 7;
+    });
+    expect(computeEff(exact, deps, placed.id).attack).toBe(9);
+    // урон изменился — условие эффекта перестаёт выполняться, аура выключается
+    const other = edit(s, (d) => {
+      d.instances[placed.id]!.damage = 6;
+    });
+    expect(computeEff(other, deps, placed.id).attack).toBe(2);
+  });
+
+  it('Кукурузный чемпион: +2 ATK/+2 DEF только при строении на этой линии', () => {
+    let s = round2(newMatch());
+    const placed = placeCreature(s, 'cake_card_24');
+    s = placed.state;
+    const withoutBuilding = computeEff(s, deps, placed.id);
+    expect(withoutBuilding.attack).toBe(1);
+    expect(withoutBuilding.defense).toBe(4);
+    // кладём строение на ту же линию — ауры включаются
+    const withBuilding = edit(s, (d) => {
+      const p1 = d.players.p1!;
+      const id = p1.deck[0]!;
+      p1.deck.shift();
+      d.instances[id]!.cardId = 'ftg_card_38';
+      d.instances[id]!.location = 'field';
+      d.instances[id]!.zone = 0;
+      d.instances[id]!.slot = 'building';
+      p1.zones[0]!.building = id;
+    });
+    expect(computeEff(withBuilding, deps, placed.id).attack).toBe(3);
+    expect(computeEff(withBuilding, deps, placed.id).defense).toBe(6);
+  });
+});

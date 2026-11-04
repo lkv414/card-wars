@@ -226,6 +226,9 @@ function validateEffect(effect, where, ability) {
     checkAmount(effect.amount, where);
     if (effect.floorAttack !== undefined && !Number.isInteger(effect.floorAttack)) fail(`${where}: stat_buff floorAttack must be an integer`);
     if (effect.floorDefense !== undefined && !Number.isInteger(effect.floorDefense)) fail(`${where}: stat_buff floorDefense must be an integer`);
+    for (const cond of effect.conditions ?? []) {
+      if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown condition ${cond.kind}`);
+    }
   } else {
     checkTargetRef(effect.target, where);
     checkAmount(effect.amount, where);

@@ -1,4 +1,4 @@
-import { instance } from '../util';
+﻿import { instance } from '../util';
 import type { Ctx } from '../util';
 import type { CardData, MatchState } from '../types';
 import { teamOf } from '../zones';
@@ -49,6 +49,8 @@ export function auraContributions(
       if (target.kind !== 'creature' || target.instanceId !== forInstanceId) continue;
       if (effect.filter && !targetMatchesFilter(draft, ctx, source, target.instanceId, effect.filter)) continue;
       if (!conditionsHold(draft, ctx, source, ability.conditions, target.instanceId)) continue;
+      // Conditions of the effect itself, per candidate (Мисс Пушинка, Кукурузный чемпион).
+      if (!conditionsHold(draft, ctx, source, effect.conditions, target.instanceId)) continue;
       out.push({
         stat: effect.stat,
         amount: resolveStatAmount(draft, ctx, source, effect.amount),

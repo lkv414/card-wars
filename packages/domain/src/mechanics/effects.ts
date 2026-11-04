@@ -10,7 +10,7 @@ import type { Ctx } from '../util';
 import type { CardData, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
-import { countsAsTypes, resolveStatAmount } from './modifiers';
+import { countsAsTypes, conditionsHold, resolveStatAmount } from './modifiers';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice, TargetFilter, TargetRef, TriggerPayload } from './types';
@@ -173,6 +173,8 @@ export function runEffect(
       const amount = resolveStatAmount(draft, ctx, source, effect.amount, undefined, choices);
       for (const target of targets) {
         if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        // Conditions of the effect itself, per target (Мисс Пушинка: «пока 7 урона»).
+        if (!conditionsHold(draft, ctx, source, effect.conditions, target.instanceId, payload)) continue;
         const inst = instance(draft, target.instanceId);
         if (effect.duration === 'this_turn') {
           draft.turnBuffs.push({

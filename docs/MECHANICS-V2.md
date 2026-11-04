@@ -146,6 +146,8 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 
 `ConditionSpec`: `if_discard_count`, `while_discard_count`, `while_undamaged` (scope `self`/`target`), `while_damage_exactly` / `while_damage_at_least` (scope `self`/`target`), `while_lane_empty_opponent`, `while_on_land_type`, `while_on_flipped_land` (Джейк), `while_distinct_lands` (min/max — Фиона, Присмо, Лимонное желе), `while_land_count` (min/max), `while_zone_has_building`, `while_empty_lands` (Лимонграб), `while_self_flipped` (Огненное торнадо), `while_opponents_hand_empty` (Митик), `while_no_other_creatures` (Одинокая панда), `if_payload_*` — условия по триггеру-событию (замена, тип вошедшей карты, «под твоим контролем», «другого», `if_payload_cost` — печатная стоимость карты события в [min..max]), `if_card_in_discard`, `while_turn_phase` — пополняется по каталогу. Payload `on_spell_cast`/`on_card_played` несёт стоимость карты события. Условия аур проверяются **по каждому кандидату-цели** (Мельница процветания, Марселин).
 
+**Условия на уровне эффекта** (`EffectSpec.conditions`): `stat_buff` несёт собственные условия, которые проверяются per-target при каждом пересчёте статов — «пока на мне ровно 7 урона» (Мисс Пушинка), «если на этой земле строение» (Кукурузный чемпион). Условия способности (`AbilitySpec.conditions`) и условия эффекта — независимы: первые gate'ят всё умение, вторые — только этот бафф. Пересчёт живой: смена урона/строения переключает ауру без переигровки.
+
 ## 8. Скрытие информации и события
 
 - События не содержат скрытых данных: «посмотрел колоду» — факт без содержимого; вскрытые карты (mill, reveal) становятся публичными и уходят в события с id карт.

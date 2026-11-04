@@ -64,7 +64,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'grant_protection']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -76,11 +76,11 @@ const TARGET_REFS = new Set([
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'each_opponent_land',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
-  'while_distinct_lands', 'while_land_count', 'while_zone_has_building', 'while_zone_has_creature', 'while_zone_has_flipped_creature', 'while_lives_at_most', 'while_opponent_creatures_at_most',
+  'while_distinct_lands', 'while_land_count', 'while_zone_has_building', 'while_zone_has_creature', 'while_zone_has_flipped_creature', 'while_lives_at_most', 'while_opponent_creatures_at_most', 'if_payload_zone_land_type',
   'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',
@@ -156,6 +156,8 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.target, where);
     if (!Number.isInteger(effect.atkBonus)) fail(`${where}: defense_mod needs integer atkBonus`);
     if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: defense_mod landType invalid`);
+  } else if (op === 'grant_protection') {
+    checkTargetRef(effect.target, where);
   } else if (op === 'remove_token') {
     checkTargetRef(effect.target, where);
   } else if (op === 'transfer_token') {
@@ -183,6 +185,7 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.target, where);
     if (effect.vs && !['ownZone', 'defenderZone'].includes(effect.vs)) fail(`${where}: attack_mod vs must be ownZone|defenderZone`);
     if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: attack_mod landType invalid`);
+    if (effect.emptyLane !== undefined && typeof effect.emptyLane !== 'boolean') fail(`${where}: attack_mod emptyLane must be boolean`);
     if (!effect.multiplier && !effect.atkBonus && !effect.face) fail(`${where}: attack_mod needs multiplier|atkBonus|face`);
   } else if (op === 'counts_as') {
     checkTargetRef(effect.target, where);
@@ -260,7 +263,8 @@ function readMechanics(dir, ids, nameOf, keyField, single) {
         // text-only placeholder is allowed until the ability is structured
       }
     } else {
-      if (!Array.isArray(record.abilities) || record.abilities.length === 0) fail(`${file}: abilities[] required`);
+      if (!Array.isArray(record.abilities)) fail(`${file}: abilities[] required`);
+      if (record.abilities.length === 0 && !record.flavorOnly) fail(`${file}: abilities[] required (or flavorOnly)`);
       const actives = record.abilities.filter((a) => a.kind === 'active');
       if (actives.length > 1) fail(`${file}: at most one active (ПРИЕМ) ability per card`);
       record.abilities.forEach((ability, i) => validateAbility(ability, `${id}[${i}]`));

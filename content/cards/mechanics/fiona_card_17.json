@@ -1,0 +1,26 @@
+{
+  "cardId": "fiona_card_17",
+  "name": "Бизнес пес",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_played_name",
+          "matchers": [
+            "пес",
+            "щенок"
+          ],
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "Бизнес пес получает +2 ATK за каждую карту сыгранную в этот ход с «пес» или «щенок» в названии."
+    }
+  ]
+}

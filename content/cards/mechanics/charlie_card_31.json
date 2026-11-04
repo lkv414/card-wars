@@ -1,0 +1,31 @@
+{
+  "cardId": "charlie_card_31",
+  "name": "Очаровательный кролик",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "Если в начале твоего хода у Милашки коалы 4 урона и более, нанеси 3 урона выбранному противнику.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "while_own_card_in_play",
+          "cardId": "bubblegum_card_10",
+          "minDamage": 4
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,8 @@ import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import { drawCards } from '../draw';
 import { emit, instance, player } from '../util';
-import { opponentsOf } from '../zones';
+import { computeEff } from '../stats';
+import { opponentsOf, opponentZoneFor } from '../zones';
 import { pickRandom } from '../rng';
 import type { MatchState } from '../types';
 import { resolveTarget } from './resolve';
@@ -348,5 +349,106 @@ export const millSpellDiscard: MechanicHandler = (
     victim.hand.splice(victim.hand.indexOf(id), 1);
     victim.discard.push(id);
     emit(ctx, { type: 'card_discarded', player: pick.playerId, instanceId: id, cardId: inst.cardId, from: 'hand' });
+  }
+};
+
+/** «Нанеси 6 урона существу противника на этой линии или противнику, если линия пуста» (Громкий Бух). */
+export const laneOrFaceDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const amount = (params?.amount as number | undefined) ?? 1;
+  if (!source.instanceId) return;
+  const src = instance(draft, source.instanceId);
+  if (src.zone === null) return;
+  const target = opponentZoneFor(draft, source.player, src.zone);
+  if (!target) return;
+  const defenderId = draft.players[target.player]!.zones[target.zone]?.creature;
+  if (defenderId) dealToCreature(draft, ctx, defenderId, amount, source.instanceId);
+  else dealToPlayer(draft, ctx, target.player, amount, source.instanceId);
+};
+
+/** «Поменяй местами двух существ под твоим контролем» (Магический портал). */
+export const swapCreatures: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  _source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const a = choices?.[0];
+  const b = choices?.[1];
+  if (!a || !b || a.kind !== 'creature' || b.kind !== 'creature') {
+    throw new DomainError('invalid_choice', 'swap_creatures needs two creature choices');
+  }
+  const instA = instance(draft, a.instanceId);
+  const instB = instance(draft, b.instanceId);
+  if (instA.controller !== instB.controller) {
+    throw new DomainError('invalid_choice', 'swap_creatures needs same-owner creatures');
+  }
+  if (instA.zone === null || instB.zone === null) return;
+  const zones = draft.players[instA.controller]!.zones;
+  const za = instA.zone;
+  const zb = instB.zone;
+  zones[za]!.creature = b.instanceId;
+  zones[zb]!.creature = a.instanceId;
+  instA.zone = zb;
+  instB.zone = za;
+  emit(ctx, { type: 'card_moved', player: instA.controller, instanceId: a.instanceId, fromZone: za, toZone: zb });
+  emit(ctx, { type: 'card_moved', player: instA.controller, instanceId: b.instanceId, fromZone: zb, toZone: za });
+};
+
+/** «Наноси урон выбранному существу, пока у него не останется 1 DEF» (Посох вуду). */
+export const damageUntilDef: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const floor = (params?.floor as number | undefined) ?? 1;
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'damage_until_def needs a creature');
+  let guard = 100;
+  while (guard-- > 0) {
+    const def = computeEff(draft, ctx, pick.instanceId).defense;
+    if (def <= floor) break;
+    dealToCreature(draft, ctx, pick.instanceId, 1, source.instanceId);
+  }
+};
+
+/** «Нанеси урон существу и ещё двум существам по бокам от него» (Взрывной мужик). */
+export const splashDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const amount = (params?.amount as number | undefined) ?? 1;
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'splash_damage needs a creature');
+  const center = instance(draft, pick.instanceId);
+  dealToCreature(draft, ctx, pick.instanceId, amount, source.instanceId);
+  if (center.zone === null) return;
+  for (const pid of draft.order) {
+    const board = draft.players[pid]!;
+    if (board.zones.length !== draft.players[center.controller]!.zones.length) continue;
+    for (const z of [center.zone - 1, center.zone + 1]) {
+      if (z < 0 || z >= board.zones.length) continue;
+      const id = board.zones[z]?.creature;
+      if (id) dealToCreature(draft, ctx, id, amount, source.instanceId);
+    }
   }
 };

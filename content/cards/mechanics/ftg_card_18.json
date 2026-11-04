@@ -1,0 +1,20 @@
+{
+  "cardId": "ftg_card_18",
+  "name": "Магический портал",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Поменяй местами двух Существ под твоим контролем. (Они меняют линии одновременно.)",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "mechanic": "swap_creatures"
+    }
+  ]
+}

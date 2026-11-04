@@ -37,6 +37,14 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   }
   draft.landFlipEffects = draft.landFlipEffects.filter((e) => !(e.owner === pid && e.grantedOnTurn < draft.turn));
 
+  // Защиты (Пещера одиночества): действуют до начала следующего хода владельца.
+  const protectedIds = new Set(draft.players[pid]!.zones.flatMap((z) => [z.creature, z.building]));
+  draft.protections = draft.protections.filter((pr) => {
+    const inst = draft.instances[pr.instanceId];
+    return inst && inst.location === 'field' && inst.controller !== pid;
+  });
+  void protectedIds;
+
   // Запрет заклинаний (Дух ниндзя): armed бан активируется на этот ход.
   if (draft.spellBansArmed.includes(pid)) {
     draft.spellBansArmed = draft.spellBansArmed.filter((x) => x !== pid);
@@ -77,6 +85,7 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.turnCounters = {};
   draft.turnModifiers = [];
   draft.discounts = []; // «в этот ход» — скидки сгорают вместе с ходом
+  draft.turnPlayedCardIds = [];
   draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn === draft.turn);
   // Активный бан заканчивается вместе с ходом, под конец снимаем полностью.
   if (draft.spellBansActive.some((b) => b.turn === draft.turn)) {

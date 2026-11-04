@@ -159,6 +159,8 @@ export interface TargetFilter {
   zoneFlipped?: boolean;
   /** Match creatures standing on a land with ice tokens (Пингвин, Мороженник, Гантер). */
   zoneToken?: boolean;
+  /** Match creatures whose zone has a building (Деревянный ритм). */
+  zoneBuilding?: boolean;
   /** Invert the match (Капитан Тако: не на кукурузной земле). */
   negate?: boolean;
 }
@@ -192,6 +194,8 @@ export type StatAmount =
   | { kind: 'per_counter'; counter: TurnCounterKind; scope: 'own' | 'all' | 'team' | 'teammate'; amount: number; every?: number }
   /** Hand size of the player chosen by choice[0] (Поля кошмаров, Фермер-кочевник). */
   | { kind: 'target_hand_size'; amount: number }
+  /** Cards played this turn whose name contains any matcher (Бизнес пес). */
+  | { kind: 'per_played_name'; matchers: string[]; amount: number }
   /** Players controlling at least one land with an ice token (Капитан мороженка). */
   | { kind: 'per_token_players'; amount: number }
   /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
@@ -268,7 +272,9 @@ export type ConditionSpec =
   /** An own creature stands on a land of this type (Костяная палочка, play-gate). */
   | { kind: 'while_own_creature_on_land_type'; landType: LandType }
   /** Own field card with this id is in play (Малыш камнепух при своей Мамуле). */
-  | { kind: 'while_own_card_in_play'; cardId: string }
+  | { kind: 'while_own_card_in_play'; cardId: string; minDamage?: number }
+  /** The payload card's landing zone land type (Бриллиантовый Дэн). */
+  | { kind: 'if_payload_zone_land_type'; landType: LandType }
   /** Own building in the source's zone (Кукурузный чемпион). */
   | { kind: 'while_zone_has_building' }
   /** Own creature in the source's zone (Теневая пирамида). */
@@ -288,6 +294,8 @@ export interface AdditionalCost {
   floopOwnCreature?: number;
   /** Destroy this very card as the cost (Зеленая сирена: «Уничтожь сирену >>> …»). */
   destroySelf?: boolean;
+  /** Discard a hand card whose name contains this word (Деревяшка: «Пирог»). */
+  discardFromHandName?: string;
   /** Sacrifice n own creatures (Док Смерть, Заводской убийца). */
   destroyOwnCreature?: number;
   /** Sacrifice n own buildings (Стрелец Дэника). */
@@ -386,9 +394,13 @@ export type EffectSpec =
       multiplier?: number;
       atkBonus?: number;
       face?: boolean;
+      /** Bonus only while attacking an EMPTY lane (hero_ice_king). */
+      emptyLane?: boolean;
     }
   /** Un-flip a flipped (applied) own creature (Архитектор разума, Моника). */
   | { op: 'unflip'; target: TargetRef }
+  /** Protect covered creatures until the owner's next turn start (Пещера одиночества). */
+  | { op: 'grant_protection'; target: TargetRef }
   /** Reveal own deck top until a matching card (or max) (Вырубка леса, Гидромансер). */
   | { op: 'reveal_until'; max: number; match?: { type?: CardType; landType?: LandType; cardIds?: string[] } }
   /** Play the last revealed card for free; the rest of the window shuffles back. */

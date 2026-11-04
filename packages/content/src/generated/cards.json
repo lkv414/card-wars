@@ -196,7 +196,23 @@
   "attack": 1,
   "defense": 9,
   "description": "Уничтожь Зеленую сирену >>> Нанеси 1 урон каждому существу противника.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 1
+    },
+    "text": "Уничтожь Зеленую сирену >>> Нанеси 1 урон каждому существу противника.",
+    "additionalCost": {
+     "destroySelf": true
+    }
+   }
+  ]
  },
  {
   "id": "bmo_card_14",
@@ -208,7 +224,14 @@
   "attack": 0,
   "defense": 6,
   "description": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса. Нанеси урон каждому существу равный стоимости действий карты.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "text": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса. Нанеси урон каждому существу равный стоимости действий карты.",
+    "mechanic": "discard_top_damage"
+   }
+  ]
  },
  {
   "id": "bmo_card_15",
@@ -642,7 +665,33 @@
   "attack": 3,
   "defense": 3,
   "description": "Уничтожь Пень с булавой >>> Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "count": {
+      "kind": "per_discard",
+      "every": 5,
+      "amount": 1
+     }
+    },
+    "text": "Уничтожь Пень с булавой >>> Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "additionalCost": {
+     "destroySelf": true
+    }
+   }
+  ]
  },
  {
   "id": "bubblegum_card_1",
@@ -771,7 +820,22 @@
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_6.png",
   "description": "Сбрось карту >>> Твое существо на этой линии не может быть атаковано или выбрано до начала твоего следующего хода.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "grant_protection",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "text": "Сбрось карту >>> Твое существо на этой линии не может быть атаковано или выбрано до начала твоего следующего хода.",
+    "additionalCost": {
+     "discardFromHand": 1
+    }
+   }
+  ]
  },
  {
   "id": "bubblegum_card_7",
@@ -1348,7 +1412,26 @@
   "landType": "corn",
   "image": "/content/cards/images/cake_card_12.png",
   "description": "Каждое твое существо на земле со строением получает +2 ATK в этом ходу.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn",
+     "filter": {
+      "zoneBuilding": true
+     }
+    },
+    "text": "Каждое твое существо на земле со строением получает +2 ATK в этом ходу."
+   }
+  ]
  },
  {
   "id": "cake_card_14",
@@ -2492,7 +2575,34 @@
   "attack": 0,
   "defense": 8,
   "description": "Если в начале твоего хода у Милашки коалы 4 урона и более, нанеси 3 урона выбранному противнику.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "text": "Если в начале твоего хода у Милашки коалы 4 урона и более, нанеси 3 урона выбранному противнику.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "conditions": [
+     {
+      "kind": "while_own_card_in_play",
+      "cardId": "bubblegum_card_10",
+      "minDamage": 4
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "charlie_card_33",
@@ -3542,7 +3652,29 @@
   "attack": 1,
   "defense": 6,
   "description": "Бизнес пес получает +2 ATK за каждую карту сыгранную в этом ход с “пес” или “щенок” в названии.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_played_name",
+      "matchers": [
+       "пес",
+       "щенок"
+      ],
+      "amount": 2
+     },
+     "duration": "aura"
+    },
+    "text": "Бизнес пес получает +2 ATK за каждую карту сыгранную в этот ход с «пес» или «щенок» в названии."
+   }
+  ]
  },
  {
   "id": "fiona_card_18",
@@ -4189,7 +4321,23 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_18.png",
   "description": "Поменяй местами двух Существ под твоим контролем. (Они меняют линии одновременно.)",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "text": "Поменяй местами двух Существ под твоим контролем. (Они меняют линии одновременно.)",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "mechanic": "swap_creatures"
+   }
+  ]
  },
  {
   "id": "ftg_card_19",
@@ -5197,7 +5345,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_65.png",
   "description": "Выбранный противник сбрасывает до 5 карт, затем получает 1 урон за каждую карту сброшенную таким образом.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "text": "Выбранный противник сбрасывает до 5 карт, затем получает 1 урон за каждую карту сброшенную таким образом.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "mechanic": "discard_then_damage",
+    "params": {
+     "count": 5
+    }
+   }
+  ]
  },
  {
   "id": "ftg_card_66",
@@ -5674,7 +5838,26 @@
   "attack": 2,
   "defense": 2,
   "description": "Когда Бриллиантовый Дэн покидает игру с Милой земли, верни его владельцу в руку.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "triggering_instance"
+     }
+    },
+    "text": "Когда Бриллиантовый Дэн покидает игру с Милой земли, верни его владельцу в руку.",
+    "conditions": [
+     {
+      "kind": "if_payload_zone_land_type",
+      "landType": "good"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_85",
@@ -5886,7 +6069,34 @@
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_92.png",
   "description": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "triggering_instance"
+     }
+    },
+    "text": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу.",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     },
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_cost",
+      "min": 1
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_97",
@@ -5898,7 +6108,27 @@
   "attack": 1,
   "defense": 7,
   "description": "+1 ATK за каждую карту сброшенную игроками (включая тебя) с руки в этом ходу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "cards_discarded",
+      "scope": "all",
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 ATK за каждую карту сброшенную игроками (включая тебя) с руки в этом ходу."
+   }
+  ]
  },
  {
   "id": "ftg_card_98",
@@ -6128,7 +6358,29 @@
   "attack": 2,
   "defense": 9,
   "description": "Уничтожь Корнишон >>> Нанеси 3 Урона выбранному существу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 3
+    },
+    "text": "Уничтожь Корнишон >>> Нанеси 3 Урона выбранному существу.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "additionalCost": {
+     "destroySelf": true
+    }
+   }
+  ]
  },
  {
   "id": "ftg_card_107",
@@ -6938,7 +7190,20 @@
   "landType": "sand",
   "image": "/content/cards/images/grand_prix_card_27.png",
   "description": "Уничтожь выбранное существо противника. Каждый противник тянет столько карт сколько стоило это существо.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "text": "Уничтожь выбранное существо противника. Каждый противник тянет столько карт сколько стоило это существо.",
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     }
+    ],
+    "mechanic": "destroy_draw_cost"
+   }
+  ]
  },
  {
   "id": "grand_prix_card_29",
@@ -8040,7 +8305,29 @@
   "attack": 3,
   "defense": 3,
   "description": "Уничтожь Снежного Кролика >>> Заморозь выбранную землю.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "frozen": true
+    },
+    "text": "Уничтожь Снежного Кролика >>> Заморозь выбранную землю.",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "additionalCost": {
+     "destroySelf": true
+    }
+   }
+  ]
  },
  {
   "id": "ice_king_card_20",
@@ -9688,7 +9975,23 @@
   "attack": 5,
   "defense": 6,
   "description": "Замерянный голем стоит на 1 меньше за каждое другое существо сыгранное в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": {
+      "kind": "per_counter",
+      "counter": "creature_entered",
+      "scope": "all",
+      "amount": -1
+     }
+    },
+    "text": "Замерянный голем стоит на 1 меньше за каждое другое существо сыгранное в этом ходу."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_20",
@@ -9782,7 +10085,8 @@
   "attack": 1,
   "defense": 5,
   "description": "Ложись на песок, подвигай руками и ногами, и она придет к тебе.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": []
  },
  {
   "id": "lady_rainicorn_card_36",
@@ -10076,7 +10380,20 @@
   "landType": "sand",
   "image": "/content/cards/images/lemongrab_card_15.png",
   "description": "Верни выбранное существо владельцу в руку. Получи количество действий равных ее стоимости.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "text": "Верни выбранное существо владельцу в руку. Получи количество действий равных ее стоимости.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "mechanic": "return_cost_actions"
+   }
+  ]
  },
  {
   "id": "lemongrab_card_16",
@@ -10748,7 +11065,8 @@
   "attack": 1,
   "defense": 6,
   "description": "\"Не такой уж и сладкий\"",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": []
  },
  {
   "id": "lich_card_21",
@@ -10894,7 +11212,8 @@
   "attack": 1,
   "defense": 4,
   "description": "\"Му?\"",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": []
  },
  {
   "id": "lich_card_34",
@@ -11328,7 +11647,22 @@
   "attack": 3,
   "defense": 6,
   "description": "ПРИЕМ >>> Сбрось 3 верхние карты своей колоды. За каждое заклинание сброшенное таким образом, выбранный игрок сбрасывает карту.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "text": "ПРИЕМ >>> Сбрось 3 верхние карты своей колоды. За каждое заклинание сброшенное таким образом, выбранный игрок сбрасывает карту.",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "mechanic": "mill_spell_discard",
+    "params": {
+     "count": 3
+    }
+   }
+  ]
  },
  {
   "id": "lsp_card_14",
@@ -12674,7 +13008,23 @@
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_38.png",
   "description": "Наноси урон выбранному существу пока у него не остается 1 DEF.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "text": "Наноси урон выбранному существу пока у него не остается 1 DEF.",
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "mechanic": "damage_until_def",
+    "params": {
+     "floor": 1
+    }
+   }
+  ]
  },
  {
   "id": "monika_card_39",
@@ -12684,7 +13034,25 @@
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_39.png",
   "description": "Сбрось карту >>> Твое Существо на этой линии получает +1 ATK в этом ход. (Используй любое количество раз во время своего хода).",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    },
+    "text": "Сбрось карту >>> Твое Существо на этой линии получает +1 ATK в этом ход. (Используй любое количество раз во время своего хода).",
+    "additionalCost": {
+     "discardFromHand": 1
+    }
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_1",
@@ -12785,7 +13153,17 @@
   "attack": 1,
   "defense": 4,
   "description": "Приём >>> Самоподрыв. В начале твоего следующего хода взорвётся, нанеся 6 урона существу противника на этой линии или противнику, если линия пуста. Если убит во время хода противника, не взрывается. После самоподрыва сбрось его.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "active",
+    "text": "Приём >>> Самоподрыв. В начале твоего следующего хода взорвётся, нанеся 6 урона существу противника на этой линии или противнику, если линия пуста. Если убит во время хода противника, не взрывается. После самоподрыва сбрось его.",
+    "mechanic": "lane_or_face_damage",
+    "params": {
+     "amount": 6
+    }
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_12",
@@ -12797,7 +13175,22 @@
   "attack": 2,
   "defense": 6,
   "description": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "active",
+    "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него.",
+    "targets": [
+     {
+      "kind": "opponent_creature"
+     }
+    ],
+    "mechanic": "splash_damage",
+    "params": {
+     "amount": 1
+    }
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_14",
@@ -12809,7 +13202,8 @@
   "attack": 4,
   "defense": 2,
   "description": "Он очень зол.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": []
  },
  {
   "id": "tree_trunks_card_16",

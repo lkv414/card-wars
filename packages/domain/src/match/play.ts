@@ -97,6 +97,7 @@ export function handlePlayCard(
     inst.playedTurn = draft.turn;
     p.hand.splice(p.hand.indexOf(instanceId), 1);
     p.companion = instanceId;
+    draft.turnPlayedCardIds.push(card.id);
     emit(ctx, {
       type: 'companion_played',
       player: playerId,
@@ -126,7 +127,7 @@ export function handlePlayCard(
       if (Array.isArray(ability.effect) || ability.optional) continue;
       validateChoices(draft, ctx, { player: playerId, instanceId }, ability.targets, declared.slice(costCount));
     }
-    const handPicks = costPicks(declared, costSpec?.discardFromHand ?? 0, playerId, draft);
+    const handPicks = costPicks(declared, costSpec?.discardFromHand ?? 0, playerId, draft, ctx, costSpec);
     const floopPicks = floopCostPicks(declared, costSpec?.discardFromHand ?? 0, costSpec, draft, playerId);
     const killPicks = sacrificePicks(declared, costSpec?.discardFromHand ?? 0, costSpec, draft, ctx, playerId);
     p.actions -= effectiveCost;
@@ -240,6 +241,7 @@ export function handlePlayCard(
 
   p.actions -= effectiveCost;
   consumeDiscount(draft, playerId, card.type === 'creature' ? 'creature' : 'building');
+  draft.turnPlayedCardIds.push(card.id);
   inst.location = 'field';
   inst.zone = zone;
   inst.slot = slot;

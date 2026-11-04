@@ -1,0 +1,20 @@
+{
+  "cardId": "monika_card_38",
+  "name": "Посох вуду",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Наноси урон выбранному существу пока у него не остается 1 DEF.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "mechanic": "damage_until_def",
+      "params": {
+        "floor": 1
+      }
+    }
+  ]
+}

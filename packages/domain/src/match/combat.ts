@@ -67,11 +67,30 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             if (!defenderInstanceId) continue;
             if (defender.lands[target.zone]!.type !== mod.landType) continue;
           }
+          if (mod.emptyLane && defenderInstanceId) continue; // только пустая линия
           if (mod.face) faceDamage = true;
           if (mod.atkBonus) attackPowerMod += mod.atkBonus;
           if (mod.multiplier) attackPowerMod *= mod.multiplier;
         }
 
+        // Защита (Пещера одиночества): атака по защищённому уходит в лицо.
+        const defenderProtected = defenderInstanceId !== null && draft.protections.some((pr) => pr.instanceId === defenderInstanceId);
+        if (defenderProtected) {
+          enqueueTrigger(draft, ctx, 'on_creature_attacks', {
+            instanceId: attackerInstanceId,
+            player: attackerInstance.controller,
+            zone: z,
+            amount: attackPowerMod,
+          });
+          dealToPlayer(draft, ctx, target.player, attackPower, attackerInstanceId);
+          enqueueTrigger(draft, ctx, 'on_damage_dealt', {
+            instanceId: attackerInstanceId,
+            player: attackerInstance.controller,
+            targetPlayer: target.player,
+            amount: attackPower,
+          });
+          continue;
+        }
         if (defenderInstanceId && !faceDamage) {
           // Simultaneous exchange: both powers are computed before any damage lands.
           bumpCounter(draft, 'creature_attack', attackerId);

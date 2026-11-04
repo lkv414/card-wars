@@ -142,6 +142,15 @@ export function runEffect(
       }
       return;
     }
+    case 'grant_protection': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'creature') continue;
+        if (!draft.protections.some((pr) => pr.instanceId === target.instanceId)) {
+          draft.protections.push({ instanceId: target.instanceId });
+        }
+      }
+      return;
+    }
     case 'unflip': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'creature') continue;
@@ -549,6 +558,10 @@ function targetMatchesFilter(
     const owner = draft.players[inst.controller]!;
     const zoneLand = inst.zone !== null ? owner.lands[inst.zone]!.type : null;
     if (zoneLand !== filter.zoneLandType) match = false;
+  }
+  if (match && filter.zoneBuilding) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || !owner.lands[inst.zone] || !owner.zones[inst.zone]!.building) match = false;
   }
   if (match && filter.zoneFlipped) {
     const owner = draft.players[inst.controller]!;

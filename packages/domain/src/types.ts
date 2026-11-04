@@ -168,6 +168,10 @@ export interface MatchState {
   turnCounters: Record<string, number>;
   /** Modifiers granted by abilities this turn; cleared at end of turn. */
   turnModifiers: TurnModifier[];
+  /** CardIds played this turn (Бизнес пес, play-gates). */
+  turnPlayedCardIds: string[];
+  /** Protected creatures: attacks redirect to face, enemy targeting rejected (Пещера одиночества). */
+  protections: Array<{ instanceId: string }>;
   /** Consumable play discounts this turn (docs/MECHANICS-V2.md §3, A10). */
   discounts: Array<{ player: PlayerId; cardType: 'spell' | 'creature' | 'building'; amount: number; grantedOnTurn: number }>;
   /** Spell-play bans armed by damage (Дух ниндзя); activated at the victim's turn start. */

@@ -9,7 +9,7 @@ import type { TargetChoice } from './types';
 /** Number of player picks the additional cost requires (before declared targets). */
 export function costPicksCount(cost: AdditionalCost | undefined): number {
   if (!cost) return 0;
-  return (cost.discardFromHand ?? 0) + (cost.destroyOwnCreature ?? 0) + (cost.destroyOwnBuilding ?? 0) + (cost.floopOwnCreature ?? 0);
+  return (cost.discardFromHand ?? 0) + (cost.destroyOwnCreature ?? 0) + (cost.destroyOwnBuilding ?? 0) + (cost.floopOwnCreature ?? 0) + (cost.discardFromHandName ? 1 : 0);
 }
 
 /** Validate and collect the discard part of the additional cost. */
@@ -18,8 +18,11 @@ export function costPicks(
   pickCount: number,
   playerId: PlayerId,
   draft: MatchState,
+  ctx?: Pick<Ctx, 'catalog'>,
+  cost?: AdditionalCost,
 ): string[] {
   const picks: string[] = [];
+  const nameFilter = cost?.discardFromHandName;
   for (const pick of targets.slice(0, pickCount)) {
     if (pick.kind !== 'card') {
       throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
@@ -27,6 +30,12 @@ export function costPicks(
     const inst = instance(draft, pick.instanceId);
     if (inst.location !== 'hand' || inst.controller !== playerId) {
       throw new DomainError('invalid_choice', 'additional cost needs a card from your hand');
+    }
+    if (nameFilter && ctx) {
+      const name = ctx.catalog.getCard(inst.cardId)?.name ?? '';
+      if (!name.toLowerCase().includes(nameFilter.toLowerCase())) {
+        throw new DomainError('invalid_choice', `additional cost needs a card with «${nameFilter}» in the name`);
+      }
     }
     picks.push(pick.instanceId);
   }

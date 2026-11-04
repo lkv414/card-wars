@@ -96,7 +96,7 @@ export function handleFloop(
     );
   }
   const allTargets = targets ?? [];
-  const handPicks = costPicks(allTargets, discardCount, playerId, draft);
+  const handPicks = costPicks(allTargets, discardCount, playerId, draft, ctx, ability.additionalCost);
   if (!interactiveArray && declaredAsks.length > 0) {
     validateChoices(draft, ctx, { player: playerId, instanceId }, declaredAsks, allTargets.slice(costCount));
   }

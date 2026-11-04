@@ -5,15 +5,13 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": {
-        "mechanic": "destroy_draw_cost"
-      },
       "text": "Уничтожь выбранное существо противника. Каждый противник тянет столько карт сколько стоило это существо.",
       "targets": [
         {
           "kind": "opponent_creature"
         }
-      ]
+      ],
+      "mechanic": "destroy_draw_cost"
     }
   ]
 }

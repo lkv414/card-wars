@@ -176,6 +176,8 @@ export function createMatch(
     turnCounters: {},
     turnModifiers: [],
     discounts: [],
+    turnPlayedCardIds: [],
+    protections: [],
     spellBansArmed: [],
     spellBansActive: [],
     landFlipEffects: [],

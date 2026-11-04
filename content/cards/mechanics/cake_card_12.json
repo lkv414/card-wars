@@ -1,0 +1,23 @@
+{
+  "cardId": "cake_card_12",
+  "name": "Деревянный ритм",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn",
+        "filter": {
+          "zoneBuilding": true
+        }
+      },
+      "text": "Каждое твое существо на земле со строением получает +2 ATK в этом ходу."
+    }
+  ]
+}

@@ -5,18 +5,16 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": {
-        "mechanic": "discard_then_damage",
-        "params": {
-          "count": 5
-        }
-      },
       "text": "Выбранный противник сбрасывает до 5 карт, затем получает 1 урон за каждую карту сброшенную таким образом.",
       "targets": [
         {
           "kind": "opponent_player"
         }
-      ]
+      ],
+      "mechanic": "discard_then_damage",
+      "params": {
+        "count": 5
+      }
     }
   ]
 }

@@ -41,6 +41,13 @@ export function validateChoices(
     if (!choiceMatchesAsk(draft, source, ask, choice, choices!)) {
       throw new DomainError('invalid_choice', `target ${i + 1} does not match ask ${ask.kind}`);
     }
+    // Защищённое существо нельзя выбрать врагом (Пещера одиночества).
+    if (choice.kind === 'creature') {
+      const inst = instance(draft, choice.instanceId);
+      if (draft.protections.some((pr) => pr.instanceId === choice.instanceId) && inst.controller !== source.player) {
+        throw new DomainError('invalid_choice', 'target is protected');
+      }
+    }
     if (ask.filter && !askFilterPasses(draft, ctx, choice, ask.filter)) {
       throw new DomainError('invalid_choice', `target ${i + 1} violates the ask filter`);
     }

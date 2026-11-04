@@ -1,0 +1,19 @@
+{
+  "cardId": "bubblegum_card_6",
+  "name": "Пещера одиночества",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "grant_protection",
+        "target": {
+          "kind": "this_lane_creature"
+        }
+      },
+      "text": "Сбрось карту >>> Твое существо на этой линии не может быть атаковано или выбрано до начала твоего следующего хода.",
+      "additionalCost": {
+        "discardFromHand": 1
+      }
+    }
+  ]
+}

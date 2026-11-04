@@ -1,0 +1,19 @@
+{
+  "cardId": "tree_trunks_card_12",
+  "name": "Взрывной мужик",
+  "abilities": [
+    {
+      "kind": "active",
+      "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него.",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "mechanic": "splash_damage",
+      "params": {
+        "amount": 1
+      }
+    }
+  ]
+}

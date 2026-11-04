@@ -307,9 +307,17 @@ export function conditionsHold(
       case 'while_own_card_in_play': {
         const inPlay = p.zones.some((zone) => {
           const id = zone.creature ?? zone.building;
-          return id !== null && draft.instances[id]!.cardId === cond.cardId;
+          if (id === null || draft.instances[id]!.cardId !== cond.cardId) return false;
+          if (cond.minDamage !== undefined && draft.instances[id]!.damage < cond.minDamage) return false;
+          return true;
         });
         if (!inPlay) return false;
+        break;
+      }
+      case 'if_payload_zone_land_type': {
+        if (!payload?.player || payload.zone === undefined || payload.zone === null) return false;
+        const land = draft.players[payload.player]!.lands[payload.zone];
+        if (!land || land.type !== cond.landType) return false;
         break;
       }
       case 'while_no_tokens_in_play': {
@@ -498,6 +506,13 @@ export function resolveStatAmount(
       const picked = choices?.find((c) => c.kind === 'player');
       return picked ? draft.players[picked.playerId]!.hand.length * amount.amount : 0;
     }
+    case 'per_played_name': {
+      const needle = (cardId: string): boolean => {
+        const name = ctx.catalog.getCard(cardId)?.name ?? '';
+        return amount.matchers.some((m) => name.toLowerCase().includes(m.toLowerCase()));
+      };
+      return draft.turnPlayedCardIds.filter(needle).length * amount.amount;
+    }
     case 'per_token_players':
       return draft.order.filter((pid) => draft.players[pid]!.lands.some((l) => l.iceTokens > 0)).length * amount.amount;
     case 'per_target': {
@@ -540,6 +555,10 @@ function targetMatchesFilter(
   if (filter.zoneFlipped) {
     const owner = draft.players[inst.controller]!;
     if (inst.zone === null || !owner.lands[inst.zone]!.flipped) return false;
+  }
+  if (filter.zoneBuilding) {
+    const owner = draft.players[inst.controller]!;
+    if (inst.zone === null || !owner.zones[inst.zone]!.building) return false;
   }
   return true;
 }

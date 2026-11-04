@@ -1,0 +1,20 @@
+{
+  "cardId": "lady_rainicorn_card_19",
+  "name": "Замерянный голем",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "all",
+          "amount": -1
+        }
+      },
+      "text": "Замерянный голем стоит на 1 меньше за каждое другое существо сыгранное в этом ходу."
+    }
+  ]
+}

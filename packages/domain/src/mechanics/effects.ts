@@ -111,6 +111,12 @@ export function runEffect(
   choices: TargetChoice[] | undefined,
   payload?: TriggerPayload,
 ): void {
+  // Условия самого эффекта: не выполнены — шаг пропускается (Древний школяр:
+  // «Верни случайную Радужную карту… Если на этой линии строение, получи
+  // 1 действие» — возврат карты безусловен, действие только при строении).
+  if (effect.conditions && !conditionsHold(draft, ctx, source, effect.conditions, undefined, payload)) {
+    return;
+  }
   switch (effect.op) {
     case 'deal_damage': {
       const targets = resolveTarget(draft, ctx, effect.target, source, choices, payload);
@@ -173,7 +179,7 @@ export function runEffect(
       const amount = resolveStatAmount(draft, ctx, source, effect.amount, undefined, choices);
       for (const target of targets) {
         if (target.kind !== 'creature' && target.kind !== 'building') continue;
-        // Conditions of the effect itself, per target (Мисс Пушинка: «пока 7 урона»).
+        // Per-target conditions of the effect (Мисс Пушинка: «пока 7 урона»).
         if (!conditionsHold(draft, ctx, source, effect.conditions, target.instanceId, payload)) continue;
         const inst = instance(draft, target.instanceId);
         if (effect.duration === 'this_turn') {
@@ -425,6 +431,38 @@ export function runEffect(
         throw new DomainError('invalid_choice', `card is not a ${effect.match.type}`);
       }
       playFreeCard(draft, ctx, source, choices, payload, pick.instanceId, handCard, effect.destination);
+      return;
+    }
+    case 'play_from_discard': {
+      // Карта выбрана из сброса (own_discard_card / any_discard_card) и играется
+      // бесплатно: существо/строение → в землю, заклинание → on_cast.
+      const pick = (choices ?? []).find((c): c is Extract<TargetChoice, { kind: 'card' }> => c.kind === 'card');
+      if (!pick) throw new DomainError('invalid_choice', 'play_from_discard needs a discard card');
+      const inst = instance(draft, pick.instanceId);
+      const card = ctx.catalog.getCard(inst.cardId);
+      if (!card || inst.location !== 'discard') {
+        throw new DomainError('invalid_choice', 'play_from_discard needs a card from a discard pile');
+      }
+      // Свой сброс или любой (Последний шанс — «твоего сброса или сброса противника»).
+      const owner = draft.players[inst.controller]!;
+      if (effect.from !== 'any' && inst.controller !== source.player) {
+        throw new DomainError('invalid_choice', 'play_from_discard needs your own discard card');
+      }
+      if (effect.match?.type && card.type !== effect.match.type) {
+        throw new DomainError('invalid_choice', `card is not a ${effect.match.type}`);
+      }
+      if (effect.match?.maxCost !== undefined && card.cost > effect.match.maxCost) {
+        throw new DomainError('invalid_choice', `card costs more than ${effect.match.maxCost}`);
+      }
+      if (effect.match?.cardIds && !effect.match.cardIds.includes(card.id)) {
+        throw new DomainError('invalid_choice', 'card does not match');
+      }
+      // Из сброса — в игру: карта покидает стопку сброса.
+      owner.discard.splice(owner.discard.indexOf(pick.instanceId), 1);
+      // Карта из чужого сброса переходит под контроль владельца способности.
+      inst.controller = source.player;
+      inst.location = 'removed';
+      playFreeCard(draft, ctx, source, choices, payload, pick.instanceId, card, effect.destination);
       return;
     }
     case 'play_revealed': {

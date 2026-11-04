@@ -1402,7 +1402,28 @@
   "landType": "corn",
   "image": "/content/cards/images/cake_card_11.png",
   "description": "Верни строение из стопки сброса в игру.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "play_from_discard"
+    },
+    "text": "Верни строение из стопки сброса в игру.",
+    "targets": [
+     {
+      "kind": "own_discard_card",
+      "filter": {
+       "cardType": "building"
+      }
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "cake_card_12",
@@ -6585,7 +6606,29 @@
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_111.png",
   "description": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "play_from_discard"
+    },
+    "text": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
+    "targets": [
+     {
+      "kind": "own_discard_card",
+      "filter": {
+       "cardType": "creature",
+       "maxCost": 2
+      }
+     },
+     {
+      "kind": "landscape"
+     }
+    ]
+   }
+  ]
  },
  {
   "id": "ftg_card_112",

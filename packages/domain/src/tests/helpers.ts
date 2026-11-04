@@ -308,6 +308,42 @@ export const cards: CardData[] = [
     ],
   }),
   card({
+    id: 'raiser',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: { op: 'play_from_discard' },
+        targets: [
+          { kind: 'own_discard_card', filter: { cardType: 'creature', maxCost: 2 } },
+          { kind: 'landscape' },
+        ],
+        text: 'ПРИЕМ >>> верни существо из сброса в игру',
+      },
+    ],
+  }),
+  card({
+    id: 'tapped-mover',
+    type: 'creature',
+    cost: 1,
+    landType: 'swamp',
+    attack: 1,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'active',
+        effect: { op: 'move_creature', target: { kind: 'choice', index: 0 }, destination: { kind: 'this_lane_land' }, side: 'own' },
+        // Только НЕактивные (флипнутые) существа — фильтр ask'а.
+        targets: [{ kind: 'own_creature', filter: { flipped: true } }],
+        text: 'ПРИЕМ >>> перемести неактивное существо на эту землю',
+      },
+    ],
+  }),
+  card({
     id: 'turn-chooser',
     type: 'creature',
     cost: 1,

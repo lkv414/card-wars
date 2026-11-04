@@ -58,6 +58,71 @@ export function Hud({ code }: { code: string }) {
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
   const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
 
+  /**
+   * Выбор карты из стопки сброса (Поднятие мертвых, Лунный урожай).
+   * Сброс публичен, но в 3D видна только верхняя карта — поэтому перечисляем
+   * карты списком в баннере ожидания (как вскрытые карты выше).
+   */
+  const discardPickers = (() => {
+    const askInfo = (() => {
+      if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
+        const ability = view.pending.cardId
+          ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
+          : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+        const ask = ability?.targets?.[view.pending.askIndex ?? 0];
+        return ask ? { kind: ask.kind, filter: ask.filter } : null;
+      }
+      if (targeting) {
+        const ask = targeting.asks[targeting.askIndex];
+        return ask ? { kind: ask.kind, filter: ask.filter } : null;
+      }
+      return null;
+    })();
+    if (!askInfo || (askInfo.kind !== 'own_discard_card' && askInfo.kind !== 'any_discard_card')) return null;
+    const filter = askInfo.filter;
+    const pools: Array<{ label: string; cards: Array<{ instanceId: string; cardId: string }> }> = [];
+    const usable = (cardId: string): boolean => {
+      if (!filter) return true;
+      const card = catalog.find((c) => c.id === cardId);
+      if (!card) return false;
+      if (filter.cardType && card.type !== filter.cardType) return false;
+      if (filter.maxCost !== undefined && card.cost > filter.maxCost) return false;
+      if (filter.cardIds && !filter.cardIds.includes(cardId)) return false;
+      return true;
+    };
+    if (askInfo.kind === 'own_discard_card') {
+      pools.push({
+        label: 'твой сброс',
+        cards: (view.players[view.me]?.discard ?? []).filter((c) => usable(c.cardId)),
+      });
+    } else {
+      for (const pid of view.order) {
+        const p = view.players[pid]!;
+        const cards = p.discard.filter((c) => usable(c.cardId));
+        if (cards.length === 0) continue;
+        pools.push({ label: `сброс: ${p.nickname}`, cards });
+      }
+    }
+    return (
+      <div className="revealed-picker" aria-label="Карты из сброса">
+        {pools.map((pool) => (
+          <span key={pool.label} className="revealed-pool">
+            <span className="hint">{pool.label}:</span>
+            {pool.cards.map((card) => (
+              <button
+                key={card.instanceId}
+                className="mini revealed-card"
+                onClick={() => targetingPick({ kind: 'card', instanceId: card.instanceId })}
+              >
+                {cardNameById(card.cardId)}
+              </button>
+            ))}
+          </span>
+        ))}
+      </div>
+    );
+  })();
+
   const activeNames = view.activePlayers
     .map((pid) => `${view.players[pid]?.nickname ?? pid}${view.players[pid]?.battleReady ? ' ✓' : ''}`)
     .join(', ');
@@ -210,6 +275,7 @@ export function Hud({ code }: { code: string }) {
                     </button>
                   ));
               })()}
+              {discardPickers}
             </>
           ) : (
             <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>

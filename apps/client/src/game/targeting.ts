@@ -14,7 +14,14 @@ import type { Command } from '@card-wars/protocol';
 
 export interface TargetAsk {
   kind: string;
-  filter?: { ready?: boolean; landType?: string };
+  filter?: {
+    ready?: boolean;
+    landType?: string;
+    /** Тип и стоимость карты (выбор из сброса). */
+    cardType?: string;
+    maxCost?: number;
+    cardIds?: string[];
+  };
 }
 
 export interface TargetingState {
@@ -82,6 +89,16 @@ function fieldCreatures(view: PlayerView, pid: string): TargetChoice[] {
 
 function cardLandType(cardId: string): string | undefined {
   return catalog.find((c) => c.id === cardId)?.landType;
+}
+
+/** Тип и стоимость карты из сброса (фильтр ask'а). */
+function discardCardPasses(cardId: string, filter: NonNullable<TargetAsk['filter']>): boolean {
+  const card = catalog.find((c) => c.id === cardId);
+  if (!card) return false;
+  if (filter.cardType && card.type !== filter.cardType) return false;
+  if (filter.maxCost !== undefined && card.cost > filter.maxCost) return false;
+  if (filter.cardIds && !filter.cardIds.includes(cardId)) return false;
+  return true;
 }
 
 /** Валидные цели для текущего ask'а (подсветка; финально валидирует домен). */
@@ -172,6 +189,17 @@ export function validTargets(
     }
     case 'own_hand_card':
       return view.myHand.map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
+    case 'own_discard_card':
+      // Сброс публичен (docs/RULES.md), но выбирать можно только свой.
+      return (view.players[view.me]?.discard ?? [])
+        .filter((c) => !ask.filter || discardCardPasses(c.cardId, ask.filter))
+        .map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
+    case 'any_discard_card':
+      return view.order.flatMap((pid) =>
+        (view.players[pid]?.discard ?? [])
+          .filter((c) => !ask.filter || discardCardPasses(c.cardId, ask.filter))
+          .map((c) => ({ kind: 'card' as const, instanceId: c.instanceId })),
+      );
     case 'revealed_card':
       return (view.revealed?.[view.me] ?? []).map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
     default:

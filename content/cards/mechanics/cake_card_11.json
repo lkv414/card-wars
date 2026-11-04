@@ -1,0 +1,25 @@
+{
+ "cardId": "cake_card_11",
+ "name": "Лунный урожай",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_cast",
+   "effect": {
+    "op": "play_from_discard"
+   },
+   "text": "Верни строение из стопки сброса в игру.",
+   "targets": [
+    {
+     "kind": "own_discard_card",
+     "filter": {
+      "cardType": "building"
+     }
+    },
+    {
+     "kind": "landscape"
+    }
+   ]
+  }
+ ]
+}

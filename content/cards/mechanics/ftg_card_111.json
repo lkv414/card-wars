@@ -1,0 +1,26 @@
+{
+ "cardId": "ftg_card_111",
+ "name": "Поднятие мертвых",
+ "abilities": [
+  {
+   "kind": "passive",
+   "trigger": "on_cast",
+   "effect": {
+    "op": "play_from_discard"
+   },
+   "text": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
+   "targets": [
+    {
+     "kind": "own_discard_card",
+     "filter": {
+      "cardType": "creature",
+      "maxCost": 2
+     }
+    },
+    {
+     "kind": "landscape"
+    }
+   ]
+  }
+ ]
+}

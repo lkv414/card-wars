@@ -68,7 +68,11 @@ export type TargetAskKind =
   /** One creature on an adjacent lane, either side (Пляжная мумия). */
   | 'adjacent_any_creature'
   /** One card of the current revealed window (Газы Огрa). */
-  | 'revealed_card';
+  | 'revealed_card'
+  /** One card of the owner's own discard pile (Поднятие мертвых, Лунный урожай). */
+  | 'own_discard_card'
+  /** One card of any player's discard pile (Последний шанс — «твоего сброса или сброса противника»). */
+  | 'any_discard_card';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -158,6 +162,10 @@ export interface TargetFilter {
   sameCard?: boolean;
   /** Only these cards (Мамуля камнепух counts Малышей — data-level cross-reference). */
   cardIds?: string[];
+  /** Only cards of this type (выбор строения из сброса — Лунный урожай). */
+  cardType?: CardType;
+  /** Only cards costing at most this much (Поднятие мертвых: «стоимостью 2 или менее»). */
+  maxCost?: number;
   /** Only creatures without damage (Пирогошторм). */
   undamaged?: boolean;
   /** Only flipped («неактивные») creatures (Лапа пумы). */
@@ -322,8 +330,13 @@ export interface AdditionalCost {
 /**
  * Declarative operations (docs/MECHANICS-V2.md §3). The union grows per
  * milestone; unimplemented ops are rejected by the interpreter until coded.
+ *
+ * Every operation may carry its own `conditions` — checked when the effect
+ * runs («Верни случайную Радужную карту… Если на этой линии строение,
+ * получи 1 действие» — Древний школяр). Ability-level `conditions` gate the
+ * whole ability; effect-level ones gate only this step.
  */
-export type EffectSpec =
+type EffectOp =
   | { op: 'deal_damage'; target: TargetRef; amount: StatAmount; pierce?: boolean; filter?: TargetFilter }
   | { op: 'heal'; target: TargetRef; amount: StatAmount }
   | { op: 'draw_cards'; count: StatAmount; target?: TargetRef }
@@ -341,12 +354,6 @@ export type EffectSpec =
       floorDefense?: number;
       /** Attack floor: «минимум 0» у дебаффов (Затопление, Аванпост попугаев). */
       floorAttack?: number;
-      /**
-       * Conditions of THIS effect, checked per candidate target
-       * (Мисс Пушинка: «пока ровно 7 урона»; Кукурузный чемпион: «если на
-       * этой земле строение»). Evaluated live — re-read on every stat scan.
-       */
-      conditions?: ConditionSpec[];
     }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
   | { op: 'gain_actions'; amount: number }
@@ -430,6 +437,20 @@ export type EffectSpec =
   | { op: 'play_revealed'; destination?: TargetRef }
   /** Play a hand card for free (cost ≤ maxCost, match filter) (Краб пират, Синхронизация). */
   | { op: 'play_from_hand'; maxCost?: number; match?: { type?: import('../types').CardType }; destination?: TargetRef }
+  /**
+   * Play a card from a discard pile for free (Поднятие мертвых, Лунный урожай,
+   * Последний шанс). The chosen card leaves the discard pile and enters play;
+   * a creature/building goes to `destination` (or the chosen landscape),
+   * a spell resolves its `on_cast`, a companion takes the slot.
+   */
+  | {
+      op: 'play_from_discard';
+      /** Restrict the pick (Лунный урожай — только строение). */
+      match?: { type?: import('../types').CardType; maxCost?: number; cardIds?: string[] };
+      /** Whose discard pile the card is taken from. */
+      from?: 'own' | 'any';
+      destination?: TargetRef;
+    }
   /** Reveal the top N cards of own deck (public, docs/MECHANICS-V2.md §8). */
   | { op: 'reveal_deck_top'; count: number }
   /**
@@ -437,6 +458,23 @@ export type EffectSpec =
    * destination per `to`; the rest of the window per `rest`.
    */
   | { op: 'resolve_revealed'; target: TargetRef; to: 'deck_bottom' | 'hand' | 'deck_top'; rest?: 'discard' | 'deck' };
+
+/**
+ * A declarative operation with its own optional conditions.
+ *
+ * `conditions` are checked when the effect runs and gate ONLY this step
+ * («Верни случайную Радужную карту… Если на этой линии контролируешь
+ * строение, получи 1 действие» — Древний школяр). Ability-level
+ * `conditions` (`AbilitySpec.conditions`) gate the whole ability instead.
+ */
+export type EffectSpec = EffectOp & {
+  /**
+   * Conditions of THIS effect. For `stat_buff` they are checked per candidate
+   * target (Мисс Пушинка: «пока ровно 7 урона»; Кукурузный чемпион: «если на
+   * этой земле строение») — evaluated live, on every stat scan.
+   */
+  conditions?: ConditionSpec[];
+};
 
 export interface AbilitySpec {
   kind: 'passive' | 'active';

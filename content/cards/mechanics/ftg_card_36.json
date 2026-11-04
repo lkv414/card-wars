@@ -1,0 +1,27 @@
+{
+ "cardId": "ftg_card_36",
+ "name": "Деревянный рыцарь",
+ "abilities": [
+  {
+   "kind": "active",
+   "effect": {
+    "op": "play_from_hand",
+    "match": {
+     "type": "building"
+    },
+    "destination": {
+     "kind": "this_lane_land"
+    }
+   },
+   "text": "ПРИЕМ >>> Положи строение со своей руки на эту линию (если на ней нет строения).",
+   "targets": [
+    {
+     "kind": "own_hand_card",
+     "filter": {
+      "cardType": "building"
+     }
+    }
+   ]
+  }
+ ]
+}

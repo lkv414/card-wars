@@ -64,14 +64,14 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'grant_protection', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage']);
 const TRIGGERS2 = null;
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze',
 ]);
-const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player']);
+const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card']);
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
@@ -126,8 +126,20 @@ function validateAbility(ability, owner) {
     if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
     if (ask.filter) {
       for (const key of Object.keys(ask.filter)) {
-        if (!['ready', 'landType', 'zoneToken', 'flipped', 'undamaged'].includes(key)) fail(`${where}: unknown ask filter ${key}`);
+        if (!['ready', 'landType', 'zoneToken', 'flipped', 'undamaged', 'cardType', 'maxCost', 'cardIds'].includes(key)) {
+          fail(`${where}: unknown ask filter ${key}`);
+        }
       }
+      if (ask.filter.cardType && !CARD_TYPES.has(ask.filter.cardType)) fail(`${where}: ask filter cardType invalid`);
+      if (ask.filter.maxCost !== undefined && !Number.isInteger(ask.filter.maxCost)) {
+        fail(`${where}: ask filter maxCost must be an integer`);
+      }
+    }
+  }
+  // Условия на уровне эффекта (Древний школяр: «если на этой линии строение…»).
+  for (const effect of effects) {
+    for (const cond of effect.conditions ?? []) {
+      if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown effect condition ${cond.kind}`);
     }
   }
 }
@@ -200,6 +212,13 @@ function validateEffect(effect, where, ability) {
   } else if (op === 'play_from_hand') {
     if (effect.destination) checkTargetRef(effect.destination, where);
     if (effect.maxCost !== undefined && !Number.isInteger(effect.maxCost)) fail(`${where}: play_from_hand maxCost must be an integer`);
+  } else if (op === 'play_from_discard') {
+    if (effect.destination) checkTargetRef(effect.destination, where);
+    if (effect.from !== undefined && !['own', 'any'].includes(effect.from)) fail(`${where}: play_from_discard from must be own|any`);
+    if (effect.match?.type && !CARD_TYPES.has(effect.match.type)) fail(`${where}: play_from_discard match type invalid`);
+    if (effect.match?.maxCost !== undefined && !Number.isInteger(effect.match.maxCost)) {
+      fail(`${where}: play_from_discard match maxCost must be an integer`);
+    }
   } else if (op === 'resolve_revealed') {
     checkTargetRef(effect.target, where);
     if (!['deck_bottom', 'hand', 'deck_top'].includes(effect.to)) fail(`${where}: resolve_revealed to must be deck_bottom|hand|deck_top`);

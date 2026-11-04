@@ -1,4 +1,4 @@
-import { DomainError } from '../errors';
+﻿import { DomainError } from '../errors';
 import { instance, player } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState, PlayerId } from '../types';
@@ -65,10 +65,20 @@ function askFilterPasses(
   if (choice.kind !== 'creature' && choice.kind !== 'card') return true;
   const inst = instance(draft, choice.instanceId);
   if (filter.ready && inst.flipped) return false;
+  if (filter.flipped === true && !inst.flipped) return false;
+  if (filter.undamaged === true && inst.damage > 0) return false;
   if (filter.landType && !landTypeMatches(draft, ctx, choice.instanceId, filter.landType)) return false;
   if (filter.zoneToken) {
     const owner = draft.players[inst.controller]!;
     if (inst.zone === null || owner.lands[inst.zone]!.iceTokens <= 0) return false;
+  }
+  // Тип и стоимость карты (выбор из сброса: «строение», «существо стоимостью 2 или менее»).
+  if (filter.cardType || filter.maxCost !== undefined || filter.cardIds) {
+    const card = ctx.catalog.getCard(inst.cardId);
+    if (!card) return false;
+    if (filter.cardType && card.type !== filter.cardType) return false;
+    if (filter.maxCost !== undefined && card.cost > filter.maxCost) return false;
+    if (filter.cardIds && !filter.cardIds.includes(card.id)) return false;
   }
   return true;
 }
@@ -175,6 +185,16 @@ function choiceMatchesAsk(
       if (choice.kind !== 'card') return false;
       const inst = instance(draft, choice.instanceId);
       return inst.location === 'hand' && inst.controller === source.player;
+    }
+    case 'own_discard_card': {
+      if (choice.kind !== 'card') return false;
+      const inst = instance(draft, choice.instanceId);
+      return inst.location === 'discard' && inst.controller === source.player;
+    }
+    case 'any_discard_card': {
+      if (choice.kind !== 'card') return false;
+      const inst = instance(draft, choice.instanceId);
+      return inst.location === 'discard';
     }
   }
 }

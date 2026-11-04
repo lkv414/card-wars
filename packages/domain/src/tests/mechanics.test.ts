@@ -474,6 +474,96 @@ describe('механики v2: каркас', () => {
       s = ok(s, { type: 'floop', player: P1, instanceId: s.players[P1]!.zones[0]!.creature! }).state;
       expect(s.instances[discarded]!.location).toBe('hand');
     });
+
+    it('play_from_discard возвращает выбранную карту из сброса в игру', () => {
+      let s = round2P1Turn();
+      s = produce(s, (d) => {
+        d.players[P1]!.lands[0]!.type = 'swamp';
+        d.players[P1]!.lands[1]!.type = 'swamp';
+      });
+      s = forceToHand(s, P1, 'raiser');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'raiser'), zone: 0 }).state;
+      // кладём существо в сброс P1
+      const discarded = s.players[P1]!.deck[0]!;
+      s = produce(s, (d) => {
+        const p = d.players[P1]!;
+        p.deck.shift();
+        d.instances[discarded]!.cardId = 'vanilla-swamp';
+        d.instances[discarded]!.location = 'discard';
+        p.discard.push(discarded);
+      });
+      // ПРИЁМ: выбираем карту из сброса и землю
+      const played = ok(s, {
+        type: 'floop',
+        player: P1,
+        instanceId: s.players[P1]!.zones[0]!.creature!,
+        targets: [
+          { kind: 'card', instanceId: discarded },
+          { kind: 'landscape', player: P1, zone: 1 },
+        ],
+      }).state;
+      // карта из сброса в игре — существо на земле 1
+      expect(played.instances[discarded]!.location).toBe('field');
+      expect(played.players[P1]!.zones[1]!.creature).toBe(discarded);
+      expect(played.players[P1]!.discard).not.toContain(discarded);
+    });
+
+    it('play_from_discard отклоняет карту не по фильтру ask', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'raiser');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'raiser'), zone: 0 }).state;
+      // кладём СТРОЕНИЕ в сброс — фильтр ask просит существо
+      const discarded = s.players[P1]!.deck[0]!;
+      s = produce(s, (d) => {
+        const p = d.players[P1]!;
+        p.deck.shift();
+        d.instances[discarded]!.cardId = 'plain-fortress';
+        d.instances[discarded]!.location = 'discard';
+        p.discard.push(discarded);
+      });
+      const res = applyCommand(
+        s,
+        {
+          type: 'floop',
+          player: P1,
+          instanceId: s.players[P1]!.zones[0]!.creature!,
+          targets: [
+            { kind: 'card', instanceId: discarded },
+            { kind: 'landscape', player: P1, zone: 1 },
+          ],
+        },
+        deps,
+      );
+      expect(res.ok).toBe(false);
+      if (!res.ok) expect(res.rejected.code).toBe('invalid_choice');
+    });
+
+    it('ask-фильтр flipped запрещает выбирать активное существо', () => {
+      let s = round2P1Turn();
+      s = forceToHand(s, P1, 'vanilla-swamp');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 }).state;
+      const swampId = s.players[P1]!.zones[0]!.creature!;
+      s = forceToHand(s, P1, 'tapped-mover');
+      s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'tapped-mover'), zone: 1 }).state;
+      // существо АКТИВНО (не флипнуто) — выбор запрещён фильтром ask'а
+      const bad = applyCommand(
+        s,
+        { type: 'floop', player: P1, instanceId: s.players[P1]!.zones[1]!.creature!, targets: [{ kind: 'creature', instanceId: swampId }] },
+        deps,
+      );
+      expect(bad.ok).toBe(false);
+      if (!bad.ok) expect(bad.rejected.code).toBe('invalid_choice');
+      // применяем (неактивное) — выбор разрешён
+      s = produce(s, (d) => {
+        d.instances[swampId]!.flipped = true;
+      });
+      const good = applyCommand(
+        s,
+        { type: 'floop', player: P1, instanceId: s.players[P1]!.zones[1]!.creature!, targets: [{ kind: 'creature', instanceId: swampId }] },
+        deps,
+      );
+      expect(good.ok).toBe(true);
+    });
   });
 
   describe('способность героя', () => {

@@ -1,0 +1,17 @@
+{
+  "cardId": "tree_trunks_card_23",
+  "name": "Пуф!",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Выбранному существу противника наносится урон, равный половине его максимальной DEF. Если показатель DEF нечётный, округляй вверх.",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "mechanic": "half_def_damage"
+    }
+  ]
+}

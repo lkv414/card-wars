@@ -70,6 +70,7 @@ export function dealToCreature(
   inst.shield -= absorbed;
   const rest = effective - absorbed;
   inst.damage += rest;
+  draft.lastHits[targetId] = sourceInstanceId;
   emit(ctx, {
     type: 'damage_dealt',
     sourceInstanceId,

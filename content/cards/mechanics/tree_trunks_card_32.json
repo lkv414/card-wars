@@ -1,0 +1,15 @@
+{
+  "cardId": "tree_trunks_card_32",
+  "name": "Сладкий пирожочек",
+  "abilities": [
+    {
+      "kind": "active",
+      "text": "Пироитмяк: нанеси 2 урона существу, у которого осталось меньше всего DEF и еще 1 - тому, у которого больше всего.",
+      "mechanic": "min_max_def_damage",
+      "params": {
+        "low": 2,
+        "high": 1
+      }
+    }
+  ]
+}

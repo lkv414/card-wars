@@ -64,7 +64,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'grant_protection']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'grant_protection', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage']);
 const TRIGGERS2 = null;
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
@@ -75,9 +75,9 @@ const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature'
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
-  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'each_opponent_land',
+  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'payload_killer', 'payload_player', 'min_attack_own', 'each_opponent_land',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
@@ -86,7 +86,7 @@ const CONDITION_KINDS = new Set([
   'while_empty_lands', 'while_on_flipped_land',
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
-  'if_payload_ally', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
+  'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
   'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type',
 ]);

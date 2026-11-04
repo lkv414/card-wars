@@ -177,6 +177,7 @@ export function createMatch(
     turnModifiers: [],
     discounts: [],
     turnPlayedCardIds: [],
+    lastHits: {},
     protections: [],
     spellBansArmed: [],
     spellBansActive: [],

@@ -314,6 +314,15 @@ export function conditionsHold(
         if (!inPlay) return false;
         break;
       }
+      case 'if_payload_killer_self':
+        if (!payload?.killerInstanceId || payload.killerInstanceId !== source.instanceId) return false;
+        break;
+      case 'if_payload_zone_matches_self': {
+        const src = source.instanceId ? instance(draft, source.instanceId) : null;
+        if (!src || src.zone === null || payload?.zone === undefined || payload.zone === null) return false;
+        if (payload.zone !== src.zone) return false;
+        break;
+      }
       case 'while_played_land_type': {
         const hit = draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.landType === cond.landType);
         if (!hit) return false;
@@ -511,6 +520,8 @@ export function resolveStatAmount(
       const picked = choices?.find((c) => c.kind === 'player');
       return picked ? draft.players[picked.playerId]!.hand.length * amount.amount : 0;
     }
+    case 'payload_cost':
+      return (payload?.cost ?? 0) * amount.amount;
     case 'per_played_name': {
       const needle = (cardId: string): boolean => {
         const name = ctx.catalog.getCard(cardId)?.name ?? '';

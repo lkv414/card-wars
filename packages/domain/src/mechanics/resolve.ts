@@ -5,6 +5,7 @@ import type { MatchState, PlayerId } from '../types';
 import { alivePlayerIds, opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import type { EffectSource } from './source';
 import { countsAsTypes } from './modifiers';
+import { computeEff } from '../stats';
 import type { TargetAsk, TargetChoice, TargetFilter, TargetRef } from './types';
 export type { TargetRef };
 
@@ -292,6 +293,28 @@ export function resolveTarget(
       if (!payload?.player || payload.zone === undefined || payload.zone === null) return [];
       const id = draft.players[payload.player]!.zones[payload.zone]?.creature;
       return id ? [{ kind: 'creature', instanceId: id }] : [];
+    }
+    case 'payload_killer': {
+      if (!payload?.killerInstanceId) return [];
+      return [{ kind: 'creature', instanceId: payload.killerInstanceId }];
+    }
+    case 'payload_player': {
+      if (!payload?.player) return [];
+      return [{ kind: 'player', playerId: payload.player }];
+    }
+    case 'min_attack_own': {
+      let best: string | null = null;
+      let bestAtk = Infinity;
+      for (const zone of draft.players[source.player]!.zones) {
+        const id = zone.creature;
+        if (!id) continue;
+        const atk = computeEff(draft, ctx, id).attack;
+        if (atk < bestAtk) {
+          bestAtk = atk;
+          best = id;
+        }
+      }
+      return best ? [{ kind: 'creature', instanceId: best }] : [];
     }
     case 'adjacent_own_land': {
       if (srcZone === null) return [];

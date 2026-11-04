@@ -49,7 +49,13 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
           cardId: inst.cardId,
           abilityIndex,
           trigger: 'on_death',
-          payload: { instanceId: id, cardId: inst.cardId, player: inst.controller },
+          payload: {
+            instanceId: id,
+            cardId: inst.cardId,
+            player: inst.controller,
+            killerInstanceId: draft.lastHits[id] ?? undefined,
+            cost: ctx.catalog.getCard(inst.cardId)?.cost ?? 0,
+          },
         });
       }
     }

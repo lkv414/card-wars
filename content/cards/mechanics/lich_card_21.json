@@ -1,0 +1,23 @@
+{
+  "cardId": "lich_card_21",
+  "name": "Духо-муха",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "payload_killer"
+        },
+        "amount": 1
+      },
+      "text": "Перед смертью наносит 1 урон убившему её существу.",
+      "conditions": [
+        {
+          "kind": "if_payload_killer_self"
+        }
+      ]
+    }
+  ]
+}

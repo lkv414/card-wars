@@ -467,3 +467,69 @@ export const damagePerHand: MechanicHandler = (
     dealToPlayer(draft, ctx, pid, draft.players[pid]!.hand.length, source.instanceId);
   }
 };
+
+/** «Урон, равный половине максимальной DEF, округляя вверх» (Пуф!). */
+export const halfDefDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'half_def_damage needs a creature');
+  const inst = instance(draft, pick.instanceId);
+  const card = ctx.catalog.getCard(inst.cardId);
+  const maxDef = (card?.defense ?? 0) + inst.bonusDefense;
+  dealToCreature(draft, ctx, pick.instanceId, Math.ceil(maxDef / 2), source.instanceId);
+};
+
+/** «2 урона существу с наименьшим DEF в игре и 1 — с наибольшим» (Сладкий пирожочек). */
+export const minMaxDefDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const lowAmount = (params?.low as number | undefined) ?? 2;
+  const highAmount = (params?.high as number | undefined) ?? 1;
+  const candidates: Array<{ id: string; def: number }> = [];
+  for (const pid of draft.order) {
+    for (const zone of draft.players[pid]!.zones) {
+      if (zone.creature) candidates.push({ id: zone.creature, def: computeEff(draft, ctx, zone.creature).defense });
+    }
+  }
+  if (candidates.length === 0) return;
+  const low = candidates.reduce((a, b) => (b.def < a.def ? b : a));
+  const high = candidates.reduce((a, b) => (b.def > a.def ? b : a));
+  dealToCreature(draft, ctx, low.id, lowAmount, source.instanceId);
+  if (high.id !== low.id) dealToCreature(draft, ctx, high.id, highAmount, source.instanceId);
+};
+
+/** «Уничтожь своё существо >>> урон, равный его стоимости, каждому существу противника» (Сильная Сьюзан). */
+export const sacrificeCostDamage: MechanicHandler = (
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  source: EffectSource,
+  _params: Record<string, unknown> | undefined,
+  choices: TargetChoice[] | undefined,
+  _payload: TriggerPayload | undefined,
+  _beneficiary: PlayerId,
+): void => {
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'sacrifice_cost_damage needs a creature');
+  const inst = instance(draft, pick.instanceId);
+  if (inst.controller !== source.player) throw new DomainError('invalid_choice', 'sacrifice needs an own creature');
+  const cost = ctx.catalog.getCard(inst.cardId)?.cost ?? 0;
+  killInstance(draft, ctx, pick.instanceId);
+  for (const pid of opponentsOf(draft, source.player)) {
+    for (const zone of draft.players[pid]!.zones) {
+      if (zone.creature) dealToCreature(draft, ctx, zone.creature, cost, source.instanceId);
+    }
+  }
+};

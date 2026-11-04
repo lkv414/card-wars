@@ -206,6 +206,13 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 - **G6**: механика `swap_creatures` (обмен двух своих существ), фильтр `zoneBuilding` (Деревянный ритм), механика `damage_until_def` (Посох вуду), механика `splash_damage` (Взрывной мужик), cost_mod по счётчику входов (Замерянный голем).
 - **G7**: `flavorOnly` в mechanics-файле — текст без механик засчитывается покрытием.
 
+## Группа G9 — убийца, смерти по линии, min/max-таргетинг
+
+- `MatchState.lastHits` — последний источник урона по каждому существу; в payload `on_death` попадают `killerInstanceId` и `cost` жертвы.
+- Рефы `payload_killer`, `payload_player` (владелец жертвы), `min_attack_own` (существо с наименьшим АТК); величина `payload_cost`.
+- Условия: `if_payload_killer_self`, `if_payload_zone_matches_self` (жертва на линии источника).
+- Механики: `half_def_damage` (урон = половина макс. DEF, округляя вверх), `min_max_def_damage` (2 — наименьший DEF в игре, 1 — наибольший), `sacrifice_cost_damage` (уничтожить своё существо → урон всем существам противника = его стоимости, Сильная Сьюзан).
+
 ## Открытые вопросы реализации
 
 - Состав опций `AdditionalCost` (какие «доп. стоимости» встречаются в каталоге) — при разборе M3.

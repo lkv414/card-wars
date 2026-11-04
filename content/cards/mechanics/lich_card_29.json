@@ -1,0 +1,23 @@
+{
+  "cardId": "lich_card_29",
+  "name": "Преобразователь скелетов",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "amount": 1
+      },
+      "text": "За каждое погибшее на этой линии существо (твоё или противника) восстанавливаем 1 урон всем твоим существам.",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ]
+    }
+  ]
+}

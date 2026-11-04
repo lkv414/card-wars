@@ -1,0 +1,27 @@
+{
+  "cardId": "ftg_card_79",
+  "name": "Песочный шакал",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": 3
+      },
+      "text": "Когда Песочный шакал на Милой земле и когда он побеждает существо противника ты восстанавливаешь 3 НР.",
+      "conditions": [
+        {
+          "kind": "if_payload_killer_self"
+        },
+        {
+          "kind": "while_on_land_type",
+          "landType": "good"
+        }
+      ]
+    }
+  ]
+}

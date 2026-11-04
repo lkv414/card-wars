@@ -39,6 +39,8 @@ export interface TriggerPayload {
   count?: number;
   cost?: number;
   zone?: number | null;
+  /** on_death: the creature that dealt the lethal damage (Карга, Духо-муха). */
+  killerInstanceId?: string;
 }
 
 /** Target asks: what the player must pick, in declared order (docs/MECHANICS-V2.md §5). */
@@ -115,6 +117,12 @@ export type TargetRef =
   | { kind: 'payload_zone_land' }
   /** Creatures of the payload player standing in the payload zone (Кейк). */
   | { kind: 'payload_zone_own_creatures' }
+  /** The killer of the dead creature in the payload (Духо-муха). */
+  | { kind: 'payload_killer' }
+  /** The player of the payload (Карга: владелец жертвы). */
+  | { kind: 'payload_player' }
+  /** Own creature with the lowest attack (Мозги). */
+  | { kind: 'min_attack_own' }
   /** The instance the trigger payload is about (e.g. attacker). */
   | { kind: 'triggering_instance' }
   /** Partner of the player in the trigger payload (2v2). */
@@ -197,6 +205,8 @@ export type StatAmount =
   | { kind: 'target_hand_size'; amount: number }
   /** Cards played this turn whose name contains any matcher (Бизнес пес). */
   | { kind: 'per_played_name'; matchers: string[]; amount: number }
+  /** The dead creature's printed cost inside an on_death payload (Карга). */
+  | { kind: 'payload_cost'; amount: number }
   /** Players controlling at least one land with an ice token (Капитан мороженка). */
   | { kind: 'per_token_players'; amount: number }
   /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
@@ -274,6 +284,10 @@ export type ConditionSpec =
   | { kind: 'while_own_creature_on_land_type'; landType: LandType }
   /** Own field card with this id is in play (Малыш камнепух при своей Мамуле). */
   | { kind: 'while_own_card_in_play'; cardId: string; minDamage?: number }
+  /** The damage killer is this very source (Карга, Песочный шакал). */
+  | { kind: 'if_payload_killer_self' }
+  /** The dead creature was on the source's lane (Фонтан милашности). */
+  | { kind: 'if_payload_zone_matches_self' }
   /** The payload card's landing zone land type (Бриллиантовый Дэн). */
   | { kind: 'if_payload_zone_land_type'; landType: LandType }
   /** A card of this land type was played this turn (Младший школяр). */

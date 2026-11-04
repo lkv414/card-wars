@@ -168,6 +168,8 @@ export interface MatchState {
   turnCounters: Record<string, number>;
   /** Modifiers granted by abilities this turn; cleared at end of turn. */
   turnModifiers: TurnModifier[];
+  /** Last damage source per victim (killer attribution, docs/MECHANICS-V2.md §3 G9). */
+  lastHits: Record<string, string | null>;
   /** CardIds played this turn (Бизнес пес, play-gates). */
   turnPlayedCardIds: string[];
   /** Protected creatures: attacks redirect to face, enemy targeting rejected (Пещера одиночества). */

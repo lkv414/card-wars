@@ -1,0 +1,20 @@
+{
+  "cardId": "lich_card_42",
+  "name": "Мозги",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "min_attack_own"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "+2 АТК на этом ходу существу с наименьшим значением АТК из существ под твоим контролем."
+    }
+  ]
+}

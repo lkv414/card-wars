@@ -1,0 +1,24 @@
+{
+  "cardId": "tree_trunks_card_21",
+  "name": "Абрака-тилиус",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        { "kind": "amount", "min": 0, "max": 3, "label": "Сколько жизней восстановить (до 3)" },
+        { "kind": "damage_distribution", "mode": "add", "label": "Распредели столько же урона на своих существах" }
+      ],
+      "effect": [
+        { "op": "heal", "target": { "kind": "self_player" }, "amount": { "kind": "chosen_amount", "index": 0 } },
+        {
+          "op": "distribute_damage",
+          "among": { "kind": "each_creature_yours" },
+          "amount": { "kind": "chosen_amount", "index": 0 },
+          "cap": "defense"
+        }
+      ],
+      "text": "Восстанови себе до 3 жизней, после чего распредели то же количество урона на своих существах на твой выбор."
+    }
+  ]
+}

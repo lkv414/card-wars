@@ -104,6 +104,12 @@ export interface TargetAsk {
   options?: string[];
   /** RU label rendered by the HUD for non-board asks. */
   label?: string;
+  /**
+   * Only for `damage_distribution` (docs §H11): `reassign` (default) — values are
+   * each creature's total damage (sum preserved, for redistribute_damage);
+   * `add` — values are damage to ADD per creature (for distribute_damage).
+   */
+  mode?: 'reassign' | 'add';
 }
 
 /** Player's answers sent with a command (floop / hero_ability / resolve_choice). */
@@ -641,7 +647,14 @@ type EffectOp =
       value?: boolean;
     }
   /** Destroy N own creatures and draw one card per creature (Милый Оверлорд). */
-  | { op: 'destroy_own_n'; count: StatAmount };
+  | { op: 'destroy_own_n'; count: StatAmount }
+  /** Relocate a building to another land's empty building slot (Помощник лесоруба, docs §H11). */
+  | { op: 'move_building'; target: TargetRef; destination: TargetRef }
+  /**
+   * Add a total of `amount` damage, distributed by one `amounts` answer over
+   * `among` (Абрака-тилиус, docs §H11). `cap: 'defense'` (default) may not kill.
+   */
+  | { op: 'distribute_damage'; among: TargetRef; amount: StatAmount; cap?: 'defense' | 'none' };
 
 /**
  * A declarative operation with its own optional conditions.

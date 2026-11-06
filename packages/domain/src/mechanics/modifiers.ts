@@ -1,7 +1,7 @@
 ﻿import { instance } from '../util';
 import type { Ctx } from '../util';
 import { DomainError } from '../errors';
-import type { CardData, MatchState } from '../types';
+import type { CardData, MatchState, PlayerId } from '../types';
 import { teamOf } from '../zones';
 import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import { resolveTarget, type ResolvedTarget, type TargetRef } from './resolve';
@@ -860,6 +860,29 @@ export function attacksSuppressed(
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'suppress' || (!effect.attacks && !effect.all)) continue;
     if (coversInstance(draft, ctx, modSource, effect.target, attackerId, undefined)) return true;
+  }
+  return false;
+}
+
+/**
+ * The covered creature cannot be TARGETED by an opponent's spells (`spells`)
+ * or opponent creatures' abilities (`creatureAbilities`) — Облачная башня,
+ * Мятная мороженка (docs §H11). Own sources never shield against their owner.
+ */
+export function targetingSuppressed(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  targetId: string,
+  byPlayer: PlayerId,
+  abilityKind: 'spell' | 'creature' | 'building' | 'hero',
+): boolean {
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'suppress' || modSource.player === byPlayer) continue;
+    const blocksSpell = effect.spells === true && abilityKind === 'spell';
+    const blocksCreature = effect.creatureAbilities === true && abilityKind === 'creature';
+    if ((blocksSpell || blocksCreature) && coversInstance(draft, ctx, modSource, effect.target, targetId, undefined)) {
+      return true;
+    }
   }
   return false;
 }

@@ -4,7 +4,7 @@ import type { Ctx } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { alivePlayerIds, opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
 import type { EffectSource } from './source';
-import { countsAsTypes } from './modifiers';
+import { countsAsTypes, targetingSuppressed } from './modifiers';
 import { computeEff } from '../stats';
 import type { TargetAsk, TargetChoice, TargetFilter, TargetRef } from './types';
 export type { TargetRef };
@@ -26,14 +26,26 @@ function isOpponent(draft: MatchState, sourcePlayer: PlayerId, other: PlayerId):
  * Validate the player's choices against the ability's declared asks, in order.
  * Atomic: throws before anything is applied (docs/MECHANICS-V2.md §5).
  */
+/** What kind of ability is resolving: suppress.spells/creatureAbilities care (docs §H11). */
+function abilityKindOf(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  source: EffectSource,
+): 'spell' | 'creature' | 'building' | 'hero' {
+  if (!source.instanceId) return 'hero';
+  const card = ctx.catalog.getCard(draft.instances[source.instanceId]?.cardId ?? '');
+  if (card?.type === 'spell') return 'spell';
+  if (card?.type === 'building') return 'building';
+  return 'creature';
+}
+
 export function validateChoices(
   draft: MatchState,
   ctx: Pick<Ctx, 'config' | 'catalog'>,
   source: EffectSource,
   asks: TargetAsk[] | undefined,
   choices: TargetChoice[] | undefined,
-): void {
-  const need = asks?.length ?? 0;
+): void {  const need = asks?.length ?? 0;
   const have = choices?.length ?? 0;
   if (need !== have) {
     throw new DomainError('target_required', `ability needs ${need} targets, got ${have}`);
@@ -49,6 +61,11 @@ export function validateChoices(
       const inst = instance(draft, choice.instanceId);
       if (draft.protections.some((pr) => pr.instanceId === choice.instanceId) && inst.controller !== source.player) {
         throw new DomainError('invalid_choice', 'target is protected');
+      }
+      // «Не может стать целью заклинаний/способностей существ противника»
+      // (Облачная башня, docs §H11).
+      if (targetingSuppressed(draft, ctx, choice.instanceId, source.player, abilityKindOf(draft, ctx, source))) {
+        throw new DomainError('invalid_choice', 'target is shielded from spells and abilities');
       }
     }
     if (ask.filter && !askFilterPasses(draft, ctx, choice, ask.filter)) {

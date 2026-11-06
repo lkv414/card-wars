@@ -338,6 +338,30 @@ export function runEffect(
       }
       return;
     }
+    case 'move_building': {
+      const movers = resolveTarget(draft, ctx, effect.target, source, choices, payload);
+      const destinations = resolveTarget(draft, ctx, effect.destination, source, choices, payload);
+      const dest = destinations[0];
+      if (!dest || dest.kind !== 'land') {
+        throw new DomainError('invalid_choice', 'move_building needs a destination zone');
+      }
+      for (const mover of movers) {
+        // Building picks arrive with kind 'creature' (ask own_building answers
+        // are instance picks); the real slot is on the instance.
+        if (mover.kind !== 'creature' && mover.kind !== 'building') continue;
+        const inst = instance(draft, mover.instanceId);
+        if (inst.location !== 'field' || inst.slot !== 'building' || inst.zone === null) continue;
+        const fromZone = inst.zone;
+        if (dest.playerId === inst.controller && dest.zone === fromZone) continue;
+        if (draft.players[dest.playerId]!.zones[dest.zone]!.building) continue; // destination must be empty
+        draft.players[inst.controller]!.zones[fromZone]!.building = null;
+        inst.zone = dest.zone;
+        inst.movedThisTurn = true;
+        draft.players[dest.playerId]!.zones[dest.zone]!.building = mover.instanceId;
+        emit(ctx, { type: 'card_moved', player: dest.playerId, instanceId: mover.instanceId, fromZone, toZone: dest.zone });
+      }
+      return;
+    }
     case 'freeze_land': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind !== 'land') continue;
@@ -649,6 +673,46 @@ export function runEffect(
     }
     case 'grant_ability': {
       // Aura-grant: read live by the floop gate; nothing to materialise.
+      return;
+    }
+    case 'distribute_damage': {
+      const ids = resolveTarget(draft, ctx, effect.among, source, choices, payload)
+        .filter((t) => t.kind === 'creature' || t.kind === 'building')
+        .map((t) => (t as { instanceId: string }).instanceId);
+      const answer = choices?.find((c): c is Extract<TargetChoice, { kind: 'amounts' }> => c.kind === 'amounts');
+      const values = answer?.values ?? [];
+      const total = resolveStatAmount(draft, ctx, source, effect.amount, payload, choices);
+      if (ids.length !== values.length || values.some((v) => !Number.isInteger(v) || v < 0)) {
+        throw new DomainError('invalid_choice', 'distribute_damage needs one amount per creature');
+      }
+      const before = ids.reduce((sum, id) => sum + instance(draft, id).damage, 0);
+      if (values.reduce((a, b) => a + b, 0) !== before + total) {
+        throw new DomainError('invalid_choice', 'distributed damage must add up to the resolved amount');
+      }
+      for (let i = 0; i < ids.length; i++) {
+        if (values[i]! < instance(draft, ids[i]!).damage) {
+          throw new DomainError('invalid_choice', 'distributed damage may not remove damage');
+        }
+        if (effect.cap !== 'none' && values[i]! >= computeEff(draft, ctx, ids[i]!).defense) {
+          throw new DomainError('invalid_choice', 'distributed damage may not kill the creature');
+        }
+      }
+      ids.forEach((id, i) => {
+        const inst = instance(draft, id);
+        const added = values[i]! - inst.damage;
+        if (added === 0) return;
+        inst.damage = values[i]!;
+        draft.lastHits[id] = source.instanceId;
+        emit(ctx, {
+          type: 'damage_dealt',
+          sourceInstanceId: source.instanceId,
+          targetInstanceId: id,
+          targetPlayer: null,
+          amount: added,
+          absorbedByShield: 0,
+          toTarget: added,
+        });
+      });
       return;
     }
     case 'redistribute_damage': {

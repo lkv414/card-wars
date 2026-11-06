@@ -1858,7 +1858,33 @@
   "attack": 2,
   "defense": 6,
   "description": "ПРИЕМ >>> Перемести выбраное строение под твоим контролем на любую землю без строения.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": {
+     "op": "move_building",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "choice",
+      "index": 1
+     }
+    },
+    "targets": [
+     {
+      "kind": "own_building"
+     },
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "ПРИЕМ >>> Перемести выбранное строение под твоим контролем на любую землю без строения."
+   }
+  ]
  },
  {
   "id": "cake_card_31",
@@ -2266,7 +2292,42 @@
   "landType": "blue",
   "image": "/content/cards/images/charlie_card_8.png",
   "description": "Твое существо на этой земле не может стать целью заклинаний или способностей существ противника.\nПРИЕМ >>> Перемести Существо под твоим контролем на эту землю.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "spells": true,
+     "creatureAbilities": true
+    },
+    "text": "Твоё существо на этой земле не может стать целью заклинаний или способностей существ противника."
+   },
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "this_lane_land"
+     },
+     "side": "own"
+    },
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Перемести существо под твоим контролем на эту землю."
+   }
+  ]
  },
  {
   "id": "charlie_card_9",
@@ -10169,7 +10230,76 @@
   "landType": "rainbow",
   "image": "/content/cards/images/jake_card_29.png",
   "description": "Можешь перевернуть одну свою землю лицом вверх. Можешь переместить одно свое строение на свою линию без строений.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "choose_option",
+      "options": [
+       "flip",
+       "move",
+       "both",
+       "skip"
+      ],
+      "label": "Перевернуть землю / переместить строение / обе / пропустить"
+     },
+     {
+      "kind": "own_landscape"
+     },
+     {
+      "kind": "own_building"
+     },
+     {
+      "kind": "own_landscape"
+     }
+    ],
+    "effect": [
+     {
+      "op": "flip_land",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "down": false,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "options": [
+         "flip",
+         "both"
+        ]
+       }
+      ]
+     },
+     {
+      "op": "move_building",
+      "target": {
+       "kind": "choice",
+       "index": 2
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 3
+      },
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "options": [
+         "move",
+         "both"
+        ]
+       }
+      ]
+     }
+    ],
+    "text": "Можешь перевернуть одну свою землю лицом вверх. Можешь переместить одно своё строение на свою линию без строений."
+   }
+  ]
  },
  {
   "id": "jake_card_31",
@@ -15568,7 +15698,50 @@
   "landType": "good",
   "image": "/content/cards/images/tree_trunks_card_21.png",
   "description": "Восстанови себе до 3 жизней, после чего распредели то же количество урона на своих существах на твой выбор.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "amount",
+      "min": 0,
+      "max": 3,
+      "label": "Сколько жизней восстановить (до 3)"
+     },
+     {
+      "kind": "damage_distribution",
+      "mode": "add",
+      "label": "Распредели столько же урона на своих существах"
+     }
+    ],
+    "effect": [
+     {
+      "op": "heal",
+      "target": {
+       "kind": "self_player"
+      },
+      "amount": {
+       "kind": "chosen_amount",
+       "index": 0
+      }
+     },
+     {
+      "op": "distribute_damage",
+      "among": {
+       "kind": "each_creature_yours"
+      },
+      "amount": {
+       "kind": "chosen_amount",
+       "index": 0
+      },
+      "cap": "defense"
+     }
+    ],
+    "text": "Восстанови себе до 3 жизней, после чего распредели то же количество урона на своих существах на твой выбор."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_23",

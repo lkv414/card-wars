@@ -271,6 +271,9 @@ function effectChoiceNeed(effect: EffectSpec): number {
     return Math.max(max + 1, 1);
   }
   if (effect.op === 'redistribute_damage') return Math.max(max + 1, 1);
+  // distribute_damage consumes the amounts answer IN ADDITION to any
+  // chosen_amount refs inside (Абрака-тилиус: heal step asks the amount first).
+  if (effect.op === 'distribute_damage') return Math.max(max + 1, 0) + 1;
   if (effect.op === 'repeat_effect') {
     const times = typeof effect.times === 'number' ? effect.times : 1;
     return Math.max(max + 1, times * countChoiceRefs(effect.effect));

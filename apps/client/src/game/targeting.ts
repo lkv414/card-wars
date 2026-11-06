@@ -27,6 +27,8 @@ export interface TargetAsk {
   max?: number;
   options?: string[];
   label?: string;
+  /** Только для damage_distribution: reassign (по умолчанию) | add (docs §H11). */
+  mode?: 'reassign' | 'add';
 }
 
 export interface TargetingState {

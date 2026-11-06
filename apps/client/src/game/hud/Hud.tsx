@@ -191,24 +191,32 @@ export function Hud({ code }: { code: string }) {
       );
     }
     if (currentAsk.kind === 'damage_distribution') {
+      const addMode = currentAsk.mode === 'add';
       const creatures = me.zones.flatMap((z) => (z.creature ? [z.creature] : []));
       const total = creatures.reduce((sum, c) => sum + c.damage, 0);
-      const values = creatures.map((c, i) => (distribution[i] === undefined ? String(c.damage) : distribution[i]!));
+      const values = creatures.map((c, i) => (distribution[i] === undefined ? (addMode ? '0' : String(c.damage)) : distribution[i]!));
       const numbers = values.map(Number);
-      const valid =
-        numbers.every((v) => Number.isInteger(v) && v >= 0) &&
-        numbers.reduce((a, b) => a + b, 0) === total &&
-        numbers.every((v, i) => v < creatures[i]!.effDefense);
+      // reassign (перераспределение): сумма сохраняется, добивать нельзя;
+      // add (распределение добавочного урона): сумму сверяет domain.
+      const valid = addMode
+        ? numbers.every((v) => Number.isInteger(v) && v >= 0)
+        : numbers.every((v) => Number.isInteger(v) && v >= 0) &&
+          numbers.reduce((a, b) => a + b, 0) === total &&
+          numbers.every((v, i) => v < creatures[i]!.effDefense);
+      const entered = numbers.reduce((a, b) => a + b, 0);
       return (
         <span className="revealed-pool">
-          <span className="hint">{currentAsk.label ?? 'Распределите урон'} (всего {total}):</span>
+          <span className="hint">
+            {currentAsk.label ?? 'Распределите урон'}
+            {addMode ? ` (введено ${entered})` : ` (всего ${total})`}:
+          </span>
           {creatures.map((creature, i) => (
             <label key={creature.instanceId} className="hint">
               {cardNameById(creature.cardId)} (DEF {creature.effDefense}):{' '}
               <input
                 type="number"
                 min={0}
-                max={Math.max(0, creature.effDefense - 1)}
+                max={addMode ? undefined : Math.max(0, creature.effDefense - 1)}
                 value={values[i]}
                 onChange={(e) => {
                   const next = [...values];

@@ -631,3 +631,136 @@ describe('golden: H10 death/leave reactions (батч II)', () => {
     expect(res.state.players.p2!.discard.length).toBe(1);
   });
 });
+
+describe('golden: H11 buildings, distribute, shielded targets (батч III)', () => {
+  function placeOwn(state: MatchState, cardId: string, zone: number, damage = 0): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      inst.damage = damage;
+      d.players.p1!.zones[zone]!.creature = id;
+    });
+  }
+
+  function placeOwnBuilding(state: MatchState, cardId: string, zone: number): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'building';
+      d.players.p1!.zones[zone]!.building = id;
+    });
+  }
+
+  it('Помощник лесоруба: ПРИЁМ переставляет своё строение на землю без строения', () => {
+    let s = placeOwn(newMatch(), 'cake_card_29', 0);
+    s = placeOwnBuilding(s, 'bmo_card_12', 1);
+    s = nextP1Turn(s);
+    const builderId = s.players.p1!.zones[0]!.creature!;
+    const buildingId = s.players.p1!.zones[1]!.building!;
+    const floop = applyCommand(s, {
+      type: 'floop', player: 'p1', instanceId: builderId,
+      targets: [
+        { kind: 'creature', instanceId: buildingId },
+        { kind: 'landscape', player: 'p1', zone: 2 },
+      ],
+    }, deps);
+    if (!floop.ok) throw new Error(floop.rejected.message);
+    expect(floop.state.players.p1!.zones[1]!.building).toBeNull();
+    expect(floop.state.players.p1!.zones[2]!.building).toBe(buildingId);
+  });
+
+  it('Восстановление ландшафта: «перевернуть» — только земля, строение не спрашивается', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands[0]!.type = 'rainbow'; // заклинание радужное
+      d.players.p1!.lands[0]!.flipped = true;
+      d.players.p1!.actions = 10;
+    });
+    s = placeOwnBuilding(s, 'bmo_card_12', 0);
+    s = forceToHand(s, 'p1', 'jake_card_29');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'jake_card_29'),
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1');
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'flip' }] },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.pending?.player).toBe('p1'); // выбор земли
+    const next2 = applyCommand(next.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'landscape', player: 'p1', zone: 0 }] },
+    }, deps);
+    if (!next2.ok) throw new Error(next2.rejected.message);
+    expect(next2.state.pending).toBeNull();
+    expect(next2.state.players.p1!.lands[0]!.flipped).toBe(false);
+  });
+
+  it('Абрака-тилиус: восстанавливает N жизней и распределяет N урона по своим', () => {
+    let s = placeOwn(newMatch(), 'bmo_card_12', 0, 2);
+    s = placeOwn(s, 'bmo_card_12', 1, 1);
+    s = edit(s, (d) => { d.players.p1!.lives = 20; d.players.p1!.actions = 10; });
+    s = forceToHand(s, 'p1', 'tree_trunks_card_21');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'tree_trunks_card_21'),
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1'); // amount
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'amount', value: 3 }] },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.players.p1!.lives).toBe(23);
+    expect(next.state.pending?.player).toBe('p1'); // damage_distribution
+    const c0 = next.state.players.p1!.zones[0]!.creature!;
+    const c1 = next.state.players.p1!.zones[1]!.creature!;
+    // 3 урона поверх текущих (2 и 1): итог 4 и 2, сумма +3
+    const dist = applyCommand(next.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'amounts', values: [4, 2] }] },
+    }, deps);
+    if (!dist.ok) throw new Error(dist.rejected.message);
+    expect(dist.state.instances[c0]!.damage).toBe(4);
+    expect(dist.state.instances[c1]!.damage).toBe(2);
+  });
+
+  it('Облачная башня: чужое заклинание не может выбрать прикрытое существо целью', () => {
+    let s = placeOwn(newMatch(), 'bmo_card_12', 0); // существо на земле башни
+    s = placeOwnBuilding(s, 'charlie_card_8', 0);
+    const shieldedId = s.players.p1!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.players.p2!.actions = 10;
+      d.players.p2!.lands[0]!.type = 'rainbow'; // Букет мечей — радужное
+    });
+    s = forceToHand(s, 'p2', 'fiona_card_5');
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps); // ход p2
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    s = gb.state;
+    // p2 целится в прикрытое существо — отказ
+    const blocked = applyCommand(s, {
+      type: 'play_card', player: 'p2', instanceId: handIdOf(s, 'p2', 'fiona_card_5'),
+      targets: [{ kind: 'creature', instanceId: shieldedId }],
+    }, deps);
+    expect(blocked.ok).toBe(false);
+    if (!blocked.ok) expect(blocked.rejected.message).toContain('shielded');
+    // открытая цель (зона 2) — проходит
+    s = placeOwn(s, 'bmo_card_12', 2);
+    const openId = s.players.p1!.zones[2]!.creature!;
+    const allowed = applyCommand(s, {
+      type: 'play_card', player: 'p2', instanceId: handIdOf(s, 'p2', 'fiona_card_5'),
+      targets: [{ kind: 'creature', instanceId: openId }],
+    }, deps);
+    if (!allowed.ok) throw new Error(allowed.rejected.message);
+  });
+});

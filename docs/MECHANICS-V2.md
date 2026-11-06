@@ -308,6 +308,13 @@ Contract decisions for the last 137 cards + 3 heroes (approved 2026-11-06). Text
 - Реф `opponent_discard_top` — верхняя карта стопки сброса каждого противника (kind `'card'`); операции, принимающие карты из стопок (`attach_card`, `discard_chosen`), понимают kind `'card'` напрямую.
 - `attach_card` при взятии из `discard`/`death` убирает id из стопки сброса (раньше карта оставалась в массиве сброса и в подложенном виде).
 
+### H11. Перемещение строений, распределение добавочного урона, «нельзя целью» (батч III)
+
+- Операция `move_building` { target, destination }: переставляет строение в слот строения другой земли (слот обязан быть пуст — иначе шаг no-op). Контроль не меняется; инстансу ставится `movedThisTurn` (для фильтров «перемещённое в этом ходу»); событие `card_moved`.
+- Операция `distribute_damage` { among, amount: StatAmount, cap?: 'defense' | 'none' }: добавляет суммарно `amount` урона, распределяя его по существам из `among` одним ответом `TargetChoice { kind: 'amounts', values }` (ask `damage_distribution`). Валидация: по значению на существо, сумма значений = текущий суммарный урон + `amount`, каждое значение ≥ текущего урона (распределение не лечит). При `cap: 'defense'` (по умолчанию) значение не может достичь effective DEF — существо нельзя убить; `cap: 'none'` разрешает добить.
+- Ask `damage_distribution` получает поле `mode?: 'reassign' | 'add'`: `reassign` (по умолчанию, для `redistribute_damage` — значения = полный урон каждого существа, клиент валидирует сохранение суммы), `add` (для `distribute_damage` — значения = добавочный урон, ввод с нуля).
+- Флаги `suppress.spells` / `suppress.creatureAbilities` реализованы: существо под прикрытием не может быть **выбрано целью** чужим заклинанием (`spells`) или приёмом чужого существа (`creatureAbilities`). Проверка — в `validateChoices` для всех «сущностных» ask'ов (`opponent_creature`, `any_creature`, `lane_creature`, `lane_opponent_creature`, `adjacent_*`, а также `own_creature` — на случай чужого прикрытия); вид действующего abilityKind определяется по карте источника (spell/creature/building/hero — способности героя не блокируются: «способностей существ»). Свои источники свои существа блокировать не могут. (Облачная башня, Мятная мороженка.)
+
 ### H8. Порядок работ
 
 Каждый блок: правка этого документа → типы/валидатор → domain → protocol → HUD → mechanics-JSON → golden/unit-тесты → `pnpm --filter @card-wars/content generate && pnpm lint && pnpm typecheck && pnpm -r test` → git commit.

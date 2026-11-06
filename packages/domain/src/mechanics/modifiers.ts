@@ -803,9 +803,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -894,6 +894,45 @@ export function dodgeMin(
     min = min === undefined ? effect.min : Math.min(min, effect.min);
   }
   return min;
+}
+
+/**
+ * The land of `playerId`'s `zone` may not be flipped down by `byPlayer`
+ * (Яблочный страж, docs §H15): a land_flip_protection creature stands there,
+ * is the land owner's, and `byPlayer` is its opponent.
+ */
+export function landFlipProtected(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  playerId: PlayerId,
+  zone: number,
+  byPlayer: PlayerId,
+): boolean {
+  for (const { source, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'land_flip_protection') continue;
+    if (!source.instanceId) continue;
+    const inst = instance(draft, source.instanceId);
+    if (inst.location !== 'field' || inst.zone !== zone) continue;
+    if (inst.controller !== playerId) continue;
+    if (inst.controller === byPlayer) continue; // свои эффекты не блокируются
+    return true;
+  }
+  return false;
+}
+
+/** `playerId` may not play a card of this cost right now (Няш-мяш, docs §H15). */
+export function playRestricted(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  playerId: PlayerId,
+  cost: number,
+): boolean {
+  for (const { source, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'restrict_play' || effect.who !== 'opponents') continue;
+    if (source.player === playerId) continue;
+    if (cost <= effect.maxCost) return true;
+  }
+  return false;
 }
 
 /**

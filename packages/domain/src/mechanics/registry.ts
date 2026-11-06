@@ -3,7 +3,7 @@ import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import { chainDamage, copySpell, damageUntilDef, halfDefDamage, minMaxDefDamage, sacrificeCostDamage, destroyDrawCost, discardThenDamage, discardTopDamage, grantRandomDiscardActive, damagePerHand, laneOrFaceDamage, millSpellDiscard, moveDamage, returnCostActions, splashDamage, swapCreatures, swapLanes, tokenBonusDamage } from './handlers';
-import { discardMinCostOrDamage, enterMoveToEmpty, selfDamageThenDestroy, startTurnMoveOrDiscard, stealAndPlayFromHand } from './handlers-h3';
+import { catLives, discardMinCostOrDamage, enterMoveToEmpty, selfDamageThenDestroy, startTurnMoveOrDiscard, stealAndPlayFromHand } from './handlers-h3';
 import type { EffectSource } from './source';
 export type { EffectSource };
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -49,6 +49,7 @@ export const MECHANICS: Record<string, MechanicHandler> = {
   self_damage_then_destroy: selfDamageThenDestroy,
   steal_and_play_from_hand: stealAndPlayFromHand,
   discard_min_cost_or_damage: discardMinCostOrDamage,
+  cat_lives: catLives,
 };
 
 export function runMechanic(

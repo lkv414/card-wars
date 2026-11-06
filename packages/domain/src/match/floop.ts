@@ -73,7 +73,11 @@ export function handleFloop(
   // Once-per-turn tracking (docs/MECHANICS-V2.md §6).
   const useKey = `${playerId}:${instanceId}:0`;
   if (ability.oncePerTurn && draft.abilityUses[useKey] === draft.turn) {
-    throw new DomainError('ability_already_used', 'ability is once per turn');
+    throw new DomainError('ability_already_used', 'hero ability is once per turn');
+  }
+  // «Используй до N раз за ход» (docs §H15).
+  if (ability.maxUsesPerTurn !== undefined && (draft.abilityUseCounts[useKey] ?? 0) >= ability.maxUsesPerTurn) {
+    throw new DomainError('ability_already_used', `ability is limited to ${ability.maxUsesPerTurn} uses per turn`);
   }
 
   const p = player(draft, playerId);
@@ -133,8 +137,12 @@ export function handleFloop(
     { player: playerId, instanceId, cardId: card!.id, abilityIndex: Math.max(0, abilityIndex) },
   );
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
+  if (ability.maxUsesPerTurn !== undefined) {
+    draft.abilityUseCounts[useKey] = (draft.abilityUseCounts[useKey] ?? 0) + 1;
+  }
 
-  inst.flipped = true;
+  // «До N раз за ход» (docs §H15): карта остаётся готовой — лимитер счётчик.
+  if (ability.maxUsesPerTurn === undefined) inst.flipped = true;
   // «Уничтожь [эту карту] >>> …» — самопожертвование после эффекта.
   if (ability.additionalCost?.destroySelf) {
     killInstance(draft, ctx, instanceId);

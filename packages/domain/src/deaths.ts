@@ -48,6 +48,7 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
         player: inst.controller,
         killerInstanceId: draft.lastHits[id] ?? undefined,
         cost: ctx.catalog.getCard(inst.cardId)?.cost ?? 0,
+        zone: prevZone,
       };
       if (card && abilityIndex >= 0) {
         ctx.frame.queue.push({

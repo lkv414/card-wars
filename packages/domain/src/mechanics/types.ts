@@ -674,7 +674,11 @@ type EffectOp =
   /** Flip a creature AND skip its next readying (Ультра пес: «заморозь существо», docs §H13). */
   | { op: 'freeze_creature'; target: TargetRef }
   /** Rule aura: creature attacks against the covered unit whiff on a d6 ≥ min (Прозрачный ниндзя, docs §H14). */
-  | { op: 'dodge'; target: TargetRef; min: number };
+  | { op: 'dodge'; target: TargetRef; min: number }
+  /** Rule aura: the covered creature's land may not be flipped DOWN by opponents (Яблочный страж, docs §H15). */
+  | { op: 'land_flip_protection'; target: TargetRef }
+  /** Rule aura: opponents of the source cannot play cards costing ≤ maxCost (Няш-мяш, docs §H15). */
+  | { op: 'restrict_play'; who: 'opponents'; maxCost: number };
 
 /**
  * A declarative operation with its own optional conditions.

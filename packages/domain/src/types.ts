@@ -211,6 +211,8 @@ export interface MatchState {
   peeks: Record<PlayerId, string[]>;
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
+  /** Use counter this turn for maxUsesPerTurn abilities (Нога дракона, docs §H15). */
+  abilityUseCounts: Record<string, number>;
   /** Word chosen by each player at match start (Колдунья-охотница, docs §H3). */
   chosenWord: Record<PlayerId, string>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

@@ -8,7 +8,7 @@ import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter, noteDiscard } from '../mechanics/effects';
-import { conditionsHold, consumeDiscount, landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
+import { conditionsHold, consumeDiscount, landCountModifier, playRestricted, playedCardCostModifier } from '../mechanics/modifiers';
 import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../mechanics/costs';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
@@ -222,6 +222,12 @@ export function handlePlayCard(
         throw new DomainError('condition_not_met', `play condition not met: ${cond.kind}`);
       }
     }
+  }
+
+  // Ограничения чужих полей (Няш-мяш, docs §H15): «противники не могут играть
+  // карты стоимостью ≤ N».
+  if (playRestricted(draft, ctx, playerId, card.cost ?? 0)) {
+    throw new DomainError('condition_not_met', 'play is restricted by an opposing card');
   }
 
   // Replacement: the old card goes to the discard pile; its own bonuses are lost with it.

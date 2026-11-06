@@ -4575,7 +4575,21 @@
   "attack": 3,
   "defense": 8,
   "description": "Противники не могут играть карты стоимостью О.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "restrict_play",
+     "target": {
+      "kind": "this_creature"
+     },
+     "who": "opponents",
+     "maxCost": 0
+    },
+    "text": "Противники не могут играть карты стоимостью 0."
+   }
+  ]
  },
  {
   "id": "ftg_card_8",
@@ -5536,7 +5550,19 @@
   "attack": 3,
   "defense": 8,
   "description": "Земля Яблочного стража не может быть перевернута лицом вниз эффектами противника.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "land_flip_protection",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "Земля Яблочного стража не может быть перевернута лицом вниз эффектами противника."
+   }
+  ]
  },
  {
   "id": "ftg_card_44",
@@ -13463,7 +13489,28 @@
   "attack": 1,
   "defense": 4,
   "description": "Считается призрачным и милым существом одновременно.\nКошачьи жизни: после уничтожения может быть воскрешен с полными жизнями (только 1 раз, по желанию). После этого нельзя вернуть из сброса.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "counts_as",
+     "target": {
+      "kind": "this_creature"
+     },
+     "landType": "ghost"
+    },
+    "text": "Считается призрачным (и милым) существом одновременно."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_death",
+    "optional": true,
+    "oncePerGame": true,
+    "mechanic": "cat_lives",
+    "text": "Кошачьи жизни: после уничтожения может быть воскрешен с полными жизнями (только 1 раз, по желанию). После этого нельзя вернуть из сброса."
+   }
+  ]
  },
  {
   "id": "lsp_card_1",
@@ -13574,7 +13621,28 @@
   "attack": 1,
   "defense": 5,
   "description": "Сбрось карту >>> Нога дракона получает +1 ATK в этом ход. (Используй до 5 раз во время своего каждого хода.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "maxUsesPerTurn": 5,
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    },
+    "targets": [],
+    "text": "ПРИЕМ >>> Сбрось карту >>> Нога дракона получает +1 ATK в этот ход. (Используй до 5 раз во время своего каждого хода.)"
+   }
+  ]
  },
  {
   "id": "lsp_card_6",
@@ -16113,7 +16181,20 @@
   "attack": 1,
   "defense": 5,
   "description": "Считается одновременно милым и радужным существом.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "counts_as",
+     "target": {
+      "kind": "this_creature"
+     },
+     "landType": "rainbow"
+    },
+    "text": "Считается одновременно милым и радужным существом."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_32",

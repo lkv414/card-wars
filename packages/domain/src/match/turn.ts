@@ -109,6 +109,7 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.turnModifiers = [];
   draft.discounts = []; // «в этот ход» — скидки сгорают вместе с ходом
   draft.turnPlayedCardIds = [];
+  draft.abilityUseCounts = {};
   for (const inst of Object.values(draft.instances)) {
     if (inst.movedThisTurn) delete inst.movedThisTurn;
     if (inst.enteredThisTurn) delete inst.enteredThisTurn;

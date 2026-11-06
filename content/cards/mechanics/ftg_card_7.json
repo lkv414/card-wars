@@ -1,0 +1,18 @@
+{
+  "cardId": "ftg_card_7",
+  "name": "Няш-мяш",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "restrict_play",
+        "target": {
+          "kind": "this_creature"
+        },
+        "who": "opponents",
+        "maxCost": 0
+      },
+      "text": "Противники не могут играть карты стоимостью 0."
+    }
+  ]
+}

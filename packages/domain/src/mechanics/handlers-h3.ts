@@ -111,6 +111,36 @@ export const discardMinCostOrDamage: MechanicHandler = (draft, ctx, source, para
   }
 };
 
+/**
+ * Кошачьи жизни (Муррризрак, docs §H15): воскреснуть в свою зону с полными
+ * жизнями. oncePerGame на способности гарантирует однократность.
+ */
+export const catLives: MechanicHandler = (draft, ctx, source, _params, _choices, payload) => {
+  const id = source.instanceId;
+  if (!id || payload?.zone === undefined || payload.zone === null) return;
+  const inst = instance(draft, id);
+  if (inst.location !== 'discard') return;
+  const zone = draft.players[inst.controller]!.zones[payload.zone]!;
+  if (zone.creature) return; // зона занята — воскрешение не проходит
+  const owner = draft.players[inst.controller]!;
+  owner.discard = owner.discard.filter((x) => x !== id);
+  inst.location = 'field';
+  inst.zone = payload.zone;
+  inst.slot = 'creature';
+  inst.damage = 0;
+  inst.cannotReturnFromDiscard = true; // «после этого нельзя вернуть из сброса»
+  zone.creature = id;
+  emit(ctx, {
+    type: 'card_played',
+    player: inst.controller,
+    instanceId: id,
+    cardId: inst.cardId,
+    zone: payload.zone,
+    slot: 'creature',
+    replacedInstanceId: null,
+  });
+};
+
 /** «Укради случайную карту с руки противника и сыграй её бесплатно». */
 export const stealAndPlayFromHand: MechanicHandler = (draft, ctx, source, _params, choices) => {
   const picked = choices?.[0];

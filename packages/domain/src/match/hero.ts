@@ -42,6 +42,9 @@ export function handleHeroAbility(
   if (ability.oncePerTurn && draft.abilityUses[useKey] === draft.turn) {
     throw new DomainError('ability_already_used', 'hero ability is once per turn');
   }
+  if (ability.maxUsesPerTurn !== undefined && (draft.abilityUseCounts[useKey] ?? 0) >= ability.maxUsesPerTurn) {
+    throw new DomainError('ability_already_used', `ability is limited to ${ability.maxUsesPerTurn} uses per turn`);
+  }
 
   const p = player(draft, playerId);
   const cost = ability.cost ?? 0;
@@ -92,6 +95,9 @@ export function handleHeroAbility(
     abilityIndex: 0,
   });
   if (ability.oncePerTurn) draft.abilityUses[useKey] = draft.turn;
+  if (ability.maxUsesPerTurn !== undefined) {
+    draft.abilityUseCounts[useKey] = (draft.abilityUseCounts[useKey] ?? 0) + 1;
+  }
 
   emit(ctx, { type: 'hero_ability_used', player: playerId, paidActions: cost });
   afterEffects(draft, ctx);

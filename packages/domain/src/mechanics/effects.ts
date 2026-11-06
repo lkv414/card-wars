@@ -10,7 +10,7 @@ import type { Ctx } from '../util';
 import type { CardData, CardInstance, CardType, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
-import { countsAsTypes, conditionsHold, resolveStatAmount } from './modifiers';
+import { countsAsTypes, conditionsHold, landFlipProtected, resolveStatAmount } from './modifiers';
 import { computeEff } from '../stats';
 import { countChoiceRefs } from './dispatch';
 import { resolveTarget, type ResolvedTarget } from './resolve';
@@ -446,6 +446,8 @@ export function runEffect(
         if (target.kind !== 'land') continue;
         const land = draft.players[target.playerId]!.lands[target.zone]!;
         if (land.flipped === effect.down) continue; // already in the wanted state
+        // Защита земли (Яблочный страж, docs §H15): чужой флип вниз не проходит.
+        if (effect.down && landFlipProtected(draft, ctx, target.playerId, target.zone, source.player)) continue;
         land.flipped = effect.down;
         if (effect.until === 'next_own_turn') {
           draft.landFlipEffects.push({ owner: source.player, zone: target.zone, down: effect.down, grantedOnTurn: draft.turn });

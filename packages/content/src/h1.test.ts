@@ -1154,3 +1154,131 @@ describe('golden: H14 dodge and enter reactions (батч VI)', () => {
     expect(far.state.pending).toBeNull();
   });
 });
+
+describe('golden: H15 limits, protections, restrictions (батч VII)', () => {
+  /** Place an own creature (batch VII helpers). */
+  function placeOwnVII(state: MatchState, cardId: string, zone: number, damage = 0): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      inst.damage = damage;
+      d.players.p1!.zones[zone]!.creature = id;
+    });
+  }
+
+  it('Нога дракона: до 5 флюпов за ход, каждый +1 ATK и сброс карты', () => {
+    let s = placeOwnVII(newMatch(), 'lsp_card_4', 0);
+    s = edit(s, (d) => {
+      // 5 карт руки для сбросов
+      for (let i = 0; i < 5; i++) {
+        const id = d.players.p1!.deck[0]!;
+        d.players.p1!.deck.splice(0, 1);
+        d.instances[id]!.location = 'hand';
+        d.players.p1!.hand.push(id);
+      }
+    });
+    s = nextP1Turn(s); // в 1-м раунде первый игрок флюпить не может
+    s = edit(s, (d) => { d.players.p1!.actions = 10; }); // после сброса на старт хода
+    const legId = s.players.p1!.zones[0]!.creature!;
+    const base = computeEff(s, deps, legId).attack;
+    for (let i = 0; i < 5; i++) {
+      const pay = s.players.p1!.hand[0]!;
+      const res = applyCommand(s, {
+        type: 'floop', player: 'p1', instanceId: legId,
+        targets: [{ kind: 'card', instanceId: pay }],
+      }, deps);
+      if (!res.ok) throw new Error(`floop ${i + 1}: ${res.rejected.message}`);
+      s = res.state;
+    }
+    expect(computeEff(s, deps, legId).attack).toBe(base + 5);
+    // 6-й раз за ход — отказ
+    const pay6 = s.players.p1!.hand[0]!;
+    const sixth = applyCommand(s, {
+      type: 'floop', player: 'p1', instanceId: legId,
+      targets: [{ kind: 'card', instanceId: pay6 }],
+    }, deps);
+    expect(sixth.ok).toBe(false);
+  });
+
+  it('Яблочный страж: чужой флип вниз по его земле не проходит; соседняя — проходит', () => {
+    let s = placeOwnVII(newMatch(), 'ftg_card_43', 0);
+    s = edit(s, (d) => {
+      d.players.p2!.actions = 10;
+      d.players.p2!.lands[0]!.type = 'blue'; // «Ты жжош!» — синее
+    });
+    s = forceToHand(s, 'p2', 'lemongrab_card_12');
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps); // ход p2
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    // защищённая земля 0 — флип не проходит
+    const blocked = applyCommand(gb.state, {
+      type: 'play_card', player: 'p2', instanceId: handIdOf(gb.state, 'p2', 'lemongrab_card_12'),
+      targets: [{ kind: 'landscape', player: 'p1', zone: 0 }],
+    }, deps);
+    if (!blocked.ok) throw new Error(blocked.rejected.message);
+    expect(blocked.state.players.p1!.lands[0]!.flipped).toBe(false);
+    // вторая копия на незащищённую землю 1 — проходит
+    s = edit(blocked.state, (d) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1);
+      d.instances[id]!.cardId = 'lemongrab_card_12';
+      d.instances[id]!.location = 'hand';
+      d.players.p2!.hand.push(id);
+    });
+    const allowed = applyCommand(s, {
+      type: 'play_card', player: 'p2', instanceId: handIdOf(s, 'p2', 'lemongrab_card_12'),
+      targets: [{ kind: 'landscape', player: 'p1', zone: 1 }],
+    }, deps);
+    if (!allowed.ok) throw new Error(allowed.rejected.message);
+    expect(allowed.state.players.p1!.lands[1]!.flipped).toBe(true);
+  });
+
+  it('Няш-мяш: противник не играет карты стоимости 0, дорогие играет', () => {
+    let s = placeOwnVII(newMatch(), 'ftg_card_7', 0);
+    s = edit(s, (d) => {
+      d.players.p2!.actions = 10;
+      d.players.p2!.lands[0]!.type = 'rainbow'; // Квадурай — радужный
+    });
+    s = forceToHand(s, 'p2', 'ftg_card_64'); // стоимость 0
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps); // ход p2
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    const blocked = applyCommand(gb.state, {
+      type: 'play_card', player: 'p2', instanceId: handIdOf(gb.state, 'p2', 'ftg_card_64'), zone: 2,
+    }, deps);
+    expect(blocked.ok).toBe(false);
+    // стоимость 2 — проходит
+    s = forceToHand(gb.state, 'p2', 'bmo_card_12');
+    const allowed = applyCommand(s, {
+      type: 'play_card', player: 'p2', instanceId: handIdOf(s, 'p2', 'bmo_card_12'), zone: 2,
+    }, deps);
+    if (!allowed.ok) throw new Error(allowed.rejected.message);
+  });
+
+  it('Муррризрак: кошачьи жизни — воскрешение один раз, потом флаг запрета', () => {
+    let s = placeOwnVII(newMatch(), 'lich_card_48', 0, 99);
+    s = edit(s, (d) => { d.players.p1!.actions = 10; });
+    s = forceToHand(s, 'p1', 'bmo_card_12');
+    const catId = s.players.p1!.zones[0]!.creature!;
+    // смерть от летального урона при розыгрыше (afterEffects)
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 2,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1'); // кошачьи жизни?
+    expect(res.state.instances[catId]!.location).toBe('discard');
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1', answer: { proceed: true },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    const cat = next.state.instances[catId]!;
+    expect(cat.location).toBe('field');
+    expect(cat.zone).toBe(0);
+    expect(cat.damage).toBe(0);
+    expect(cat.cannotReturnFromDiscard).toBe(true);
+    expect(next.state.players.p1!.zones[0]!.creature).toBe(catId);
+  });
+});

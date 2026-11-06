@@ -65,7 +65,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
 const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
-  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature', 'dodge']);
+  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature', 'dodge', 'land_flip_protection', 'restrict_play']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -110,6 +110,7 @@ function validateAbility(ability, owner) {
     fail(`${where}: unknown trigger ${ability.trigger}`);
   }
   if (ability.kind === 'active' && ability.trigger !== undefined) fail(`${where}: active ability must not have a trigger`);
+  if (ability.maxUsesPerTurn !== undefined && (!Number.isInteger(ability.maxUsesPerTurn) || ability.maxUsesPerTurn < 1)) fail();
   if (ability.cost !== undefined && (ability.kind !== 'active' || !Number.isInteger(ability.cost) || ability.cost < 0)) {
     fail(`${where}: cost is an active-only non-negative integer`);
   }
@@ -206,6 +207,12 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.card, where);
   } else if (op === 'freeze_creature') {
     checkTargetRef(effect.target, where);
+  } else if (op === 'land_flip_protection') {
+    checkTargetRef(effect.target, where);
+  } else if (op === 'restrict_play') {
+    checkTargetRef(effect.target, where);
+    if (effect.who !== 'opponents') fail();
+    if (!Number.isInteger(effect.maxCost) || effect.maxCost < 0) fail();
   } else if (op === 'dodge') {
     checkTargetRef(effect.target, where);
     if (!Number.isInteger(effect.min) || effect.min < 1 || effect.min > 6) fail(`${where}: dodge needs integer min 1..6`);
@@ -333,6 +340,8 @@ function validateEffect(effect, where, ability) {
 }
 
 /** Read a mechanics dir (optional): one file per card/hero, validated and keyed by id. */
+const flavorOnlyIds = new Set();
+
 function readMechanics(dir, ids, nameOf, keyField, single) {
   let entries;
   try {
@@ -369,6 +378,7 @@ function readMechanics(dir, ids, nameOf, keyField, single) {
       if (actives.length > 1) fail(`${file}: at most one active (ПРИЕМ) ability per card`);
       record.abilities.forEach((ability, i) => validateAbility(ability, `${id}[${i}]`));
     }
+    if (record.flavorOnly) flavorOnlyIds.add(id);
     map.set(id, single ? record : record.abilities);
   }
   return map;
@@ -430,9 +440,10 @@ console.log(`heroes: ${heroes.length}`);
 
 // Mechanics coverage (docs/MECHANICS-V2.md §4): what is structured vs pending.
 const withMechanics = cards.filter((c) => c.abilities?.length).length;
-const structurable = cards.filter((c) => !c.abilities && c.description).length;
-const vanilla = cards.filter((c) => !c.abilities?.length && !c.description).length;
+const structurable = cards.filter((c) => !c.abilities?.length && c.description && !flavorOnlyIds.has(c.id)).length;
+const vanilla = cards.filter((c) => !c.abilities?.length && !c.description && !flavorOnlyIds.has(c.id)).length;
+const flavorOnly = cards.filter((c) => flavorOnlyIds.has(c.id)).length;
 console.log(
   `mechanics: cards ${withMechanics}/${cards.length} structured, ${structurable} with text pending, ` +
-    `${vanilla} intentionally vanilla, heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`,
+    `${flavorOnly} flavorOnly, ${vanilla} intentionally vanilla, heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`,
 );

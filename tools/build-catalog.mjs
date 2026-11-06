@@ -69,7 +69,7 @@ const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_de
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
-  'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze',
+  'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze', 'on_return_to_hand',
 ]);
 const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card', 'visible_card', 'heal_or_damage', 'amount', 'choose_option', 'damage_distribution']);
 const TARGET_REFS = new Set([
@@ -90,7 +90,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
   'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
-  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self',
+  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains',
 ]);
 
 function checkAmount(amount, where) {

@@ -114,6 +114,8 @@ export const PlayerViewSchema = z.object({
   winners: z.array(z.string()).nullable(),
   finishReason: z.enum(['elimination', 'surrender', 'disconnect']).nullable(),
   journal: z.array(z.string()),
+  /** Word chosen at match start by this player, if any (docs §H7). */
+  myWord: z.string().nullable().default(null),
 });
 
 export type LandView = z.infer<typeof LandViewSchema>;
@@ -175,6 +177,8 @@ export const CommandSchema = z.discriminatedUnion('type', [
     player: z.string(),
     answer: ChoiceAnswerSchema,
   }),
+  /** Free-text word chosen at match start (Колдунья-охотница, docs §H7). */
+  z.object({ type: z.literal('choose_word'), player: z.string(), word: z.string().min(3).max(40) }),
   z.object({ type: z.literal('draw_extra'), player: z.string() }),
   z.object({
     type: z.literal('discard_from_hand'),

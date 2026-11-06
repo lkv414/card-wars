@@ -349,7 +349,33 @@
   "id": "hero_huntress_wizard",
   "name": "Колдунья-охотница",
   "image": "/content/heroes/images/hero_huntress_wizard.png",
-  "text": "В начале игры выбери слово из 3х и более букв. Когда играешь карту с этим словом в названии, нанеси 1 урон выбранному существу под контролем противника."
+  "text": "В начале игры выбери слово из 3х и более букв. Когда играешь карту с этим словом в названии, нанеси 1 урон выбранному существу под контролем противника.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "conditions": [
+    {
+     "kind": "if_payload_player_self"
+    },
+    {
+     "kind": "if_payload_name_contains"
+    }
+   ],
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 1
+   },
+   "targets": [
+    {
+     "kind": "opponent_creature"
+    }
+   ],
+   "text": "В начале игры выбери слово из 3х и более букв. Когда играешь карту с этим словом в названии, нанеси 1 урон выбранному существу под контролем противника."
+  }
  },
  {
   "id": "hero_ice_king",
@@ -426,7 +452,36 @@
   "id": "hero_lady_rainicorn",
   "name": "Леди Ливнерог",
   "image": "/content/heroes/images/hero_lady_rainicorn.png",
-  "text": "Если во время своего хода ты возвращаешь себе на руку 2 или более существ из игры или из своего сброса, ты восстанавливаешь 2 HP."
+  "text": "Если во время своего хода ты возвращаешь себе на руку 2 или более существ из игры или из своего сброса, ты восстанавливаешь 2 HP.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_return_to_hand",
+   "conditions": [
+    {
+     "kind": "if_payload_player_self"
+    },
+    {
+     "kind": "while_counter_at_least",
+     "counter": "returned_to_hand",
+     "min": 2,
+     "scope": "own"
+    },
+    {
+     "kind": "while_counter_at_most",
+     "counter": "returned_to_hand",
+     "max": 2,
+     "scope": "own"
+    }
+   ],
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "self_player"
+    },
+    "amount": 2
+   },
+   "text": "Если во время своего хода ты возвращаешь себе на руку 2 или более существ из игры или из своего сброса, ты восстанавливаешь 2 HP."
+  }
  },
  {
   "id": "hero_lemongrab",
@@ -591,7 +646,27 @@
   "id": "hero_ricardio",
   "name": "Рикардио",
   "image": "/content/heroes/images/hero_ricardio.png",
-  "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её."
+  "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её.",
+  "ability": {
+   "kind": "active",
+   "cost": 0,
+   "oncePerTurn": true,
+   "mechanic": "reveal_maybe_discard",
+   "params": {
+    "payLife": 1
+   },
+   "targets": [
+    {
+     "kind": "choose_option",
+     "options": [
+      "keep",
+      "discard"
+     ],
+     "label": "Верхняя карта колоды"
+    }
+   ],
+   "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её."
+  }
  },
  {
   "id": "hero_strong_susan",

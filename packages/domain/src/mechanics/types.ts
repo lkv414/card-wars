@@ -23,7 +23,9 @@ export type Trigger =
   | 'on_card_played'
   | 'start_of_battle_phase'
   | 'on_companion_event'
-  | 'on_freeze';
+  | 'on_freeze'
+  /** A card returned to its owner's hand (Леди Ливнерог, docs §H7). */
+  | 'on_return_to_hand';
 
 /** What a triggered ability observes (queued with the ability). */
 export interface TriggerPayload {
@@ -197,7 +199,8 @@ export type TurnCounterKind =
   | 'cards_discarded'
   | 'creature_cost_2_plus_played'
   | 'damage_dealt_to_enemy'
-  | 'creature_attack';
+  | 'creature_attack'
+  | 'returned_to_hand';
 
 /** Scope used by turn-counter reads/writes. */
 export type CounterScope = 'own' | 'team' | 'teammate';
@@ -396,7 +399,9 @@ export type ConditionSpec =
   /** The aura candidate changed lane this turn (Хата на Новый Год). */
   | { kind: 'while_target_moved_this_turn' }
   /** The trigger payload is about this very instance (Усталый библиотекарь). */
-  | { kind: 'if_payload_instance_self' };
+  | { kind: 'if_payload_instance_self' }
+  /** The played card's name contains the player's chosen word (Колдунья-охотница). */
+  | { kind: 'if_payload_name_contains' };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {

@@ -151,5 +151,6 @@ export function viewFor(
     winners: state.winners,
     finishReason: state.finishReason,
     journal: options.journal ?? [],
+    myWord: state.chosenWord[me] ?? null,
   };
 }

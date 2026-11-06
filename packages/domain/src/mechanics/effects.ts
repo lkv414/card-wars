@@ -489,6 +489,8 @@ export function runEffect(
         inst.flipped = false;
         draft.players[inst.controller]!.hand.push(target.instanceId);
         emit(ctx, { type: 'card_returned', player: inst.controller, instanceId: target.instanceId, cardId: inst.cardId });
+        bumpCounter(draft, 'returned_to_hand', inst.controller);
+        enqueueTrigger(draft, ctx, 'on_return_to_hand', { instanceId: target.instanceId, cardId: inst.cardId, player: inst.controller, zone: prevZone });
         enqueueLeavePlay(draft, ctx, target.instanceId, inst.cardId, inst.controller, prevZone);
       }
       return;
@@ -863,6 +865,8 @@ function returnCards(
       p.hand.push(chosen);
     }
     emit(ctx, { type: 'card_returned', player: source.player, instanceId: chosen, cardId: inst.cardId });
+    bumpCounter(draft, 'returned_to_hand', source.player);
+    enqueueTrigger(draft, ctx, 'on_return_to_hand', { instanceId: chosen, cardId: inst.cardId, player: source.player });
   }
 }
 

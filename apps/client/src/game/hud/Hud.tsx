@@ -70,6 +70,7 @@ export function Hud({ code }: { code: string }) {
 
   const [amountInput, setAmountInput] = useState('');
   const [distribution, setDistribution] = useState<string[]>([]);
+  const [wordInput, setWordInput] = useState('');
 
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
   const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
@@ -333,6 +334,25 @@ export function Hud({ code }: { code: string }) {
 
       {error && <div className="error-line hud-error">{error.message}</div>}
 
+      {view.status === 'running' && me.heroId === 'hero_huntress_wizard' && !view.myWord && (
+        <div className="pending-banner">
+          <span>Выбери слово из 3+ букв для способности героя:</span>
+          <input
+            value={wordInput}
+            maxLength={40}
+            onChange={(e) => setWordInput(e.target.value)}
+            aria-label="Слово героя"
+          />
+          <button
+            className="mini"
+            disabled={wordInput.trim().length < 3}
+            onClick={() => sendCommand({ type: 'choose_word', player: view.me, word: wordInput.trim() })}
+          >
+            ОК
+          </button>
+        </div>
+      )}
+
       {targeting && targeting.mode === 'active' && (
         <div className="pending-banner">
           <span>
@@ -530,6 +550,8 @@ const OPTION_LABELS: Record<string, string> = {
   damage: 'Нанести урон',
   deck_top: 'На верх колоды',
   hand: 'В руку',
+  keep: 'Оставить',
+  discard: 'Сбросить',
 };
 
 function phaseRu(phase: string): string {

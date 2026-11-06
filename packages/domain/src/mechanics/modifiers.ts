@@ -465,6 +465,13 @@ export function conditionsHold(
         if (draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.landType === cond.landType)) return false;
         break;
       }
+      case 'if_payload_name_contains': {
+        const word = draft.chosenWord[source.player] ?? '';
+        if (word.length < 3 || !payload?.cardId) return false;
+        const name = ctx.catalog.getCard(payload.cardId)?.name ?? '';
+        if (!name.toLowerCase().includes(word.toLowerCase())) return false;
+        break;
+      }
       case 'if_payload_instance_self': {
         if (!source.instanceId || payload?.instanceId !== source.instanceId) return false;
         break;

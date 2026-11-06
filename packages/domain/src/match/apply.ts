@@ -157,6 +157,16 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
     case 'keep_hand':
       handleKeepHand(draft, ctx, command.player);
       return;
+    case 'choose_word': {
+      // Chosen once at match start; stored per player, never leaves their view.
+      if (draft.status === 'finished') throw new DomainError('match_finished', 'match is finished');
+      if (!draft.players[command.player]) throw new DomainError('unknown_player', 'unknown player');
+      const word = command.word.trim();
+      if (word.length < 3) throw new DomainError('invalid_choice', 'word must have at least 3 letters');
+      if (draft.chosenWord[command.player]) throw new DomainError('invalid_choice', 'word already chosen');
+      draft.chosenWord[command.player] = word;
+      return;
+    }
     case 'play_card':
       handlePlayCard(draft, ctx, command.player, command.instanceId, command.zone, command.unfreezeWith, command.targets);
       return;

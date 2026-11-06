@@ -103,6 +103,8 @@ function toCommand(c: Sample): Command {
       return { type: 'mulligan', player: c.player };
     case 'keep_hand':
       return { type: 'keep_hand', player: c.player };
+    case 'choose_word':
+      return { type: 'choose_word', player: c.player, word: 'тест' };
     case 'hero_ability':
       return { type: 'hero_ability', player: c.player };
     case 'resolve_choice':

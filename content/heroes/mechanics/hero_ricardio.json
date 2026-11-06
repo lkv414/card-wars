@@ -1,0 +1,19 @@
+{
+  "heroId": "hero_ricardio",
+  "name": "Рикардио",
+  "ability": {
+    "kind": "active",
+    "cost": 0,
+    "oncePerTurn": true,
+    "mechanic": "reveal_maybe_discard",
+    "params": { "payLife": 1 },
+    "targets": [
+      {
+        "kind": "choose_option",
+        "options": ["keep", "discard"],
+        "label": "Верхняя карта колоды"
+      }
+    ],
+    "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её."
+  }
+}

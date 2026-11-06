@@ -71,6 +71,27 @@ export const selfDamageThenDestroy: MechanicHandler = (draft, ctx, source, _para
   killInstance(draft, ctx, pick.instanceId);
 };
 
+/** «Открой верхнюю карту колоды; можешь сбросить её» (docs §H7). */
+export const revealMaybeDiscard: MechanicHandler = (draft, ctx, source, params, choices) => {
+  const p = player(draft, source.player);
+  const lifeCost = Number(params?.payLife ?? 0);
+  if (lifeCost > 0) {
+    p.lives -= lifeCost;
+    emit(ctx, { type: 'lives_changed', player: source.player, delta: -lifeCost, lives: p.lives });
+  }
+  const id = p.deck[0];
+  if (!id) return;
+  const inst = instance(draft, id);
+  emit(ctx, { type: 'cards_revealed', player: source.player, cardIds: [id] });
+  const answer = choices?.find((c) => c.kind === 'option');
+  if (answer && answer.kind === 'option' && answer.option === 'discard') {
+    p.deck.shift();
+    inst.location = 'discard';
+    p.discard.push(id);
+    emit(ctx, { type: 'card_discarded', player: source.player, instanceId: id, cardId: inst.cardId, from: 'deck' });
+  }
+};
+
 /** «Укради случайную карту с руки противника и сыграй её бесплатно». */
 export const stealAndPlayFromHand: MechanicHandler = (draft, ctx, source, _params, choices) => {
   const picked = choices?.[0];

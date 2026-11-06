@@ -16,6 +16,8 @@ export interface ChoiceAnswer {
 export type Command =
   | { type: 'mulligan'; player: PlayerId }
   | { type: 'keep_hand'; player: PlayerId }
+  /** Free-text word chosen at match start (Колдунья-охотница, docs §H7). */
+  | { type: 'choose_word'; player: PlayerId; word: string }
   | { type: 'play_card'; player: PlayerId; instanceId: string; zone?: number; unfreezeWith?: string; targets?: TargetChoice[] }
   | { type: 'floop'; player: PlayerId; instanceId: string; targets?: TargetChoice[] }
   | { type: 'hero_ability'; player: PlayerId; targets?: TargetChoice[] }

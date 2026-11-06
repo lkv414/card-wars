@@ -87,6 +87,45 @@ function placeOwnCreatures(state: MatchState, cardId: string, damage: number[]):
   });
 }
 
+describe('golden: hero abilities (H7)', () => {
+  it('Колдунья-охотница: choose_word сохраняет слово и срабатывает на карте с этим словом', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.heroId = 'hero_huntress_wizard';
+      d.players.p1!.lands = ['rainbow', 'rainbow', 'rainbow', 'rainbow'].map((type) => ({
+        type: type as 'rainbow', frozen: false, flipped: false, iceTokens: 0,
+      }));
+      d.players.p1!.actions = 10;
+    });
+    const chosen = applyCommand(s, { type: 'choose_word', player: 'p1', word: 'Сирена' }, deps);
+    expect(chosen.ok).toBe(true);
+    if (!chosen.ok) throw new Error(chosen.rejected.message);
+    expect(chosen.state.chosenWord.p1).toBe('Сирена');
+    s = forceToHand(chosen.state, 'p1', 'bmo_card_12');
+    const played = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 0,
+    }, deps);
+    expect(played.ok).toBe(true);
+    if (!played.ok) throw new Error(played.rejected.message);
+    expect(played.state.pending?.player).toBe('p1');
+  });
+
+  it('Рикардио: один раз за ход платит 1 жизнью и может сбросить верхнюю карту', () => {
+    let s = edit(newMatch(), (d) => { d.players.p1!.heroId = 'hero_ricardio'; });
+    const deckBefore = s.players.p1!.deck.length;
+    const res = applyCommand(s, {
+      type: 'hero_ability', player: 'p1', targets: [{ kind: 'option', option: 'discard' }],
+    }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p1!.lives).toBe(24);
+    expect(res.state.players.p1!.deck.length).toBe(deckBefore - 1);
+    const again = applyCommand(res.state, {
+      type: 'hero_ability', player: 'p1', targets: [{ kind: 'option', option: 'keep' }],
+    }, deps);
+    expect(again.ok).toBe(false);
+  });
+});
+
 describe('golden: H1 primitives', () => {
   it('Заплатка: перераспределение урона сохраняет сумму', () => {
     let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [3, 1]);

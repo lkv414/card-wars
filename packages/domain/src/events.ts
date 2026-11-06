@@ -29,7 +29,7 @@ export type GameEvent =
   /** The card left the game entirely (Громила: «удали из игры»). */
   | { type: 'card_removed'; player: PlayerId; instanceId: string; cardId: string }
   | { type: 'card_returned'; player: PlayerId; instanceId: string; cardId: string }
-  | { type: 'land_changed'; player: PlayerId; zone: number; change: 'frozen' | 'unfrozen' | 'flipped' | 'unflipped' }
+  | { type: 'land_changed'; player: PlayerId; zone: number; change: 'frozen' | 'unfrozen' | 'flipped' | 'unflipped' | 'type_changed' }
   | { type: 'token_changed'; player: PlayerId; zone: number; iceTokens: number }
   | { type: 'bonus_changed'; instanceId: string; cardId: string; bonusAttack: number; bonusDefense: number }
   | { type: 'shield_changed'; instanceId: string; cardId: string; shield: number }

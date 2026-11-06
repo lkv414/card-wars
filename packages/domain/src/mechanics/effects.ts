@@ -12,6 +12,7 @@ import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
 import { countsAsTypes, conditionsHold, resolveStatAmount } from './modifiers';
 import { computeEff } from '../stats';
+import { countChoiceRefs } from './dispatch';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice, TargetFilter, TargetRef, TriggerPayload } from './types';
@@ -672,8 +673,20 @@ export function runEffect(
         const inst = instance(draft, id);
         const delta = values[i]! - inst.damage;
         inst.damage = values[i]!;
-        if (delta !== 0) {
-          emit(ctx, { type: 'creature_healed', instanceId: id, amount: Math.abs(delta) });
+        if (delta > 0) {
+          // Damage went UP: a dealt-damage fact (journal/animation), not a heal.
+          draft.lastHits[id] = source.instanceId;
+          emit(ctx, {
+            type: 'damage_dealt',
+            sourceInstanceId: source.instanceId,
+            targetInstanceId: id,
+            targetPlayer: null,
+            amount: delta,
+            absorbedByShield: 0,
+            toTarget: delta,
+          });
+        } else if (delta < 0) {
+          emit(ctx, { type: 'creature_healed', instanceId: id, amount: -delta });
         }
       });
       return;
@@ -692,7 +705,7 @@ export function runEffect(
         if (state.originalType === undefined) state.originalType = state.type;
         state.type = next as import('../types').LandType;
         state.typeChangedOnTurn = draft.turn;
-        emit(ctx, { type: 'land_changed', player: land.playerId, zone: land.zone, change: 'unflipped' });
+        emit(ctx, { type: 'land_changed', player: land.playerId, zone: land.zone, change: 'type_changed' });
       }
       return;
     }
@@ -706,16 +719,25 @@ export function runEffect(
       const ib = instance(draft, (b as { instanceId: string }).instanceId);
       if (ia.location !== 'field' || ib.location !== 'field' || ia.zone === null || ib.zone === null || ia.slot === null || ia.slot !== ib.slot) return;
       const slot = ia.slot;
-      const za = draft.players[ia.controller]!.zones[ia.zone]!;
-      const zb = draft.players[ib.controller]!.zones[ib.zone]!;
+      const fromA = ia.zone;
+      const fromB = ib.zone;
+      const za = draft.players[ia.controller]!.zones[fromA]!;
+      const zb = draft.players[ib.controller]!.zones[fromB]!;
       za[slot] = ib.id;
       zb[slot] = ia.id;
-      const zoneA = ia.zone;
-      ia.zone = ib.zone;
-      ib.zone = zoneA;
+      ia.zone = fromB;
+      ib.zone = fromA;
       ia.movedThisTurn = true;
       ib.movedThisTurn = true;
+      // Same facts as any lane change: counter, public movement events, triggers.
       bumpCounter(draft, 'line_change', ia.controller);
+      bumpCounter(draft, 'line_change', ib.controller);
+      const idA = ia.id;
+      const idB = ib.id;
+      emit(ctx, { type: 'card_moved', player: ia.controller, instanceId: idA, fromZone: fromA, toZone: fromB });
+      emit(ctx, { type: 'card_moved', player: ib.controller, instanceId: idB, fromZone: fromB, toZone: fromA });
+      enqueueTrigger(draft, ctx, 'on_line_change', { instanceId: idA, player: ia.controller, zone: fromB });
+      enqueueTrigger(draft, ctx, 'on_line_change', { instanceId: idB, player: ib.controller, zone: fromA });
       return;
     }
     case 'attach_card': {
@@ -747,13 +769,28 @@ export function runEffect(
       if (!target || (target.kind !== 'creature' && target.kind !== 'building')) return;
       const id = (target as { instanceId: string }).instanceId;
       const inst = instance(draft, id);
+      let from: 'hand' | 'field' | 'companion';
       if (inst.location === 'hand') {
         const p = draft.players[inst.controller]!;
         p.hand = p.hand.filter((x) => x !== id);
+        from = 'hand';
+      } else if (inst.location === 'field' || inst.location === 'companion') {
+        // Leaving play: clear the slot and fire on_leave_play (docs §3).
+        if (inst.zone !== null && inst.slot) {
+          const owner = draft.players[inst.controller]!;
+          if (owner.zones[inst.zone]![inst.slot] === id) owner.zones[inst.zone]![inst.slot] = null;
+        }
+        if (inst.location === 'companion') draft.players[inst.controller]!.companion = null;
+        from = inst.location;
+        enqueueLeavePlay(draft, ctx, id, inst.cardId, inst.controller, inst.zone);
+      } else {
+        return; // deck / discard / removed — nothing to discard
       }
       inst.location = 'discard';
+      inst.zone = null;
+      inst.slot = null;
       draft.players[inst.controller]!.discard.push(id);
-      emit(ctx, { type: 'card_discarded', player: inst.controller, instanceId: id, cardId: inst.cardId, from: 'hand' });
+      emit(ctx, { type: 'card_discarded', player: inst.controller, instanceId: id, cardId: inst.cardId, from });
       return;
     }
     case 'pay_life': {
@@ -894,23 +931,6 @@ function returnCards(
     bumpCounter(draft, 'returned_to_hand', source.player);
     enqueueTrigger(draft, ctx, 'on_return_to_hand', { instanceId: chosen, cardId: inst.cardId, player: source.player });
   }
-}
-
-/** How many `choice` refs one effect step consumes (docs §H2 repeat_effect). */
-function countChoiceRefs(effect: EffectSpec): number {
-  const found: number[] = [];
-  const visit = (value: unknown): void => {
-    if (Array.isArray(value)) {
-      for (const item of value) visit(item);
-      return;
-    }
-    if (!value || typeof value !== 'object') return;
-    const record = value as Record<string, unknown>;
-    if (record.kind === 'choice' && typeof record.index === 'number') found.push(record.index);
-    for (const nested of Object.values(record)) visit(nested);
-  };
-  visit(effect);
-  return found.length > 0 ? Math.max(...found) + 1 : 0;
 }
 
 /** Increment a per-turn event counter (key `kind:player`). */

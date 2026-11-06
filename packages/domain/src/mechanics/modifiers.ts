@@ -1,5 +1,6 @@
 ﻿import { instance } from '../util';
 import type { Ctx } from '../util';
+import { DomainError } from '../errors';
 import type { CardData, MatchState } from '../types';
 import { teamOf } from '../zones';
 import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
@@ -494,8 +495,11 @@ export function conditionsHold(
         break;
       }
       case 'while_effective_def_at_most': {
-        const targetId = cond.scope === 'target' ? undefined : source.instanceId;
-        const id = targetId ?? source.instanceId;
+        // «Осталось ≤ N DEF с учётом бонусов»: база + бонусы + turnBuffs, БЕЗ
+        // аур — computeEff здесь дал бы бесконечную рекурсию (условие ауры
+        // того же инстанса пересчитывало бы её же). scope 'target' смотрит на
+        // цель, проверяемую per-target.
+        const id = cond.scope === 'target' ? targetInstanceId : source.instanceId;
         if (!id) return false;
         const inst = instance(draft, id);
         const card = ctx.catalog.getCard(inst.cardId);
@@ -630,7 +634,10 @@ export function resolveStatAmount(
     }
     case 'chosen_amount': {
       const answer = choices?.[amount.index];
-      return answer && answer.kind === 'amount' ? answer.value : 0;
+      if (!answer || answer.kind !== 'amount') {
+        throw new DomainError('invalid_choice', `no amount answer at index ${amount.index}`);
+      }
+      return answer.value;
     }
     case 'target_damage': {
       const targets = resolveTarget(draft, ctx, amount.target, source, choices, undefined);

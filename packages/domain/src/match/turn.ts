@@ -38,7 +38,7 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
       land.type = land.originalType;
       delete land.originalType;
       delete land.typeChangedOnTurn;
-      emit(ctx, { type: 'land_changed', player: pid, zone, change: 'unflipped' });
+      emit(ctx, { type: 'land_changed', player: pid, zone, change: 'type_changed' });
     }
   });
 

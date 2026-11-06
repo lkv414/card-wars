@@ -84,16 +84,23 @@ export function eliminatePlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: Pl
     for (const slot of ['creature', 'building'] as const) {
       const id = zone[slot];
       if (id) {
+        dropAttached(draft, id);
         instance(draft, id).location = 'removed';
         zone[slot] = null;
       }
     }
   }
   if (p.companion) {
+    dropAttached(draft, p.companion);
     instance(draft, p.companion).location = 'removed';
     p.companion = null;
   }
   emit(ctx, { type: 'player_eliminated', player: playerId });
+}
+
+/** Attached cards are already out of the game; detach the list from the host. */
+function dropAttached(draft: Draft<MatchState>, hostId: string): void {
+  delete draft.instances[hostId]?.attached;
 }
 
 /** Standard post-effect batch: deaths, elimination/win check, trigger drain. */

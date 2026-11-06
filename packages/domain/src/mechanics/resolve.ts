@@ -471,7 +471,11 @@ export function resolveTarget(
       );
     case 'attached_cards': {
       const host = source.instanceId ? draft.instances[source.instanceId] : null;
-      return (host?.attached ?? []).map((id) => ({ kind: 'building' as const, instanceId: id }));
+      return (host?.attached ?? []).map((id) => {
+        // Real card type, not a hardcoded kind — attached cards may be creatures.
+        const card = draft.instances[id] ? ctx.catalog.getCard(draft.instances[id]!.cardId) : undefined;
+        return { kind: (card?.type === 'creature' ? 'creature' : 'building') as 'creature' | 'building', instanceId: id };
+      });
     }
   }
 }

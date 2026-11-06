@@ -256,7 +256,7 @@ function effectChoiceNeed(effect: EffectSpec): number {
   if (effect.op === 'redistribute_damage') return Math.max(max + 1, 1);
   if (effect.op === 'repeat_effect') {
     const times = typeof effect.times === 'number' ? effect.times : 1;
-    return Math.max(max + 1, times * countChoiceRefsLocal(effect.effect));
+    return Math.max(max + 1, times * countChoiceRefs(effect.effect));
   }
   if (effect.op === 'set_land_type' && effect.landType === 'chosen') return Math.max(max + 1, 1);
   if (effect.op === 'discard_chosen') return Math.max(max + 1, 1);
@@ -265,7 +265,7 @@ function effectChoiceNeed(effect: EffectSpec): number {
 }
 
 /** Distinct `choice` indices consumed by one effect (docs §H2 repeat_effect). */
-function countChoiceRefsLocal(effect: EffectSpec): number {
+export function countChoiceRefs(effect: EffectSpec): number {
   let max = -1;
   const visit = (value: unknown): void => {
     if (Array.isArray(value)) {

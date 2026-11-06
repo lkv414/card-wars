@@ -1,0 +1,19 @@
+{
+  "cardId": "charlie_card_7",
+  "name": "Цитадель с куполом",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием противника."
+    }
+  ]
+}

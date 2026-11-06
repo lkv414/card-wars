@@ -1,0 +1,24 @@
+{
+  "cardId": "ftg_card_48",
+  "name": "Воскресная школа",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_lives_even"
+          }
+        ]
+      },
+      "text": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK."
+    }
+  ]
+}

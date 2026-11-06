@@ -2241,7 +2241,22 @@
   "landType": "blue",
   "image": "/content/cards/images/charlie_card_7.png",
   "description": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием противника.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "stat": "defense",
+     "amount": 2,
+     "duration": "aura"
+    },
+    "text": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием противника."
+   }
+  ]
  },
  {
   "id": "charlie_card_8",
@@ -2481,7 +2496,24 @@
   "attack": 3,
   "defense": 5,
   "description": "Когда Аэромансер вступает в игру, можешь поменять местами 2 существ выбранного игрока.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "optional": true,
+    "mechanic": "swap_creatures",
+    "targets": [
+     {
+      "kind": "any_creature"
+     },
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Когда Аэромансер вступает в игру, можешь поменять местами 2 существ выбранного игрока."
+   }
+  ]
  },
  {
   "id": "charlie_card_20",
@@ -3134,7 +3166,22 @@
   "attack": 2,
   "defense": 6,
   "description": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК в этом ходу.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_moved_this_turn"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura"
+    },
+    "text": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК в этом ходу."
+   }
+  ]
  },
  {
   "id": "finn_card_14",
@@ -3307,7 +3354,29 @@
   "landType": "blue",
   "image": "/content/cards/images/finn_card_23.png",
   "description": "ПРИЕМ >>> Перемести существо на соседнюю линию (если она пустует).",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "destination": {
+      "kind": "adjacent_own_land"
+     },
+     "side": "own"
+    },
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Перемести существо на соседнюю линию (если она пустует)."
+   }
+  ]
  },
  {
   "id": "finn_card_25",
@@ -3417,7 +3486,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/finn_card_31.png",
   "description": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК.",
-  "deckSet": "finn"
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_moved_this_turn"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "this_turn"
+    },
+    "text": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК."
+   }
+  ]
  },
  {
   "id": "finn_card_32",
@@ -3952,7 +4037,30 @@
   "attack": 1,
   "defense": 7,
   "description": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой. (У нее нет типа Земли.)",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "counts_as",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "landType": "rainbow"
+     }
+    },
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ],
+    "text": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой. (У нее нет типа Земли.)"
+   }
+  ]
  },
  {
   "id": "fiona_card_30",
@@ -4314,7 +4422,22 @@
   "attack": 3,
   "defense": 7,
   "description": "Каждое существо сменившее линию в этом ход получает +3 ATK в этом ход. (Не действует на существ противника.)",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_own_creature_moved_this_turn"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "text": "Каждое существо сменившее линию в этом ход получает +3 ATK в этом ход. (Не действует на существ противника.)"
+   }
+  ]
  },
  {
   "id": "ftg_card_7",
@@ -4526,7 +4649,31 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_16.png",
   "description": "Подготовь каждое существо сменившее линию в этом ход. Каждое из них получает +2 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "ready_creature",
+      "target": {
+       "kind": "each_creature_moved_this_turn"
+      }
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "each_creature_moved_this_turn"
+      },
+      "stat": "attack",
+      "amount": 2,
+      "duration": "this_turn"
+     }
+    ],
+    "text": "Подготовь каждое существо сменившее линию в этом ход. Каждое из них получает +2 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_17",
@@ -4768,7 +4915,33 @@
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_30.png",
   "description": "Играй только если ты сыграл не-кукурузные карты в этом ход. Нанеси 5 урона выбранному существу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 5
+    },
+    "conditions": [
+     {
+      "kind": "while_no_land_type_played",
+      "landType": "corn"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Играй только если ты сыграл не-кукурузные карты в этом ход. Нанеси 5 урона выбранному существу."
+   }
+  ]
  },
  {
   "id": "ftg_card_31",
@@ -5232,7 +5405,27 @@
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_48.png",
   "description": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_lives_even"
+      }
+     ]
+    },
+    "text": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK."
+   }
+  ]
  },
  {
   "id": "ftg_card_49",
@@ -10677,7 +10870,32 @@
   "attack": 1,
   "defense": 10,
   "description": "Песчаная мышь получает 1 DEF за каждое другое существо вступившее в игру под твоим контролем.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "excludeSelf": true,
+      "filter": {
+       "enteredThisTurn": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Песчаная мышь получает 1 DEF за каждое другое существо вступившее в игру под твоим контролем."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_22",
@@ -13477,7 +13695,32 @@
   "landType": "rainbow",
   "image": "/content/cards/images/marceline_card_33.png",
   "description": "Выбранное существо получает X ATK в этом ходу, где X это число различных типов земель под контролем твоего противника.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "duration": "this_turn",
+     "amount": {
+      "kind": "per_opponent_distinct_lands",
+      "amount": 1
+     }
+    },
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Выбранное существо получает X ATK в этом ходу, где X это число различных типов земель под контролем твоего противника."
+   }
+  ]
  },
  {
   "id": "marceline_card_35",
@@ -14616,7 +14859,63 @@
   "landType": "good",
   "image": "/content/cards/images/tree_trunks_card_35.png",
   "description": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "cardIds": [
+       "bubblegum_card_30",
+       "ftg_card_51",
+       "tree_trunks_card_1",
+       "tree_trunks_card_2",
+       "tree_trunks_card_4",
+       "tree_trunks_card_7",
+       "tree_trunks_card_8",
+       "tree_trunks_card_26",
+       "tree_trunks_card_30",
+       "tree_trunks_card_35"
+      ]
+     }
+    },
+    "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "stat": "defense",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "cardIds": [
+       "bubblegum_card_30",
+       "ftg_card_51",
+       "tree_trunks_card_1",
+       "tree_trunks_card_2",
+       "tree_trunks_card_4",
+       "tree_trunks_card_7",
+       "tree_trunks_card_8",
+       "tree_trunks_card_26",
+       "tree_trunks_card_30",
+       "tree_trunks_card_35"
+      ]
+     }
+    },
+    "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_37",

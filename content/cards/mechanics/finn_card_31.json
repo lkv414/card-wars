@@ -1,0 +1,20 @@
+{
+  "cardId": "finn_card_31",
+  "name": "Кровь Вайда",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_moved_this_turn"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК."
+    }
+  ]
+}

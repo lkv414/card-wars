@@ -176,6 +176,8 @@ export type TargetRef =
   | { kind: 'each_own_creature_damaged' }
   /** Every creature that changed lane this turn (Кот-панк, Запашок от носок). */
   | { kind: 'each_creature_moved_this_turn' }
+  /** Own creatures that changed lane this turn (Паладин). */
+  | { kind: 'each_own_creature_moved_this_turn' }
   /** All buildings in play, either side (Снижение налогов). */
   | { kind: 'each_building' }
   /** All lands in play, either side (Ледяной залп). */
@@ -241,6 +243,8 @@ export type StatAmount =
   | { kind: 'per_damage'; amount: number }
   /** «за каждый различный тип земли под твоим контролем». */
   | { kind: 'per_distinct_lands'; amount: number }
+  /** Distinct land types controlled by the opponents (Ожерелье черных дыр). */
+  | { kind: 'per_opponent_distinct_lands'; amount: number }
   /** Lands by scope; filters: only empty zones (Пескозавр рекс), only face-down (Смещатель земли). */
   | {
       kind: 'per_lands';
@@ -382,7 +386,11 @@ export type ConditionSpec =
   /** A card of this type was played this turn. */
   | { kind: 'while_played_card_type'; type: import('../types').CardType }
   /** No spells were played this turn (Виноградная попка: «не-кукурузные карты»). */
-  | { kind: 'while_no_spells_played' };
+  | { kind: 'while_no_spells_played' }
+  /** No card of this land type was played this turn (Виноградная попка). */
+  | { kind: 'while_no_land_type_played'; landType: import('../types').LandType }
+  /** The owner's life total is even (Воскресная школа). */
+  | { kind: 'while_lives_even' };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {

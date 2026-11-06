@@ -118,6 +118,39 @@ describe('golden: H1 primitives', () => {
     expect(computeEff(s, deps, id).attack).toBe((card.attack ?? 0) * 2);
   });
 
+  it('Ожерелье черных дыр: +X ATK по числу типов земель противника', () => {
+    let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [0]);
+    s = forceToHand(s, 'p1', 'marceline_card_33');
+    const target = s.players.p1!.zones[0]!.creature!;
+    const expected = new Set(s.players.p2!.lands.map((l) => l.type)).size;
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'marceline_card_33'),
+      targets: [{ kind: 'creature', instanceId: target }],
+    }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.turnBuffs.some((b) => b.instanceId === target && b.amount === expected)).toBe(true);
+  });
+
+  it('Воскресная школа: +2 ATK только при чётном числе жизней', () => {
+    let base = placeOwnCreatures(newMatch(), 'bmo_card_12', [0]);
+    base = edit(base, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = 'ftg_card_48';
+      inst.location = 'field';
+      inst.zone = 0;
+      inst.slot = 'building';
+      d.players.p1!.zones[0]!.building = id;
+      d.players.p1!.lives = 24;
+    });
+    const id = base.players.p1!.zones[0]!.creature!;
+    const even = computeEff(base, deps, id).attack;
+    const odd = edit(base, (d) => { d.players.p1!.lives = 23; });
+    expect(even - computeEff(odd, deps, id).attack).toBe(2);
+  });
+
   it('Кольцо пушистости: +X ATK по урону на выбранном существе', () => {
     let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [3]);
     s = forceToHand(s, 'p1', 'bubblegum_card_14');

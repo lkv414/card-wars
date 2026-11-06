@@ -461,6 +461,16 @@ export function conditionsHold(
         if (p.zones[src.zone]!.creature) return false;
         break;
       }
+      case 'while_no_land_type_played': {
+        if (draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.landType === cond.landType)) return false;
+        break;
+      }
+      case 'while_lives_even': {
+        const team = teamOf(draft, source.player);
+        const lives = team ? team.lives : p.lives;
+        if (lives % 2 !== 0) return false;
+        break;
+      }
       case 'while_damage_at_most': {
         const id = source.instanceId;
         if (!id || instance(draft, id).damage > cond.amount) return false;
@@ -542,6 +552,10 @@ export function resolveStatAmount(
     }
     case 'per_distinct_lands':
       return distinctLandTypes(p.lands.map((l) => l.type)) * amount.amount;
+    case 'per_opponent_distinct_lands': {
+      const types = opponentsOf(draft, source.player).flatMap((pid) => draft.players[pid]!.lands.map((l) => l.type));
+      return distinctLandTypes(types) * amount.amount;
+    }
     case 'per_lands': {
       let count = 0;
       const src = source.instanceId ? instance(draft, source.instanceId) : null;

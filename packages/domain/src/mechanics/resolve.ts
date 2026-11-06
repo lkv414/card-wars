@@ -459,6 +459,10 @@ export function resolveTarget(
       return draft.order.flatMap((pid) => creaturesOf(draft, pid)).filter(
         (t) => t.kind === 'creature' && draft.instances[t.instanceId]!.movedThisTurn === true,
       );
+    case 'each_own_creature_moved_this_turn':
+      return creaturesOf(draft, source.player).filter(
+        (t) => t.kind === 'creature' && draft.instances[t.instanceId]!.movedThisTurn === true,
+      );
     case 'each_building':
       return draft.order.flatMap((pid) => buildingsOf(draft, pid));
     case 'each_land':

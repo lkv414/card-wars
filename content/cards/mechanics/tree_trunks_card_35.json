@@ -1,0 +1,60 @@
+{
+  "cardId": "tree_trunks_card_35",
+  "name": "Хлопковый форт",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "cardIds": [
+            "bubblegum_card_30",
+            "ftg_card_51",
+            "tree_trunks_card_1",
+            "tree_trunks_card_2",
+            "tree_trunks_card_4",
+            "tree_trunks_card_7",
+            "tree_trunks_card_8",
+            "tree_trunks_card_26",
+            "tree_trunks_card_30",
+            "tree_trunks_card_35"
+          ]
+        }
+      },
+      "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "cardIds": [
+            "bubblegum_card_30",
+            "ftg_card_51",
+            "tree_trunks_card_1",
+            "tree_trunks_card_2",
+            "tree_trunks_card_4",
+            "tree_trunks_card_7",
+            "tree_trunks_card_8",
+            "tree_trunks_card_26",
+            "tree_trunks_card_30",
+            "tree_trunks_card_35"
+          ]
+        }
+      },
+      "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
+    }
+  ]
+}

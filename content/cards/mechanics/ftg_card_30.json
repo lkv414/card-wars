@@ -1,0 +1,30 @@
+{
+  "cardId": "ftg_card_30",
+  "name": "Виноградная попка",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 5
+      },
+      "conditions": [
+        {
+          "kind": "while_no_land_type_played",
+          "landType": "corn"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Играй только если ты сыграл не-кукурузные карты в этом ход. Нанеси 5 урона выбранному существу."
+    }
+  ]
+}

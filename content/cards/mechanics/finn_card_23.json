@@ -1,0 +1,26 @@
+{
+  "cardId": "finn_card_23",
+  "name": "Шалаш Вайда",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "adjacent_own_land"
+        },
+        "side": "own"
+      },
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "ПРИЕМ >>> Перемести существо на соседнюю линию (если она пустует)."
+    }
+  ]
+}

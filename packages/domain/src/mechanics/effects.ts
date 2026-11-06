@@ -743,11 +743,29 @@ export function runEffect(
     case 'attach_card': {
       const hostRef = resolveTarget(draft, ctx, effect.to, source, choices, payload)[0];
       const cardRef = resolveTarget(draft, ctx, effect.card, source, choices, payload)[0];
-      if (!hostRef || !cardRef || (hostRef.kind !== 'creature' && hostRef.kind !== 'building') ||
-          (cardRef.kind !== 'creature' && cardRef.kind !== 'building')) return;
+      if (!hostRef || (hostRef.kind !== 'creature' && hostRef.kind !== 'building')) return;
+      // Карта может прийти с доски (creature/building) или из стопки/колоды
+      // (kind 'card' — верх чужого сброса, ответ карточного ask'а).
+      let cardId: string | null = null;
+      if (cardRef && (cardRef.kind === 'creature' || cardRef.kind === 'building' || cardRef.kind === 'card')) {
+        cardId = cardRef.instanceId;
+      }
+      if (!cardId) return;
       const host = instance(draft, (hostRef as { instanceId: string }).instanceId);
-      const cardId = (cardRef as { instanceId: string }).instanceId;
       const attached = instance(draft, cardId);
+      if (attached.location === 'field' || attached.location === 'companion') {
+        if (attached.zone !== null && attached.slot) {
+          const owner = draft.players[attached.controller]!;
+          if (owner.zones[attached.zone]![attached.slot] === cardId) owner.zones[attached.zone]![attached.slot] = null;
+        }
+        if (attached.location === 'companion') draft.players[attached.controller]!.companion = null;
+        enqueueLeavePlay(draft, ctx, cardId, attached.cardId, attached.controller, attached.zone);
+      }
+      // Изъятие из публичных стопок: id не должен оставаться в сбросе.
+      if (attached.location === 'discard') {
+        const owner = draft.players[attached.controller]!;
+        owner.discard = owner.discard.filter((x) => x !== cardId);
+      }
       host.attached = [...(host.attached ?? []), cardId];
       attached.location = 'removed';
       attached.zone = null;

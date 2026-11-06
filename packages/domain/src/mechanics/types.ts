@@ -185,7 +185,9 @@ export type TargetRef =
   /** All lands in play, either side (Ледяной залп). */
   | { kind: 'each_land' }
   /** Cards attached under the source instance (Каракум, Берсеркорова). */
-  | { kind: 'attached_cards' };
+  | { kind: 'attached_cards' }
+  /** Top card of each opponent's discard pile (Очаровательный трупоедик). */
+  | { kind: 'opponent_discard_top' };
 
 export type StatKey = 'attack' | 'defense';
 

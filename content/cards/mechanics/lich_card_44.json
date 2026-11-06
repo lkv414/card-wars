@@ -1,0 +1,26 @@
+{
+  "cardId": "lich_card_44",
+  "name": "Очаровательный трупоедик",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": [
+        {
+          "op": "attach_card",
+          "card": { "kind": "opponent_discard_top" },
+          "to": { "kind": "this_creature" },
+          "from": "discard"
+        },
+        {
+          "op": "stat_buff",
+          "target": { "kind": "this_creature" },
+          "stat": "attack",
+          "amount": 1,
+          "duration": "permanent"
+        }
+      ],
+      "text": "Питается павшими. Приём >>> Уничтожь верхнюю карту сброса противника и получи постоянно +1 АТК. Положи эту карту под него; при смерти сбрось все карты под ним."
+    }
+  ]
+}

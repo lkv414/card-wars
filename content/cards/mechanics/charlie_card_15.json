@@ -1,0 +1,22 @@
+{
+  "cardId": "charlie_card_15",
+  "name": "Некромансер",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        { "kind": "if_payload_player_self" },
+        { "kind": "if_payload_other" }
+      ],
+      "effect": {
+        "op": "move_creature",
+        "target": { "kind": "this_creature" },
+        "destination": { "kind": "payload_zone_land" },
+        "side": "own"
+      },
+      "text": "Каждый раз, когда существо под твоим контролем покидает игру, можешь переместить Некромансера на пустую землю того существа."
+    }
+  ]
+}

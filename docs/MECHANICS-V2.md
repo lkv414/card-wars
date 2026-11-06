@@ -300,6 +300,14 @@ Contract decisions for the last 137 cards + 3 heroes (approved 2026-11-06). Text
 - **Леди Ливнерог.** Новый триггер `on_return_to_hand` и счётчик хода `returned_to_hand` поднимаются в `return_to_owner` и `return_from_discard`. Условия `while_counter_at_least(min:2)` + `while_counter_at_most(max:2)` дают ровно одно восстановление 2 HP в ход — в момент второго возврата (осознанная трактовка «2 или более существ»).
 - **Рикардио.** Активная способность героя `oncePerTurn` — декларативная цепочка `[pay_life 1 → peek_deck_top 1 → resolve_peek]` с ask `choose_option` (`keep` / `discard`). Приватное вскрытие (решение владельца 2026-11-07, замена утечной механики `reveal_maybe_discard`): `peek_deck_top` кладёт верхние N карт колоды актёра в **приватное окно** `MatchState.peeks[player]` — карты остаются в колоде, окно видно только владельцу (`PlayerView.myPeek`) и не порождает публичных событий. `resolve_peek` спрашивается ленивым `effect_step` (§6) уже **после** вскрытия: ответ `discard` убирает вскрытые карты из колоды в сброс (публичное событие `card_discarded`), ответ `keep` или отсутствие ответа — карты остаются в колоде. Окно очищается в обоих случаях, а также по таймеру и при отмене способности (`skipPending`).
 
+### H10. Реакции на чужие смерти и уходы (батч II)
+
+- `on_death` как реакция: `processDeaths` после прямого пуша способности самой жертвы вызывает `enqueueTrigger('on_death', payload)` — реагируют живые источники. Триггер добавлен в список «по умолчанию только источник события»: чужие источники реагируют только при явных `if_payload_other` / `if_payload_player_self` (иначе способность «когда ЭТА карта умирает» срабатывала бы и на чужие смерти).
+- `on_leave_play` как реакция: `enqueueLeavePlay` (вызывается на каждом пути ухода) дополнительно просеивает живые источники через `enqueueTrigger('on_leave_play', payload)`. Уходящая карта к моменту вызова уже вне игры — живой скан её не видит, дубля собственной способности нет.
+- Условия реакции: `if_payload_player_self` («под твоим контролем»), `if_payload_other` (не про себя), `if_payload_land_type` (тип умершей карты — Обжор: призрачные), `if_payload_killer_self` (убил сам — Берсеркорова).
+- Реф `opponent_discard_top` — верхняя карта стопки сброса каждого противника (kind `'card'`); операции, принимающие карты из стопок (`attach_card`, `discard_chosen`), понимают kind `'card'` напрямую.
+- `attach_card` при взятии из `discard`/`death` убирает id из стопки сброса (раньше карта оставалась в массиве сброса и в подложенном виде).
+
 ### H8. Порядок работ
 
 Каждый блок: правка этого документа → типы/валидатор → domain → protocol → HUD → mechanics-JSON → golden/unit-тесты → `pnpm --filter @card-wars/content generate && pnpm lint && pnpm typecheck && pnpm -r test` → git commit.

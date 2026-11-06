@@ -13,6 +13,8 @@ export type { TargetRef };
 export type ResolvedTarget =
   | { kind: 'creature'; instanceId: string }
   | { kind: 'building'; instanceId: string }
+  /** A card outside the board (hand / discard / deck top) — discard- and attach-style ops. */
+  | { kind: 'card'; instanceId: string }
   | { kind: 'player'; playerId: PlayerId }
   | { kind: 'land'; playerId: PlayerId; zone: number };
 
@@ -475,6 +477,13 @@ export function resolveTarget(
         // Real card type, not a hardcoded kind — attached cards may be creatures.
         const card = draft.instances[id] ? ctx.catalog.getCard(draft.instances[id]!.cardId) : undefined;
         return { kind: (card?.type === 'creature' ? 'creature' : 'building') as 'creature' | 'building', instanceId: id };
+      });
+    }
+    case 'opponent_discard_top': {
+      // Top card of each opponent's discard pile (kind 'card' — any zone).
+      return opponentsOf(draft, source.player).flatMap((pid) => {
+        const top = draft.players[pid]!.discard[draft.players[pid]!.discard.length - 1];
+        return top ? [{ kind: 'card' as const, instanceId: top }] : [];
       });
     }
   }

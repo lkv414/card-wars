@@ -1,0 +1,30 @@
+{
+  "cardId": "tree_trunks_card_16",
+  "name": "Берсеркорова",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "conditions": [
+        { "kind": "if_payload_other" },
+        { "kind": "if_payload_killer_self" }
+      ],
+      "effect": [
+        {
+          "op": "attach_card",
+          "card": { "kind": "triggering_instance" },
+          "to": { "kind": "this_creature" },
+          "from": "death"
+        },
+        {
+          "op": "stat_buff",
+          "target": { "kind": "this_creature" },
+          "stat": "attack",
+          "amount": 1,
+          "duration": "permanent"
+        }
+      ],
+      "text": "Убивая существо, положи его карту под Берсеркорову, чтобы получить навсегда +1 ATK. Сбрось все карты, если Берсеркорова выходит из игры."
+    }
+  ]
+}

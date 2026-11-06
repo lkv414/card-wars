@@ -2427,7 +2427,33 @@
   "attack": 1,
   "defense": 8,
   "description": "Каждый раз, когда существо под твоим контролем покидает игру, можешь переместить Некромансера на пустую землю того существа.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "this_creature"
+     },
+     "destination": {
+      "kind": "payload_zone_land"
+     },
+     "side": "own"
+    },
+    "text": "Каждый раз, когда существо под твоим контролем покидает игру, можешь переместить Некромансера на пустую землю того существа."
+   }
+  ]
  },
  {
   "id": "charlie_card_17",
@@ -12150,7 +12176,69 @@
   "attack": 0,
   "defense": 4,
   "description": "Когда существо под твоим контролем покидает игру, можешь подложить его под эту карту.\n+1 АТК и +1 DEF за каждую карту под ней. Когда она покидает игру сбрось все карты под ней.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "effect": {
+     "op": "attach_card",
+     "card": {
+      "kind": "triggering_instance"
+     },
+     "to": {
+      "kind": "this_creature"
+     },
+     "from": "field"
+    },
+    "text": "Когда существо под твоим контролем покидает игру, можешь подложить его под эту карту."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "attached_count",
+      "target": {
+       "kind": "this_creature"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "+1 АТК за каждую карту под ней."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "attached_count",
+      "target": {
+       "kind": "this_creature"
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "+1 DEF за каждую карту под ней. Когда она покидает игру, сбрось все карты под ней."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_34",
@@ -12488,7 +12576,56 @@
   "attack": 3,
   "defense": 5,
   "description": "Обжор поглощает другие души (и всё остальное). Если призрачное существо под твоим контролем умирает, положи его карту под обжора - он получит +1 АТК и +2 DEF навсегда.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_death",
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     },
+     {
+      "kind": "if_payload_land_type",
+      "landType": "ghost"
+     }
+    ],
+    "effect": [
+     {
+      "op": "attach_card",
+      "card": {
+       "kind": "triggering_instance"
+      },
+      "to": {
+       "kind": "this_creature"
+      },
+      "from": "death"
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "this_creature"
+      },
+      "stat": "attack",
+      "amount": 1,
+      "duration": "permanent"
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "this_creature"
+      },
+      "stat": "defense",
+      "amount": 2,
+      "duration": "permanent"
+     }
+    ],
+    "text": "Обжор поглощает другие души (и всё остальное). Если призрачное существо под твоим контролем умирает, положи его карту под обжора — он получит +1 АТК и +2 DEF навсегда."
+   }
+  ]
  },
  {
   "id": "lich_card_15",
@@ -12955,7 +13092,35 @@
   "attack": 1,
   "defense": 9,
   "description": "Питается павшими.\nПриём >>> Уничтожь верхнюю карту сброса противника и получи постоянно +1 АТК. Положи эту карту под него, сбрось все при смерти.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+     {
+      "op": "attach_card",
+      "card": {
+       "kind": "opponent_discard_top"
+      },
+      "to": {
+       "kind": "this_creature"
+      },
+      "from": "discard"
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "this_creature"
+      },
+      "stat": "attack",
+      "amount": 1,
+      "duration": "permanent"
+     }
+    ],
+    "text": "Питается павшими. Приём >>> Уничтожь верхнюю карту сброса противника и получи постоянно +1 АТК. Положи эту карту под него; при смерти сбрось все карты под ним."
+   }
+  ]
  },
  {
   "id": "lich_card_46",
@@ -13982,7 +14147,26 @@
   "attack": 2,
   "defense": 6,
   "description": "Если Бездомный болот покидает игру, пока подготовлен, каждый противник сбрасывает карту.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "conditions": [
+     {
+      "kind": "while_self_flipped"
+     }
+    ],
+    "effect": {
+     "op": "opponent_discards",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "count": 1
+    },
+    "text": "Если Бездомный болот покидает игру, пока подготовлен, каждый противник сбрасывает карту."
+   }
+  ]
  },
  {
   "id": "marceline_card_19",
@@ -13994,7 +14178,26 @@
   "attack": 3,
   "defense": 8,
   "description": "Если Болотная бомба-лягушка покидает игру пока подготовлена, нанеси 2 урона каждому существу противника.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "conditions": [
+     {
+      "kind": "while_self_flipped"
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_creature_opponent"
+     },
+     "amount": 2
+    },
+    "text": "Если Болотная бомба-лягушка покидает игру пока подготовлена, нанеси 2 урона каждому существу противника."
+   }
+  ]
  },
  {
   "id": "marceline_card_20",
@@ -15250,7 +15453,43 @@
   "attack": 2,
   "defense": 9,
   "description": "Убивая существо, положи его карту под Берсеркорову, чтобы получить навсегда +1 ATK. Скинь все карты, если Берсеркорова выходит из игры.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_death",
+    "conditions": [
+     {
+      "kind": "if_payload_other"
+     },
+     {
+      "kind": "if_payload_killer_self"
+     }
+    ],
+    "effect": [
+     {
+      "op": "attach_card",
+      "card": {
+       "kind": "triggering_instance"
+      },
+      "to": {
+       "kind": "this_creature"
+      },
+      "from": "death"
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "this_creature"
+      },
+      "stat": "attack",
+      "amount": 1,
+      "duration": "permanent"
+     }
+    ],
+    "text": "Убивая существо, положи его карту под Берсеркорову, чтобы получить навсегда +1 ATK. Сбрось все карты, если Берсеркорова выходит из игры."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_18",

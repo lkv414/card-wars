@@ -76,7 +76,7 @@ const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_opponent_land', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'payload_killer', 'payload_player', 'min_attack_own', 'each_opponent_land',
-  'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_own_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards',
+  'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_own_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards', 'opponent_discard_top',
 ]);
 const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost', 'chosen_amount', 'target_damage', 'target_attack', 'attached_count', 'per_opponent_distinct_lands']);
 const CONDITION_KINDS = new Set([

@@ -477,3 +477,157 @@ describe('golden: H9 option branching (батч I)', () => {
     expect(pick2.state.players.p1!.zones[1]!.building).toBe(b0);
   });
 });
+
+describe('golden: H10 death/leave reactions (батч II)', () => {
+  /** Put one own creature of the given card into the given zone. */
+  function placeOwn(state: MatchState, cardId: string, zone: number, damage = 0): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      inst.damage = damage;
+      d.players.p1!.zones[zone]!.creature = id;
+    });
+  }
+
+  /** Place a vanilla creature for p2 in the given zone. */
+  function placeOpp(state: MatchState, zone: number, damage = 0): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1); // изъять из колоды, чтобы не вытянулась
+      const inst = d.instances[id]!;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      inst.damage = damage;
+      d.players.p2!.zones[zone]!.creature = id;
+    });
+  }
+
+  it('Бестелесый обжор: поглощает умершее призрачное существо (+1 ATK/+2 DEF навсегда)', () => {
+    let s = placeOwn(newMatch(), 'lich_card_13', 0);
+    s = placeOwn(s, 'lich_card_13', 1, 99); // призрачный спутник с летальным уроном
+    const gluttonId = s.players.p1!.zones[0]!.creature!;
+    const base = computeEff(s, deps, gluttonId);
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    expect(gb.state.players.p1!.zones[1]!.creature).toBeNull();
+    const glutton = gb.state.instances[gluttonId]!;
+    expect(glutton.attached?.length).toBe(1);
+    const eff = computeEff(gb.state, deps, gluttonId);
+    expect(eff.attack).toBe(base.attack + 1);
+    expect(eff.defense).toBe(base.defense + 2);
+  });
+
+  it('Берсеркорова: убивает в бою — карта жертвы под ней, +1 ATK навсегда', () => {
+    let s = placeOwn(newMatch(), 'tree_trunks_card_16', 0);
+    const berserkId = s.players.p1!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.instances[berserkId]!.bonusAttack = 50;
+    });
+    s = placeOpp(s, 3);
+    s = nextP1Turn(s); // в 1-м раунде первый игрок не атакует
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    expect(gb.state.players.p2!.zones[3]!.creature).toBeNull();
+    const berserk = gb.state.instances[berserkId]!;
+    expect(berserk.attached?.length).toBe(1);
+    expect(berserk.bonusAttack).toBe(51);
+  });
+
+  it('Очаровательный трупоедик: ПРИЁМ кладёт верхнюю карту чужого сброса под себя (+1 ATK)', () => {
+    let s = placeOwn(newMatch(), 'lich_card_44', 0);
+    const corpseId = s.players.p1!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1); // изъять из колоды, чтобы не вытянулась
+      d.instances[id]!.location = 'discard';
+      d.players.p2!.discard.push(id);
+    });
+    s = nextP1Turn(s);
+    const discardBefore = s.players.p2!.discard.length;
+    const floop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: corpseId }, deps);
+    if (!floop.ok) throw new Error(floop.rejected.message);
+    const corpse = floop.state.instances[corpseId]!;
+    expect(corpse.attached?.length).toBe(1);
+    expect(floop.state.players.p2!.discard.length).toBe(discardBefore - 1);
+    expect(corpse.bonusAttack).toBe(1);
+  });
+
+  it('Каракум: подкладывает ушедшее существо под себя, +1/+1 за каждую карту (аура)', () => {
+    let s = placeOwn(newMatch(), 'lemongrab_card_33', 0);
+    const rugId = s.players.p1!.zones[0]!.creature!;
+    s = placeOwn(s, 'bmo_card_12', 1, 99);
+    const base = computeEff(s, deps, rugId);
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    // опциональная способность ждёт решения
+    expect(gb.state.pending?.player).toBe('p1');
+    const res = applyCommand(gb.state, {
+      type: 'resolve_choice', player: 'p1', answer: { proceed: true },
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    const rug = res.state.instances[rugId]!;
+    expect(rug.attached?.length).toBe(1);
+    const eff = computeEff(res.state, deps, rugId);
+    expect(eff.attack).toBe(base.attack + 1);
+    expect(eff.defense).toBe(base.defense + 1);
+  });
+
+  it('Некромансер: переезжает на пустую землю ушедшего своего существа', () => {
+    let s = placeOwn(newMatch(), 'charlie_card_15', 0);
+    const necroId = s.players.p1!.zones[0]!.creature!;
+    s = placeOwn(s, 'bmo_card_12', 1, 99);
+    s = forceToHand(s, 'p1', 'bmo_card_12');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 2,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1');
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1', answer: { proceed: true },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.players.p1!.zones[0]!.creature).toBeNull();
+    expect(next.state.players.p1!.zones[1]!.creature).toBe(necroId);
+  });
+
+  it('Болотная бомба-лягушка: уходя подготовленной, наносит 2 урона существам противника', () => {
+    let s = placeOwn(newMatch(), 'marceline_card_19', 0);
+    const frogId = s.players.p1!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.instances[frogId]!.flipped = true;
+      d.instances[frogId]!.damage = 99;
+    });
+    s = placeOpp(s, 3);
+    s = forceToHand(s, 'p1', 'bmo_card_12');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 1,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    const victimId = res.state.players.p2!.zones[3]!.creature!;
+    expect(res.state.instances[victimId]!.damage).toBe(2);
+    expect(res.state.players.p1!.zones[0]!.creature).toBeNull();
+  });
+
+  it('Бездомный болот: уходя подготовленным, заставляет противника сбросить карту', () => {
+    let s = placeOwn(newMatch(), 'marceline_card_17', 0);
+    const bogId = s.players.p1!.zones[0]!.creature!;
+    s = edit(s, (d) => {
+      d.instances[bogId]!.flipped = true;
+      d.instances[bogId]!.damage = 99;
+    });
+    s = forceToHand(s, 'p1', 'bmo_card_12');
+    const handBefore = s.players.p2!.hand.length;
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 1,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p2!.hand.length).toBe(handBefore - 1);
+    expect(res.state.players.p2!.discard.length).toBe(1);
+  });
+});

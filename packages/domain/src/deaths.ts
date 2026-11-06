@@ -4,7 +4,7 @@ import { finishMatch } from './finish';
 import { emit, inPlayInstanceIds, instance, player } from './util';
 import type { Ctx } from './util';
 import { computeEff } from './stats';
-import { drainTriggers, enqueueLeavePlay } from './mechanics/dispatch';
+import { drainTriggers, enqueueLeavePlay, enqueueTrigger } from './mechanics/dispatch';
 import { bumpCounter } from './mechanics/effects';
 import type { CardData, MatchState, PlayerId } from './types';
 
@@ -42,6 +42,13 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
       const abilityIndex = card?.abilities?.findIndex(
         (a) => a.kind === 'passive' && a.trigger === 'on_death',
       ) ?? -1;
+      const deathPayload = {
+        instanceId: id,
+        cardId: inst.cardId,
+        player: inst.controller,
+        killerInstanceId: draft.lastHits[id] ?? undefined,
+        cost: ctx.catalog.getCard(inst.cardId)?.cost ?? 0,
+      };
       if (card && abilityIndex >= 0) {
         ctx.frame.queue.push({
           player: inst.controller,
@@ -49,15 +56,12 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
           cardId: inst.cardId,
           abilityIndex,
           trigger: 'on_death',
-          payload: {
-            instanceId: id,
-            cardId: inst.cardId,
-            player: inst.controller,
-            killerInstanceId: draft.lastHits[id] ?? undefined,
-            cost: ctx.catalog.getCard(inst.cardId)?.cost ?? 0,
-          },
+          payload: deathPayload,
         });
       }
+      // Реакции живых источников на чужую смерть (docs §H10): Обжор,
+      // Берсеркорова — их условия (if_payload_*) гейтят срабатывание.
+      enqueueTrigger(draft, ctx, 'on_death', deathPayload);
     }
   }
 }

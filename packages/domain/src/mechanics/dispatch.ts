@@ -23,7 +23,7 @@ import type { AbilitySpec, PlayerId, QueuedAbility, TargetChoice, Trigger, Trigg
  * scan cannot see it). Finds the ability index in the card data directly.
  */
 export function enqueueLeavePlay(
-  _draft: Draft<MatchState>,
+  draft: Draft<MatchState>,
   ctx: Ctx,
   instanceId: string,
   cardId: string,
@@ -32,16 +32,20 @@ export function enqueueLeavePlay(
 ): void {
   const card = ctx.catalog.getCard(cardId);
   const abilityIndex = card?.abilities?.findIndex((a) => a.kind === 'passive' && a.trigger === 'on_leave_play') ?? -1;
-  if (!card || abilityIndex < 0) return;
-  ctx.frame.queue.push({
-    player: playerId,
-    instanceId,
-    cardId,
-    abilityIndex,
-    trigger: 'on_leave_play',
-    beneficiary: playerId,
-    payload: { instanceId, cardId, player: playerId, zone },
-  });
+  if (card && abilityIndex >= 0) {
+    ctx.frame.queue.push({
+      player: playerId,
+      instanceId,
+      cardId,
+      abilityIndex,
+      trigger: 'on_leave_play',
+      beneficiary: playerId,
+      payload: { instanceId, cardId, player: playerId, zone },
+    });
+  }
+  // Реакции ДРУГИХ источников (docs §H10): уходящая карта уже вне игры, живой
+  // скан её не видит — собственной способности дубля нет.
+  enqueueTrigger(draft, ctx, 'on_leave_play', { instanceId, cardId, player: playerId, zone });
 }
 
 /** Which player answers a volunteered ability (default: the source controller). */
@@ -75,10 +79,11 @@ export function enqueueTrigger(
     ) {
       return;
     }
-    // «Когда эта карта вступает в игру» — только у входящей карты; реакции
-    // других источников требуют явных if_payload_* условий (Персиковая Джинни).
+    // «Когда эта карта вступает в игру / уходит / умирает» — только у самой
+    // карты; реакции других источников требуют явных if_payload_* условий
+    // (Персиковая Джинни, Обжор, Берсеркорова).
     if (
-      (trigger === 'on_enters_play' || trigger === 'on_leave_play') &&
+      (trigger === 'on_enters_play' || trigger === 'on_leave_play' || trigger === 'on_death') &&
       payload.instanceId &&
       source.instanceId &&
       source.instanceId !== payload.instanceId &&

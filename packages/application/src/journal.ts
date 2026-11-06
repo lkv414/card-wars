@@ -102,6 +102,8 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
       return `${cardName(deps, event.cardId)}: щит ${event.shield}`;
     case 'card_moved':
       return `${cardName(deps, state.instances[event.instanceId]?.cardId ?? '')} перемещается: зона ${event.fromZone + 1} → ${event.toZone + 1}`;
+    case 'dice_rolled':
+      return `Кубик d6: ${event.value} — урон не прошёл`;
     case 'cards_revealed':
       return `${nick(state, event.player)} открывает: ${event.cardIds
         .map((id) => cardName(deps, state.instances[id]?.cardId ?? id))

@@ -1046,3 +1046,111 @@ describe('golden: H13 combat mods and freeze (батч V)', () => {
     expect(res.state.players.p1!.zones[0]!.creature).toBe(nineId);
   });
 });
+
+describe('golden: H14 dodge and enter reactions (батч VI)', () => {
+  /** Place an own creature (batch VI helpers). */
+  function placeOwnVI(state: MatchState, cardId: string, zone: number): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      d.players.p1!.zones[zone]!.creature = id;
+    });
+  }
+
+  /** Place a p2 creature (batch VI helpers). */
+  function placeOppVI(state: MatchState, cardId: string, zone: number): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      d.players.p2!.zones[zone]!.creature = id;
+    });
+  }
+
+  it('Прозрачный ниндзя: бросок d6 решает, проходит ли атака (и сдача)', () => {
+    let s = placeOwnVI(newMatch(), 'lich_card_8', 0); // ниндзя — защитник
+    s = placeOppVI(s, 'bmo_card_12', 3);
+    const gb1 = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb1.ok) throw new Error(gb1.rejected.message);
+    const gb2 = applyCommand(gb1.state, { type: 'go_battle', player: 'p2' }, deps);
+    if (!gb2.ok) throw new Error(gb2.rejected.message);
+    const dice = gb2.events.filter((e) => e.type === 'dice_rolled');
+    expect(dice.length).toBe(1);
+    const roll = dice[0]!.type === 'dice_rolled' ? dice[0]!.value : 0;
+    const ninja = gb2.state.instances[gb2.state.players.p1!.zones[0]!.creature!]!;
+    const attacker = gb2.state.instances[gb2.state.players.p2!.zones[3]!.creature!]!;
+    if (roll >= 4) {
+      expect(ninja.damage).toBe(0); // атака сорвана
+      expect(attacker.damage).toBe(0); // сдачи нет
+    } else {
+      expect(ninja.damage).toBe(3); // обычный обмен: у атакующего АТК 3
+    }
+  });
+
+  it('Призрак Тэдди-крюка: +1 АТК за каждого соседа цели', () => {
+    let s = placeOwnVI(newMatch(), 'lich_card_15', 1);
+    s = placeOppVI(s, 'bmo_card_12', 2); // цель (зеркало зоны 1)
+    s = placeOppVI(s, 'bmo_card_12', 1); // сосед цели
+    s = placeOppVI(s, 'bmo_card_12', 3); // сосед цели
+    s = nextP1Turn(s);
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    const victim = gb.state.instances[gb.state.players.p2!.zones[2]!.creature!]!;
+    // 4 = сдача из боя 1-го круга (2) + атака 2-го круга: 2 АТК + 2 соседа
+    expect(victim.damage).toBe(6);
+  });
+
+  it('Ловкий песочный краб: меняется местами с вошедшим существом', () => {
+    let s = placeOwnVI(newMatch(), 'grand_prix_card_38', 2);
+    s = forceToHand(s, 'p1', 'bmo_card_12');
+    const crabId = s.players.p1!.zones[2]!.creature!;
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 1,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1');
+    const enteredId = res.state.players.p1!.zones[1]!.creature!;
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1', answer: { proceed: true },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.players.p1!.zones[1]!.creature).toBe(crabId);
+    expect(next.state.players.p1!.zones[2]!.creature).toBe(enteredId);
+  });
+
+  it('Песочный краб рубака: бьёт вошедшее на соседнюю землю существо; через одну — нет', () => {
+    let s = placeOwnVI(newMatch(), 'grand_prix_card_40', 0);
+    s = edit(s, (d) => { d.players.p1!.actions = 10; });
+    s = forceToHand(s, 'p1', 'bmo_card_12');
+    const adjacent = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 1,
+    }, deps);
+    if (!adjacent.ok) throw new Error(adjacent.rejected.message);
+    const enteredId = adjacent.state.players.p1!.zones[1]!.creature!;
+    expect(adjacent.state.instances[enteredId]!.damage).toBe(2);
+    // вторая копия в руку; зона 3 — не сосед зоны 0: без урона и без вопроса
+    s = edit(adjacent.state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      d.instances[id]!.cardId = 'bmo_card_12';
+      d.instances[id]!.location = 'hand';
+      d.players.p1!.hand.push(id);
+    });
+    const far = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 3,
+    }, deps);
+    if (!far.ok) throw new Error(far.rejected.message);
+    const farId = far.state.players.p1!.zones[3]!.creature!;
+    expect(far.state.instances[farId]!.damage).toBe(0);
+    expect(far.state.pending).toBeNull();
+  });
+});

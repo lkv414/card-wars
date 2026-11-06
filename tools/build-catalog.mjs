@@ -65,7 +65,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
 const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
-  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature']);
+  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature', 'dodge']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -90,7 +90,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
   'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
-  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains', 'while_opponents_hand_at_least', 'if_option',
+  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains', 'while_opponents_hand_at_least', 'if_option', 'if_payload_zone_adjacent',
 ]);
 
 function checkAmount(amount, where) {
@@ -206,6 +206,9 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.card, where);
   } else if (op === 'freeze_creature') {
     checkTargetRef(effect.target, where);
+  } else if (op === 'dodge') {
+    checkTargetRef(effect.target, where);
+    if (!Number.isInteger(effect.min) || effect.min < 1 || effect.min > 6) fail(`${where}: dodge needs integer min 1..6`);
   } else if (op === 'set_land_type') {
     checkTargetRef(effect.target, where);
     if (effect.landType !== 'chosen' && !LAND_TYPES.has(effect.landType)) fail(`${where}: set_land_type landType invalid`);
@@ -256,7 +259,7 @@ function validateEffect(effect, where, ability) {
     if (effect.defenderType && !LAND_TYPES.has(effect.defenderType)) fail(`${where}: attack_mod defenderType invalid`);
     if (effect.defenderCost !== undefined && !Number.isInteger(effect.defenderCost)) fail(`${where}: attack_mod defenderCost must be integer`);
     if (effect.emptyLane !== undefined && typeof effect.emptyLane !== 'boolean') fail(`${where}: attack_mod emptyLane must be boolean`);
-    if (!effect.multiplier && !effect.atkBonus && !effect.face) fail(`${where}: attack_mod needs multiplier|atkBonus|face`);
+    if (!effect.multiplier && !effect.atkBonus && !effect.face && !effect.atkBonusPerAdjacentEnemy) fail(`${where}: attack_mod needs multiplier|atkBonus|face|atkBonusPerAdjacentEnemy`);
   } else if (op === 'counts_as') {
     checkTargetRef(effect.target, where);
     if (!LAND_TYPES.has(effect.landType)) fail(`${where}: counts_as needs a land type`);

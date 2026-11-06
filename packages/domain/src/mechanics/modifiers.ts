@@ -255,6 +255,15 @@ export function conditionsHold(
       case 'if_payload_player_opponent':
         if (!payload?.player || payload.player === source.player) return false;
         break;
+      case 'if_payload_zone_adjacent': {
+        // Событие в соседней зоне того же контроллера (Песочный краб рубака).
+        if (!source.instanceId || payload?.zone === undefined || payload.zone === null || !payload.instanceId) return false;
+        const src = instance(draft, source.instanceId);
+        if (src.zone === null) return false;
+        if (Math.abs(payload.zone - src.zone) !== 1) return false;
+        if (instance(draft, payload.instanceId).controller !== src.controller) return false;
+        break;
+      }
       case 'while_counter_at_least': {
         const value = counterValue(draft, cond.counter, cond.scope ?? 'team', source.player);
         if (value < cond.min) return false;
@@ -794,9 +803,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -870,6 +879,21 @@ export function attacksSuppressed(
     if (coversInstance(draft, ctx, modSource, effect.target, attackerId, undefined)) return true;
   }
   return false;
+}
+
+/** d6 minimum for creature attacks against the covered unit to whiff (Прозрачный ниндзя, docs §H14). */
+export function dodgeMin(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  defenderId: string,
+): number | undefined {
+  let min: number | undefined;
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'dodge') continue;
+    if (!coversInstance(draft, ctx, modSource, effect.target, defenderId, undefined)) continue;
+    min = min === undefined ? effect.min : Math.min(min, effect.min);
+  }
+  return min;
 }
 
 /**

@@ -8401,7 +8401,32 @@
   "attack": 2,
   "defense": 7,
   "description": "Каждый раз когда во время твоего хода существо вступает в игру, можешь поменять их местами с Ловким песочным крабом.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_other"
+     },
+     {
+      "kind": "while_own_turn"
+     }
+    ],
+    "effect": {
+     "op": "swap_field_cards",
+     "a": {
+      "kind": "this_creature"
+     },
+     "b": {
+      "kind": "triggering_instance"
+     }
+    },
+    "text": "Каждый раз когда во время твоего хода существо вступает в игру, можешь поменять их местами с Ловким песочным крабом."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_40",
@@ -8413,7 +8438,32 @@
   "attack": 2,
   "defense": 8,
   "description": "Каждый раз когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "conditions": [
+     {
+      "kind": "if_payload_other"
+     },
+     {
+      "kind": "while_own_turn"
+     },
+     {
+      "kind": "if_payload_zone_adjacent"
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "triggering_instance"
+     },
+     "amount": 2
+    },
+    "text": "Каждый раз когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии."
+   }
+  ]
  },
  {
   "id": "gunter_card_1",
@@ -12639,7 +12689,20 @@
   "attack": 2,
   "defense": 5,
   "description": "Когда Прозрачный ниндзя атакован другим существом (но не заклинанием или приёмом), у него есть шанс избежать атаки. Кидай кубик, на 4 и больше урон не прошёл.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "dodge",
+     "target": {
+      "kind": "this_creature"
+     },
+     "min": 4
+    },
+    "text": "Когда Прозрачный ниндзя атакован другим существом (но не заклинанием или приёмом), у него есть шанс избежать атаки. Кидай кубик: на 4 и больше урон не прошёл."
+   }
+  ]
  },
  {
   "id": "lich_card_10",
@@ -12831,7 +12894,20 @@
   "attack": 2,
   "defense": 8,
   "description": "На Абордаж! Тэдди-крюк при атаке вражеского существа получает бонус +1 АТК за каждое из соседних с целью вражеских существ.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "atkBonusPerAdjacentEnemy": 1
+    },
+    "text": "На Абордаж! Тэдди-крюк при атаке вражеского существа получает бонус +1 АТК за каждое из соседних с целью вражеских существ."
+   }
+  ]
  },
  {
   "id": "lich_card_16",

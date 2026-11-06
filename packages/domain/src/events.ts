@@ -44,4 +44,6 @@ export type GameEvent =
   | { type: 'choice_resolved'; player: PlayerId; kind: 'optional' | 'target'; askIndex?: number }
   | { type: 'hero_ability_used'; player: PlayerId; paidActions: number }
   | { type: 'cards_revealed'; player: PlayerId; cardIds: string[] }
+  /** Seeded RNG roll made public (dodge d6, docs §H14). */
+  | { type: 'dice_rolled'; value: number; reason: 'dodge' }
   | { type: 'match_finished'; winners: PlayerId[]; reason: FinishReason };

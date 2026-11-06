@@ -416,6 +416,8 @@ export type ConditionSpec =
   | { kind: 'if_payload_instance_self' }
   /** Any opponent holds at least N cards (ftg_card_64-style start-of-turn damage). */
   | { kind: 'while_opponents_hand_at_least'; min: number }
+  /** The event happened in a zone adjacent to the source's own (Песочный краб рубака, docs §H14). */
+  | { kind: 'if_payload_zone_adjacent' }
   /**
    * Effect-array branch gate on a `choose_option` answer (docs §6 «Ветвление»).
    * Checked in runSteps BEFORE counting the step's choices; inside
@@ -585,6 +587,8 @@ type EffectOp =
       defenderType?: LandType;
       /** Bonus only against creatures with exactly this printed cost (Хлопковая гвардия). */
       defenderCost?: number;
+      /** Per enemy creature adjacent to the defender (Призрак Тэдди-крюка, docs §H14). */
+      atkBonusPerAdjacentEnemy?: number;
     }
   /** Un-flip a flipped (applied) own creature (Архитектор разума, Моника). */
   | { op: 'unflip'; target: TargetRef }
@@ -668,7 +672,9 @@ type EffectOp =
   /** Remove one specific card from the game (Марселина: карта из стопки сброса, docs §H12). */
   | { op: 'banish_card'; card: TargetRef }
   /** Flip a creature AND skip its next readying (Ультра пес: «заморозь существо», docs §H13). */
-  | { op: 'freeze_creature'; target: TargetRef };
+  | { op: 'freeze_creature'; target: TargetRef }
+  /** Rule aura: creature attacks against the covered unit whiff on a d6 ≥ min (Прозрачный ниндзя, docs §H14). */
+  | { op: 'dodge'; target: TargetRef; min: number };
 
 /**
  * A declarative operation with its own optional conditions.

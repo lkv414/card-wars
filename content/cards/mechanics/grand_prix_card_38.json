@@ -1,0 +1,21 @@
+{
+  "cardId": "grand_prix_card_38",
+  "name": "Ловкий песочный краб",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "conditions": [
+        { "kind": "if_payload_other" },
+        { "kind": "while_own_turn" }
+      ],
+      "effect": {
+        "op": "swap_field_cards",
+        "a": { "kind": "this_creature" },
+        "b": { "kind": "triggering_instance" }
+      },
+      "text": "Каждый раз когда во время твоего хода существо вступает в игру, можешь поменять их местами с Ловким песочным крабом."
+    }
+  ]
+}

@@ -3,8 +3,9 @@ import { dealToCreature, dealToPlayer } from '../damage';
 import { afterEffects } from '../deaths';
 import { computeEff } from '../stats';
 import { bumpCounter } from '../mechanics/effects';
-import { attacksSuppressed, defenseMods } from '../mechanics/modifiers';
+import { attacksSuppressed, defenseMods, dodgeMin } from '../mechanics/modifiers';
 import { opponentZoneFor } from '../zones';
+import { rngInt } from '../rng';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
 import type { MatchState } from '../types';
@@ -77,6 +78,18 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             const defenderCard = ctx.catalog.getCard(instance(draft, defenderInstanceId).cardId);
             if ((defenderCard?.cost ?? 0) !== mod.defenderCost) continue;
           }
+          if (mod.atkBonusPerAdjacentEnemy !== undefined && defenderInstanceId) {
+            // Соседи цели на ЕЁ стороне (Призрак Тэдди-крюка, docs §H14).
+            const defenderZone = instance(draft, defenderInstanceId).zone;
+            if (defenderZone !== null) {
+              let adjacentEnemies = 0;
+              for (const dz of [defenderZone - 1, defenderZone + 1]) {
+                const neighbor = defender.zones[dz]?.creature;
+                if (neighbor) adjacentEnemies += 1;
+              }
+              attackPowerMod += mod.atkBonusPerAdjacentEnemy * adjacentEnemies;
+            }
+          }
           if (mod.emptyLane && defenderInstanceId) continue; // только пустая линия
           if (mod.face) faceDamage = true;
           if (mod.atkBonus) attackPowerMod += mod.atkBonus;
@@ -104,6 +117,14 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         if (defenderInstanceId && !faceDamage) {
           // Simultaneous exchange: both powers are computed before any damage lands.
           bumpCounter(draft, 'creature_attack', attackerId);
+          // Уклонение (Прозрачный ниндзя, docs §H14): d6 ≥ min — обмен целиком
+          // срывается, урон и сдача не проходят.
+          const dodgeThreshold = dodgeMin(draft, ctx, defenderInstanceId);
+          if (dodgeThreshold !== undefined) {
+            const roll = rngInt(draft.rng, 6) + 1;
+            emit(ctx, { type: 'dice_rolled', value: roll, reason: 'dodge' });
+            if (roll >= dodgeThreshold) continue;
+          }
           let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
           // Боевой контекст защитника (A8): «+N АТК пока защищается от существ
           // на X земле» — земля ЗОНЫ АТАКУЮЩЕГО.

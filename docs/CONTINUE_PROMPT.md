@@ -7,72 +7,57 @@
 Ты продолжаешь работу над механиками карточной игры Card Wars v3 в монорепо pnpm workspaces (`packages/{domain,application,protocol,content}` + `apps/{server,client}`). Прочитай сначала:
 
 1. `AGENTS.md` — конвенции (чистый domain, запрет хардкода карт, doc-first, zod на границе)
-2. `docs/MECHANICS-V2.md` — архитектура механик v2 (главный документ: AbilitySpec, два класса пассивок, EffectSpec + именованные механики, pendingChoice, таргетинг, дорожная карта M1–M6 + бэклог)
+2. `docs/MECHANICS-V2.md` — архитектура механик v2 (главный документ: AbilitySpec, два класса пассивок, EffectSpec + именованные механики, pendingChoice, таргетинг, группы G и H, бэклог)
 3. `docs/CARDS.md` — формат карт (⚠ частично устарел — abilities вернулись, механики в `content/{cards,heroes}/mechanics/`)
 4. `git log --oneline -20` — история коммитов (все этапы закоммичены)
 
 ## Текущее состояние
 
-- **Покрытие**: 394/544 карт + 22/25 героев структурированы и работают
-- **Тесты**: 231 зелёный (158 domain, 48 content, 15 server, 5 application, 4 protocol)
-- **Отчёт покрытия** после каждой генерации: `pnpm --filter @card-wars/content generate` печатает «mechanics: cards N/544 structured»
-
-## Что уже реализовано в движке
-
-- Триггеры: on_cast, on_enters_play, on_leave_play, on_death, start_of_turn, start_of_next_turn, on_creature_attacks, on_damage_dealt, on_line_change, on_flip, on_draw, on_spell_cast, on_card_played, start_of_battle_phase, on_companion_event
-- Операции (EffectSpec): deal_damage, heal, draw_cards, discard_top_deck, opponent_discards, stat_buff (aura/permanent/this_turn), gain_shield, gain_actions, flip_land, destroy, move_creature, freeze_land, win_if_opponents_deck_empty, cost_mod, land_count_mod, suppress, no_retaliation, damage_immunity, damage_redirect, grant_modifier, return_from_discard, discard_from_hand, grant_ability, reveal_deck_top, resolve_revealed, return_to_owner, counts_as, attack_mod, play_from_hand, play_from_discard
-- Условия на уровне эффекта: `EffectSpec.conditions` — общий механизм для всех операций (шаг выполняется, только если условия выполнены); у `stat_buff` проверяются per-target
-- Модификаторы: cost_mod, land_count_mod, stat_aura (с фильтрами ready/landType/sameCard/cardIds + floorDefense), damage_redirect, damage_immunity, no_retaliation, suppress (triggers/actives), counts_as, attack_mod
-- Динамические величины: per_discard, per_damage, per_distinct_lands, per_lands (own/all/adjacent, empty/flipped), per_target, per_counter (spell_cast/creature_entered/creature_died/line_change), payload_damage
-- Условия: if/while_discard_count, while_undamaged (self/target), while_damage_exactly/at_least (self/target), while_lane_empty_opponent, while_on_land_type, while_on_flipped_land (self/target), while_distinct_lands (min/max), while_land_count, while_zone_has_building, while_empty_lands, while_self_flipped, while_opponents_hand_empty, while_no_other_creatures (scope own/all), while_opponents_turn, if_payload_* (replacing/land_type/player_self/other/to_player/targeted_self/player_opponent)
-- Цели (TargetAsk): own_creature, opponent_creature, any_creature, lane_creature, lane_opponent_creature, opponent_player, landscape, own_landscape, own_hand_card, own_building, lane_building, adjacent_creature, adjacent_any_creature, revealed_card, own_discard_card, any_discard_card — все с опциональными фильтрами (ready/landType/flipped/undamaged/cardType/maxCost/cardIds)
-- Цели-рефы (TargetRef): choice, this_creature, this_lane_creature, this_lane_opponent_creature, adjacent_creatures, each_creature_yours/opponent/all, each_building_yours, each_player, each_opponent_player, self_player, this_lane_land, this_lane_lands, active_opponent_players
-- Именованные механики (реестр): chain_damage, move_damage, swap_lanes, copy_spell (Связь: копия заклинания партнёром, цели по targets оригинала; MechanicHandler получает payload и beneficiary), grant_random_discard_active (Школа: suppress-all + выданный приём из сброса через turnModifiers)
-- suppress с флагом all («без текста»): фильтр в forSource — заглушённые инстансы не отдают способностей/модификаторов; флюп-гейт разрешает флюп выданной способности при подавленных своих
-- AbilitySpec.oncePerGame («в первый раз…»), условие if_payload_cost; TargetRef: this_lane_own_creature, this_lane_opponent_building
-- Ледяные жетоны (A7+A7.1): LandState.iceTokens (ледяные земли стартуют с 1 — docs/RULES.md), ops remove_token/transfer_token, условия while_lane_ice_token/while_own_turn/while_no_tokens_in_play/while_zone_ice_token (play-gate), per_lands.token+where:'choice', фильтр zoneToken, suppress.attacks+filter, рефы each_creature_of_choice_player/adjacent_own_land, механики token_bonus_damage, событие token_changed
-- Боевой контекст защитника (A8): операция defense_mod («+N АТК пока защищается», матчинг по земле зоны атакующего, только retaliation), условие while_own_card_in_play { cardId }
-- Дебаффы АТК (A9): stat_buff.floorAttack («минимум 0» — ауры и this_turn-бафы)
-- Ходы-состояния (A10): grant_discount (расходуемая скидка следующего розыгрыша, MatchState.discounts), ban_spells_next_turn (Дух ниндзя: armed→active по ходам жертвы, гейт spells_banned)
-- Массовые батчи A–F: op unflip, рефы each_opponent_land/payload_zone_land/payload_zone_own_creatures, ask any_player/opponent_building, StatAmount target_hand_size/per_counter.every, фильтры undamaged/flipped/zoneFlipped, условия while_zone_has_creature/while_zone_has_flipped_creature/while_lives_at_most/while_opponent_creatures_at_most/while_own_creature_on_land_type, обобщённый play-gate по conditions-only пассивкам, move_damage params.self, swap_lanes params.opponent
-- pendingChoice: optional, target (мульти-ask с отложенным сбором через effect_step), resolve_choice, таймер-дефолт (skipPending), bot-ответ time_expired
-- Кура данных: content/cards/mechanics/*.json + content/heroes/mechanics/*.json → build-catalog.mjs валидирует (ops, triggers, asks, refs, amounts, conditions, фильтры, choice-vs-targets) и печатает отчёт покрытия
-
-## Клиент (C14 готов)
-
-- targeting.ts — валидные цели по ask'у из view, режимы active/pending
-- Hud — баннер с отменой, кнопки-цели для player/revealed, кнопка «Герой»
-- CardMesh/Land/Hand — клик по подсвеченной цели отдаёт её таргетингу
-
-## Бэклог — 137 карт + 3 героя, сгруппированы по требуемому механизму
-
-Простые карты разобраны (батчи A–F + G1–G12). Остаток требует НОВЫХ механизмов:
-
-1. **Выбор из сброса + игра оттуда** ✅ — Лунный урожай, Поднятие мертвых, Древний школяр, Последний шанс, Амбар с сеном, Громила, Спасайся кто может!, Крок-зачинщик.
-2. **Перераспределение урона произвольно** (Заплатка, Вместе навсегда, Браслеты, Ангел-болот Банши done, Крепость из подушек) — свободный перенос, нужен спец-UI. Частично закрыто: `heal_or_damage` (восстанови/урон) и `give_card` (передача карты) — Зелёная сахарная вата, Милая мельница, Авто-ощипыватель, Шаровая бобовая бомба, Дай пять!; осталось — свободный перенос урона между существами с числовым вводом.
-3. **2v2-компаньоны** (Сотрудничество — копия заклинания той же стоимости, Выручка — фаза сражения партнёра, Поддержка — правило розыгрыша) — on_companion_event-семантики.
-4. **Кража и информация** (Башня правды, Мушка-хлопушка, Просвещение — reorder ЧУЖОЙ колоды, Пакость, Близняшки, Один в один, Семейные посиделки) — steal + сравнения вскрытых карт.
-5. **Слова в названии** (Охотница-волшебница, Бизнес пес done, Клон, Частичка души, Некромама) — соответствие названий на уровне правил.
-6. **Боевые семантики II** (Крысолов — замена атакующего, Призрак Тэдди-крюка, Проклятый дух, Дух воплекура «ИЛИ», Разбойная тыква — повтор за земли, Куча мала, Слинять) — расширение combat-контекста.
-7. **Статусы и правила розыгрыша** (поп-десанты «нельзя заменить» + автоперемещение, Ледяная база, Крепкий лесоруб — доп. строение, Няш-мяш — запрет карт стоимости 0, Мятная мороженка — иммунитет к заклинаниям, Яблочный страж — защита земли, Хата на Новый Год / Кот-панк / Паладин / Кровь Вайда — трекинг «сменивших линию», Воскресная школа — чёт HP, Хижина эльфа / Желтый маяк / Башня правосудия / Квадурай / Жучья госпожа / Тонущие / Усталые / Бордер колли / Моккомет / Музыкальный трон / Снижение налогов / Книга Кунг-фу / Запашок / Виноградная попка / Магический портал done / Магокражка done).
-8. **Прочее** (Рикардио — плата жизнями, Муррризрак — воскрешение, Частичка души, Песочный замок — изгнание, Прозрачный ниндзя — кубик, Пещера-стиль для Цитадели/Облачной башни — иммунитет к заклинаниям/выбору, Плюшевый/Кольцо пушистости — ATK-зависимые величины, Бондарь — стоимость карт партнёрства, Ледяной лимонад — лечение ровно N, Кольцо третьего глаза done, Геркулез done).
-
-## Найденные при разборе баги (уже исправлены — не откатывать)
-
-- `stat_buff.conditions` — тип не имел поля, движок условия не читал: 18 карт работали безусловно (Мисс Пушинка, Кукурузный чемпион).
-- `resolve_choice` валидировал ВЕСЬ набор ask'ов сразу, а ответы приходят по одному → multi-ask триггеры нельзя было завершить (~15 карт).
-- ask-фильтры `flipped`/`undamaged` разрешались валидатором, но не проверялись доменом (Магазин для отдыха).
-- Батч G10 заявил 7 карт, а записал 4 (скрипт упал на `NameError`): потеряны Деревянный рыцарь, Спасайся кто может!, Крок-зачинщик.
+- **Покрытие**: 435/544 карт + 25/25 героев структурированы и работают; 96 карт с текстом ещё не разобраны, 9 — осознанно vanilla (`flavorOnly`, нет игрового текста).
+- **Тесты**: 234 зелёных (150 domain, 60 content, 15 server, 5 application, 4 protocol).
+- **Отчёт покрытия** после генерации: `pnpm --filter @card-wars/content generate` печатает «mechanics: cards N/544 structured».
 
 ## Правила работы
 
 - **Doc-first**: изменения контракта → сначала docs/MECHANICS-V2.md, потом код
 - **Никаких имён карт в коде правил** — только в data (content/cards/mechanics/)
-- **Константы — из CONFIG** (docs/CONFIG.md)
-- **Тесты**: golden на представителя каждой механики в packages/content/src/golden.test.ts (реальный каталог), юнит-тесты в packages/domain/src/tests/mechanics.test.ts (фикстуры)
-- **Валидация**: build-catalog.mjs валидирует все новые ops/asks/conditions — не забудь добавить новые в множества
-- **git commit после каждого завершённого блока**
+- **Константы — из CONFIG/данных**: глобальные параметры правил — docs/CONFIG.md + GameConfig; параметры способности конкретного героя/карты — данные (`wordSetup`, `min`/`max` ask'ов)
+- **Стиль кода механик — файлы-пачки** (`handlers.ts`, `handlers-h3.ts`, …), не «файл на механику» (решение владельца 2026-11-06)
+- **События широковещательные**: приватные окна (`peeks`) не порождают событий; `cards_revealed` — только для публичных вскрытий (см. §H8)
+- **Тесты**: golden на представителя каждой механики в packages/content/src/h1.test.ts / golden.test.ts (реальный каталог), юнит-тесты в packages/domain/src/tests/mechanics.test.ts (фикстуры)
+- **Валидация**: build-catalog.mjs валидирует новые ops/triggers/asks/refs/conditions — добавляй их в множества
+- **git commit после каждого завершённого блока**; после блока — `pnpm --filter @card-wars/content generate && pnpm typecheck && pnpm lint && pnpm -r test`
+- Журнал работы — `docs/journal/YYYY-MM-DD.md` (формат по предыдущим дням)
+
+## Что уже реализовано в движке (кратко; полный список — MECHANICS-V2.md)
+
+- Триггеры: on_cast, on_enters_play, on_leave_play, on_death, start_of_turn, start_of_next_turn, on_creature_attacks, on_damage_dealt, on_line_change, on_flip, on_draw, on_spell_cast, on_card_played, start_of_battle_phase, on_companion_event, on_freeze, on_return_to_hand
+- ~60 операций EffectSpec, в т.ч. все из §H2 (redistribute_damage, set_land_type, swap_field_cards, attach_card с уходом вложенных в сброс, repeat_effect, discard_chosen, pay_life, peek_deck_top + resolve_peek — приватное вскрытие, set_instance_flag, destroy_own_n)
+- Условия: все `while_*`/`if_*` из §7 и §H3 + `while_effective_def_at_most` (ручной подсчёт без аур — computeEff внутри условия ауры того же инстанса даёт бесконечную рекурсию)
+- Ask'и: доска/рука/сброс/число (`amount`), опции (`choose_option`), распределение урона (`damage_distribution`), до 16 ответов
+- pendingChoice: optional, target, effect_step (ленивые шаги массива эффектов), таймер-дефолт
+- 25/25 героев, включая choose_word (границы слова — `wordSetup` в данных героя) и приватный peek Рикардио
+
+## Бэклог — 96 карт, сгруппированы по требуемому механизму
+
+Разбор остатка (ид сверху вниз, пачками по механикам):
+
+1. **«ИЛИ»-выборы + условия от ответов** — уже есть `choose_option`; нужен `EffectSpec.conditions: if_option { index, option }` и пропуск шага в runSteps ДО подсчёта выборов (иначе движок спрашивает цели непройденной ветки). Карты: Дух воплекура (1 урон всем ИЛИ 3 одному), Рубленный стейк (сбрось 2 или уничтожь), Поменять строения (своя пара / чужая пара / ничего), противник с 4+ картами в руке (условие `while_opponents_hand_at_least`), Башня свободы (set_land_type по выбору + сброс-плата).
+2. **Реакции чужих уходов/смертей** — deaths.ts пушит on_death только самому умершему; добавить `enqueueTrigger('on_death'/'on_leave_play')`, чтобы реагировали ЧУЖИЕ карты с `if_payload_other` (+`if_payload_player_self`). Карты: Некромансер (переместиться на землю уходящего), Вязаный… подкладывание под карту (attach_card from field), Обжор (души под себя, +1 ATK/+2 DEF за каждую), Берсеркорова (+1 ATK за убитых), Питается павшими (верхняя карта чужого сброса под себя + постоянный +1 ATK — реф `opponent_discard_top`), Бездомный болот/Болотная бомба-лягушка (уходят подготовленными → эффекты).
+3. **Перемещение строений** — оп `move_building` (по аналогии с move_creature): ПРИЁМ «перемести строение на землю без строения», spell «переверни землю + перемести строение», «строения соседних земель»-ауры (Центр знаний, Вязаный котёнок — aura с фильтром соседства).
+4. **Распределение/сравнение вскрытий** — `distribute_damage` (восстанови до N жизней и распредели столько же урона — tree_trunks_card_21), механики сравнения стоимостей вскрытых карт (grand_prix_card_5, monika_card_1/2), peek+reorder чужой колоды (charlie_card_22), «открой 3 → сыграй партнёрство» (monika_card_32, grand_prix_card_4).
+5. **Партнёрские 2v2** — триггер `on_companion_event` семантики: Сотрудничество (копия радужного заклинания), фаза сражения партнёра (charlie_card_28), игра на ледяные земли (monika_card_24), +ATK за стоимость карт партнёрства (grand_prix_card_7).
+6. **Марселина-сбросы** — новый триггер `on_card_discarded` (payload player): ауры «когда враг сбрасывает» (marceline_card_1/15), «если нет → урон» (marceline_card_3/5 — механика discard_min_cost_or_damage), banish из сброса → лечение на стоимость (marceline_card_35).
+7. **Боевые семантики II** — Прозрачный ниндзя (dodge d6 при атаке — механика через сидированный RNG), Тэдди-крюк (+1 ATK за соседей цели), Крысолов (replace_attacker, §H4), Ловкий песочный краб / Песочный краб рубака (обмен при входе / урон при входе на соседнюю), Косячья Девятка (переезд после урона).
+8. **Статусы и правила розыгрыша** — запрет карт стоимости 0 (ftg_card_7 — play-restriction aura), доп. строение на земле (cake_card_18), защита земли от чужих флипов (ftg_card_43), игра на замороженную землю (monika_card_9/24), «нельзя заменить» уже есть (`cannotReplace`), Ледяная база (заморозка линии при входе).
+9. **Лимиты использований** — «до 5 раз за ход» (lsp_card_4): счётчик использований приёма за ход (переиспользовать идею abilityUses, но со счётчиком).
+10. **Прочее** — restricted action (lsp_card_17 — действие только на существо этой линии), смена земель из-вне игры (ftg_card_67), Воскрешение кошачьих жизней (lich_card_48), Частичка души (игра второй из колоды, связные судьбы), Некромама/Клон (соответствие названий), flavorOnly-карты без текста (lich_card_19/32, tree_trunks_card_14, lady_rainicorn_card_33 и т.п.).
+
+## Найденные при разборе зазоры (не откатывать фикс-коммиты!)
+
+- `resolve_choice` не вызывает `afterEffects`: смерти в докатке прерванного эффекта обрабатываются только следующей командой (предсуществующий зазор — починить отдельным коммитом с тестом).
+- События всегда широковещательные — «адресные» события невозможны без доработки Room; приватное = состояние + персональный вид, не событие.
 
 ## Начни с
 
-`git log --oneline -5` + `pnpm -r test` — убедись, что всё зелёное, потом продолжай бэклог сверху вниз. После каждого блока карт — `pnpm --filter @card-wars/content generate && pnpm -r test`.
+`git log --oneline -5` + `pnpm -r test` — убедись, что всё зелёное, потом продолжай бэклог сверху вниз. После каждого блока карт — `pnpm --filter @card-wars/content generate && pnpm typecheck && pnpm lint && pnpm -r test`.

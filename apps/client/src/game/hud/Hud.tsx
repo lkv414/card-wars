@@ -16,6 +16,8 @@ export function Hud({ code }: { code: string }) {
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
   const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
+  // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
+  const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
   const targeting = useGame((st) => st.ui.targeting);
 
   useEffect(() => {
@@ -334,18 +336,19 @@ export function Hud({ code }: { code: string }) {
 
       {error && <div className="error-line hud-error">{error.message}</div>}
 
-      {view.status === 'running' && me.heroId === 'hero_huntress_wizard' && !view.myWord && (
+      {/* Границы слова — данные героя (wordSetup, docs §H7); имён героев в клиенте нет. */}
+      {view.status === 'running' && wordSetup && !view.myWord && (
         <div className="pending-banner">
-          <span>Выбери слово из 3+ букв для способности героя:</span>
+          <span>{wordSetup.label ?? `Выбери слово (от ${wordSetup.min} букв) для способности героя:`}</span>
           <input
             value={wordInput}
-            maxLength={40}
+            maxLength={wordSetup.max}
             onChange={(e) => setWordInput(e.target.value)}
             aria-label="Слово героя"
           />
           <button
             className="mini"
-            disabled={wordInput.trim().length < 3}
+            disabled={wordInput.trim().length < wordSetup.min}
             onClick={() => sendCommand({ type: 'choose_word', player: view.me, word: wordInput.trim() })}
           >
             ОК

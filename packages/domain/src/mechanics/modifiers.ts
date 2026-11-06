@@ -466,8 +466,9 @@ export function conditionsHold(
         break;
       }
       case 'if_payload_name_contains': {
+        // The word was validated against the hero's wordSetup at choose_word.
         const word = draft.chosenWord[source.player] ?? '';
-        if (word.length < 3 || !payload?.cardId) return false;
+        if (!word || !payload?.cardId) return false;
         const name = ctx.catalog.getCard(payload.cardId)?.name ?? '';
         if (!name.toLowerCase().includes(word.toLowerCase())) return false;
         break;
@@ -518,7 +519,7 @@ export function conditionsHold(
       }
       case 'while_card_name_contains': {
         const word = draft.chosenWord[source.player] ?? '';
-        if (!word || word.length < 3) return false;
+        if (!word) return false;
         const needle = word.toLowerCase();
         if (!draft.turnPlayedCardIds.some((cid) => (ctx.catalog.getCard(cid)?.name ?? '').toLowerCase().includes(needle))) return false;
         break;

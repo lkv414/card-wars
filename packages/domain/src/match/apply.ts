@@ -159,10 +159,15 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       return;
     case 'choose_word': {
       // Chosen once at match start; stored per player, never leaves their view.
+      // Boundaries come from the hero's own data (wordSetup, docs §H7).
       if (draft.status === 'finished') throw new DomainError('match_finished', 'match is finished');
       if (!draft.players[command.player]) throw new DomainError('unknown_player', 'unknown player');
+      const setup = ctx.catalog.getHero(draft.players[command.player]!.heroId)?.wordSetup;
+      if (!setup) throw new DomainError('invalid_choice', 'hero has no word setup');
       const word = command.word.trim();
-      if (word.length < 3) throw new DomainError('invalid_choice', 'word must have at least 3 letters');
+      if (word.length < setup.min || word.length > setup.max) {
+        throw new DomainError('invalid_choice', `word must have ${setup.min} to ${setup.max} characters`);
+      }
       if (draft.chosenWord[command.player]) throw new DomainError('invalid_choice', 'word already chosen');
       draft.chosenWord[command.player] = word;
       return;

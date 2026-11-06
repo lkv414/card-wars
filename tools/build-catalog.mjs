@@ -330,6 +330,13 @@ function readMechanics(dir, ids, nameOf, keyField, single) {
       if (record.ability.kind === 'passive' && record.ability.trigger === undefined && !record.ability.effect) {
         // text-only placeholder is allowed until the ability is structured
       }
+      if (record.wordSetup !== undefined) {
+        const s = record.wordSetup;
+        if (!s || !Number.isInteger(s.min) || !Number.isInteger(s.max) || s.min < 1 || s.max < s.min) {
+          fail(`${file}: wordSetup needs integers min >= 1 and max >= min`);
+        }
+        if (s.label !== undefined && typeof s.label !== 'string') fail(`${file}: wordSetup label must be a string`);
+      }
     } else {
       if (!Array.isArray(record.abilities)) fail(`${file}: abilities[] required`);
       if (record.abilities.length === 0 && !record.flavorOnly) fail(`${file}: abilities[] required (or flavorOnly)`);
@@ -337,7 +344,7 @@ function readMechanics(dir, ids, nameOf, keyField, single) {
       if (actives.length > 1) fail(`${file}: at most one active (ПРИЕМ) ability per card`);
       record.abilities.forEach((ability, i) => validateAbility(ability, `${id}[${i}]`));
     }
-    map.set(id, single ? record.ability : record.abilities);
+    map.set(id, single ? record : record.abilities);
   }
   return map;
 }
@@ -381,8 +388,10 @@ for (const card of cards) {
   if (abilities) card.abilities = abilities;
 }
 for (const hero of heroes) {
-  const ability = heroMechanics.get(hero.id);
-  if (ability) hero.ability = ability;
+  const record = heroMechanics.get(hero.id);
+  if (!record) continue;
+  hero.ability = record.ability;
+  if (record.wordSetup) hero.wordSetup = record.wordSetup;
 }
 
 mkdirSync(outDir, { recursive: true });

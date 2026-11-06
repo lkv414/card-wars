@@ -1,6 +1,11 @@
 {
   "heroId": "hero_huntress_wizard",
   "name": "Колдунья-охотница",
+  "wordSetup": {
+    "min": 3,
+    "max": 40,
+    "label": "Слово (3+ букв)"
+  },
   "ability": {
     "kind": "passive",
     "trigger": "on_card_played",

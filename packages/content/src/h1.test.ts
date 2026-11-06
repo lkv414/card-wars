@@ -100,6 +100,9 @@ describe('golden: hero abilities (H7)', () => {
     expect(chosen.ok).toBe(true);
     if (!chosen.ok) throw new Error(chosen.rejected.message);
     expect(chosen.state.chosenWord.p1).toBe('Сирена');
+    // Герой без wordSetup слово выбрать не может (validation by hero data).
+    const noWord = applyCommand(chosen.state, { type: 'choose_word', player: 'p2', word: 'Джейк' }, deps);
+    expect(noWord.ok).toBe(false);
     s = forceToHand(chosen.state, 'p1', 'bmo_card_12');
     const played = applyCommand(s, {
       type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 0,

@@ -31,6 +31,8 @@ export interface HeroData {
   image?: string;
   text: string;
   ability?: AbilitySpec;
+  /** Match-start word choice boundaries (Колдунья-охотница, docs §H7) — hero data, not a global constant. */
+  wordSetup?: { min: number; max: number; label?: string };
 }
 
 // --- Match state ---

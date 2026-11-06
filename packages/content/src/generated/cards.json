@@ -7796,7 +7796,36 @@
   "attack": 3,
   "defense": 6,
   "description": "ПРИЕМ >>> Заморозь выбранную землю и существо на ней.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+     {
+      "op": "freeze_land",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "frozen": true
+     },
+     {
+      "op": "freeze_creature",
+      "target": {
+       "kind": "choice_zone_creature",
+       "index": 0
+      }
+     }
+    ],
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "text": "ПРИЕМ >>> Заморозь выбранную землю и существо на ней."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_13",
@@ -12551,7 +12580,42 @@
   "attack": 2,
   "defense": 8,
   "description": "Начиная со следующего твоего хода каждый ход получает +1 DEF навсегда. Существа противника на этой линии без урона на них, видя дух, паникуют и теряют -1 АТК.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": 1,
+     "duration": "permanent"
+    },
+    "text": "Начиная со следующего твоего хода каждый ход получает +1 DEF навсегда."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "stat": "attack",
+     "amount": -1,
+     "duration": "aura",
+     "conditions": [
+      {
+       "kind": "while_undamaged",
+       "scope": "target"
+      }
+     ]
+    },
+    "text": "Существа противника на этой линии без урона на них, видя дух, паникуют и теряют 1 АТК."
+   }
+  ]
  },
  {
   "id": "lich_card_6",
@@ -13026,7 +13090,21 @@
   "attack": 1,
   "defense": 6,
   "description": "Получаем +1 АТК, когда атакуем существ с жёлтым цветом на них (он просто его не любит).",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "atkBonus": 1,
+     "defenderType": "corn"
+    },
+    "text": "Получаем +1 АТК, когда атакуем существ с жёлтым цветом на них (он просто его не любит)."
+   }
+  ]
  },
  {
   "id": "lich_card_36",
@@ -15477,7 +15555,21 @@
   "attack": 2,
   "defense": 6,
   "description": "Укротитель: +1 ATK против существ со стоимостью ровно 2.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "attack_mod",
+     "target": {
+      "kind": "this_creature"
+     },
+     "atkBonus": 1,
+     "defenderCost": 2
+    },
+    "text": "Укротитель: +1 ATK против существ со стоимостью ровно 2."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_4",
@@ -15907,7 +15999,33 @@
   "attack": 2,
   "defense": 4,
   "description": "Каждый раз после того, как существо противника наносит Косячьей Девятке урон, можешь переместить её на пустую соседнюю землю.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_targeted_self"
+     },
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ],
+    "effect": {
+     "op": "move_creature",
+     "target": {
+      "kind": "this_creature"
+     },
+     "destination": {
+      "kind": "adjacent_own_land"
+     },
+     "side": "own"
+    },
+    "text": "Каждый раз после того, как существо противника наносит Косячьей Девятке урон, можешь переместить её на пустую соседнюю землю."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_30",

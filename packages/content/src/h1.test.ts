@@ -922,3 +922,127 @@ function placeOwnHBuilding(state: MatchState, cardId: string, zone: number): Mat
     d.players.p1!.zones[zone]!.building = id;
   });
 }
+
+describe('golden: H13 combat mods and freeze (батч V)', () => {
+  /** Place an own creature (batch V helpers). */
+  function placeOwnV(state: MatchState, cardId: string, zone: number, damage = 0): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      inst.damage = damage;
+      d.players.p1!.zones[zone]!.creature = id;
+    });
+  }
+
+  /** Place a p2 creature (batch V helpers). */
+  function placeOppV(state: MatchState, cardId: string, zone: number): MatchState {
+    return edit(state, (d) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      d.players.p2!.zones[zone]!.creature = id;
+    });
+  }
+
+  it('Му-бык: +1 ATK против жёлтых (кукурузных), без бонуса против остальных', () => {
+    const atk = catalog.getCard('lich_card_34')!.attack ?? 0;
+    let s = placeOwnV(newMatch(), 'lich_card_34', 0);
+    s = nextP1Turn(s); // 1-й раунд никто не атакует
+    s = placeOppV(s, 'cake_card_17', 3); // кукуруза
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    const cornVictim = gb.state.instances[gb.state.players.p2!.zones[3]!.creature!]!;
+    expect(cornVictim.damage).toBe(atk + 1);
+    // тот же бой против радужного bmo_card_12 — без бонуса
+    let s2 = placeOwnV(newMatch(), 'lich_card_34', 0);
+    s2 = nextP1Turn(s2);
+    s2 = placeOppV(s2, 'bmo_card_12', 3);
+    const gb2 = applyCommand(s2, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb2.ok) throw new Error(gb2.rejected.message);
+    const plainVictim = gb2.state.instances[gb2.state.players.p2!.zones[3]!.creature!]!;
+    expect(plainVictim.damage).toBe(atk);
+  });
+
+  it('Хлопковая гвардия: +1 ATK только против существ стоимости 2', () => {
+    const atk = catalog.getCard('tree_trunks_card_2')!.attack ?? 0;
+    let s = placeOwnV(newMatch(), 'tree_trunks_card_2', 0);
+    s = nextP1Turn(s);
+    s = placeOppV(s, 'bmo_card_12', 3); // стоимость 2
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    const victim = gb.state.instances[gb.state.players.p2!.zones[3]!.creature!]!;
+    expect(victim.damage).toBe(atk + 1);
+    let s2 = placeOwnV(newMatch(), 'tree_trunks_card_2', 0);
+    s2 = nextP1Turn(s2);
+    s2 = placeOppV(s2, 'cake_card_20', 3); // стоимость 1
+    const gb2 = applyCommand(s2, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb2.ok) throw new Error(gb2.rejected.message);
+    const cheapVictim = gb2.state.instances[gb2.state.players.p2!.zones[3]!.creature!]!;
+    expect(cheapVictim.damage).toBe(atk);
+  });
+
+  it('Ультра пес: замораживает выбранную землю и существо на ней', () => {
+    let s = placeOwnV(newMatch(), 'grand_prix_card_12', 0);
+    s = nextP1Turn(s);
+    s = placeOppV(s, 'bmo_card_12', 3);
+    const sandId = s.players.p1!.zones[0]!.creature!;
+    const victimId = s.players.p2!.zones[3]!.creature!;
+    // массив эффектов спрашивает землю лениво: флюп → pending → ответ
+    const floop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: sandId }, deps);
+    if (!floop.ok) throw new Error(floop.rejected.message);
+    expect(floop.state.pending?.player).toBe('p1');
+    const frozen = applyCommand(floop.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'landscape', player: 'p2', zone: 3 }] },
+    }, deps);
+    if (!frozen.ok) throw new Error(frozen.rejected.message);
+    expect(frozen.state.players.p2!.lands[3]!.frozen).toBe(true);
+    const victim = frozen.state.instances[victimId]!;
+    expect(victim.flipped).toBe(true);
+    expect(victim.frozenUntilTurn).toBe(frozen.state.turn + 1);
+  });
+
+  it('Проклятый древесный дух: паника без урона, +1 DEF каждый свой ход', () => {
+    let s = placeOwnV(newMatch(), 'lich_card_5', 0);
+    s = placeOppV(s, 'bmo_card_12', 3); // в зеркальной линии, урона нет
+    const enemyId = s.players.p2!.zones[3]!.creature!;
+    const baseAtk = catalog.getCard('bmo_card_12')!.attack ?? 0;
+    expect(computeEff(s, deps, enemyId).attack).toBe(baseAtk - 1);
+    // повреждённое существо паникует? нет
+    s = edit(s, (d) => { d.instances[enemyId]!.damage = 1; });
+    expect(computeEff(s, deps, enemyId).attack).toBe(baseAtk);
+    // свой ход → +1 DEF навсегда
+    s = edit(s, (d) => { d.instances[enemyId]!.damage = 0; });
+    const spiritId = s.players.p1!.zones[0]!.creature!;
+    const baseDef = computeEff(s, deps, spiritId).defense;
+    s = nextP1Turn(s);
+    expect(computeEff(s, deps, spiritId).defense).toBe(baseDef + 1);
+  });
+
+  it('Косячья Девятка: получив урон, переезжает на пустую соседнюю землю', () => {
+    let s = placeOwnV(newMatch(), 'tree_trunks_card_28', 1); // соседи 0 и 2
+    s = placeOppV(s, 'bmo_card_12', 2); // зеркало зоны 1
+    const gb1 = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb1.ok) throw new Error(gb1.rejected.message);
+    const gb2 = applyCommand(gb1.state, { type: 'go_battle', player: 'p2' }, deps);
+    if (!gb2.ok) throw new Error(gb2.rejected.message);
+    // в 1-м раунде атакует последний (p2): урон по Девятке → optional
+    expect(gb2.state.pending?.player).toBe('p1');
+    const nineId = gb2.state.players.p1!.zones[1]!.creature!;
+    const res = applyCommand(gb2.state, {
+      type: 'resolve_choice', player: 'p1', answer: { proceed: true },
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p1!.zones[1]!.creature).toBeNull();
+    expect(res.state.players.p1!.zones[0]!.creature).toBe(nineId);
+  });
+});

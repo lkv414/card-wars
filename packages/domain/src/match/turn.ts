@@ -20,10 +20,15 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   const p = player(draft, pid);
 
   // Подготовка: own field cards and companion become ready again.
-  // `noReady` (Усталый библиотекарь) keeps the card tapped at turn start.
+  // `noReady` (Усталый библиотекарь) keeps the card tapped at turn start;
+  // `frozenUntilTurn` (Ультра пес) skips exactly the next readying.
   const ready = (id: string | null): void => {
     if (!id) return;
     const inst = draft.instances[id]!;
+    if (inst.frozenUntilTurn !== undefined) {
+      if (inst.frozenUntilTurn > draft.turn) return; // still frozen this turn
+      delete inst.frozenUntilTurn; // freeze expired
+    }
     if (!inst.noReady) inst.flipped = false;
   };
   for (const zone of p.zones) {

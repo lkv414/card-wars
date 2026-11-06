@@ -67,6 +67,16 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             if (!defenderInstanceId) continue;
             if (defender.lands[target.zone]!.type !== mod.landType) continue;
           }
+          if (mod.defenderType !== undefined) {
+            if (!defenderInstanceId) continue;
+            const defenderCard = ctx.catalog.getCard(instance(draft, defenderInstanceId).cardId);
+            if (defenderCard?.landType !== mod.defenderType) continue;
+          }
+          if (mod.defenderCost !== undefined) {
+            if (!defenderInstanceId) continue;
+            const defenderCard = ctx.catalog.getCard(instance(draft, defenderInstanceId).cardId);
+            if ((defenderCard?.cost ?? 0) !== mod.defenderCost) continue;
+          }
           if (mod.emptyLane && defenderInstanceId) continue; // только пустая линия
           if (mod.face) faceDamage = true;
           if (mod.atkBonus) attackPowerMod += mod.atkBonus;

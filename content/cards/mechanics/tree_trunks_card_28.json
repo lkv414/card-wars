@@ -1,0 +1,22 @@
+{
+  "cardId": "tree_trunks_card_28",
+  "name": "Косячья Девятка",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "optional": true,
+      "conditions": [
+        { "kind": "if_payload_targeted_self" },
+        { "kind": "if_payload_player_opponent" }
+      ],
+      "effect": {
+        "op": "move_creature",
+        "target": { "kind": "this_creature" },
+        "destination": { "kind": "adjacent_own_land" },
+        "side": "own"
+      },
+      "text": "Каждый раз после того, как существо противника наносит Косячьей Девятке урон, можешь переместить её на пустую соседнюю землю."
+    }
+  ]
+}

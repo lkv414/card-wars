@@ -195,7 +195,9 @@ export type TargetRef =
   /** Cards attached under the source instance (Каракум, Берсеркорова). */
   | { kind: 'attached_cards' }
   /** Top card of each opponent's discard pile (Очаровательный трупоедик). */
-  | { kind: 'opponent_discard_top' };
+  | { kind: 'opponent_discard_top' }
+  /** Creature standing in the zone chosen by the ask answer at this index (Ультра пес). */
+  | { kind: 'choice_zone_creature'; index: number };
 
 export type StatKey = 'attack' | 'defense';
 
@@ -579,6 +581,10 @@ type EffectOp =
       face?: boolean;
       /** Bonus only while attacking an EMPTY lane (hero_ice_king). */
       emptyLane?: boolean;
+      /** Bonus only against creatures of this land type (Му-бык: жёлтые = кукуруза). */
+      defenderType?: LandType;
+      /** Bonus only against creatures with exactly this printed cost (Хлопковая гвардия). */
+      defenderCost?: number;
     }
   /** Un-flip a flipped (applied) own creature (Архитектор разума, Моника). */
   | { op: 'unflip'; target: TargetRef }
@@ -660,7 +666,9 @@ type EffectOp =
    */
   | { op: 'distribute_damage'; among: TargetRef; amount: StatAmount; cap?: 'defense' | 'none' }
   /** Remove one specific card from the game (Марселина: карта из стопки сброса, docs §H12). */
-  | { op: 'banish_card'; card: TargetRef };
+  | { op: 'banish_card'; card: TargetRef }
+  /** Flip a creature AND skip its next readying (Ультра пес: «заморозь существо», docs §H13). */
+  | { op: 'freeze_creature'; target: TargetRef };
 
 /**
  * A declarative operation with its own optional conditions.

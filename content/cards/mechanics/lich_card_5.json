@@ -1,0 +1,30 @@
+{
+  "cardId": "lich_card_5",
+  "name": "Проклятый древесный дух",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "stat_buff",
+        "target": { "kind": "this_creature" },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "permanent"
+      },
+      "text": "Начиная со следующего твоего хода каждый ход получает +1 DEF навсегда."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": { "kind": "this_lane_opponent_creature" },
+        "stat": "attack",
+        "amount": -1,
+        "duration": "aura",
+        "conditions": [{ "kind": "while_undamaged", "scope": "target" }]
+      },
+      "text": "Существа противника на этой линии без урона на них, видя дух, паникуют и теряют 1 АТК."
+    }
+  ]
+}

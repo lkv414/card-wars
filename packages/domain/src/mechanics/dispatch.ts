@@ -96,7 +96,8 @@ export function enqueueTrigger(
       return;
     }
     // Боевые триггеры и триггеры движения — по умолчанию только у источника
-    // события; реакции чужих источников — при явных if_payload_*-условиях.
+    // события; реакции чужих источников — при явных if_payload_*-условиях
+    // (Косячья Девятка: урон, пришедший именно по ней).
     if (
       (trigger === 'on_creature_attacks' ||
         trigger === 'on_damage_dealt' ||
@@ -105,7 +106,10 @@ export function enqueueTrigger(
       payload.instanceId &&
       source.instanceId &&
       source.instanceId !== payload.instanceId &&
-      !ability.conditions?.some((c) => c.kind === 'if_payload_other' || c.kind === 'if_payload_player_self')
+      !ability.conditions?.some((c) =>
+        c.kind === 'if_payload_other' ||
+        c.kind === 'if_payload_player_self' ||
+        c.kind === 'if_payload_targeted_self')
     ) {
       return;
     }
@@ -254,7 +258,10 @@ function effectChoiceNeed(effect: EffectSpec): number {
     }
     if (value === null || typeof value !== 'object') return;
     const record = value as Record<string, unknown>;
-    if (record.kind === 'choice' && typeof record.index === 'number') {
+    if (
+      (record.kind === 'choice' || record.kind === 'choice_zone_creature') &&
+      typeof record.index === 'number'
+    ) {
       max = Math.max(max, record.index);
     }
     if (record.kind === 'chosen_amount' && typeof record.index === 'number') {

@@ -506,6 +506,12 @@ export function resolveTarget(
         return top ? [{ kind: 'card' as const, instanceId: top }] : [];
       });
     }
+    case 'choice_zone_creature': {
+      const answer = choices?.[ref.index];
+      if (!answer || answer.kind !== 'landscape') return [];
+      const id = draft.players[answer.player]!.zones[answer.zone]?.creature;
+      return id ? [{ kind: 'creature' as const, instanceId: id }] : [];
+    }
   }
 }
 

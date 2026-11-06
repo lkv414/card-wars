@@ -1,0 +1,16 @@
+{
+  "cardId": "tree_trunks_card_2",
+  "name": "Хлопковая гвардия",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": { "kind": "this_creature" },
+        "atkBonus": 1,
+        "defenderCost": 2
+      },
+      "text": "Укротитель: +1 ATK против существ со стоимостью ровно 2."
+    }
+  ]
+}

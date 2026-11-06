@@ -960,6 +960,17 @@ export function runEffect(
       }
       return;
     }
+    case 'freeze_creature': {
+      // Flip now + skip the next readying (docs §H13). No public event: the
+      // flipped state is visible in the snapshot.
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'creature') continue;
+        const inst = instance(draft, target.instanceId);
+        inst.flipped = true;
+        inst.frozenUntilTurn = draft.turn + 1;
+      }
+      return;
+    }
     case 'set_instance_flag': {
       const flag = effect.flag;
       const value = effect.value ?? true;

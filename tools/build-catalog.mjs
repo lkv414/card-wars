@@ -65,7 +65,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
 const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
-  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card']);
+  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -76,7 +76,7 @@ const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_opponent_land', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'payload_killer', 'payload_player', 'min_attack_own', 'each_opponent_land',
-  'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_own_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards', 'opponent_discard_top',
+  'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_own_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards', 'opponent_discard_top', 'choice_zone_creature',
 ]);
 const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost', 'chosen_amount', 'target_damage', 'target_attack', 'attached_count', 'per_opponent_distinct_lands', 'chosen_card_cost']);
 const CONDITION_KINDS = new Set([
@@ -204,6 +204,8 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.destination, where);
   } else if (op === 'banish_card') {
     checkTargetRef(effect.card, where);
+  } else if (op === 'freeze_creature') {
+    checkTargetRef(effect.target, where);
   } else if (op === 'set_land_type') {
     checkTargetRef(effect.target, where);
     if (effect.landType !== 'chosen' && !LAND_TYPES.has(effect.landType)) fail(`${where}: set_land_type landType invalid`);
@@ -251,6 +253,8 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.target, where);
     if (effect.vs && !['ownZone', 'defenderZone'].includes(effect.vs)) fail(`${where}: attack_mod vs must be ownZone|defenderZone`);
     if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: attack_mod landType invalid`);
+    if (effect.defenderType && !LAND_TYPES.has(effect.defenderType)) fail(`${where}: attack_mod defenderType invalid`);
+    if (effect.defenderCost !== undefined && !Number.isInteger(effect.defenderCost)) fail(`${where}: attack_mod defenderCost must be integer`);
     if (effect.emptyLane !== undefined && typeof effect.emptyLane !== 'boolean') fail(`${where}: attack_mod emptyLane must be boolean`);
     if (!effect.multiplier && !effect.atkBonus && !effect.face) fail(`${where}: attack_mod needs multiplier|atkBonus|face`);
   } else if (op === 'counts_as') {
@@ -309,9 +313,9 @@ function validateEffect(effect, where, ability) {
   // Inside grant_ability the asks live on the granted ability.
   const holder = op === 'grant_ability' ? effect.ability : ability;
   const effectJson = JSON.stringify(effect);
-  const choiceMatches = [...effectJson.matchAll(/"choice","index":(\d+)/g)];
+  const choiceMatches = [...effectJson.matchAll(/"choice(_zone_creature)?","index":(\d+)/g)];
   if (choiceMatches.length > 0) {
-    const need = Math.max(...choiceMatches.map((m) => Number(m[1]) + 1));
+    const need = Math.max(...choiceMatches.map((m) => Number(m[2]) + 1));
     if ((holder.targets?.length ?? 0) < need) {
       fail(`${where}: effect uses choice(0..${need - 1}) but only ${holder.targets?.length ?? 0} targets declared`);
     }

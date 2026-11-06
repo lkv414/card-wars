@@ -96,6 +96,8 @@ export interface CardInstance {
   cannotReplace?: boolean;
   /** «Нельзя вернуть из сброса» (Частичка души, Муррризрак). */
   cannotReturnFromDiscard?: boolean;
+  /** Skips its next readying while this turn number has not passed (Ультра пес, docs §H13). */
+  frozenUntilTurn?: number;
 }
 
 export interface PlayerState {

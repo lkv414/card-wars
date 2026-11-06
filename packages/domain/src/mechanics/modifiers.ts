@@ -683,6 +683,14 @@ export function resolveStatAmount(
       }
       return total;
     }
+    case 'chosen_card_cost': {
+      const answer = choices?.[amount.index];
+      if (!answer || answer.kind !== 'card') {
+        throw new DomainError('invalid_choice', `no card answer at index ${amount.index}`);
+      }
+      const inst = instance(draft, answer.instanceId);
+      return ctx.catalog.getCard(inst.cardId)?.cost ?? 0;
+    }
   }
 }
 

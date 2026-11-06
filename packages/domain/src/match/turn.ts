@@ -97,7 +97,9 @@ export function startTurn(draft: Draft<MatchState>, ctx: Ctx): void {
 /** Burn leftovers, drop spell visuals and this-turn buffs, pass to the next team/player. */
 export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.castSpells = [];
-  draft.turnBuffs = [];
+  // 'next_turn' бафы живут до конца СЛЕДУЮЩЕГО хода (docs §H12); обычные
+  // this_turn-бафы (без untilTurn) сгорают здесь же, как и раньше.
+  draft.turnBuffs = draft.turnBuffs.filter((b) => b.untilTurn !== undefined && b.untilTurn > draft.turn);
   draft.turnCounters = {};
   draft.turnModifiers = [];
   draft.discounts = []; // «в этот ход» — скидки сгорают вместе с ходом

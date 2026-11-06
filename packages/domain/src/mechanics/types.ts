@@ -25,7 +25,9 @@ export type Trigger =
   | 'on_companion_event'
   | 'on_freeze'
   /** A card returned to its owner's hand (Леди Ливнерог, docs §H7). */
-  | 'on_return_to_hand';
+  | 'on_return_to_hand'
+  /** Any card hit a discard pile (Марселина: «когда враг сбрасывает карту», docs §H12). */
+  | 'on_card_discarded';
 
 /** What a triggered ability observes (queued with the ability). */
 export interface TriggerPayload {
@@ -293,7 +295,9 @@ export type StatAmount =
   /** Effective attack of a target creature (Плюшевый). */
   | { kind: 'target_attack'; target: TargetRef }
   /** Number of cards attached under an instance (Каракум). */
-  | { kind: 'attached_count'; target: TargetRef };
+  | { kind: 'attached_count'; target: TargetRef }
+  /** Printed cost of the card picked by the ask answer at this index (Марселина, docs §H12). */
+  | { kind: 'chosen_card_cost'; index: number };
 
 /**
  * Conditions (docs/MECHANICS-V2.md §7). `if_*` — one-shot at run time,
@@ -457,7 +461,7 @@ type EffectOp =
       target: TargetRef;
       stat: StatKey;
       amount: StatAmount;
-      duration: 'permanent' | 'aura' | 'this_turn';
+      duration: 'permanent' | 'aura' | 'this_turn' | 'next_turn';
       /** Aura target filter (Фея Шепард: только милые существа). */
       filter?: TargetFilter;
       /** Defense floor for the affected creature (Угнетающая пирамида: не ниже 1). */
@@ -654,7 +658,9 @@ type EffectOp =
    * Add a total of `amount` damage, distributed by one `amounts` answer over
    * `among` (Абрака-тилиус, docs §H11). `cap: 'defense'` (default) may not kill.
    */
-  | { op: 'distribute_damage'; among: TargetRef; amount: StatAmount; cap?: 'defense' | 'none' };
+  | { op: 'distribute_damage'; among: TargetRef; amount: StatAmount; cap?: 'defense' | 'none' }
+  /** Remove one specific card from the game (Марселина: карта из стопки сброса, docs §H12). */
+  | { op: 'banish_card'; card: TargetRef };
 
 /**
  * A declarative operation with its own optional conditions.

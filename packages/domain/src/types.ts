@@ -155,6 +155,8 @@ export interface TurnBuff {
   stat: 'attack' | 'defense';
   amount: number;
   grantedOnTurn: number;
+  /** Survives until the END of this turn number (stat_buff duration 'next_turn', docs §H12). */
+  untilTurn?: number;
   /** Attack floor for a debuff («минимум 0», Затопление). */
   floorAttack?: number;
   /** Multiply the stat after additive bonuses (docs §H2). */

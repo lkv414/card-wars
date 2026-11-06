@@ -7,7 +7,7 @@ import { cardOf, emit, instance, moveId, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
-import { bumpCounter } from '../mechanics/effects';
+import { bumpCounter, noteDiscard } from '../mechanics/effects';
 import { conditionsHold, consumeDiscount, landCountModifier, playedCardCostModifier } from '../mechanics/modifiers';
 import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../mechanics/costs';
 import { validateChoices } from '../mechanics/resolve';
@@ -136,7 +136,7 @@ export function handlePlayCard(
       pickInst.location = 'discard';
       moveId(p.hand, p.discard, pickId);
       emit(ctx, { type: 'card_discarded', player: playerId, instanceId: pickId, cardId: pickInst.cardId, from: 'hand' });
-      bumpCounter(draft, 'cards_discarded', playerId);
+      noteDiscard(draft, ctx, playerId, { instanceId: pickId, cardId: pickInst.cardId, from: 'hand' });
     }
     for (const pickId of floopPicks) {
       instance(draft, pickId).flipped = true;
@@ -201,7 +201,7 @@ export function handlePlayCard(
     moveId(p.hand, p.discard, unfreezeWith);
     p.lands[zone]!.frozen = false;
     emit(ctx, { type: 'card_discarded', player: playerId, instanceId: unfreezeWith, cardId: unfreezeInst.cardId, from: 'hand' });
-    bumpCounter(draft, 'cards_discarded', playerId);
+    noteDiscard(draft, ctx, playerId, { instanceId: unfreezeWith, cardId: unfreezeInst.cardId, from: 'hand' });
     emit(ctx, { type: 'land_changed', player: playerId, zone, change: 'unfrozen' });
   }
 

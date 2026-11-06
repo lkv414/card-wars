@@ -5,6 +5,7 @@ import { drawCards } from '../draw';
 import { DomainError } from '../errors';
 import { finishMatch } from '../finish';
 import { isActive, teamOf } from '../zones';
+import { noteDiscard } from '../mechanics/effects';
 import { resolveCombat } from './combat';
 import { handleFloop } from './floop';
 import { handleHeroAbility } from './hero';
@@ -221,6 +222,9 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
       inst.location = 'discard';
       moveId(p.hand, p.discard, command.instanceId);
       emit(ctx, { type: 'card_discarded', player: command.player, instanceId: command.instanceId, cardId: inst.cardId, from: 'hand' });
+      noteDiscard(draft, ctx, command.player, { instanceId: command.instanceId, cardId: inst.cardId, from: 'hand' });
+      // Реакции на сброс (Марселина) разгоняются стандартным батчем.
+      afterEffects(draft, ctx);
       return;
     }
     case 'discard_from_field': {

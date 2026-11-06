@@ -223,12 +223,14 @@ export function runEffect(
         // Per-target conditions of the effect (Мисс Пушинка: «пока 7 урона»).
         if (!conditionsHold(draft, ctx, source, effect.conditions, target.instanceId, payload)) continue;
         const inst = instance(draft, target.instanceId);
-        if (effect.duration === 'this_turn') {
+        if (effect.duration === 'this_turn' || effect.duration === 'next_turn') {
           draft.turnBuffs.push({
             instanceId: target.instanceId,
             stat: effect.stat,
             amount,
             grantedOnTurn: draft.turn,
+            // 'next_turn' («до конца следующего хода») переживает конец текущего.
+            untilTurn: effect.duration === 'next_turn' ? draft.turn + 1 : undefined,
             floorAttack: effect.floorAttack,
             multiplier: effect.multiplier,
           });
@@ -493,7 +495,7 @@ export function runEffect(
         inst.location = 'discard';
         moveId(p.hand, p.discard, inst.id);
         emit(ctx, { type: 'card_discarded', player: source.player, instanceId: inst.id, cardId: inst.cardId, from: 'hand' });
-        bumpCounter(draft, 'cards_discarded', source.player);
+        noteDiscard(draft, ctx, source.player, { instanceId: inst.id, cardId: inst.cardId, from: 'hand' });
       }
       return;
     }
@@ -886,12 +888,42 @@ export function runEffect(
       inst.slot = null;
       draft.players[inst.controller]!.discard.push(id);
       emit(ctx, { type: 'card_discarded', player: inst.controller, instanceId: id, cardId: inst.cardId, from });
+      if (from === 'hand') {
+        noteDiscard(draft, ctx, inst.controller, { instanceId: id, cardId: inst.cardId, from: 'hand' });
+      }
       return;
     }
     case 'pay_life': {
       const p = player(draft, source.player);
       p.lives -= effect.amount;
       emit(ctx, { type: 'lives_changed', player: source.player, delta: -effect.amount, lives: p.lives });
+      return;
+    }
+    case 'banish_card': {
+      // Remove ONE specific card from the game (Марселина: из стопки сброса).
+      const [target] = resolveTarget(draft, ctx, effect.card, source, choices, payload);
+      if (!target) return;
+      let id: string | null = null;
+      if (target.kind === 'creature' || target.kind === 'building' || target.kind === 'card') {
+        id = target.instanceId;
+      }
+      if (!id) return;
+      const inst = instance(draft, id);
+      if (inst.location === 'discard') {
+        const owner = draft.players[inst.controller]!;
+        owner.discard = owner.discard.filter((x) => x !== id);
+      } else if (inst.location === 'hand') {
+        const owner = draft.players[inst.controller]!;
+        owner.hand = owner.hand.filter((x) => x !== id);
+      } else if (inst.location !== 'deck') {
+        return; // field cards are not banished by this op
+      } else {
+        draft.players[inst.controller]!.deck = draft.players[inst.controller]!.deck.filter((x) => x !== id);
+      }
+      inst.location = 'removed';
+      inst.zone = null;
+      inst.slot = null;
+      emit(ctx, { type: 'card_removed', player: inst.controller, instanceId: id, cardId: inst.cardId });
       return;
     }
     case 'peek_deck_top': {
@@ -1032,6 +1064,24 @@ function returnCards(
 export function bumpCounter(draft: Draft<MatchState>, kind: string, playerId: string): void {
   const key = `${kind}:${playerId}`;
   draft.turnCounters[key] = (draft.turnCounters[key] ?? 0) + 1;
+}
+
+/**
+ * A card just hit a discard pile: per-turn counter + on_card_discarded
+ * reactions (Марселина, docs §H12). Every discard path goes through here.
+ */
+export function noteDiscard(
+  draft: Draft<MatchState>,
+  ctx: Ctx,
+  playerId: string,
+  card: { instanceId: string; cardId: string; from: 'hand' | 'field' | 'companion' | 'deck' },
+): void {
+  bumpCounter(draft, 'cards_discarded', playerId);
+  enqueueTrigger(draft, ctx, 'on_card_discarded', {
+    player: playerId,
+    instanceId: card.instanceId,
+    cardId: card.cardId,
+  });
 }
 
 /** Board filter for damage targets: card or zone-land based, invertible. */

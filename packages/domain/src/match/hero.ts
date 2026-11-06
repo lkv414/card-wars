@@ -5,6 +5,7 @@ import type { Ctx } from '../util';
 import { killInstance } from '../damage';
 import { emit, instance, moveId, player } from '../util';
 import { costPicks, costPicksCount, sacrificePicks } from '../mechanics/costs';
+import { noteDiscard } from '../mechanics/effects';
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
@@ -74,6 +75,7 @@ export function handleHeroAbility(
       cardId: pickInst.cardId,
       from: 'hand',
     });
+    noteDiscard(draft, ctx, playerId, { instanceId: pickId, cardId: pickInst.cardId, from: 'hand' });
   }
   for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
     killInstance(draft, ctx, pickId);

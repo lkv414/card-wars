@@ -313,7 +313,10 @@ export function resolveTarget(
         case 'landscape':
           return [{ kind: 'land', playerId: choice!.player, zone: choice!.zone }];
         case 'card':
-          throw new DomainError('invalid_choice', 'hand card choice is not an effect target');
+          // Non-board card (hand / discard / deck top) — for ops that consume
+          // card picks (discard_chosen, banish_card, …). Board-only effects
+          // filter it out by kind downstream.
+          return [{ kind: 'card', instanceId: choice!.instanceId }];
       }
       return [];
     }

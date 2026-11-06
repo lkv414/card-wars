@@ -8,7 +8,7 @@ import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../me
 import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { runAbilityDirect } from '../mechanics/dispatch';
-import { bumpCounter } from '../mechanics/effects';
+import { noteDiscard } from '../mechanics/effects';
 import { areActivesSuppressed, collectGrantedActives, conditionsHold } from '../mechanics/modifiers';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
@@ -114,7 +114,7 @@ export function handleFloop(
       cardId: pickInst.cardId,
       from: 'hand',
     });
-    bumpCounter(draft, 'cards_discarded', playerId);
+    noteDiscard(draft, ctx, playerId, { instanceId: pickId, cardId: pickInst.cardId, from: 'hand' });
   }
   for (const pickId of sacrificePicks(allTargets, discardCount, ability.additionalCost, draft, ctx, playerId)) {
     killInstance(draft, ctx, pickId);

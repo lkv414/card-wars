@@ -315,6 +315,14 @@ Contract decisions for the last 137 cards + 3 heroes (approved 2026-11-06). Text
 - Ask `damage_distribution` получает поле `mode?: 'reassign' | 'add'`: `reassign` (по умолчанию, для `redistribute_damage` — значения = полный урон каждого существа, клиент валидирует сохранение суммы), `add` (для `distribute_damage` — значения = добавочный урон, ввод с нуля).
 - Флаги `suppress.spells` / `suppress.creatureAbilities` реализованы: существо под прикрытием не может быть **выбрано целью** чужим заклинанием (`spells`) или приёмом чужого существа (`creatureAbilities`). Проверка — в `validateChoices` для всех «сущностных» ask'ов (`opponent_creature`, `any_creature`, `lane_creature`, `lane_opponent_creature`, `adjacent_*`, а также `own_creature` — на случай чужого прикрытия); вид действующего abilityKind определяется по карте источника (spell/creature/building/hero — способности героя не блокируются: «способностей существ»). Свои источники свои существа блокировать не могут. (Облачная башня, Мятная мороженка.)
 
+### H12. Сбросы Марселины (батч IV)
+
+- Триггер `on_card_discarded` — карта попала в стопку сброса **из руки** (стоимости, эффекты `discard_from_hand`/`discard_chosen`/`opponent_discards`, команда «сбрось карту», случайные сбросы, кражи со сбросом). Милл из колоды, замены и уходы с поля триггером не считаются — «сбрасывает карту» = карта из руки. Точка вызова — хелпер `noteDiscard` (счётчик `cards_discarded` + очередь триггеров); гейт «врага» — условие `if_payload_player_opponent`.
+- `stat_buff` получил duration `'next_turn'` — «до конца следующего хода»: баф кладётся в `turnBuffs` с `untilTurn = turn + 1` и снимается в конце этого хода (обычные `this_turn`-бафы сгорают в конце текущего, как раньше).
+- Операция `banish_card` { card }: изъять ОДНУ конкретную карту из игры (из стопки сброса, руки или колоды) — событие `card_removed`.
+- Величина `chosen_card_cost { index }` — печатная стоимость карты из ответа-выбора с этим индексом (Марселина: «восстанови X урона, X — стоимость изъятой карты»).
+- Механика `discard_min_cost_or_damage` { minCost, amount, to: 'player' | 'creatures' }: выбранный игрок сбрасывает случайную карту со стоимостью ≥ minCost; если таких нет — `amount` урона ему (to: 'player') или каждому его существу (to: 'creatures'). Случайный выбор — осознанная трактовка: текст не даёт жертве выбора, а перекрёстный pending другого игрока внутри чужого заклинания не поддержан.
+
 ### H8. Порядок работ
 
 Каждый блок: правка этого документа → типы/валидатор → domain → protocol → HUD → mechanics-JSON → golden/unit-тесты → `pnpm --filter @card-wars/content generate && pnpm lint && pnpm typecheck && pnpm -r test` → git commit.

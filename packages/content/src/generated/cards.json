@@ -14061,7 +14061,28 @@
   "landType": "swamp",
   "image": "/content/cards/images/marceline_card_1.png",
   "description": "Когда враг сбрасывает карту, твое существо на этой линии получает +1 ATK до конца следующего хода.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_card_discarded",
+    "conditions": [
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "next_turn"
+    },
+    "text": "Когда враг сбрасывает карту, твоё существо на этой линии получает +1 ATK до конца следующего хода."
+   }
+  ]
  },
  {
   "id": "marceline_card_2",
@@ -14104,7 +14125,25 @@
   "landType": "swamp",
   "image": "/content/cards/images/marceline_card_3.png",
   "description": "Выбранный враг сбрасывает карту стоимостью 2 или более. Если нет, то нанеси 5 урона этому врагу.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "discard_min_cost_or_damage",
+    "params": {
+     "minCost": 2,
+     "amount": 5,
+     "to": "player"
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Выбранный враг сбрасывает карту стоимостью 2 или более. Если нет, то нанеси 5 урона этому врагу."
+   }
+  ]
  },
  {
   "id": "marceline_card_5",
@@ -14114,7 +14153,25 @@
   "landType": "swamp",
   "image": "/content/cards/images/marceline_card_5.png",
   "description": "Выбранный враг может сбросить карту. Если нет, то нанеси 2 Урона каждому его существу.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "discard_min_cost_or_damage",
+    "params": {
+     "minCost": 0,
+     "amount": 2,
+     "to": "creatures"
+    },
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Выбранный враг сбрасывает карту. Если нет, то нанеси 2 урона каждому его существу."
+   }
+  ]
  },
  {
   "id": "marceline_card_7",
@@ -14265,7 +14322,26 @@
   "attack": 1,
   "defense": 11,
   "description": "Когда враг сбрасывает карту, нанеси ему 1 Урон..",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_card_discarded",
+    "conditions": [
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "payload_player"
+     },
+     "amount": 1
+    },
+    "text": "Когда враг сбрасывает карту, нанеси ему 1 урон."
+   }
+  ]
  },
  {
   "id": "marceline_card_17",
@@ -14685,7 +14761,42 @@
   "landType": "rainbow",
   "image": "/content/cards/images/marceline_card_35.png",
   "description": "Удали из игры карту из любой стопки сброса игроков. Восстанови X урона с выбранного существа, где X стоимость карты изъятой этим способом.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "banish_card",
+      "card": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "heal",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "amount": {
+       "kind": "chosen_card_cost",
+       "index": 0
+      }
+     }
+    ],
+    "targets": [
+     {
+      "kind": "any_discard_card"
+     },
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "Удали из игры карту из любой стопки сброса игроков. Восстанови X урона с выбранного существа, где X — стоимость карты, изъятой этим способом."
+   }
+  ]
  },
  {
   "id": "marceline_card_36",

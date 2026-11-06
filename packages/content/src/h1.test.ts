@@ -763,4 +763,162 @@ describe('golden: H11 buildings, distribute, shielded targets (батч III)', (
     }, deps);
     if (!allowed.ok) throw new Error(allowed.rejected.message);
   });
+
+  it('Ведьмак: враг сбрасывает карту — 1 урон ему', () => {
+    let s = placeOwnH(newMatch(), 'marceline_card_15', 0);
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps); // ход p2
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    s = gb.state;
+    const livesBefore = s.players.p2!.lives;
+    const handBefore = s.players.p2!.hand.length;
+    const res = applyCommand(s, {
+      type: 'discard_from_hand', player: 'p2', instanceId: s.players.p2!.hand[0]!,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p2!.hand.length).toBe(handBefore - 1);
+    expect(res.state.players.p2!.lives).toBe(livesBefore - 1);
+  });
+
+  it('Загробный дом: сброс врага даёт +1 ATK до конца следующего хода', () => {
+    let s = placeOwnH(newMatch(), 'bmo_card_12', 0);
+    s = placeOwnHBuilding(s, 'marceline_card_1', 0);
+    const creatureId = s.players.p1!.zones[0]!.creature!;
+    const base = computeEff(s, deps, creatureId).attack;
+    const gb = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps); // ход p2
+    if (!gb.ok) throw new Error(gb.rejected.message);
+    const res = applyCommand(gb.state, {
+      type: 'discard_from_hand', player: 'p2', instanceId: gb.state.players.p2!.hand[0]!,
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(computeEff(res.state, deps, creatureId).attack).toBe(base + 1);
+    const buff = res.state.turnBuffs.find((b) => b.instanceId === creatureId);
+    expect(buff?.untilTurn).toBe(res.state.turn + 1);
+  });
+
+  it('Ванна крови: враг с картой 2+ сбрасывает; без таких — 5 урона', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands[0]!.type = 'swamp';
+      d.players.p1!.actions = 10;
+    });
+    s = forceToHand(s, 'p1', 'marceline_card_3');
+    // сценарий 1: во руке p2 есть дорогая карта (фиксируем cost 2)
+    s = edit(s, (d) => {
+      const first = d.players.p2!.hand[0]!;
+      d.instances[first]!.cardId = 'bmo_card_12';
+    });
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'marceline_card_3'),
+      targets: [{ kind: 'player', playerId: 'p2' }],
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p2!.hand.length).toBe(4);
+    expect(res.state.players.p2!.lives).toBe(25);
+    // сценарий 2: рука p2 пуста → 5 урона
+    let s2 = edit(newMatch(), (d) => {
+      d.players.p1!.lands[0]!.type = 'swamp';
+      d.players.p1!.actions = 10;
+      d.players.p2!.hand = [];
+    });
+    s2 = forceToHand(s2, 'p1', 'marceline_card_3');
+    const livesBefore = s2.players.p2!.lives;
+    const res2 = applyCommand(s2, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s2, 'p1', 'marceline_card_3'),
+      targets: [{ kind: 'player', playerId: 'p2' }],
+    }, deps);
+    if (!res2.ok) throw new Error(res2.rejected.message);
+    expect(res2.state.players.p2!.lives).toBe(livesBefore - 5);
+  });
+
+  it('Белкобомбы!: пустая рука врага — 2 урона каждому его существу', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands[0]!.type = 'swamp';
+      d.players.p1!.actions = 10;
+      d.players.p2!.hand = [];
+    });
+    s = placeOwnH(s, 'bmo_card_12', 0);
+    s = edit(s, (d) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.location = 'field';
+      inst.zone = 3;
+      inst.slot = 'creature';
+      d.players.p2!.zones[3]!.creature = id;
+    });
+    s = forceToHand(s, 'p1', 'marceline_card_5');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'marceline_card_5'),
+      targets: [{ kind: 'player', playerId: 'p2' }],
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    // урон идёт существам ВЫБРАННОГО игрока: у p1 существо цело
+    expect(res.state.instances[res.state.players.p1!.zones[0]!.creature!]!.damage).toBe(0);
+  });
+
+  it('Переливание крови: изымает карту из сброса и лечит на её стоимость', () => {
+    let s = edit(newMatch(), (d) => {
+      d.players.p1!.lands[0]!.type = 'rainbow';
+      d.players.p1!.actions = 10;
+    });
+    s = placeOwnH(s, 'bmo_card_12', 0, 2);
+    const hurtId = s.players.p1!.zones[0]!.creature!;
+    // карта стоимости 2 (bmo_card_12) в свой сброс
+    s = edit(s, (d) => {
+      const id = d.players.p1!.deck[0]!;
+      d.players.p1!.deck.splice(0, 1);
+      d.instances[id]!.cardId = 'bmo_card_12';
+      d.instances[id]!.location = 'discard';
+      d.players.p1!.discard.push(id);
+    });
+    const banishedId = s.players.p1!.discard[0]!;
+    s = forceToHand(s, 'p1', 'marceline_card_35');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'marceline_card_35'),
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1');
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'card', instanceId: banishedId }] },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    const next2 = applyCommand(next.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'creature', instanceId: hurtId }] },
+    }, deps);
+    if (!next2.ok) throw new Error(next2.rejected.message);
+    expect(next2.state.instances[banishedId]!.location).toBe('removed');
+    // в сбросе остаётся только само разыгранное заклинание
+    expect(next2.state.players.p1!.discard).toEqual([handIdOf(s, 'p1', 'marceline_card_35')]);
+    expect(next2.state.instances[hurtId]!.damage).toBe(0);
+  });
 });
+
+/** Place an own creature (h1 batch IV helpers). */
+function placeOwnH(state: MatchState, cardId: string, zone: number, damage = 0): MatchState {
+  return edit(state, (d) => {
+    const id = d.players.p1!.deck[0]!;
+    d.players.p1!.deck.splice(0, 1);
+    const inst = d.instances[id]!;
+    inst.cardId = cardId;
+    inst.location = 'field';
+    inst.zone = zone;
+    inst.slot = 'creature';
+    inst.damage = damage;
+    d.players.p1!.zones[zone]!.creature = id;
+  });
+}
+
+/** Place an own building (h1 batch IV helpers). */
+function placeOwnHBuilding(state: MatchState, cardId: string, zone: number): MatchState {
+  return edit(state, (d) => {
+    const id = d.players.p1!.deck[0]!;
+    d.players.p1!.deck.splice(0, 1);
+    const inst = d.instances[id]!;
+    inst.cardId = cardId;
+    inst.location = 'field';
+    inst.zone = zone;
+    inst.slot = 'building';
+    d.players.p1!.zones[zone]!.building = id;
+  });
+}

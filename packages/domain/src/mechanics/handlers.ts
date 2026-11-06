@@ -8,6 +8,7 @@ import { computeEff } from '../stats';
 import { opponentsOf, opponentZoneFor } from '../zones';
 import { pickRandom } from '../rng';
 import type { MatchState } from '../types';
+import { noteDiscard } from './effects';
 import { resolveTarget } from './resolve';
 import type { EffectSource, MechanicHandler } from './registry';
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -313,6 +314,7 @@ export const discardThenDamage: MechanicHandler = (
     victim.discard.push(id);
     discarded += 1;
     emit(ctx, { type: 'card_discarded', player: pick.playerId, instanceId: id, cardId: inst.cardId, from: 'hand' });
+    noteDiscard(draft, ctx, pick.playerId, { instanceId: id, cardId: inst.cardId, from: 'hand' });
   }
   if (discarded > 0) dealToPlayer(draft, ctx, pick.playerId, discarded, source.instanceId);
 };
@@ -349,6 +351,7 @@ export const millSpellDiscard: MechanicHandler = (
     victim.hand.splice(victim.hand.indexOf(id), 1);
     victim.discard.push(id);
     emit(ctx, { type: 'card_discarded', player: pick.playerId, instanceId: id, cardId: inst.cardId, from: 'hand' });
+    noteDiscard(draft, ctx, pick.playerId, { instanceId: id, cardId: inst.cardId, from: 'hand' });
   }
 };
 

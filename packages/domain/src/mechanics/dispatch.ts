@@ -71,11 +71,15 @@ export function enqueueTrigger(
   forSource(draft, ctx, (source, ability, abilityIndex) => {
     if (ability.kind !== 'passive' || ability.trigger !== trigger) return;
     // Turn-scoped triggers (start_of_turn, on_draw, …) normally fire only for the
-    // scoped player; companion reactions may opt into ally events via if_payload_ally.
+    // scoped player; reactions opt into foreign events via if_payload_* conditions
+    // (ally / other / «когда ВРАГ сбрасывает» — if_payload_player_opponent).
     if (
       payload.player &&
       source.player !== payload.player &&
-      !ability.conditions?.some((c) => c.kind === 'if_payload_ally' || c.kind === 'if_payload_other')
+      !ability.conditions?.some((c) =>
+        c.kind === 'if_payload_ally' ||
+        c.kind === 'if_payload_other' ||
+        c.kind === 'if_payload_player_opponent')
     ) {
       return;
     }

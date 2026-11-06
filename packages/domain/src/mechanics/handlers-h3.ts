@@ -1,12 +1,14 @@
 import type { Draft } from 'immer';
-import { dealToPlayer, killInstance } from '../damage';
+import { dealToCreature, dealToPlayer, killInstance } from '../damage';
+import { DomainError } from '../errors';
 import { emit, instance, player } from '../util';
 import { computeEff } from '../stats';
-import { opponentsOf } from '../zones';
+import { opponentsOf, teammatesOf } from '../zones';
 import { pickRandom } from '../rng';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import type { EffectSource, MechanicHandler } from './registry';
+import { noteDiscard } from './effects';
 
 /**
  * Move a field creature to an empty zone, keeping its controller (docs §H3).
@@ -71,6 +73,44 @@ export const selfDamageThenDestroy: MechanicHandler = (draft, ctx, source, _para
   killInstance(draft, ctx, pick.instanceId);
 };
 
+/**
+ * «Выбранный враг сбрасывает карту стоимостью N или более. Если нет — …»
+ * (Марселина, docs §H12). The victim discards a RANDOM eligible card (the
+ * printed text does not grant the victim a choice and a cross-player pending
+ * would stall the spell); the fallback hits the player or their creatures.
+ */
+export const discardMinCostOrDamage: MechanicHandler = (draft, ctx, source, params, choices) => {
+  const minCost = Number(params?.minCost ?? 0);
+  const amount = Number(params?.amount ?? 0);
+  const to = params?.to === 'creatures' ? 'creatures' : 'player';
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'player') throw new DomainError('invalid_choice', 'discard_min_cost_or_damage needs a player');
+  const victim = draft.players[pick.playerId]!;
+  const eligible = victim.hand.filter((id) => (ctx.catalog.getCard(instance(draft, id).cardId)?.cost ?? 0) >= minCost);
+  if (eligible.length > 0) {
+    const stolen = pickRandom(draft.rng, eligible);
+    if (!stolen) return;
+    const inst = instance(draft, stolen);
+    inst.location = 'discard';
+    victim.hand = victim.hand.filter((x) => x !== stolen);
+    victim.discard.push(stolen);
+    emit(ctx, { type: 'card_discarded', player: pick.playerId, instanceId: stolen, cardId: inst.cardId, from: 'hand' });
+    noteDiscard(draft, ctx, pick.playerId, { instanceId: stolen, cardId: inst.cardId, from: 'hand' });
+    return;
+  }
+  if (to === 'player') {
+    dealToPlayer(draft, ctx, pick.playerId, amount, source.instanceId);
+    return;
+  }
+  for (const pid of [pick.playerId, ...teammatesOf(draft, pick.playerId)]) {
+    const p = draft.players[pid]!;
+    for (const zone of p.zones) {
+      if (!zone.creature) continue;
+      dealToCreature(draft, ctx, zone.creature, amount, source.instanceId);
+    }
+  }
+};
+
 /** «Укради случайную карту с руки противника и сыграй её бесплатно». */
 export const stealAndPlayFromHand: MechanicHandler = (draft, ctx, source, _params, choices) => {
   const picked = choices?.[0];
@@ -105,4 +145,5 @@ export const stealAndPlayFromHand: MechanicHandler = (draft, ctx, source, _param
   inst.slot = null;
   me.discard.push(stolen);
   emit(ctx, { type: 'card_discarded', player: source.player, instanceId: stolen, cardId: inst.cardId, from: 'hand' });
+  noteDiscard(draft, ctx, source.player, { instanceId: stolen, cardId: inst.cardId, from: 'hand' });
 };

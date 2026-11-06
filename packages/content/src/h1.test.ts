@@ -109,20 +109,47 @@ describe('golden: hero abilities (H7)', () => {
     expect(played.state.pending?.player).toBe('p1');
   });
 
-  it('Рикардио: один раз за ход платит 1 жизнью и может сбросить верхнюю карту', () => {
+  it('Рикардио: платит 1 жизнь, вскрывает верхнюю карту приватно и решает после вскрытия', () => {
     const s = edit(newMatch(), (d) => { d.players.p1!.heroId = 'hero_ricardio'; });
     const deckBefore = s.players.p1!.deck.length;
-    const res = applyCommand(s, {
-      type: 'hero_ability', player: 'p1', targets: [{ kind: 'option', option: 'discard' }],
-    }, deps);
+    const res = applyCommand(s, { type: 'hero_ability', player: 'p1' }, deps);
     expect(res.ok).toBe(true);
     if (!res.ok) throw new Error(res.rejected.message);
     expect(res.state.players.p1!.lives).toBe(24);
-    expect(res.state.players.p1!.deck.length).toBe(deckBefore - 1);
-    const again = applyCommand(res.state, {
-      type: 'hero_ability', player: 'p1', targets: [{ kind: 'option', option: 'keep' }],
+    // Приватное окно: верхняя карта колоды, вопрос — после вскрытия (effect_step).
+    const topId = res.state.players.p1!.deck[0]!;
+    expect(res.state.peeks.p1).toEqual([topId]);
+    expect(res.state.pending?.player).toBe('p1');
+    expect(res.state.pending?.ask.kind).toBe('effect_step');
+    expect(res.state.players.p1!.deck.length).toBe(deckBefore);
+    // «Сбросить» — карта уходит в сброс, окно закрывается.
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'discard' }] },
     }, deps);
+    expect(next.ok).toBe(true);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.players.p1!.deck.length).toBe(deckBefore - 1);
+    expect(next.state.peeks.p1 ?? []).toEqual([]);
+    // Один раз за ход.
+    const again = applyCommand(next.state, { type: 'hero_ability', player: 'p1' }, deps);
     expect(again.ok).toBe(false);
+  });
+
+  it('Рикардио: ответ keep оставляет карту в колоде и закрывает окно', () => {
+    const s = edit(newMatch(), (d) => { d.players.p1!.heroId = 'hero_ricardio'; });
+    const deckBefore = s.players.p1!.deck.length;
+    const res = applyCommand(s, { type: 'hero_ability', player: 'p1' }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) throw new Error(res.rejected.message);
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'keep' }] },
+    }, deps);
+    expect(next.ok).toBe(true);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.players.p1!.deck.length).toBe(deckBefore);
+    expect(next.state.peeks.p1 ?? []).toEqual([]);
   });
 });
 

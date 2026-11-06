@@ -5,13 +5,16 @@
     "kind": "active",
     "cost": 0,
     "oncePerTurn": true,
-    "mechanic": "reveal_maybe_discard",
-    "params": { "payLife": 1 },
+    "effect": [
+      { "op": "pay_life", "amount": 1 },
+      { "op": "peek_deck_top", "count": 1 },
+      { "op": "resolve_peek" }
+    ],
     "targets": [
       {
         "kind": "choose_option",
         "options": ["keep", "discard"],
-        "label": "Верхняя карта колоды"
+        "label": "Верхняя карта колоды: оставить или сбросить?"
       }
     ],
     "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её."

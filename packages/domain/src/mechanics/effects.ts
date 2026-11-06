@@ -762,6 +762,32 @@ export function runEffect(
       emit(ctx, { type: 'lives_changed', player: source.player, delta: -effect.amount, lives: p.lives });
       return;
     }
+    case 'peek_deck_top': {
+      // PRIVATE window (docs §H8): the cards stay in the deck, no public event.
+      const p = player(draft, source.player);
+      draft.peeks[source.player] = p.deck.slice(0, Math.max(0, effect.count));
+      return;
+    }
+    case 'resolve_peek': {
+      // The `choose_option` answer arrives AFTER the reveal (lazy effect_step,
+      // docs §H7): `discard` sends the peeked cards to the discard pile, anything
+      // else keeps them in the deck. The window closes in every case.
+      const peeked = draft.peeks[source.player] ?? [];
+      delete draft.peeks[source.player];
+      const answer = choices?.find((c): c is Extract<TargetChoice, { kind: 'option' }> => c.kind === 'option');
+      if (answer?.option !== 'discard' || peeked.length === 0) return;
+      const p = player(draft, source.player);
+      p.deck = p.deck.filter((id) => !peeked.includes(id));
+      for (const id of peeked) {
+        const inst = instance(draft, id);
+        inst.location = 'discard';
+        inst.zone = null;
+        inst.slot = null;
+        p.discard.push(id);
+        emit(ctx, { type: 'card_discarded', player: source.player, instanceId: id, cardId: inst.cardId, from: 'deck' });
+      }
+      return;
+    }
     case 'ready_creature': {
       for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
         if (target.kind === 'creature' || target.kind === 'building') {

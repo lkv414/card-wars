@@ -110,6 +110,8 @@ export const PlayerViewSchema = z.object({
   castSpells: z.array(SpellViewSchema),
   /** Public revealed deck windows, keyed by player id (e.g. Газы Огрa). */
   revealed: z.record(z.string(), z.array(RevealedCardViewSchema)),
+  /** PRIVATE peek window (Рикардио, docs §H8): only this player's own window. */
+  myPeek: z.array(RevealedCardViewSchema).default([]),
   pending: PendingChoiceViewSchema.nullable(),
   winners: z.array(z.string()).nullable(),
   finishReason: z.enum(['elimination', 'surrender', 'disconnect']).nullable(),

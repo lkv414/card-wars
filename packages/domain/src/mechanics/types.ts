@@ -617,6 +617,10 @@ type EffectOp =
   | { op: 'discard_chosen'; card: TargetRef; from?: 'own_hand' | 'any_hand' }
   /** Pay lives as part of a hero ability (Рикардио, docs §H2). */
   | { op: 'pay_life'; amount: number }
+  /** Look at the deck top — PRIVATE window, owner-only view (Рикардио, docs §H7/§8). */
+  | { op: 'peek_deck_top'; count: number }
+  /** Close the peek window; a `discard` option answer sends the peeked cards to the discard pile. */
+  | { op: 'resolve_peek' }
   /** Ready a creature (alias of `unflip`, kept for readable data). */
   | { op: 'ready_creature'; target: TargetRef }
   /** Set a per-instance status flag (docs §H3). */

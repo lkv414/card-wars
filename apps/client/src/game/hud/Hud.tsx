@@ -436,6 +436,12 @@ export function Hud({ code }: { code: string }) {
           ) : (
             <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>
           )}
+          {/* Приватное вскрытие (Рикардио, docs §H8): видит только владелец окна. */}
+          {view.pending?.player === view.me && view.myPeek.length > 0 && (
+            <span className="hint">
+              Открытая карта: {view.myPeek.map((card) => cardNameById(card.cardId)).join(', ')}
+            </span>
+          )}
           {revealedForPendingPlayer.length > 0 && (
             <div className="revealed-picker" aria-label="Открытые карты">
               {revealedForPendingPlayer.map((card) =>

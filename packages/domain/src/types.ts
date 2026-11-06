@@ -201,10 +201,10 @@ export interface MatchState {
   landFlipEffects: LandFlipEffect[];
   /** Revealed deck window (Газы Огрa): card ids, public until consumed. */
   revealed: Record<string, string[]>;
+  /** PRIVATE peek windows (Рикардио): deck-top card ids, owner-only view (docs §H8). */
+  peeks: Record<PlayerId, string[]>;
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
-  /** Usage count per ability this turn (docs §H2, «до N раз за ход»). */
-  abilityUseCounts: Record<string, number>;
   /** Word chosen by each player at match start (Колдунья-охотница, docs §H3). */
   chosenWord: Record<PlayerId, string>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;

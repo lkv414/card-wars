@@ -147,6 +147,11 @@ export function viewFor(
     // Fact of awaiting only — the prompt itself is rendered from catalog data.
     // Public: reveal effects expose the selected cards to both sides.
     revealed,
+    // PRIVATE peek window (Рикардио, docs/MECHANICS-V2.md §H8): owner-only.
+    myPeek: (state.peeks[me] ?? []).map((instanceId) => ({
+      instanceId,
+      cardId: state.instances[instanceId]!.cardId,
+    })),
     pending: state.pending ? pendingView(deps, state) : null,
     winners: state.winners,
     finishReason: state.finishReason,

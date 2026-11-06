@@ -260,6 +260,7 @@ function effectChoiceNeed(effect: EffectSpec): number {
   }
   if (effect.op === 'set_land_type' && effect.landType === 'chosen') return Math.max(max + 1, 1);
   if (effect.op === 'discard_chosen') return Math.max(max + 1, 1);
+  if (effect.op === 'resolve_peek') return Math.max(max + 1, 1);
   return max + 1;
 }
 
@@ -410,6 +411,7 @@ export function resolvePending(
   if (!ability) {
     // Source vanished while paused; skip the ability and continue the queue.
     delete draft.revealed[pending.current.player];
+    delete draft.peeks[pending.current.player];
     draft.pending = null;
     ctx.frame.queue = pending.queue;
     drainTriggers(draft, ctx);
@@ -523,8 +525,13 @@ export function skipPending(draft: Draft<MatchState>, ctx: Ctx): void {
       kind: 'target',
       askIndex: pending.ask.askIndex,
     });
-    // The cards stay in the deck in their original order; clear the public window.
+    // The cards stay in the deck in their original order; clear the public window
+    // and any private peek opened before the pause (docs §H8). Both keys: the
+    // window owner may be the ability source or the answering beneficiary.
+    delete draft.revealed[pending.current.player];
     delete draft.revealed[pending.player];
+    delete draft.peeks[pending.current.player];
+    delete draft.peeks[pending.player];
     draft.pending = null;
     ctx.frame.queue = pending.queue;
   }

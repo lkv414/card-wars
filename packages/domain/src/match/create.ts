@@ -172,7 +172,7 @@ export function createMatch(
     mulliganDecisions: {},
     pending: null,
     abilityUses: {},
-    abilityUseCounts: {},
+    peeks: {},
     chosenWord: {},
     turnBuffs: [],
     turnCounters: {},

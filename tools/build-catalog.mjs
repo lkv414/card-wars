@@ -65,7 +65,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
 const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
-  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature']);
+  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -78,7 +78,7 @@ const TARGET_REFS = new Set([
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'payload_killer', 'payload_player', 'min_attack_own', 'each_opponent_land',
   'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_own_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost', 'chosen_amount', 'target_damage', 'attached_count', 'per_opponent_distinct_lands']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost', 'chosen_amount', 'target_damage', 'target_attack', 'attached_count', 'per_opponent_distinct_lands']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
@@ -90,7 +90,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
   'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
-  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even',
+  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self',
 ]);
 
 function checkAmount(amount, where) {
@@ -210,6 +210,11 @@ function validateEffect(effect, where, ability) {
     checkTargetRef(effect.card, where);
   } else if (op === 'pay_life') {
     if (!Number.isInteger(effect.amount)) fail(`${where}: pay_life needs integer amount`);
+  } else if (op === 'set_instance_flag') {
+    checkTargetRef(effect.target, where);
+    if (!['noReady', 'entersTapped', 'cannotReplace', 'cannotReturnFromDiscard'].includes(effect.flag)) fail(`${where}: set_instance_flag flag invalid`);
+  } else if (op === 'destroy_own_n') {
+    checkAmount(effect.count, where);
   } else if (op === 'ready_creature') {
     checkTargetRef(effect.target, where);
   } else if (op === 'suppress' || op === 'no_retaliation' || op === 'damage_immunity' || op === 'damage_redirect') {

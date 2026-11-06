@@ -1,0 +1,18 @@
+{
+  "cardId": "jake_2v2_card_29",
+  "name": "Бесконечный комбайн",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "self_damage_then_destroy",
+      "params": {},
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо."
+    }
+  ]
+}

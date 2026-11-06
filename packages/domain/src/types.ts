@@ -155,6 +155,8 @@ export interface TurnBuff {
   grantedOnTurn: number;
   /** Attack floor for a debuff («минимум 0», Затопление). */
   floorAttack?: number;
+  /** Multiply the stat after additive bonuses (docs §H2). */
+  multiplier?: number;
 }
 
 export interface MatchState {

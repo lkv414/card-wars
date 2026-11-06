@@ -25,7 +25,11 @@ export function computeEff(
     if (buff.stat === 'attack') {
       attack += buff.amount;
       if (buff.floorAttack !== undefined) attackFloor = Math.max(attackFloor ?? -Infinity, buff.floorAttack);
-    } else defense += buff.amount;
+      attack *= buff.multiplier ?? 1;
+    } else {
+      defense += buff.amount;
+      defense *= buff.multiplier ?? 1;
+    }
   }
   let defenseFloor: number | undefined;
   let attackMultiplier = 1;

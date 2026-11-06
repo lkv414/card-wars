@@ -279,6 +279,8 @@ export type StatAmount =
   | { kind: 'chosen_amount'; index: number }
   /** Current damage counters on a target creature. */
   | { kind: 'target_damage'; target: TargetRef }
+  /** Effective attack of a target creature (Плюшевый). */
+  | { kind: 'target_attack'; target: TargetRef }
   /** Number of cards attached under an instance (Каракум). */
   | { kind: 'attached_count'; target: TargetRef };
 
@@ -390,7 +392,11 @@ export type ConditionSpec =
   /** No card of this land type was played this turn (Виноградная попка). */
   | { kind: 'while_no_land_type_played'; landType: import('../types').LandType }
   /** The owner's life total is even (Воскресная школа). */
-  | { kind: 'while_lives_even' };
+  | { kind: 'while_lives_even' }
+  /** The aura candidate changed lane this turn (Хата на Новый Год). */
+  | { kind: 'while_target_moved_this_turn' }
+  /** The trigger payload is about this very instance (Усталый библиотекарь). */
+  | { kind: 'if_payload_instance_self' };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {
@@ -607,7 +613,16 @@ type EffectOp =
   /** Pay lives as part of a hero ability (Рикардио, docs §H2). */
   | { op: 'pay_life'; amount: number }
   /** Ready a creature (alias of `unflip`, kept for readable data). */
-  | { op: 'ready_creature'; target: TargetRef };
+  | { op: 'ready_creature'; target: TargetRef }
+  /** Set a per-instance status flag (docs §H3). */
+  | {
+      op: 'set_instance_flag';
+      target: TargetRef;
+      flag: 'noReady' | 'entersTapped' | 'cannotReplace' | 'cannotReturnFromDiscard';
+      value?: boolean;
+    }
+  /** Destroy N own creatures and draw one card per creature (Милый Оверлорд). */
+  | { op: 'destroy_own_n'; count: StatAmount };
 
 /**
  * A declarative operation with its own optional conditions.

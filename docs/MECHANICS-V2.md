@@ -281,7 +281,16 @@ Contract decisions for the last 137 cards + 3 heroes (approved 2026-11-06). Text
 - «Муррризрак» / «Нельзя вернуть из сброса»: флаг `cannotReturnFromDiscard` проверяется всеми операциями возврата.
 - 9 карт без игрового текста (Желтая сирена, Корова, Хэнклоп, Пони, Острая сосулька, Злое око, Филлис, Слюнявый чел, Овечка) — **осознанно пусто**: `flavorOnly: true`, `abilities: []`. Отчёт `generate` учитывает их отдельной категорией, а не как pending.
 
-### H5. Порядок работ
+### H5. Батч H3 — флаги инстансов и именованные механики
+
+- `set_instance_flag` { target, flag, value? } — выставляет `noReady`, `entersTapped` (заодно флипает карту), `cannotReplace`, `cannotReturnFromDiscard` на инстансе. `unflip` при `on_line_change` с условием `if_payload_instance_self` снимает флип только у носителя.
+- `destroy_own_n` { count } — уничтожить N своих существ (в порядке зон) и добрать N карт; N приходит из `amount`-ответа (Милый Оверлорд).
+- `StatAmount.target_attack` — эффективная атака цели без аур (база + бонусы + turnBuffs с множителем); `stat_buff.multiplier` теперь работает и для `this_turn`-бафов, не только для аур.
+- Условия `while_target_moved_this_turn` (проверяется per-target при скане аур) и `if_payload_instance_self`.
+- Именованные механики: `start_turn_move_or_discard` { fallback?: 'opponent_land' } (Тонущий клирик, Усталый вомбам, Предводитель Вайда), `enter_move_to_empty` { flipLand?: boolean } (поп-десанты), `self_damage_then_destroy` (Бесконечный комбайн), `steal_and_play_from_hand` (Башня правды).
+- Интерпретации: «Нанеси 3 урона Щенку >>> +2 АТК» реализовано как активная способность с двумя шагами (урон по себе, затем баф) — урон наносится до бафа, что совпадает с напечатанным порядком. «Начало следующего хода» у Статичного поп-десанта — триггер `start_of_next_turn`, урон своему герою 1. «Укради случайную карту… и сыграй бесплатно» — карта берётся сидированным RNG из чужой руки, меняет контроллера и кладётся в первую свободную зону (заклинание уходит в сброс владельца способности).
+
+### H6. Порядок работ
 
 Каждый блок: правка этого документа → типы/валидатор → domain → protocol → HUD → mechanics-JSON → golden/unit-тесты → `pnpm --filter @card-wars/content generate && pnpm lint && pnpm typecheck && pnpm -r test` → git commit.
 

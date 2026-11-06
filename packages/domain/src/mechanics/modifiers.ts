@@ -465,6 +465,15 @@ export function conditionsHold(
         if (draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.landType === cond.landType)) return false;
         break;
       }
+      case 'if_payload_instance_self': {
+        if (!source.instanceId || payload?.instanceId !== source.instanceId) return false;
+        break;
+      }
+      case 'while_target_moved_this_turn': {
+        const id = targetInstanceId ?? source.instanceId;
+        if (!id || !instance(draft, id).movedThisTurn) return false;
+        break;
+      }
       case 'while_lives_even': {
         const team = teamOf(draft, source.player);
         const lives = team ? team.lives : p.lives;
@@ -620,6 +629,24 @@ export function resolveStatAmount(
       let total = 0;
       for (const target of targets) {
         if (target.kind === 'creature' || target.kind === 'building') total += instance(draft, target.instanceId).damage;
+      }
+      return total;
+    }
+    case 'target_attack': {
+      const targets = resolveTarget(draft, ctx, amount.target, source, choices, undefined);
+      let total = 0;
+      for (const target of targets) {
+        if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        const inst = instance(draft, target.instanceId);
+        const card = ctx.catalog.getCard(inst.cardId);
+        let attack = (card?.attack ?? 0) + inst.bonusAttack;
+        for (const buff of draft.turnBuffs) {
+          if (buff.instanceId === target.instanceId && buff.stat === 'attack') {
+            attack += buff.amount;
+            attack *= buff.multiplier ?? 1;
+          }
+        }
+        total += attack;
       }
       return total;
     }

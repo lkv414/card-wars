@@ -3,6 +3,7 @@ import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import { chainDamage, copySpell, damageUntilDef, halfDefDamage, minMaxDefDamage, sacrificeCostDamage, destroyDrawCost, discardThenDamage, discardTopDamage, grantRandomDiscardActive, damagePerHand, laneOrFaceDamage, millSpellDiscard, moveDamage, returnCostActions, splashDamage, swapCreatures, swapLanes, tokenBonusDamage } from './handlers';
+import { enterMoveToEmpty, selfDamageThenDestroy, startTurnMoveOrDiscard, stealAndPlayFromHand } from './handlers-h3';
 import type { EffectSource } from './source';
 export type { EffectSource };
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -43,6 +44,10 @@ export const MECHANICS: Record<string, MechanicHandler> = {
   half_def_damage: halfDefDamage,
   min_max_def_damage: minMaxDefDamage,
   sacrifice_cost_damage: sacrificeCostDamage,
+  start_turn_move_or_discard: startTurnMoveOrDiscard,
+  enter_move_to_empty: enterMoveToEmpty,
+  self_damage_then_destroy: selfDamageThenDestroy,
+  steal_and_play_from_hand: stealAndPlayFromHand,
 };
 
 export function runMechanic(

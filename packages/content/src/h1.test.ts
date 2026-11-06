@@ -151,6 +151,63 @@ describe('golden: H1 primitives', () => {
     expect(even - computeEff(odd, deps, id).attack).toBe(2);
   });
 
+  it('Плюшевый: урон по ATK и удвоение ATK в этом ходу', () => {
+    let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [0]);
+    s = forceToHand(s, 'p1', 'charlie_card_38');
+    const target = s.players.p1!.zones[0]!.creature!;
+    const baseAttack = computeEff(s, deps, target).attack;
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'charlie_card_38'),
+      targets: [{ kind: 'creature', instanceId: target }],
+    }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) throw new Error(res.rejected.message);
+    // Effect arrays ask for their choices lazily (docs §6), so the creature
+    // answer arrives through resolve_choice, not with play_card.
+    let state = res.state;
+    if (state.pending) {
+      const next = applyCommand(state, {
+        type: 'resolve_choice', player: 'p1',
+        answer: { targets: [{ kind: 'creature', instanceId: target }] },
+      }, deps);
+      expect(next.ok).toBe(true);
+      if (!next.ok) throw new Error(next.rejected.message);
+      state = next.state;
+    }
+    expect(state.instances[target]!.damage).toBe(baseAttack);
+    expect(computeEff(state, deps, target).attack).toBe(baseAttack * 2);
+  });
+
+  it('Бесконечный комбайн: урон себе по остатку DEF и уничтожение существа', () => {
+    let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [2]);
+    s = forceToHand(s, 'p1', 'jake_2v2_card_29');
+    const target = s.players.p1!.zones[0]!.creature!;
+    const remaining = computeEff(s, deps, target).defense - 2;
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'jake_2v2_card_29'),
+      targets: [{ kind: 'creature', instanceId: target }],
+    }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p1!.lives).toBe(25 - remaining);
+    expect(res.state.players.p1!.zones[0]!.creature).toBeNull();
+  });
+
+  it('Милый Оверлорд: уничтожить N своих существ и добрать N карт', () => {
+    let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [0, 0]);
+    s = forceToHand(s, 'p1', 'gunter_card_3');
+    const handBefore = s.players.p1!.hand.length;
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'gunter_card_3'),
+      targets: [{ kind: 'amount', value: 2 }],
+    }, deps);
+    expect(res.ok).toBe(true);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p1!.zones[0]!.creature).toBeNull();
+    expect(res.state.players.p1!.zones[1]!.creature).toBeNull();
+    expect(res.state.players.p1!.hand.length).toBe(handBefore - 1 + 2);
+  });
+
   it('Кольцо пушистости: +X ATK по урону на выбранном существе', () => {
     let s = placeOwnCreatures(newMatch(), 'bmo_card_12', [3]);
     s = forceToHand(s, 'p1', 'bubblegum_card_14');

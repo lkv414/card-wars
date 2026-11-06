@@ -229,6 +229,7 @@ export function runEffect(
             amount,
             grantedOnTurn: draft.turn,
             floorAttack: effect.floorAttack,
+            multiplier: effect.multiplier,
           });
         } else if (effect.stat === 'attack') inst.bonusAttack += amount;
         else inst.bonusDefense += amount;
@@ -765,6 +766,27 @@ export function runEffect(
           instance(draft, (target as { instanceId: string }).instanceId).flipped = false;
         }
       }
+      return;
+    }
+    case 'set_instance_flag': {
+      const flag = effect.flag;
+      const value = effect.value ?? true;
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind !== 'creature' && target.kind !== 'building') continue;
+        const inst = instance(draft, (target as { instanceId: string }).instanceId);
+        inst[flag] = value;
+        if (flag === 'entersTapped' && value) inst.flipped = true;
+      }
+      return;
+    }
+    case 'destroy_own_n': {
+      const count = Math.max(0, resolveStatAmount(draft, ctx, source, effect.count, payload, choices));
+      const own = player(draft, source.player).zones
+        .map((z) => z.creature)
+        .filter((id): id is string => id !== null)
+        .slice(0, count);
+      for (const id of own) killInstance(draft, ctx, id);
+      if (own.length > 0) drawCards(draft, ctx, source.player, own.length);
       return;
     }
     case 'gain_actions':

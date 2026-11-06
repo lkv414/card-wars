@@ -1,0 +1,13 @@
+{
+  "cardId": "gunter_card_28",
+  "name": "Тонущий клирик",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "start_turn_move_or_discard",
+      "params": {},
+      "text": "В начале своего хода перемести Тонущего клирика на пустую землю под твоим контролем. Если не смог, то сбрось его."
+    }
+  ]
+}

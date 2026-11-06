@@ -1,0 +1,43 @@
+{
+  "cardId": "charlie_card_38",
+  "name": "Плюшевый",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": {
+            "kind": "target_attack",
+            "target": {
+              "kind": "choice",
+              "index": 0
+            }
+          }
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "stat": "attack",
+          "amount": 0,
+          "duration": "this_turn",
+          "multiplier": 2
+        }
+      ],
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Выбери существо под своим контролем, нанеси ему урон равный его ATK и затем удвой его ATK в этом ходу."
+    }
+  ]
+}

@@ -2882,7 +2882,46 @@
   "landType": "good",
   "image": "/content/cards/images/charlie_card_38.png",
   "description": "Выбери существо под своим контролем, нанеси ему урон равный его ATK и затем удвой его ATK в этом ходу.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": {
+       "kind": "target_attack",
+       "target": {
+        "kind": "choice",
+        "index": 0
+       }
+      }
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "stat": "attack",
+      "amount": 0,
+      "duration": "this_turn",
+      "multiplier": 2
+     }
+    ],
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "Выбери существо под своим контролем, нанеси ему урон равный его ATK и затем удвой его ATK в этом ходу."
+   }
+  ]
  },
  {
   "id": "charlie_card_39",
@@ -4719,7 +4758,27 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_19.png",
   "description": "ПРИЕМ >>> Если твое существо на этой линии перемещено сюда с другой линии в этом ход, оно получает +3 ATK в этом ход.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "stat": "attack",
+     "amount": 3,
+     "duration": "this_turn",
+     "conditions": [
+      {
+       "kind": "while_target_moved_this_turn"
+      }
+     ]
+    },
+    "text": "ПРИЕМ >>> Если твое существо на этой линии перемещено сюда с другой линии в этом ход, оно получает +3 ATK в этом ход."
+   }
+  ]
  },
  {
   "id": "ftg_card_20",
@@ -8193,7 +8252,29 @@
   "landType": "rainbow",
   "image": "/content/cards/images/gunter_card_3.png",
   "description": "Уничтожь любое число существ под твоим контролем. Тяни карту за каждого существа уничтоженного таким образом.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "destroy_own_n",
+     "count": {
+      "kind": "chosen_amount",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "amount",
+      "min": 0,
+      "max": 4,
+      "label": "Сколько существ уничтожить"
+     }
+    ],
+    "text": "Уничтожь любое число существ под твоим контролем. Тяни карту за каждого существа уничтоженного таким образом."
+   }
+  ]
  },
  {
   "id": "gunter_card_4",
@@ -8649,7 +8730,16 @@
   "attack": 3,
   "defense": 5,
   "description": "В начале своего хода перемести Тонущего клирика на пустую землю под твоим контролем. Если не смог, то сбрось его.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "mechanic": "start_turn_move_or_discard",
+    "params": {},
+    "text": "В начале своего хода перемести Тонущего клирика на пустую землю под твоим контролем. Если не смог, то сбрось его."
+   }
+  ]
  },
  {
   "id": "gunter_card_30",
@@ -8661,7 +8751,46 @@
   "attack": 3,
   "defense": 4,
   "description": "Усталый библиотекарь вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": [
+     {
+      "op": "set_instance_flag",
+      "target": {
+       "kind": "this_creature"
+      },
+      "flag": "entersTapped"
+     },
+     {
+      "op": "set_instance_flag",
+      "target": {
+       "kind": "this_creature"
+      },
+      "flag": "noReady"
+     }
+    ],
+    "text": "Усталый библиотекарь вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_line_change",
+    "effect": {
+     "op": "unflip",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_instance_self"
+     }
+    ],
+    "text": "Усталый библиотекарь вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его."
+   }
+  ]
  },
  {
   "id": "gunter_card_32",
@@ -8698,7 +8827,18 @@
   "attack": 4,
   "defense": 5,
   "description": "В начале своего хода перемести Усталого вомбама на пустую землю под твоим контролем. Если не смог, то перемести на пустую землю твоего противника.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "mechanic": "start_turn_move_or_discard",
+    "params": {
+     "fallback": "opponent_land"
+    },
+    "text": "В начале своего хода перемести Усталого вомбама на пустую землю под твоим контролем. Если не смог, то перемести на пустую землю твоего противника."
+   }
+  ]
  },
  {
   "id": "gunter_card_36",
@@ -8710,7 +8850,46 @@
   "attack": 5,
   "defense": 6,
   "description": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": [
+     {
+      "op": "set_instance_flag",
+      "target": {
+       "kind": "this_creature"
+      },
+      "flag": "entersTapped"
+     },
+     {
+      "op": "set_instance_flag",
+      "target": {
+       "kind": "this_creature"
+      },
+      "flag": "noReady"
+     }
+    ],
+    "text": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_line_change",
+    "effect": {
+     "op": "unflip",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "conditions": [
+     {
+      "kind": "if_payload_instance_self"
+     }
+    ],
+    "text": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его."
+   }
+  ]
  },
  {
   "id": "gunter_card_38",
@@ -8722,7 +8901,16 @@
   "attack": 3,
   "defense": 4,
   "description": "В начале своего хода перемести Предводителя Вайда на пустую землю под твоим контролем. Если не смог, то сбрось его.",
-  "deckSet": "gunter"
+  "deckSet": "gunter",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "mechanic": "start_turn_move_or_discard",
+    "params": {},
+    "text": "В начале своего хода перемести Предводителя Вайда на пустую землю под твоим контролем. Если не смог, то сбрось его."
+   }
+  ]
  },
  {
   "id": "gunter_card_40",
@@ -9784,7 +9972,20 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_card_25.png",
   "description": "Потрать 2 действия >>> Укради случайную карту с руки противника и сыграй ее бесплатно.",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 2,
+    "mechanic": "steal_and_play_from_hand",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Потрать 2 действия >>> Укради случайную карту с руки противника и сыграй ее бесплатно."
+   }
+  ]
  },
  {
   "id": "jake_card_28",
@@ -9940,7 +10141,31 @@
   "attack": 3,
   "defense": 8,
   "description": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 ATK в этом ходу.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "this_creature"
+      },
+      "amount": 3
+     },
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "this_creature"
+      },
+      "stat": "attack",
+      "amount": 2,
+      "duration": "this_turn"
+     }
+    ],
+    "text": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 ATK в этом ходу."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_4",
@@ -10434,7 +10659,21 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_29.png",
   "description": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "self_damage_then_destroy",
+    "params": {},
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_30",
@@ -11062,7 +11301,41 @@
   "attack": 1,
   "defense": 8,
   "description": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "mechanic": "enter_move_to_empty",
+    "params": {},
+    "text": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "set_instance_flag",
+     "target": {
+      "kind": "this_creature"
+     },
+     "flag": "cannotReplace"
+    },
+    "text": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "adjacent_creatures"
+     },
+     "stat": "attack",
+     "amount": -1,
+     "duration": "aura"
+    },
+    "text": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_2",
@@ -11074,7 +11347,30 @@
   "attack": 2,
   "defense": 4,
   "description": "Когда Мясной поп-десант вступает в игру, перемести его на пустую землю, затем переверни эту землю лицом вниз.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "mechanic": "enter_move_to_empty",
+    "params": {
+     "flipLand": true
+    },
+    "text": "Когда Мясной поп-десант вступает в игру, перемести его на пустую землю, затем переверни эту землю лицом вниз."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "set_instance_flag",
+     "target": {
+      "kind": "this_creature"
+     },
+     "flag": "cannotReplace"
+    },
+    "text": "Когда Мясной поп-десант вступает в игру, перемести его на пустую землю, затем переверни эту землю лицом вниз."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_3",
@@ -11086,7 +11382,37 @@
   "attack": 1,
   "defense": 5,
   "description": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "mechanic": "enter_move_to_empty",
+    "params": {},
+    "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "set_instance_flag",
+     "target": {
+      "kind": "this_creature"
+     },
+     "flag": "cannotReplace"
+    },
+    "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту."
+   },
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+     "op": "discard_from_hand",
+     "count": 1
+    },
+    "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_5",
@@ -11098,7 +11424,40 @@
   "attack": 0,
   "defense": 6,
   "description": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "mechanic": "enter_move_to_empty",
+    "params": {},
+    "text": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "set_instance_flag",
+     "target": {
+      "kind": "this_creature"
+     },
+     "flag": "cannotReplace"
+    },
+    "text": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою."
+   },
+   {
+    "kind": "passive",
+    "trigger": "start_of_next_turn",
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "self_player"
+     },
+     "amount": 1
+    },
+    "text": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_7",

@@ -110,7 +110,7 @@ describe('golden: hero abilities (H7)', () => {
   });
 
   it('Рикардио: один раз за ход платит 1 жизнью и может сбросить верхнюю карту', () => {
-    let s = edit(newMatch(), (d) => { d.players.p1!.heroId = 'hero_ricardio'; });
+    const s = edit(newMatch(), (d) => { d.players.p1!.heroId = 'hero_ricardio'; });
     const deckBefore = s.players.p1!.deck.length;
     const res = applyCommand(s, {
       type: 'hero_ability', player: 'p1', targets: [{ kind: 'option', option: 'discard' }],

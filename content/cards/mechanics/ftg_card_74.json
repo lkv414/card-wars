@@ -1,0 +1,19 @@
+{
+  "cardId": "ftg_card_74",
+  "name": "Жучья госпожа",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "conditions": [
+        { "kind": "while_effective_def_at_most", "max": 2, "scope": "self" }
+      ],
+      "effect": {
+        "op": "return_to_owner",
+        "target": { "kind": "this_creature" }
+      },
+      "text": "Если в начале твоего хода у Существа под твоим контролем осталось 2 DEF или менее, то можешь вернуть его в руку владельцу."
+    }
+  ]
+}

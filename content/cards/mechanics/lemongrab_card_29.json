@@ -1,0 +1,25 @@
+{
+  "cardId": "lemongrab_card_29",
+  "name": "Башня свободы",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": { "discardFromHand": 1 },
+      "effect": {
+        "op": "set_land_type",
+        "target": { "kind": "this_lane_land" },
+        "landType": "chosen",
+        "until": "next_own_turn"
+      },
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": ["corn", "blue", "good", "ice", "sand", "swamp", "rainbow", "ghost"],
+          "label": "Новый тип земли до начала твоего следующего хода"
+        }
+      ],
+      "text": "ПРИЁМ >>> Сбрось карту >>> Твоя земля на этой линии теряет свой тип земли и берет тип по твоему выбору (кроме перевернутых) до начала твоего следующего хода."
+    }
+  ]
+}

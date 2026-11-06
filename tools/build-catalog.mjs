@@ -90,7 +90,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
   'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
-  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains',
+  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains', 'while_opponents_hand_at_least', 'if_option',
 ]);
 
 function checkAmount(amount, where) {
@@ -303,6 +303,13 @@ function validateEffect(effect, where, ability) {
     const need = Math.max(...choiceMatches.map((m) => Number(m[1]) + 1));
     if ((holder.targets?.length ?? 0) < need) {
       fail(`${where}: effect uses choice(0..${need - 1}) but only ${holder.targets?.length ?? 0} targets declared`);
+    }
+  }
+  const optionMatches = [...effectJson.matchAll(/"if_option","index":(\d+)/g)];
+  if (optionMatches.length > 0) {
+    const need = Math.max(...optionMatches.map((m) => Number(m[1]) + 1));
+    if ((holder.targets?.length ?? 0) < need) {
+      fail(`${where}: if_option uses index(0..${need - 1}) but only ${holder.targets?.length ?? 0} targets declared`);
     }
   }
 }

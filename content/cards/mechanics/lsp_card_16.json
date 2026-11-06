@@ -1,0 +1,25 @@
+{
+  "cardId": "lsp_card_16",
+  "name": "Рубленный стейк",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": ["discard", "destroy"],
+          "label": "Сбрось 2 карты или уничтожь Рубленный стейк"
+        },
+        { "kind": "own_hand_card" },
+        { "kind": "own_hand_card" }
+      ],
+      "effect": [
+        { "op": "discard_chosen", "card": { "kind": "choice", "index": 1 }, "conditions": [{ "kind": "if_option", "index": 0, "option": "discard" }] },
+        { "op": "discard_chosen", "card": { "kind": "choice", "index": 2 }, "conditions": [{ "kind": "if_option", "index": 0, "option": "discard" }] },
+        { "op": "destroy", "target": { "kind": "this_creature" }, "conditions": [{ "kind": "if_option", "index": 0, "option": "destroy" }] }
+      ],
+      "text": "В начале твоего хода сбрось 2 карты или уничтожь Рубленный стейк. (Сбрось после начального взятия карты.)"
+    }
+  ]
+}

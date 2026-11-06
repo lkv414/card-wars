@@ -4722,7 +4722,82 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_17.png",
   "description": "Можешь поменять местами два своих строения на различных линиях под своим контролем. Можешь поменять местами два строения противника на различных линиях под его контролем.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "choose_option",
+      "options": [
+       "own",
+       "opponent",
+       "both",
+       "skip"
+      ],
+      "label": "Поменять местами строения: свои / противника / обе пары / пропустить"
+     },
+     {
+      "kind": "own_building"
+     },
+     {
+      "kind": "own_building"
+     },
+     {
+      "kind": "opponent_building"
+     },
+     {
+      "kind": "opponent_building"
+     }
+    ],
+    "effect": [
+     {
+      "op": "swap_field_cards",
+      "a": {
+       "kind": "choice",
+       "index": 1
+      },
+      "b": {
+       "kind": "choice",
+       "index": 2
+      },
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "options": [
+         "own",
+         "both"
+        ]
+       }
+      ]
+     },
+     {
+      "op": "swap_field_cards",
+      "a": {
+       "kind": "choice",
+       "index": 3
+      },
+      "b": {
+       "kind": "choice",
+       "index": 4
+      },
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "options": [
+         "opponent",
+         "both"
+        ]
+       }
+      ]
+     }
+    ],
+    "text": "Можешь поменять местами два своих строения на различных линиях под своим контролем. Можешь поменять местами два строения противника на различных линиях под его контролем."
+   }
+  ]
  },
  {
   "id": "ftg_card_18",
@@ -5908,7 +5983,27 @@
   "attack": 0,
   "defense": 6,
   "description": "В начале своего хода нанеси 2 урона противнику с 4мя или более картами в руке.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "conditions": [
+     {
+      "kind": "while_opponents_hand_at_least",
+      "min": 4
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": 2
+    },
+    "text": "В начале своего хода нанеси 2 урона противнику с 4мя или более картами в руке."
+   }
+  ]
  },
  {
   "id": "ftg_card_65",
@@ -6163,7 +6258,28 @@
   "attack": 1,
   "defense": 9,
   "description": "Если в начале твоего хода у Существа под твоим контролем осталось 2 DEF или менее, то можешь вернуть его в руку владельцу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "while_effective_def_at_most",
+      "max": 2,
+      "scope": "self"
+     }
+    ],
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "Если в начале твоего хода у Существа под твоим контролем осталось 2 DEF или менее, то можешь вернуть его в руку владельцу."
+   }
+  ]
  },
  {
   "id": "ftg_card_75",
@@ -11893,7 +12009,41 @@
   "landType": "corn",
   "image": "/content/cards/images/lemongrab_card_29.png",
   "description": "Сбрось карту >>> Твоя земля на этой линии теряет свой тип земли и берет тип по твоему выбору (кроме перевернутых) до начала твоего следующего хода.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 0,
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "effect": {
+     "op": "set_land_type",
+     "target": {
+      "kind": "this_lane_land"
+     },
+     "landType": "chosen",
+     "until": "next_own_turn"
+    },
+    "targets": [
+     {
+      "kind": "choose_option",
+      "options": [
+       "corn",
+       "blue",
+       "good",
+       "ice",
+       "sand",
+       "swamp",
+       "rainbow",
+       "ghost"
+      ],
+      "label": "Новый тип земли до начала твоего следующего хода"
+     }
+    ],
+    "text": "ПРИЁМ >>> Сбрось карту >>> Твоя земля на этой линии теряет свой тип земли и берет тип по твоему выбору (кроме перевернутых) до начала твоего следующего хода."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_30",
@@ -12219,7 +12369,54 @@
   "attack": 1,
   "defense": 9,
   "description": "Приём: Оглушительный \"Кудах!\". Наносит 1 урон всем существам противника ИЛИ 3 урона существу перед Духом воплекура.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "choose_option",
+      "options": [
+       "all",
+       "one"
+      ],
+      "label": "Оглушительный «Кудах!»"
+     }
+    ],
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "each_creature_opponent"
+      },
+      "amount": 1,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "all"
+       }
+      ]
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "this_lane_opponent_creature"
+      },
+      "amount": 3,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "one"
+       }
+      ]
+     }
+    ],
+    "text": "Приём: Оглушительный «Кудах!». Наносит 1 урон всем существам противника ИЛИ 3 урона существу перед Духом воплекура."
+   }
+  ]
  },
  {
   "id": "lich_card_11",
@@ -13121,7 +13318,73 @@
   "attack": 4,
   "defense": 4,
   "description": "В начале твоего хода сбрось 2 карты или уничтожь Рубленный стейк. (Сбрось после начального взятия карты.)",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "targets": [
+     {
+      "kind": "choose_option",
+      "options": [
+       "discard",
+       "destroy"
+      ],
+      "label": "Сбрось 2 карты или уничтожь Рубленный стейк"
+     },
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "own_hand_card"
+     }
+    ],
+    "effect": [
+     {
+      "op": "discard_chosen",
+      "card": {
+       "kind": "choice",
+       "index": 1
+      },
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "discard"
+       }
+      ]
+     },
+     {
+      "op": "discard_chosen",
+      "card": {
+       "kind": "choice",
+       "index": 2
+      },
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "discard"
+       }
+      ]
+     },
+     {
+      "op": "destroy",
+      "target": {
+       "kind": "this_creature"
+      },
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "destroy"
+       }
+      ]
+     }
+    ],
+    "text": "В начале твоего хода сбрось 2 карты или уничтожь Рубленный стейк. (Сбрось после начального взятия карты.)"
+   }
+  ]
  },
  {
   "id": "lsp_card_17",

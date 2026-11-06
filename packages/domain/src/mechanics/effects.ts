@@ -765,9 +765,22 @@ export function runEffect(
       return;
     }
     case 'discard_chosen': {
-      const [target] = resolveTarget(draft, ctx, effect.card, source, choices, payload);
-      if (!target || (target.kind !== 'creature' && target.kind !== 'building')) return;
-      const id = (target as { instanceId: string }).instanceId;
+      // The card may come from a hand-card ask (answer kind 'card', any zone)
+      // or from a static ref on the board (creature/building kinds only).
+      let id: string | null = null;
+      if (effect.card.kind === 'choice') {
+        const answer = choices?.[effect.card.index];
+        if (!answer || answer.kind !== 'card') {
+          throw new DomainError('invalid_choice', 'discard_chosen needs a card answer');
+        }
+        id = answer.instanceId;
+      } else {
+        const [target] = resolveTarget(draft, ctx, effect.card, source, choices, payload);
+        if (target && (target.kind === 'creature' || target.kind === 'building')) {
+          id = target.instanceId;
+        }
+      }
+      if (!id) return;
       const inst = instance(draft, id);
       let from: 'hand' | 'field' | 'companion';
       if (inst.location === 'hand') {

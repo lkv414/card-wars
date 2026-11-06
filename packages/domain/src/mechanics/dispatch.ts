@@ -188,12 +188,24 @@ function runSteps(
 ): void {
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i]!;
+    // Branch gate (docs §6 «Ветвление»): a step with `if_option` conditions may
+    // not run before its `choose_option` answer is collected (pause and ask),
+    // and is skipped entirely when the collected answer routes elsewhere —
+    // together with its choices, so unchosen branches are never asked.
+    const gate = (step.conditions ?? []).filter((c) => c.kind === 'if_option');
+    const gateNeedsAnswer = gate.some((c) => {
+      const answer = collected[c.index];
+      return !answer || answer.kind !== 'option';
+    });
+    // Routed out by an already-collected answer: skip before the need check so
+    // the unchosen branch's targets are never asked («skip»-style options).
+    if (gate.length > 0 && !gateNeedsAnswer && !ifOptionHolds(step.conditions, collected)) continue;
     const need = effectChoiceNeed(step);
-    if (need > collected.length) {
+    if (gateNeedsAnswer || need > collected.length) {
       const asks = ability.targets ?? [];
       const nextAskIndex = collected.length;
       if (!asks[nextAskIndex]) {
-        throw new DomainError('target_required', `step ${i + 1} needs ${need - collected.length} more target(s)`);
+        throw new DomainError('target_required', `step ${i + 1} needs more target(s)`);
       }
       if (origin) {
         draft.pending = {
@@ -214,7 +226,7 @@ function runSteps(
         return;
       }
       // Command-driven ability without pre-collected choices: reject.
-      throw new DomainError('target_required', `step ${i + 1} needs ${need - collected.length} more target(s)`);
+      throw new DomainError('target_required', `step ${i + 1} needs more target(s)`);
     }
     runEffect(draft, ctx, step, source, collected, payload);
   }
@@ -262,6 +274,22 @@ function effectChoiceNeed(effect: EffectSpec): number {
   if (effect.op === 'discard_chosen') return Math.max(max + 1, 1);
   if (effect.op === 'resolve_peek') return Math.max(max + 1, 1);
   return max + 1;
+}
+
+/**
+ * Do the step's `if_option` conditions rule the step out? An answer that is
+ * not collected YET does not rule it out — the need-check below will pause and
+ * ask for it; only a collected, mismatching answer skips the branch.
+ */
+function ifOptionHolds(conditions: EffectSpec['conditions'], collected: TargetChoice[]): boolean {
+  for (const cond of conditions ?? []) {
+    if (cond.kind !== 'if_option') continue;
+    const answer = collected[cond.index];
+    if (!answer || answer.kind !== 'option') return true;
+    const allowed = cond.options ?? (cond.option !== undefined ? [cond.option] : []);
+    if (!allowed.includes(answer.option)) return false;
+  }
+  return true;
 }
 
 /** Distinct `choice` indices consumed by one effect (docs §H2 repeat_effect). */
@@ -325,10 +353,10 @@ export function drainTriggers(draft: Draft<MatchState>, ctx: Ctx): void {
     const qa = ctx.frame.queue.shift()!;
     const ability = abilityOf(draft, ctx, qa);
     if (!ability) continue;
-    // Payload-conditions (реакция на конкретное событие) проверяются ДО паузы:
-    // мёртвая реакция не должна останавливать матч вопросом (Привлекательный слон).
+    // Условия проверяются ДО паузы: мёртвая реакция не должна останавливать
+    // матч вопросом (Привлекательный слон, Квадурай, Жучья госпожа).
     if (
-      ability.conditions?.some((c) => c.kind.startsWith('if_payload')) &&
+      ability.conditions &&
       !conditionsHold(draft, ctx, { player: qa.player, instanceId: qa.instanceId }, ability.conditions, undefined, qa.payload)
     ) {
       continue;

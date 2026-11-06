@@ -536,6 +536,16 @@ export function conditionsHold(
         if (draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.type === 'spell')) return false;
         break;
       }
+      case 'while_opponents_hand_at_least': {
+        const holds = opponentsOf(draft, source.player).some((pid) => draft.players[pid]!.hand.length >= cond.min);
+        if (!holds) return false;
+        break;
+      }
+      case 'if_option': {
+        // Branch gate: evaluated in runSteps before the step's choices are
+        // counted (docs §6). By the time a step runs, its branch is chosen.
+        break;
+      }
     }
   }
   return true;

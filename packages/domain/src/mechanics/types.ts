@@ -400,6 +400,14 @@ export type ConditionSpec =
   | { kind: 'while_target_moved_this_turn' }
   /** The trigger payload is about this very instance (Усталый библиотекарь). */
   | { kind: 'if_payload_instance_self' }
+  /** Any opponent holds at least N cards (ftg_card_64-style start-of-turn damage). */
+  | { kind: 'while_opponents_hand_at_least'; min: number }
+  /**
+   * Effect-array branch gate on a `choose_option` answer (docs §6 «Ветвление»).
+   * Checked in runSteps BEFORE counting the step's choices; inside
+   * conditionsHold it is always satisfied by construction.
+   */
+  | { kind: 'if_option'; index: number; option?: string; options?: string[] }
   /** The played card's name contains the player's chosen word (Колдунья-охотница). */
   | { kind: 'if_payload_name_contains' };
 

@@ -290,3 +290,190 @@ describe('golden: H1 primitives', () => {
     expect(res.state.turnBuffs.some((b) => b.instanceId === target && b.stat === 'attack' && b.amount === 3)).toBe(true);
   });
 });
+
+/** Place a creature on the OPPONENT's side (zones mirror: p1 zone i ↔ p2 zone 3-i). */
+function placeOppCreatures(state: MatchState, cardId: string, zones: number[]): MatchState {
+  return edit(state, (d) => {
+    zones.forEach((zone) => {
+      const id = d.players.p2!.deck[0]!;
+      d.players.p2!.deck.splice(0, 1);
+      const inst = d.instances[id]!;
+      inst.cardId = cardId;
+      inst.location = 'field';
+      inst.zone = zone;
+      inst.slot = 'creature';
+      d.players.p2!.zones[zone]!.creature = id;
+    });
+  });
+}
+
+function placeOwnBuilding(state: MatchState, cardId: string, zone: number): MatchState {
+  return edit(state, (d) => {
+    const id = d.players.p1!.deck[0]!;
+    d.players.p1!.deck.splice(0, 1);
+    const inst = d.instances[id]!;
+    inst.cardId = cardId;
+    inst.location = 'field';
+    inst.zone = zone;
+    inst.slot = 'building';
+    d.players.p1!.zones[zone]!.building = id;
+  });
+}
+
+/** Pass p1's and p2's battle phases to reach p1's next turn (round 2). */
+function nextP1Turn(state: MatchState): MatchState {
+  const gb1 = applyCommand(state, { type: 'go_battle', player: 'p1' }, deps);
+  if (!gb1.ok) throw new Error(gb1.rejected.message);
+  const gb2 = applyCommand(gb1.state, { type: 'go_battle', player: 'p2' }, deps);
+  if (!gb2.ok) throw new Error(gb2.rejected.message);
+  return gb2.state;
+}
+
+describe('golden: H9 option branching (батч I)', () => {
+  /** Дух воплекура с нулевой АТК: боевой уход nextP1Turn не искажает урон приёма. */
+  function poltergeistSetup(): MatchState {
+    let s = placeOwnCreatures(newMatch(), 'lich_card_10', [0]);
+    const atk = catalog.getCard('lich_card_10')!.attack ?? 0;
+    s = edit(s, (d) => {
+      d.instances[d.players.p1!.zones[0]!.creature!]!.bonusAttack = -atk;
+    });
+    return placeOppCreatures(s, 'bmo_card_12', [3, 2]);
+  }
+
+  it('Дух воплекура: «всем» — 1 урон каждому существу противника', () => {
+    let s = poltergeistSetup();
+    s = nextP1Turn(s); // в 1-м раунде первый игрок флюпить не может
+    const id = s.players.p1!.zones[0]!.creature!;
+    // Массив эффектов спрашивает ветку лениво: флюп без целей → pending → ответ.
+    const floop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: id }, deps);
+    if (!floop.ok) throw new Error(floop.rejected.message);
+    expect(floop.state.pending?.player).toBe('p1');
+    const res = applyCommand(floop.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'all' }] },
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    const left = res.state.instances[res.state.players.p2!.zones[3]!.creature!]!;
+    const right = res.state.instances[res.state.players.p2!.zones[2]!.creature!]!;
+    expect(left.damage).toBe(1);
+    expect(right.damage).toBe(1);
+  });
+
+  it('Дух воплекура: «одному» — 3 урона существу перед ним, остальные целы', () => {
+    let s = poltergeistSetup();
+    s = nextP1Turn(s);
+    const id = s.players.p1!.zones[0]!.creature!;
+    const floop = applyCommand(s, { type: 'floop', player: 'p1', instanceId: id }, deps);
+    if (!floop.ok) throw new Error(floop.rejected.message);
+    const res = applyCommand(floop.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'one' }] },
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    const front = res.state.instances[res.state.players.p2!.zones[3]!.creature!]!;
+    const other = res.state.instances[res.state.players.p2!.zones[2]!.creature!]!;
+    expect(front.damage).toBe(3);
+    expect(other.damage).toBe(0);
+  });
+
+  it('Рубленный стейк: «уничтожь» — без вопросов о картах руки', () => {
+    let s = placeOwnCreatures(newMatch(), 'lsp_card_16', [0]);
+    s = nextP1Turn(s);
+    expect(s.pending?.player).toBe('p1');
+    const handBefore = s.players.p1!.hand.length;
+    const res = applyCommand(s, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'destroy' }] },
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p1!.zones[0]!.creature).toBeNull();
+    expect(res.state.players.p1!.hand.length).toBe(handBefore);
+    expect(res.state.pending).toBeNull();
+  });
+
+  it('Рубленный стейк: «сбрось 2» — две карты руки в сброс', () => {
+    let s = placeOwnCreatures(newMatch(), 'lsp_card_16', [0]);
+    s = nextP1Turn(s);
+    expect(s.pending?.player).toBe('p1');
+    const res1 = applyCommand(s, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'discard' }] },
+    }, deps);
+    if (!res1.ok) throw new Error(res1.rejected.message);
+    expect(res1.state.pending?.player).toBe('p1'); // вопрос о 1-й карте руки
+    const card1 = res1.state.players.p1!.hand[0]!;
+    const res2 = applyCommand(res1.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'card', instanceId: card1 }] },
+    }, deps);
+    if (!res2.ok) throw new Error(res2.rejected.message);
+    const card2 = res2.state.players.p1!.hand[0]!;
+    const res3 = applyCommand(res2.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'card', instanceId: card2 }] },
+    }, deps);
+    if (!res3.ok) throw new Error(res3.rejected.message);
+    expect(res3.state.pending).toBeNull();
+    expect(res3.state.players.p1!.zones[0]!.creature).not.toBeNull();
+    expect(res3.state.players.p1!.discard.length).toBe(2);
+  });
+
+  it('Башня свободы: ПРИЁМ со сбросом карты меняет тип земли линии', () => {
+    let s = edit(newMatch(), (d) => { d.players.p1!.actions = 10; });
+    s = placeOwnBuilding(s, 'lemongrab_card_29', 0);
+    s = nextP1Turn(s);
+    const buildingId = s.players.p1!.zones[0]!.building!;
+    const payId = s.players.p1!.hand[0]!;
+    // Один шаг эффекта: доп. стоимость и выбор типа приходят одной командой.
+    const res = applyCommand(s, {
+      type: 'floop', player: 'p1', instanceId: buildingId,
+      targets: [{ kind: 'card', instanceId: payId }, { kind: 'option', option: 'ice' }],
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.players.p1!.lands[0]!.type).toBe('ice');
+    expect(res.state.players.p1!.lands[0]!.originalType).toBeDefined();
+  });
+
+  it('Квадурай: бьёт противника с 4+ картами в руке в начале своего хода', () => {
+    const s = placeOwnCreatures(newMatch(), 'ftg_card_64', [0]);
+    const livesBefore = s.players.p2!.lives;
+    const gb1 = applyCommand(s, { type: 'go_battle', player: 'p1' }, deps);
+    if (!gb1.ok) throw new Error(gb1.rejected.message);
+    const gb2 = applyCommand(gb1.state, { type: 'go_battle', player: 'p2' }, deps);
+    if (!gb2.ok) throw new Error(gb2.rejected.message);
+    expect(gb2.state.players.p2!.lives).toBe(livesBefore - 2);
+  });
+
+  it('Снижение налогов: «свои» — обмен двух своих строений, чужие не спрашиваются', () => {
+    let s = edit(newMatch(), (d) => { d.players.p1!.actions = 10; });
+    s = placeOwnBuilding(s, 'bmo_card_12', 0);
+    s = placeOwnBuilding(s, 'bmo_card_12', 1);
+    s = forceToHand(s, 'p1', 'ftg_card_17');
+    const res = applyCommand(s, {
+      type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'ftg_card_17'),
+    }, deps);
+    if (!res.ok) throw new Error(res.rejected.message);
+    expect(res.state.pending?.player).toBe('p1');
+    const next = applyCommand(res.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'option', option: 'own' }] },
+    }, deps);
+    if (!next.ok) throw new Error(next.rejected.message);
+    expect(next.state.pending?.player).toBe('p1'); // выбор 1-го строения
+    const b0 = next.state.players.p1!.zones[0]!.building!;
+    const b1 = next.state.players.p1!.zones[1]!.building!;
+    const pick1 = applyCommand(next.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'creature', instanceId: b0 }] },
+    }, deps);
+    if (!pick1.ok) throw new Error(pick1.rejected.message);
+    const pick2 = applyCommand(pick1.state, {
+      type: 'resolve_choice', player: 'p1',
+      answer: { targets: [{ kind: 'creature', instanceId: b1 }] },
+    }, deps);
+    if (!pick2.ok) throw new Error(pick2.rejected.message);
+    expect(pick2.state.pending).toBeNull();
+    expect(pick2.state.players.p1!.zones[0]!.building).toBe(b1);
+    expect(pick2.state.players.p1!.zones[1]!.building).toBe(b0);
+  });
+});

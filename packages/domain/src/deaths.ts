@@ -4,7 +4,7 @@ import { finishMatch } from './finish';
 import { emit, inPlayInstanceIds, instance, player } from './util';
 import type { Ctx } from './util';
 import { computeEff } from './stats';
-import { drainTriggers, enqueueLeavePlay, enqueueTrigger } from './mechanics/dispatch';
+import { drainTriggers, enqueueLeavePlay } from './mechanics/dispatch';
 import { bumpCounter } from './mechanics/effects';
 import type { CardData, MatchState, PlayerId } from './types';
 

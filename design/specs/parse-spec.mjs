@@ -6,7 +6,6 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 // Input is a Figma CSS export passed as the first argument (not stored in the repo).
 const SRC = process.argv[2] ?? resolve(HERE, 'source.txt');
 const OUT = process.env.SPEC_OUT ?? resolve(HERE, 'spec.json');
-const DEBUG = process.env.DBG === '1';
 const lines = readFileSync(SRC, 'utf8').split(/\r?\n/);
 
 // ---- tokenizer ----
@@ -89,7 +88,6 @@ function pad(p) {
   return [parts[0], parts[1], parts[2], parts[3]];
 }
 function parseGap(p) { return p.gap ? (parseFloat(p.gap) || 0) : 0; }
-function num(v, dflt = Infinity) { const x = parseFloat(v); return Number.isFinite(x) ? x : dflt; }
 
 // ---- builder: DFS reconstruction with strict flex-order continuity ----
 const root = { name: '__ROOT__', props: {}, children: [], depth: 0, isText: false };
@@ -136,7 +134,7 @@ function fits(c, b) {
     } else {
   // row (possibly wrapped): simulate greedy line packing by known child widths
       const innerW = cw === Infinity ? Infinity : cw;
-      let rows = 0, rowW = 0, rowH = 0, usedH = 0, prevRowH = 0;
+      let rows = 0, rowW = 0, rowH = 0, usedH = 0;
       const flush = () => { if (rowW) { rows++; usedH += (rows > 1 ? g : 0) + rowH; rowW = 0; rowH = 0; } };
       for (const c2 of c.children) {
         if (c2.props.abs) continue;
@@ -200,7 +198,7 @@ function containsFull(c, b) {
 
 for (const b of blocks) if (b.props.flex) b.children = [];
 
-function attach(idx, b, why) {
+function attach(idx, b, _why) {
   const parent = stack[idx];
   if (parent.children == null) parent.children = [];
   parent.children.push(b);
@@ -243,19 +241,14 @@ for (const b of blocks) {
         looseIdx = i; break;
       }
     }
-    if (idx !== -1) { attach(idx, b, 'exact'); TRACE && TRACE(`@${b.line} ${b.name} ord=${p.order} -> EXACT ${stack[idx].name}@${stack[idx].line}`); }
-    else if (looseIdx !== -1) { attach(looseIdx, b, 'loose'); fallbackCount++; fallbacks.push({ line: b.line, name: b.name, order: p.order, parent: stack[looseIdx].name + '@' + stack[looseIdx].line, mode: 'loose' }); TRACE && TRACE(`@${b.line} ${b.name} ord=${p.order} -> LOOSE ${stack[looseIdx].name}@${stack[looseIdx].line}`); }
+    if (idx !== -1) { attach(idx, b, 'exact'); if (TRACE) TRACE(`@${b.line} ${b.name} ord=${p.order} -> EXACT ${stack[idx].name}@${stack[idx].line}`); }
+    else if (looseIdx !== -1) { attach(looseIdx, b, 'loose'); fallbackCount++; fallbacks.push({ line: b.line, name: b.name, order: p.order, parent: stack[looseIdx].name + '@' + stack[looseIdx].line, mode: 'loose' }); if (TRACE) TRACE(`@${b.line} ${b.name} ord=${p.order} -> LOOSE ${stack[looseIdx].name}@${stack[looseIdx].line}`); }
     else { attach(0, b, 'root'); fallbackCount++; fallbacks.push({ line: b.line, name: b.name, order: p.order, parent: '__ROOT__', mode: 'root' }); if (TRACE || DBGABS) console.log(`@${b.line} ${b.name} ord=${p.order} -> ROOT | stack: ` + stack.map(s => `${s.name}@${s.line}(max=${s.children ? maxOrder(s) : -1})`).join(' / ')); }  } else {
     // absolutely positioned: parent = deepest open container whose inner box
     // fully contains it; if none, deepest with top-left inside; if the node
     // declares an order, the candidate must expect exactly that order.
     const ord = p.order;
-    const gate = (c) => {
-      if (ord == null) return true;
-      const mo = c.children ? maxOrder(c) : -1;
-      return mo + 1 === ord;
-    };
-    let idx = 0, tier = contains;
+    let idx = 0;
     for (const useName of ['full', 'corner', 'any']) {
       const use = useName === 'full' ? containsFull : useName === 'corner' ? contains : () => true;
       let found = -1;
@@ -269,10 +262,9 @@ for (const b of blocks) {
       }
     if (found > 0) { idx = found; break; }
     }
-    attach(idx, b, 'abs'); TRACE && TRACE(`@${b.line} ${b.name} abs -> ${stack[idx].name}@${stack[idx].line} (ord ${ord == null ? 'null' : ord})`);
+    attach(idx, b, 'abs'); if (TRACE) TRACE(`@${b.line} ${b.name} abs -> ${stack[idx].name}@${stack[idx].line} (ord ${ord == null ? 'null' : ord})`);
   }
 }
-function container(n) { return true; } // any frame/group holds abs children
 
 // root pseudo-container receives anything: rewrite contains to accept root implicitly (idx=0 default above)
 

@@ -666,7 +666,7 @@ function moveCreatureToZone(
   instanceId: string,
   destPlayerId: string,
   zone: number,
-  side: 'own' | 'any',
+  _side: 'own' | 'any',
 ): void {
   const inst = instance(draft, instanceId);
   if (inst.location !== 'field' || inst.slot !== 'creature' || inst.zone === null) return;

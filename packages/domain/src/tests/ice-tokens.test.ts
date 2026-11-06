@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyCommand, computeEff, createMatch, type Command, type MatchState } from '../index';
 import { catalog, defaultConfig, forceToHand, handCardId, makeSetup, mustOk, P1, P2, refillActions } from './helpers';
-import { startedMatch } from './engine.test';
 
 const deps = { config: defaultConfig, catalog };
 

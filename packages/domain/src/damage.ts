@@ -107,7 +107,7 @@ export function dealToPlayer(
 }
 
 /** Remove a card from its zone slot and put it into the discard pile. */
-export function killInstance(draft: Draft<MatchState>, ctx: Ctx, targetId: string): CardInstance {
+export function killInstance(draft: Draft<MatchState>, _ctx: Ctx, targetId: string): CardInstance {
   const inst = instance(draft, targetId);
   if (inst.location !== 'field' && inst.location !== 'companion') {
     throw new DomainError('card_not_in_play', `instance ${targetId} is not in play`);

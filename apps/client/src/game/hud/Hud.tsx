@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { sendCommand, setQuality, setUi, useGame } from '../../store';
-import { pick, startForActive, startForPending, validTargets } from '../targeting';
+import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
 
@@ -17,8 +17,6 @@ export function Hud({ code }: { code: string }) {
   const myMain = myTurn && view.phase === 'main';
   const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
   const targeting = useGame((st) => st.ui.targeting);
-  const myHero = heroCatalog.find((h) => h.id === me.heroId);
-  const heroActive = myHero?.ability && myHero.ability.kind === 'active' ? myHero.ability : null;
 
   useEffect(() => {
     const ui = useGame.getState().ui;
@@ -44,17 +42,6 @@ export function Hud({ code }: { code: string }) {
     }
   };
 
-  const startHeroAbility = () => {
-    if (!heroActive) return;
-    const state = startForActive(view, 'hero_ability', null, me.heroId);
-    if (state) {
-      setUi({ targeting: state });
-      sendCommand(state.base as Parameters<typeof sendCommand>[0]);
-    } else {
-      sendCommand({ type: 'hero_ability', player: view.me });
-    }
-  };
-  const revealedForMe = view.revealed[view.me] ?? [];
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
   const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
 

@@ -8,7 +8,6 @@ import type {
   MatchState,
   PlayerSetup,
 } from '../index';
-import type { AbilitySpec } from '../mechanics/types';
 
 // Test fixtures only — the real catalog lives in content/ (packages/content).
 // Vanilla cards cover the core engine (play, combat, turns, teams); ability

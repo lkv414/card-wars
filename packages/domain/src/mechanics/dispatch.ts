@@ -23,7 +23,7 @@ import type { AbilitySpec, PlayerId, QueuedAbility, TargetChoice, Trigger, Trigg
  * scan cannot see it). Finds the ability index in the card data directly.
  */
 export function enqueueLeavePlay(
-  draft: Draft<MatchState>,
+  _draft: Draft<MatchState>,
   ctx: Ctx,
   instanceId: string,
   cardId: string,

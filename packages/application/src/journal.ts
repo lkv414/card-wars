@@ -88,10 +88,12 @@ function formatEvent(deps: DomainDeps, state: MatchState, event: GameEvent): str
       return `${nick(state, event.player)} сбрасывает ${cardName(deps, event.cardId)} (из ${
         event.from === 'hand' ? 'руки' : event.from === 'deck' ? 'колоды' : event.from === 'companion' ? 'парной зоны' : 'поля'
       })`;
+    case 'card_removed':
+      return `${nick(state, event.player)} убирает ${cardName(deps, event.cardId)} из игры`;
     case 'card_returned':
       return `${nick(state, event.player)} возвращает ${cardName(deps, event.cardId)} из сброса в руку`;
     case 'land_changed': {
-      const what = event.change === 'frozen' ? 'заморожена' : event.change === 'unfrozen' ? 'разморожена' : event.change === 'flipped' ? 'перевёрнута' : 'возвращена';
+      const what = event.change === 'frozen' ? 'заморожена' : event.change === 'unfrozen' ? 'разморожена' : event.change === 'flipped' ? 'перевёрнута' : 'перевёрнута обратно';
       return `земля ${event.zone + 1} игрока ${nick(state, event.player)} ${what}`;
     }
     case 'bonus_changed':

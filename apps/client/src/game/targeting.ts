@@ -229,12 +229,12 @@ export function validTargets(
 }
 
 function myLands(view: PlayerView): TargetChoice[] {
-  return view.players[view.me]!.lands.map((land, zone) => ({ kind: 'landscape' as const, player: view.me, zone }));
+  return view.players[view.me]!.lands.map((_land, zone) => ({ kind: 'landscape' as const, player: view.me, zone }));
 }
 
 function allLands(view: PlayerView): TargetChoice[] {
   return view.order.flatMap((pid) =>
-    view.players[pid]!.lands.map((land, zone) => ({ kind: 'landscape' as const, player: pid, zone })),
+    view.players[pid]!.lands.map((_land, zone) => ({ kind: 'landscape' as const, player: pid, zone })),
   );
 }
 
@@ -277,7 +277,6 @@ export function startForActive(
   instanceId: string | null,
   cardId: string,
 ): TargetingState | null {
-  const me = view.players[view.me]!;
   const ability = kind === 'hero_ability'
     ? activeAbilityOfHero(cardId)
     : activeAbilityOf(cardId);
@@ -298,7 +297,7 @@ export function startForActive(
 
 /** Начать pending-таргетинг (триггерная способность, §6). */
 export function startForPending(
-  view: PlayerView,
+  _view: PlayerView,
   pending: NonNullable<PlayerView['pending']>,
 ): TargetingState | null {
   if (pending.cardId === undefined) return null;

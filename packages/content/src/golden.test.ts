@@ -349,7 +349,7 @@ describe('golden: ауры и модификаторы (M2)', () => {
       d.players.p1!.actions = 10;
     });
     s = forceToHand(s, 'p1', 'finn_card_16');
-    let res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'finn_card_16'), zone: 0 }, deps);
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'finn_card_16'), zone: 0 }, deps);
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     const leaderId = res.state.players.p1!.zones[0]!.creature!;
@@ -417,7 +417,6 @@ describe('golden: ауры и модификаторы (M2)', () => {
     // для проверки подавления нужен на самом деле enter-drawer в реальном каталоге:
     // возьмём jake_card_21 Зернотавр (on_enters_play, урон противнику)
     s = forceToHand(s, 'p2', 'jake_card_21');
-    const deckBefore = s.players.p2!.deck.length;
     const livesBefore = s.players.p1!.lives;
     res = applyCommand(s, { type: 'play_card', player: 'p2', instanceId: handIdOf(s, 'p2', 'jake_card_21'), zone: 3 }, deps);
     expect(res.ok).toBe(true);
@@ -445,7 +444,7 @@ describe('golden: ауры и модификаторы (M2)', () => {
       d.players.p2!.lands[3]!.type = 'swamp';
     });
     s = forceToHand(s, 'p1', 'fiona_card_37'); // Лорд Вампиров
-    let res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'fiona_card_37'), zone: 0 }, deps);
+    const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'fiona_card_37'), zone: 0 }, deps);
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     const vampireId = res.state.players.p1!.zones[0]!.creature!;
@@ -555,7 +554,6 @@ describe('golden: ауры и модификаторы (M2)', () => {
     const res2 = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'bmo_card_12'), zone: 1 }, deps);
     expect(res2.ok).toBe(true);
     if (!res2.ok) return;
-    const allyId = res2.state.players.p1!.zones[1]!.creature!;
     const floop = applyCommand(res2.state, { type: 'floop', player: 'p1', instanceId: vedrId }, deps);
     expect(floop.ok).toBe(true);
     if (!floop.ok) return;
@@ -876,7 +874,7 @@ describe('golden: ауры и модификаторы (M2)', () => {
   });
 
   it('Угнетающая пирамида: −2 DEF существу противника, но не ниже 1', () => {
-    let s = edit(newMatch(), (d) => {
+    const s = edit(newMatch(), (d) => {
       d.players.p1!.lands = [
         { type: 'swamp', frozen: false, flipped: false, iceTokens: 0 },
         { type: 'blue', frozen: false, flipped: false, iceTokens: 0 },
@@ -1232,7 +1230,7 @@ describe('golden: дебаффы АТК (A9)', () => {
   it('Затопление: −2 АТК существам противника в этот ход, минимум 0', () => {
     let s = edit(newMatch(), (d) => {
       const p2 = d.players.p2!;
-      for (const [zone, cardId, atk] of [[0, 'bmo_card_12', 3], [1, 'bmo_card_13', 1]] as const) {
+      for (const [zone, cardId] of [[0, 'bmo_card_12', 3], [1, 'bmo_card_13', 1]] as const) {
         const id = p2.deck[0]!;
         p2.deck = p2.deck.filter((x) => x !== id);
         d.instances[id]!.cardId = cardId;
@@ -1516,7 +1514,7 @@ describe('golden: захват контроля (move_creature.capture)', () => 
   }
 
   it('Крок-зачинщик: существо противника перемещается на линию Крок-зачинщика', () => {
-    let s = round2(newMatch());
+    const s = round2(newMatch());
     // существо P2 в зоне 1; встречная зона 0 линии P1 (зона 3 P2) свободна
     const enemy = edit(s, (d) => {
       const p2 = d.players.p2!;

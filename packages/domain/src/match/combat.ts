@@ -8,7 +8,7 @@ import { opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
 import type { MatchState } from '../types';
-import { endTurn, lastAliveInOrder } from './turn';
+import { lastAliveInOrder } from './turn';
 import { enqueueTrigger } from '../mechanics/dispatch';
 import { attackMods, hasNoRetaliation } from '../mechanics/modifiers';
 

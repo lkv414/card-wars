@@ -76,7 +76,7 @@ export function sacrificePicks(
   discardCount: number,
   cost: AdditionalCost | undefined,
   draft: Draft<MatchState>,
-  ctx: Ctx,
+  _ctx: Ctx,
   playerId: PlayerId,
 ): string[] {
   if (!cost) return [];

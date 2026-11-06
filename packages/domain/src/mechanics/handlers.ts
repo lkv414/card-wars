@@ -113,7 +113,7 @@ export const swapLanes: MechanicHandler = (
  * safe).
  */
 export const copySpell: MechanicHandler = (
-  draft: Draft<MatchState>,
+  _draft: Draft<MatchState>,
   ctx: Ctx,
   _source: EffectSource,
   _params: Record<string, unknown> | undefined,
@@ -129,7 +129,7 @@ export const copySpell: MechanicHandler = (
     .map((ability, abilityIndex) => ({ ability, abilityIndex }))
     .filter(({ ability }) => ability.kind === 'passive' && ability.trigger === 'on_cast');
   const answering = beneficiary; // «другой партнёр», not the companion's owner
-  for (const { ability, abilityIndex } of casts) {
+  for (const { abilityIndex } of casts) {
     ctx.frame.queue.push({
       player: answering,
       beneficiary: answering,

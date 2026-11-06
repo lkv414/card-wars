@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, type Command } from '../index';
-import { catalog, defaultConfig, forceToHand, handCardId, P1, P2 } from './helpers';
+import { catalog, defaultConfig, forceToHand, handCardId, P1 } from './helpers';
 import { startedMatch } from './engine.test';
 
 const deps = { config: defaultConfig, catalog };

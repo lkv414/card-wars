@@ -22,6 +22,11 @@ export interface TargetAsk {
     maxCost?: number;
     cardIds?: string[];
   };
+  /** Числовой ввод (docs/MECHANICS-V2.md §H1). */
+  min?: number;
+  max?: number;
+  options?: string[];
+  label?: string;
 }
 
 export interface TargetingState {
@@ -221,6 +226,19 @@ export function validTargets(
         { kind: 'mode' as const, mode: 'heal' as const },
         { kind: 'mode' as const, mode: 'damage' as const },
       ];
+    case 'amount': {
+      const min = ask.min ?? 0;
+      const max = ask.max ?? 99;
+      return Array.from({ length: Math.min(max - min + 1, 100) }, (_unused, i) => ({
+        kind: 'amount' as const,
+        value: min + i,
+      }));
+    }
+    case 'choose_option':
+      return (ask.options ?? []).map((option) => ({ kind: 'option' as const, option }));
+    case 'damage_distribution':
+      // Values are entered as a whole array by the HUD, not picked on the board.
+      return [];
     case 'revealed_card':
       return (view.revealed?.[view.me] ?? []).map((c) => ({ kind: 'card' as const, instanceId: c.instanceId }));
     default:
@@ -328,7 +346,9 @@ export function pick(
 ): { accepted: boolean; command?: Command; nextState?: TargetingState } {
   const ask = state.asks[state.askIndex];
   if (!ask) return { accepted: false };
-  const valid = validTargets(view, ask, state.sourceInstanceId, state.collected);
+  const valid = ask.kind === 'damage_distribution'
+    ? (candidate.kind === 'amounts' ? [candidate] : [])
+    : validTargets(view, ask, state.sourceInstanceId, state.collected);
   if (!valid.some((v) => JSON.stringify(v) === JSON.stringify(candidate))) return { accepted: false };
 
   if (state.mode === 'pending') {

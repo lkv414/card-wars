@@ -42,6 +42,35 @@ export function Hud({ code }: { code: string }) {
     }
   };
 
+  /**
+   * Non-board answers (docs/MECHANICS-V2.md §H1): number and named branch.
+   * For a pending `effect_step` there is no client TargetingState, so the
+   * answer goes straight to resolve_choice.
+   */
+  const submitChoice = (candidate: Parameters<typeof pick>[2]) => {
+    if (useGame.getState().ui.targeting) {
+      targetingPick(candidate);
+      return;
+    }
+    if (view.pending?.player === view.me) {
+      sendCommand({ type: 'resolve_choice', player: view.me, answer: { targets: [candidate] } });
+    }
+  };
+
+  const currentAsk = (() => {
+    if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
+      const ability = view.pending.cardId
+        ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
+        : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+      return ability?.targets?.[view.pending.askIndex ?? 0] ?? null;
+    }
+    if (targeting) return targeting.asks[targeting.askIndex] ?? null;
+    return null;
+  })();
+
+  const [amountInput, setAmountInput] = useState('');
+  const [distribution, setDistribution] = useState<string[]>([]);
+
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
   const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
 
@@ -110,6 +139,98 @@ export function Hud({ code }: { code: string }) {
         ))}
       </div>
     );
+  })();
+
+  /** Числовой ввод и выбор ветки «ИЛИ» (docs/MECHANICS-V2.md §H1). */
+  const nonBoardPicker = (() => {
+    if (!currentAsk) return null;
+    if (view.pending && view.pending.player !== view.me) return null;
+    if (!view.pending && targeting?.mode !== 'active') return null;
+    if (currentAsk.kind === 'amount') {
+      const min = currentAsk.min ?? 0;
+      const max = currentAsk.max ?? 99;
+      const value = Number(amountInput);
+      return (
+        <span className="revealed-pool">
+          <span className="hint">{currentAsk.label ?? 'Введите число'}: {min}–{max}</span>
+          <input
+            type="number"
+            min={min}
+            max={max}
+            value={amountInput}
+            onChange={(e) => setAmountInput(e.target.value)}
+            style={{ width: 64 }}
+            aria-label="Число"
+          />
+          <button
+            className="mini"
+            disabled={amountInput === '' || !Number.isInteger(value) || value < min || value > max}
+            onClick={() => {
+              submitChoice({ kind: 'amount', value });
+              setAmountInput('');
+            }}
+          >
+            ОК
+          </button>
+        </span>
+      );
+    }
+    if (currentAsk.kind === 'choose_option') {
+      return (
+        <span className="revealed-pool">
+          <span className="hint">{currentAsk.label ?? 'Выберите'}: </span>
+          {(currentAsk.options ?? []).map((option) => (
+            <button key={option} className="mini" onClick={() => submitChoice({ kind: 'option', option })}>
+              {OPTION_LABELS[option] ?? option}
+            </button>
+          ))}
+        </span>
+      );
+    }
+    if (currentAsk.kind === 'damage_distribution') {
+      const creatures = me.zones.flatMap((z) => (z.creature ? [z.creature] : []));
+      const total = creatures.reduce((sum, c) => sum + c.damage, 0);
+      const values = creatures.map((c, i) => (distribution[i] === undefined ? String(c.damage) : distribution[i]!));
+      const numbers = values.map(Number);
+      const valid =
+        numbers.every((v) => Number.isInteger(v) && v >= 0) &&
+        numbers.reduce((a, b) => a + b, 0) === total &&
+        numbers.every((v, i) => v < creatures[i]!.effDefense);
+      return (
+        <span className="revealed-pool">
+          <span className="hint">{currentAsk.label ?? 'Распределите урон'} (всего {total}):</span>
+          {creatures.map((creature, i) => (
+            <label key={creature.instanceId} className="hint">
+              {cardNameById(creature.cardId)} (DEF {creature.effDefense}):{' '}
+              <input
+                type="number"
+                min={0}
+                max={Math.max(0, creature.effDefense - 1)}
+                value={values[i]}
+                onChange={(e) => {
+                  const next = [...values];
+                  next[i] = e.target.value;
+                  setDistribution(next);
+                }}
+                style={{ width: 52 }}
+                aria-label={`Урон для ${cardNameById(creature.cardId)}`}
+              />
+            </label>
+          ))}
+          <button
+            className="mini"
+            disabled={!valid}
+            onClick={() => {
+              submitChoice({ kind: 'amounts', values: numbers });
+              setDistribution([]);
+            }}
+          >
+            ОК
+          </button>
+        </span>
+      );
+    }
+    return null;
   })();
 
   const activeNames = view.activePlayers
@@ -217,6 +338,7 @@ export function Hud({ code }: { code: string }) {
           <span>
             {targeting.label} — цель {targeting.askIndex + 1}/{targeting.asks.length}
           </span>
+          {nonBoardPicker}
           <button className="mini" onClick={() => setUi({ targeting: null })}>
             Отмена
           </button>
@@ -265,6 +387,7 @@ export function Hud({ code }: { code: string }) {
                   ));
               })()}
               {discardPickers}
+              {nonBoardPicker}
               {(() => {
                 // «Восстанови или нанеси урон» — выбор режима.
                 const askKind = (() => {
@@ -390,6 +513,24 @@ function won(view: NonNullable<ReturnType<typeof useGame.getState>['view']>): bo
   const team = view.teams?.[teamId];
   return Boolean(team && team.playerIds.some((pid) => view.winners?.includes(pid)));
 }
+
+/** RU labels for named branches declared in mechanics data (docs §H1). */
+const OPTION_LABELS: Record<string, string> = {
+  corn: 'Кукуруза',
+  blue: 'Голубая равнина',
+  good: 'Добрая земля',
+  ice: 'Лёд',
+  sand: 'Песок',
+  swamp: 'Болото',
+  rainbow: 'Радуга',
+  ghost: 'Призрачная',
+  all: 'Все существа',
+  one: 'Одно существо',
+  heal: 'Восстановить',
+  damage: 'Нанести урон',
+  deck_top: 'На верх колоды',
+  hand: 'В руку',
+};
 
 function phaseRu(phase: string): string {
   return phase === 'main' ? 'основная фаза' : phase === 'draw' ? 'добор' : 'бой';

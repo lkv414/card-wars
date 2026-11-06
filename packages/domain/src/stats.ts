@@ -28,15 +28,23 @@ export function computeEff(
     } else defense += buff.amount;
   }
   let defenseFloor: number | undefined;
+  let attackMultiplier = 1;
+  let defenseMultiplier = 1;
   for (const contribution of auraContributions(draft, ctx, instanceId)) {
     if (contribution.stat === 'attack') {
       attack += contribution.amount;
       if (contribution.floorAttack !== undefined) attackFloor = Math.max(attackFloor ?? -Infinity, contribution.floorAttack);
-    } else defense += contribution.amount;
+      attackMultiplier *= contribution.multiplier ?? 1;
+    } else {
+      defense += contribution.amount;
+      defenseMultiplier *= contribution.multiplier ?? 1;
+    }
     if (contribution.floorDefense !== undefined) {
       defenseFloor = Math.max(defenseFloor ?? 0, contribution.floorDefense);
     }
   }
+  attack *= attackMultiplier;
+  defense *= defenseMultiplier;
   if (attackFloor !== undefined) attack = Math.max(attack, attackFloor);
   if (defenseFloor !== undefined) defense = Math.max(defense, defenseFloor);
   return { attack, defense };

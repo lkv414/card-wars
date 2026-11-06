@@ -1,0 +1,24 @@
+{
+  "cardId": "lich_card_36",
+  "name": "Вместе навсегда",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "redistribute_damage",
+        "among": {
+          "kind": "each_creature_yours"
+        },
+        "cap": "defense"
+      },
+      "targets": [
+        {
+          "kind": "damage_distribution",
+          "label": "Распредели урон между существами"
+        }
+      ],
+      "text": "Распредели урон между двумя существами под твоим контролем, как тебе нужно. Урон на одном существе не может равняться его DEF."
+    }
+  ]
+}

@@ -237,6 +237,54 @@ content/heroes/mechanics/<heroId>.json    тот же формат
 - **`give_card`** { card, to }: передача карты из руки выбранному игроку («передай карту в руку своему партнёру» — Дай пять!). Карта меняет контроль на получателя.
 - **`remove_from_game`** { from, name }: удаляет из игры все карты с выбранным названием из стопки сброса выбранного игрока (Громила). Название берётся из публичной карты (ask `visible_card` — всё, что в игре или в любом сбросе); сбросы публичны по правилам, поэтому скрытия не возникает.
 
+## Группа H — примитивы финального бэклога
+
+Contract decisions for the last 137 cards + 3 heroes (approved 2026-11-06). Text is interpreted **by intent** when the OCR is broken or contradicts RULES.md; every such interpretation is recorded here, not in code. Card names never appear in rule code — only in `content/*/mechanics/*.json`.
+
+### H1. Новые виды ответа игрока
+
+- `TargetAsk.kind: 'amount'` — числовой ввод. Поля `min`, `max`, `label` (RU-подпись для HUD). Ответ `TargetChoice { kind: 'amount', value }`, domain проверяет `min ≤ value ≤ max` и целочисленность. Используется для «нанеси 1 или 2 урона», «восстанови 1 или 2», «вылечи до 3 жизней», «распредели урон».
+- `TargetAsk.kind: 'choose_option'` — выбор одной из `options: string[]` («ИЛИ»-эффекты, выбор типа земли). Ответ `TargetChoice { kind: 'option', option }`. Старый `heal_or_damage` остаётся узким случаем и не удаляется.
+- `StatAmount.kind: 'chosen_amount'` `{ index }` — величина берётся из `amount`-ответа с этим индексом. `StatAmount.kind: 'target_damage'` `{ target }` — текущий урон на цели. `StatAmount.kind: 'attached_count'` `{ target }` — число карт, положенных под инстанс.
+- `ChoiceAnswerSchema.targets` и команды с `targets` принимают до **16** ответов (перераспределение урона по 4+ существам).
+
+### H2. Операции
+
+| Операция | Поля | Смысл |
+|---|---|---|
+| `redistribute_damage` | `among: TargetRef`, `amounts: number[]` (индексы `amount`-ответов), `cap?: 'defense' \| 'none'` | Сумма урона на выбранных существах сохраняется; игрок заново задаёт урон каждому. При `cap: 'defense'` значение не может достичь effective DEF (иначе существо погибло бы). Валидация: сумма новых значений == сумме старых. |
+| `set_land_type` | `target: TargetRef`, `landType: LandType \| 'chosen'`, `until: 'next_own_turn'` | Земля теряет тип и получает выбранный до начала следующего хода владельца. |
+| `swap_field_cards` | `a: TargetRef`, `b: TargetRef` | Обмен двух существ/строений местами (сохранение `flipped`, `damage`). |
+| `attach_card` | `card: TargetRef`, `to: TargetRef`, `from: 'discard' \| 'field' \| 'death'` | Положить карту под инстанс (`CardInstance.attached: string[]`); при уходе носителя из игры вложенные карты уходят в сброс. |
+| `repeat_effect` | `times: StatAmount`, `effect: EffectSpec` | Повторить шаг N раз (за каждое поле, за каждое существо), каждый раз со следующим `choice`-ответом. |
+| `discard_chosen` | `card: TargetRef`, `from?: 'own_hand' \| 'any_hand'` | Сбросить конкретную карту (в т.ч. чужую, случайно выбранную в domain). |
+| `pay_life` | `amount: number` | Заплатить жизнями (Рикардио) — дополнительная стоимость активной способности героя. |
+| `ready_creature` | `target: TargetRef` | Подготовить существо (снять флип) — синоним `unflip`, оставлен для читаемости данных. |
+
+- `stat_buff` получает `multiplier?: number` («АТК удваивается»): применяется в `computeEff` после сложения бонусов, до обрезки по `floorAttack`.
+- `suppress` получает `spells?: boolean` и `creatureAbilities?: boolean`: «не может быть поврежден/выбран заклинаниями и способностями существ противника».
+
+### H3. Условия, рефы и фильтры
+
+- Условия: `while_effective_def_at_most { max, scope }` (осталось ≤ N DEF с учётом бонусов), `while_lives_at_least { min }`, `while_attached_at_least { min }`, `while_card_name_contains { word }` (для героя с выбранным словом), `while_played_card_type { type }` («сыграл не-кукурузные карты»), `while_no_spells_played`.
+- `TargetRef`: `each_own_creature_damaged`, `each_creature_moved_this_turn`, `each_building`, `each_land`, `attached_cards`, `chosen_land_type`.
+- `TargetFilter`: `movedThisTurn?: boolean`, `enteredThisTurn?: boolean` — отмечаются в `CardInstance` при перемещении/входе и сбрасываются в конце хода.
+- `MatchState` получает `chosenWord?: Record<PlayerId, string>` (герой Колдунья-охотница), `CardInstance.attached?: string[]`, `CardInstance.movedThisTurn?: boolean`, `CardInstance.entersTapped?: boolean`, `CardInstance.noReady?: boolean`, `CardInstance.cannotReplace?: boolean`, `CardInstance.cannotReturnFromDiscard?: boolean`.
+
+### H4. Интерпретации спорных текстов
+
+- «Крысолов»: при атаке этим существом игрок может вместо него атаковать другим готовым существом под своим контролем; реализуется именованной механикой `replace_attacker` с `optional: true`.
+- «Слинять»: выбранное существо покидает игру **перед** фазой боя, весь урон с него снимается; триггер `start_of_battle_phase`, `optional`.
+- «Бесконечный комбайн»: урон себе равен **остатку effective DEF** выбранного существа, затем существо уничтожается (`mechanic: 'self_damage_then_destroy'`).
+- «Перераспредели урон» (Заплатка, Вместе навсегда): сумма урона сохраняется; запрещено ставить значение, равное effective DEF или больше (иначе существо погибло бы), если текстом не оговорено иное.
+- «Прозрачный ниндзя»: бросок d6 через сидированный RNG порта, на 4+ урон от атаки не проходит; заклинания и ПРИЁМЫ бросок не дают.
+- «Муррризрак» / «Нельзя вернуть из сброса»: флаг `cannotReturnFromDiscard` проверяется всеми операциями возврата.
+- 9 карт без игрового текста (Желтая сирена, Корова, Хэнклоп, Пони, Острая сосулька, Злое око, Филлис, Слюнявый чел, Овечка) — **осознанно пусто**: `flavorOnly: true`, `abilities: []`. Отчёт `generate` учитывает их отдельной категорией, а не как pending.
+
+### H5. Порядок работ
+
+Каждый блок: правка этого документа → типы/валидатор → domain → protocol → HUD → mechanics-JSON → golden/unit-тесты → `pnpm --filter @card-wars/content generate && pnpm lint && pnpm typecheck && pnpm -r test` → git commit.
+
 ## Открытые вопросы реализации
 
 - Состав опций `AdditionalCost` (какие «доп. стоимости» встречаются в каталоге) — при разборе M3.

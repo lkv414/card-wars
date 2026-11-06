@@ -24,6 +24,8 @@ export interface AuraContribution {
   floorDefense?: number;
   /** Attack floor applied by this aura (Аванпост попугаев: АТК не ниже 0). */
   floorAttack?: number;
+  /** Multiply the final stat (docs §H2, «АТК удваивается»). */
+  multiplier?: number;
 }
 
 /**
@@ -56,6 +58,7 @@ export function auraContributions(
         amount: resolveStatAmount(draft, ctx, source, effect.amount),
         floorDefense: effect.floorDefense,
         floorAttack: effect.floorAttack,
+        multiplier: effect.multiplier,
       });
     }
   });
@@ -458,6 +461,50 @@ export function conditionsHold(
         if (p.zones[src.zone]!.creature) return false;
         break;
       }
+      case 'while_damage_at_most': {
+        const id = source.instanceId;
+        if (!id || instance(draft, id).damage > cond.amount) return false;
+        break;
+      }
+      case 'while_effective_def_at_most': {
+        const targetId = cond.scope === 'target' ? undefined : source.instanceId;
+        const id = targetId ?? source.instanceId;
+        if (!id) return false;
+        const inst = instance(draft, id);
+        const card = ctx.catalog.getCard(inst.cardId);
+        const buffs = draft.turnBuffs
+          .filter((b) => b.instanceId === id && b.stat === 'defense')
+          .reduce((sum, b) => sum + b.amount, 0);
+        const remaining = (card?.defense ?? 0) + inst.bonusDefense + buffs - inst.damage;
+        if (remaining > cond.max) return false;
+        break;
+      }
+      case 'while_lives_at_least': {
+        const team = teamOf(draft, source.player);
+        const lives = team ? team.lives : p.lives;
+        if (lives < cond.min) return false;
+        break;
+      }
+      case 'while_attached_at_least': {
+        const inst = source.instanceId ? instance(draft, source.instanceId) : null;
+        if ((inst?.attached?.length ?? 0) < cond.min) return false;
+        break;
+      }
+      case 'while_card_name_contains': {
+        const word = draft.chosenWord[source.player] ?? '';
+        if (!word || word.length < 3) return false;
+        const needle = word.toLowerCase();
+        if (!draft.turnPlayedCardIds.some((cid) => (ctx.catalog.getCard(cid)?.name ?? '').toLowerCase().includes(needle))) return false;
+        break;
+      }
+      case 'while_played_card_type': {
+        if (!draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.type === cond.type)) return false;
+        break;
+      }
+      case 'while_no_spells_played': {
+        if (draft.turnPlayedCardIds.some((cid) => ctx.catalog.getCard(cid)?.type === 'spell')) return false;
+        break;
+      }
     }
   }
   return true;
@@ -549,6 +596,26 @@ export function resolveStatAmount(
         count += 1;
       }
       return count * amount.amount;
+    }
+    case 'chosen_amount': {
+      const answer = choices?.[amount.index];
+      return answer && answer.kind === 'amount' ? answer.value : 0;
+    }
+    case 'target_damage': {
+      const targets = resolveTarget(draft, ctx, amount.target, source, choices, undefined);
+      let total = 0;
+      for (const target of targets) {
+        if (target.kind === 'creature' || target.kind === 'building') total += instance(draft, target.instanceId).damage;
+      }
+      return total;
+    }
+    case 'attached_count': {
+      const targets = resolveTarget(draft, ctx, amount.target, source, choices, undefined);
+      let total = 0;
+      for (const target of targets) {
+        if (target.kind === 'creature' || target.kind === 'building') total += instance(draft, target.instanceId).attached?.length ?? 0;
+      }
+      return total;
     }
   }
 }

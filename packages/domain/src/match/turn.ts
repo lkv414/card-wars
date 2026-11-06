@@ -20,11 +20,27 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   const p = player(draft, pid);
 
   // Подготовка: own field cards and companion become ready again.
+  // `noReady` (Усталый библиотекарь) keeps the card tapped at turn start.
+  const ready = (id: string | null): void => {
+    if (!id) return;
+    const inst = draft.instances[id]!;
+    if (!inst.noReady) inst.flipped = false;
+  };
   for (const zone of p.zones) {
-    if (zone.creature) draft.instances[zone.creature]!.flipped = false;
-    if (zone.building) draft.instances[zone.building]!.flipped = false;
+    ready(zone.creature);
+    ready(zone.building);
   }
-  if (p.companion) draft.instances[p.companion]!.flipped = false;
+  ready(p.companion);
+
+  // Temporary land type changes (Башня свободы) expire at the owner's turn start.
+  p.lands.forEach((land, zone) => {
+    if (land.originalType !== undefined && (land.typeChangedOnTurn ?? draft.turn) < draft.turn) {
+      land.type = land.originalType;
+      delete land.originalType;
+      delete land.typeChangedOnTurn;
+      emit(ctx, { type: 'land_changed', player: pid, zone, change: 'unflipped' });
+    }
+  });
 
   // Временные перевороты земель (Воронка) возвращаются к началу хода владельца.
   const expired = draft.landFlipEffects.filter((e) => e.owner === pid && e.grantedOnTurn < draft.turn);
@@ -86,6 +102,11 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.turnModifiers = [];
   draft.discounts = []; // «в этот ход» — скидки сгорают вместе с ходом
   draft.turnPlayedCardIds = [];
+  draft.abilityUseCounts = {};
+  for (const inst of Object.values(draft.instances)) {
+    if (inst.movedThisTurn) delete inst.movedThisTurn;
+    if (inst.enteredThisTurn) delete inst.enteredThisTurn;
+  }
   draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn === draft.turn);
   // Активный бан заканчивается вместе с ходом, под конец снимаем полностью.
   if (draft.spellBansActive.some((b) => b.turn === draft.turn)) {

@@ -83,12 +83,25 @@ export type TargetAskKind =
    * The player's pick between healing and dealing damage («Восстанови или
    * нанеси 1 урон» — Зелёная сахарная вата, Милая мельница).
    */
-  | 'heal_or_damage';
+  | 'heal_or_damage'
+  /** Numeric input (docs/MECHANICS-V2.md §H1): «нанеси 1 или 2 урона», damage redistribution. */
+  | 'amount'
+  /** Pick one of several named branches («ИЛИ», выбор типа земли). */
+  | 'choose_option'
+  /** One answer carrying damage values for every own creature (docs §H1). */
+  | 'damage_distribution';
 
 export interface TargetAsk {
   kind: TargetAskKind;
   /** Optional constraint validated at choice time (Пси-фехтовальщик: только применённые). */
   filter?: TargetFilter;
+  /** Inclusive bounds for `amount`; default 0..99. */
+  min?: number;
+  max?: number;
+  /** Allowed values for `choose_option`. */
+  options?: string[];
+  /** RU label rendered by the HUD for non-board asks. */
+  label?: string;
 }
 
 /** Player's answers sent with a command (floop / hero_ability / resolve_choice). */
@@ -98,7 +111,13 @@ export type TargetChoice =
   | { kind: 'landscape'; player: PlayerId; zone: number }
   | { kind: 'card'; instanceId: string }
   /** «Восстанови или нанеси урон» — игрок выбирает режим. */
-  | { kind: 'mode'; mode: 'heal' | 'damage' };
+  | { kind: 'mode'; mode: 'heal' | 'damage' }
+  /** Numeric answer to an `amount` ask. */
+  | { kind: 'amount'; value: number }
+  /** Named branch answer to a `choose_option` ask. */
+  | { kind: 'option'; option: string }
+  /** Damage values for every creature of `damage_distribution`. */
+  | { kind: 'amounts'; values: number[] };
 
 /** How an effect picks its targets: static board relations or a player choice by ask index. */
 export type TargetRef =
@@ -152,7 +171,17 @@ export type TargetRef =
   | { kind: 'payload_partner' }
   | { kind: 'each_player' }
   | { kind: 'each_opponent_player' }
-  | { kind: 'self_player' };
+  | { kind: 'self_player' }
+  /** Own creatures carrying damage (Заплатка, перераспределение урона). */
+  | { kind: 'each_own_creature_damaged' }
+  /** Every creature that changed lane this turn (Кот-панк, Запашок от носок). */
+  | { kind: 'each_creature_moved_this_turn' }
+  /** All buildings in play, either side (Снижение налогов). */
+  | { kind: 'each_building' }
+  /** All lands in play, either side (Ледяной залп). */
+  | { kind: 'each_land' }
+  /** Cards attached under the source instance (Каракум, Берсеркорова). */
+  | { kind: 'attached_cards' };
 
 export type StatKey = 'attack' | 'defense';
 
@@ -199,6 +228,10 @@ export interface TargetFilter {
   zoneBuilding?: boolean;
   /** Invert the match (Капитан Тако: не на кукурузной земле). */
   negate?: boolean;
+  /** Only creatures that changed lane this turn (docs/MECHANICS-V2.md §H3). */
+  movedThisTurn?: boolean;
+  /** Only creatures that entered play this turn. */
+  enteredThisTurn?: boolean;
 }
 
 /** Dynamic stat amounts (docs/MECHANICS-V2.md §3). */
@@ -237,7 +270,13 @@ export type StatAmount =
   /** Players controlling at least one land with an ice token (Капитан мороженка). */
   | { kind: 'per_token_players'; amount: number }
   /** Inside a damage trigger: the dealt amount (Лорд Вампиров, Мятный змей). */
-  | { kind: 'payload_damage' };
+  | { kind: 'payload_damage' }
+  /** A number chosen by the player via an `amount` ask (docs/MECHANICS-V2.md §H1). */
+  | { kind: 'chosen_amount'; index: number }
+  /** Current damage counters on a target creature. */
+  | { kind: 'target_damage'; target: TargetRef }
+  /** Number of cards attached under an instance (Каракум). */
+  | { kind: 'attached_count'; target: TargetRef };
 
 /**
  * Conditions (docs/MECHANICS-V2.md §7). `if_*` — one-shot at run time,
@@ -250,6 +289,7 @@ export type ConditionSpec =
   | { kind: 'while_undamaged'; scope: 'self' | 'target' }
   | { kind: 'while_damage_exactly'; amount: number; scope: 'self' | 'target' }
   | { kind: 'while_damage_at_least'; amount: number; scope: 'self' | 'target' }
+  | { kind: 'while_damage_at_most'; amount: number; scope: 'self' | 'target' }
   | { kind: 'while_lane_empty_opponent' }
   | { kind: 'while_self_flipped' }
   | { kind: 'while_opponents_hand_empty' }
@@ -330,7 +370,19 @@ export type ConditionSpec =
   /** Owner's lives at most N (Магокражка). */
   | { kind: 'while_lives_at_most'; max: number }
   /** Opponents control at most N creatures (Зомбанан). */
-  | { kind: 'while_opponent_creatures_at_most'; max: number };
+  | { kind: 'while_opponent_creatures_at_most'; max: number }
+  /** Effective DEF (base + bonuses − damage) is at most N (Хлопковый Великан). */
+  | { kind: 'while_effective_def_at_most'; max: number; scope?: 'self' | 'target' }
+  /** Owner's lives at least N (Милая сладюшка). */
+  | { kind: 'while_lives_at_least'; min: number }
+  /** At least N cards attached under this instance. */
+  | { kind: 'while_attached_at_least'; min: number }
+  /** A card whose printed name contains `word` was played (Колдунья-охотница). */
+  | { kind: 'while_card_name_contains'; word: string }
+  /** A card of this type was played this turn. */
+  | { kind: 'while_played_card_type'; type: import('../types').CardType }
+  /** No spells were played this turn (Виноградная попка: «не-кукурузные карты»). */
+  | { kind: 'while_no_spells_played' };
 
 /** Mandatory additional cost printed before «ПРИЕМ/>>>» (docs/MECHANICS-V2.md §1). */
 export interface AdditionalCost {
@@ -346,6 +398,8 @@ export interface AdditionalCost {
   destroyOwnCreature?: number;
   /** Sacrifice n own buildings (Стрелец Дэника). */
   destroyOwnBuilding?: number;
+  /** Pay n lives (Рикардио, docs §H2). */
+  payLife?: number;
 }
 
 /**
@@ -375,6 +429,8 @@ type EffectOp =
       floorDefense?: number;
       /** Attack floor: «минимум 0» у дебаффов (Затопление, Аванпост попугаев). */
       floorAttack?: number;
+      /** Multiply the resulting stat («АТК удваивается», docs §H2). */
+      multiplier?: number;
     }
   | { op: 'gain_shield'; target: TargetRef; amount: number }
   | { op: 'gain_actions'; amount: number }
@@ -438,7 +494,7 @@ type EffectOp =
   /** Suppress triggers or actives of the covered cards (Дворец Костей, Чародейка Вайда);
    *  `all` = «без текста»: actives, triggers and passive modifiers (Пес, Школа);
    *  `attacks` = «не могут атаковать» (Морозильная камера); `filter` narrows coverage. */
-  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[]; all?: boolean; attacks?: boolean; filter?: TargetFilter }
+  | { op: 'suppress'; target: TargetRef; actives?: boolean; triggers?: Trigger[]; all?: boolean; attacks?: boolean; spells?: boolean; creatureAbilities?: boolean; filter?: TargetFilter }
   /** Attacking this creature provokes no retaliation (Призрачные бро). */
   | { op: 'no_retaliation'; target: TargetRef }
   /** Covered creature ignores the first N damage of each hit (Пушистая лиса). */
@@ -524,7 +580,26 @@ type EffectOp =
    * Consume the revealed window (Газы Огрa): one revealed card via ask,
    * destination per `to`; the rest of the window per `rest`.
    */
-  | { op: 'resolve_revealed'; target: TargetRef; to: 'deck_bottom' | 'hand' | 'deck_top'; rest?: 'discard' | 'deck' };
+  | { op: 'resolve_revealed'; target: TargetRef; to: 'deck_bottom' | 'hand' | 'deck_top'; rest?: 'discard' | 'deck' }
+  /**
+   * Reassign damage counters among the chosen creatures; the total is preserved
+   * (Заплатка, Вместе навсегда, docs §H2). `amounts` are indices of `amount` asks.
+   */
+  | { op: 'redistribute_damage'; among: TargetRef; cap?: 'defense' | 'none' }
+  /** Temporarily replace a land's type (Башня свободы). */
+  | { op: 'set_land_type'; target: TargetRef; landType: import('../types').LandType | 'chosen'; until: 'next_own_turn' }
+  /** Exchange two field cards (Снижение налогов, Хлопковая аллея). */
+  | { op: 'swap_field_cards'; a: TargetRef; b: TargetRef }
+  /** Attach a card under an instance (Каракум,docs §H2). */
+  | { op: 'attach_card'; card: TargetRef; to: TargetRef; from: 'discard' | 'field' | 'death' }
+  /** Repeat one effect N times, consuming consecutive choices (Разбойная тыква). */
+  | { op: 'repeat_effect'; times: StatAmount; effect: EffectSpec }
+  /** Discard one specific card (Ванна крови: «карту стоимостью 2+»). */
+  | { op: 'discard_chosen'; card: TargetRef; from?: 'own_hand' | 'any_hand' }
+  /** Pay lives as part of a hero ability (Рикардио, docs §H2). */
+  | { op: 'pay_life'; amount: number }
+  /** Ready a creature (alias of `unflip`, kept for readable data). */
+  | { op: 'ready_creature'; target: TargetRef };
 
 /**
  * A declarative operation with its own optional conditions.
@@ -551,6 +626,8 @@ export interface AbilitySpec {
   cost?: number;
   additionalCost?: AdditionalCost;
   oncePerTurn?: boolean;
+  /** «Используй до N раз за ход» (Нога дракона), docs §H2. */
+  maxUsesPerTurn?: number;
   /** «можешь …»: the owning player decides (pendingChoice, docs/MECHANICS-V2.md §6). */
   optional?: boolean;
   /** «В первый раз …»: activates once per match (docs/MECHANICS-V2.md §1). */

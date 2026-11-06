@@ -1,0 +1,21 @@
+{
+  "cardId": "ftg_card_20",
+  "name": "Хижина эльфа",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_target",
+          "target": {
+            "kind": "this_lane_creature"
+          },
+          "amount": 1
+        }
+      },
+      "text": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии."
+    }
+  ]
+}

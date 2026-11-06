@@ -236,6 +236,9 @@ function effectChoiceNeed(effect: EffectSpec): number {
     if (record.kind === 'choice' && typeof record.index === 'number') {
       max = Math.max(max, record.index);
     }
+    if (record.kind === 'chosen_amount' && typeof record.index === 'number') {
+      max = Math.max(max, record.index);
+    }
     for (const item of Object.values(record)) visit(item);
   };
   visit(effect);
@@ -250,6 +253,30 @@ function effectChoiceNeed(effect: EffectSpec): number {
     // discard-card pick (ask own_discard_card / any_discard_card) + destination
     return Math.max(max + 1, 1);
   }
+  if (effect.op === 'redistribute_damage') return Math.max(max + 1, 1);
+  if (effect.op === 'repeat_effect') {
+    const times = typeof effect.times === 'number' ? effect.times : 1;
+    return Math.max(max + 1, times * countChoiceRefsLocal(effect.effect));
+  }
+  if (effect.op === 'set_land_type' && effect.landType === 'chosen') return Math.max(max + 1, 1);
+  if (effect.op === 'discard_chosen') return Math.max(max + 1, 1);
+  return max + 1;
+}
+
+/** Distinct `choice` indices consumed by one effect (docs §H2 repeat_effect). */
+function countChoiceRefsLocal(effect: EffectSpec): number {
+  let max = -1;
+  const visit = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      for (const item of value) visit(item);
+      return;
+    }
+    if (value === null || typeof value !== 'object') return;
+    const record = value as Record<string, unknown>;
+    if (record.kind === 'choice' && typeof record.index === 'number') max = Math.max(max, record.index);
+    for (const item of Object.values(record)) visit(item);
+  };
+  visit(effect);
   return max + 1;
 }
 

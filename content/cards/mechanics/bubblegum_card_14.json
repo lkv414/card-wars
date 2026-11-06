@@ -1,0 +1,32 @@
+{
+  "cardId": "bubblegum_card_14",
+  "name": "Кольцо пушистости",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "duration": "this_turn",
+        "amount": {
+          "kind": "target_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        }
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Выбранное существо под твоим контролем получает +X ATK в этом ходу, где X это число урона на нем."
+    }
+  ]
+}

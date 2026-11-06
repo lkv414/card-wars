@@ -55,6 +55,9 @@ export interface LandState {
   flipped: boolean;
   /** Ice tokens (docs/RULES.md «Земли»): icy lands enter play with one. */
   iceTokens: number;
+  /** Original type before a temporary `set_land_type` (docs §H2). */
+  originalType?: LandType;
+  typeChangedOnTurn?: number;
 }
 
 export interface ZoneState {
@@ -78,6 +81,19 @@ export interface CardInstance {
   bonusAttack: number;
   bonusDefense: number;
   playedTurn: number | null;
+  /** Cards placed under this instance (docs §H2). */
+  attached?: string[];
+  /** Changed lane during the current turn (docs §H3). */
+  movedThisTurn?: boolean;
+  /** Entered play during the current turn. */
+  enteredThisTurn?: boolean;
+  /** Enters play flipped and is not readied at the owner's turn start. */
+  entersTapped?: boolean;
+  noReady?: boolean;
+  /** «Нельзя заменить» (поп-десанты). */
+  cannotReplace?: boolean;
+  /** «Нельзя вернуть из сброса» (Частичка души, Муррризрак). */
+  cannotReturnFromDiscard?: boolean;
 }
 
 export interface PlayerState {
@@ -185,6 +201,10 @@ export interface MatchState {
   revealed: Record<string, string[]>;
   /** Once-per-turn ability usage: key `player:instanceId|hero:index` → turn of last use. */
   abilityUses: Record<string, number>;
+  /** Usage count per ability this turn (docs §H2, «до N раз за ход»). */
+  abilityUseCounts: Record<string, number>;
+  /** Word chosen by each player at match start (Колдунья-охотница, docs §H3). */
+  chosenWord: Record<PlayerId, string>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;
   winners: PlayerId[] | null;
   finishReason: FinishReason | null;

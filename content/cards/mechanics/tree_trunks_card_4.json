@@ -1,0 +1,59 @@
+{
+  "cardId": "tree_trunks_card_4",
+  "name": "Хлопковый король",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "cardIds": [
+            "bubblegum_card_30",
+            "ftg_card_51",
+            "tree_trunks_card_1",
+            "tree_trunks_card_2",
+            "tree_trunks_card_4",
+            "tree_trunks_card_7",
+            "tree_trunks_card_8",
+            "tree_trunks_card_26",
+            "tree_trunks_card_30",
+            "tree_trunks_card_35"
+          ]
+        }
+      },
+      "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+    },
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 1
+        },
+        "amount": {
+          "kind": "chosen_amount",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "amount",
+          "min": 1,
+          "max": 2,
+          "label": "Восстановление"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+    }
+  ]
+}

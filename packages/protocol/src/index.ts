@@ -135,11 +135,17 @@ export const TargetChoiceSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('card'), instanceId: z.string() }),
   /** «Восстанови или нанеси урон» — выбор лечения/урона. */
   z.object({ kind: z.literal('mode'), mode: z.enum(['heal', 'damage']) }),
+  /** Numeric input (docs/MECHANICS-V2.md §H1). */
+  z.object({ kind: z.literal('amount'), value: z.number().int().min(0) }),
+  /** Named branch («ИЛИ», выбор типа земли). */
+  z.object({ kind: z.literal('option'), option: z.string() }),
+  /** Damage values for every creature of a redistribution ask. */
+  z.object({ kind: z.literal('amounts'), values: z.array(z.number().int().min(0)).max(16) }),
 ]);
 
 export const ChoiceAnswerSchema = z.object({
   proceed: z.boolean().optional(),
-  targets: z.array(TargetChoiceSchema).max(8).optional(),
+  targets: z.array(TargetChoiceSchema).max(16).optional(),
 });
 
 export const CommandSchema = z.discriminatedUnion('type', [
@@ -151,18 +157,18 @@ export const CommandSchema = z.discriminatedUnion('type', [
     instanceId: z.string(),
     zone: z.number().optional(),
     unfreezeWith: z.string().optional(),
-    targets: z.array(TargetChoiceSchema).max(8).optional(),
+    targets: z.array(TargetChoiceSchema).max(16).optional(),
   }),
   z.object({
     type: z.literal('floop'),
     player: z.string(),
     instanceId: z.string(),
-    targets: z.array(TargetChoiceSchema).max(8).optional(),
+    targets: z.array(TargetChoiceSchema).max(16).optional(),
   }),
   z.object({
     type: z.literal('hero_ability'),
     player: z.string(),
-    targets: z.array(TargetChoiceSchema).max(8).optional(),
+    targets: z.array(TargetChoiceSchema).max(16).optional(),
   }),
   z.object({
     type: z.literal('resolve_choice'),

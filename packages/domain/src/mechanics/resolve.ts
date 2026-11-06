@@ -204,6 +204,21 @@ function choiceMatchesAsk(
     }
     case 'heal_or_damage':
       return choice.kind === 'mode';
+    case 'amount':
+      return (
+        choice.kind === 'amount' &&
+        Number.isInteger(choice.value) &&
+        choice.value >= (ask.min ?? 0) &&
+        choice.value <= (ask.max ?? 99)
+      );
+    case 'choose_option':
+      return choice.kind === 'option' && (ask.options ?? []).includes(choice.option);
+    case 'damage_distribution':
+      return (
+        choice.kind === 'amounts' &&
+        Array.isArray(choice.values) &&
+        choice.values.every((v) => Number.isInteger(v) && v >= 0)
+      );
   }
 }
 
@@ -436,6 +451,24 @@ export function resolveTarget(
       return buildingsOf(draft, source.player);
     case 'self_player':
       return [{ kind: 'player', playerId: source.player }];
+    case 'each_own_creature_damaged':
+      return creaturesOf(draft, source.player).filter(
+        (t) => t.kind === 'creature' && draft.instances[t.instanceId]!.damage > 0,
+      );
+    case 'each_creature_moved_this_turn':
+      return draft.order.flatMap((pid) => creaturesOf(draft, pid)).filter(
+        (t) => t.kind === 'creature' && draft.instances[t.instanceId]!.movedThisTurn === true,
+      );
+    case 'each_building':
+      return draft.order.flatMap((pid) => buildingsOf(draft, pid));
+    case 'each_land':
+      return draft.order.flatMap((pid) =>
+        draft.players[pid]!.lands.map((_land, zone) => ({ kind: 'land' as const, playerId: pid, zone })),
+      );
+    case 'attached_cards': {
+      const host = source.instanceId ? draft.instances[source.instanceId] : null;
+      return (host?.attached ?? []).map((id) => ({ kind: 'building' as const, instanceId: id }));
+    }
   }
 }
 

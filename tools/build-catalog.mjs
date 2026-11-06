@@ -64,19 +64,21 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage']);
+const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
+  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
   'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze',
 ]);
-const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card', 'visible_card', 'heal_or_damage']);
+const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card', 'visible_card', 'heal_or_damage', 'amount', 'choose_option', 'damage_distribution']);
 const TARGET_REFS = new Set([
   'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_opponent_land', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
   'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
   'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'payload_killer', 'payload_player', 'min_attack_own', 'each_opponent_land',
+  'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards',
 ]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost']);
+const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost', 'chosen_amount', 'target_damage', 'attached_count']);
 const CONDITION_KINDS = new Set([
   'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
   'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
@@ -87,7 +89,8 @@ const CONDITION_KINDS = new Set([
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
   'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
   'if_payload_team_target', 'if_payload_opponent_target',
-  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type',
+  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
+  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most',
 ]);
 
 function checkAmount(amount, where) {
@@ -188,11 +191,32 @@ function validateEffect(effect, where, ability) {
   } else if (op === 'destroy' || op === 'freeze_land') {
     checkTargetRef(effect.target, where);
     if (op === 'freeze_land' && typeof effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);
+  } else if (op === 'redistribute_damage') {
+    checkTargetRef(effect.among, where);
+  } else if (op === 'set_land_type') {
+    checkTargetRef(effect.target, where);
+    if (effect.landType !== 'chosen' && !LAND_TYPES.has(effect.landType)) fail(`${where}: set_land_type landType invalid`);
+  } else if (op === 'swap_field_cards') {
+    checkTargetRef(effect.a, where);
+    checkTargetRef(effect.b, where);
+  } else if (op === 'attach_card') {
+    checkTargetRef(effect.card, where);
+    checkTargetRef(effect.to, where);
+    if (!['discard', 'field', 'death'].includes(effect.from)) fail(`${where}: attach_card from invalid`);
+  } else if (op === 'repeat_effect') {
+    checkAmount(effect.times, where);
+    if (!effect.effect || !EFFECT_OPS.has(effect.effect.op)) fail(`${where}: repeat_effect needs an effect`);
+  } else if (op === 'discard_chosen') {
+    checkTargetRef(effect.card, where);
+  } else if (op === 'pay_life') {
+    if (!Number.isInteger(effect.amount)) fail(`${where}: pay_life needs integer amount`);
+  } else if (op === 'ready_creature') {
+    checkTargetRef(effect.target, where);
   } else if (op === 'suppress' || op === 'no_retaliation' || op === 'damage_immunity' || op === 'damage_redirect') {
     const target = effect.target ?? effect.from;
     checkTargetRef(target, where);
     if (op === 'damage_immunity' && !Number.isInteger(effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
-    if (op === 'suppress' && !effect.actives && !effect.triggers && !effect.all && !effect.attacks) fail(`${where}: suppress needs actives, triggers, all or attacks`);
+    if (op === 'suppress' && !effect.actives && !effect.triggers && !effect.all && !effect.attacks && !effect.spells && !effect.creatureAbilities) fail(`${where}: suppress needs a coverage flag`);
   } else if (op === 'grant_modifier') {
     if (!effect.modifier || !EFFECT_OPS.has(effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
   } else if (op === 'grant_ability') {
@@ -364,7 +388,8 @@ console.log(`heroes: ${heroes.length}`);
 // Mechanics coverage (docs/MECHANICS-V2.md §4): what is structured vs pending.
 const withMechanics = cards.filter((c) => c.abilities?.length).length;
 const structurable = cards.filter((c) => !c.abilities && c.description).length;
+const vanilla = cards.filter((c) => !c.abilities?.length && !c.description).length;
 console.log(
   `mechanics: cards ${withMechanics}/${cards.length} structured, ${structurable} with text pending, ` +
-    `heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`,
+    `${vanilla} intentionally vanilla, heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`,
 );

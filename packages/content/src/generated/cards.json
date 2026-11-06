@@ -184,7 +184,8 @@
   "image": "/content/cards/images/bmo_card_12.png",
   "attack": 3,
   "defense": 9,
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": []
  },
  {
   "id": "bmo_card_13",
@@ -967,7 +968,35 @@
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_14.png",
   "description": "Выбранное существо под твоим контролем получает +X ATK в этом ходу, где X это число урона на нем.",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "duration": "this_turn",
+     "amount": {
+      "kind": "target_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     }
+    },
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "Выбранное существо под твоим контролем получает +X ATK в этом ходу, где X это число урона на нем."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_17",
@@ -1269,7 +1298,8 @@
   "image": "/content/cards/images/bubblegum_card_35.png",
   "attack": 1,
   "defense": 5,
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": []
  },
  {
   "id": "bubblegum_card_39",
@@ -1343,7 +1373,8 @@
   "image": "/content/cards/images/cake_card_3.png",
   "attack": 3,
   "defense": 3,
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": []
  },
  {
   "id": "cake_card_5",
@@ -2579,7 +2610,30 @@
   "attack": 2,
   "defense": 8,
   "description": "Пока у Набитого орангутана 4 и более урона, его ATK удваивается.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 0,
+     "duration": "aura",
+     "multiplier": 2,
+     "conditions": [
+      {
+       "kind": "while_damage_at_least",
+       "amount": 4,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Пока у Набитого орангутана 4 и более урона, его ATK удваивается."
+   }
+  ]
  },
  {
   "id": "charlie_card_28",
@@ -3976,7 +4030,8 @@
   "image": "/content/cards/images/fiona_card_33.png",
   "attack": 1,
   "defense": 5,
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": []
  },
  {
   "id": "fiona_card_35",
@@ -4527,7 +4582,24 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_20.png",
   "description": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": {
+     "op": "draw_cards",
+     "count": {
+      "kind": "per_target",
+      "target": {
+       "kind": "this_lane_creature"
+      },
+      "amount": 1
+     }
+    },
+    "text": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии."
+   }
+  ]
  },
  {
   "id": "ftg_card_24",
@@ -4564,7 +4636,40 @@
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_25.png",
   "description": "Потрать 1 действие >>> Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 1
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 1
+      },
+      "amount": 1
+     }
+    ],
+    "targets": [
+     {
+      "kind": "lane_creature"
+     },
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "text": "Потрать 1 действие >>> Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу."
+   }
+  ]
  },
  {
   "id": "ftg_card_26",
@@ -9059,7 +9164,8 @@
   "image": "/content/cards/images/ice_king_card_35.png",
   "attack": 3,
   "defense": 1,
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": []
  },
  {
   "id": "ice_king_card_37",
@@ -9573,7 +9679,8 @@
   "image": "/content/cards/images/jake_card_36.png",
   "attack": 1,
   "defense": 5,
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": []
  },
  {
   "id": "jake_card_37",
@@ -9584,7 +9691,8 @@
   "image": "/content/cards/images/jake_card_37.png",
   "attack": 2,
   "defense": 7,
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": []
  },
  {
   "id": "jake_card_38",
@@ -9595,7 +9703,8 @@
   "image": "/content/cards/images/jake_card_38.png",
   "attack": 3,
   "defense": 9,
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": []
  },
  {
   "id": "jake_card_39",
@@ -9696,7 +9805,27 @@
   "landType": "good",
   "image": "/content/cards/images/jake_2v2_card_6.png",
   "description": "Перераспредели урон на существах под твоим контролем (сделай это так, чтобы урона было не больше DEF).",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "redistribute_damage",
+     "among": {
+      "kind": "each_creature_yours"
+     },
+     "cap": "defense"
+    },
+    "targets": [
+     {
+      "kind": "damage_distribution",
+      "label": "Перераспредели урон"
+     }
+    ],
+    "text": "Перераспредели урон на существах под твоим контролем (сделай это так, чтобы урона было не больше DEF)."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_7",
@@ -10177,7 +10306,8 @@
   "image": "/content/cards/images/jake_2v2_card_38.png",
   "attack": 2,
   "defense": 3,
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": []
  },
  {
   "id": "jake_2v2_card_40",
@@ -11865,7 +11995,27 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lich_card_36.png",
   "description": "Распредели урон между двумя существами под твоим контролем, как тебе нужно. Урон на одном существе не может равняться его DEF.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": {
+     "op": "redistribute_damage",
+     "among": {
+      "kind": "each_creature_yours"
+     },
+     "cap": "defense"
+    },
+    "targets": [
+     {
+      "kind": "damage_distribution",
+      "label": "Распредели урон между существами"
+     }
+    ],
+    "text": "Распредели урон между двумя существами под твоим контролем, как тебе нужно. Урон на одном существе не может равняться его DEF."
+   }
+  ]
  },
  {
   "id": "lich_card_37",
@@ -13016,7 +13166,43 @@
   "attack": 1,
   "defense": 9,
   "description": "ПРИЕМ >>> Восстанови 2 урона с существа на соседней линии. Если на Доке Кукольштейне 5 или более урона, то вместо этого восстанови 2 урона с каждого существа.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "heal",
+      "target": {
+       "kind": "adjacent_creatures"
+      },
+      "amount": 2,
+      "conditions": [
+       {
+        "kind": "while_damage_at_most",
+        "amount": 4,
+        "scope": "self"
+       }
+      ]
+     },
+     {
+      "op": "heal",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 2,
+      "conditions": [
+       {
+        "kind": "while_damage_at_least",
+        "amount": 5,
+        "scope": "self"
+       }
+      ]
+     }
+    ],
+    "text": "ПРИЕМ >>> Восстанови 2 урона с существа на соседней линии. Если на Доке Кукольштейне 5 или более урона, то вместо этого восстанови 2 урона с каждого существа."
+   }
+  ]
  },
  {
   "id": "marceline_card_22",
@@ -13028,7 +13214,55 @@
   "attack": 1,
   "defense": 8,
   "description": "ПРИЕМ >>> Нанеси 1 урон выбранному существу. Если на Хлопкопульте 5 урона или более, она восстанавливает 1 урон и подготавливается.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 1
+     },
+     {
+      "op": "heal",
+      "target": {
+       "kind": "this_creature"
+      },
+      "amount": 1,
+      "conditions": [
+       {
+        "kind": "while_damage_at_least",
+        "amount": 5,
+        "scope": "self"
+       }
+      ]
+     },
+     {
+      "op": "unflip",
+      "target": {
+       "kind": "this_creature"
+      },
+      "conditions": [
+       {
+        "kind": "while_damage_at_least",
+        "amount": 5,
+        "scope": "self"
+       }
+      ]
+     }
+    ],
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу. Если на Хлопкопульте 5 урона или более, она восстанавливает 1 урон и подготавливается."
+   }
+  ]
  },
  {
   "id": "marceline_card_24",
@@ -13068,7 +13302,41 @@
   "landType": "good",
   "image": "/content/cards/images/marceline_card_25.png",
   "description": "В начале твоего хода нанеси 1 или 2 Урона своему существу на этой линии, затем восстанови 1 HP (максимум 25).",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": [
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "this_lane_own_creature"
+      },
+      "amount": {
+       "kind": "chosen_amount",
+       "index": 0
+      }
+     },
+     {
+      "op": "heal",
+      "target": {
+       "kind": "self_player"
+      },
+      "amount": 1
+     }
+    ],
+    "targets": [
+     {
+      "kind": "amount",
+      "min": 1,
+      "max": 2,
+      "label": "Урон своему существу"
+     }
+    ],
+    "text": "В начале твоего хода нанеси 1 или 2 Урона своему существу на этой линии, затем восстанови 1 HP (максимум 25)."
+   }
+  ]
  },
  {
   "id": "marceline_card_26",
@@ -13142,7 +13410,30 @@
   "attack": 0,
   "defense": 9,
   "description": "ПРИЕМ >>> Тяни карту. Если у Утки-менестреля 5 или более урона, то тяни еще одну.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "draw_cards",
+      "count": 1
+     },
+     {
+      "op": "draw_cards",
+      "count": 1,
+      "conditions": [
+       {
+        "kind": "while_damage_at_least",
+        "amount": 5,
+        "scope": "self"
+       }
+      ]
+     }
+    ],
+    "text": "ПРИЕМ >>> Тяни карту. Если у Утки-менестреля 5 или более урона, то тяни еще одну."
+   }
+  ]
  },
  {
   "id": "marceline_card_31",
@@ -13842,7 +14133,30 @@
   "attack": 2,
   "defense": 10,
   "description": "Если у Хлопкового великана осталось 3 DEF или меньше, его ATK увеличивается в 2 раза.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": 0,
+     "duration": "aura",
+     "multiplier": 2,
+     "conditions": [
+      {
+       "kind": "while_effective_def_at_most",
+       "max": 3,
+       "scope": "self"
+      }
+     ]
+    },
+    "text": "Если у Хлопкового великана осталось 3 DEF или меньше, его ATK увеличивается в 2 раза."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_2",
@@ -13866,7 +14180,62 @@
   "attack": 2,
   "defense": 7,
   "description": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "defense",
+     "amount": 1,
+     "duration": "aura",
+     "filter": {
+      "cardIds": [
+       "bubblegum_card_30",
+       "ftg_card_51",
+       "tree_trunks_card_1",
+       "tree_trunks_card_2",
+       "tree_trunks_card_4",
+       "tree_trunks_card_7",
+       "tree_trunks_card_8",
+       "tree_trunks_card_26",
+       "tree_trunks_card_30",
+       "tree_trunks_card_35"
+      ]
+     }
+    },
+    "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+   },
+   {
+    "kind": "active",
+    "effect": {
+     "op": "heal",
+     "target": {
+      "kind": "choice",
+      "index": 1
+     },
+     "amount": {
+      "kind": "chosen_amount",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "amount",
+      "min": 1,
+      "max": 2,
+      "label": "Восстановление"
+     },
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_5",
@@ -13919,7 +14288,30 @@
   "attack": 2,
   "defense": 7,
   "description": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "active",
+    "effect": [
+     {
+      "op": "draw_cards",
+      "count": 1
+     },
+     {
+      "op": "draw_cards",
+      "count": 1,
+      "conditions": [
+       {
+        "kind": "while_effective_def_at_most",
+        "max": 2,
+        "scope": "self"
+       }
+      ]
+     }
+    ],
+    "text": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_10",

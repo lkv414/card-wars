@@ -11,6 +11,7 @@ import type { CardData, CardInstance, CardType, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from './dispatch';
 import { countsAsTypes, conditionsHold, resolveStatAmount } from './modifiers';
+import { computeEff } from '../stats';
 import { resolveTarget, type ResolvedTarget } from './resolve';
 import type { EffectSource } from './source';
 import type { EffectSpec, TargetChoice, TargetFilter, TargetRef, TriggerPayload } from './types';
@@ -127,6 +128,7 @@ function playFreeCard(
       inst.zone = dest.zone;
       inst.slot = slot;
       inst.playedTurn = draft.turn;
+      inst.enteredThisTurn = true;
       owner.zones[dest.zone]![slot] = playedId;
       emit(ctx, { type: 'card_played', player: source.player, instanceId: playedId, cardId: card.id, zone: dest.zone, slot, replacedInstanceId: null });
       bumpCounter(draft, 'creature_entered', source.player);
@@ -645,6 +647,126 @@ export function runEffect(
       // Aura-grant: read live by the floop gate; nothing to materialise.
       return;
     }
+    case 'redistribute_damage': {
+      const ids = resolveTarget(draft, ctx, effect.among, source, choices, payload)
+        .filter((t) => t.kind === 'creature' || t.kind === 'building')
+        .map((t) => (t as { instanceId: string }).instanceId);
+      const answer = choices?.find((c): c is Extract<TargetChoice, { kind: 'amounts' }> => c.kind === 'amounts');
+      const values = answer?.values ?? [];
+      if (ids.length !== values.length || values.some((v) => !Number.isInteger(v) || v < 0)) {
+        throw new DomainError('invalid_choice', 'redistribute_damage needs one amount per creature');
+      }
+      const before = ids.reduce((sum, id) => sum + instance(draft, id).damage, 0);
+      if (values.reduce((a, b) => a + b, 0) !== before) {
+        throw new DomainError('invalid_choice', 'redistributed damage total must be preserved');
+      }
+      ids.forEach((id, i) => {
+        if (effect.cap !== 'none' && values[i]! >= computeEff(draft, ctx, id).defense) {
+          throw new DomainError('invalid_choice', 'redistributed damage may not kill the creature');
+        }
+      });
+      ids.forEach((id, i) => {
+        const inst = instance(draft, id);
+        const delta = values[i]! - inst.damage;
+        inst.damage = values[i]!;
+        if (delta !== 0) {
+          emit(ctx, { type: 'creature_healed', instanceId: id, amount: Math.abs(delta) });
+        }
+      });
+      return;
+    }
+    case 'set_land_type': {
+      const lands = resolveTarget(draft, ctx, effect.target, source, choices, payload)
+        .filter((t) => t.kind === 'land');
+      const chosen = choices?.find((c): c is Extract<TargetChoice, { kind: 'option' }> => c.kind === 'option')?.option;
+      const next = effect.landType === 'chosen' ? chosen : effect.landType;
+      if (!next || !['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'ghost'].includes(next)) {
+        throw new DomainError('invalid_choice', 'set_land_type needs a valid land type');
+      }
+      for (const land of lands) {
+        if (land.kind !== 'land') continue;
+        const state = draft.players[land.playerId]!.lands[land.zone]!;
+        if (state.originalType === undefined) state.originalType = state.type;
+        state.type = next as import('../types').LandType;
+        state.typeChangedOnTurn = draft.turn;
+        emit(ctx, { type: 'land_changed', player: land.playerId, zone: land.zone, change: 'unflipped' });
+      }
+      return;
+    }
+    case 'swap_field_cards': {
+      const [a] = resolveTarget(draft, ctx, effect.a, source, choices, payload);
+      const [b] = resolveTarget(draft, ctx, effect.b, source, choices, payload);
+      if (!a || !b || (a.kind !== 'creature' && a.kind !== 'building') || (b.kind !== 'creature' && b.kind !== 'building')) {
+        return;
+      }
+      const ia = instance(draft, (a as { instanceId: string }).instanceId);
+      const ib = instance(draft, (b as { instanceId: string }).instanceId);
+      if (ia.location !== 'field' || ib.location !== 'field' || ia.zone === null || ib.zone === null || ia.slot === null || ia.slot !== ib.slot) return;
+      const slot = ia.slot;
+      const za = draft.players[ia.controller]!.zones[ia.zone]!;
+      const zb = draft.players[ib.controller]!.zones[ib.zone]!;
+      za[slot] = ib.id;
+      zb[slot] = ia.id;
+      const zoneA = ia.zone;
+      ia.zone = ib.zone;
+      ib.zone = zoneA;
+      ia.movedThisTurn = true;
+      ib.movedThisTurn = true;
+      bumpCounter(draft, 'line_change', ia.controller);
+      return;
+    }
+    case 'attach_card': {
+      const hostRef = resolveTarget(draft, ctx, effect.to, source, choices, payload)[0];
+      const cardRef = resolveTarget(draft, ctx, effect.card, source, choices, payload)[0];
+      if (!hostRef || !cardRef || (hostRef.kind !== 'creature' && hostRef.kind !== 'building') ||
+          (cardRef.kind !== 'creature' && cardRef.kind !== 'building')) return;
+      const host = instance(draft, (hostRef as { instanceId: string }).instanceId);
+      const cardId = (cardRef as { instanceId: string }).instanceId;
+      const attached = instance(draft, cardId);
+      host.attached = [...(host.attached ?? []), cardId];
+      attached.location = 'removed';
+      attached.zone = null;
+      attached.slot = null;
+      emit(ctx, { type: 'card_removed', player: source.player, instanceId: cardId, cardId: attached.cardId });
+      return;
+    }
+    case 'repeat_effect': {
+      const times = resolveStatAmount(draft, ctx, source, effect.times, payload, choices);
+      const perStep = countChoiceRefs(effect.effect);
+      for (let i = 0; i < times; i++) {
+        const slice = perStep > 0 ? (choices ?? []).slice(i * perStep, (i + 1) * perStep) : choices;
+        runEffect(draft, ctx, effect.effect, source, slice, payload);
+      }
+      return;
+    }
+    case 'discard_chosen': {
+      const [target] = resolveTarget(draft, ctx, effect.card, source, choices, payload);
+      if (!target || (target.kind !== 'creature' && target.kind !== 'building')) return;
+      const id = (target as { instanceId: string }).instanceId;
+      const inst = instance(draft, id);
+      if (inst.location === 'hand') {
+        const p = draft.players[inst.controller]!;
+        p.hand = p.hand.filter((x) => x !== id);
+      }
+      inst.location = 'discard';
+      draft.players[inst.controller]!.discard.push(id);
+      emit(ctx, { type: 'card_discarded', player: inst.controller, instanceId: id, cardId: inst.cardId, from: 'hand' });
+      return;
+    }
+    case 'pay_life': {
+      const p = player(draft, source.player);
+      p.lives -= effect.amount;
+      emit(ctx, { type: 'lives_changed', player: source.player, delta: -effect.amount, lives: p.lives });
+      return;
+    }
+    case 'ready_creature': {
+      for (const target of resolveTarget(draft, ctx, effect.target, source, choices, payload)) {
+        if (target.kind === 'creature' || target.kind === 'building') {
+          instance(draft, (target as { instanceId: string }).instanceId).flipped = false;
+        }
+      }
+      return;
+    }
     case 'gain_actions':
       player(draft, source.player).actions += effect.amount;
       return;
@@ -681,6 +803,7 @@ function moveCreatureToZone(
   const fromZone = inst.zone;
   owner.zones[fromZone]!.creature = null;
   inst.zone = zone;
+  inst.movedThisTurn = true;
   owner.zones[zone]!.creature = instanceId;
   emit(ctx, { type: 'card_moved', player: destPlayerId, instanceId, fromZone, toZone: zone });
   bumpCounter(draft, 'line_change', destPlayerId);
@@ -719,6 +842,23 @@ function returnCards(
     }
     emit(ctx, { type: 'card_returned', player: source.player, instanceId: chosen, cardId: inst.cardId });
   }
+}
+
+/** How many `choice` refs one effect step consumes (docs §H2 repeat_effect). */
+function countChoiceRefs(effect: EffectSpec): number {
+  const found: number[] = [];
+  const visit = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      for (const item of value) visit(item);
+      return;
+    }
+    if (!value || typeof value !== 'object') return;
+    const record = value as Record<string, unknown>;
+    if (record.kind === 'choice' && typeof record.index === 'number') found.push(record.index);
+    for (const nested of Object.values(record)) visit(nested);
+  };
+  visit(effect);
+  return found.length > 0 ? Math.max(...found) + 1 : 0;
 }
 
 /** Increment a per-turn event counter (key `kind:player`). */
@@ -768,5 +908,7 @@ function targetMatchesFilter(
     if (!card || card.id !== ownCardId) match = false;
   }
   if (match && filter.cardIds && (!card || !filter.cardIds.includes(card.id))) match = false;
+  if (match && filter.movedThisTurn === true && !inst.movedThisTurn) match = false;
+  if (match && filter.enteredThisTurn === true && !inst.enteredThisTurn) match = false;
   return filter.negate ? !match : match;
 }

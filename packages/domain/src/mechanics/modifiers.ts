@@ -1,4 +1,4 @@
-﻿import { instance, player } from '../util';
+import { instance, player } from '../util';
 import type { Ctx } from '../util';
 import { DomainError } from '../errors';
 import type { CardData, MatchState, PlayerId } from '../types';
@@ -543,10 +543,10 @@ export function conditionsHold(
         break;
       }
       case 'while_effective_def_at_most': {
-        // «Осталось ≤ N DEF с учётом бонусов»: база + бонусы + turnBuffs, БЕЗ
-        // аур — computeEff здесь дал бы бесконечную рекурсию (условие ауры
-        // того же инстанса пересчитывало бы её же). scope 'target' смотрит на
-        // цель, проверяемую per-target.
+        // Remaining DEF <= N including bonuses: base + bonuses + turnBuffs, WITHOUT
+        // auras — calling computeEff here would recurse infinitely (an aura's
+        // condition on the same instance would re-evaluate itself). scope 'target'
+        // inspects the per-target candidate.
         const id = cond.scope === 'target' ? targetInstanceId : source.instanceId;
         if (!id) return false;
         const inst = instance(draft, id);
@@ -856,9 +856,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'allow_extra_building', 'inherit_adjacent_buildings']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'inherit_adjacent_buildings']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' | 'allow_frozen_play' | 'guard_player' | 'damage_cap' | 'damage_bonus' | 'allow_extra_building' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' | 'allow_frozen_play' | 'guard_player' | 'damage_cap' | 'damage_bonus' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -1008,23 +1008,7 @@ export function landFlipProtected(
   return false;
 }
 
-/** The covered creature enables a SECOND building on its land (Крепкий лесоруб, docs §H16). */
-export function extraBuildingPermitted(
-  draft: MatchState,
-  ctx: Pick<Ctx, 'config' | 'catalog'>,
-  playerId: PlayerId,
-  zone: number,
-): boolean {
-  for (const { source, effect } of ruleEffects(draft, ctx)) {
-    if (effect.op !== 'allow_extra_building') continue;
-    if (!source.instanceId) continue;
-    const inst = instance(draft, source.instanceId);
-    if (inst.location === 'field' && inst.controller === playerId && inst.zone === zone) return true;
-  }
-  return false;
-}
-
-/** Frozen-land creature play permit (Ледяная база / monika_card_24, docs §H16). */
+/** Frozen-land creature play permit (monika_card_9 / monika_card_24, docs §H16). */
 export function frozenPlayPermitted(
   draft: MatchState,
   ctx: Pick<Ctx, 'config' | 'catalog'>,

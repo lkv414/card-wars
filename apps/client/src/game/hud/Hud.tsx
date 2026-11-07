@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
-import { sendCommand, setQuality, setUi, useGame } from '../../store';
+import { sendCommand, setCameraMode, setQuality, setUi, useGame } from '../../store';
 import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
@@ -11,6 +11,7 @@ export function Hud({ code }: { code: string }) {
   const timer = useGame((s) => s.timer);
   const error = useGame((s) => s.error);
   const quality = useGame((s) => s.ui.quality);
+  const cameraMode = useGame((s) => s.ui.cameraMode);
   const journalOpen = useGame((s) => s.ui.journalOpen);
   const me = view.players[view.me]!;
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
@@ -76,6 +77,24 @@ export function Hud({ code }: { code: string }) {
 
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
   const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
+
+  const pendingSourceInfo = (() => {
+    if (!view.pending) return null;
+    if (view.pending.cardId) {
+      const card = catalog.find((c) => c.id === view.pending!.cardId);
+      const ability = card?.abilities?.[view.pending.abilityIndex ?? 0];
+      return {
+        name: card?.name ?? view.pending.cardId,
+        text: ability?.text || card?.description || '',
+      };
+    }
+    const ownerHeroId = view.players[view.pending.player]?.heroId;
+    const hero = heroCatalog.find((h) => h.id === ownerHeroId);
+    return {
+      name: hero?.name ?? 'Герой',
+      text: hero?.ability?.text || hero?.description || '',
+    };
+  })();
 
   /**
    * Выбор карты из стопки сброса (Поднятие мертвых, Лунный урожай).
@@ -272,6 +291,12 @@ export function Hud({ code }: { code: string }) {
             ))}
         <span className="hud-spacer" />
         <span className="hint">
+          камера:{' '}
+          <button className="mini" onClick={() => setCameraMode(cameraMode === 'follow' ? 'self' : 'follow')}>
+            {cameraMode === 'follow' ? 'за ходом' : 'своя сторона'}
+          </button>
+        </span>
+        <span className="hint">
           кач-во:{' '}
           <button className="mini" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
             {quality === 'high' ? 'высокое' : 'низкое'}
@@ -377,76 +402,86 @@ export function Hud({ code }: { code: string }) {
       )}
       {view.pending && (
         <div className="pending-banner">
-          {view.pending.player === view.me ? (
-            <>
-              {view.pending.kind === 'optional'
-                ? 'Применить способность?'
-                : `Выберите цель (${(view.pending.askIndex ?? 0) + 1}${view.pending.askCount ? `/${view.pending.askCount}` : ''})`}
-              {view.pending.kind === 'optional' && (
+          {pendingSourceInfo && (
+            <div className="pending-ability-desc">
+              <b>«{pendingSourceInfo.name}»</b>
+              {pendingSourceInfo.text ? ` — ${pendingSourceInfo.text}` : ''}
+            </div>
+          )}
+          <div className="pending-controls">
+            {view.pending.player === view.me ? (
+              <>
+                <b>
+                  {view.pending.kind === 'optional'
+                    ? 'Применить способность?'
+                    : `Выберите цель (${(view.pending.askIndex ?? 0) + 1}${view.pending.askCount ? `/${view.pending.askCount}` : ''}):`}
+                </b>
+                {view.pending.kind === 'optional' && (
+                  <button
+                    className="mini"
+                    onClick={() => sendCommand({ type: 'resolve_choice', player: view.me, answer: { proceed: true } })}
+                  >
+                    Да
+                  </button>
+                )}
                 <button
                   className="mini"
-                  onClick={() => sendCommand({ type: 'resolve_choice', player: view.me, answer: { proceed: true } })}
-                >
-                  Да
-                </button>
-              )}
-              <button
-                className="mini"
-                onClick={() =>
-                  sendCommand({
-                    type: 'resolve_choice',
-                    player: view.me,
-                    answer: view.pending!.kind === 'optional' ? { proceed: false } : {},
-                  })
-                }
-              >
-                Пропустить
-              </button>
-              {(() => {
-                if (view.pending!.kind !== 'target') return null;
-                const ability = view.pending!.cardId
-                  ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
-                  : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
-                const ask = ability?.targets?.[view.pending!.askIndex ?? 0];
-                if (!ask || ask.kind !== 'opponent_player') return null;
-                return view.order
-                  .filter((pid) => pid !== view.me)
-                  .map((pid) => (
-                    <button key={pid} className="mini" onClick={() => targetingPick({ kind: 'player', playerId: pid })}>
-                      {view.players[pid]?.nickname ?? pid}
-                    </button>
-                  ));
-              })()}
-              {discardPickers}
-              {nonBoardPicker}
-              {(() => {
-                // «Восстанови или нанеси урон» — выбор режима.
-                const askKind = (() => {
-                  if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
-                    const ability = view.pending.cardId
-                      ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
-                      : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
-                    return ability?.targets?.[view.pending.askIndex ?? 0]?.kind;
+                  onClick={() =>
+                    sendCommand({
+                      type: 'resolve_choice',
+                      player: view.me,
+                      answer: view.pending!.kind === 'optional' ? { proceed: false } : {},
+                    })
                   }
-                  if (targeting) return targeting.asks[targeting.askIndex]?.kind;
-                  return undefined;
-                })();
-                if (askKind !== 'heal_or_damage') return null;
-                return (
-                  <>
-                    <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'heal' })}>
-                      Восстанови
-                    </button>
-                    <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'damage' })}>
-                      Нанеси урон
-                    </button>
-                  </>
-                );
-              })()}
-            </>
-          ) : (
-            <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>
-          )}
+                >
+                  Пропустить
+                </button>
+                {(() => {
+                  if (view.pending!.kind !== 'target') return null;
+                  const ability = view.pending!.cardId
+                    ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
+                    : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+                  const ask = ability?.targets?.[view.pending!.askIndex ?? 0];
+                  if (!ask || ask.kind !== 'opponent_player') return null;
+                  return view.order
+                    .filter((pid) => pid !== view.me)
+                    .map((pid) => (
+                      <button key={pid} className="mini" onClick={() => targetingPick({ kind: 'player', playerId: pid })}>
+                        {view.players[pid]?.nickname ?? pid}
+                      </button>
+                    ));
+                })()}
+                {discardPickers}
+                {nonBoardPicker}
+                {(() => {
+                  // «Восстанови или нанеси урон» — выбор режима.
+                  const askKind = (() => {
+                    if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
+                      const ability = view.pending.cardId
+                        ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
+                        : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+                      return ability?.targets?.[view.pending.askIndex ?? 0]?.kind;
+                    }
+                    if (targeting) return targeting.asks[targeting.askIndex]?.kind;
+                    return undefined;
+                  })();
+                  if (askKind !== 'heal_or_damage') return null;
+                  return (
+                    <>
+                      <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'heal' })}>
+                        Восстанови
+                      </button>
+                      <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'damage' })}>
+                        Нанеси урон
+                      </button>
+                    </>
+                  );
+                })()}
+              </>
+            ) : (
+              <>Ожидается решение: {view.players[view.pending.player]?.nickname ?? view.pending.player}</>
+            )}
+          </div>
           {/* Приватное вскрытие (Рикардио, docs §H8): видит только владелец окна. */}
           {view.pending?.player === view.me && view.myPeek.length > 0 && (
             <span className="hint">
@@ -520,7 +555,7 @@ export function Hud({ code }: { code: string }) {
       {view.status === 'finished' && (
         <div className="overlay">
           <div className="panel">
-            <h2>{won(view) ? 'Победа!' : 'Поражение'}</h2>
+            <h2>{view.winners?.length === 0 ? 'Ничья!' : won(view) ? 'Победа!' : 'Поражение'}</h2>
             <p className="hint">
               Причина:{' '}
               {view.finishReason === 'surrender' ? 'сдача' : view.finishReason === 'disconnect' ? 'обрыв соединения' : 'жизни на нуле'}

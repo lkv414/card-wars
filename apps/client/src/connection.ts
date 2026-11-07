@@ -69,7 +69,7 @@ export class GameConnection {
     }
     // zod — только на границе (docs/TECH.md): серверные сообщения валидируются.
     const result = ServerMessageSchema.safeParse(parsed);
-    if (!result.success) return;
+    if (!result.success) { console.error('[Protocol] Server message validation error:', result.error); return; }
     const message = result.data;
     switch (message.t) {
       case 'joined':

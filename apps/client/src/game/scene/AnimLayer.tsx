@@ -5,9 +5,9 @@ import type { GameEvent, PlayerView } from '@card-wars/protocol';
 import {
   CARD_H,
   CARD_W,
-  HAND,
   SPRITE_SCALE,
   boardTransform,
+  handWorldPos,
   localToWorld,
   worldOfCompanion,
   worldOfDeck,
@@ -112,7 +112,7 @@ interface AnimEvent {
 /** Map incoming server events to visual ghosts. */
 export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): void {
   if (!view) return;
-  const handPos: [number, number, number] = [0, 30, HAND.z];
+  const handPos = handWorldPos(view, useGame.getState().ui.cameraMode);
   for (const raw of events) {
     const event = raw as unknown as AnimEvent;
     const zone = event.zone ?? 0;
@@ -261,7 +261,7 @@ function Ghost({ anim, now }: { anim: Anim; now: number }) {
     const texture = anim.cardId ? cardTexture(anim.cardId) : null;
     if (!texture) return null;
     return (
-      <mesh position={pos} rotation={[-Math.PI / 2 + Math.sin(t * Math.PI) * 0.7, 0, 0]}>
+      <mesh position={pos} rotation={[-Math.PI / 2 + Math.sin(t * Math.PI) * 0.7, 0, 0]} raycast={() => null}>
         <planeGeometry args={[CARD_W, CARD_H]} />
         <meshBasicMaterial map={texture} transparent opacity={opacity} />
       </mesh>
@@ -269,14 +269,14 @@ function Ghost({ anim, now }: { anim: Anim; now: number }) {
   }
   if (anim.kind === 'number') {
     return (
-      <sprite position={pos} scale={[256 * SPRITE_SCALE * 2, 128 * SPRITE_SCALE * 2, 1]}>
+      <sprite position={pos} scale={[256 * SPRITE_SCALE * 2, 128 * SPRITE_SCALE * 2, 1]} raycast={() => null}>
         <spriteMaterial map={textSprite(anim.text ?? '', anim.color ?? '#ffffff')} transparent opacity={opacity} />
       </sprite>
     );
   }
   // flash
   return (
-    <mesh position={[pos[0], 2, pos[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh position={[pos[0], 2, pos[2]]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
       <planeGeometry args={[130, 170]} />
       <meshBasicMaterial color={anim.color ?? '#ffffff'} transparent opacity={0.5 * (1 - t)} />
     </mesh>

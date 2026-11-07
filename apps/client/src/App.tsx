@@ -1,20 +1,25 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
-import { DecksScreen } from './decks/DecksScreen';
-import { MockScene } from './game/debug/MockScene';
 import { getSelectedDeckId, heroName, loadDecks } from './decks';
 import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
 import './styles.css';
 
+const DecksScreen = lazy(() => import('./decks/DecksScreen').then((m) => ({ default: m.DecksScreen })));
+const MockScene = lazy(() => import('./game/debug/MockScene').then((m) => ({ default: m.MockScene })));
+
 type Screen = 'menu' | 'decks';
 
 export function App() {
   const [nickname, setNickname] = useState(() => localStorage.getItem('cw-nickname') ?? '');
-  // ?scene=1 — dev-превью 3D-сцены с мок-снапшотом, без сервера.
+  // ?scene=1 — dev preview of the 3D scene with a mock snapshot, without a server.
   if (new URLSearchParams(location.search).has('scene')) {
-    return <MockScene />;
+    return (
+      <Suspense fallback={null}>
+        <MockScene />
+      </Suspense>
+    );
   }
   const [codeInput, setCodeInput] = useState('');
   const [screen, setScreen] = useState<Screen>(() => (location.pathname === '/decks' ? 'decks' : 'menu'));
@@ -39,12 +44,14 @@ export function App() {
 
   if (screen === 'decks') {
     return (
-      <DecksScreen
-        onBack={() => {
-          history.pushState(null, '', '/');
-          setScreen('menu');
-        }}
-      />
+      <Suspense fallback={null}>
+        <DecksScreen
+          onBack={() => {
+            history.pushState(null, '', '/');
+            setScreen('menu');
+          }}
+        />
+      </Suspense>
     );
   }
 

@@ -247,8 +247,9 @@ export function DamagePile({
             else meshesRef.current.delete(t.key);
           }}
           position={[t.x, t.y, t.z]}
+          raycast={() => null}
         >
-          <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 24]} />
+          <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 20]} />
           <meshLambertMaterial map={tokenTexture(t.face)} />
         </mesh>
       ))}
@@ -260,8 +261,9 @@ export function DamagePile({
             else leavingMeshesRef.current.delete(l.key);
           }}
           position={[l.x, l.y, l.z]}
+          raycast={() => null}
         >
-          <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 24]} />
+          <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 20]} />
           <meshLambertMaterial map={tokenTexture(l.face)} transparent />
         </mesh>
       ))}

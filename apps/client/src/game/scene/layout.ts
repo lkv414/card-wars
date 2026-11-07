@@ -210,28 +210,101 @@ export function zoneFromWorld(view: PlayerView, worldX: number, worldZ: number):
   return Math.max(0, Math.min(ZONE_COUNT - 1, index));
 }
 
-export function cameraFor(view: PlayerView): {
+/** Which player's side the camera faces in the current camera mode (docs/UI-3D.md). */
+export function cameraTargetPlayer(view: PlayerView, mode: 'follow' | 'self' = 'self'): string {
+  if (mode === 'self' || view.status !== 'running') return view.me;
+  if (view.activePlayers.includes(view.me)) return view.me;
+  return view.activePlayers[0] ?? view.me;
+}
+
+/** Camera orbit parameters around the central table anchor. */
+export function cameraOrbitFor(
+  view: PlayerView,
+  mode: 'follow' | 'self' = 'self',
+): {
+  angle: number;
+  radius: number;
+  height: number;
+  lookOffset: number;
+  fov: number;
+} {
+  const targetPid = cameraTargetPlayer(view, mode);
+  const transform = boardTransform(view, targetPid);
+  const angle = transform?.rotation ?? 0;
+
+  if (view.mode === 'teams' && view.teamVariant === 'wall') {
+    return { angle, height: 640, radius: 760, lookOffset: 15, fov: 44 };
+  }
+  const alive = view.order.filter((pid) => !view.players[pid]!.eliminated).length;
+  if (alive >= 3) {
+    return { angle, height: 730, radius: 880, lookOffset: 0, fov: 45 };
+  }
+  return { angle, height: 540, radius: 620, lookOffset: 24, fov: 43 };
+}
+
+export function cameraFor(
+  view: PlayerView,
+  mode: 'follow' | 'self' = 'self',
+): {
   position: [number, number, number];
   lookAt: [number, number, number];
   fov: number;
 } {
-  if (view.mode === 'teams' && view.teamVariant === 'wall') {
-    return { position: [0, 700, 840], lookAt: [0, 0, 10], fov: 46 };
-  }
-  const alive = view.order.filter((pid) => !view.players[pid]!.eliminated).length;
-  if (alive >= 3) {
-    return { position: [0, 820, 1010], lookAt: [0, 0, -60], fov: 46 };
-  }
-  return { position: [0, 660, 790], lookAt: [0, 0, 20], fov: 46 };
+  const orbit = cameraOrbitFor(view, mode);
+  const sin = Math.sin(orbit.angle);
+  const cos = Math.cos(orbit.angle);
+  return {
+    position: [orbit.radius * sin, orbit.height, orbit.radius * cos],
+    lookAt: [orbit.lookOffset * sin, 0, orbit.lookOffset * cos],
+    fov: orbit.fov,
+  };
 }
 
+/**
+ * Camera rotation easing on turn change (docs/UI-3D.md):
+ * smooth acceleration -> sharp braking into overshoot (~9%) -> rollback settle to 1.0.
+ */
+export function cameraTurnEase(t: number): number {
+  if (t <= 0) return 0;
+  if (t >= 1) return 1;
+  const peakT = 0.64;
+  const overshoot = 1.09;
+  if (t < peakT) {
+    const u = t / peakT;
+    const uAccel = Math.pow(u, 1.7);
+    const braked = 1 - Math.pow(1 - uAccel, 3.2);
+    return overshoot * braked;
+  }
+  const v = (t - peakT) / (1 - peakT);
+  const settle = 1 - Math.pow(1 - v, 2.6);
+  return overshoot + (1 - overshoot) * settle;
+}
+
+/**
+ * 3D hand parameters attached to the camera frame (docs/UI-3D.md):
+ * local camera coordinates (-Z forward, -Y bottom) keep cards above the table,
+ * close enough for readable text, and following the camera around the table.
+ */
 export const HAND = {
-  z: 280,
-  y: 6,
-  step: 96,
-  liftY: 38,
+  /** World Z reference for card flight animations. */
+  z: 260,
+  y: 95,
+  step: 66,
+  liftY: 42,
   rotX: -0.5,
+  /** Camera-local coordinates for the hand fan. */
+  camZ: -340,
+  camLiftZ: -250,
+  camY: -94,
+  camLiftY: -46,
 };
+
+/** World position of the player's hand (used by AnimLayer card flights). */
+export function handWorldPos(view: PlayerView, mode: 'follow' | 'self' = 'self'): [number, number, number] {
+  const orbit = cameraOrbitFor(view, mode);
+  const r = orbit.radius - 240;
+  return [r * Math.sin(orbit.angle), 120, r * Math.cos(orbit.angle)];
+}
 
 /** Sprite labels floating over the board (damage numbers etc.). */
 export const SPRITE_SCALE = 0.28;

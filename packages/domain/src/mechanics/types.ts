@@ -711,8 +711,8 @@ type EffectOp =
   | { op: 'damage_cap'; target: TargetRef; max: number }
   /** Rule aura: spells deal +amount extra to the covered unit (Подушка боли, docs §H16). */
   | { op: 'damage_bonus'; target: TargetRef; amount: number }
-  /** Rule aura: the covered creature's land may hold a SECOND building (Крепкий лесоруб, docs §H16). */
-  | { op: 'allow_extra_building'; target: TargetRef }
+
+
   /** Every own creature strikes the facing enemy with its ATK (jake_2v2_card_5). */
   | { op: 'lane_strike_all' }
   /** Rule aura: this card receives the rule texts of buildings on ADJACENT own lands (Котенок/Центр, docs §H16). */

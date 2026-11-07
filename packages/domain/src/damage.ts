@@ -42,7 +42,7 @@ export function healPlayer(
 
 /**
  * Damage to a creature: redirects and immunity scanned live (docs/MECHANICS-V2.md
- * §2А), then shield absorbs first (docs/RULES.md «Бой», «Щит»). Death is checked
+ * §2A), then shield absorbs first (docs/RULES.md). Death is checked
  * later in batch. `fromAttack` gates attack-only immunities.
  */
 export function dealToCreature(
@@ -66,8 +66,8 @@ export function dealToCreature(
   const inst = instance(draft, targetId);
   const immune = damageImmunity(draft, ctx, targetId, fromAttack);
   let effective = Math.max(0, amount - immune);
-  // Модификаторы получаемого урона (Подушка боли, docs §H16): кап за удары
-  // существ, прибавка от заклинаний.
+  // Incoming damage modifiers (tree_trunks_card_5, docs §H16): cap per creature hit,
+  // bonus damage from spells.
   const bySpell = sourceInstanceId !== null &&
     ctx.catalog.getCard(draft.instances[sourceInstanceId]?.cardId ?? '')?.type === 'spell';
   if (bySpell) effective += spellDamageBonusFor(draft, ctx, targetId, true);
@@ -133,9 +133,10 @@ export function killInstance(draft: Draft<MatchState>, _ctx: Ctx, targetId: stri
   // Attached cards follow their host into the discard pile (docs §H2 attach_card).
   for (const attachedId of inst.attached ?? []) {
     const attached = draft.instances[attachedId];
-    if (!attached || attached.location !== 'removed') continue;
-    attached.location = 'discard';
-    draft.players[attached.controller]!.discard.push(attachedId);
+    if (attached) {
+      attached.location = 'discard';
+      draft.players[attached.controller]!.discard.push(attachedId);
+    }
   }
   delete inst.attached;
   return inst;

@@ -1740,18 +1740,7 @@
   "defense": 9,
   "description": "Можешь сыграть дополнительное строение на этой земле.",
   "deckSet": "cake",
-  "abilities": [
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "allow_extra_building",
-     "target": {
-      "kind": "this_creature"
-     }
-    },
-    "text": "Можешь сыграть дополнительное строение на этой земле."
-   }
-  ]
+  "abilities": []
  },
  {
   "id": "cake_card_20",

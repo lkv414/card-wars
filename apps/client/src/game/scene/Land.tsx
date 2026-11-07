@@ -74,34 +74,26 @@ export function Land({
       <mesh
         position={[0, 0.6, 0]}
         onClick={handleClick}
-        onPointerOver={(e) => {
-          if (placeMode) {
-            e.stopPropagation();
-            useGame.setState((s) => ({ ui: { ...s.ui, draggingOverZone: zone } }));
-          }
-        }}
-        onPointerOut={() => {
-          useGame.setState((s) => (s.ui.draggingOverZone === zone ? { ui: { ...s.ui, draggingOverZone: null } } : {}));
-        }}
+        raycast={isLandTarget ? undefined : () => null}
       >
         <boxGeometry args={[LAND_W, 1.2, LAND_H]} />
         <meshLambertMaterial map={texture} />
       </mesh>
       {isLandTarget && (
-        <mesh position={[0, 1.6, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh position={[0, 1.6, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[LAND_W + 8, LAND_H + 8]} />
           <meshBasicMaterial color="#7fd1ff" transparent opacity={0.35} />
         </mesh>
       )}
       {/* Подсветка половин при драге: только слот под тип карты (или обе, если тип не зональный) */}
       {highlightSlot('creature') && (
-        <mesh position={[0, 1.6, -HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh position={[0, 1.6, -HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[HALF_W + 6, HALF_H + 4]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>
       )}
       {highlightSlot('building') && (
-        <mesh position={[0, 1.6, HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh position={[0, 1.6, HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[HALF_W + 6, HALF_H + 4]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>
@@ -115,7 +107,7 @@ export function Land({
 
 function SlotGuide({ z }: { z: number }) {
   return (
-    <mesh position={[0, 0.7, z]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh position={[0, 0.7, z]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
       <planeGeometry args={[CARD_W + 6, CARD_H + 6]} />
       <meshBasicMaterial color="#ffe9a8" transparent opacity={0.1} side={THREE.DoubleSide} />
     </mesh>

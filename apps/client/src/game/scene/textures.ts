@@ -183,7 +183,7 @@ export function cardTexture(cardId: string): THREE.CanvasTexture {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
+  texture.anisotropy = 8;
   cardCache.set(cardId, texture);
   requestScan(cardId, card, canvas, texture);
   return texture;

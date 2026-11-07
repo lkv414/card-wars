@@ -2,6 +2,7 @@
 setlocal
 cd /d "%~dp0"
 title Card Wars v3 - local dev
+if not exist "%SystemRoot%\System32\msvcp140.dll" if exist "%ProgramFiles(x86)%\Microsoft\EdgeCore\Optimized\msvcp140.dll" set "PATH=%ProgramFiles(x86)%\Microsoft\EdgeCore\Optimized;%PATH%"
 
 where pnpm >nul 2>nul
 if errorlevel 1 (

@@ -63,15 +63,13 @@ export function moveId(from: string[], to: string[], id: string): void {
   to.push(id);
 }
 
-/** Clear a zone slot for a card leaving play (creature / building / extra building). */
+/** Clear a zone slot for a card leaving play (creature / building). */
 export function clearZoneSlot(
-  zone: { creature: string | null; building: string | null; extraBuilding?: string | null },
-  slot: 'creature' | 'building' | 'extra_building',
+  zone: { creature: string | null; building: string | null },
+  slot: 'creature' | 'building',
   id: string,
 ): void {
-  if (slot === 'extra_building') {
-    if (zone.extraBuilding === id) zone.extraBuilding = null;
-  } else if (zone[slot] === id) {
+  if (zone[slot] === id) {
     zone[slot] = null;
   }
 }

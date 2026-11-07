@@ -104,11 +104,27 @@ header {
 }
 
 .pending-banner {
-  padding: 6px 10px;
-  background: #2a2416;
-  border: 1px solid #5a4a1a;
+  padding: 8px 14px;
+  background: rgba(42, 36, 22, 0.92);
+  border: 1px solid #6b561e;
   border-radius: 8px;
-  margin: 6px 0;
+  margin: 6px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pending-ability-desc {
+  color: #fff3d1;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.pending-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .revealed-picker {

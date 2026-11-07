@@ -117,7 +117,7 @@ function handleDisconnectLoss(draft: Draft<MatchState>, ctx: Ctx, playerId: Play
   finishMatch(draft, ctx, winners, 'disconnect');
 }
 
-/** «В бой» / timer: in 2v2 only marks this ally ready; combat starts when both are ready. */
+/** Go to battle / timer: in 2v2 only marks this ally ready; combat starts when both are ready. */
 function markBattleReady(
   draft: Draft<MatchState>,
   ctx: Ctx,

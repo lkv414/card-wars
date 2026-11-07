@@ -38,7 +38,7 @@ function contentAssets(): Plugin {
       });
     },
     closeBundle() {
-      // Сканы карт и портреты героев раздаются статикой (docs/UI-3D.md «Состав сцена»).
+      // Card scans and hero portraits are served as static assets (docs/UI-3D.md).
       for (const part of [['cards', 'images'], ['heroes', 'images']]) {
         const source = join(contentDir, ...part);
         const target = resolve(here, 'dist/content', ...part);
@@ -50,5 +50,26 @@ function contentAssets(): Plugin {
 
 export default defineConfig({
   plugins: [react(), contentAssets()],
-  // Этап 2: прокси /ws на wrangler dev для локальной разработки.
+  build: {
+    chunkSizeWarningLimit: 750,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          const norm = id.replace(/\\/g, '/');
+          if (norm.includes('node_modules/@react-three')) {
+            return 'r3f';
+          }
+          if (norm.includes('node_modules/three')) {
+            return 'three';
+          }
+          if (norm.includes('packages/content')) {
+            return 'content';
+          }
+          if (norm.includes('node_modules/zod')) {
+            return 'zod';
+          }
+        },
+      },
+    },
+  },
 });

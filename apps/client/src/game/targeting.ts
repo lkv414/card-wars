@@ -301,6 +301,9 @@ export function startForActive(
     ? activeAbilityOfHero(cardId)
     : activeAbilityOf(cardId);
   if (!ability) return null;
+  const sourceName = kind === 'hero_ability'
+    ? heroCatalog.find((h) => h.id === cardId)?.name
+    : catalog.find((c) => c.id === cardId)?.name;
   const asks = ability.targets ?? [];
   return {
     mode: 'active',
@@ -311,7 +314,7 @@ export function startForActive(
     asks,
     askIndex: 0,
     collected: [],
-    label: ability.text,
+    label: sourceName ? `«${sourceName}»: ${ability.text}` : ability.text,
   };
 }
 
@@ -332,7 +335,7 @@ export function startForPending(
     asks,
     askIndex: pending.askIndex ?? 0,
     collected: [],
-    label: ability.text,
+    label: card?.name ? `«${card.name}»: ${ability.text}` : ability.text,
   };
 }
 

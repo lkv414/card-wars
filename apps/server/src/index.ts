@@ -5,6 +5,7 @@ export { Room };
 
 interface Env {
   ROOM: DurableObjectNamespace<Room>;
+  ASSETS?: Fetcher;
 }
 
 // Stage-2 Worker: /health, /ws (WebSocket upgrade routed to the Room DO by code),
@@ -27,6 +28,10 @@ export default {
       }
       const room = env.ROOM.getByName(code);
       return room.fetch(request);
+    }
+
+    if (env.ASSETS) {
+      return env.ASSETS.fetch(request);
     }
 
     return new Response('Not found', { status: 404 });

@@ -16,10 +16,10 @@ import { attackMods, hasNoRetaliation } from '../mechanics/modifiers';
 export { mirrorZoneIndex } from '../zones';
 
 /**
- * Combat phase (docs/RULES.md «Бой»): ready creatures attack zone by zone,
+ * Combat phase (docs/RULES.md): ready creatures attack zone by zone,
  * left to right. The defender creature retaliates simultaneously; an empty
  * defending zone takes the damage to the face. In 2v2 both allies attack,
- * each zone is paired by seating (docs/RULES.md «Зоны»).
+ * each zone is paired by seating (docs/RULES.md).
  *
  * Round 1: FFA — only the last player in turn order attacks; 2v2 — no attacks.
  */
@@ -46,7 +46,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         if (!attackerInstanceId) continue;
         const attackerInstance = instance(draft, attackerInstanceId);
         if (attackerInstance.flipped) continue;
-        // «Не могут атаковать» (Морозильная камера, docs/MECHANICS-V2.md §3).
+        // Attack suppression aura (docs/MECHANICS-V2.md §3).
         if (attacksSuppressed(draft, ctx, attackerInstanceId)) continue;
 
         const target = opponentZoneFor(draft, attackerId, z);
@@ -56,8 +56,8 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         const strikeInstanceId0 = attackerInstanceId; void strikeInstanceId0;
         const attackPower = computeEff(draft, ctx, attackerInstanceId).attack;
 
-        // Боевые модификаторы атакующего (A3, docs/MECHANICS-V2.md §2А):
-        // тройной урон / бонус АТК по земле зоны, удар «в лицо».
+        // Attacker combat modifiers (A3, docs/MECHANICS-V2.md §2A):
+        // multiplier / ATK bonus by zone land, direct face hit.
         const attackerLand = attackerInstance.zone !== null
           ? player(draft, attackerId).lands[attackerInstance.zone]!.type
           : null;
@@ -80,7 +80,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             if ((defenderCard?.cost ?? 0) !== mod.defenderCost) continue;
           }
           if (mod.atkBonusPerAdjacentEnemy !== undefined && defenderInstanceId) {
-            // Соседи цели на ЕЁ стороне (Призрак Тэдди-крюка, docs §H14).
+            // Target's neighbors on its own side (docs §H14).
             const defenderZone = instance(draft, defenderInstanceId).zone;
             if (defenderZone !== null) {
               let adjacentEnemies = 0;
@@ -91,13 +91,13 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
               attackPowerMod += mod.atkBonusPerAdjacentEnemy * adjacentEnemies;
             }
           }
-          if (mod.emptyLane && defenderInstanceId) continue; // только пустая линия
+          if (mod.emptyLane && defenderInstanceId) continue; // empty lane only
           if (mod.face) faceDamage = true;
           if (mod.atkBonus) attackPowerMod += mod.atkBonus;
           if (mod.multiplier) attackPowerMod *= mod.multiplier;
         }
 
-        // Защита (Пещера одиночества): атака по защищённому уходит в лицо.
+        // Protection (docs §G5): attacks against a protected creature go to the face.
         const defenderProtected = defenderInstanceId !== null && draft.protections.some((pr) => pr.instanceId === defenderInstanceId);
         if (defenderProtected) {
           enqueueTrigger(draft, ctx, 'on_creature_attacks', {
@@ -116,7 +116,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
           continue;
         }
         if (defenderInstanceId && !faceDamage) {
-          // Подмена атакующего (Крысолов, docs §H16): удар и сдача — от заместителя.
+          // Attacker replacement (cake_card_33, docs §H16): strike and retaliation use the substitute.
           const armIdx = draft.armedReplacements.findIndex((r) => r.attackerId === attackerInstanceId && r.expiresTurn >= draft.turn);
           let strikeId = attackerInstanceId;
           if (armIdx >= 0) {
@@ -125,8 +125,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
           }
           // Simultaneous exchange: both powers are computed before any damage lands.
           bumpCounter(draft, 'creature_attack', attackerId);
-          // Уклонение (Прозрачный ниндзя, docs §H14): d6 ≥ min — обмен целиком
-          // срывается, урон и сдача не проходят.
+          // Dodge (docs §H14): d6 >= min cancels the entire combat exchange.
           const dodgeThreshold = dodgeMin(draft, ctx, defenderInstanceId);
           if (dodgeThreshold !== undefined) {
             const roll = rngInt(draft.rng, 6) + 1;
@@ -134,8 +133,8 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             if (roll >= dodgeThreshold) continue;
           }
           let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
-          // Боевой контекст защитника (A8): «+N АТК пока защищается от существ
-          // на X земле» — земля ЗОНЫ АТАКУЮЩЕГО.
+          // Defender combat context (A8): "+N ATK while defending against creatures
+          // on X land" — reads the attacker's zone land.
           const strikeZone = instance(draft, strikeId).zone;
           const attackerZoneLandType = strikeZone !== null
             ? player(draft, instance(draft, strikeId).controller).lands[strikeZone]!.type
@@ -159,8 +158,8 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             targetInstanceId: defenderInstanceId,
             amount: attackPower,
           });
-          // Эхо урона (jake_2v2_card_36, docs §H16): вооружённое существо бьёт —
-          // 2 урона тому же противнику-игроку.
+          // Damage echo (jake_2v2_card_36, docs §H16): when the armed creature hits,
+          // deal 2 damage to the defending player and give a card to the teammate.
           const echoIdx = draft.armedDamageEcho.findIndex((e) => e.creatureId === attackerInstanceId && e.expiresTurn >= draft.turn);
           if (echoIdx >= 0 && attackPowerMod > 0) {
             const echo = draft.armedDamageEcho[echoIdx]!;
@@ -168,7 +167,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             dealToPlayer(draft, ctx, instance(draft, defenderInstanceId).controller, 2, echo.creatureId);
             const mate = teammatesOf(draft, echo.playerId)[0];
             if (mate) {
-              // карта-награда уходит партнёру из руки владельца, если есть
+              // Reward card goes to the teammate from the owner's hand, if any.
               const p = player(draft, echo.playerId);
               const give = p.hand[0];
               if (give) {

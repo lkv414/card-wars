@@ -10,15 +10,18 @@ import type { TargetingState } from './game/targeting';
 // Target picking returns with mechanics v2 (docs/TECH.md № 2).
 
 export type Quality = 'low' | 'high';
+export type CameraMode = 'follow' | 'self';
 
 export interface UiState {
   quality: Quality;
+  cameraMode: CameraMode;
   selectedHand: string | null;
+  hoveredHand: string | null;
   dragging: string | null;
   draggingFrom: 'hand' | 'field';
   draggingOverZone: number | null;
   draggingOverDiscard: boolean;
-  /** Мировые координаты указателя при перетаскивании (рейкаст по плоскости стола). */
+  /** World coordinates of the pointer while dragging (raycast on table plane). */
   dragPoint: { x: number; z: number } | null;
   holdingFloop: { instanceId: string; startedAt: number; startX: number; startY: number } | null;
   targeting: TargetingState | null;
@@ -54,7 +57,9 @@ export const useGame = create<GameStore>(() => ({
   lastEventsSeq: 0,
   ui: {
     quality: (localStorage.getItem('cw-quality') as Quality) ?? 'high',
+    cameraMode: (localStorage.getItem('cw-camera-mode') as CameraMode) === 'self' ? 'self' : 'follow',
     selectedHand: null,
+    hoveredHand: null,
     dragging: null,
     draggingFrom: 'hand',
     draggingOverZone: null,
@@ -88,6 +93,22 @@ export function setUi(part: Partial<UiState>): void {
 export function setQuality(quality: Quality): void {
   localStorage.setItem('cw-quality', quality);
   setUi({ quality });
+}
+
+export function setCameraMode(cameraMode: CameraMode): void {
+  localStorage.setItem('cw-camera-mode', cameraMode);
+  setUi({ cameraMode });
+}
+
+let hintTimeout: ReturnType<typeof setTimeout> | null = null;
+export function showHint(message: string): void {
+  if (hintTimeout) clearTimeout(hintTimeout);
+  useGame.setState({ error: { message } });
+  hintTimeout = setTimeout(() => {
+    if (useGame.getState().error?.message === message) {
+      useGame.setState({ error: null });
+    }
+  }, 3200);
 }
 
 export function pushEvents(events: GameEvent[]): void {

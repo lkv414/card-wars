@@ -1,12 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { Suspense, lazy, useEffect, useMemo } from 'react';
 import { GameConnection } from '../connection';
 import { useGame } from '../store';
-import { Scene } from './scene/Scene';
 import { Hud } from './hud/Hud';
 import { DomGame } from './debug/DomGame';
 import { Lobby } from './lobby/Lobby';
 
-/** Экран игры: лобби → 3D-сцена + HUD; ?debug=1 — DOM-отладочный вид. */
+const Scene = lazy(() => import('./scene/Scene').then((m) => ({ default: m.Scene })));
+
+/** Game screen: lobby -> 3D scene + HUD; ?debug=1 — DOM debug view. */
 export function GameShell({ code, nickname }: { code: string; nickname: string }) {
   const [create] = useMemo(
     () => [new URLSearchParams(location.search).get('create') === '1'],
@@ -46,7 +47,9 @@ export function GameShell({ code, nickname }: { code: string; nickname: string }
 
   return (
     <div className="game-3d">
-      <Scene />
+      <Suspense fallback={null}>
+        <Scene />
+      </Suspense>
       <Hud code={code} />
     </div>
   );

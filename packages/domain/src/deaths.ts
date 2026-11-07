@@ -24,7 +24,7 @@ function findDestroyed(draft: Draft<MatchState>, ctx: Ctx): string[] {
 
 /**
  * Resolve destruction to a fixpoint (on-death mechanics return with mechanics v2,
- * docs/TECH.md № 2; the loop stays for that future).
+ * docs/TECH.md #2; the loop stays for that future).
  */
 export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
   for (let guard = 0; guard < 200; guard++) {
@@ -37,7 +37,7 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
       bumpCounter(draft, 'creature_died', inst.controller);
       enqueueLeavePlay(draft, ctx, id, inst.cardId, inst.controller, prevZone);
       // on_death enqueued directly: the source is already in the discard, so
-      // the live-source scan cannot see it (docs/MECHANICS-V2.md §2Б).
+      // the live-source scan cannot see it (docs/MECHANICS-V2.md §2B).
       const card = ctx.catalog.getCard(inst.cardId);
       const abilityIndex = card?.abilities?.findIndex(
         (a) => a.kind === 'passive' && a.trigger === 'on_death',
@@ -60,14 +60,14 @@ export function processDeaths(draft: Draft<MatchState>, ctx: Ctx): void {
           payload: deathPayload,
         });
       }
-      // Реакции живых источников на чужую смерть (docs §H10): Обжор,
-      // Берсеркорова — их условия (if_payload_*) гейтят срабатывание.
+      // Live sources reacting to another card's death (docs §H10): their
+      // conditions (if_payload_*) gate execution.
       enqueueTrigger(draft, ctx, 'on_death', deathPayload);
     }
   }
 }
 
-/** Remove every member of a team from the game (docs/RULES.md «2 на 2»). */
+/** Remove every member of a team from the game (docs/RULES.md). */
 export function eliminateTeam(
   draft: Draft<MatchState>,
   ctx: Ctx,
@@ -81,7 +81,7 @@ export function eliminateTeam(
   }
 }
 
-/** Remove a player's field cards and companion from the game (docs/RULES.md «Выбывание»). */
+/** Remove a player's field cards and companion from the game (docs/RULES.md). */
 export function eliminatePlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId): void {
   const p = player(draft, playerId);
   p.eliminated = true;

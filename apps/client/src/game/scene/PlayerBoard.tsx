@@ -71,7 +71,7 @@ function DeckPile({ count }: { count: number }) {
   return (
     <group position={[x, y, z]}>
       {Array.from({ length: layers }, (_, i) => (
-        <mesh key={i} position={[0, i * 1.4, 0]}>
+        <mesh key={i} position={[0, i * 1.4, 0]} raycast={() => null}>
           <boxGeometry args={[CARD_W, 1, CARD_H]} />
           <meshLambertMaterial map={back} />
         </mesh>
@@ -93,13 +93,13 @@ function DiscardPile({ view, pid }: { view: PlayerView; pid: string }) {
   return (
     <group position={[x, y, z]}>
       {top && (
-        <mesh position={[0, 1, 0]}>
+        <mesh position={[0, 1, 0]} raycast={() => null}>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
           <meshLambertMaterial map={texture} />
         </mesh>
       )}
       {active && (
-        <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[CARD_W + 30, CARD_H + 30]} />
           <meshBasicMaterial
             color={overDiscard ? '#48d9a0' : '#48bb78'}
@@ -132,12 +132,12 @@ function HeroStand({
   const portrait = useMemo(() => heroTexture(heroId), [heroId]);
   return (
     <group position={[x, 0, z]}>
-      <mesh position={[0, 14, 0]}>
+      <mesh position={[0, 14, 0]} raycast={() => null}>
         <boxGeometry args={[110, 28, 10]} />
         <meshLambertMaterial color={color} />
       </mesh>
       {/* портрет героя — скан из content/heroes/images (docs/UI-3D.md «Состав сцена») */}
-      <mesh position={[0, 56, 6]}>
+      <mesh position={[0, 56, 6]} raycast={() => null}>
         <planeGeometry args={[64, 80]} />
         <meshLambertMaterial map={portrait} />
       </mesh>
@@ -171,7 +171,7 @@ function SpellGhost({ cardId, index }: { cardId: string; index: number }) {
   const x = (column - 2) * 76;
   const z = row * 22;
   return (
-    <mesh position={[x, 80 + row * 8, z]} rotation={[-Math.PI / 2.6, 0, 0]}>
+    <mesh position={[x, 80 + row * 8, z]} rotation={[-Math.PI / 2.6, 0, 0]} raycast={() => null}>
       <planeGeometry args={[CARD_W, CARD_H]} />
       <meshBasicMaterial map={texture} transparent opacity={0.55} />
     </mesh>
@@ -182,7 +182,7 @@ function SpellGhost({ cardId, index }: { cardId: string; index: number }) {
 export function FloatingLabel({ text, position }: { text: string; position: [number, number, number] }) {
   const texture = useMemo(() => labelTexture(text), [text]);
   return (
-    <sprite position={position} scale={[120, 34, 1]}>
+    <sprite position={position} scale={[120, 34, 1]} raycast={() => null}>
       <spriteMaterial map={texture} transparent />
     </sprite>
   );

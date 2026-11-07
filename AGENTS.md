@@ -31,6 +31,7 @@
 
 ```
 start.bat             # Windows: зависимости (при первом запуске) + сборка клиента + wrangler dev + браузер
+deploy.bat            # Windows: проверка входа Cloudflare + сборка пакетов и клиента + wrangler deploy
 pnpm install          # установка
 pnpm -r test          # тесты (vitest)
 pnpm -r build         # сборка пакетов → client → статика

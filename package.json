@@ -11,7 +11,8 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "build": "pnpm -r build",
-    "dev:server": "pnpm --filter @card-wars/server dev"
+    "dev:server": "pnpm --filter @card-wars/server dev",
+    "deploy": "pnpm -r build && pnpm --filter @card-wars/server deploy"
   },
   "devDependencies": {
     "eslint": "^9.30.0",

@@ -255,6 +255,20 @@ export function conditionsHold(
       case 'if_payload_player_opponent':
         if (!payload?.player || payload.player === source.player) return false;
         break;
+      case 'while_zone_ice_token': {
+        // Для аур/триггеров — зона источника; для розыгрыша есть отдельный
+        // гейт в playCard (docs §H15). Играть можно только на землю с жетоном.
+        if (!source.instanceId) return false;
+        const src = instance(draft, source.instanceId);
+        if (src.zone === null) return false;
+        if (draft.players[source.player]!.lands[src.zone]!.iceTokens <= 0) return false;
+        break;
+      }
+      case 'while_own_creatures_at_most': {
+        const count = p.zones.filter((z) => z.creature).length;
+        if (count > cond.max) return false;
+        break;
+      }
       case 'while_team_creature_on_token_land': {
         const owners = [source.player, ...teammatesOf(draft, source.player)];
         const holds = owners.some((pid) =>

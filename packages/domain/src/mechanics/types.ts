@@ -440,6 +440,8 @@ export type ConditionSpec =
   | { kind: 'while_adjacent_lanes_empty' }
   /** An opponent controls one of the source owner's creatures (Ска-пион, docs §H16). */
   | { kind: 'while_opponent_controls_own_creature' }
+  /** Own field creatures count ≤ max (Магокражка, аудит 2026-11-07). */
+  | { kind: 'while_own_creatures_at_most'; max: number }
   /**
    * Effect-array branch gate on a `choose_option` answer (docs §6 «Ветвление»).
    * Checked in runSteps BEFORE counting the step's choices; inside
@@ -710,7 +712,9 @@ type EffectOp =
   /** Rule aura: spells deal +amount extra to the covered unit (Подушка боли, docs §H16). */
   | { op: 'damage_bonus'; target: TargetRef; amount: number }
   /** Rule aura: the covered creature's land may hold a SECOND building (Крепкий лесоруб, docs §H16). */
-  | { op: 'allow_extra_building'; target: TargetRef };
+  | { op: 'allow_extra_building'; target: TargetRef }
+  /** Every own creature strikes the facing enemy with its ATK (jake_2v2_card_5). */
+  | { op: 'lane_strike_all' };
 
 /**
  * A declarative operation with its own optional conditions.

@@ -88,7 +88,7 @@ const CONDITION_KINDS = new Set([
   'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',
   'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
   'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
-  'if_payload_team_target', 'if_payload_opponent_target',
+  'if_payload_team_target', 'if_payload_opponent_target', 'while_own_creatures_at_most',
   'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
   'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains', 'while_opponents_hand_at_least', 'if_option', 'if_payload_zone_adjacent', 'while_team_creature_on_token_land', 'while_adjacent_lanes_empty', 'while_opponent_controls_own_creature',
 ]);

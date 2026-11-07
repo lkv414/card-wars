@@ -568,10 +568,10 @@ export const damageOncePerLand: MechanicHandler = (draft, ctx, source, params, c
   }
 };
 
-/** jake_2v2_card_5: каждое свое существо наносит свой ATK существу противника на линии. */
-export const laneStrikeAll: MechanicHandler = (draft, ctx, source) => {
-  const me = player(draft, source.player);
-  const enemy = opponentsOf(draft, source.player)[0];
+/** Ядро удара по линиям — и как mechanic, и как op (jake_2v2_card_5). */
+export function laneStrikeAllCore(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId): void {
+  const me = player(draft, playerId);
+  const enemy = opponentsOf(draft, playerId)[0];
   if (!enemy) return;
   for (let z = 0; z < me.zones.length; z++) {
     const id = me.zones[z]!.creature;
@@ -582,6 +582,11 @@ export const laneStrikeAll: MechanicHandler = (draft, ctx, source) => {
     if (foe) dealToCreature(draft, ctx, foe, atk, id);
     else dealToPlayer(draft, ctx, enemy, atk, id);
   }
+}
+
+/** jake_2v2_card_5: каждое свое существо наносит свой ATK существу противника на линии. */
+export const laneStrikeAll: MechanicHandler = (draft, ctx, source) => {
+  laneStrikeAllCore(draft, ctx, source.player);
 };
 
 /** lemongrab_card_16: тяни за каждое существо, вошедшее на эту землю в этот ход. */

@@ -6,6 +6,7 @@ import { finishMatch } from '../finish';
 import { killInstance } from '../damage';
 import { pickRandom, rngInt } from '../rng';
 import { clearZoneSlot, emit, instance, moveId, player } from '../util';
+import { laneStrikeAllCore } from './handlers-h16';
 import type { Ctx } from '../util';
 import type { CardData, CardInstance, CardType, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
@@ -953,6 +954,10 @@ export function runEffect(
         p.discard.push(id);
         emit(ctx, { type: 'card_discarded', player: source.player, instanceId: id, cardId: inst.cardId, from: 'deck' });
       }
+      return;
+    }
+    case 'lane_strike_all': {
+      laneStrikeAllCore(draft, ctx, source.player);
       return;
     }
     case 'ready_creature': {

@@ -65,7 +65,7 @@ const cards = readdirSync(join(contentDir, 'cards', 'json'))
 // --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
 
 const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
-  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'lane_strike_all', 'allow_extra_building']);
+  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'lane_strike_all', 'allow_extra_building', 'inherit_adjacent_buildings']);
 const TRIGGERS = new Set([
   'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
   'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
@@ -215,6 +215,8 @@ function validateEffect(effect, where, ability) {
     if (!Number.isInteger(effect.maxCost) || effect.maxCost < 0) fail();
   } else if (op === 'lane_strike_all') {
     // no targets
+  } else if (op === 'inherit_adjacent_buildings') {
+    checkTargetRef(effect.target, where);
   } else if (op === 'allow_extra_building') {
     checkTargetRef(effect.target, where);
   } else if (op === 'allow_frozen_play') {

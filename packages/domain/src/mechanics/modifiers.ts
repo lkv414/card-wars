@@ -856,7 +856,7 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'allow_extra_building']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'allow_extra_building', 'inherit_adjacent_buildings']);
 
 type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' | 'allow_frozen_play' | 'guard_player' | 'damage_cap' | 'damage_bonus' | 'allow_extra_building' }>;
 
@@ -872,6 +872,41 @@ function ruleEffects(
     if (!conditionsHold(draft, ctx, source, ability.conditions, undefined)) return;
     out.push({ source, effect: effect as RuleEffect });
   });
+  // Наследование строений (Вязаный котенок / Центр знаний, docs §H16): носитель
+  // наследует rule-тексты строений на СОСЕДНИХ своих землях (не наследники).
+  for (const pid of draft.order) {
+    const p = draft.players[pid]!;
+    for (let z = 0; z < p.zones.length; z++) {
+      const slots = [p.zones[z]!.creature, p.zones[z]!.building];
+      for (const hid of slots) {
+        if (!hid) continue;
+        const hCard = ctx.catalog.getCard(draft.instances[hid]!.cardId);
+        if (!hCard?.abilities?.some(
+          (a) => a.kind === 'passive' && a.trigger === undefined && !Array.isArray(a.effect) && a.effect?.op === 'inherit_adjacent_buildings',
+        )) continue;
+        for (const nz of [z - 1, z + 1]) {
+          if (nz < 0 || nz >= p.zones.length) continue;
+          const bid = p.zones[nz]!.building;
+          if (!bid) continue;
+          const bInst = draft.instances[bid]!;
+          const bCard = ctx.catalog.getCard(bInst.cardId);
+          if (!bCard?.abilities) continue;
+          if (bCard.abilities.some(
+            (a) => a.kind === 'passive' && a.trigger === undefined && !Array.isArray(a.effect) && a.effect?.op === 'inherit_adjacent_buildings',
+          )) continue; // донор не наследник — без цепочек
+          for (const a of bCard.abilities) {
+            if (a.kind !== 'passive' || a.trigger !== undefined) continue;
+            const eff = a.effect;
+            if (!eff || Array.isArray(eff) || !MODIFIER_OPS.has(eff.op)) continue;
+            if (eff.op === 'inherit_adjacent_buildings') continue;
+            const donorSource = { player: pid, instanceId: bid };
+            if (a.conditions && !conditionsHold(draft, ctx, donorSource, a.conditions, undefined)) continue;
+            out.push({ source: { player: pid, instanceId: hid }, effect: eff as RuleEffect });
+          }
+        }
+      }
+    }
+  }
   return out;
 }
 

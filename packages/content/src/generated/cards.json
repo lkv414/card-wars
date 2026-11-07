@@ -3078,7 +3078,19 @@
   "attack": 3,
   "defense": 7,
   "description": "На Вязаного котенка действуют строения соседних земель.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "inherit_adjacent_buildings",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "На Вязаного котенка действуют строения соседних земель (слева и справа)."
+   }
+  ]
  },
  {
   "id": "charlie_card_34",
@@ -4474,7 +4486,19 @@
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_31.png",
   "description": "Центр знаний получает игровой текст строений под твоим контролем на соседних линиях (но не их имена).",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "inherit_adjacent_buildings",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "Центр знаний получает игровой текст строений под твоим контролем на соседних линиях (но не их имена)."
+   }
+  ]
  },
  {
   "id": "fiona_card_32",

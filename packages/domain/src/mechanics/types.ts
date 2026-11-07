@@ -714,7 +714,9 @@ type EffectOp =
   /** Rule aura: the covered creature's land may hold a SECOND building (Крепкий лесоруб, docs §H16). */
   | { op: 'allow_extra_building'; target: TargetRef }
   /** Every own creature strikes the facing enemy with its ATK (jake_2v2_card_5). */
-  | { op: 'lane_strike_all' };
+  | { op: 'lane_strike_all' }
+  /** Rule aura: this card receives the rule texts of buildings on ADJACENT own lands (Котенок/Центр, docs §H16). */
+  | { op: 'inherit_adjacent_buildings'; target: TargetRef };
 
 /**
  * A declarative operation with its own optional conditions.

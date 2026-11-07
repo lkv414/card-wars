@@ -593,6 +593,28 @@ export function laneStrikeAllCore(draft: Draft<MatchState>, ctx: Ctx, playerId: 
   }
 }
 
+/** ftg_card_67: сменить до 2 своих земель на типы, которых нет среди своих земель в игре. */
+export const swapLandsReserves: MechanicHandler = (draft, ctx, source, _params, choices) => {
+  const p = player(draft, source.player);
+  for (let i = 0; i + 1 < (choices?.length ?? 0); i += 2) {
+    const zoneAsk = choices![i]!;
+    const typeAsk = choices![i + 1]!;
+    if (zoneAsk.kind !== 'landscape' || typeAsk.kind !== 'option') continue;
+    if (zoneAsk.player !== source.player) continue;
+    const present = new Set(p.lands.map((l) => l.type));
+    if (present.has(typeAsk.option as LandType)) continue; // тип уже в игре
+    const idx = zoneAsk.zone;
+    if (idx < 0 || idx >= p.lands.length) continue;
+    const l = p.lands[idx]!;
+    if (l.type === typeAsk.option) continue;
+    l.type = typeAsk.option as LandType;
+    l.frozen = false;
+    l.flipped = false;
+    l.iceTokens = l.iceTokens;
+    emit(ctx, { type: 'land_changed', player: source.player, zone: idx, change: 'type_changed' });
+  }
+};
+
 /** jake_2v2_card_5: каждое свое существо наносит свой ATK существу противника на линии. */
 export const laneStrikeAll: MechanicHandler = (draft, ctx, source) => {
   laneStrikeAllCore(draft, ctx, source.player);

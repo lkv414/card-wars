@@ -1,0 +1,19 @@
+{
+  "cardId": "lemongrab_card_37",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_opponent_controls_own_creature"
+        }
+      ],
+      "effect": {
+        "op": "cost_mod",
+        "amount": -1,
+        "self": true
+      },
+      "text": "Пока противник контролирует твое существо, Ска-пион стоит на 1 меньше."
+    }
+  ]
+}

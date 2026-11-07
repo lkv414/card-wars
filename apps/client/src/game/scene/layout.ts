@@ -5,8 +5,8 @@ import type { PlayerView } from '@card-wars/protocol';
 // Every board is a local coordinate system facing the table centre; the player
 // is always at the bottom, other seats are placed around the table.
 
-export const LAND_W = 92;
-export const LAND_H = 129;
+export const LAND_W = 96;
+export const LAND_H = 188; // 3D-тайл увеличен против оригинала: карта 63×89 целиком в своей половине 96×94 (docs/UI-3D.md «Размеры»)
 export const LAND_GAP = 10;
 export const CARD_W = 63;
 export const CARD_H = 89;
@@ -16,26 +16,33 @@ export const FROST_D = 25.5;
 export const TOKEN_T = 3;
 export const ZONE_COUNT = 4;
 
-export const ROW_LEN = ZONE_COUNT * LAND_W + (ZONE_COUNT - 1) * LAND_GAP; // 398
+export const ROW_LEN = ZONE_COUNT * LAND_W + (ZONE_COUNT - 1) * LAND_GAP; // 414
 export const ROW_Z = LAND_H / 2 + 6;
-const RING_RADIUS = 360;
+const RING_RADIUS = 380;
 
 /** Column X for zone index 0..3 (local row coordinates). */
 export function zoneX(zone: number): number {
   return -(ROW_LEN - LAND_W) / 2 + zone * (LAND_W + LAND_GAP);
 }
 
+/** Половины тайла: существо у линии боя, строение ближе к владельцу (docs/UI-3D.md «Размеры»). */
+export const HALF_W = LAND_W;
+export const HALF_H = LAND_H / 2;
 /** Creature toward the centre line, building toward the owner, companion in front. */
 export function slotLocalZ(slot: 'creature' | 'building' | 'companion'): number {
-  if (slot === 'creature') return -22;
-  if (slot === 'building') return 24;
+  if (slot === 'creature') return -HALF_H / 2;
+  if (slot === 'building') return HALF_H / 2;
   return -LAND_H / 2 - 52;
 }
 
 export const deckLocal: [number, number, number] = [-ROW_LEN / 2 - 78, 4, 0];
 export const discardLocal: [number, number, number] = [ROW_LEN / 2 + 78, 4, 0];
-export const heroLocal: [number, number, number] = [0, 0, LAND_H + 78];
-export const livesLocal: [number, number, number] = [120, 2, LAND_H + 78];
+export const heroLocal: [number, number, number] = [0, 0, LAND_H / 2 + 78];
+export const livesLocal: [number, number, number] = [120, 2, LAND_H / 2 + 78];
+/** Жетон мороза лежит на переднем крае тайла. */
+export const frostLocalZ = -LAND_H / 2 + 22;
+/** Радиус попадания в стопку сброса при перетаскивании (docs/UI-3D.md «Взаимодействие»). */
+export const DISCARD_HIT_RADIUS = 95;
 
 export interface BoardTransform {
   x: number;
@@ -157,6 +164,15 @@ export function worldOfDiscard(view: PlayerView, pid: string): [number, number, 
   return [world.x, 4, world.z];
 }
 
+/** Находимся ли мировые координаты указателя над моей стопкой сброса (drag & drop). */
+export function overMyDiscard(view: PlayerView, worldX: number, worldZ: number): boolean {
+  const world = worldOfDiscard(view, view.me);
+  if (!world) return false;
+  const dx = worldX - world[0];
+  const dz = worldZ - world[2];
+  return dx * dx + dz * dz <= DISCARD_HIT_RADIUS * DISCARD_HIT_RADIUS;
+}
+
 /** Which of my zones is under a world pointer position (drag & drop). */
 export function zoneFromWorld(view: PlayerView, worldX: number, worldZ: number): number | null {
   const origin = myBoardTransform(view);
@@ -175,13 +191,13 @@ export function cameraFor(view: PlayerView): {
   fov: number;
 } {
   if (view.mode === 'teams' && view.teamVariant === 'wall') {
-    return { position: [0, 640, 780], lookAt: [0, 0, 10], fov: 46 };
+    return { position: [0, 700, 840], lookAt: [0, 0, 10], fov: 46 };
   }
   const alive = view.order.filter((pid) => !view.players[pid]!.eliminated).length;
   if (alive >= 3) {
-    return { position: [0, 760, 940], lookAt: [0, 0, -60], fov: 46 };
+    return { position: [0, 820, 1010], lookAt: [0, 0, -60], fov: 46 };
   }
-  return { position: [0, 600, 720], lookAt: [0, 0, 30], fov: 46 };
+  return { position: [0, 660, 790], lookAt: [0, 0, 20], fov: 46 };
 }
 
 export const HAND = {

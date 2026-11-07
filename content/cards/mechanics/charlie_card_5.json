@@ -1,0 +1,42 @@
+{
+  "cardId": "charlie_card_5",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "effect": [
+        {
+          "op": "move_creature",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "destination": {
+            "kind": "choice",
+            "index": 1
+          },
+          "side": "own"
+        },
+        {
+          "op": "give_card",
+          "card": {
+            "kind": "choice",
+            "index": 0
+          },
+          "to": {
+            "kind": "teammate_player"
+          }
+        }
+      ],
+      "text": "Перемести свое существо на соседнюю землю под контролем его владельца; затем отдай эту карту партнеру в руку."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "cardId": "lady_rainicorn_card_37",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_land_type",
+          "landType": "sand"
+        },
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn",
+        "filter": {
+          "cardIds": [
+            "lady_rainicorn_card_36"
+          ]
+        }
+      },
+      "text": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этот ход."
+    }
+  ]
+}

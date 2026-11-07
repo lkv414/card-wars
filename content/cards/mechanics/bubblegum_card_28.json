@@ -1,0 +1,51 @@
+{
+  "cardId": "bubblegum_card_28",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": [
+            "heal",
+            "damage"
+          ],
+          "label": "Восстановить или нанести 1 урон каждому своему существу"
+        }
+      ],
+      "effect": [
+        {
+          "op": "heal",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 1,
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 0,
+              "option": "heal"
+            }
+          ]
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 1,
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 0,
+              "option": "damage"
+            }
+          ]
+        }
+      ],
+      "text": "В начале твоего хода можешь восстановить или нанести 1 урон каждому существу под твоим контролем."
+    }
+  ]
+}

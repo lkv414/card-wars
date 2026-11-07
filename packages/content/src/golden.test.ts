@@ -350,17 +350,15 @@ describe('golden: ауры и модификаторы (M2)', () => {
     });
     s = forceToHand(s, 'p1', 'finn_card_16');
     const res = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', 'finn_card_16'), zone: 0 }, deps);
-    expect(res.ok).toBe(true);
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('vaida play: ' + res.rejected.message);
     const leaderId = res.state.players.p1!.zones[0]!.creature!;
     const base = catalog.getCard('finn_card_16')?.attack ?? 0;
     expect(computeEff(res.state, deps, leaderId).attack).toBe(base);
     // играем заклинание (spell-карта пресета — любая дешёвая)
     const spell = deckPresets[0]!.deck.map((id) => catalog.getCard(id)!).find((c) => c.type === 'spell' && c.cost <= 2)!;
     s = forceToHand(res.state, 'p1', spell.id);
-    const castRes = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', spell.id) }, deps);
-    expect(castRes.ok).toBe(true);
-    if (!castRes.ok) return;
+    const castRes = applyCommand(s, { type: 'play_card', player: 'p1', instanceId: handIdOf(s, 'p1', spell.id), targets: [{ kind: 'player', playerId: 'p2' }] }, deps);
+    if (!castRes.ok) throw new Error('spell cast: ' + castRes.rejected.message);
     expect(computeEff(castRes.state, deps, leaderId).attack).toBe(base + 2);
   });
 

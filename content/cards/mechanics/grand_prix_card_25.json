@@ -1,0 +1,27 @@
+{
+  "cardId": "grand_prix_card_25",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "additionalCost": {
+        "destroySelf": true
+      },
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_lane_own_creature"
+          }
+        },
+        {
+          "op": "play_from_hand",
+          "destination": {
+            "kind": "this_lane_land"
+          }
+        }
+      ],
+      "text": "ПРИЕМ >>> Сбрось Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно."
+    }
+  ]
+}

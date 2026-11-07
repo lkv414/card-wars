@@ -126,6 +126,25 @@ export function enqueueTrigger(
       payload,
     });
   });
+  // Компаньоны 2v2 (docs §H16): события игрока волонтёрятся тиммейту через
+  // on_companion_event с обёрнутым payload.
+  if (payload.player && trigger !== 'on_companion_event') {
+    for (const mate of teammatesOf(draft, payload.player)) {
+      forSource(draft, ctx, (source, ability, abilityIndex) => {
+        if (ability.kind !== 'passive' || ability.trigger !== 'on_companion_event') return;
+        if (source.player !== mate) return;
+        ctx.frame.queue.push({
+          player: source.player,
+          beneficiary: source.player,
+          instanceId: source.instanceId,
+          cardId: source.instanceId ? instance(draft, source.instanceId).cardId : null,
+          abilityIndex,
+          trigger: 'on_companion_event',
+          payload: { ...payload, companionEvent: trigger },
+        });
+      });
+    }
+  }
 }
 
 function abilityOf(

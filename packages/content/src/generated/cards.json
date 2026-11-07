@@ -564,7 +564,20 @@
   "landType": "swamp",
   "image": "/content/cards/images/bmo_card_34.png",
   "description": "Потрать 1 действие, ПРИЕМ >>> Если ты не контролируешь существ на этой линии, то перемести выбранное существо на свою сторону и подготовь его. В конце хода верни его на сторону владельца.",
-  "deckSet": "bmo"
+  "deckSet": "bmo",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "mechanic": "borrow_creature",
+    "text": "ПРИЕМ >>> Если ты не контролируешь существ на этой линии, перемести выбранное существо на свою сторону и подготовь его. В конце хода верни его владельцу."
+   }
+  ]
  },
  {
   "id": "bmo_card_35",
@@ -1219,7 +1232,55 @@
   "attack": 1,
   "defense": 7,
   "description": "В начале твоего хода можешь восстановить или нанести 1 урон с каждого существа под твоим контролем. (Выбери для каждого существа.)",
-  "deckSet": "bubblegum"
+  "deckSet": "bubblegum",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "optional": true,
+    "targets": [
+     {
+      "kind": "choose_option",
+      "options": [
+       "heal",
+       "damage"
+      ],
+      "label": "Восстановить или нанести 1 урон каждому своему существу"
+     }
+    ],
+    "effect": [
+     {
+      "op": "heal",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "heal"
+       }
+      ]
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": 1,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "damage"
+       }
+      ]
+     }
+    ],
+    "text": "В начале твоего хода можешь восстановить или нанести 1 урон каждому существу под твоим контролем."
+   }
+  ]
  },
  {
   "id": "bubblegum_card_30",
@@ -1384,7 +1445,31 @@
   "landType": "rainbow",
   "image": "/content/cards/images/cake_card_5.png",
   "description": "Каждый раз когда существо противника на этой линии получает урон, прибавь к значению 1.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "conditions": [
+     {
+      "kind": "if_payload_zone_matches_self"
+     },
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "defense",
+     "amount": 1,
+     "duration": "permanent"
+    },
+    "text": "Каждый раз когда существо противника на этой линии получает урон, это строение навсегда получает +1 DEF."
+   }
+  ]
  },
  {
   "id": "cake_card_7",
@@ -2173,7 +2258,41 @@
   "landType": "rainbow",
   "image": "/content/cards/images/charlie_card_3.png",
   "description": "Выбери существо под твоим контролем и верни его на руку владельцу. Выбери другого игрока. Он выбирает существо под его контролем и возвращает его на руку владельцу.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "any_player"
+     },
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "choice",
+       "index": 2
+      }
+     }
+    ],
+    "text": "Верни свое существо в руку владельцу. Выбранный игрок возвращает свое существо в руку владельцу."
+   }
+  ]
  },
  {
   "id": "charlie_card_4",
@@ -2217,7 +2336,46 @@
   "landType": "rainbow",
   "image": "/content/cards/images/charlie_card_5.png",
   "description": "Выбери существо и перемести на соседнюю землю под контролем его владельца. Как сделал это можешь отдать карту партнёру в руку.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_landscape"
+     }
+    ],
+    "effect": [
+     {
+      "op": "move_creature",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 1
+      },
+      "side": "own"
+     },
+     {
+      "op": "give_card",
+      "card": {
+       "kind": "choice",
+       "index": 0
+      },
+      "to": {
+       "kind": "teammate_player"
+      }
+     }
+    ],
+    "text": "Перемести свое существо на соседнюю землю под контролем его владельца; затем отдай эту карту партнеру в руку."
+   }
+  ]
  },
  {
   "id": "charlie_card_6",
@@ -2641,7 +2799,23 @@
   "landType": "blue",
   "image": "/content/cards/images/charlie_card_22.png",
   "description": "Посмотри 4 верхние карты в колоде выбранного игрока и верни их обратно в любом порядке. Затем тяни карту.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "any_player"
+     }
+    ],
+    "mechanic": "peek_reorder",
+    "params": {
+     "count": 4
+    },
+    "text": "Посмотри 4 верхние карты колоды выбранного игрока (в своем виде), верни их обратно. Затем тяни карту — добор выполняется в тот же ход вручную."
+   }
+  ]
  },
  {
   "id": "charlie_card_23",
@@ -2762,7 +2936,37 @@
   "landType": "good",
   "image": "/content/cards/images/charlie_card_28.png",
   "description": "Во время фазы сражения твоего партнера, первый раз когда нанесен урон противнику, другой партнер может нанести 1 урон выбранному существу на 1 из своих линий.",
-  "deckSet": "charlie"
+  "deckSet": "charlie",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_companion_event",
+    "optional": true,
+    "oncePerTurn": true,
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_player_opponent"
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "text": "Во время фазы сражения твоего партнера, первый раз когда нанесен урон противнику, ты можешь нанести 1 урон выбранному существу на своей линии."
+   }
+  ]
  },
  {
   "id": "charlie_card_29",
@@ -4139,7 +4343,15 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если мы сбросил радужную карту таким способом, получи 1 Действие.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "mechanic": "draw_discard_rainbow_action",
+    "text": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил радужную карту, получи 1 Действие."
+   }
+  ]
  },
  {
   "id": "fiona_card_23",
@@ -4151,7 +4363,21 @@
   "attack": 2,
   "defense": 8,
   "description": "Когда эта карта оказывается в твоей стопке сброса, можешь сбросить карту с руки чтобы вернуть Невероятного опоссума себе в руку.",
-  "deckSet": "fiona"
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_card_discarded",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_instance_self"
+     }
+    ],
+    "mechanic": "discard_to_return_self",
+    "text": "Когда эта карта оказывается в твоей стопке сброса, можешь сбросить карту с руки и вернуть Невероятного опоссума себе в руку."
+   }
+  ]
  },
  {
   "id": "fiona_card_28",
@@ -4779,7 +5005,24 @@
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_15.png",
   "description": "Подготовь 1 Существо каждого типа под своим контролем. (Типы это Кукуруза Радуга, Болота, Равнина и Песок.)",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "ready_per_type",
+    "params": {
+     "types": [
+      "corn",
+      "rainbow",
+      "swamp",
+      "blue",
+      "sand"
+     ]
+    },
+    "text": "Подготовь 1 существо каждого типа под своим контролем (Кукуруза, Радуга, Болота, Равнина, Песок)."
+   }
+  ]
  },
  {
   "id": "ftg_card_16",
@@ -5061,7 +5304,15 @@
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_26.png",
   "description": "В начале твоего хода, каждый игрок, который контролирует существо на этой линии, тянет карту.",
-  "deckSet": "ftg"
+  "deckSet": "ftg",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "mechanic": "draw_to_lane_players",
+    "text": "В начале твоего хода каждый игрок, который контролирует существо на этой линии, тянет карту."
+   }
+  ]
  },
  {
   "id": "ftg_card_27",
@@ -7644,7 +7895,34 @@
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_4.png",
   "description": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложить Пляжную вечеринку в руку партнера.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "reveal_deck_top",
+      "count": 3
+     },
+     {
+      "op": "resolve_revealed",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "to": "hand",
+      "rest": "discard"
+     }
+    ],
+    "targets": [
+     {
+      "kind": "revealed_card"
+     }
+    ],
+    "text": "Открой 3 верхние карты своей колоды, возьми одну, остальные сбрось."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_5",
@@ -7654,7 +7932,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_5.png",
   "description": "Вытяни карту и открой ее. Выбранный игрок открывает верхнюю карту своей колоды. Если стоимость карт совпадает выбранный игрок берет ее себе на руку.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "any_player"
+     }
+    ],
+    "mechanic": "compare_reveal_players",
+    "params": {
+     "selfFirst": true
+    },
+    "text": "Открой верхнюю карту своей колоды. Выбранный игрок открывает верхнюю карту своей колоды. Если стоимости совпадают, выбранный игрок берет ее в руку."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_6",
@@ -7664,7 +7958,26 @@
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_6.png",
   "description": "В первый раз когда ты или твой партнер сыграете Радужное заклинание, во время своего хода, другой партнер может сыграть Радужное заклинание той же стоимости бесплатно.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_companion_event",
+    "oncePerTurn": true,
+    "conditions": [
+     {
+      "kind": "if_payload_land_type",
+      "landType": "rainbow"
+     }
+    ],
+    "mechanic": "arm_free_play",
+    "params": {
+     "landType": "rainbow",
+     "costFromPayload": true
+    },
+    "text": "В первый раз в ход, когда ты или партнер сыграли Радужное заклинание, другой партнер может сыграть Радужное заклинание той же стоимости бесплатно."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_7",
@@ -7676,7 +7989,31 @@
   "attack": 3,
   "defense": 8,
   "description": "ПРИЕМ >>> Выбранное существо получает столько +ATK сколько стоят все карты партнерства под контролем твоей команды.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "team_companion_cost"
+     },
+     "duration": "permanent"
+    },
+    "text": "ПРИЕМ >>> Выбранное существо получает +ATK, равный стоимости всех карт партнерства под контролем твоей команды."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_8",
@@ -7810,7 +8147,15 @@
   "landType": "ice",
   "image": "/content/cards/images/grand_prix_card_11.png",
   "description": "Сосчитай количество земель с Ледяными жетонами. Восстанови 1 урон с такого же количества дружественых существ.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "heal_one_per_ice_land",
+    "text": "Сосчитай количество земель с Ледяными жетонами. Восстанови 1 урон с такого же количества дружественных существ."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_12",
@@ -7969,7 +8314,26 @@
   "attack": 3,
   "defense": 3,
   "description": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_adjacent_lanes_empty"
+     }
+    ],
+    "effect": {
+     "op": "suppress",
+     "target": {
+      "kind": "this_creature"
+     },
+     "spells": true,
+     "creatureAbilities": true
+    },
+    "text": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_18",
@@ -7981,7 +8345,23 @@
   "attack": 0,
   "defense": 4,
   "description": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 2 урона выбранному существу. Если это существо погибло, заморозь землю под ним.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "mechanic": "damage_then_freeze_land",
+    "params": {
+     "amount": 2
+    },
+    "text": "ПРИЕМ >>> Нанеси 2 урона выбранному существу. Если оно погибло, заморозь землю под ним."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_19",
@@ -8124,7 +8504,31 @@
   "landType": "sand",
   "image": "/content/cards/images/grand_prix_card_25.png",
   "description": "Сбрось Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно.",
-  "deckSet": "grand_prix"
+  "deckSet": "grand_prix",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "additionalCost": {
+     "destroySelf": true
+    },
+    "effect": [
+     {
+      "op": "return_to_owner",
+      "target": {
+       "kind": "this_lane_own_creature"
+      }
+     },
+     {
+      "op": "play_from_hand",
+      "destination": {
+       "kind": "this_lane_land"
+      }
+     }
+    ],
+    "text": "ПРИЕМ >>> Сбрось Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно."
+   }
+  ]
  },
  {
   "id": "grand_prix_card_26",
@@ -9290,7 +9694,20 @@
   "attack": 1,
   "defense": 7,
   "description": "ПРИЕМ >>> Перемести Бордер колли на любую свою пустую землю. Если эта земля заморожена, получи 1 Действие.",
-  "deckSet": "ice_king"
+  "deckSet": "ice_king",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "own_landscape"
+     }
+    ],
+    "mechanic": "move_self_gain_action_if_frozen",
+    "text": "ПРИЕМ >>> Перемести Бордер колли на любую свою пустую землю. Если эта земля заморожена, получи 1 Действие."
+   }
+  ]
  },
  {
   "id": "ice_king_card_4",
@@ -10032,7 +10449,18 @@
   "attack": 1,
   "defense": 4,
   "description": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо на этой линии на пустую соседнюю линию (на своей стороне).",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "mechanic": "enter_move_lane_creature",
+    "text": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо противника в этой линии на пустую соседнюю линию."
+   }
+  ]
  },
  {
   "id": "jake_card_7",
@@ -10144,7 +10572,32 @@
   "attack": 0,
   "defense": 5,
   "description": "ПРИЕМ >>> Наносит 1 урон выбранному существу. Повтори это за каждое Кукурузное поле под твоим контролем. (Может повредить каждое существо только 1 раз.)",
-  "deckSet": "jake"
+  "deckSet": "jake",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": {
+      "kind": "per_lands",
+      "where": "own",
+      "landType": "corn",
+      "amount": 1
+     }
+    },
+    "text": "ПРИЕМ >>> Наносит 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем."
+   }
+  ]
  },
  {
   "id": "jake_card_18",
@@ -10590,7 +11043,28 @@
   "landType": "good",
   "image": "/content/cards/images/jake_2v2_card_5.png",
   "description": "Дружественные существа получают +1 ATK до начала следующей фазы сражения. Затем каждое существо наносит урон равный его ATK существу противника на этой линии.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "effect": [
+     {
+      "op": "stat_buff",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "stat": "attack",
+      "amount": 1,
+      "duration": "this_turn"
+     },
+     {
+      "op": "lane_strike_all"
+     }
+    ],
+    "text": "Дружественные существа получают +1 ATK до начала следующей фазы сражения. Затем каждое существо наносит урон, равный его ATK, существу противника на этой линии."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_6",
@@ -10661,7 +11135,100 @@
   "landType": "good",
   "image": "/content/cards/images/jake_2v2_card_8.png",
   "description": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. Проделай то же самое с другим дружественным существом.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "choose_option",
+      "options": [
+       "heal",
+       "damage"
+      ],
+      "label": "Первое существо: восстановить или нанести 2"
+     },
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "choose_option",
+      "options": [
+       "heal",
+       "damage"
+      ],
+      "label": "Второе существо: восстановить или нанести 2"
+     }
+    ],
+    "effect": [
+     {
+      "op": "heal",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 2,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "heal"
+       }
+      ]
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 2,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 0,
+        "option": "damage"
+       }
+      ]
+     },
+     {
+      "op": "heal",
+      "target": {
+       "kind": "choice",
+       "index": 2
+      },
+      "amount": 2,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 2,
+        "option": "heal"
+       }
+      ]
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 2
+      },
+      "amount": 2,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 2,
+        "option": "damage"
+       }
+      ]
+     }
+    ],
+    "text": "ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. То же с другим дружественным существом."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_10",
@@ -10899,7 +11466,54 @@
   "attack": 3,
   "defense": 7,
   "description": "+1 ATK за каждую Тимборк под контролем твоей команды. Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_played_name",
+      "matchers": [
+       {
+        "cardIds": [
+         "jake_2v2_card_17",
+         "jake_2v2_card_18",
+         "jake_2v2_card_20",
+         "jake_2v2_card_22"
+        ]
+       }
+      ],
+      "amount": 1
+     },
+     "duration": "aura"
+    },
+    "text": "+1 ATK за каждого Зебрарога под контролем твоей команды."
+   },
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "while_phase",
+      "phase": "combat"
+     },
+     {
+      "kind": "while_own_turn"
+     }
+    ],
+    "mechanic": "self_rescue_on_death",
+    "params": {
+     "destination": "hand"
+    },
+    "text": "Если покидает игру в твоей фазе сражения, можешь положить его в свою руку."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_24",
@@ -10911,7 +11525,28 @@
   "attack": 2,
   "defense": 5,
   "description": "Если Молодой крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его на верх своей колоды.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_leave_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "while_phase",
+      "phase": "combat"
+     },
+     {
+      "kind": "while_own_turn"
+     }
+    ],
+    "mechanic": "self_rescue_on_death",
+    "params": {
+     "destination": "deck_top"
+    },
+    "text": "Если Молодой крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его на верх своей колоды."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_25",
@@ -11026,7 +11661,25 @@
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_28.png",
   "description": "Когда выбранное существо атакует в этом ход, оно покидает игру перед фазой сражения, сними весь урон с него за это.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     }
+    ],
+    "effect": {
+     "op": "banish_card",
+     "card": {
+      "kind": "triggering_instance"
+     }
+    },
+    "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед нанесением урона."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_29",
@@ -11084,7 +11737,18 @@
   "landType": "rainbow",
   "image": "/content/cards/images/jake_2v2_card_34.png",
   "description": "Сыграй свое следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "arm_free_play",
+    "params": {
+     "nameRequired": true
+    },
+    "text": "Сыграй свое следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_35",
@@ -11094,7 +11758,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/jake_2v2_card_35.png",
   "description": "Выбери другого игрока и землю под твоим контролем. Каждый тянет карту существа соответствующего этой земле.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "any_player"
+     },
+     {
+      "kind": "own_landscape"
+     }
+    ],
+    "mechanic": "each_draw_creature_of_type",
+    "text": "Выбери другого игрока и землю под твоим контролем. Каждый игрок тянет карту существа, соответствующего этой земле."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_36",
@@ -11104,7 +11784,20 @@
   "landType": "rainbow",
   "image": "/content/cards/images/jake_2v2_card_36.png",
   "description": "Если выбранное существо под твоим контролем наносит 1 и более урона противнику в этом ход, то нанеси 2 урона этому же противнику. Как сделал это, передай какрту в руку своему партнеру.",
-  "deckSet": "jake_2v2"
+  "deckSet": "jake_2v2",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "mechanic": "arm_damage_echo",
+    "text": "Если выбранное существо под твоим контролем наносит 1+ урона в этот ход, нанеси 2 урона этому же противнику."
+   }
+  ]
  },
  {
   "id": "jake_2v2_card_38",
@@ -11581,7 +12274,30 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lady_rainicorn_card_25.png",
   "description": "Выбранное песчаное существо получает +2 ATK в этом ход за каждое существо, вступившее в игру на соседнюю линию в этом ходу.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "per_counter",
+      "counter": "creature_entered",
+      "scope": "own",
+      "amount": 2
+     },
+     "duration": "aura",
+     "filter": {
+      "landType": "sand"
+     }
+    },
+    "text": "Песчаные существа получают +2 ATK в этот ход за каждое существо, вступившее в игру в этот ход."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_33",
@@ -11644,7 +12360,40 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lady_rainicorn_card_37.png",
   "description": "Когда песнаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этот ход.",
-  "deckSet": "lady_rainicorn"
+  "deckSet": "lady_rainicorn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "conditions": [
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     },
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "each_creature_yours"
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn",
+     "filter": {
+      "cardIds": [
+       "lady_rainicorn_card_36"
+      ]
+     }
+    },
+    "text": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этот ход."
+   }
+  ]
  },
  {
   "id": "lady_rainicorn_card_38",
@@ -12031,7 +12780,15 @@
   "landType": "sand",
   "image": "/content/cards/images/lemongrab_card_16.png",
   "description": "ПРИЕМ >>> Тяни карту за каждое существо введённое в игру на эту землю в этом ход.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "mechanic": "draw_per_zone_enters",
+    "text": "ПРИЕМ >>> Тяни карту за каждое существо, введенное в игру на эту землю в этот ход."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_17",
@@ -12554,7 +13311,23 @@
   "attack": 3,
   "defense": 3,
   "description": "Пока противник контролируем твое существо, Ска-пион стоит на 1 меньше, чтобы сыграть его.",
-  "deckSet": "lemongrab"
+  "deckSet": "lemongrab",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_opponent_controls_own_creature"
+     }
+    ],
+    "effect": {
+     "op": "cost_mod",
+     "amount": -1,
+     "self": true
+    },
+    "text": "Пока противник контролирует твое существо, Ска-пион стоит на 1 меньше."
+   }
+  ]
  },
  {
   "id": "lemongrab_card_39",
@@ -12703,7 +13476,32 @@
   "attack": 2,
   "defense": 4,
   "description": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (если она там есть), после перемешай. Если поле покидает одна, с ней уходит и вторая. Нельзя вернуть из сброса.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "while_empty_lands"
+     }
+    ],
+    "mechanic": "soul_twin",
+    "text": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (перемешав после)."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "set_instance_flag",
+     "target": {
+      "kind": "this_creature"
+     },
+     "flag": "cannotReturnFromDiscard"
+    },
+    "text": "Нельзя вернуть из сброса."
+   }
+  ]
  },
  {
   "id": "lich_card_8",
@@ -12945,7 +13743,26 @@
   "attack": 0,
   "defense": 7,
   "description": "Прием >>> Перемешай сброс рубашкой вверх и тяни карты, пока не попадётся Коричный зомби или Прячный скелет, после сыграй их. Если места нет, прием не работает.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "conditions": [
+     {
+      "kind": "while_empty_lands"
+     }
+    ],
+    "mechanic": "dig_play_named",
+    "params": {
+     "cardIds": [
+      "lich_card_19",
+      "lich_card_32"
+     ]
+    },
+    "text": "ПРИЕМ >>> Перемешай свой сброс в колоду и тяни карты, пока не попадется Коричный зомби или Корова-нежить, после сыграй их бесплатно."
+   }
+  ]
  },
  {
   "id": "lich_card_17",
@@ -13390,7 +14207,23 @@
   "attack": 4,
   "defense": 3,
   "description": "Не отличает своих от чужих.\n\nПри атаке существ противника, если рядом с ним есть союзные существа, нанеси одному из них на твой выбор 2 урона.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "conditions": [
+     {
+      "kind": "if_payload_instance_self"
+     }
+    ],
+    "mechanic": "splash_target_allies",
+    "params": {
+     "amount": 2
+    },
+    "text": "При атаке существа противника, если рядом с ним есть союзные существа, нанеси одному из них 2 урона."
+   }
+  ]
  },
  {
   "id": "lich_card_44",
@@ -13440,7 +14273,24 @@
   "landType": "ghost",
   "image": "/content/cards/images/lich_card_46.png",
   "description": "Уничтожь существо под твоим контролем. Если урон на нём - меньше половины его DEF, тяни 3 карты, иначе можешь взять 2.",
-  "deckSet": "lich"
+  "deckSet": "lich",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "own_creature"
+     }
+    ],
+    "mechanic": "sacrifice_half_def_draw",
+    "params": {
+     "full": 3,
+     "else": 2
+    },
+    "text": "Уничтожь существо под твоим контролем. Если урон на нем меньше половины его DEF, тяни 3 карты, иначе 2."
+   }
+  ]
  },
  {
   "id": "lich_card_47",
@@ -13911,7 +14761,20 @@
   "landType": "blue",
   "image": "/content/cards/images/lsp_card_17.png",
   "description": "ПРИЕМ >>> Если контролируешь существо на этой линии, получи 1 действие. Используй его только чтобы играть существо на эту линию.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "conditions": [
+     {
+      "kind": "while_zone_has_creature"
+     }
+    ],
+    "mechanic": "grant_earmark",
+    "text": "ПРИЕМ >>> Если контролируешь существо на этой линии, получи 1 действие — только чтобы играть существо на эту линию."
+   }
+  ]
  },
  {
   "id": "lsp_card_18",
@@ -13988,7 +14851,43 @@
   "landType": "blue",
   "image": "/content/cards/images/lsp_card_21.png",
   "description": "Перемести выбранное существо под твоим контролем на пустую Голубую равнину под твоим контролем, затем тяни карту.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_landscape",
+      "filter": {
+       "landType": "blue"
+      }
+     }
+    ],
+    "effect": [
+     {
+      "op": "move_creature",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "destination": {
+       "kind": "choice",
+       "index": 1
+      },
+      "side": "own"
+     },
+     {
+      "op": "draw_cards",
+      "count": 1
+     }
+    ],
+    "text": "Перемести выбранное существо под твоим контролем на пустую Голубую равнину под твоим контролем, затем тяни карту."
+   }
+  ]
  },
  {
   "id": "lsp_card_22",
@@ -14273,7 +15172,59 @@
   "landType": "rainbow",
   "image": "/content/cards/images/lsp_card_39.png",
   "description": "Уничножь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии.",
-  "deckSet": "lsp"
+  "deckSet": "lsp",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "any_building"
+     },
+     {
+      "kind": "choose_option",
+      "options": [
+       "yes",
+       "no"
+      ],
+      "label": "Нанести 3 урона существу на этой линии?"
+     }
+    ],
+    "effect": [
+     {
+      "op": "destroy",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      }
+     },
+     {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice_zone_opponent_creature",
+       "index": 0
+      },
+      "amount": 3,
+      "conditions": [
+       {
+        "kind": "if_option",
+        "index": 1,
+        "option": "yes"
+       }
+      ]
+     },
+     {
+      "op": "flip_land",
+      "target": {
+       "kind": "choice_zone_land",
+       "index": 0
+      },
+      "down": true
+     }
+    ],
+    "text": "Уничтожь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии."
+   }
+  ]
  },
  {
   "id": "marceline_card_1",
@@ -14440,7 +15391,15 @@
   "attack": 1,
   "defense": 6,
   "description": "ПРИЕМ >>> Каждый противник сбрасывает карту стоимостью 0 или показывает руку, если их нет.",
-  "deckSet": "marceline"
+  "deckSet": "marceline",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "mechanic": "discard_cost0_or_reveal_hand",
+    "text": "ПРИЕМ >>> Каждый противник сбрасывает карту стоимостью 0 или показывает руку, если таких нет."
+   }
+  ]
  },
  {
   "id": "marceline_card_11",
@@ -15118,7 +16077,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/monika_card_1.png",
   "description": "Выбери двух игроков. Каждый открывает случайную карту с руки. Если их стоимость не совпадает они сбрасывают эти карты.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "any_player"
+     },
+     {
+      "kind": "any_player"
+     }
+    ],
+    "mechanic": "compare_reveal_players",
+    "text": "Выбери двух игроков. Каждый открывает случайную карту с руки. Если их стоимость не совпадает, они сбрасывают эти карты."
+   }
+  ]
  },
  {
   "id": "monika_card_2",
@@ -15128,7 +16103,23 @@
   "landType": "rainbow",
   "image": "/content/cards/images/monika_card_2.png",
   "description": "Вытяни 2 верхних карты из своей колоды. Если они одинаковой стоимости нанеси урон выбранному противнику. Как сделал это, можешь вложить эту карту в руку партнера.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
+    "mechanic": "draw_two_cost_match",
+    "params": {
+     "amount": 2
+    },
+    "text": "Вытяни 2 верхние карты своей колоды. Если они одинаковой стоимости — нанеси 2 урона выбранному противнику."
+   }
+  ]
  },
  {
   "id": "monika_card_7",
@@ -15218,7 +16209,32 @@
   "landType": "ice",
   "image": "/content/cards/images/monika_card_9.png",
   "description": "Когда ледяная база вступает в игру, заморозь обе земли на этой линии. Можешь играть существо на эту землю даже если она заморожена.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+     "op": "freeze_land",
+     "target": {
+      "kind": "this_lane_lands"
+     },
+     "frozen": true
+    },
+    "text": "Когда Ледяная база вступает в игру, заморозь обе земли на этой линии."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "allow_frozen_play",
+     "target": {
+      "kind": "this_lane_own_creature"
+     },
+     "scope": "own_lane"
+    },
+    "text": "Можешь играть существо на эту землю, даже если она заморожена."
+   }
+  ]
  },
  {
   "id": "monika_card_10",
@@ -15260,7 +16276,20 @@
   "landType": "ice",
   "image": "/content/cards/images/monika_card_11.png",
   "description": "Заморозь выбранную землю. Ты можешь перемещать любое количество Ледяных жетонов на новые земли (1 жетон на землю).",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "landscape"
+     }
+    ],
+    "mechanic": "freeze_and_spread_tokens",
+    "text": "Заморозь выбранную землю. Ее Ледяные жетоны перемещаются по одному на твои земли без жетонов."
+   }
+  ]
  },
  {
   "id": "monika_card_12",
@@ -15382,7 +16411,25 @@
   "landType": "ice",
   "image": "/content/cards/images/monika_card_24.png",
   "description": "Пока ты или твой партнер контролируете существо на земле с ледяным жетоном, ваша команда может играть существ на земли с ледяным жетоном.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_team_creature_on_token_land"
+     }
+    ],
+    "effect": {
+     "op": "allow_frozen_play",
+     "target": {
+      "kind": "this_creature"
+     },
+     "scope": "all"
+    },
+    "text": "Пока ты или твой партнер контролируете существо на земле с ледяным жетоном, ваша команда может играть существ на земли с ледяным жетоном."
+   }
+  ]
  },
  {
   "id": "monika_card_25",
@@ -15453,7 +16500,34 @@
   "attack": 2,
   "defense": 6,
   "description": "Сбрось карту >>>\nКрок-исследователь получает +ATK равную стоимости сброшенной карты (используй только во время своего хода).",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "conditions": [
+     {
+      "kind": "while_own_turn"
+     }
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_creature"
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "chosen_card_cost",
+      "index": 0
+     },
+     "duration": "permanent"
+    },
+    "text": "ПРИЕМ >>> Сбрось карту >>> Крок-исследователь получает +ATK, равную стоимости сброшенной карты."
+   }
+  ]
  },
  {
   "id": "monika_card_30",
@@ -15498,7 +16572,21 @@
   "attack": 3,
   "defense": 8,
   "description": "Сбрось карту >>> Открой 3 верхние карты своей колоды. Сыграй открытое партнерство бесплатно, затем сбрось другие карты.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "additionalCost": {
+     "discardFromHand": 1
+    },
+    "mechanic": "dig_play_companion",
+    "params": {
+     "count": 3
+    },
+    "text": "ПРИЕМ >>> Сбрось карту >>> Открой 3 верхние карты своей колоды. Сыграй открытое партнерство бесплатно, остальное сбрось."
+   }
+  ]
  },
  {
   "id": "monika_card_33",
@@ -15571,7 +16659,23 @@
   "attack": 2,
   "defense": 6,
   "description": "Уничтожь Тошнотного клопа >>>\nУничтожь выбранное Существо противника на этой линии и любое существо с таким же именем в игре.",
-  "deckSet": "monika"
+  "deckSet": "monika",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "additionalCost": {
+     "destroySelf": true
+    },
+    "targets": [
+     {
+      "kind": "lane_opponent_creature"
+     }
+    ],
+    "mechanic": "destroy_lane_and_same_name",
+    "text": "ПРИЕМ >>> Уничтожь Тошнотного клопа >>> Уничтожь выбранное существо противника на этой линии и любое существо с таким же именем в игре."
+   }
+  ]
  },
  {
   "id": "monika_card_37",
@@ -15792,7 +16896,31 @@
   "attack": 2,
   "defense": 10,
   "description": "Бей её сильнее - ей всё равно.\nПодушка боли не может получить больше 4 урона за удар существа противника, зато магия наносит ей на 2 единицы урона больше.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "damage_cap",
+     "target": {
+      "kind": "this_creature"
+     },
+     "max": 4
+    },
+    "text": "Подушка боли не может получить больше 4 урона за удар существа противника."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "damage_bonus",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": 2
+    },
+    "text": "Зато заклинания наносят ей на 2 урона больше."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_7",
@@ -16121,7 +17249,19 @@
   "landType": "good",
   "image": "/content/cards/images/tree_trunks_card_25.png",
   "description": "Ты сбрасываешь всех существ из игры и все карты с руки. После этого тяни 5 карт из колоды. У тебя есть 3 действия на то, чтобы сыграть существ, которые тебе выпали. Если существ не оказалось - готовься к худшему.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "trigger": "on_cast",
+    "mechanic": "reset_and_refill",
+    "params": {
+     "draw": 5,
+     "actions": 3
+    },
+    "text": "Ты сбрасываешь всех существ из игры и все карты с руки. Затем тяни 5 карт. У тебя есть 3 действия, чтобы сыграть существ."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_26",
@@ -16131,7 +17271,18 @@
   "landType": "good",
   "image": "/content/cards/images/tree_trunks_card_26.png",
   "description": "Приём >>> Если у тебя под контролем одна аллея, можешь переместить существо на этой линии на пустую соседнюю землю. Если две, можешь также переместиться ко второй аллее или поменять местами существ, находящихся на землях с аллеей.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "mechanic": "alley_move",
+    "params": {
+     "alleyCardId": "tree_trunks_card_26"
+    },
+    "text": "ПРИЕМ >>> Если у тебя одна Хлопковая аллея, перемести существо этой линии на пустую соседнюю землю. Если две — также поменяй местами существ на землях с аллеями."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_28",
@@ -16379,7 +17530,20 @@
   "attack": 2,
   "defense": 8,
   "description": "Держись! Если у тебя 5 жизней игрока или меньше и ты сейчас получишь урон, милостраж получает урон за тебя вне зависимости от того, на какой линии находится. Если атакует существо, он даёт ему сдачу, иначе просто получает урон.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "guard_player",
+     "target": {
+      "kind": "this_creature"
+     },
+     "threshold": 5
+    },
+    "text": "Если у тебя 5 жизней или меньше, урон тебе получает Мило-страж (сдача — при атаке существом)."
+   }
+  ]
  },
  {
   "id": "tree_trunks_card_39",
@@ -16391,6 +17555,33 @@
   "attack": 0,
   "defense": 5,
   "description": "\"Не бейте меня, пожалуйста!\"\nПриём >>> Если у тебя 10 жизней или больше, +1 ATK любому существу в игре на этом ходу, иначе +3. Не суммируется с приемами.",
-  "deckSet": "tree_trunks"
+  "deckSet": "tree_trunks",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "targets": [
+     {
+      "kind": "any_creature"
+     }
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": {
+      "kind": "lives_ladder",
+      "threshold": 10,
+      "high": 1,
+      "low": 3
+     },
+     "duration": "this_turn"
+    },
+    "text": "ПРИЕМ >>> Если у тебя 10 жизней или больше, +1 ATK любому существу в игре в этот ход, иначе +3."
+   }
+  ]
  }
 ]

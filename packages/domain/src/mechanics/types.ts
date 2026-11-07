@@ -45,6 +45,8 @@ export interface TriggerPayload {
   zone?: number | null;
   /** on_death: the creature that dealt the lethal damage (Карга, Духо-муха). */
   killerInstanceId?: string;
+  /** on_companion_event: the wrapped partner event (docs §H16). */
+  companionEvent?: Trigger;
 }
 
 /** Target asks: what the player must pick, in declared order (docs/MECHANICS-V2.md §5). */
@@ -93,7 +95,11 @@ export type TargetAskKind =
   /** Pick one of several named branches («ИЛИ», выбор типа земли). */
   | 'choose_option'
   /** One answer carrying damage values for every own creature (docs §H1). */
-  | 'damage_distribution';
+  | 'damage_distribution'
+  /** Any building in play (lsp_card_39). */
+  | 'any_building'
+  /** One card of the private peek window, by position (charlie_card_22). */
+  | 'peek_card';
 
 export interface TargetAsk {
   kind: TargetAskKind;
@@ -197,7 +203,13 @@ export type TargetRef =
   /** Top card of each opponent's discard pile (Очаровательный трупоедик). */
   | { kind: 'opponent_discard_top' }
   /** Creature standing in the zone chosen by the ask answer at this index (Ультра пес). */
-  | { kind: 'choice_zone_creature'; index: number };
+  | { kind: 'choice_zone_creature'; index: number }
+  /** The SOURCE-side land of the chosen zone (lsp_card_39). */
+  | { kind: 'choice_zone_land'; index: number }
+  /** Opponent creature facing the chosen zone (lsp_card_39). */
+  | { kind: 'choice_zone_opponent_creature'; index: number }
+  /** Cards of the source's private peek window (charlie_card_22). */
+  | { kind: 'peeked_cards' };
 
 export type StatKey = 'attack' | 'defense';
 
@@ -299,7 +311,11 @@ export type StatAmount =
   /** Number of cards attached under an instance (Каракум). */
   | { kind: 'attached_count'; target: TargetRef }
   /** Printed cost of the card picked by the ask answer at this index (Марселина, docs §H12). */
-  | { kind: 'chosen_card_cost'; index: number };
+  | { kind: 'chosen_card_cost'; index: number }
+  /** Sum of the source team's companion card costs (grand_prix_card_7, docs §H16). */
+  | { kind: 'team_companion_cost' }
+  /** Ladder on the owner's life total (tree_trunks_card_39, docs §H16). */
+  | { kind: 'lives_ladder'; threshold: number; high: number; low: number };
 
 /**
  * Conditions (docs/MECHANICS-V2.md §7). `if_*` — one-shot at run time,
@@ -418,6 +434,12 @@ export type ConditionSpec =
   | { kind: 'while_opponents_hand_at_least'; min: number }
   /** The event happened in a zone adjacent to the source's own (Песочный краб рубака, docs §H14). */
   | { kind: 'if_payload_zone_adjacent' }
+  /** Own or teammate creatures stand on lands with ice tokens (monika_card_24, docs §H16). */
+  | { kind: 'while_team_creature_on_token_land' }
+  /** Both lanes adjacent to the source have no creatures (Мятная мороженка, docs §H16). */
+  | { kind: 'while_adjacent_lanes_empty' }
+  /** An opponent controls one of the source owner's creatures (Ска-пион, docs §H16). */
+  | { kind: 'while_opponent_controls_own_creature' }
   /**
    * Effect-array branch gate on a `choose_option` answer (docs §6 «Ветвление»).
    * Checked in runSteps BEFORE counting the step's choices; inside
@@ -678,7 +700,15 @@ type EffectOp =
   /** Rule aura: the covered creature's land may not be flipped DOWN by opponents (Яблочный страж, docs §H15). */
   | { op: 'land_flip_protection'; target: TargetRef }
   /** Rule aura: opponents of the source cannot play cards costing ≤ maxCost (Няш-мяш, docs §H15). */
-  | { op: 'restrict_play'; who: 'opponents'; maxCost: number };
+  | { op: 'restrict_play'; who: 'opponents'; maxCost: number }
+  /** Rule aura: creatures may be played onto frozen lands (Ледяная база / monika_card_24, docs §H16). */
+  | { op: 'allow_frozen_play'; target: TargetRef; scope: 'own_lane' | 'all' }
+  /** Rule aura: player damage at or below the threshold goes to the covered creature (Мило-страж, docs §H16). */
+  | { op: 'guard_player'; target: TargetRef; threshold: number }
+  /** Rule aura: creature hits against the covered unit cap at max (Подушка боли, docs §H16). */
+  | { op: 'damage_cap'; target: TargetRef; max: number }
+  /** Rule aura: spells deal +amount extra to the covered unit (Подушка боли, docs §H16). */
+  | { op: 'damage_bonus'; target: TargetRef; amount: number };
 
 /**
  * A declarative operation with its own optional conditions.

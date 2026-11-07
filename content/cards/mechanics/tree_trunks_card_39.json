@@ -1,0 +1,30 @@
+{
+  "cardId": "tree_trunks_card_39",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "lives_ladder",
+          "threshold": 10,
+          "high": 1,
+          "low": 3
+        },
+        "duration": "this_turn"
+      },
+      "text": "ПРИЕМ >>> Если у тебя 10 жизней или больше, +1 ATK любому существу в игре в этот ход, иначе +3."
+    }
+  ]
+}

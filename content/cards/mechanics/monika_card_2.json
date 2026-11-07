@@ -1,0 +1,19 @@
+{
+  "cardId": "monika_card_2",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "mechanic": "draw_two_cost_match",
+      "params": {
+        "amount": 2
+      },
+      "text": "Вытяни 2 верхние карты своей колоды. Если они одинаковой стоимости — нанеси 2 урона выбранному противнику."
+    }
+  ]
+}

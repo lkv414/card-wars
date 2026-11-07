@@ -1,0 +1,17 @@
+{
+  "cardId": "fiona_card_23",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_card_discarded",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_instance_self"
+        }
+      ],
+      "mechanic": "discard_to_return_self",
+      "text": "Когда эта карта оказывается в твоей стопке сброса, можешь сбросить карту с руки и вернуть Невероятного опоссума себе в руку."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "cardId": "grand_prix_card_11",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "heal_one_per_ice_land",
+      "text": "Сосчитай количество земель с Ледяными жетонами. Восстанови 1 урон с такого же количества дружественных существ."
+    }
+  ]
+}

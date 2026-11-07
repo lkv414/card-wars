@@ -110,6 +110,20 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.discounts = []; // «в этот ход» — скидки сгорают вместе с ходом
   draft.turnPlayedCardIds = [];
   draft.abilityUseCounts = {};
+  draft.zoneEntersThisTurn = {};
+  draft.armedFreePlays = draft.armedFreePlays.filter((a) => a.expiresTurn > draft.turn);
+  draft.armedDamageEcho = draft.armedDamageEcho.filter((a) => a.expiresTurn > draft.turn);
+  // Временный захват (bmo_card_34): вернуть существ владельцам.
+  for (const b of [...draft.borrowedCreatures]) {
+    const inst = draft.instances[b.instanceId];
+    if (!inst || inst.location !== 'field') { draft.borrowedCreatures = draft.borrowedCreatures.filter((x) => x !== b); continue; }
+    const cur = draft.players[inst.controller]!.zones[inst.zone!]!;
+    if (cur.creature === b.instanceId) cur.creature = null;
+    const back = draft.players[b.owner]!.zones[b.zone]!;
+    if (!back.creature) { back.creature = b.instanceId; inst.controller = b.owner; inst.zone = b.zone; }
+    draft.borrowedCreatures = draft.borrowedCreatures.filter((x) => x !== b);
+  }
+  draft.abilityUseCounts = {};
   for (const inst of Object.values(draft.instances)) {
     if (inst.movedThisTurn) delete inst.movedThisTurn;
     if (inst.enteredThisTurn) delete inst.enteredThisTurn;

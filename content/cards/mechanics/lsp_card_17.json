@@ -1,0 +1,16 @@
+{
+  "cardId": "lsp_card_17",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "conditions": [
+        {
+          "kind": "while_zone_has_creature"
+        }
+      ],
+      "mechanic": "grant_earmark",
+      "text": "ПРИЕМ >>> Если контролируешь существо на этой линии, получи 1 действие — только чтобы играть существо на эту линию."
+    }
+  ]
+}

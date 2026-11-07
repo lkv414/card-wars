@@ -1,0 +1,26 @@
+{
+  "cardId": "lady_rainicorn_card_25",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "own",
+          "amount": 2
+        },
+        "duration": "aura",
+        "filter": {
+          "landType": "sand"
+        }
+      },
+      "text": "Песчаные существа получают +2 ATK в этот ход за каждое существо, вступившее в игру в этот ход."
+    }
+  ]
+}

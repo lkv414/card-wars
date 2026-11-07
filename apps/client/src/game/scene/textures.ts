@@ -1,13 +1,63 @@
 import * as THREE from 'three';
-import { cards as catalog } from '@card-wars/content';
+import { cards as catalog, heroes } from '@card-wars/content';
 import type { CardData, LandType } from '@card-wars/content';
 
-// Canvas-generated card art (docs/UI-3D.md: гибрид — фреймы из данных, сканы позже).
-// All textures are cached; one texture per card id serves every copy in play.
+// Лицо карты — полный скан из content/cards/images (docs/UI-3D.md «Состав сцена»):
+// синхронно отдаём canvas-заглушку из данных карты, скан догружается асинхронно
+// и перерисовывается поверх. Все текстуры кэшируются; одна текстура на cardId
+// обслуживает все копии в игре.
 
 const cardCache = new Map<string, THREE.CanvasTexture>();
 const tokenCache = new Map<string, THREE.CanvasTexture>();
 const spriteCache = new Map<string, THREE.CanvasTexture>();
+const heroCache = new Map<string, THREE.CanvasTexture>();
+
+// Статус загрузки скана на cardId; завершение — сигнал подписчикам (invalidate).
+const scanStatus = new Map<string, 'loading' | 'done'>();
+const scanListeners = new Set<() => void>();
+
+/** Подписка на завершение загрузок сканов — сцена перерисовывает кадр (frameloop="demand"). */
+export function subscribeImageLoads(cb: () => void): () => void {
+  scanListeners.add(cb);
+  return () => {
+    scanListeners.delete(cb);
+  };
+}
+
+function notifyScanLoaded(): void {
+  for (const listener of scanListeners) listener();
+}
+
+/** Догрузка полного скана поверх заглушки; картинка уже раздаётся по /content/... */
+function requestScan(cardId: string, card: CardData | undefined, canvas: HTMLCanvasElement, texture: THREE.CanvasTexture): void {
+  const url = card?.image;
+  if (!url || scanStatus.has(cardId)) return;
+  scanStatus.set(cardId, 'loading');
+  const img = new Image();
+  img.onload = () => {
+    scanStatus.set(cardId, 'done');
+    const W = canvas.width;
+    const H = canvas.height;
+    const ctx = canvas.getContext('2d')!;
+    ctx.save();
+    roundRect(ctx, 6, 6, W - 12, H - 12, 30);
+    ctx.clip();
+    // cover: скан 63:89 ≈ канвас, обрезаем минимально
+    const scale = Math.max(W / img.width, H / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+    ctx.restore();
+    texture.needsUpdate = true;
+    notifyScanLoaded();
+  };
+  img.onerror = () => {
+    // остаётся заглушка — она уже нарисована
+    scanStatus.delete(cardId);
+    notifyScanLoaded();
+  };
+  img.src = url;
+}
 
 export const LAND_COLORS: Record<LandType, { bg: string; deep: string; label: string }> = {
   corn: { bg: '#d9a441', deep: '#8a5f1e', label: 'Кукуруза' },
@@ -53,7 +103,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: num
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
 }
 
-/** Card front: 512×722 canvas (63×89 proportion), rounded, cost/name/atk/def/text. */
+/** Card front: 512×722 canvas (63×89 proportion); после загрузки — полный скан карты. */
 export function cardTexture(cardId: string): THREE.CanvasTexture {
   const cached = cardCache.get(cardId);
   if (cached) return cached;
@@ -135,6 +185,46 @@ export function cardTexture(cardId: string): THREE.CanvasTexture {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
   cardCache.set(cardId, texture);
+  requestScan(cardId, card, canvas, texture);
+  return texture;
+}
+
+/** Портрет героя — скан из content/heroes/images (docs/UI-3D.md «Состав сцена»). */
+export function heroTexture(heroId: string): THREE.CanvasTexture {
+  const cached = heroCache.get(heroId);
+  if (cached) return cached;
+  const hero = heroes.find((h) => h.id === heroId);
+  const W = 256;
+  const H = 320;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d')!;
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#33415a');
+  grad.addColorStop(1, '#1c2430');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  heroCache.set(heroId, texture);
+  const url = hero?.image;
+  if (url) {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.max(W / img.width, H / img.height);
+      const w = img.width * scale;
+      const h = img.height * scale;
+      ctx.save();
+      roundRect(ctx, 0, 0, W, H, 16);
+      ctx.clip();
+      ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+      ctx.restore();
+      texture.needsUpdate = true;
+      notifyScanLoaded();
+    };
+    img.src = url;
+  }
   return texture;
 }
 
@@ -269,7 +359,7 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
   const cached = tokenCache.get(key);
   if (cached) return cached;
   const W = 256;
-  const H = 360;
+  const H = 500; // пропорция тайла 96×188 (docs/UI-3D.md «Размеры»)
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
@@ -294,6 +384,16 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
     grad.addColorStop(1, theme.deep);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
+    // Деление пополам: верх (по канвасу) — половина существа у линии боя,
+    // низ — половина строения ближе к владельцу; лёгкая разница оттенков.
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillRect(0, 0, W, H / 2);
+    ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
     ctx.fillStyle = 'rgba(255,255,255,0.25)';
     ctx.fillRect(0, 0, W, 6);
     ctx.fillStyle = 'rgba(0,0,0,0.35)';

@@ -1,0 +1,28 @@
+{
+  "cardId": "jake_card_15",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 1
+        }
+      },
+      "text": "ПРИЕМ >>> Наносит 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем."
+    }
+  ]
+}

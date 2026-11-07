@@ -1,4 +1,4 @@
-﻿import { instance } from '../util';
+﻿import { instance, player } from '../util';
 import type { Ctx } from '../util';
 import { DomainError } from '../errors';
 import type { CardData, MatchState, PlayerId } from '../types';
@@ -255,6 +255,31 @@ export function conditionsHold(
       case 'if_payload_player_opponent':
         if (!payload?.player || payload.player === source.player) return false;
         break;
+      case 'while_team_creature_on_token_land': {
+        const owners = [source.player, ...teammatesOf(draft, source.player)];
+        const holds = owners.some((pid) =>
+          draft.players[pid]!.lands.some((l, z) => l.iceTokens > 0 && draft.players[pid]!.zones[z]!.creature));
+        if (!holds) return false;
+        break;
+      }
+      case 'while_adjacent_lanes_empty': {
+        if (!source.instanceId) return false;
+        const src = instance(draft, source.instanceId);
+        if (src.zone === null) return false;
+        const me = draft.players[source.player]!;
+        for (const nz of [src.zone - 1, src.zone + 1]) {
+          if (nz < 0 || nz >= me.zones.length) continue;
+          if (me.zones[nz]!.creature || draft.players[opponentsOf(draft, source.player)[0] ?? '']?.zones[nz]?.creature) return false;
+        }
+        break;
+      }
+      case 'while_opponent_controls_own_creature': {
+        const holds = Object.values(draft.instances).some(
+          (i) => i.location === 'field' && i.controller !== i.owner,
+        );
+        if (!holds) return false;
+        break;
+      }
       case 'if_payload_zone_adjacent': {
         // Событие в соседней зоне того же контроллера (Песочный краб рубака).
         if (!source.instanceId || payload?.zone === undefined || payload.zone === null || !payload.instanceId) return false;
@@ -700,6 +725,20 @@ export function resolveStatAmount(
       const inst = instance(draft, answer.instanceId);
       return ctx.catalog.getCard(inst.cardId)?.cost ?? 0;
     }
+    case 'team_companion_cost': {
+      let total = 0;
+      for (const pid of [source.player, ...teammatesOf(draft, source.player)]) {
+        const comp = draft.players[pid]!.companion;
+        if (comp) total += ctx.catalog.getCard(draft.instances[comp]!.cardId)?.cost ?? 0;
+      }
+      return total;
+    }
+    case 'lives_ladder': {
+      const lives = teamOf(draft, source.player)
+        ? teamOf(draft, source.player)!.lives
+        : player(draft, source.player).lives;
+      return lives >= amount.threshold ? amount.high : amount.low;
+    }
   }
 }
 
@@ -803,9 +842,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' | 'allow_frozen_play' | 'guard_player' | 'damage_cap' | 'damage_bonus' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -918,6 +957,76 @@ export function landFlipProtected(
     return true;
   }
   return false;
+}
+
+/** Frozen-land creature play permit (Ледяная база / monika_card_24, docs §H16). */
+export function frozenPlayPermitted(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  playerId: PlayerId,
+  zone: number,
+): boolean {
+  for (const { source, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'allow_frozen_play') continue;
+    if (effect.scope === 'all') return true;
+    if (!source.instanceId) continue;
+    const inst = instance(draft, source.instanceId);
+    if (inst.controller === playerId && inst.zone === zone) return true;
+  }
+  return false;
+}
+
+/** Player damage at/below the threshold goes to the covered guardian (Мило-страж, docs §H16). */
+export function playerGuard(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  playerId: PlayerId,
+  lives: number,
+): string | undefined {
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'guard_player') continue;
+    if (lives > effect.threshold) continue;
+    const covered = resolveTarget(draft, ctx, effect.target, modSource, undefined).find(
+      (t) => t.kind === 'creature',
+    );
+    if (covered && covered.kind === 'creature') {
+      const inst = instance(draft, covered.instanceId);
+      if (inst.controller === playerId) return covered.instanceId;
+    }
+  }
+  return undefined;
+}
+
+/** Creature-hit damage cap for the covered unit (Подушка боли, docs §H16). */
+export function damageCapFor(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  targetId: string,
+  fromAttack: boolean,
+): number | undefined {
+  let cap: number | undefined;
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'damage_cap') continue;
+    if (!coversInstance(draft, ctx, modSource, effect.target, targetId, undefined)) continue;
+    if (fromAttack) cap = cap === undefined ? effect.max : Math.min(cap, effect.max);
+  }
+  return cap;
+}
+
+/** Extra spell damage against the covered unit (Подушка боли, docs §H16). */
+export function spellDamageBonusFor(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  targetId: string,
+  bySpell: boolean,
+): number {
+  let bonus = 0;
+  for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'damage_bonus') continue;
+    if (!bySpell || !coversInstance(draft, ctx, modSource, effect.target, targetId, undefined)) continue;
+    bonus += effect.amount;
+  }
+  return bonus;
 }
 
 /** `playerId` may not play a card of this cost right now (Няш-мяш, docs §H15). */

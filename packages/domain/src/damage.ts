@@ -4,7 +4,7 @@ import type { Ctx } from './util';
 import { emit, instance, player } from './util';
 import type { CardInstance, MatchState, PlayerId } from './types';
 import { teamOf } from './zones';
-import { damageImmunity, damageRedirectTarget } from './mechanics/modifiers';
+import { damageCapFor, damageImmunity, damageRedirectTarget, spellDamageBonusFor } from './mechanics/modifiers';
 
 /** Lives live on the team in 2v2; both allies mirror the shared value (docs/RULES.md). */
 function currentLives(draft: Draft<MatchState>, playerId: PlayerId): number {
@@ -65,7 +65,14 @@ export function dealToCreature(
   }
   const inst = instance(draft, targetId);
   const immune = damageImmunity(draft, ctx, targetId, fromAttack);
-  const effective = Math.max(0, amount - immune);
+  let effective = Math.max(0, amount - immune);
+  // Модификаторы получаемого урона (Подушка боли, docs §H16): кап за удары
+  // существ, прибавка от заклинаний.
+  const bySpell = sourceInstanceId !== null &&
+    ctx.catalog.getCard(draft.instances[sourceInstanceId]?.cardId ?? '')?.type === 'spell';
+  if (bySpell) effective += spellDamageBonusFor(draft, ctx, targetId, true);
+  const cap = damageCapFor(draft, ctx, targetId, fromAttack && !bySpell);
+  if (cap !== undefined && effective > cap) effective = cap;
   const absorbed = pierce ? 0 : Math.min(inst.shield, effective);
   inst.shield -= absorbed;
   const rest = effective - absorbed;

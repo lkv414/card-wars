@@ -1,0 +1,19 @@
+{
+  "cardId": "jake_2v2_card_35",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "any_player"
+        },
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "mechanic": "each_draw_creature_of_type",
+      "text": "Выбери другого игрока и землю под твоим контролем. Каждый игрок тянет карту существа, соответствующего этой земле."
+    }
+  ]
+}

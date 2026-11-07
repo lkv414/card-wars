@@ -1,0 +1,33 @@
+{
+  "cardId": "charlie_card_28",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_companion_event",
+      "optional": true,
+      "oncePerTurn": true,
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Во время фазы сражения твоего партнера, первый раз когда нанесен урон противнику, ты можешь нанести 1 урон выбранному существу на своей линии."
+    }
+  ]
+}

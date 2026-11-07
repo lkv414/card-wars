@@ -1,0 +1,27 @@
+{
+  "cardId": "cake_card_5",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "permanent"
+      },
+      "text": "Каждый раз когда существо противника на этой линии получает урон, это строение навсегда получает +1 DEF."
+    }
+  ]
+}

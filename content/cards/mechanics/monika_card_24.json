@@ -1,0 +1,21 @@
+{
+  "cardId": "monika_card_24",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_team_creature_on_token_land"
+        }
+      ],
+      "effect": {
+        "op": "allow_frozen_play",
+        "target": {
+          "kind": "this_creature"
+        },
+        "scope": "all"
+      },
+      "text": "Пока ты или твой партнер контролируете существо на земле с ледяным жетоном, ваша команда может играть существ на земли с ледяным жетоном."
+    }
+  ]
+}

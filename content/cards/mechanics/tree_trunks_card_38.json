@@ -1,0 +1,16 @@
+{
+  "cardId": "tree_trunks_card_38",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "guard_player",
+        "target": {
+          "kind": "this_creature"
+        },
+        "threshold": 5
+      },
+      "text": "Если у тебя 5 жизней или меньше, урон тебе получает Мило-страж (сдача — при атаке существом)."
+    }
+  ]
+}

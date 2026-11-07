@@ -1,0 +1,21 @@
+{
+  "cardId": "jake_2v2_card_28",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "effect": {
+        "op": "banish_card",
+        "card": {
+          "kind": "triggering_instance"
+        }
+      },
+      "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед нанесением урона."
+    }
+  ]
+}

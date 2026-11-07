@@ -1,0 +1,19 @@
+{
+  "cardId": "charlie_card_22",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "mechanic": "peek_reorder",
+      "params": {
+        "count": 4
+      },
+      "text": "Посмотри 4 верхние карты колоды выбранного игрока (в своем виде), верни их обратно. Затем тяни карту — добор выполняется в тот же ход вручную."
+    }
+  ]
+}

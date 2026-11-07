@@ -8,7 +8,7 @@ import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter, noteDiscard } from '../mechanics/effects';
-import { conditionsHold, consumeDiscount, landCountModifier, playRestricted, playedCardCostModifier } from '../mechanics/modifiers';
+import { conditionsHold, consumeDiscount, frozenPlayPermitted, landCountModifier, playRestricted, playedCardCostModifier } from '../mechanics/modifiers';
 import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../mechanics/costs';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
@@ -57,7 +57,35 @@ export function handlePlayCard(
   const card = cardOf(ctx, inst);
 
   // Cost modifiers are scanned live (Остролист, Домик из разного дерева — docs/MECHANICS-V2.md §3).
-  const effectiveCost = Math.max(0, card.cost + playedCardCostModifier(draft, ctx, playerId, card, instanceId));
+  let effectiveCost = Math.max(0, card.cost + playedCardCostModifier(draft, ctx, playerId, card, instanceId));
+  // Вооружённый бесплатный розыгрыш (docs §H16): jake_2v2_card_34 / grand_prix_card_6.
+  const armIdx = draft.armedFreePlays.findIndex((a) => {
+    if (a.player !== playerId || a.expiresTurn < draft.turn) return false;
+    if (a.landType !== undefined && a.landType !== card.landType) return false;
+    if (a.maxCost !== undefined && card.cost > a.maxCost) return false;
+    if (a.name === undefined) return true;
+    const armedName = ctx.catalog.getCard(a.name)?.name;
+    return draft.order.some((pid) =>
+      p.zones === draft.players[pid]!.zones || true
+        ? [0, 1, 2, 3].some((z) => {
+            const bid = draft.players[pid]!.zones[z]!.building;
+            const cid = draft.players[pid]!.zones[z]!.creature;
+            return [bid, cid].some(
+              (id) => id && ctx.catalog.getCard(draft.instances[id]!.cardId)?.name === armedName,
+            );
+          })
+        : false,
+    );
+  });
+  if (armIdx >= 0) {
+    draft.armedFreePlays.splice(armIdx, 1);
+    effectiveCost = 0;
+  }
+  // Помеченное действие (lsp_card_17, docs §H16): существо именно в эту зону.
+  if (card.type === 'creature' && (p.earmarkedActions ?? []).some((e) => e.zone === zone) && p.actions < effectiveCost) {
+    p.earmarkedActions = (p.earmarkedActions ?? []).filter((e) => e.zone !== zone);
+    p.actions += 1;
+  }
   if (p.actions < effectiveCost) {
     throw new DomainError('insufficient_actions', `need ${effectiveCost} actions, have ${p.actions}`);
   }
@@ -106,6 +134,8 @@ export function handlePlayCard(
       replacedInstanceId: replaced ?? null,
     });
     bumpCounter(draft, 'creature_entered', playerId);
+    const zoneKey = `${playerId}:${zone}`;
+    draft.zoneEntersThisTurn[zoneKey] = (draft.zoneEntersThisTurn[zoneKey] ?? 0) + 1;
     enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, replaced: Boolean(replaced) });
     afterEffects(draft, ctx);
     return;
@@ -189,7 +219,7 @@ export function handlePlayCard(
   const slot = card.type === 'creature' ? 'creature' : 'building';
 
   // Frozen land: discard a card from hand to remove the freeze first (docs/RULES.md «Земли»).
-  if (p.lands[zone]!.frozen) {
+  if (p.lands[zone]!.frozen && !frozenPlayPermitted(draft, ctx, playerId, zone)) {
     if (!unfreezeWith) {
       throw new DomainError('land_frozen', `zone ${zone} is frozen; unfreezeWith required`);
     }
@@ -265,6 +295,8 @@ export function handlePlayCard(
   });
 
   bumpCounter(draft, 'creature_entered', playerId);
+  const enterKey = `${playerId}:${zone}`;
+  draft.zoneEntersThisTurn[enterKey] = (draft.zoneEntersThisTurn[enterKey] ?? 0) + 1;
   if (card.type === 'creature' && card.cost >= 2) bumpCounter(draft, 'creature_cost_2_plus_played', playerId);
   enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, zone, replaced: Boolean(replaced) });
   enqueueTrigger(draft, ctx, 'on_card_played', { instanceId, cardId: card.id, player: playerId, cost: effectiveCost, zone });

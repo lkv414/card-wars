@@ -1,0 +1,19 @@
+{
+  "cardId": "lich_card_43",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "conditions": [
+        {
+          "kind": "if_payload_instance_self"
+        }
+      ],
+      "mechanic": "splash_target_allies",
+      "params": {
+        "amount": 2
+      },
+      "text": "При атаке существа противника, если рядом с ним есть союзные существа, нанеси одному из них 2 урона."
+    }
+  ]
+}

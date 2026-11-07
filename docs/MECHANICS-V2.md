@@ -350,6 +350,52 @@ Contract decisions for the last 137 cards + 3 heroes (approved 2026-11-06). Text
 - Кошачьи жизни (Муррризрак): `on_death` на себе + `optional` + `oncePerGame` + механика `cat_lives` — воскрешение в свою зону с полными жизнями; после — `cannotReturnFromDiscard`. Death-payload дополнен `zone`.
 - FlavorOnly-карты без игрового текста: Песчаный ангел, и две «реплики» Лича, «Он очень зол» — `flavorOnly: true`.
 
+### H16. Финальный батч: оставшиеся карты (решения по каждой группе)
+
+**Компаньоны 2v2 (on_companion_event):** `enqueueTrigger` после скана источников игрока X дополнительно сканирует карты ТИММЕЙТА X с `trigger: 'on_companion_event'`, оборачивая payload: `{ companionEvent: <trigger>, ...payload }`. Гейты чужих событий к компаньонам не применяются (событие волонтёрится тиммейту явно).
+- **Ведьмак-стиль ответы:** charlie_card_28 — `on_companion_event` + `oncePerTurn` + `if_payload_player_self` (урон наносил партнёр) + эффект «1 урон выбранному своему существу» (`optional`, ask `own_creature`).
+- **grand_prix_card_6** — `on_companion_event(on_spell_cast)` + `if_payload_land_type rainbow` + `oncePerTurn` + механика `arm_free_play` — см. вооружённые бесплатные розыгрыши ниже.
+- **monika_card_24** — правило-аура `allow_frozen_play { scope: 'all' }` с условием `while_team_creature_on_token_land` (команда стоит на ледяных жетонах). monika_card_9 — та же аура с `scope: 'own_lane'` + заморозка линии при входе (`this_lane_lands`).
+- **grand_prix_card_7** — StatAmount `team_companion_cost` (сумма стоимостей парных карт команды).
+
+**Вооружённые бесплатные розыгрыши** (`MatchState.armedFreePlays[] { player, landType?, maxCost?, name?, expiresTurn }`, consumed в `playCard` до оплаты): jake_2v2_card_34 («следующее существо/строение бесплатно, если такое имя уже в игре» — `arm_free_play { nameRequired: true }`), grand_prix_card_6 (радужное заклинание той же стоимости — `arm_free_play { landType: 'rainbow', maxCost: payload.cost }`).
+
+**Реакции на урон-эхо:** jake_2v2_card_36 — заклинание ставит `MatchState.armedDamageEcho { creatureId, playerId, expiresTurn }`; в боевом `on_damage_dealt`-пути: если бьёт вооружённое существо → 2 урона жертве-игроку + `give_card` партнёру. Сгорает в конце хода.
+
+**Смертные спасения:** механика `self_rescue_on_death { destination: 'hand' | 'deck_top' }` (on_death self, optional, в свою фазу сражения — условие `while_phase combat`) — jake_2v2_card_23 (рука) и jake_2v2_card_24 (верх колоды).
+
+**Прочие механики батча:**
+- `draw_discard_rainbow_action` (fiona_card_22): тяни 1, сбрось случайную свою карту руки; если она радужная — +1 действие.
+- `discard_to_return_self` (fiona_card_23): `on_card_discarded` self + optional — сбросить случайную свою карту руки и вернуть себя в руку.
+- `ready_per_type` (ftg_card_15): подготовить по одному своему существу каждого из заданных типов.
+- `draw_to_lane_players` (ftg_card_26): в начале хода владельца каждый игрок с существом в этой линии тянет карту.
+- `heal_one_per_ice_land` (grand_prix_card_11): лечит по 1 урона со своих существ (в порядке зон), пока не исчерпано число земель с жетонами.
+- `damage_then_freeze_land` (grand_prix_card_18): урон цели; если цель погибла — заморозить её землю.
+- `move_self_gain_action_if_frozen` (ice_king_card_3): переместить себя на выбранную свою пустую землю; если она заморожена — +1 действие.
+- `enter_move_lane_creature` (jake_card_6): при входе переместить существо противника в зеркальной зоне на пустую соседнюю его стороны.
+- `per_lands.landType` (jake_card_15): «1 урон за каждое Кукурузное поле» — урон = число своих кукурузных земель по выбранной цели (трактовка: «каждое существо только 1 раз» уточняет одну цель).
+- `splash_target_allies` (lich_card_43): при атаке существа — 2 урона случайному соседу цели на её стороне.
+- `sacrifice_half_def_draw` (lich_card_46): уничтожить своё существо; если его урон < половины DEF — тяни 3, иначе 2.
+- `hand_revealed` событие (marceline_card_9): противники сбрасывают случайную карту стоимости 0, иначе показывают руку (публичное событие с id карт).
+- `compare_reveal` (monika_card_1, grand_prix_card_5, monika_card_2): вскрытия случайных/верхних карт со сравнением стоимости.
+- `dig_play_named` (lich_card_16): замешать сброс, тянуть до карты из `cardIds`, сыграть бесплатно (условие `while_empty_lands` — «если места нет, приём не работает»); `dig_play_companion` (monika_card_32): открыть 3 верхних, сыграть парную карту, остальное в сброс; `reveal_draw_named` (grand_prix_card_4): открыть 3, взять одну (ask), сброс остальных.
+- `peek_reorder` (charlie_card_22): приватное окно на 4 верхних карты ВЫБРАННОГО игрока + 4 ответа-порядка (`peek_card` ask), затем тяни карту.
+- `redistribute_ice_tokens` (monika_card_11): заморозить землю; все её жетоны разом переносятся по 1 на свои земли без жетонов (авто).
+- `destroy_lane_and_same_name` (monika_card_35): уничтожить выбранное существо противника на линии + все существа с тем же именем в игре (доп. стоимость — само существо).
+- `damage_cap` / `damage_bonus_from_spells` (tree_trunks_card_5): правило-ауры на получаемый урон (≤4 за удар существ, +2 от заклинаний).
+- `reset_and_refill` (tree_trunks_card_25): уничтожить все существа в игре, сбросить свою руку, тяни 5, +3 действия.
+- `alley_move` (tree_trunks_card_26): по числу своих «Хлопковых аллей»: 1 — перемещение существа линии на пустую соседнюю свою; 2 — доп. обмен существ на землях аллей.
+- `guard_player` (tree_trunks_card_38): правило-аура — при жизнях владельца ≤ 5 урон игроку идёт стражу (сдача — при атаке).
+- `borrow_creature` (bmo_card_34): ПРИЁМ без своих существ на линии — временный захват существа противника (своя сторона, подготовлен), возврат владельцу в конце хода.
+- `each_draw_creature_of_type` (jake_2v2_card_35): каждый игрок тянет верхнюю карту-существо заданного типа.
+- Ask `any_building` и рефы `choice_zone_land`, `choice_zone_opponent_creature` (lsp_card_39: уничтожить строение → опционально 3 урона существу той линии → своя земля той линии вниз).
+- `lsp_card_17`: помеченное действие (`MatchState.earmarkedActions { player, zone }`) — тратится только на розыгрыш СУЩЕСТВА в эту зону.
+- `lemongrab_card_37`: условие `while_opponent_controls_own_creature` → cost_mod −1.
+- `grand_prix_card_16`: `suppress { spells, creatureAbilities }` с условием `while_adjacent_lanes_empty`.
+- lady_rainicorn_card_25/37 — аура `per_counter(creature_entered)×2` по своим песчаным; реакция на вход песчаного → +1 ATK Персиковой Джинни (фильтр `cardIds` в данных).
+
+**Отложены (не читаемый OCR / переделка схемы):** cake_card_5 («прибавь к значению 1» — цель нечитаема), cake_card_18 (второе строение на земле — схема зон), cake_card_33 + fiona_card_31 (наследование текстов соседних строений — динамическое копирование способностей), jake_2v2_card_28 (текст-мусор). Всего 5 карт — вынесены в OPEN_QUESTIONS для сверки с оригиналом.
+
 ### H8. Порядок работ
 
 Каждый блок: правка этого документа → типы/валидатор → domain → protocol → HUD → mechanics-JSON → golden/unit-тесты → `pnpm --filter @card-wars/content generate && pnpm lint && pnpm typecheck && pnpm -r test` → git commit.

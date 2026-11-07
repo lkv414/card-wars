@@ -1,0 +1,55 @@
+{
+  "cardId": "lsp_card_39",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "any_building"
+        },
+        {
+          "kind": "choose_option",
+          "options": [
+            "yes",
+            "no"
+          ],
+          "label": "Нанести 3 урона существу на этой линии?"
+        }
+      ],
+      "effect": [
+        {
+          "op": "destroy",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice_zone_opponent_creature",
+            "index": 0
+          },
+          "amount": 3,
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 1,
+              "option": "yes"
+            }
+          ]
+        },
+        {
+          "op": "flip_land",
+          "target": {
+            "kind": "choice_zone_land",
+            "index": 0
+          },
+          "down": true
+        }
+      ],
+      "text": "Уничтожь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии."
+    }
+  ]
+}

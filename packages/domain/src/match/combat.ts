@@ -4,7 +4,7 @@ import { afterEffects } from '../deaths';
 import { computeEff } from '../stats';
 import { bumpCounter } from '../mechanics/effects';
 import { attacksSuppressed, defenseMods, dodgeMin } from '../mechanics/modifiers';
-import { opponentZoneFor } from '../zones';
+import { opponentZoneFor, teammatesOf } from '../zones';
 import { rngInt } from '../rng';
 import type { Ctx } from '../util';
 import { emit, instance, player } from '../util';
@@ -150,6 +150,27 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             targetInstanceId: defenderInstanceId,
             amount: attackPower,
           });
+          // Эхо урона (jake_2v2_card_36, docs §H16): вооружённое существо бьёт —
+          // 2 урона тому же противнику-игроку.
+          const echoIdx = draft.armedDamageEcho.findIndex((e) => e.creatureId === attackerInstanceId && e.expiresTurn >= draft.turn);
+          if (echoIdx >= 0 && attackPowerMod > 0) {
+            const echo = draft.armedDamageEcho[echoIdx]!;
+            draft.armedDamageEcho.splice(echoIdx, 1);
+            dealToPlayer(draft, ctx, instance(draft, defenderInstanceId).controller, 2, echo.creatureId);
+            const mate = teammatesOf(draft, echo.playerId)[0];
+            if (mate) {
+              // карта-награда уходит партнёру из руки владельца, если есть
+              const p = player(draft, echo.playerId);
+              const give = p.hand[0];
+              if (give) {
+                const gi = instance(draft, give);
+                p.hand = p.hand.filter((x) => x !== give);
+                gi.controller = mate;
+                gi.location = 'hand';
+                draft.players[mate]!.hand.push(give);
+              }
+            }
+          }
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: defenderInstanceId,
             player: instance(draft, defenderInstanceId).controller,

@@ -1,0 +1,30 @@
+{
+  "cardId": "grand_prix_card_4",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "reveal_deck_top",
+          "count": 3
+        },
+        {
+          "op": "resolve_revealed",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "to": "hand",
+          "rest": "discard"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "revealed_card"
+        }
+      ],
+      "text": "Открой 3 верхние карты своей колоды, возьми одну, остальные сбрось."
+    }
+  ]
+}

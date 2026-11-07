@@ -1,0 +1,37 @@
+{
+  "cardId": "charlie_card_3",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "any_player"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "choice",
+            "index": 2
+          }
+        }
+      ],
+      "text": "Верни свое существо в руку владельцу. Выбранный игрок возвращает свое существо в руку владельцу."
+    }
+  ]
+}

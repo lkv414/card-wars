@@ -238,7 +238,14 @@ function choiceMatchesAsk(
         Array.isArray(choice.values) &&
         choice.values.every((v) => Number.isInteger(v) && v >= 0)
       );
+    case 'any_building':
+      return choice.kind === 'creature' && instance(draft, choice.instanceId).slot === 'building';
+    case 'peek_card': {
+      if (choice.kind !== 'card') return false;
+      return (draft.peeks[source.player] ?? []).includes(choice.instanceId);
+    }
   }
+  return false;
 }
 
 /**
@@ -512,7 +519,24 @@ export function resolveTarget(
       const id = draft.players[answer.player]!.zones[answer.zone]?.creature;
       return id ? [{ kind: 'creature' as const, instanceId: id }] : [];
     }
+    case 'choice_zone_land': {
+      const answer = choices?.[ref.index];
+      if (!answer || answer.kind !== 'landscape') return [];
+      return [{ kind: 'land', playerId: answer.player, zone: answer.zone }];
+    }
+    case 'choice_zone_opponent_creature': {
+      const answer = choices?.[ref.index];
+      if (!answer || answer.kind !== 'landscape') return [];
+      const enemy = opponentsOf(draft, source.player)[0];
+      if (!enemy) return [];
+      const id = draft.players[enemy]!.zones[answer.zone]?.creature;
+      return id ? [{ kind: 'creature' as const, instanceId: id }] : [];
+    }
+    case 'peeked_cards': {
+      return (draft.peeks[source.player] ?? []).map((id) => ({ kind: 'card' as const, instanceId: id }));
+    }
   }
+  return [];
 }
 
 function creaturesOf(draft: MatchState, playerId: PlayerId): ResolvedTarget[] {

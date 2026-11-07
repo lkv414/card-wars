@@ -1,0 +1,11 @@
+{
+  "cardId": "lemongrab_card_16",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "draw_per_zone_enters",
+      "text": "ПРИЕМ >>> Тяни карту за каждое существо, введенное в игру на эту землю в этот ход."
+    }
+  ]
+}

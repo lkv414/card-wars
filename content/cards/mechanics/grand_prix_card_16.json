@@ -1,0 +1,22 @@
+{
+  "cardId": "grand_prix_card_16",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_adjacent_lanes_empty"
+        }
+      ],
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_creature"
+        },
+        "spells": true,
+        "creatureAbilities": true
+      },
+      "text": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ."
+    }
+  ]
+}

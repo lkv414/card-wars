@@ -1,0 +1,19 @@
+{
+  "cardId": "monika_card_1",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "any_player"
+        },
+        {
+          "kind": "any_player"
+        }
+      ],
+      "mechanic": "compare_reveal_players",
+      "text": "Выбери двух игроков. Каждый открывает случайную карту с руки. Если их стоимость не совпадает, они сбрасывают эти карты."
+    }
+  ]
+}

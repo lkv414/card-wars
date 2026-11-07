@@ -1,0 +1,50 @@
+{
+  "cardId": "jake_2v2_card_23",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_played_name",
+          "matchers": [
+            {
+              "cardIds": [
+                "jake_2v2_card_17",
+                "jake_2v2_card_18",
+                "jake_2v2_card_20",
+                "jake_2v2_card_22"
+              ]
+            }
+          ],
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждого Зебрарога под контролем твоей команды."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_phase",
+          "phase": "combat"
+        },
+        {
+          "kind": "while_own_turn"
+        }
+      ],
+      "mechanic": "self_rescue_on_death",
+      "params": {
+        "destination": "hand"
+      },
+      "text": "Если покидает игру в твоей фазе сражения, можешь положить его в свою руку."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "cardId": "jake_2v2_card_24",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_phase",
+          "phase": "combat"
+        },
+        {
+          "kind": "while_own_turn"
+        }
+      ],
+      "mechanic": "self_rescue_on_death",
+      "params": {
+        "destination": "deck_top"
+      },
+      "text": "Если Молодой крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его на верх своей колоды."
+    }
+  ]
+}

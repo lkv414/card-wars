@@ -71,6 +71,8 @@ export interface CardInstance {
   id: string;
   cardId: string;
   controller: PlayerId;
+  /** Original deck owner — never changes (Ска-пион, docs §H16). */
+  owner: PlayerId;
   location: Location;
   /** Zone index for field cards; null otherwise. */
   zone: number | null;
@@ -101,6 +103,8 @@ export interface CardInstance {
 }
 
 export interface PlayerState {
+  /** Action earmarked for playing a CREATURE into this zone (lsp_card_17, docs §H16). */
+  earmarkedActions?: Array<{ zone: number }>;
   id: PlayerId;
   nickname: string;
   heroId: string;
@@ -215,6 +219,14 @@ export interface MatchState {
   abilityUseCounts: Record<string, number>;
   /** Word chosen by each player at match start (Колдунья-охотница, docs §H3). */
   chosenWord: Record<PlayerId, string>;
+  /** Armed free plays (docs §H16): next matching play is free for the player. */
+  armedFreePlays: Array<{ player: PlayerId; landType?: string; maxCost?: number; name?: string; expiresTurn: number }>;
+  /** Damage echo (jake_2v2_card_36, docs §H16): if this creature deals damage, echo 2. */
+  armedDamageEcho: Array<{ creatureId: string; playerId: PlayerId; expiresTurn: number }>;
+  /** Creatures borrowed for the turn (bmo_card_34, docs §H16): returned at end of turn. */
+  borrowedCreatures: Array<{ instanceId: string; owner: PlayerId; zone: number }>;
+  /** Creatures that entered each zone this turn: key player:zone (lemongrab_card_16). */
+  zoneEntersThisTurn: Record<string, number>;
   mulliganDecisions: Record<PlayerId, 'keep' | 'mulligan' | undefined>;
   winners: PlayerId[] | null;
   finishReason: FinishReason | null;

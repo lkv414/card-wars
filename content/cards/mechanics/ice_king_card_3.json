@@ -1,0 +1,16 @@
+{
+  "cardId": "ice_king_card_3",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "mechanic": "move_self_gain_action_if_frozen",
+      "text": "ПРИЕМ >>> Перемести Бордер колли на любую свою пустую землю. Если эта земля заморожена, получи 1 Действие."
+    }
+  ]
+}

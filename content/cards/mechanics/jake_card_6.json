@@ -1,0 +1,14 @@
+{
+  "cardId": "jake_card_6",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "mechanic": "enter_move_lane_creature",
+      "text": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо противника в этой линии на пустую соседнюю линию."
+    }
+  ]
+}

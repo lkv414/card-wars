@@ -46,4 +46,6 @@ export type GameEvent =
   | { type: 'cards_revealed'; player: PlayerId; cardIds: string[] }
   /** Seeded RNG roll made public (dodge d6, docs §H14). */
   | { type: 'dice_rolled'; value: number; reason: 'dodge' }
+  /** A player shows their hand to everyone (Марселина, docs §H16). */
+  | { type: 'hand_revealed'; player: PlayerId; cardIds: string[] }
   | { type: 'match_finished'; winners: PlayerId[]; reason: FinishReason };

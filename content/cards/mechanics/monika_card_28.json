@@ -1,0 +1,30 @@
+{
+  "cardId": "monika_card_28",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "conditions": [
+        {
+          "kind": "while_own_turn"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "chosen_card_cost",
+          "index": 0
+        },
+        "duration": "permanent"
+      },
+      "text": "ПРИЕМ >>> Сбрось карту >>> Крок-исследователь получает +ATK, равную стоимости сброшенной карты."
+    }
+  ]
+}

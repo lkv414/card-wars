@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, type MutableRefObject } from 'react';
-import { useFrame, type ThreeEvent } from '@react-three/fiber';
+import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
-import { catalog } from '@card-wars/content';
+import { cards as catalog } from '@card-wars/content';
 import { CARD_H, CARD_T, CARD_W, HAND, myBoardTransform, overMyDiscardRay, zoneFromWorld } from './layout';
-import { cardTexture } from './textures';
+import { cardBackTexture, cardTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
 import { pick } from '../targeting';
+
+const DRAG_THRESHOLD_PX = 10;
 
 /**
  * Рука — 3D-веер внизу экрана (docs/UI-3D.md «Рука (решено: 3D)»).
@@ -36,13 +38,13 @@ export function Hand({ view }: { view: PlayerView }) {
         : HAND.step
       : Math.max(narrow ? 54 : 70, (narrow ? 380 : 560) / items.length);
 
-  // Глобальное окончание перетаскивания: указатель в этот момент уже НЕ над
-  // картой руки, поэтому решаем всё здесь — стопка сброса = сброс, зона = сыграть.
+  // Глобальное окончание перетаскивания: указатель в этот момент уже над столом,
+  // поэтому решаем всё здесь — стопка сброса = сброс, зона = сыграть.
   useEffect(() => {
     const onMove = (event: PointerEvent) => {
       const pending = pendingDrag.current;
       if (!pending) return;
-      if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) <= 10) return;
+      if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) <= DRAG_THRESHOLD_PX) return;
       pendingDrag.current = null;
       setUi({
         selectedHand: pending.id,
@@ -53,9 +55,10 @@ export function Hand({ view }: { view: PlayerView }) {
         dragPoint: null,
       });
     };
+
     const onUp = (event: PointerEvent) => {
-      const ui = useGame.getState().ui;
       pendingDrag.current = null;
+      const ui = useGame.getState().ui;
       if (!ui.dragging) return;
       const overDiscard = ui.draggingOverDiscard;
       const inCorner = event.clientX > innerWidth - 170 && event.clientY > innerHeight - 170;
@@ -75,6 +78,7 @@ export function Hand({ view }: { view: PlayerView }) {
         setUi({ selectedHand: null });
       }
     };
+
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
     return () => {
@@ -106,20 +110,13 @@ export function Hand({ view }: { view: PlayerView }) {
     }
   }, [myMain]);
 
-  useFrame((_, delta) => {
-    if (!group.current) return;
-    // лёгкое покачивание веера — сцена «живая»
-    group.current.position.x = Math.sin(performance.now() / 2400) * 2;
-    void delta;
-  });
-
   return (
     <>
       <group ref={group}>
         {items.map((card, index) => {
           const offset = index - (items.length - 1) / 2;
           const isSelected = selected === card.instanceId;
-          const meta = catalog.getCard(card.cardId);
+          const meta = catalog.find((c) => c.id === card.cardId);
           return (
             <HandCard
               key={card.instanceId}
@@ -166,10 +163,7 @@ function DragGhost({ view, instanceId }: { view: PlayerView; instanceId: string 
   );
 }
 
-/** Прозрачная (но не visible=false — рейкаст невидимых отключён) плоскость
- *  улавливания при перетаскивании: следит за указателем над всем столом.
- *  Зону и точку следования считаем на уровне стола (луч, а не хит по
- *  плоскости ловушки) — иначе параллакс уводит drop мимо стопки/зоны. */
+/** Прозрачная плоскость улавливания при перетаскивании: следит за указателем над всем столом. */
 function DragPlane({ view }: { view: PlayerView }) {
   const origin = myBoardTransform(view);
   return (
@@ -231,7 +225,22 @@ function HandCard({
   pendingDrag: MutableRefObject<{ id: string; x: number; y: number } | null>;
 }) {
   const texture = useMemo(() => cardTexture(cardId), [cardId]);
+  const back = useMemo(() => cardBackTexture(), []);
+  const edgeMat = useMemo(() => new THREE.MeshLambertMaterial({ color: '#2a3545' }), []);
+  const materials = useMemo(
+    () => [
+      edgeMat, // +x
+      edgeMat, // -x
+      new THREE.MeshLambertMaterial({ map: texture }), // +y (лицо)
+      new THREE.MeshLambertMaterial({ map: back }), // -y (рубашка)
+      edgeMat, // +z
+      edgeMat, // -z
+    ],
+    [texture, back, edgeMat],
+  );
+
   const mesh = useRef<THREE.Group>(null);
+  const invalidate = useThree((s) => s.invalidate);
   const target = useMemo(
     () => ({
       x: offset * step,
@@ -247,22 +256,42 @@ function HandCard({
   useFrame(() => {
     const g = mesh.current;
     if (!g) return;
-    g.position.x += (target.x - g.position.x) * 0.2;
-    g.position.y += (target.y - g.position.y) * 0.2;
-    g.position.z += (target.z - g.position.z) * 0.2;
-    g.rotation.x += (target.rotX - g.rotation.x) * 0.2;
-    g.rotation.y += (target.rotY - g.rotation.y) * 0.2;
-    const s = target.scale;
-    g.scale.x += (s - g.scale.x) * 0.2;
-    g.scale.y += (s - g.scale.y) * 0.2;
-    g.scale.z += (s - g.scale.z) * 0.2;
+    const dx = target.x - g.position.x;
+    const dy = target.y - g.position.y;
+    const dz = target.z - g.position.z;
+    const drx = target.rotX - g.rotation.x;
+    const dry = target.rotY - g.rotation.y;
+    const ds = target.scale - g.scale.x;
+    const moving =
+      Math.abs(dx) > 0.1 ||
+      Math.abs(dy) > 0.1 ||
+      Math.abs(dz) > 0.1 ||
+      Math.abs(drx) > 0.005 ||
+      Math.abs(dry) > 0.005 ||
+      Math.abs(ds) > 0.005;
+
+    if (moving) {
+      g.position.x += dx * 0.2;
+      g.position.y += dy * 0.2;
+      g.position.z += dz * 0.2;
+      g.rotation.x += drx * 0.2;
+      g.rotation.y += dry * 0.2;
+      const s = target.scale;
+      g.scale.x += (s - g.scale.x) * 0.2;
+      g.scale.y += (s - g.scale.y) * 0.2;
+      g.scale.z += (s - g.scale.z) * 0.2;
+      invalidate();
+    } else {
+      g.position.set(target.x, target.y, target.z);
+      g.rotation.set(target.rotX, target.rotY, 0);
+      g.scale.set(target.scale, target.scale, target.scale);
+    }
   });
 
   const handleDown = (event: ThreeEvent<PointerEvent>) => {
     if (!playable) return;
     event.stopPropagation();
     pendingDrag.current = { id: instanceId, x: event.nativeEvent.clientX, y: event.nativeEvent.clientY };
-    setUi({ selectedHand: instanceId });
   };
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
@@ -300,13 +329,12 @@ function HandCard({
       onPointerDown={handleDown}
       onClick={handleClick}
     >
-      <mesh>
+      <mesh material={materials}>
         <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
-        <meshLambertMaterial map={texture} />
       </mesh>
-      {/* Широкая невидимая плоскость: тонкий бокс 1.2 мм луч часто промахивает. */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, CARD_T, 0]}>
-        <planeGeometry args={[CARD_W + 16, CARD_H + 16]} />
+      {/* Прозрачная плоскость хитбокса над картой: надёжный клик даже при тонком боксе */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, CARD_T + 0.2, 0]}>
+        <planeGeometry args={[CARD_W + 12, CARD_H + 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {selected && (

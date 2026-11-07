@@ -91,11 +91,13 @@ interface LeavingToken {
 /** Один фиксированный шаг симуляции; true, если кто-то ещё движется. */
 function step(tokens: TokenState[], dt: number, zOrigin: number): boolean {
   let active = false;
-  // Границы земли-тайла в координатах группы карты (группа смещена к слоту на zOrigin).
+  // Границы тайла в координатах группы карты (группа смещена к слоту на zOrigin).
+  // Если это компаньон (вне тайлов), держим жетоны на самой карте.
+  const isCompanion = zOrigin < -LAND_H / 2;
   const minX = -(LAND_W / 2 - TOKEN_D / 2);
   const maxX = LAND_W / 2 - TOKEN_D / 2;
-  const minZ = -LAND_H / 2 - zOrigin + TOKEN_D / 2;
-  const maxZ = LAND_H / 2 - zOrigin - TOKEN_D / 2;
+  const minZ = isCompanion ? -(CARD_H / 2 - TOKEN_D / 2) : -LAND_H / 2 - zOrigin + TOKEN_D / 2;
+  const maxZ = isCompanion ? CARD_H / 2 - TOKEN_D / 2 : LAND_H / 2 - zOrigin - TOKEN_D / 2;
   for (const t of tokens) {
     if (t.settled) continue;
     t.vy -= GRAVITY * dt;

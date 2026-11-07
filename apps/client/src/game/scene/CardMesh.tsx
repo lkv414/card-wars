@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useFrame, type ThreeEvent } from '@react-three/fiber';
+import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { CardView, PlayerView } from '@card-wars/protocol';
 import { CARD_H, CARD_T, CARD_W, FROST_D, TOKEN_D, TOKEN_T, slotLocalZ } from './layout';
-import { cardTexture, frostTexture, tokenTexture } from './textures';
+import { cardBackTexture, cardTexture, frostTexture, tokenTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
 import { activeAbilityOf, pick, startForActive, validTargets } from '../targeting';
 import { DamagePile } from './DamagePile';
@@ -12,7 +12,7 @@ const HOLD_MS = 1000; // флюп — зажать карту на 1 с (docs/UI
 const DRAG_THRESHOLD_PX = 10; // движение больше порога превращает зажатие в драг
 const DRAG_LIFT_Y = 34; // высота подъёма карты при перетаскивании
 
-/** Карта на поле: бокс 63×89 со сканом; флюп = поворот на 90° против часовой. */
+/** Карта на поле: бокс 63×89 со сканом и рубашкой; флюп = поворот на 90° против часовой. */
 export function CardMesh({
   card,
   view,
@@ -27,8 +27,23 @@ export function CardMesh({
   const holder = useRef<THREE.Group>(null); // позиция: базовый слот или следование за драгом
   const group = useRef<THREE.Group>(null); // поворот флюпа
   const ring = useRef<THREE.Mesh>(null);
+  const pendingPress = useRef<{ startX: number; startY: number } | null>(null);
   const baseTarget = useMemo(() => new THREE.Vector3(), []);
   const texture = useMemo(() => cardTexture(card.cardId), [card.cardId]);
+  const back = useMemo(() => cardBackTexture(), []);
+  const edgeMat = useMemo(() => new THREE.MeshLambertMaterial({ color: '#2a3545' }), []);
+  const materials = useMemo(
+    () => [
+      edgeMat, // +x
+      edgeMat, // -x
+      new THREE.MeshLambertMaterial({ map: texture }), // +y (лицо)
+      new THREE.MeshLambertMaterial({ map: back }), // -y (рубашка)
+      edgeMat, // +z
+      edgeMat, // -z
+    ],
+    [texture, back, edgeMat],
+  );
+
   const basePosition = useMemo<[number, number, number]>(
     () => [0, CARD_T / 2 + 0.4, slotLocalZ(slot)],
     [slot],
@@ -42,17 +57,18 @@ export function CardMesh({
   const canDrag = isMe && myMain; // драг с поля: сброс перетягиванием в стопку
   const canHold = canDrag && hasAbility && !card.flipped;
   const slotZ = slotLocalZ(slot);
+  const invalidate = useThree((s) => s.invalidate);
 
   // Зажатие → драг: движение указателя сверх порога отменяет флюп и начинает драг.
   useEffect(() => {
     if (!canDrag) return;
     const onMove = (e: PointerEvent) => {
-      const ui = useGame.getState().ui;
-      const holding = ui.holdingFloop;
-      if (holding?.instanceId !== card.instanceId) return;
-      if (Math.hypot(e.clientX - holding.startX, e.clientY - holding.startY) < DRAG_THRESHOLD_PX) {
+      const press = pendingPress.current;
+      if (!press) return;
+      if (Math.hypot(e.clientX - press.startX, e.clientY - press.startY) < DRAG_THRESHOLD_PX) {
         return;
       }
+      pendingPress.current = null;
       setUi({
         holdingFloop: null,
         dragging: card.instanceId,
@@ -62,29 +78,49 @@ export function CardMesh({
         dragPoint: null,
       });
     };
+    const onUp = () => {
+      pendingPress.current = null;
+    };
     window.addEventListener('pointermove', onMove);
-    return () => window.removeEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
   }, [canDrag, card.instanceId]);
 
   useFrame(() => {
     // Флюп: поворот против часовой (со стороны владельца) служит меткой состояния.
     if (group.current) {
       const targetRot = card.flipped ? Math.PI / 2 : 0;
-      group.current.rotation.y += (targetRot - group.current.rotation.y) * 0.18;
+      const diffRot = targetRot - group.current.rotation.y;
+      if (Math.abs(diffRot) > 0.005) {
+        group.current.rotation.y += diffRot * 0.18;
+        invalidate();
+      } else {
+        group.current.rotation.y = targetRot;
+      }
     }
     const ui = useGame.getState();
     // Драг с поля: карта поднимается и следует за указателем (мировые → локальные).
-    // В покое — просто базовый слот: worldToLocal применяется только к мировой
-    // точке драга, локальную позицию слота искажать нельзя.
     if (holder.current) {
       const draggingMe =
         ui.ui.dragging === card.instanceId && ui.ui.draggingFrom === 'field' && ui.ui.dragPoint;
       if (draggingMe) {
         const target = new THREE.Vector3(ui.ui.dragPoint!.x, DRAG_LIFT_Y, ui.ui.dragPoint!.z);
         holder.current.parent!.worldToLocal(target);
-        holder.current.position.lerp(target, 0.3);
+        if (holder.current.position.distanceTo(target) > 0.1) {
+          holder.current.position.lerp(target, 0.3);
+          invalidate();
+        }
       } else {
-        holder.current.position.lerp(baseTarget.set(basePosition[0], basePosition[1], basePosition[2]), 0.3);
+        baseTarget.set(basePosition[0], basePosition[1], basePosition[2]);
+        if (holder.current.position.distanceTo(baseTarget) > 0.1) {
+          holder.current.position.lerp(baseTarget, 0.3);
+          invalidate();
+        } else {
+          holder.current.position.copy(baseTarget);
+        }
       }
     }
     // Кольцо прогресса зажатия; на полном круге — флюп (или таргетинг его целей).
@@ -98,7 +134,9 @@ export function CardMesh({
         ring.current.scale.set(s, s, s);
         const material = ring.current.material as THREE.MeshBasicMaterial;
         material.opacity = 0.35 + progress * 0.6;
+        invalidate();
         if (progress >= 1) {
+          pendingPress.current = null;
           setUi({ holdingFloop: null });
           const ability = activeAbilityOf(card.cardId);
           if (ability && (ability.targets?.length ?? 0) > 0) {
@@ -139,17 +177,22 @@ export function CardMesh({
   const startHold = (event: ThreeEvent<PointerEvent>) => {
     if (!canDrag || useGame.getState().ui.targeting) return;
     event.stopPropagation();
-    setUi({
-      holdingFloop: {
-        instanceId: card.instanceId,
-        startedAt: performance.now(),
-        startX: event.clientX,
-        startY: event.clientY,
-      },
-      selectedHand: null,
-    });
+    pendingPress.current = { startX: event.nativeEvent.clientX, startY: event.nativeEvent.clientY };
+    if (canHold) {
+      setUi({
+        holdingFloop: {
+          instanceId: card.instanceId,
+          startedAt: performance.now(),
+          startX: event.nativeEvent.clientX,
+          startY: event.nativeEvent.clientY,
+        },
+        selectedHand: null,
+      });
+    }
   };
+
   const cancelHold = () => {
+    pendingPress.current = null;
     const holding = useGame.getState().ui.holdingFloop;
     if (holding?.instanceId === card.instanceId) setUi({ holdingFloop: null });
   };
@@ -157,9 +200,8 @@ export function CardMesh({
   return (
     <group ref={holder} position={basePosition}>
       <group ref={group} onClick={handleClick} onPointerDown={startHold} onPointerUp={cancelHold} onPointerOut={cancelHold}>
-        <mesh>
+        <mesh material={materials}>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
-          <meshLambertMaterial map={texture} />
         </mesh>
       </group>
       {canHold && (

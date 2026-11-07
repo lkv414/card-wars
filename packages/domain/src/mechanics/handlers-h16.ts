@@ -546,7 +546,7 @@ export const digPlayCompanion: MechanicHandler = (draft, ctx, source, params) =>
 };
 
 /** Крысолов: вооружить подмену атакующего применённым существом (docs §H16). */
-export const armReplaceAttacker: MechanicHandler = (draft, ctx, source, _params, choices) => {
+export const armReplaceAttacker: MechanicHandler = (draft, _ctx, source, _params, choices) => {
   const ratId = source.instanceId;
   if (!ratId) return;
   const pick = choices?.[0];

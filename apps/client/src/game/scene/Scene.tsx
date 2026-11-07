@@ -35,7 +35,7 @@ export function Scene() {
   );
 }
 
-/** Догрузка сканов карт асинхронна — каждый завершившиеся груз перерисовывает кадр. */
+/** Догрузка сканов карт асинхронна — каждый завершившийся груз перерисовывает кадр. */
 function ImageLoadTicker() {
   const invalidate = useThree((s) => s.invalidate);
   useEffect(() => subscribeImageLoads(() => invalidate()), [invalidate]);
@@ -52,7 +52,12 @@ function SceneContent() {
   // Dev-превью (?scene=1): доступ к three-сцене из консоли для отладки раскладки.
   useEffect(() => {
     if (new URLSearchParams(location.search).has('scene')) {
-      Object.assign(window as unknown as Record<string, unknown>, { __cwScene: scene, __cwCam: camera, __cwGl: gl, __cwThree: THREE });
+      Object.assign(window as unknown as Record<string, unknown>, {
+        __cwScene: scene,
+        __cwCam: camera,
+        __cwGl: gl,
+        __cwThree: THREE,
+      });
     }
   }, [scene, camera, gl]);
 
@@ -117,11 +122,11 @@ function CameraRig() {
   return null;
 }
 
-/** demand-рендер: активен, пока есть анимации/драг/удержание/наведение. */
+/** demand-рендер: активен, пока есть активные анимации, драг или зажатие флюпа. */
 function LoopController() {
   useFrame(({ invalidate }) => {
     const ui = useGame.getState().ui;
-    const busy = hasActiveAnims() || ui.dragging !== null || ui.holdingFloop !== null || ui.selectedHand !== null;
+    const busy = hasActiveAnims() || ui.dragging !== null || ui.holdingFloop !== null;
     if (busy) invalidate();
   });
   return null;

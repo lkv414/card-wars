@@ -1,0 +1,16 @@
+{
+  "cardId": "cake_card_18",
+  "name": "Крепкий лесоруб",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "allow_extra_building",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Можешь сыграть дополнительное строение на этой земле."
+    }
+  ]
+}

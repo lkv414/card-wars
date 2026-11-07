@@ -143,7 +143,7 @@ export function createMatch(
       hand,
       discard: [],
       lands: p.lands.map((type) => ({ type, frozen: false, flipped: false, iceTokens: type === 'ice' ? 1 : 0 })),
-      zones: Array.from({ length: config.landsPerPlayer }, () => ({ creature: null, building: null })),
+      zones: Array.from({ length: config.landsPerPlayer }, () => ({ creature: null, building: null, extraBuilding: null })),
       companion: null,
       actions: 0,
       mulligansUsed: 0,

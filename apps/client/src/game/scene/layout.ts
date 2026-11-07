@@ -173,6 +173,31 @@ export function overMyDiscard(view: PlayerView, worldX: number, worldZ: number):
   return dx * dx + dz * dz <= DISCARD_HIT_RADIUS * DISCARD_HIT_RADIUS;
 }
 
+/** Задевает ли ЛУЧ указателя цилиндр моей стопки сброса — без параллакса
+ *  плоскости драга (стопка лежит на столе, плоскость ловушки выше). */
+export function overMyDiscardRay(
+  view: PlayerView,
+  ox: number,
+  oy: number,
+  oz: number,
+  dx: number,
+  dy: number,
+  dz: number,
+): boolean {
+  const world = worldOfDiscard(view, view.me);
+  if (!world) return false;
+  const px = world[0] - ox;
+  const py = world[1] - oy;
+  const pz = world[2] - oz;
+  const dd = dx * dx + dy * dy + dz * dz;
+  if (dd === 0) return false;
+  const t = (px * dx + py * dy + pz * dz) / dd;
+  const cx = px - dx * t;
+  const cy = py - dy * t;
+  const cz = pz - dz * t;
+  return cx * cx + cy * cy + cz * cz <= DISCARD_HIT_RADIUS * DISCARD_HIT_RADIUS;
+}
+
 /** Which of my zones is under a world pointer position (drag & drop). */
 export function zoneFromWorld(view: PlayerView, worldX: number, worldZ: number): number | null {
   const origin = myBoardTransform(view);

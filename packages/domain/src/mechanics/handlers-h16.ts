@@ -552,6 +552,22 @@ export const armDamageEcho: MechanicHandler = (draft, _ctx, source, _params, cho
   draft.armedDamageEcho.push({ creatureId: pick.instanceId, playerId: source.player, expiresTurn: draft.turn });
 };
 
+/** jake_card_15: 1 урон каждому из N РАЗНЫХ существ, N = свои земли заданного типа. */
+export const damageOncePerLand: MechanicHandler = (draft, ctx, source, params, choices) => {
+  const type = params?.landType as string | undefined;
+  const amount = Number(params?.amount ?? 1);
+  const n = draft.players[source.player]!.lands.filter((l) => !type || l.type === type).length;
+  const seen = new Set<string>();
+  let hits = 0;
+  for (const pick of choices ?? []) {
+    if (hits >= n) break;
+    if (!pick || pick.kind !== 'creature' || seen.has(pick.instanceId)) continue;
+    seen.add(pick.instanceId);
+    dealToCreature(draft, ctx, pick.instanceId, amount, source.instanceId);
+    hits += 1;
+  }
+};
+
 /** jake_2v2_card_5: каждое свое существо наносит свой ATK существу противника на линии. */
 export const laneStrikeAll: MechanicHandler = (draft, ctx, source) => {
   const me = player(draft, source.player);

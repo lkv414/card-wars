@@ -8,7 +8,7 @@ import type { MatchState, PlayerId } from '../types';
 import { isActive } from '../zones';
 import { enqueueLeavePlay, enqueueTrigger } from '../mechanics/dispatch';
 import { bumpCounter, noteDiscard } from '../mechanics/effects';
-import { conditionsHold, consumeDiscount, frozenPlayPermitted, landCountModifier, playRestricted, playedCardCostModifier } from '../mechanics/modifiers';
+import { conditionsHold, consumeDiscount, extraBuildingPermitted, frozenPlayPermitted, landCountModifier, playRestricted, playedCardCostModifier } from '../mechanics/modifiers';
 import { costPicks, costPicksCount, floopCostPicks, sacrificePicks } from '../mechanics/costs';
 import { validateChoices } from '../mechanics/resolve';
 import type { TargetChoice } from '../mechanics/types';
@@ -264,7 +264,14 @@ export function handlePlayCard(
   const zoneState = p.zones[zone]!;
   const replaced = zoneState[slot];
   let replacedCardId: string | null = null;
-  if (replaced) {
+  // Дополнительное строение (Крепкий лесоруб, docs §H16): слот занят, но есть
+  // разрешение и второй слот пуст → строение ставится в extraBuilding.
+  let extra = false;
+  if (slot === 'building' && replaced && zoneState.extraBuilding == null &&
+      extraBuildingPermitted(draft, ctx, playerId, zone)) {
+    extra = true;
+  }
+  if (replaced && !extra) {
     const oldInst = instance(draft, replaced);
     replacedCardId = oldInst.cardId;
     oldInst.location = 'discard';
@@ -274,16 +281,28 @@ export function handlePlayCard(
     zoneState[slot] = null;
     emit(ctx, { type: 'card_discarded', player: playerId, instanceId: replaced, cardId: oldInst.cardId, from: 'field' });
   }
+  if (extra) {
+    const oldExtra = zoneState.extraBuilding!;
+    const oldInst = instance(draft, oldExtra);
+    replacedCardId = oldInst.cardId;
+    oldInst.location = 'discard';
+    oldInst.zone = null;
+    oldInst.slot = null;
+    p.discard.push(oldExtra);
+    zoneState.extraBuilding = null;
+    emit(ctx, { type: 'card_discarded', player: playerId, instanceId: oldExtra, cardId: oldInst.cardId, from: 'field' });
+  }
 
   p.actions -= effectiveCost;
   consumeDiscount(draft, playerId, card.type === 'creature' ? 'creature' : 'building');
   draft.turnPlayedCardIds.push(card.id);
   inst.location = 'field';
   inst.zone = zone;
-  inst.slot = slot;
+  inst.slot = extra ? 'extra_building' : slot;
   inst.playedTurn = draft.turn;
   p.hand.splice(p.hand.indexOf(instanceId), 1);
-  zoneState[slot] = instanceId;
+  if (extra) zoneState.extraBuilding = instanceId;
+  else zoneState[slot] = instanceId;
   emit(ctx, {
     type: 'card_played',
     player: playerId,

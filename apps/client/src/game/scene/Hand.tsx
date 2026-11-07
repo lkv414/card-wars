@@ -3,15 +3,15 @@ import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
 import { cards as catalog } from '@card-wars/content';
-import { CARD_H, CARD_T, CARD_W, HAND, myBoardTransform, zoneFromWorld } from './layout';
+import { CARD_H, CARD_T, CARD_W, HAND, myBoardTransform, overMyDiscardRay, zoneFromWorld } from './layout';
 import { cardTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
 import { pick } from '../targeting';
 
 /**
  * Рука — 3D-веер внизу экрана (docs/UI-3D.md «Рука (решено: 3D)»).
- * Клик выбирает карту; для существа/строения появляется режим размещения —
- * клик по своей зоне играет карту; перетаскивание в правый нижний угол — сброс.
+ * Перетаскивание: карта следует за указателем; зона — сыграть,
+ * стопка сброса (или правый нижний угол) — сбросить.
  */
 export function Hand({ view }: { view: PlayerView }) {
   const me = view.players[view.me]!;
@@ -22,6 +22,7 @@ export function Hand({ view }: { view: PlayerView }) {
     view.phase === 'main';
   const selected = useGame((s) => s.ui.selectedHand);
   const dragging = useGame((s) => s.ui.dragging);
+  const draggingFrom = useGame((s) => s.ui.draggingFrom);
   const group = useRef<THREE.Group>(null);
 
   const items = view.myHand.filter((c) => c.instanceId !== dragging);
@@ -35,19 +36,26 @@ export function Hand({ view }: { view: PlayerView }) {
       : Math.max(narrow ? 54 : 70, (narrow ? 380 : 560) / items.length);
 
   // Глобальное окончание перетаскивания: указатель в этот момент уже НЕ над
-  // картой руки, поэтому решаем всё здесь — зона = сыграть, угол = сброс.
+  // картой руки, поэтому решаем всё здесь — стопка сброса = сброс, зона = сыграть.
   useEffect(() => {
     const onUp = (event: PointerEvent) => {
       const ui = useGame.getState().ui;
       if (!ui.dragging) return;
+      const overDiscard = ui.draggingOverDiscard;
       const inCorner = event.clientX > innerWidth - 170 && event.clientY > innerHeight - 170;
       const zone = ui.draggingOverZone;
-      setUi({ dragging: null, draggingOverZone: null });
-      if (inCorner) {
-        sendCommand({ type: 'discard_from_hand', player: view.me, instanceId: ui.dragging });
-        setUi({ selectedHand: null });
-      } else if (zone !== null) {
-        sendCommand({ type: 'play_card', player: view.me, instanceId: ui.dragging, zone });
+      const source = ui.draggingFrom;
+      const instanceId = ui.dragging;
+      setUi({ dragging: null, draggingOverZone: null, draggingOverDiscard: false, dragPoint: null });
+      if (overDiscard || inCorner) {
+        if (source === 'field') {
+          sendCommand({ type: 'discard_from_field', player: view.me, instanceId });
+        } else {
+          sendCommand({ type: 'discard_from_hand', player: view.me, instanceId });
+          setUi({ selectedHand: null });
+        }
+      } else if (zone !== null && source === 'hand') {
+        sendCommand({ type: 'play_card', player: view.me, instanceId, zone });
         setUi({ selectedHand: null });
       }
     };
@@ -67,7 +75,14 @@ export function Hand({ view }: { view: PlayerView }) {
     if (myMain) return;
     const ui = useGame.getState().ui;
     if (ui.selectedHand || ui.dragging || ui.holdingFloop) {
-      setUi({ selectedHand: null, dragging: null, draggingOverZone: null, holdingFloop: null });
+      setUi({
+        selectedHand: null,
+        dragging: null,
+        draggingOverZone: null,
+        draggingOverDiscard: false,
+        dragPoint: null,
+        holdingFloop: null,
+      });
     }
   }, [myMain]);
 
@@ -79,38 +94,96 @@ export function Hand({ view }: { view: PlayerView }) {
   });
 
   return (
-    <group ref={group}>
-      {items.map((card, index) => {
-        const offset = index - (items.length - 1) / 2;
-        const isSelected = selected === card.instanceId;
-        const meta = catalog.find((c) => c.id === card.cardId);
-        return (
-          <HandCard
-            key={card.instanceId}
-            instanceId={card.instanceId}
-            cardId={card.cardId}
-            offset={offset}
-            step={step}
-            selected={isSelected}
-            playable={myMain}
-            isDirect={meta?.type === 'spell' || meta?.type === 'companion'}
-            view={view}
-          />
-        );
-      })}
+    <>
+      <group ref={group}>
+        {items.map((card, index) => {
+          const offset = index - (items.length - 1) / 2;
+          const isSelected = selected === card.instanceId;
+          const meta = catalog.find((c) => c.id === card.cardId);
+          return (
+            <HandCard
+              key={card.instanceId}
+              instanceId={card.instanceId}
+              cardId={card.cardId}
+              offset={offset}
+              step={step}
+              selected={isSelected}
+              playable={myMain}
+              isDirect={meta?.type === 'spell' || meta?.type === 'companion'}
+              view={view}
+            />
+          );
+        })}
+      </group>
+      {dragging && draggingFrom === 'hand' && <DragGhost view={view} instanceId={dragging} />}
       {dragging && <DragPlane view={view} />}
-      {dragging && <CornerHint instanceId={dragging} />}
+    </>
+  );
+}
+
+/** Призрак карты руки следует за указателем при перетаскивании (docs/UI-3D.md «Взаимодействие»). */
+function DragGhost({ view, instanceId }: { view: PlayerView; instanceId: string }) {
+  const dragPoint = useGame((s) => s.ui.dragPoint);
+  const ref = useRef<THREE.Group>(null);
+  const cardId = view.myHand.find((c) => c.instanceId === instanceId)?.cardId ?? '';
+  const texture = useMemo(() => cardTexture(cardId), [cardId]);
+
+  useFrame(() => {
+    if (!ref.current || !dragPoint) return;
+    ref.current.position.x += (dragPoint.x - ref.current.position.x) * 0.35;
+    ref.current.position.z += (dragPoint.z - ref.current.position.z) * 0.35;
+  });
+
+  if (!dragPoint) return null;
+  return (
+    <group ref={ref} position={[dragPoint.x, 42, dragPoint.z]} rotation={[-Math.PI / 2 + 0.55, 0, 0]}>
+      <mesh>
+        <planeGeometry args={[CARD_W, CARD_H]} />
+        <meshBasicMaterial map={texture} transparent opacity={0.9} />
+      </mesh>
     </group>
   );
 }
 
-/** Подсказка зоны сброса в правом нижнем углу при перетаскивании (docs/UI-3D.md). */
-function CornerHint({ instanceId }: { instanceId: string }) {
-  const texture = useMemo(() => cardTexture(useGame.getState().view?.myHand.find((c) => c.instanceId === instanceId)?.cardId ?? ''), [instanceId]);
+/** Прозрачная (но не visible=false — рейкаст невидимых отключён) плоскость
+ *  улавливания при перетаскивании: следит за указателем над всем столом.
+ *  Зону и точку следования считаем на уровне стола (луч, а не хит по
+ *  плоскости ловушки) — иначе параллакс уводит drop мимо стопки/зоны. */
+function DragPlane({ view }: { view: PlayerView }) {
+  const origin = myBoardTransform(view);
   return (
-    <mesh position={[-600, 40, 250]} rotation={[0.5, 0.6, 0]}>
-      <planeGeometry args={[CARD_W, CARD_H]} />
-      <meshBasicMaterial map={texture} transparent opacity={0.25} />
+    <mesh
+      position={[origin.x, 45, origin.z]}
+      rotation={[-Math.PI / 2, 0, 0]}
+      onPointerMove={(event) => {
+        event.stopPropagation();
+        const ray = event.ray;
+        const tableY = 1.6; // верх карт на поле
+        const tTable = Math.abs(ray.direction.y) > 1e-6 ? (tableY - ray.origin.y) / ray.direction.y : 0;
+        const px = ray.origin.x + ray.direction.x * tTable;
+        const pz = ray.origin.z + ray.direction.z * tTable;
+        const zone = zoneFromWorld(view, px, pz);
+        const overDiscard = overMyDiscardRay(
+          view,
+          ray.origin.x,
+          ray.origin.y,
+          ray.origin.z,
+          ray.direction.x,
+          ray.direction.y,
+          ray.direction.z,
+        );
+        useGame.setState((s) => ({
+          ui: {
+            ...s.ui,
+            dragPoint: { x: px, z: pz },
+            draggingOverZone: zone,
+            draggingOverDiscard: overDiscard,
+          },
+        }));
+      }}
+    >
+      <planeGeometry args={[2800, 1800]} />
+      <meshBasicMaterial transparent opacity={0} depthWrite={false} />
     </mesh>
   );
 }
@@ -165,15 +238,22 @@ function HandCard({
   const handleDown = (event: ThreeEvent<PointerEvent>) => {
     if (!playable) return;
     event.stopPropagation();
-    setUi({ selectedHand: instanceId, dragging: instanceId, draggingOverZone: null });
+    setUi({
+      selectedHand: instanceId,
+      dragging: instanceId,
+      draggingFrom: 'hand',
+      draggingOverZone: null,
+      draggingOverDiscard: false,
+      dragPoint: null,
+    });
   };
 
   const handleUp = () => {
     // Отпускание над самой картой: ничего не решаем — глобальный pointerup
-    // в Hand уже обработал зону/угол (указатель ушёл с карты при перетаскивании).
+    // в Hand уже обработал стопку/зону (указатель ушёл с карты при перетаскивании).
     const state = useGame.getState().ui;
     if (state.dragging !== instanceId) return;
-    setUi({ dragging: null, draggingOverZone: null });
+    setUi({ dragging: null, draggingOverZone: null, draggingOverDiscard: false, dragPoint: null });
   };
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
@@ -223,29 +303,5 @@ function HandCard({
         </mesh>
       )}
     </group>
-  );
-}
-
-/** Прозрачная (но не visible=false — рейкаст невидимых отключён) плоскость
- *  улавливания при перетаскивании: подсвечивает зоны моей доски. */
-function DragPlane({ view }: { view: PlayerView }) {
-  const origin = myBoardTransform(view);
-  return (
-    <mesh
-      position={[origin.x, 45, origin.z]}
-      rotation={[-Math.PI / 2, 0, 0]}
-      onPointerMove={(event) => {
-        event.stopPropagation();
-        const zone = zoneFromWorld(view, event.point.x, event.point.z);
-        useGame.setState((s) =>
-          s.ui.draggingOverZone !== zone
-            ? { ui: { ...s.ui, draggingOverZone: zone } }
-            : {},
-        );
-      }}
-    >
-      <planeGeometry args={[1000, 600]} />
-      <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-    </mesh>
   );
 }

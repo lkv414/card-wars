@@ -708,7 +708,9 @@ type EffectOp =
   /** Rule aura: creature hits against the covered unit cap at max (Подушка боли, docs §H16). */
   | { op: 'damage_cap'; target: TargetRef; max: number }
   /** Rule aura: spells deal +amount extra to the covered unit (Подушка боли, docs §H16). */
-  | { op: 'damage_bonus'; target: TargetRef; amount: number };
+  | { op: 'damage_bonus'; target: TargetRef; amount: number }
+  /** Rule aura: the covered creature's land may hold a SECOND building (Крепкий лесоруб, docs §H16). */
+  | { op: 'allow_extra_building'; target: TargetRef };
 
 /**
  * A declarative operation with its own optional conditions.

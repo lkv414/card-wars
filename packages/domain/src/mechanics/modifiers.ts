@@ -842,9 +842,9 @@ export function landCountModifier(
 export type { ResolvedTarget };
 
 /** Modifier effects only (suppress / no_retaliation / damage_immunity / damage_redirect). */
-const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus']);
+const MODIFIER_OPS = new Set(['suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'counts_as', 'attack_mod', 'defense_mod', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'allow_extra_building']);
 
-type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' | 'allow_frozen_play' | 'guard_player' | 'damage_cap' | 'damage_bonus' }>;
+type RuleEffect = Extract<EffectSpec, { op: 'suppress' | 'no_retaliation' | 'damage_immunity' | 'damage_redirect' | 'counts_as' | 'attack_mod' | 'defense_mod' | 'dodge' | 'land_flip_protection' | 'restrict_play' | 'allow_frozen_play' | 'guard_player' | 'damage_cap' | 'damage_bonus' | 'allow_extra_building' }>;
 
 function ruleEffects(
   draft: MatchState,
@@ -955,6 +955,22 @@ export function landFlipProtected(
     if (inst.controller !== playerId) continue;
     if (inst.controller === byPlayer) continue; // свои эффекты не блокируются
     return true;
+  }
+  return false;
+}
+
+/** The covered creature enables a SECOND building on its land (Крепкий лесоруб, docs §H16). */
+export function extraBuildingPermitted(
+  draft: MatchState,
+  ctx: Pick<Ctx, 'config' | 'catalog'>,
+  playerId: PlayerId,
+  zone: number,
+): boolean {
+  for (const { source, effect } of ruleEffects(draft, ctx)) {
+    if (effect.op !== 'allow_extra_building') continue;
+    if (!source.instanceId) continue;
+    const inst = instance(draft, source.instanceId);
+    if (inst.location === 'field' && inst.controller === playerId && inst.zone === zone) return true;
   }
   return false;
 }

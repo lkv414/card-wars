@@ -1739,7 +1739,19 @@
   "attack": 2,
   "defense": 9,
   "description": "Можешь сыграть дополнительное строение на этой земле.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "allow_extra_building",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "Можешь сыграть дополнительное строение на этой земле."
+   }
+  ]
  },
  {
   "id": "cake_card_20",
@@ -10580,22 +10592,23 @@
     "targets": [
      {
       "kind": "any_creature"
+     },
+     {
+      "kind": "any_creature"
+     },
+     {
+      "kind": "any_creature"
+     },
+     {
+      "kind": "any_creature"
      }
     ],
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "amount": {
-      "kind": "per_lands",
-      "where": "own",
-      "landType": "corn",
-      "amount": 1
-     }
+    "mechanic": "damage_once_per_land",
+    "params": {
+     "landType": "corn",
+     "amount": 1
     },
-    "text": "ПРИЕМ >>> Наносит 1 урон выбранному существу за каждое Кукурузное поле под твоим контролем."
+    "text": "ПРИЕМ >>> Наносит 1 урон выбранному существу. Повтори это за каждое Кукурузное поле под твоим контролем. (Может повредить каждое существо только 1 раз.)"
    }
   ]
  },

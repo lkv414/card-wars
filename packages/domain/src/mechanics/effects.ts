@@ -5,7 +5,7 @@ import { DomainError } from '../errors';
 import { finishMatch } from '../finish';
 import { killInstance } from '../damage';
 import { pickRandom, rngInt } from '../rng';
-import { emit, instance, moveId, player } from '../util';
+import { clearZoneSlot, emit, instance, moveId, player } from '../util';
 import type { Ctx } from '../util';
 import type { CardData, CardInstance, CardType, MatchState } from '../types';
 import { opponentsOf, teamOf } from '../zones';
@@ -509,7 +509,7 @@ export function runEffect(
         const prevZone = inst.zone;
         if (inst.zone !== null && inst.slot) {
           const zoneOwner = draft.players[inst.controller]!;
-          if (zoneOwner.zones[inst.zone]![inst.slot] === target.instanceId) zoneOwner.zones[inst.zone]![inst.slot] = null;
+          clearZoneSlot(zoneOwner.zones[inst.zone]!, inst.slot, target.instanceId);
         }
         if (inst.location === 'companion') draft.players[inst.controller]!.companion = null;
         inst.location = 'hand';
@@ -786,7 +786,8 @@ export function runEffect(
       const ia = instance(draft, (a as { instanceId: string }).instanceId);
       const ib = instance(draft, (b as { instanceId: string }).instanceId);
       if (ia.location !== 'field' || ib.location !== 'field' || ia.zone === null || ib.zone === null || ia.slot === null || ia.slot !== ib.slot) return;
-      const slot = ia.slot;
+      if (ia.slot !== 'creature' && ia.slot !== 'building') return;
+      const slot: 'creature' | 'building' = ia.slot;
       const fromA = ia.zone;
       const fromB = ib.zone;
       const za = draft.players[ia.controller]!.zones[fromA]!;
@@ -824,7 +825,7 @@ export function runEffect(
       if (attached.location === 'field' || attached.location === 'companion') {
         if (attached.zone !== null && attached.slot) {
           const owner = draft.players[attached.controller]!;
-          if (owner.zones[attached.zone]![attached.slot] === cardId) owner.zones[attached.zone]![attached.slot] = null;
+          clearZoneSlot(owner.zones[attached.zone]!, attached.slot, cardId);
         }
         if (attached.location === 'companion') draft.players[attached.controller]!.companion = null;
         enqueueLeavePlay(draft, ctx, cardId, attached.cardId, attached.controller, attached.zone);
@@ -877,7 +878,7 @@ export function runEffect(
         // Leaving play: clear the slot and fire on_leave_play (docs §3).
         if (inst.zone !== null && inst.slot) {
           const owner = draft.players[inst.controller]!;
-          if (owner.zones[inst.zone]![inst.slot] === id) owner.zones[inst.zone]![inst.slot] = null;
+          clearZoneSlot(owner.zones[inst.zone]!, inst.slot, id);
         }
         if (inst.location === 'companion') draft.players[inst.controller]!.companion = null;
         from = inst.location;

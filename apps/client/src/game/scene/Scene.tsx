@@ -6,6 +6,7 @@ import { cameraFor } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
+import { subscribeImageLoads } from './textures';
 
 /**
  * 3D-сцена — декларативная функция снапшота (docs/UI-3D.md): сцена строится из
@@ -29,13 +30,31 @@ export function Scene() {
       <SceneContent />
       <CameraRig />
       <LoopController />
+      <ImageLoadTicker />
     </Canvas>
   );
+}
+
+/** Догрузка сканов карт асинхронна — каждый завершившиеся груз перерисовывает кадр. */
+function ImageLoadTicker() {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => subscribeImageLoads(() => invalidate()), [invalidate]);
+  return null;
 }
 
 function SceneContent() {
   const view = useGame((s) => s.view);
   const quality = useGame((s) => s.ui.quality);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+  const gl = useThree((s) => s.gl);
+
+  // Dev-превью (?scene=1): доступ к three-сцене из консоли для отладки раскладки.
+  useEffect(() => {
+    if (new URLSearchParams(location.search).has('scene')) {
+      Object.assign(window as unknown as Record<string, unknown>, { __cwScene: scene, __cwCam: camera, __cwGl: gl, __cwThree: THREE });
+    }
+  }, [scene, camera, gl]);
 
   if (!view) return null;
   // Мой ряд рисуется последним, чтобы быть поверх соседних досок.

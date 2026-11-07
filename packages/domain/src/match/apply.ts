@@ -4,6 +4,7 @@ import { afterEffects, eliminatePlayer, eliminateTeam } from '../deaths';
 import { drawCards } from '../draw';
 import { DomainError } from '../errors';
 import { finishMatch } from '../finish';
+import { clearZoneSlot } from '../util';
 import { isActive, teamOf } from '../zones';
 import { noteDiscard } from '../mechanics/effects';
 import { resolveCombat } from './combat';
@@ -235,7 +236,7 @@ function handle(draft: Draft<MatchState>, ctx: Ctx, command: Command): void {
         throw new DomainError('card_not_in_play', 'card is not on your field');
       }
       if (inst.zone !== null && inst.slot) {
-        p.zones[inst.zone]![inst.slot] = null;
+        clearZoneSlot(p.zones[inst.zone]!, inst.slot, command.instanceId);
       }
       if (inst.location === 'companion') p.companion = null;
       const from = inst.location === 'companion' ? 'companion' : 'field';

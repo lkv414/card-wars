@@ -65,6 +65,8 @@ export interface LandState {
 export interface ZoneState {
   creature: string | null;
   building: string | null;
+  /** Second building slot, enabled by Крепкий лесоруб (docs §H16). */
+  extraBuilding?: string | null;
 }
 
 export interface CardInstance {
@@ -76,7 +78,7 @@ export interface CardInstance {
   location: Location;
   /** Zone index for field cards; null otherwise. */
   zone: number | null;
-  slot: 'creature' | 'building' | null;
+  slot: 'creature' | 'building' | 'extra_building' | null;
   /** Floop state: flipped card does not attack until its controller's next turn start. */
   flipped: boolean;
   /** Accumulated damage (destroyed when damage >= effective defense). */

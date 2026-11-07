@@ -16,7 +16,7 @@ import {
   worldOfSlot,
   zoneX,
 } from './layout';
-import { cardTexture, textSprite, tokenTexture } from './textures';
+import { cardTexture, textSprite } from './textures';
 import { useGame } from '../../store';
 
 // Анимации-«призраки» поверх снапшота: сцена уже показывает итоговое состояние,
@@ -24,7 +24,7 @@ import { useGame } from '../../store';
 
 interface Anim {
   id: number;
-  kind: 'fly' | 'tokenDrop' | 'number' | 'flash';
+  kind: 'fly' | 'number' | 'flash';
   cardId?: string;
   from: [number, number, number];
   to: [number, number, number];
@@ -137,6 +137,8 @@ export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): voi
         break;
       }
       case 'damage_dealt': {
+        // Падение жетонов показывает кучка DamagePile (физсимуляция на карте);
+        // здесь остаётся только всплывающая цифра урона.
         const target: [number, number, number] = event.targetInstanceId
           ? (positionOfInstance(view, event.targetInstanceId) ?? [0, 20, 0])
           : heroAt(view, event.targetPlayer);
@@ -148,9 +150,6 @@ export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): voi
           to: [target[0], target[1] + 130, target[2]],
           duration: 900,
         });
-        if (event.targetInstanceId) {
-          pushAnim({ kind: 'tokenDrop', from: [target[0], 130, target[2]], to: [target[0] + 18, 8, target[2] - 12], duration: 420 });
-        }
         break;
       }
       case 'creature_healed': {
@@ -265,14 +264,6 @@ function Ghost({ anim, now }: { anim: Anim; now: number }) {
       <mesh position={pos} rotation={[-Math.PI / 2 + Math.sin(t * Math.PI) * 0.7, 0, 0]}>
         <planeGeometry args={[CARD_W, CARD_H]} />
         <meshBasicMaterial map={texture} transparent opacity={opacity} />
-      </mesh>
-    );
-  }
-  if (anim.kind === 'tokenDrop') {
-    return (
-      <mesh position={[pos[0], pos[1], pos[2]]}>
-        <cylinderGeometry args={[12.5, 12.5, 3, 20]} />
-        <meshLambertMaterial map={tokenTexture(1)} transparent opacity={opacity} />
       </mesh>
     );
   }

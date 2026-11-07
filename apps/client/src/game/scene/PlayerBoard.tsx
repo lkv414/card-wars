@@ -9,13 +9,15 @@ import {
   boardTransform,
   deckLocal,
   discardLocal,
+  frostLocalZ,
   heroLocal,
   livesLocal,
   zoneX,
 } from './layout';
-import { cardBackTexture, cardTexture } from './textures';
+import { cardBackTexture, cardTexture, heroTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
+import { useGame } from '../../store';
 
 /** Половина стола одного игрока: ряд земель, колода/сброс, герой, жизни, парная. */
 export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string; isMe: boolean }) {
@@ -33,7 +35,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
         <group key={i} position={[zoneX(i), 0, 0]}>
           <Land land={p.lands[i]!} zone={i} isMe={isMe} pid={pid} view={view} />
           {p.lands[i]!.frozen && (
-            <group position={[0, 0, -34]}>
+            <group position={[0, 0, frostLocalZ]}>
               <FrostToken />
             </group>
           )}
@@ -79,17 +81,31 @@ function DeckPile({ count }: { count: number }) {
   );
 }
 
+/** Стопка сброса — цель перетаскивания (рука и поле); подсвечивается при драге (docs/UI-3D.md «Взаимодействие»). */
 function DiscardPile({ view, pid }: { view: PlayerView; pid: string }) {
   const p = view.players[pid]!;
   const [x, y, z] = discardLocal;
   const top = p.discard[p.discard.length - 1];
   const texture = useMemo(() => (top ? cardTexture(top.cardId) : cardBackTexture()), [top?.cardId]);
+  const isMe = pid === view.me;
+  const active = isMe && useGame((s) => s.ui.dragging) !== null;
+  const overDiscard = useGame((s) => s.ui.draggingOverDiscard);
   return (
     <group position={[x, y, z]}>
       {top && (
         <mesh position={[0, 1, 0]}>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
           <meshLambertMaterial map={texture} />
+        </mesh>
+      )}
+      {active && (
+        <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[CARD_W + 30, CARD_H + 30]} />
+          <meshBasicMaterial
+            color={overDiscard ? '#48d9a0' : '#48bb78'}
+            transparent
+            opacity={overDiscard ? 0.5 : 0.22}
+          />
         </mesh>
       )}
       <FloatingLabel text={`Сброс: ${p.discard.length}`} position={[0, 16, 0]} />
@@ -113,11 +129,17 @@ function HeroStand({
   const [x, , z] = heroLocal;
   const color = ready ? '#4c8ee8' : active ? '#48bb78' : '#3a4250';
   const suffix = `${ready ? ' · готов' : active ? ' · ход' : ''}${teamLabel ? ` · ${teamLabel}` : ''}`;
+  const portrait = useMemo(() => heroTexture(heroId), [heroId]);
   return (
     <group position={[x, 0, z]}>
       <mesh position={[0, 14, 0]}>
         <boxGeometry args={[110, 28, 10]} />
         <meshLambertMaterial color={color} />
+      </mesh>
+      {/* портрет героя — скан из content/heroes/images (docs/UI-3D.md «Состав сцена») */}
+      <mesh position={[0, 56, 6]}>
+        <planeGeometry args={[64, 80]} />
+        <meshLambertMaterial map={portrait} />
       </mesh>
       <FloatingLabel text={`${heroNameOf(heroId)} · ${nickname}${suffix}`} position={[0, 34, 0]} />
     </group>

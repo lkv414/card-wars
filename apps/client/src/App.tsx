@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
 import { DecksScreen } from './decks/DecksScreen';
+import { MockScene } from './game/debug/MockScene';
 import { getSelectedDeckId, heroName, loadDecks } from './decks';
 import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
@@ -11,6 +12,10 @@ type Screen = 'menu' | 'decks';
 
 export function App() {
   const [nickname, setNickname] = useState(() => localStorage.getItem('cw-nickname') ?? '');
+  // ?scene=1 — dev-превью 3D-сцены с мок-снапшотом, без сервера.
+  if (new URLSearchParams(location.search).has('scene')) {
+    return <MockScene />;
+  }
   const [codeInput, setCodeInput] = useState('');
   const [screen, setScreen] = useState<Screen>(() => (location.pathname === '/decks' ? 'decks' : 'menu'));
   const [activeCode, setActiveCode] = useState<string | null>(() => {

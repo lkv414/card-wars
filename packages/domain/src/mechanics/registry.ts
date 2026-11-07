@@ -4,7 +4,7 @@ import type { Ctx } from '../util';
 import type { MatchState } from '../types';
 import { chainDamage, copySpell, damageUntilDef, halfDefDamage, minMaxDefDamage, sacrificeCostDamage, destroyDrawCost, discardThenDamage, discardTopDamage, grantRandomDiscardActive, damagePerHand, laneOrFaceDamage, millSpellDiscard, moveDamage, returnCostActions, splashDamage, swapCreatures, swapLanes, tokenBonusDamage } from './handlers';
 import { catLives, discardMinCostOrDamage, enterMoveToEmpty, selfDamageThenDestroy, startTurnMoveOrDiscard, stealAndPlayFromHand } from './handlers-h3';
-import { alleyMove, armDamageEcho, armFreePlay, banishAttacker, drawPerZoneEnters, laneStrikeAll, borrowCreature, compareRevealPlayers, damageThenFreezeLand, discardCost0OrRevealHand, discardToReturnSelf, digPlayCompanion, digPlayNamed, drawDiscardRainbowAction, drawToLanePlayers, drawTwoCostMatch, eachDrawCreatureOfType, enterMoveLaneCreature, freezeAndSpreadTokens, grantEarmark, healOnePerIceLand, moveSelfGainActionIfFrozen, peekReorder, readyPerType, resetAndRefill, sacrificeHalfDefDraw, selfRescueOnDeath, splashTargetAllies, destroyLaneAndSameName } from './handlers-h16';
+import { alleyMove, armDamageEcho, armFreePlay, banishAttacker, damageOncePerLand, drawPerZoneEnters, laneStrikeAll, borrowCreature, compareRevealPlayers, damageThenFreezeLand, discardCost0OrRevealHand, discardToReturnSelf, digPlayCompanion, digPlayNamed, drawDiscardRainbowAction, drawToLanePlayers, drawTwoCostMatch, eachDrawCreatureOfType, enterMoveLaneCreature, freezeAndSpreadTokens, grantEarmark, healOnePerIceLand, moveSelfGainActionIfFrozen, peekReorder, readyPerType, resetAndRefill, sacrificeHalfDefDraw, selfRescueOnDeath, splashTargetAllies, destroyLaneAndSameName } from './handlers-h16';
 import type { EffectSource } from './source';
 export type { EffectSource };
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -66,6 +66,7 @@ export const MECHANICS: Record<string, MechanicHandler> = {
   arm_free_play: armFreePlay,
   arm_damage_echo: armDamageEcho,
   lane_strike_all: laneStrikeAll,
+  damage_once_per_land: damageOncePerLand,
   draw_per_zone_enters: drawPerZoneEnters,
   banish_attacker: banishAttacker,
   discard_cost0_or_reveal_hand: discardCost0OrRevealHand,

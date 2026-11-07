@@ -38,9 +38,12 @@ function contentAssets(): Plugin {
       });
     },
     closeBundle() {
-      const source = join(contentDir, 'cards', 'images');
-      const target = resolve(here, 'dist/content/cards/images');
-      if (existsSync(source)) cpSync(source, target, { recursive: true });
+      // Сканы карт и портреты героев раздаются статикой (docs/UI-3D.md «Состав сцена»).
+      for (const part of [['cards', 'images'], ['heroes', 'images']]) {
+        const source = join(contentDir, ...part);
+        const target = resolve(here, 'dist/content', ...part);
+        if (existsSync(source)) cpSync(source, target, { recursive: true });
+      }
     },
   };
 }

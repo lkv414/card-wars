@@ -3,7 +3,7 @@ import { dealToCreature, dealToPlayer, killInstance } from '../damage';
 import { DomainError } from '../errors';
 import type { Ctx } from '../util';
 import { drawCards } from '../draw';
-import { emit, instance, player } from '../util';
+import { clearZoneSlot, emit, instance, player } from '../util';
 import { computeEff } from '../stats';
 import { opponentsOf, opponentZoneFor } from '../zones';
 import { pickRandom } from '../rng';
@@ -261,7 +261,7 @@ export const returnCostActions: MechanicHandler = (
   const owner = player(draft, inst.controller);
   inst.location = 'hand';
   if (inst.zone !== null && inst.slot) {
-    draft.players[inst.controller]!.zones[inst.zone]![inst.slot] = null;
+    clearZoneSlot(draft.players[inst.controller]!.zones[inst.zone]!, inst.slot, pick.instanceId);
   }
   inst.zone = null;
   inst.slot = null;

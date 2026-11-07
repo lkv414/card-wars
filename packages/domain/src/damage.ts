@@ -1,7 +1,7 @@
 import type { Draft } from 'immer';
 import { DomainError } from './errors';
 import type { Ctx } from './util';
-import { emit, instance, player } from './util';
+import { clearZoneSlot, emit, instance, player } from './util';
 import type { CardInstance, MatchState, PlayerId } from './types';
 import { teamOf } from './zones';
 import { damageCapFor, damageImmunity, damageRedirectTarget, spellDamageBonusFor } from './mechanics/modifiers';
@@ -121,8 +121,7 @@ export function killInstance(draft: Draft<MatchState>, _ctx: Ctx, targetId: stri
   }
   if (inst.zone !== null && inst.slot) {
     const owner = draft.players[inst.controller]!;
-    const zone = owner.zones[inst.zone]!;
-    if (zone[inst.slot] === targetId) zone[inst.slot] = null;
+    clearZoneSlot(owner.zones[inst.zone]!, inst.slot, targetId);
   }
   if (inst.location === 'companion') {
     draft.players[inst.controller]!.companion = null;

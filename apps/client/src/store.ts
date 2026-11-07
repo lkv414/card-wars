@@ -15,8 +15,12 @@ export interface UiState {
   quality: Quality;
   selectedHand: string | null;
   dragging: string | null;
+  draggingFrom: 'hand' | 'field';
   draggingOverZone: number | null;
-  holdingFloop: { instanceId: string; startedAt: number } | null;
+  draggingOverDiscard: boolean;
+  /** Мировые координаты указателя при перетаскивании (рейкаст по плоскости стола). */
+  dragPoint: { x: number; z: number } | null;
+  holdingFloop: { instanceId: string; startedAt: number; startX: number; startY: number } | null;
   targeting: TargetingState | null;
   journalOpen: boolean;
 }
@@ -52,7 +56,10 @@ export const useGame = create<GameStore>(() => ({
     quality: (localStorage.getItem('cw-quality') as Quality) ?? 'high',
     selectedHand: null,
     dragging: null,
+    draggingFrom: 'hand',
     draggingOverZone: null,
+    draggingOverDiscard: false,
+    dragPoint: null,
     holdingFloop: null,
     targeting: null,
     journalOpen: false,

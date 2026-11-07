@@ -545,6 +545,15 @@ export const digPlayCompanion: MechanicHandler = (draft, ctx, source, params) =>
   if (compIdx >= 0) playCardFree(draft, ctx, source, window[compIdx]!, null);
 };
 
+/** Крысолов: вооружить подмену атакующего применённым существом (docs §H16). */
+export const armReplaceAttacker: MechanicHandler = (draft, ctx, source, _params, choices) => {
+  const ratId = source.instanceId;
+  if (!ratId) return;
+  const pick = choices?.[0];
+  if (!pick || pick.kind !== 'creature') throw new DomainError('invalid_choice', 'needs a creature');
+  draft.armedReplacements.push({ attackerId: ratId, substituteId: pick.instanceId, expiresTurn: draft.turn });
+};
+
 /** jake_2v2_card_36: вооружить эхо урона на выбранном существе (до конца хода). */
 export const armDamageEcho: MechanicHandler = (draft, _ctx, source, _params, choices) => {
   const pick = choices?.[0];

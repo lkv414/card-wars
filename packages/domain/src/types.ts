@@ -225,6 +225,8 @@ export interface MatchState {
   armedFreePlays: Array<{ player: PlayerId; landType?: string; maxCost?: number; name?: string; expiresTurn: number }>;
   /** Damage echo (jake_2v2_card_36, docs §H16): if this creature deals damage, echo 2. */
   armedDamageEcho: Array<{ creatureId: string; playerId: PlayerId; expiresTurn: number }>;
+  /** Armed attacker replacement (Крысолов, docs §H16): next strike by substitute. */
+  armedReplacements: Array<{ attackerId: string; substituteId: string; expiresTurn: number }>;
   /** Creatures borrowed for the turn (bmo_card_34, docs §H16): returned at end of turn. */
   borrowedCreatures: Array<{ instanceId: string; owner: PlayerId; zone: number }>;
   /** Creatures that entered each zone this turn: key player:zone (lemongrab_card_16). */

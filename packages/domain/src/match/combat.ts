@@ -53,6 +53,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
         if (!target) continue;
         const defender = player(draft, target.player);
         const defenderInstanceId = defender.zones[target.zone]?.creature ?? null;
+        const strikeInstanceId0 = attackerInstanceId; void strikeInstanceId0;
         const attackPower = computeEff(draft, ctx, attackerInstanceId).attack;
 
         // Боевые модификаторы атакующего (A3, docs/MECHANICS-V2.md §2А):
@@ -115,6 +116,13 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
           continue;
         }
         if (defenderInstanceId && !faceDamage) {
+          // Подмена атакующего (Крысолов, docs §H16): удар и сдача — от заместителя.
+          const armIdx = draft.armedReplacements.findIndex((r) => r.attackerId === attackerInstanceId && r.expiresTurn >= draft.turn);
+          let strikeId = attackerInstanceId;
+          if (armIdx >= 0) {
+            strikeId = draft.armedReplacements[armIdx]!.substituteId;
+            draft.armedReplacements.splice(armIdx, 1);
+          }
           // Simultaneous exchange: both powers are computed before any damage lands.
           bumpCounter(draft, 'creature_attack', attackerId);
           // Уклонение (Прозрачный ниндзя, docs §H14): d6 ≥ min — обмен целиком
@@ -128,13 +136,14 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
           let retaliation = computeEff(draft, ctx, defenderInstanceId).attack;
           // Боевой контекст защитника (A8): «+N АТК пока защищается от существ
           // на X земле» — земля ЗОНЫ АТАКУЮЩЕГО.
-          const attackerZoneLandType = attackerInstance.zone !== null
-            ? player(draft, attackerInstance.controller).lands[attackerInstance.zone]!.type
+          const strikeZone = instance(draft, strikeId).zone;
+          const attackerZoneLandType = strikeZone !== null
+            ? player(draft, instance(draft, strikeId).controller).lands[strikeZone]!.type
             : null;
           for (const mod of defenseMods(draft, ctx, defenderInstanceId, attackerZoneLandType)) {
             retaliation += mod.atkBonus;
           }
-          if (hasNoRetaliation(draft, ctx, attackerInstanceId)) retaliation = 0;
+          if (hasNoRetaliation(draft, ctx, strikeId)) retaliation = 0;
           enqueueTrigger(draft, ctx, 'on_creature_attacks', {
             instanceId: attackerInstanceId,
             player: attackerInstance.controller,
@@ -142,8 +151,8 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             zone: z,
             amount: attackPowerMod,
           });
-          dealToCreature(draft, ctx, defenderInstanceId, attackPowerMod, attackerInstanceId, false, true);
-          dealToCreature(draft, ctx, attackerInstanceId, retaliation, defenderInstanceId, false, true);
+          dealToCreature(draft, ctx, defenderInstanceId, attackPowerMod, strikeId, false, true);
+          dealToCreature(draft, ctx, strikeId, retaliation, defenderInstanceId, false, true);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
             player: attackerInstance.controller,

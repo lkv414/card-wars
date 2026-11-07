@@ -2021,7 +2021,24 @@
   "attack": 1,
   "defense": 9,
   "description": "Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него.",
-  "deckSet": "cake"
+  "deckSet": "cake",
+  "abilities": [
+   {
+    "kind": "active",
+    "cost": 1,
+    "maxUsesPerTurn": 1,
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "flipped": true
+      }
+     }
+    ],
+    "mechanic": "arm_replace_attacker",
+    "text": "ПРИЕМ >>> Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него."
+   }
+  ]
  },
  {
   "id": "cake_card_35",

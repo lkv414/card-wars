@@ -113,6 +113,7 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   draft.zoneEntersThisTurn = {};
   draft.armedFreePlays = draft.armedFreePlays.filter((a) => a.expiresTurn > draft.turn);
   draft.armedDamageEcho = draft.armedDamageEcho.filter((a) => a.expiresTurn > draft.turn);
+  draft.armedReplacements = draft.armedReplacements.filter((a) => a.expiresTurn > draft.turn);
   // Временный захват (bmo_card_34): вернуть существ владельцам.
   for (const b of [...draft.borrowedCreatures]) {
     const inst = draft.instances[b.instanceId];

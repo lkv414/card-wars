@@ -177,6 +177,7 @@ export function createMatch(
     peeks: {},
     armedFreePlays: [],
     armedDamageEcho: [],
+    armedReplacements: [],
     borrowedCreatures: [],
     zoneEntersThisTurn: {},
     chosenWord: {},

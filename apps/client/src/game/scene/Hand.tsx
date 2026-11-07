@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, type MutableRefObject } from 'react';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
-import { cards as catalog } from '@card-wars/content';
+import { catalog } from '@card-wars/content';
 import { CARD_H, CARD_T, CARD_W, HAND, myBoardTransform, overMyDiscardRay, zoneFromWorld } from './layout';
 import { cardTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
@@ -24,6 +24,7 @@ export function Hand({ view }: { view: PlayerView }) {
   const dragging = useGame((s) => s.ui.dragging);
   const draggingFrom = useGame((s) => s.ui.draggingFrom);
   const group = useRef<THREE.Group>(null);
+  const pendingDrag = useRef<{ id: string; x: number; y: number } | null>(null);
 
   const items = view.myHand.filter((c) => c.instanceId !== dragging);
   // Шаг веера ужинается с ростом руки и шириной экрана.
@@ -38,8 +39,23 @@ export function Hand({ view }: { view: PlayerView }) {
   // Глобальное окончание перетаскивания: указатель в этот момент уже НЕ над
   // картой руки, поэтому решаем всё здесь — стопка сброса = сброс, зона = сыграть.
   useEffect(() => {
+    const onMove = (event: PointerEvent) => {
+      const pending = pendingDrag.current;
+      if (!pending) return;
+      if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) <= 10) return;
+      pendingDrag.current = null;
+      setUi({
+        selectedHand: pending.id,
+        dragging: pending.id,
+        draggingFrom: 'hand',
+        draggingOverZone: null,
+        draggingOverDiscard: false,
+        dragPoint: null,
+      });
+    };
     const onUp = (event: PointerEvent) => {
       const ui = useGame.getState().ui;
+      pendingDrag.current = null;
       if (!ui.dragging) return;
       const overDiscard = ui.draggingOverDiscard;
       const inCorner = event.clientX > innerWidth - 170 && event.clientY > innerHeight - 170;
@@ -59,8 +75,12 @@ export function Hand({ view }: { view: PlayerView }) {
         setUi({ selectedHand: null });
       }
     };
+    window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
-    return () => window.removeEventListener('pointerup', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
   }, [view.me]);
 
   // Выбранная карта ушла из руки (сыграна/сброшена) — снимаем выделение.
@@ -99,7 +119,7 @@ export function Hand({ view }: { view: PlayerView }) {
         {items.map((card, index) => {
           const offset = index - (items.length - 1) / 2;
           const isSelected = selected === card.instanceId;
-          const meta = catalog.find((c) => c.id === card.cardId);
+          const meta = catalog.getCard(card.cardId);
           return (
             <HandCard
               key={card.instanceId}
@@ -111,6 +131,7 @@ export function Hand({ view }: { view: PlayerView }) {
               playable={myMain}
               isDirect={meta?.type === 'spell' || meta?.type === 'companion'}
               view={view}
+              pendingDrag={pendingDrag}
             />
           );
         })}
@@ -197,6 +218,7 @@ function HandCard({
   playable,
   isDirect,
   view,
+  pendingDrag,
 }: {
   instanceId: string;
   cardId: string;
@@ -206,6 +228,7 @@ function HandCard({
   playable: boolean;
   isDirect: boolean;
   view: PlayerView;
+  pendingDrag: MutableRefObject<{ id: string; x: number; y: number } | null>;
 }) {
   const texture = useMemo(() => cardTexture(cardId), [cardId]);
   const mesh = useRef<THREE.Group>(null);
@@ -238,22 +261,8 @@ function HandCard({
   const handleDown = (event: ThreeEvent<PointerEvent>) => {
     if (!playable) return;
     event.stopPropagation();
-    setUi({
-      selectedHand: instanceId,
-      dragging: instanceId,
-      draggingFrom: 'hand',
-      draggingOverZone: null,
-      draggingOverDiscard: false,
-      dragPoint: null,
-    });
-  };
-
-  const handleUp = () => {
-    // Отпускание над самой картой: ничего не решаем — глобальный pointerup
-    // в Hand уже обработал стопку/зону (указатель ушёл с карты при перетаскивании).
-    const state = useGame.getState().ui;
-    if (state.dragging !== instanceId) return;
-    setUi({ dragging: null, draggingOverZone: null, draggingOverDiscard: false, dragPoint: null });
+    pendingDrag.current = { id: instanceId, x: event.nativeEvent.clientX, y: event.nativeEvent.clientY };
+    setUi({ selectedHand: instanceId });
   };
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
@@ -289,12 +298,16 @@ function HandCard({
       position={[offset * step, HAND.y, HAND.z + Math.abs(offset) * 10]}
       rotation={[HAND.rotX, -offset * 0.07, 0]}
       onPointerDown={handleDown}
-      onPointerUp={handleUp}
       onClick={handleClick}
     >
       <mesh>
         <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
         <meshLambertMaterial map={texture} />
+      </mesh>
+      {/* Широкая невидимая плоскость: тонкий бокс 1.2 мм луч часто промахивает. */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, CARD_T, 0]}>
+        <planeGeometry args={[CARD_W + 16, CARD_H + 16]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {selected && (
         <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>

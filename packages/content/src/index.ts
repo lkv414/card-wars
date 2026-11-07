@@ -10,12 +10,15 @@ import { buildPreset } from './presets.ts';
 export const cards = generatedCards as unknown as CardData[];
 export const heroes = generatedHeroes as unknown as HeroData[];
 
+const cardsById = new Map(cards.map((card) => [card.id, card]));
+const heroesById = new Map(heroes.map((hero) => [hero.id, hero]));
+
 /** Canonical land types (docs/RULES.md «Земли»). */
 export const LAND_TYPES: LandType[] = ['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'ghost'];
 
 export const catalog: CardCatalog = {
-  getCard: (id) => cards.find((c) => c.id === id),
-  getHero: (id) => heroes.find((h) => h.id === id),
+  getCard: (id) => cardsById.get(id),
+  getHero: (id) => heroesById.get(id),
 };
 
 /** MVP deck presets (docs/MVP.md): Бимо — blue, Билли — good. */

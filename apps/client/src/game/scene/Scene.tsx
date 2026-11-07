@@ -70,11 +70,11 @@ function SceneContent() {
         shadow-mapSize={[1024, 1024]}
       />
       {/* стол: с запасом за краями доски, чтобы камера не видела фон */}
-      <mesh position={[0, -0.5, 20]} receiveShadow={quality === 'high'}>
+      <mesh position={[0, -0.5, 20]} receiveShadow={quality === 'high'} raycast={() => null}>
         <boxGeometry args={[2200, 1, 1900]} />
         <meshLambertMaterial color="#274232" />
       </mesh>
-      <mesh position={[0, 0.05, 20]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={quality === 'high'}>
+      <mesh position={[0, 0.05, 20]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={quality === 'high'} raycast={() => null}>
         <planeGeometry args={[2100, 1800]} />
         <meshLambertMaterial color="#2e5240" />
       </mesh>

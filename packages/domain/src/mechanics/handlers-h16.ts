@@ -602,19 +602,23 @@ export const banishAttacker: MechanicHandler = (draft, ctx, _source, _params, _c
 };
 
 /** lich_card_6: двойник — сыграть вторую из колоды и связать уходы. */
-export const soulTwin: MechanicHandler = (draft, ctx, source, _params, _choices, payload) => {
+export const soulTwin: MechanicHandler = (draft, ctx, source) => {
   if (!source.instanceId) return;
   const self = instance(draft, source.instanceId);
-  if (payload?.zone === undefined || payload.zone === null) return;
   const cardId = self.cardId;
   const p = player(draft, source.player);
+  if (!p.zones.some((z) => !z.creature)) return;
   const twinIdx = p.deck.findIndex((id) => draft.instances[id]!.cardId === cardId);
   if (twinIdx < 0) return;
   const twin = p.deck.splice(twinIdx, 1)[0]!;
-  shuffle(draft.rng, p.deck);
   const twinInst = instance(draft, twin);
   twinInst.cannotReturnFromDiscard = true;
   self.cannotReturnFromDiscard = true;
-  playCardFree(draft, ctx, source, twin, null);
-  void payload;
+  const played = playCardFree(draft, ctx, source, twin, null);
+  if (!played) {
+    twinInst.cannotReturnFromDiscard = false;
+    p.deck.push(twin);
+    return;
+  }
+  p.deck = shuffle(draft.rng, p.deck);
 };

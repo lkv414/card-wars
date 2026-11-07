@@ -124,7 +124,7 @@ function step(tokens: TokenState[], dt: number, zOrigin: number): boolean {
         t.vy = 0;
         t.vx *= 0.75;
         t.vz *= 0.75;
-        if (Math.hypot(t.vx, t.vz) < 6) {
+        if (Math.hypot(t.vx, t.vz) < 8) {
           t.vx = 0;
           t.vz = 0;
           t.spin = 0;
@@ -132,7 +132,7 @@ function step(tokens: TokenState[], dt: number, zOrigin: number): boolean {
         }
       }
     }
-    active = true;
+    if (!t.settled) active = true;
   }
   // Попарное расталкивание цилиндров Ø25: осевшиеся жетоны — препятствия.
   for (let i = 0; i < tokens.length; i++) {
@@ -151,17 +151,11 @@ function step(tokens: TokenState[], dt: number, zOrigin: number): boolean {
         const share = b.settled ? overlap : overlap / 2;
         a.x -= nx * share;
         a.z -= nz * share;
-        a.vx -= nx * 40;
-        a.vz -= nz * 40;
-        a.settled = false;
       }
       if (!b.settled) {
         const share = a.settled ? overlap : overlap / 2;
         b.x += nx * share;
         b.z += nz * share;
-        b.vx += nx * 40;
-        b.vz += nz * 40;
-        b.settled = false;
       }
     }
   }

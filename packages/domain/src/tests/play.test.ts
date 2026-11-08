@@ -53,6 +53,19 @@ describe('розыгрыш карт', () => {
     expect(s.players[P1]!.zones[0]!.creature).not.toBeNull();
   });
 
+  it('при включённой настройке anyLand разрешает разыгрывать карты без земель нужного типа', () => {
+    let s = startedMatch();
+    s = produce(s, (d) => {
+      d.anyLand = true;
+      d.players[P1]!.lands.forEach((land) => {
+        land.type = 'swamp';
+      });
+    });
+    s = forceToHand(s, P1, 'vanilla-good');
+    s = ok(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-good'), zone: 0 });
+    expect(s.players[P1]!.zones[0]!.creature).not.toBeNull();
+  });
+
   it('перевёрнутая земля не считается типом; радужная подходит под любой тип', () => {
     let s = startedMatch();
     s = produce(s, (d) => {

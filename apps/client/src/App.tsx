@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
 import { getSelectedDeckId, heroName, loadDecks } from './decks';
@@ -6,13 +6,36 @@ import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
 import './styles.css';
 
+const APP_VERSION = 'v3.1.0';
+
 const DecksScreen = lazy(() => import('./decks/DecksScreen').then((m) => ({ default: m.DecksScreen })));
 const MockScene = lazy(() => import('./game/debug/MockScene').then((m) => ({ default: m.MockScene })));
 
 type Screen = 'menu' | 'decks';
 
+function routeFromLocation(): { screen: Screen; code: string | null } {
+  const match = /^\/play\/(\d+)$/.exec(location.pathname);
+  if (match?.[1]) return { screen: 'menu', code: match[1] };
+  if (location.pathname === '/decks') return { screen: 'decks', code: null };
+  return { screen: 'menu', code: null };
+}
+
 export function App() {
   const [nickname, setNickname] = useState(() => localStorage.getItem('cw-nickname') ?? '');
+  const [codeInput, setCodeInput] = useState('');
+  const [screen, setScreen] = useState<Screen>(() => routeFromLocation().screen);
+  const [activeCode, setActiveCode] = useState<string | null>(() => routeFromLocation().code);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const next = routeFromLocation();
+      setScreen(next.screen);
+      setActiveCode(next.code);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
   // ?scene=1 — dev preview of the 3D scene with a mock snapshot, without a server.
   if (new URLSearchParams(location.search).has('scene')) {
     return (
@@ -21,12 +44,6 @@ export function App() {
       </Suspense>
     );
   }
-  const [codeInput, setCodeInput] = useState('');
-  const [screen, setScreen] = useState<Screen>(() => (location.pathname === '/decks' ? 'decks' : 'menu'));
-  const [activeCode, setActiveCode] = useState<string | null>(() => {
-    const match = /^\/play\/(\d+)$/.exec(location.pathname);
-    return match?.[1] ?? null;
-  });
 
   if (activeCode) {
     return nickname.trim() ? (
@@ -68,7 +85,10 @@ export function App() {
       codeInput={codeInput}
       onCodeInput={setCodeInput}
       onEnter={enter}
-      onDecks={() => setScreen('decks')}
+      onDecks={() => {
+        history.pushState(null, '', '/decks');
+        setScreen('decks');
+      }}
     />
   );
 }
@@ -160,6 +180,7 @@ function MainMenu({
               {quality === 'high' ? 'высокая' : 'низкая'}
             </button>
           </span>
+          <span className="main-menu-version">Версия {APP_VERSION}</span>
         </div>
       </div>
     </main>

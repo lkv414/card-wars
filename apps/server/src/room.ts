@@ -58,6 +58,7 @@ interface RoomState {
   nextBotNum: number;
   mode: LobbyMode;
   hidden: boolean;
+  anyLand: boolean;
   match: MatchState | null;
   journal: string[];
   /** Turn timers of the current active players (one in FFA, two in 2v2). */
@@ -86,6 +87,7 @@ function freshState(): RoomState {
     nextBotNum: 1,
     mode: { kind: 'ffa' },
     hidden: false,
+    anyLand: false,
     match: null,
     journal: [],
     timers: {},
@@ -395,6 +397,10 @@ export class Room extends DurableObject {
         this.requireHost(state, session);
         state.hidden = command.hidden;
         break;
+      case 'set_any_land':
+        this.requireHost(state, session);
+        state.anyLand = command.anyLand;
+        break;
       case 'add_bot':
         this.requireHost(state, session);
         this.addBot(state);
@@ -472,6 +478,7 @@ export class Room extends DurableObject {
       seed,
       mode: mode.kind === 'teams' ? 'teams' : 'ffa',
       teamVariant: mode.kind === 'teams' ? mode.variant : null,
+      anyLand: Boolean(state.anyLand),
     });
 
     state.match = match;
@@ -799,6 +806,7 @@ export class Room extends DurableObject {
       host: state.hostId,
       mode: state.mode,
       hidden: state.hidden,
+      anyLand: Boolean(state.anyLand),
       slots,
       minPlayers: config.minPlayers,
       maxPlayers: config.maxPlayers,

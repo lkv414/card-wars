@@ -38,8 +38,8 @@ function contentAssets(): Plugin {
       });
     },
     closeBundle() {
-      // Card scans and hero portraits are served as static assets (docs/UI-3D.md).
-      for (const part of [['cards', 'images'], ['heroes', 'images']]) {
+      // Card scans, hero portraits, and land tiles are served as static assets (docs/UI-3D.md, docs/UI.md).
+      for (const part of [['cards', 'images'], ['heroes', 'images'], ['lands', 'images']]) {
         const source = join(contentDir, ...part);
         const target = resolve(here, 'dist/content', ...part);
         if (existsSync(source)) cpSync(source, target, { recursive: true });

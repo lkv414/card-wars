@@ -40,13 +40,17 @@ export function Hand({ view }: { view: PlayerView }) {
   const fovDeg = camera instanceof THREE.PerspectiveCamera ? camera.fov : 43;
   const halfH = Math.abs(HAND.camZ) * Math.tan(THREE.MathUtils.degToRad(fovDeg / 2));
   const halfW = halfH * aspect;
-  const baseScale = Math.min(1.04, Math.max(0.76, aspect * 0.86));
-  const maxSpan = Math.max(60, 2 * halfW - CARD_W * baseScale - 24);
+  const baseScale = Math.min(0.95, Math.max(0.72, aspect * 0.8));
+  const maxSpan = Math.max(60, 2 * halfW - CARD_W * baseScale - 40);
+  // UNO-style overlapping fan: tighter horizontal spacing + radial fan tilt.
   const step =
     items.length > 1
-      ? Math.min(HAND.step * baseScale, maxSpan / (items.length - 1))
+      ? Math.min(38 * baseScale, maxSpan / (items.length - 1))
       : 0;
-  const baseY = -halfH + (CARD_H * baseScale) / 2 + 12;
+  const fanStepRad =
+    items.length > 1 ? Math.min(0.085, 0.52 / Math.max(1, items.length - 1)) : 0;
+  // At rest, tuck the fan low near the bottom edge so the player's lands & hero are visible.
+  const baseY = -halfH + (CARD_H * baseScale) * 0.24;
 
   // Sync hand group with camera transform before paint and on every frame.
   useLayoutEffect(() => {
@@ -198,8 +202,10 @@ export function Hand({ view }: { view: PlayerView }) {
               index={index}
               offset={offset}
               step={step}
+              fanStepRad={fanStepRad}
               baseY={baseY}
               baseScale={baseScale}
+              halfH={halfH}
               halfW={halfW}
               selected={isSelected}
               hovered={isHovered}
@@ -258,8 +264,10 @@ function HandCard({
   index,
   offset,
   step,
+  fanStepRad,
   baseY,
   baseScale,
+  halfH,
   halfW,
   selected,
   hovered,
@@ -273,8 +281,10 @@ function HandCard({
   index: number;
   offset: number;
   step: number;
+  fanStepRad: number;
   baseY: number;
   baseScale: number;
+  halfH: number;
   halfW: number;
   selected: boolean;
   hovered: boolean;
@@ -310,19 +320,22 @@ function HandCard({
 
   const target = useMemo(() => {
     const rawX = offset * step;
-    const elevScale = Math.min(1.28, baseScale * 1.32);
-    const maxX = Math.max(0, halfW * (Math.abs(HAND.camLiftZ) / Math.abs(HAND.camZ)) - (CARD_W * elevScale) / 2 - 8);
+    const elevScale = baseScale * 1.08;
+    const maxX = Math.max(0, halfW - (CARD_W * elevScale) / 2 - 8);
     const clampedX = elevated ? Math.max(-maxX, Math.min(maxX, rawX)) : rawX;
+    const arcDrop = Math.abs(offset) * Math.abs(offset) * 1.9 + Math.abs(offset) * 2.4;
+    // Gentle UNO-style lift: slide smoothly out of the fan without lunging forward at the camera.
+    const elevatedY = -halfH + (CARD_H * elevScale) * 0.5 + 6;
     return {
       x: clampedX,
-      y: elevated ? baseY + 34 : baseY - Math.abs(offset) * 2.5,
-      z: elevated ? HAND.camLiftZ : HAND.camZ + index * 0.6,
-      rotX: elevated ? Math.PI / 2 : Math.PI / 2 - 0.12,
+      y: elevated ? elevatedY : baseY - arcDrop,
+      z: elevated ? HAND.camZ + 18 : HAND.camZ + index * 0.8,
+      rotX: elevated ? Math.PI / 2 - 0.04 : Math.PI / 2 - 0.1,
       rotY: 0,
-      rotZ: elevated ? 0 : -offset * 0.038,
+      rotZ: elevated ? -offset * (fanStepRad * 0.25) : -offset * fanStepRad,
       scale: elevated ? elevScale : baseScale,
     };
-  }, [offset, step, index, elevated, baseY, baseScale, halfW]);
+  }, [offset, step, fanStepRad, index, elevated, baseY, baseScale, halfH, halfW]);
 
   useFrame(() => {
     const g = mesh.current;
@@ -414,8 +427,12 @@ function HandCard({
   return (
     <group
       ref={mesh}
-      position={[offset * step, baseY - Math.abs(offset) * 2.5, HAND.camZ + index * 0.6]}
-      rotation={[Math.PI / 2 - 0.12, 0, -offset * 0.038]}
+      position={[
+        offset * step,
+        baseY - (Math.abs(offset) * Math.abs(offset) * 1.9 + Math.abs(offset) * 2.4),
+        HAND.camZ + index * 0.8,
+      ]}
+      rotation={[Math.PI / 2 - 0.1, 0, -offset * fanStepRad]}
       scale={[baseScale, baseScale, baseScale]}
       onPointerDown={handleDown}
       onPointerOver={handleOver}
@@ -425,9 +442,9 @@ function HandCard({
       <mesh material={materials}>
         <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
       </mesh>
-      {/* Transparent hitbox plane above the card for reliable clicking on thin box */}
+      {/* Transparent hitbox plane matching the exact card face for reliable UNO-fan hover */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, CARD_T + 0.2, 0]}>
-        <planeGeometry args={[CARD_W + 8, CARD_H + 8]} />
+        <planeGeometry args={[CARD_W, CARD_H]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {selected && (

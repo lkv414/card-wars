@@ -12,12 +12,13 @@ import {
   validateSavedDeck,
   type SavedDeck,
 } from '../decks';
-import { DeckEditor } from './DeckEditor';
+import { DeckEditor, clearEditorDraft, loadEditorDraft } from './DeckEditor';
+import { DeckPreview } from './DeckPreview';
 
 export function DecksScreen({ onBack }: { onBack: () => void }) {
   const [decks, setDecks] = useState<SavedDeck[]>(() => loadDecks());
   const [selectedId, setSelectedId] = useState<string | null>(() => getSelectedDeckId() ?? loadDecks()[0]?.id ?? null);
-  const [editing, setEditing] = useState<SavedDeck | null>(null);
+  const [editing, setEditing] = useState<SavedDeck | null>(() => loadEditorDraft());
   const [codePanel, setCodePanel] = useState<{ deck: SavedDeck; code: string } | null>(null);
   const [importCode, setImportCode] = useState('');
   const [message, setMessage] = useState<string | null>(null);
@@ -33,6 +34,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     persist(exists ? decks.map((d) => (d.id === deck.id ? deck : d)) : [...decks, deck]);
     setSelectedId(deck.id);
     setSelectedDeckId(deck.id);
+    clearEditorDraft();
     setEditing(null);
     setMessage(`Колода «${deck.name}» сохранена`);
     setError(null);
@@ -103,7 +105,16 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
   };
 
   if (editing) {
-    return <DeckEditor deck={editing} onSave={saveDeck} onClose={() => setEditing(null)} />;
+    return (
+      <DeckEditor
+        deck={editing}
+        onSave={saveDeck}
+        onClose={() => {
+          clearEditorDraft();
+          setEditing(null);
+        }}
+      />
+    );
   }
 
   return (
@@ -142,6 +153,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
                 </span>
                 <span className="deck-stat">{deck.lands.length} земли</span>
               </div>
+              <DeckPreview deck={deck} compact />
               <div className={`deck-card-desc ${problems.length > 0 ? 'deck-card-desc--error' : ''}`}>
                 {problems[0] ?? 'Колода готова к игре'}
               </div>

@@ -11,8 +11,11 @@ import {
   validateSavedDeck,
   type SavedDeck,
 } from '../../decks';
-import { DeckEditor } from '../../decks/DeckEditor';
+import { DeckEditor, clearEditorDraft, loadEditorDraft } from '../../decks/DeckEditor';
+import { DeckPreview } from '../../decks/DeckPreview';
 import { sendLobbyCommand, useGame } from '../../store';
+
+const LOBBY_EDITOR_DRAFT_KEY = 'cw-lobby-editor-draft';
 
 /** Лобби (docs/UI.md «Лобби»): код, колода, игроки, настройки хоста, боты. */
 export function Lobby({ code }: { code: string }) {
@@ -22,7 +25,9 @@ export function Lobby({ code }: { code: string }) {
   const error = useGame((s) => s.error);
   const [decks, setDecks] = useState<SavedDeck[]>(() => loadDecks());
   const [selectedId, setSelectedId] = useState<string | null>(() => getSelectedDeckId());
-  const [editing, setEditing] = useState<SavedDeck | null>(null);
+  const [editing, setEditing] = useState<SavedDeck | null>(() => loadEditorDraft(LOBBY_EDITOR_DRAFT_KEY));
+  const [hoveredSeat, setHoveredSeat] = useState<number | null>(null);
+  const [myDeckHovered, setMyDeckHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const sent = useRef<string | null>(null);
 
@@ -104,6 +109,7 @@ export function Lobby({ code }: { code: string }) {
     setDecks(next);
     saveDecks(next);
     chooseDeck(deck.id);
+    clearEditorDraft(LOBBY_EDITOR_DRAFT_KEY);
     setEditing(null);
   };
 
@@ -113,7 +119,17 @@ export function Lobby({ code }: { code: string }) {
   };
 
   if (editing) {
-    return <DeckEditor deck={editing} onSave={saveEdited} onClose={() => setEditing(null)} />;
+    return (
+      <DeckEditor
+        deck={editing}
+        storageKey={LOBBY_EDITOR_DRAFT_KEY}
+        onSave={saveEdited}
+        onClose={() => {
+          clearEditorDraft(LOBBY_EDITOR_DRAFT_KEY);
+          setEditing(null);
+        }}
+      />
+    );
   }
 
   return (
@@ -157,7 +173,11 @@ export function Lobby({ code }: { code: string }) {
           <p className="lobby-code-hint">Поделитесь кодом с другом или отправьте ссылку</p>
         </section>
 
-        <section className="lobby-deck-picker">
+        <section
+          className={`lobby-deck-picker ${myDeckHovered && selected ? 'lobby-deck-picker--open' : ''}`}
+          onMouseEnter={() => setMyDeckHovered(true)}
+          onMouseLeave={() => setMyDeckHovered(false)}
+        >
           <div className="lobby-deck-picker__label">Ваша колода</div>
           {validDecks.length > 0 ? (
             <>
@@ -185,6 +205,17 @@ export function Lobby({ code }: { code: string }) {
                   {selected.lands.join(', ')}
                 </p>
               )}
+              {myDeckHovered && selected && (
+                <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
+                  <div className="lobby-player-popover__head">
+                    <strong>{selected.name}</strong>
+                    <span>
+                      {heroName(selected.heroId)} · {selected.cards.length}/{CONFIG.deckSize} карт
+                    </span>
+                  </div>
+                  <DeckPreview deck={selected} compact />
+                </div>
+              )}
             </>
           ) : (
             <div className="lobby-deck-picker__empty">
@@ -205,9 +236,16 @@ export function Lobby({ code }: { code: string }) {
             {lobby.slots.map((slot, seat) => (
               <li
                 key={seat}
-                className={`lobby-player ${slot ? '' : 'lobby-player--empty'}`}
+                className={`lobby-player ${slot ? '' : 'lobby-player--empty'} ${hoveredSeat === seat && slot?.deck ? 'lobby-player--preview-open' : ''}`}
                 draggable={isHost && Boolean(slot)}
+                onMouseEnter={() => {
+                  if (slot?.deck) setHoveredSeat(seat);
+                }}
+                onMouseLeave={() => {
+                  setHoveredSeat((cur) => (cur === seat ? null : cur));
+                }}
                 onDragStart={(e) => {
+                  setHoveredSeat(null);
                   if (slot) e.dataTransfer.setData('text/plain', slot.id);
                 }}
                 onDragOver={(e) => {
@@ -244,6 +282,18 @@ export function Lobby({ code }: { code: string }) {
                 <span className={`lobby-player__status ${slot?.ready ? 'ready' : 'waiting'}`}>
                   {slot ? (slot.ready ? '✓ Готов' : 'Ожидание') : '—'}
                 </span>
+
+                {hoveredSeat === seat && slot?.deck && (
+                  <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
+                    <div className="lobby-player-popover__head">
+                      <strong>{slot.nickname}</strong>
+                      <span>
+                        {heroName(slot.deck.heroId)} · {slot.deck.cards.length}/{CONFIG.deckSize} карт
+                      </span>
+                    </div>
+                    <DeckPreview deck={slot.deck} compact />
+                  </div>
+                )}
 
                 {isHost && slot && (
                   <div className="lobby-row-actions">
@@ -309,10 +359,19 @@ export function Lobby({ code }: { code: string }) {
               />
               скрывать составы игроков
             </label>
+            <label className="filter-check">
+              <input
+                type="checkbox"
+                checked={Boolean(lobby.anyLand)}
+                onChange={(e) => sendLobbyCommand({ type: 'set_any_land', anyLand: e.target.checked })}
+              />
+              разрешить ставить карты на разные типы земель
+            </label>
           </section>
         ) : (
           <p className="lobby-hint">
             Режим: {modeLabel} · {lobby.hidden ? 'составы скрыты' : 'составы видны'}
+            {lobby.anyLand ? ' · любые типы земель' : ''}
           </p>
         )}
 

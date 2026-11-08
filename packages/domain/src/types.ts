@@ -176,6 +176,8 @@ export interface MatchState {
   phase: Phase;
   mode: MatchMode;
   teamVariant: TeamVariant | null;
+  /** Optional lobby rule: ignore land-type requirement when playing cards (docs/RULES.md). */
+  anyLand?: boolean;
   teams: Record<string, TeamState> | null;
   players: Record<PlayerId, PlayerState>;
   /** Seating order; also the turn order. */

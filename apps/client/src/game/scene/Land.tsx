@@ -80,20 +80,20 @@ export function Land({
         <meshLambertMaterial map={texture} />
       </mesh>
       {isLandTarget && (
-        <mesh position={[0, 1.6, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.5, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[LAND_W + 8, LAND_H + 8]} />
           <meshBasicMaterial color="#7fd1ff" transparent opacity={0.35} />
         </mesh>
       )}
       {/* Подсветка половин при драге: только слот под тип карты (или обе, если тип не зональный) */}
       {highlightSlot('creature') && (
-        <mesh position={[0, 1.6, -HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.5, -HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[HALF_W + 6, HALF_H + 4]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>
       )}
       {highlightSlot('building') && (
-        <mesh position={[0, 1.6, HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.5, HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
           <planeGeometry args={[HALF_W + 6, HALF_H + 4]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>

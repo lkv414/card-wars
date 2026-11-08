@@ -57,7 +57,7 @@ export function CardMesh({
   }, [materials]);
 
   const basePosition = useMemo<[number, number, number]>(
-    () => [0, CARD_T / 2 + 0.4, slotLocalZ(slot)],
+    () => [0, 2.5, slotLocalZ(slot)],
     [slot],
   );
   const me = view.players[view.me]!;

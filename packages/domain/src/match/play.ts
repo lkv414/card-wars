@@ -90,7 +90,7 @@ export function handlePlayCard(
     throw new DomainError('insufficient_actions', `need ${effectiveCost} actions, have ${p.actions}`);
   }
 
-  if (matchingLandCount(draft, ctx, playerId, card.landType) < ctx.config.landRequirementPerCard) {
+  if (!draft.anyLand && matchingLandCount(draft, ctx, playerId, card.landType) < ctx.config.landRequirementPerCard) {
     throw new DomainError(
       'land_requirement_not_met',
       `no land of type ${card.landType} under control`,

@@ -29,7 +29,7 @@ export function Scene() {
       shadows={quality === 'high'}
       dpr={quality === 'high' ? [1, 1.5] : 1}
       frameloop="demand"
-      camera={{ position: [0, 540, 620], fov: 43, near: 1, far: 6000 }}
+      camera={{ position: [0, 540, 620], fov: 43, near: 20, far: 4500 }}
       gl={{ antialias: quality === 'high', powerPreference: 'high-performance' }}
     >
       <color attach="background" args={['#10141b']} />
@@ -79,14 +79,15 @@ function SceneContent() {
         intensity={1.55}
         castShadow={quality === 'high'}
         shadow-mapSize={[1024, 1024]}
+        shadow-bias={-0.0005}
       />
-      {/* стол: с запасом за краями доски, чтобы камера не видела фон при облёте по кругу */}
-      <mesh position={[0, -0.5, 0]} receiveShadow={quality === 'high'} raycast={() => null}>
-        <boxGeometry args={[2800, 1, 2800]} />
+      {/* стол: разнесённые по высоте уровни без наложения плоскостей (никакого Z-fighting при вращении камеры) */}
+      <mesh position={[0, -9, 0]} raycast={() => null}>
+        <boxGeometry args={[2800, 10, 2800]} />
         <meshLambertMaterial color="#274232" />
       </mesh>
-      <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow={quality === 'high'} raycast={() => null}>
-        <planeGeometry args={[2700, 2700]} />
+      <mesh position={[0, -2, 0]} receiveShadow={quality === 'high'} raycast={() => null}>
+        <boxGeometry args={[2700, 2, 2700]} />
         <meshLambertMaterial color="#2e5240" />
       </mesh>
 

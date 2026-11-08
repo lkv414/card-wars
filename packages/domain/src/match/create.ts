@@ -27,6 +27,8 @@ export interface MatchSetup {
   mode?: MatchMode;
   /** Required for team mode; ignored for FFA. */
   teamVariant?: TeamVariant | null;
+  /** Optional lobby rule: allow playing cards regardless of land types (docs/RULES.md). */
+  anyLand?: boolean;
 }
 
 /**
@@ -160,6 +162,7 @@ export function createMatch(
     phase: 'main',
     mode,
     teamVariant,
+    anyLand: Boolean(setup.anyLand),
     teams,
     players,
     order,

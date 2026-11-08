@@ -130,6 +130,7 @@ export function viewFor(
     phase: state.phase,
     mode: state.mode,
     teamVariant: state.teamVariant,
+    anyLand: Boolean(state.anyLand),
     teams,
     turn: state.turn,
     round: state.round,

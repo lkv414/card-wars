@@ -44,7 +44,7 @@ function findPlay(view: PlayerView, deps: BotDeps): Command | null {
   for (const card of view.myHand) {
     const meta = cardOf(deps, card.cardId);
     if (!meta || meta.cost > me.actions) continue;
-    if (!landRequirementMet(view, meta.landType, deps.config.landRequirementPerCard)) continue;
+    if (!view.anyLand && !landRequirementMet(view, meta.landType, deps.config.landRequirementPerCard)) continue;
 
     if (meta.type === 'companion') {
       if (view.mode !== 'teams') continue;

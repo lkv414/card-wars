@@ -92,7 +92,7 @@ export function Hud({ code }: { code: string }) {
     const hero = heroCatalog.find((h) => h.id === ownerHeroId);
     return {
       name: hero?.name ?? 'Герой',
-      text: hero?.ability?.text || hero?.description || '',
+      text: hero?.ability?.text || hero?.text || '',
     };
   })();
 

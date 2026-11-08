@@ -80,6 +80,7 @@ function buildView(): PlayerView {
     phase: 'main',
     mode: 'ffa',
     teamVariant: null,
+    anyLand: false,
     teams: null,
     turn: 3,
     round: 2,

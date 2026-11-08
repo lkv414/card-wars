@@ -97,7 +97,7 @@ export function DeckPreview({
             onPointerUp={clearHold}
             onPointerCancel={clearHold}
             onPointerLeave={clearHold}
-            title={`${hero.name}${hero.description ? ` — ${hero.description}` : ''}`}
+            title={`${hero.name}${hero.text ? ` — ${hero.text}` : ''}`}
           >
             <div className="deck-preview__visual">
               {hero.image ? (

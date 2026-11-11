@@ -1,0 +1,12 @@
+{
+  "name_ru": "Телепорт",
+  "name_en": "TELEPORT",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести одно из своих существ на одну из своих пустых линий.",
+  "flavor": "",
+  "set_code": "CP1"
+}

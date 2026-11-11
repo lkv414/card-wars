@@ -1,0 +1,12 @@
+{
+  "name_ru": "Воскресная школа",
+  "name_en": "SUNDAE SCHOOL",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK.",
+  "flavor": "",
+  "set_code": "PROMO"
+}

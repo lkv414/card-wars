@@ -1,0 +1,12 @@
+{
+  "name_ru": "Затопление",
+  "name_en": "WATER LOGGED",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Существа противника получают -2 АТК в этот ход (минимум 0).",
+  "flavor": "",
+  "set_code": "2V2"
+}

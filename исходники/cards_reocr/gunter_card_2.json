@@ -1,0 +1,12 @@
+{
+  "name_ru": "Магазин для отдыха",
+  "name_en": "WEARY TRADING POST",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "attack": null,
+  "defense": null,
+  "description": "ПРИЕМ >>> Перемести неактивное существо под твоим контролем на эту землю (если она пустая).",
+  "flavor": "",
+  "set_code": "CP5"
+}

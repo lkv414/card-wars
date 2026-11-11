@@ -1,0 +1,12 @@
+{
+  "name_ru": "Полюс холода",
+  "name_en": "FREEZING POINT",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь каждую землю твоего противника.",
+  "flavor": "",
+  "set_code": "CP4"
+}

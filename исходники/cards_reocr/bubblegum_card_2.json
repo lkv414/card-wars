@@ -1,0 +1,12 @@
+{
+  "name_ru": "Падающая звезда",
+  "name_en": "FALLING STAR",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Существа под твоим контролем не получают урон от существ противника в этот ход.",
+  "flavor": "",
+  "set_code": "CP3"
+}

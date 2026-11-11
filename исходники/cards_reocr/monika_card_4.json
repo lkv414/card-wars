@@ -1,0 +1,12 @@
+{
+  "name_ru": "Фирменное рукопожатие",
+  "name_en": "FIRM HANDSHAKE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 5 урона себе и выбранному противнику.",
+  "flavor": "",
+  "set_code": "2V2"
+}

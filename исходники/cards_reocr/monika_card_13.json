@@ -1,0 +1,12 @@
+{
+  "name_ru": "Офицер ириска",
+  "name_en": "FOUR STAR FUDGE",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 2,
+  "defense": 9,
+  "description": "Каждый раз когда земля замораживается, тяни карту.",
+  "flavor": "",
+  "set_code": "2V2"
+}

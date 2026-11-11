@@ -1,0 +1,12 @@
+{
+  "name_ru": "Друид початка",
+  "name_en": "DRUID OF THE COB",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 1,
+  "defense": 8,
+  "description": "Примененное существо под твоим контролем получает +1 АТК.",
+  "flavor": "",
+  "set_code": "CP6"
+}

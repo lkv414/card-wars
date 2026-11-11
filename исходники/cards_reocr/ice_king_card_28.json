@@ -1,0 +1,12 @@
+{
+  "name_ru": "Дорога снега",
+  "name_en": "SNOW WAY",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь две выбранные земли.",
+  "flavor": "",
+  "set_code": "CP4"
+}

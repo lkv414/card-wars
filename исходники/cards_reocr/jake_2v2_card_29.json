@@ -1,0 +1,12 @@
+{
+  "name_ru": "Бесконечный комбайн",
+  "name_en": "INFINITE HAYMAKER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо.",
+  "flavor": "",
+  "set_code": "2V2"
+}

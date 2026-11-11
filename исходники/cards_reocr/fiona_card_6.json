@@ -1,0 +1,12 @@
+{
+  "name_ru": "Букет мечей",
+  "name_en": "SWORD BOUQUET",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 1 урон выбранному существу за каждую вытянутую тобой карту в этом ходу.",
+  "flavor": "",
+  "set_code": "CP6"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Талисман Вайда",
+  "name_en": "WOAD TALISMAN",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери существо Голубых равнин под твоим контролем, оно получит +2 АТК в этом ходу.",
+  "flavor": "",
+  "set_code": "CP1"
+}

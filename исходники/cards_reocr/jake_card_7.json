@@ -1,0 +1,12 @@
+{
+  "name_ru": "Поля кошмаров",
+  "name_en": "FIELD OF NIGHTMARES",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Наносят 1 урон противнику за каждую карту в его руке.",
+  "flavor": "",
+  "set_code": "CP1"
+}

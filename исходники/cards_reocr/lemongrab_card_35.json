@@ -1,0 +1,12 @@
+{
+  "name_ru": "Пескозавр рекс",
+  "name_en": "SANDASAURUS REX",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 0,
+  "defense": 9,
+  "description": "+2 АТК за каждую твою пустую землю.",
+  "flavor": "",
+  "set_code": "CP5"
+}

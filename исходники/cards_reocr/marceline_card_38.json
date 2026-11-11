@@ -1,0 +1,12 @@
+{
+  "name_ru": "Яростная наседка",
+  "name_en": "FURIOUS HEN",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 0,
+  "defense": 10,
+  "description": "Яростная цыпа получает +1 АТК за каждую единицу урона на ней.",
+  "flavor": "",
+  "set_code": "CP4"
+}

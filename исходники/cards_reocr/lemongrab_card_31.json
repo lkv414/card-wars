@@ -1,0 +1,12 @@
+{
+  "name_ru": "Скачущий зебрарог",
+  "name_en": "BOUNCING ZEBRACORN",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 1,
+  "defense": 9,
+  "description": "+1 АТК за каждый различный тип земли под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP5"
+}

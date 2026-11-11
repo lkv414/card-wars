@@ -1,0 +1,12 @@
+{
+  "name_ru": "Гном-победитель",
+  "name_en": "LIFE BEATER GNOME",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 1,
+  "defense": 6,
+  "description": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Песчаных землях.",
+  "flavor": "",
+  "set_code": "FTG"
+}

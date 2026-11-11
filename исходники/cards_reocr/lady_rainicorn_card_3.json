@@ -1,0 +1,12 @@
+{
+  "name_ru": "Фолианкх",
+  "name_en": "TOME OF ANKHS",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Тяни карту за каждую свою пустую линию.",
+  "flavor": "",
+  "set_code": "CP2"
+}

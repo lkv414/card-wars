@@ -1,0 +1,12 @@
+{
+  "name_ru": "Яростный петух",
+  "name_en": "FURIOUS ROOSTER",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 0,
+  "defense": 8,
+  "description": "Яростный петух получает +1 АТК за каждую единицу урона на нем.",
+  "flavor": "",
+  "set_code": "CP4"
+}

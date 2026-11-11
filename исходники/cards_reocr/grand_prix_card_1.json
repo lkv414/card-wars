@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ледяной лазутчик",
+  "name_en": "ICY INFILTRATOR",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда Ледяной лазутчик вступает в игру, заморозь его землю.",
+  "flavor": "",
+  "set_code": "2V2"
+}

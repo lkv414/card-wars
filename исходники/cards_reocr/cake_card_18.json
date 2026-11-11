@@ -1,0 +1,12 @@
+{
+  "name_ru": "Крепкий лесоруб",
+  "name_en": "BURLY LUMBERJACK",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 2,
+  "defense": 9,
+  "description": "Можешь сыграть дополнительное строение на этой земле.",
+  "flavor": "",
+  "set_code": "CP6"
+}

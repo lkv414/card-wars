@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ледяной душегуб",
+  "name_en": "FROSTED DEANIMATOR",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 2,
+  "defense": 6,
+  "description": "Ледяной душегуб вступает в игру только на земли с ледяным жетоном.",
+  "flavor": "",
+  "set_code": "CP5"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Теневая пирамида",
+  "name_en": "SHADOWY PYRAMID",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "attack": null,
+  "defense": null,
+  "description": "ПРИЕМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту.",
+  "flavor": "",
+  "set_code": "FTG"
+}

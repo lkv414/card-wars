@@ -1,0 +1,12 @@
+{
+  "name_ru": "Замораживающий луч",
+  "name_en": "FREEZE RAY",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь выбранную землю, затем тяни карту.",
+  "flavor": "",
+  "set_code": "CP4"
+}

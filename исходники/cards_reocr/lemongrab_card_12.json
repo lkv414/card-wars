@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ты жжош!",
+  "name_en": "ROCK OUT!",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Переверни выбранную землю лицом вниз до начала твоего следующего хода.",
+  "flavor": "",
+  "set_code": "CP5"
+}

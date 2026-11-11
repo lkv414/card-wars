@@ -1,0 +1,12 @@
+{
+  "name_ru": "Императорский пингвин",
+  "name_en": "EMPEROR PENGUIN",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 1,
+  "defense": 8,
+  "description": "Существа на землях с ледяным жетоном получают -1 АТК.",
+  "flavor": "",
+  "set_code": "CP4"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Приятный скелет",
+  "name_en": "TRAVELIN' WIZARD",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Призрачное существо",
+  "attack": 2,
+  "defense": 4,
+  "description": "+1 DEF, если на поле есть ещё один Приятный скелет.",
+  "flavor": "\"Добрый вечер!\"",
+  "set_code": "FCP 6"
+}

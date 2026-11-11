@@ -1,0 +1,12 @@
+{
+  "name_ru": "Приодетый Волк",
+  "name_en": "WELL-DRESSED WOLF",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 3,
+  "defense": 6,
+  "description": "Приодетый волк получает +1 АТК пока атакует существ на кукурузных полях.",
+  "flavor": "",
+  "set_code": "FTG"
+}

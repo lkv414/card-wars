@@ -1,0 +1,12 @@
+{
+  "name_ru": "Перегорелыш",
+  "name_en": "BURNT-OUT",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 4,
+  "defense": 2,
+  "description": "",
+  "flavor": "Он очень зол.",
+  "set_code": "FCP 6"
+}

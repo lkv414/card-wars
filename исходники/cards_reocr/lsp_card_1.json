@@ -1,0 +1,12 @@
+{
+  "name_ru": "Мавзолей",
+  "name_en": "MAUSOLEUM",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Твое Существо на этой линии получает +1 DEF за каждые 5 карт в твоей стопке сброса.",
+  "flavor": "",
+  "set_code": "CP3"
+}

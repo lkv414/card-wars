@@ -1,0 +1,12 @@
+{
+  "name_ru": "Няш-мяш",
+  "name_en": "PENTACUTIE",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "attack": 3,
+  "defense": 8,
+  "description": "Противники не могут играть карты стоимостью 0.",
+  "flavor": "",
+  "set_code": "FTG"
+}

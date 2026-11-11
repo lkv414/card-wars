@@ -1,0 +1,12 @@
+{
+  "name_ru": "Снежная лавина",
+  "name_en": "SNOW AVALANCHE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками.",
+  "flavor": "",
+  "set_code": "CP5"
+}

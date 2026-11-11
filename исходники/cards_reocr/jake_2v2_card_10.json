@@ -1,0 +1,12 @@
+{
+  "name_ru": "Милашка коала",
+  "name_en": "CUTIE KOALA",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 1,
+  "defense": 8,
+  "description": "Пока у Милашки коалы 4 урона и более, она получает +2 ATK.",
+  "flavor": "",
+  "set_code": "2V2"
+}

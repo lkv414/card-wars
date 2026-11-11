@@ -1,0 +1,12 @@
+{
+  "name_ru": "Кукурузные рыцари",
+  "name_en": "HUSKER KNIGHT",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": null,
+  "defense": null,
+  "description": "Кукурузные рыцари получают +1 ATK и +2 DEF за каждое Кукурузное поле под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP1"
+}

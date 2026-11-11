@@ -1,0 +1,12 @@
+{
+  "name_ru": "Милая мельница",
+  "name_en": "NICE WINDMILL",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое строение",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 Действие >>> Восстанови или нанеси 2 урона своему существу на этой линии.",
+  "flavor": "",
+  "set_code": "FTG"
+}

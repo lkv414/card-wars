@@ -1,0 +1,12 @@
+{
+  "name_ru": "Зеленая сахарная вата",
+  "name_en": "GREEN CANDY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Восстанови или нанеси 1 Урон выбранному существу.",
+  "flavor": "",
+  "set_code": "CP3"
+}

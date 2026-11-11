@@ -1,0 +1,12 @@
+{
+  "name_ru": "Мисс Пушинка",
+  "name_en": "MS. FLUFF",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 10,
+  "description": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 АТК.",
+  "flavor": "",
+  "set_code": "CP3"
+}

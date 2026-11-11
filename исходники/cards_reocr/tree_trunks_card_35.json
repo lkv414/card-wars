@@ -1,0 +1,12 @@
+{
+  "name_ru": "Хлопковый форт",
+  "name_en": "COTTON FORT",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое строение",
+  "attack": null,
+  "defense": null,
+  "description": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF.",
+  "flavor": "",
+  "set_code": "FCP 6"
+}

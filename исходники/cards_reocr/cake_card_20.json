@@ -1,0 +1,12 @@
+{
+  "name_ru": "Кукурузный тамплиер",
+  "name_en": "CORNS TEMPLAR",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 1,
+  "defense": 7,
+  "description": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера.",
+  "flavor": "",
+  "set_code": "CP6"
+}

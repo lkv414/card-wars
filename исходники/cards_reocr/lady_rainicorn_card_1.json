@@ -1,0 +1,12 @@
+{
+  "name_ru": "Песчаный сфинкс",
+  "name_en": "SAND SPHINX",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "attack": null,
+  "defense": null,
+  "description": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владельцу.",
+  "flavor": "",
+  "set_code": "CP2"
+}

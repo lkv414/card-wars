@@ -1,0 +1,12 @@
+{
+  "name_ru": "Голубой тритон",
+  "name_en": "BLUE MERLOCK",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "attack": 2,
+  "defense": 5,
+  "description": "ПРИЕМ >>> Тяни карту. Затем сбрось карту.",
+  "flavor": "",
+  "set_code": "FTG"
+}

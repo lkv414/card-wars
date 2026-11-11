@@ -1,0 +1,12 @@
+{
+  "name_ru": "Струзен Джинн",
+  "name_en": "STRUZANN JINN",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "attack": 1,
+  "defense": 11,
+  "description": "+2 АТК каждому Примененному существу под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP1"
+}

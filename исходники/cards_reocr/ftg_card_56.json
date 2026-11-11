@@ -1,0 +1,12 @@
+{
+  "name_ru": "Подушка боли",
+  "name_en": "SACK OF PAIN",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 10,
+  "description": "Пока на Подушке боли ровно 6 урона, она получает +6 АТК.",
+  "flavor": "",
+  "set_code": "FTG"
+}

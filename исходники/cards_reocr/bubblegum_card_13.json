@@ -1,0 +1,12 @@
+{
+  "name_ru": "Стена шоколада",
+  "name_en": "WALL OF CHOCOLATE",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 1,
+  "defense": 9,
+  "description": "Пока на Стене шоколада нет урона, она получает +3 АТК.",
+  "flavor": "",
+  "set_code": "CP3"
+}

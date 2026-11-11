@@ -1,0 +1,12 @@
+{
+  "name_ru": "Зубастик",
+  "name_en": "MOUTHBALL",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "attack": 2,
+  "defense": 4,
+  "description": "+2 DEF за каждые 5 карт в твоей стопке сброса.",
+  "flavor": "",
+  "set_code": "CP2"
+}

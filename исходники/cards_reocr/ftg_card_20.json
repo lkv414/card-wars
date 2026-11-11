@@ -1,0 +1,12 @@
+{
+  "name_ru": "Хижина эльфа",
+  "name_en": "ELF HUT",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии.",
+  "flavor": "",
+  "set_code": "FTG"
+}

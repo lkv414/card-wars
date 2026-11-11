@@ -1,0 +1,12 @@
+{
+  "name_ru": "Космонаперсток",
+  "name_en": "VOID THIMBLE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Потеряй 2 здоровья, получи 1 действие.",
+  "flavor": "",
+  "set_code": "CP6"
+}

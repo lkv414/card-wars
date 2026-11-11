@@ -1,0 +1,12 @@
+{
+  "name_ru": "Майонезный ангел",
+  "name_en": "ANGEL OF VANILLA",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 6,
+  "description": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела.",
+  "flavor": "",
+  "set_code": "CP3"
+}

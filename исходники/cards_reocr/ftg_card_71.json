@@ -1,0 +1,12 @@
+{
+  "name_ru": "Фонтан слез",
+  "name_en": "FOUNTAIN OF TEARS",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 АТК.",
+  "flavor": "",
+  "set_code": "FTG"
+}

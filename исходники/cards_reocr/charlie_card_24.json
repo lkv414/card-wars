@@ -1,0 +1,12 @@
+{
+  "name_ru": "Цитадель с куполом",
+  "name_en": "DOMED STRONGHOLD",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием противника.",
+  "flavor": "",
+  "set_code": "2V2"
+}

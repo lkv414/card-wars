@@ -1,0 +1,12 @@
+{
+  "name_ru": "Кактус бандит",
+  "name_en": "CACTUS THUG",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 2,
+  "defense": 7,
+  "description": "Соседние Кукурузные существа получают +1 АТК.",
+  "flavor": "",
+  "set_code": "FTG"
+}

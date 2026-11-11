@@ -1,0 +1,12 @@
+{
+  "name_ru": "Портал в никуда",
+  "name_en": "PORTAL TO NOWHERE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне).",
+  "flavor": "",
+  "set_code": "FTG"
+}

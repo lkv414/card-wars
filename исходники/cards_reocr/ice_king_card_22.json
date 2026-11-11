@@ -1,0 +1,12 @@
+{
+  "name_ru": "Снежный пес",
+  "name_en": "SNOW DOG",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 2,
+  "defense": 7,
+  "description": "ПРИЕМ >>> Каждое соседнее существо получает +2 АТК.",
+  "flavor": "",
+  "set_code": "CP4"
+}

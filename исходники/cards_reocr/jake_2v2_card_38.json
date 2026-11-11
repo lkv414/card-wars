@@ -1,0 +1,12 @@
+{
+  "name_ru": "Овечка",
+  "name_en": "SHEEP",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 2,
+  "defense": 3,
+  "description": "",
+  "flavor": "",
+  "set_code": "2V2"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Лунный урожай",
+  "name_en": "HARVEST MOON",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Верни строение из стопки сброса в игру.",
+  "flavor": "",
+  "set_code": "CP6"
+}

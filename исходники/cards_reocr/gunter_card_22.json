@@ -1,0 +1,12 @@
+{
+  "name_ru": "Морозильник",
+  "name_en": "THE COOLER",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 4,
+  "defense": 7,
+  "description": "Когда Морозильник покидает игру, заморозь его землю.",
+  "flavor": "",
+  "set_code": "CP5"
+}

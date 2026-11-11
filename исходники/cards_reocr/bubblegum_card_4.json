@@ -1,0 +1,12 @@
+{
+  "name_ru": "Голубая сахарная вата",
+  "name_en": "BLUE CANDY",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Восстанови до 3 Урона с выбранного существа под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP3"
+}

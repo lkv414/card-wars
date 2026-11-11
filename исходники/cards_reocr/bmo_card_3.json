@@ -1,0 +1,12 @@
+{
+  "name_ru": "Кольцо змееглаза",
+  "name_en": "SNAKE EYE RING",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Верни случайное болотное существо из своей стопки сброса себе в руку.",
+  "flavor": "",
+  "set_code": "CP2"
+}

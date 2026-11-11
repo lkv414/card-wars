@@ -1,0 +1,12 @@
+{
+  "name_ru": "Музыкальный трон",
+  "name_en": "MUSICAL CHAIR",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Смени до 2х своих земель с теми которые сейчас не в игре.",
+  "flavor": "",
+  "set_code": "FTG"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Корова-нежить",
+  "name_en": "GHOST COW",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 4,
+  "description": "",
+  "flavor": "\"Му?\"",
+  "set_code": "FCP 6"
+}

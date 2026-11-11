@@ -1,0 +1,12 @@
+{
+  "name_ru": "Крепость Крови",
+  "name_en": "BLOOD FORTRESS",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Твое существо получает +1 АТК на этой линии.",
+  "flavor": "",
+  "set_code": "CP1"
+}

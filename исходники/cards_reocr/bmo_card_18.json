@@ -1,0 +1,12 @@
+{
+  "name_ru": "Темный ангел",
+  "name_en": "DARK ANGEL",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "attack": 0,
+  "defense": 5,
+  "description": "+1 ATK за каждые 5 карт в твоей стопке сброса.",
+  "flavor": "",
+  "set_code": "CP2"
+}

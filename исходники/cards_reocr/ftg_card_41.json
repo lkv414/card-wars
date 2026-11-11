@@ -1,0 +1,12 @@
+{
+  "name_ru": "Коровий",
+  "name_en": "COWSPER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 3,
+  "defense": 8,
+  "description": "Каждое соседнее кукурузное существо получает +1 DEF.",
+  "flavor": "",
+  "set_code": "FTG"
+}

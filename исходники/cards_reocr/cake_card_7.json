@@ -1,0 +1,12 @@
+{
+  "name_ru": "Великолепная Крепость",
+  "name_en": "CELESTIAL CASTLE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Существо противника на этой линии получает -2 DEF.",
+  "flavor": "",
+  "set_code": "CP6"
+}

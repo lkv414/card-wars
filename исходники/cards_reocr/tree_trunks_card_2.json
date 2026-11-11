@@ -1,0 +1,12 @@
+{
+  "name_ru": "Хлопковая гвардия",
+  "name_en": "COTTON GUARD",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 6,
+  "description": "Укротитель: +1 АТК против существ со стоимостью ровно 2.",
+  "flavor": "",
+  "set_code": "FCP 6"
+}

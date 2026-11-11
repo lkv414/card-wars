@@ -1,0 +1,12 @@
+{
+  "name_ru": "Яростная цыпа",
+  "name_en": "FURIOUS CHICK",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 0,
+  "defense": 5,
+  "description": "Яростная цыпа получает +1 АТК за каждый урон на ней.",
+  "flavor": "",
+  "set_code": "CP4"
+}

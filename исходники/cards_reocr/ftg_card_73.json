@@ -1,0 +1,12 @@
+{
+  "name_ru": "Пень-колода",
+  "name_en": "GOLDEN AXE STUMP",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 1,
+  "defense": 7,
+  "description": "Каждый раз когда противник тянет карту, нанеси ему 1 урон.",
+  "flavor": "",
+  "set_code": "FTG"
+}

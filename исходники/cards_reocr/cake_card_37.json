@@ -1,0 +1,12 @@
+{
+  "name_ru": "Огненное торнадо",
+  "name_en": "TORNADO WAL OF FIRE",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 0,
+  "defense": 10,
+  "description": "ПРИЕМ >>> Огненное торнадо получает +3 АТК пока применено.",
+  "flavor": "",
+  "set_code": "CP6"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Слюнявый чел",
+  "name_en": "DROOLING DUDE",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 3,
+  "defense": 9,
+  "description": "",
+  "flavor": "Девушки в калошах любят его.",
+  "set_code": "CP1"
+}

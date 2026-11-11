@@ -1,0 +1,12 @@
+{
+  "name_ru": "Попкорн-бабочка",
+  "name_en": "POPCORN BUTTEREDFLY",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 1,
+  "defense": 5,
+  "description": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP6"
+}

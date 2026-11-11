@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ведьмак",
+  "name_en": "MAN-WITCH",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "attack": 1,
+  "defense": 11,
+  "description": "Когда враг сбрасывает карту, нанеси ему 1 Урон.",
+  "flavor": "",
+  "set_code": "CP4"
+}

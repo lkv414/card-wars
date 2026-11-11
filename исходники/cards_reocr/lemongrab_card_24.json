@@ -1,0 +1,12 @@
+{
+  "name_ru": "Зебрарог на подборе",
+  "name_en": "REBOUNDING ZEBRACORN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 0,
+  "defense": 6,
+  "description": "+1 АТК за каждый различный тип земли под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP5"
+}

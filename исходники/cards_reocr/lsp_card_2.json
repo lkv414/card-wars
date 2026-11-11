@@ -1,0 +1,12 @@
+{
+  "name_ru": "Темный маяк",
+  "name_en": "NIGHT TOWER",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "attack": null,
+  "defense": null,
+  "description": "ПРИЕМ >>> Если у противника нет существа на этой линии, то он сбрасывает карту.",
+  "flavor": "",
+  "set_code": "CP3"
+}

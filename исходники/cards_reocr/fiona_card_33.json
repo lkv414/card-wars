@@ -1,0 +1,12 @@
+{
+  "name_ru": "Пони",
+  "name_en": "PONY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 5,
+  "description": "",
+  "flavor": "",
+  "set_code": "CP6"
+}

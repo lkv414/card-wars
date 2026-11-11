@@ -1,0 +1,12 @@
+{
+  "name_ru": "Мельница процветания",
+  "name_en": "WINDMILL OF HEALTH",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое строение",
+  "attack": null,
+  "defense": null,
+  "description": "Пока на твоем существе на этой линии нет урона, оно получает +2 ATK.",
+  "flavor": "",
+  "set_code": "CP3"
+}

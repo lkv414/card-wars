@@ -1,0 +1,12 @@
+{
+  "name_ru": "Посох вуду",
+  "name_en": "STAFF OF FRAILTY",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Наноси урон выбранному существу пока у него не остается 1 DEF.",
+  "flavor": "",
+  "set_code": "2V2"
+}

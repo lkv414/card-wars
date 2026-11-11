@@ -1,0 +1,12 @@
+{
+  "name_ru": "Запашок от носок",
+  "name_en": "SOCKS OF FORTITUDE",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Подготовь каждое существо сменившее линию в этот ход. Каждое из них получает +2 АТК в этот ход.",
+  "flavor": "",
+  "set_code": "FTG"
+}

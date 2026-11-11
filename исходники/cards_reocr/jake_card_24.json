@@ -1,0 +1,12 @@
+{
+  "name_ru": "Призрак полей",
+  "name_en": "FIELD STALKER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 1,
+  "defense": 10,
+  "description": "В начале твоего хода каждый игрок тянет карту.",
+  "flavor": "",
+  "set_code": "CP1"
+}

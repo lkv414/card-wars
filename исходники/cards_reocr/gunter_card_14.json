@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ледяная снегобаба",
+  "name_en": "FROSTED SNOWWOMAN",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 3,
+  "defense": 5,
+  "description": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии.",
+  "flavor": "",
+  "set_code": "CP5"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Коричный зомби",
+  "name_en": "CINNAMON ZOMBIE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Призрачное существо",
+  "attack": 1,
+  "defense": 6,
+  "description": "",
+  "flavor": "\"Не такой уж и сладкий\"",
+  "set_code": "FCP 6"
+}

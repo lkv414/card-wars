@@ -1,0 +1,12 @@
+{
+  "name_ru": "Призрачный шмяк",
+  "name_en": "RING OF THIRD EYE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Призрачное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное строение противника.",
+  "flavor": "",
+  "set_code": "FCP 6"
+}

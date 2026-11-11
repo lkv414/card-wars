@@ -1,0 +1,12 @@
+{
+  "name_ru": "Нежный Снежный Малыш",
+  "name_en": "NICE ICE BABY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 2,
+  "description": "+3 АТК пока у противника нет существа на этой линии.",
+  "flavor": "",
+  "set_code": "CP4"
+}

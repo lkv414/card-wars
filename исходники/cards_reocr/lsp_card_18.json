@@ -1,0 +1,12 @@
+{
+  "name_ru": "Кристалл силы",
+  "name_en": "STRENGTH CRYSTAL",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранный игрок тянет 5 карт.",
+  "flavor": "",
+  "set_code": "CP3"
+}

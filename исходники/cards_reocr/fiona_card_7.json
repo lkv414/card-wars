@@ -1,0 +1,12 @@
+{
+  "name_ru": "Браслет дружбы",
+  "name_en": "FRIENDSHIP BRACELET",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Поменяй любое количество урона между двумя существами под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP6"
+}

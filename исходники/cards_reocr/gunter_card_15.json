@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ледяной гонщик",
+  "name_en": "GLACIER RACER",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 2,
+  "defense": 6,
+  "description": "+4 АТК, если обе земли на этой линии имеют Ледяные жетоны.",
+  "flavor": "",
+  "set_code": "CP5"
+}

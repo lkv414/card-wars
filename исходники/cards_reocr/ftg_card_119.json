@@ -1,0 +1,12 @@
+{
+  "name_ru": "Поднятие мертвых",
+  "name_en": "RAISE THE DEAD",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
+  "flavor": "",
+  "set_code": "FTG"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Нефтяная вышка",
+  "name_en": "OIL REFINERY",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP6"
+}

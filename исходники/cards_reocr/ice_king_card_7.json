@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ледяной дракон",
+  "name_en": "FROST DRAGON",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 2,
+  "defense": 10,
+  "description": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
+  "flavor": "",
+  "set_code": "CP4"
+}

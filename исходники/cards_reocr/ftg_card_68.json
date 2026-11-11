@@ -1,0 +1,12 @@
+{
+  "name_ru": "Мастер маскировки",
+  "name_en": "MASTER OF DISGUISE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо противника получает -1 АТК в этот ход.",
+  "flavor": "",
+  "set_code": "FTG"
+}

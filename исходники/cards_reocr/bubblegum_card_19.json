@@ -1,0 +1,12 @@
+{
+  "name_ru": "Фея Шепард",
+  "name_en": "FAIRY SHEPARD",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 9,
+  "description": "Каждое соседнее милое существо получает +2 DEF.",
+  "flavor": "",
+  "set_code": "CP3"
+}

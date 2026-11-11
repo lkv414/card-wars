@@ -1,0 +1,12 @@
+{
+  "name_ru": "Свиток плохого дыхания",
+  "name_en": "SCROLL OF BAD BREATH",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует существо на Милой земле.",
+  "flavor": "",
+  "set_code": "FTG"
+}

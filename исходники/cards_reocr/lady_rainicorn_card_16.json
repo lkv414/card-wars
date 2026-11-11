@@ -1,0 +1,12 @@
+{
+  "name_ru": "Муми-тролль",
+  "name_en": "MUMMY",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 2,
+  "defense": 7,
+  "description": "ПРИЕМ >>> Получи 1 Действие в этот ход.",
+  "flavor": "",
+  "set_code": "CP2"
+}

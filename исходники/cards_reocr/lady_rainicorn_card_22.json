@@ -1,0 +1,12 @@
+{
+  "name_ru": "Песчаные рыцари",
+  "name_en": "SAND KNIGHTS",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 1,
+  "defense": 8,
+  "description": "+2 ATK если под твоим контролем Голубые равнины.",
+  "flavor": "",
+  "set_code": "CP2"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Заумный Шторм Крови",
+  "name_en": "CEREBRAL BLOODSTORM",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Наносит 1 Урон каждому существу противника.",
+  "flavor": "",
+  "set_code": "CP1"
+}

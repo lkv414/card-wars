@@ -1,0 +1,12 @@
+{
+  "name_ru": "Мозговой смерч",
+  "name_en": "PSYCHIC TEMPEST",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Верни всех своих существ в игре себе в руку (включая украденных существ).",
+  "flavor": "",
+  "set_code": "FTG"
+}

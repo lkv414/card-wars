@@ -1,0 +1,12 @@
+{
+  "name_ru": "Меч певунец",
+  "name_en": "SINGING SWORD",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо получает +1 АТК за каждые 2 вытянутые тобой карты в этом ходу.",
+  "flavor": "",
+  "set_code": "CP6"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Бумажный тигр",
+  "name_en": "PAPERCUT TIGER",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 9,
+  "description": "Пока на Бумажном тигре ровно 5 урона, он получает +5 АТК.",
+  "flavor": "",
+  "set_code": "CP4"
+}

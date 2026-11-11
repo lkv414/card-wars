@@ -1,0 +1,12 @@
+{
+  "name_ru": "Корова",
+  "name_en": "COW",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 5,
+  "description": "Муу.",
+  "flavor": "",
+  "set_code": "CP3"
+}

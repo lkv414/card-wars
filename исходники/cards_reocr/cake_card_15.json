@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ферма",
+  "name_en": "FARMHOUSE",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Ферма считается за дополнительную Кукурузную землю под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP6"
+}

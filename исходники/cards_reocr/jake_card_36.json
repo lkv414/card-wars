@@ -1,0 +1,12 @@
+{
+  "name_ru": "Злое око",
+  "name_en": "EVIL EYE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 5,
+  "description": "",
+  "flavor": "Зло таится в глазах смотрящего.",
+  "set_code": "CP1"
+}

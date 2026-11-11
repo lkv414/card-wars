@@ -1,0 +1,12 @@
+{
+  "name_ru": "Набитый орангутан",
+  "name_en": "OVERSTUFFED ORANGUTAN",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 8,
+  "description": "Пока у Набитого орангутана 4 и более урона, его АТК удваивается.",
+  "flavor": "",
+  "set_code": "2V2"
+}

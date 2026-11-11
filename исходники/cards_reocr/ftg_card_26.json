@@ -1,0 +1,12 @@
+{
+  "name_ru": "Желтый маяк",
+  "name_en": "YELLOW LIGHTHOUSE",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "attack": null,
+  "defense": null,
+  "description": "В начале твоего хода, каждый игрок, который контролирует существо на этой линии, тянет карту.",
+  "flavor": "",
+  "set_code": "FTG"
+}

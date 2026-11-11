@@ -1,0 +1,12 @@
+{
+  "name_ru": "Мышь альбинос",
+  "name_en": "ALBINO EYEBAT",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 2,
+  "defense": 7,
+  "description": "Пока на Мыше альбиносе ровно 2 Урона, она получает +2 ATK",
+  "flavor": "",
+  "set_code": "CP3"
+}

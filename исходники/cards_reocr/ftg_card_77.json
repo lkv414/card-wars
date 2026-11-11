@@ -1,0 +1,12 @@
+{
+  "name_ru": "Пляжная мумия",
+  "name_en": "BEACH MUMMY",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 0,
+  "defense": 7,
+  "description": "ПРИЕМ >>> Верни существо на соседней линии в руку владельцу.",
+  "flavor": "",
+  "set_code": "FTG"
+}

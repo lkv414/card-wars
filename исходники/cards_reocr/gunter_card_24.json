@@ -1,0 +1,12 @@
+{
+  "name_ru": "С добрым утром!",
+  "name_en": "WAKE UP CALL",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Подготовь каждое существо под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP5"
+}

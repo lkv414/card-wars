@@ -1,0 +1,12 @@
+{
+  "name_ru": "Хлопковая няшка",
+  "name_en": "COTTON CANDY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 5,
+  "description": "Считается одновременно милым и радужным существом.",
+  "flavor": "",
+  "set_code": "FCP 6"
+}

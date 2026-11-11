@@ -1,0 +1,12 @@
+{
+  "name_ru": "Кукурузный глазастик",
+  "name_en": "OL' CORN EYE",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 4,
+  "defense": 1,
+  "description": "+1 DEF за каждую различную землю под твоим контролем.",
+  "flavor": "",
+  "set_code": "CP5"
+}

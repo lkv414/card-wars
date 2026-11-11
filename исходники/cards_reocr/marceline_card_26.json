@@ -1,0 +1,12 @@
+{
+  "name_ru": "Авто-ощипыватель",
+  "name_en": "AUTO-PLUCKER",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии.",
+  "flavor": "",
+  "set_code": "CP4"
+}

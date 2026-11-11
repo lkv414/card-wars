@@ -1,0 +1,12 @@
+{
+  "name_ru": "Аванпост попугаев",
+  "name_en": "PARROT MILITARY OUTPOST",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо на этой линии получает -1 АТК (минимум 0).",
+  "flavor": "",
+  "set_code": "CP5"
+}

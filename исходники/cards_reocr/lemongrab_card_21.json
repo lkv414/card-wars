@@ -1,0 +1,12 @@
+{
+  "name_ru": "Дрожь земли",
+  "name_en": "QUAKE MAKER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 1,
+  "defense": 7,
+  "description": "+2 АТК за каждую землю в игре, перевернутую лицом вниз.",
+  "flavor": "",
+  "set_code": "CP5"
+}

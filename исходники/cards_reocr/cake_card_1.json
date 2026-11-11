@@ -1,0 +1,12 @@
+{
+  "name_ru": "Рука помощи",
+  "name_en": "HELPING HAND",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 1,
+  "defense": 4,
+  "description": "ПРИЕМ >>> Верни строение из стопки сброса себе в руку.",
+  "flavor": "",
+  "set_code": "CP6"
+}

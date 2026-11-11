@@ -1,0 +1,12 @@
+{
+  "name_ru": "Великолепный замок",
+  "name_en": "CELESTIAL CASTLE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "attack": null,
+  "defense": null,
+  "description": "Твое существо получает +3 DEF на этой линии.",
+  "flavor": "",
+  "set_code": "CP3"
+}

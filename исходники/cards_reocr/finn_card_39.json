@@ -1,0 +1,12 @@
+{
+  "name_ru": "Сопли гнома",
+  "name_en": "GNOME SNOT",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Тяни 3 карты.",
+  "flavor": "",
+  "set_code": "CP1"
+}

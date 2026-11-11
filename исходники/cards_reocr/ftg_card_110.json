@@ -1,0 +1,12 @@
+{
+  "name_ru": "Брекиты Огрa",
+  "name_en": "OGRE BRACES",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса.",
+  "flavor": "",
+  "set_code": "FTG"
+}

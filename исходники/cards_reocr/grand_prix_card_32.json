@@ -1,0 +1,12 @@
+{
+  "name_ru": "Серф-лобстер",
+  "name_en": "LONGBOARD LOBSTER",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "attack": 1,
+  "defense": 7,
+  "description": "+1 АТК за каждую землю Бесполезных болот в игре.",
+  "flavor": "",
+  "set_code": "2V2"
+}

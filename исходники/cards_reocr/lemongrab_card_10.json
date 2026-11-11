@@ -1,0 +1,12 @@
+{
+  "name_ru": "Зона Высадки",
+  "name_en": "DROP ZONE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери свое существо и верни его на руку.",
+  "flavor": "",
+  "set_code": "CP5"
+}

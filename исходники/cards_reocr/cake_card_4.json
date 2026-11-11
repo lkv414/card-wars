@@ -1,0 +1,12 @@
+{
+  "name_ru": "Хэнклоп",
+  "name_en": "HUNKLOPS",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 3,
+  "defense": 3,
+  "description": "",
+  "flavor": "",
+  "set_code": "CP6"
+}

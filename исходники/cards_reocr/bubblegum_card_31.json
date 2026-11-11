@@ -1,0 +1,12 @@
+{
+  "name_ru": "Хлопковая мышь",
+  "name_en": "COTTON EYEBAT",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 1,
+  "defense": 8,
+  "description": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 АТК.",
+  "flavor": "",
+  "set_code": "СР3"
+}

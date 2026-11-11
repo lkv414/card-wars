@@ -1,0 +1,12 @@
+{
+  "name_ru": "Великолепный грамофон",
+  "name_en": "GLORIOUS GRAMOPHONE",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Тяни 4 карты, затем сбрось 2 карты.",
+  "flavor": "",
+  "set_code": "CP6"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Портал антипризыва",
+  "name_en": "PORTAL OF UNSUMMONING",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Верни выбранное существо его владельцу в руку.",
+  "flavor": "",
+  "set_code": "FTG"
+}

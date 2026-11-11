@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ультра пес",
+  "name_en": "ULTRA DOG",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 3,
+  "defense": 6,
+  "description": "ПРИЕМ >>> Заморозь выбранную землю и существо на ней.",
+  "flavor": "",
+  "set_code": "2V2"
+}

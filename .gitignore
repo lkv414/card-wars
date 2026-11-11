@@ -2,6 +2,12 @@
 node_modules/
 .idea/
 .zcode/
+.workbuddy-ai/
+.workbuddy/
+
+# ключи и секреты
+.env
+.env.*
 
 # тестово-временные каталоги
 .ocr-test/

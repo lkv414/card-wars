@@ -1,0 +1,12 @@
+{
+  "name_ru": "Непустой гроб",
+  "name_en": "UNEMPTY COFFIN",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Следующее существо сыгранное тобой в этот ход стоит на 2 действия меньше.",
+  "flavor": "",
+  "set_code": "CP2"
+}

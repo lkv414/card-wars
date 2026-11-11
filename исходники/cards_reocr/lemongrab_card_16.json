@@ -1,0 +1,12 @@
+{
+  "name_ru": "Закусочная",
+  "name_en": "LUNCHPAD",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "attack": null,
+  "defense": null,
+  "description": "ПРИЕМ >>> Тяни карту за каждое существo введённое в игру на эту землю в этот ход.",
+  "flavor": "",
+  "set_code": "CP5"
+}

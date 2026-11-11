@@ -1,0 +1,12 @@
+{
+  "name_ru": "Сила трусов",
+  "name_en": "BRIEF POWER",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное Болотное существо под твоим контролем получает +2 АТК в этот ход.",
+  "flavor": "",
+  "set_code": "CP3"
+}

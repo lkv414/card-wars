@@ -1,0 +1,12 @@
+{
+  "name_ru": "Шоколадный ангел",
+  "name_en": "ANGEL OF CHOCOLATE",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 3,
+  "defense": 7,
+  "description": "Потрать 1 Действие >>> Восстанови весь урон с Ангела шоколада.",
+  "flavor": "",
+  "set_code": "СР3"
+}

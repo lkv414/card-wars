@@ -1,0 +1,12 @@
+{
+  "name_ru": "Ледяной Штурмовик",
+  "name_en": "ICY INTRUDER",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "attack": 2,
+  "defense": 7,
+  "description": "Потрать 1 действие, ПРИЕМ >>> Заморозь выбранную землю.",
+  "flavor": "",
+  "set_code": "CP5"
+}

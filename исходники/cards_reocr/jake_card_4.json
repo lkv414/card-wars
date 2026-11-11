@@ -1,0 +1,12 @@
+{
+  "name_ru": "Стена початков",
+  "name_en": "WALL OF EARS",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "attack": 2,
+  "defense": 4,
+  "description": "+1 DEF за каждое Кукурузное поле в игре (у всех игроков).",
+  "flavor": "",
+  "set_code": "CP1"
+}

@@ -1,0 +1,12 @@
+{
+  "name_ru": "Милашка",
+  "name_en": "CUTIE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Милое существо",
+  "attack": 0,
+  "defense": 6,
+  "description": "ПРИЕМ >>> Восстанови себе 1 HP. (Но не более 25.)",
+  "flavor": "",
+  "set_code": "CP3"
+}

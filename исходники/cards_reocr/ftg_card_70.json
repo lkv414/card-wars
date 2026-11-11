@@ -1,0 +1,12 @@
+{
+  "name_ru": "Цельнометаллическая ракетка",
+  "name_en": "FULL METAL RACKET",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона выбранному существу.",
+  "flavor": "",
+  "set_code": "FTG"
+}

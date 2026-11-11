@@ -1,0 +1,12 @@
+{
+  "name_ru": "Пурга",
+  "name_en": "SNOWBLOWER",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери линию и заморозь обе земли на ней.",
+  "flavor": "",
+  "set_code": "CP5"
+}

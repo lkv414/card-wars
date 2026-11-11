@@ -1,0 +1,12 @@
+{
+  "name_ru": "Острая сосулька",
+  "name_en": "SPIKE ICICLE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "attack": 3,
+  "defense": 1,
+  "description": "",
+  "flavor": "Поберегись!",
+  "set_code": "CP4"
+}

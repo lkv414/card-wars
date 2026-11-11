@@ -1,0 +1,12 @@
+{
+  "name_ru": "Желтая сирена",
+  "name_en": "BLONDE MERWITCH",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "attack": 3,
+  "defense": 9,
+  "description": "",
+  "flavor": "",
+  "set_code": "CP2"
+}

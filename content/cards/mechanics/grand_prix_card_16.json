@@ -8,14 +8,7 @@
           "kind": "while_adjacent_lanes_empty"
         }
       ],
-      "effect": {
-        "op": "suppress",
-        "target": {
-          "kind": "this_creature"
-        },
-        "spells": true,
-        "creatureAbilities": true
-      },
+      "mechanic": "mint_ice_cream_spell_and_ability_immunity",
       "text": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ."
     }
   ],

@@ -3,25 +3,14 @@
   "abilities": [
     {
       "kind": "passive",
-      "trigger": "on_damage_dealt",
-      "conditions": [
-        {
-          "kind": "if_payload_zone_matches_self"
-        },
-        {
-          "kind": "if_payload_player_opponent"
-        }
-      ],
       "effect": {
-        "op": "stat_buff",
+        "op": "damage_bonus",
         "target": {
-          "kind": "this_creature"
+          "kind": "this_lane_opponent_creature"
         },
-        "stat": "defense",
-        "amount": 1,
-        "duration": "permanent"
+        "amount": 1
       },
-      "text": "Каждый раз когда существо противника на этой линии получает урон, это строение навсегда получает +1 DEF."
+      "text": "Каждый раз когда существо противника на этой линии получает урон, прибавь к значению 1."
     }
   ],
   "name": "Замок Крови"

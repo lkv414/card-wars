@@ -5,17 +5,13 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": {
-        "op": "redistribute_damage",
-        "among": {
-          "kind": "each_creature_yours"
-        },
-        "cap": "defense"
-      },
+      "mechanic": "redistribute_damage_between_two",
       "targets": [
         {
-          "kind": "damage_distribution",
-          "label": "Распредели урон между существами"
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
         }
       ],
       "text": "Распредели урон между двумя существами под твоим контролем, как тебе нужно. Урон на одном существе не может равняться его DEF."

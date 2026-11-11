@@ -5,9 +5,17 @@
     {
       "kind": "passive",
       "trigger": "start_of_battle_phase",
-      "effect": { "op": "deal_damage", "target": { "kind": "each_creature_of_choice_player" }, "amount": 1 },
-      "targets": [{ "kind": "opponent_player" }],
-      "conditions": [{ "kind": "while_lane_ice_token", "min": 1 }],
+      "conditions": [
+        {
+          "kind": "while_lane_ice_token"
+        }
+      ],
+      "mechanic": "damage_each_creature_of_player",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
       "text": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока."
     }
   ]

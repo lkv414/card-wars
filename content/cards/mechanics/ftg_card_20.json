@@ -5,16 +5,7 @@
     {
       "kind": "active",
       "cost": 1,
-      "effect": {
-        "op": "draw_cards",
-        "count": {
-          "kind": "per_target",
-          "target": {
-            "kind": "this_lane_creature"
-          },
-          "amount": 1
-        }
-      },
+      "mechanic": "draw_per_creature_on_lane",
       "text": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии."
     }
   ]

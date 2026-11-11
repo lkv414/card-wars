@@ -4,22 +4,26 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "attack_mod",
-        "target": {
-          "kind": "each_creature_yours"
-        },
-        "atkBonus": 1
-      },
-      "text": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 ATK в этом ход.",
+      "trigger": "on_creature_attacks",
       "conditions": [
         {
           "kind": "while_counter_at_most",
           "counter": "creature_attack",
-          "scope": "team",
           "max": 0
         }
-      ]
+      ],
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "triggering_instance"
+          },
+          "amount": 1
+        }
+      },
+      "text": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 АТК в этот ход."
     }
   ]
 }

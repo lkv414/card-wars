@@ -1,23 +1,29 @@
 {
- "cardId": "ftg_card_3",
- "name": "Черничное желе",
- "abilities": [
-  {
-   "kind": "passive",
-   "trigger": "on_enters_play",
-   "effect": {
-    "op": "return_to_owner",
-    "target": {
-     "kind": "this_lane_creature"
-    }
-   },
-   "conditions": [
+  "cardId": "ftg_card_3",
+  "name": "Черничное желе",
+  "abilities": [
     {
-     "kind": "while_distinct_lands",
-     "min": 3
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "while_distinct_lands",
+          "count": 3
+        }
+      ],
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу."
     }
-   ],
-   "text": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу."
-  }
- ]
+  ]
 }

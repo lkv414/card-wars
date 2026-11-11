@@ -5,23 +5,23 @@
     {
       "kind": "passive",
       "trigger": "on_enters_play",
-      "effect": {
-        "op": "deal_damage",
-        "target": {
-          "kind": "opponent_team"
-        },
-        "amount": 1
-      },
-      "text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику.",
       "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
         {
           "kind": "if_payload_land_type",
           "landType": "sand"
-        },
-        {
-          "kind": "if_payload_player_self"
         }
-      ]
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "amount": 1
+      },
+      "text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику."
     }
   ]
 }

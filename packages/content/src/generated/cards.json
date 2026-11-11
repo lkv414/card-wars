@@ -273,18 +273,10 @@
    {
     "kind": "passive",
     "trigger": "start_of_turn",
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "each_opponent_player"
-     },
+    "mechanic": "damage_opponents_with_empty_hand",
+    "params": {
      "amount": 3
     },
-    "conditions": [
-     {
-      "kind": "while_opponents_hand_empty"
-     }
-    ],
     "text": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке."
    }
   ]
@@ -467,8 +459,7 @@
      "count": 1,
      "filter": {
       "cost": 0
-     },
-     "random": true
+     }
     },
     "text": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в руку."
    }
@@ -571,18 +562,27 @@
     "cost": 1,
     "targets": [
      {
-      "kind": "any_creature"
+      "kind": "opponent_creature"
      }
     ],
     "mechanic": "borrow_creature",
-    "text": "ПРИЕМ >>> Если ты не контролируешь существ на этой линии, перемести выбранное существо на свою сторону и подготовь его. В конце хода верни его владельцу."
+    "text": "ПРИЕМ >>> Если ты не контролируешь существ на этой линии, перемести выбранное существо на свою сторону и подготовь его. В конце хода верни его владельцу.",
+    "conditions": [
+     {
+      "kind": "while_zone_has_no_creature"
+     }
+    ],
+    "params": {
+     "returnAtEndOfTurn": true,
+     "readyTarget": true
+    }
    }
   ]
  },
  {
   "id": "bmo_card_35",
   "name": "Абрака Амадеус",
-  "type": "building",
+  "type": "spell",
   "cost": 2,
   "landType": "swamp",
   "image": "/content/cards/images/bmo_card_35.png",
@@ -592,6 +592,11 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "targets": [
+     {
+      "kind": "opponent_player"
+     }
+    ],
     "effect": {
      "op": "opponent_discards",
      "target": {
@@ -604,12 +609,7 @@
       "amount": 1
      }
     },
-    "text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
-    "targets": [
-     {
-      "kind": "opponent_player"
-     }
-    ]
+    "text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса."
    }
   ]
  },
@@ -1238,47 +1238,11 @@
     "kind": "passive",
     "trigger": "start_of_turn",
     "optional": true,
-    "targets": [
-     {
-      "kind": "choose_option",
-      "options": [
-       "heal",
-       "damage"
-      ],
-      "label": "Восстановить или нанести 1 урон каждому своему существу"
-     }
-    ],
-    "effect": [
-     {
-      "op": "heal",
-      "target": {
-       "kind": "each_creature_yours"
-      },
-      "amount": 1,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 0,
-        "option": "heal"
-       }
-      ]
-     },
-     {
-      "op": "deal_damage",
-      "target": {
-       "kind": "each_creature_yours"
-      },
-      "amount": 1,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 0,
-        "option": "damage"
-       }
-      ]
-     }
-    ],
-    "text": "В начале твоего хода можешь восстановить или нанести 1 урон каждому существу под твоим контролем."
+    "mechanic": "per_creature_heal_or_damage",
+    "params": {
+     "amount": 1
+    },
+    "text": "В начале твоего хода можешь восстановить или нанести 1 урон с каждого существа под твоим контролем. (Выбери для каждого существа.)"
    }
   ]
  },
@@ -1419,8 +1383,7 @@
      "count": 1,
      "filter": {
       "type": "building"
-     },
-     "random": true
+     }
     },
     "text": "ПРИЕМ >>> Верни строение из стопки сброса себе в руку."
    }
@@ -1450,25 +1413,14 @@
   "abilities": [
    {
     "kind": "passive",
-    "trigger": "on_damage_dealt",
-    "conditions": [
-     {
-      "kind": "if_payload_zone_matches_self"
-     },
-     {
-      "kind": "if_payload_player_opponent"
-     }
-    ],
     "effect": {
-     "op": "stat_buff",
+     "op": "damage_bonus",
      "target": {
-      "kind": "this_creature"
+      "kind": "this_lane_opponent_creature"
      },
-     "stat": "defense",
-     "amount": 1,
-     "duration": "permanent"
+     "amount": 1
     },
-    "text": "Каждый раз когда существо противника на этой линии получает урон, это строение навсегда получает +1 DEF."
+    "text": "Каждый раз когда существо противника на этой линии получает урон, прибавь к значению 1."
    }
   ]
  },
@@ -1524,7 +1476,7 @@
       },
       "amount": 2,
       "filter": {
-       "ready": true
+       "flipped": true
       }
      },
      "duration": "this_turn"
@@ -1630,7 +1582,7 @@
       },
       "amount": -1,
       "filter": {
-       "ready": true
+       "flipped": true
       }
      }
     },
@@ -1741,7 +1693,13 @@
   "defense": 9,
   "description": "Можешь сыграть дополнительное строение на этой земле.",
   "deckSet": "cake",
-  "abilities": []
+  "abilities": [
+   {
+    "kind": "passive",
+    "mechanic": "allow_extra_building_on_lane",
+    "text": "Можешь сыграть дополнительное строение на этой земле."
+   }
+  ]
  },
  {
   "id": "cake_card_20",
@@ -1791,7 +1749,7 @@
      "amount": 1,
      "duration": "aura",
      "filter": {
-      "ready": true
+      "flipped": true
      }
     },
     "text": "Примененное существо под твоим контролем получает +1 ATK."
@@ -1926,7 +1884,7 @@
       "amount": 1,
       "excludeSelf": true,
       "filter": {
-       "ready": true
+       "flipped": true
       }
      },
      "duration": "aura"
@@ -1949,7 +1907,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "effect": {
      "op": "move_building",
      "target": {
@@ -2014,9 +1971,10 @@
   "deckSet": "cake",
   "abilities": [
    {
-    "kind": "active",
-    "cost": 1,
-    "maxUsesPerTurn": 1,
+    "kind": "passive",
+    "trigger": "on_creature_attacks",
+    "optional": true,
+    "mechanic": "replace_attacker_with_flooped",
     "targets": [
      {
       "kind": "own_creature",
@@ -2025,8 +1983,7 @@
       }
      }
     ],
-    "mechanic": "arm_replace_attacker",
-    "text": "ПРИЕМ >>> Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него."
+    "text": "Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него."
    }
   ]
  },
@@ -2282,34 +2239,16 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "charlie_bike_for_two",
     "targets": [
      {
       "kind": "own_creature"
      },
      {
       "kind": "any_player"
-     },
-     {
-      "kind": "own_creature"
      }
     ],
-    "effect": [
-     {
-      "op": "return_to_owner",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      }
-     },
-     {
-      "op": "return_to_owner",
-      "target": {
-       "kind": "choice",
-       "index": 2
-      }
-     }
-    ],
-    "text": "Верни свое существо в руку владельцу. Выбранный игрок возвращает свое существо в руку владельцу."
+    "text": "Выбери существо под твоим контролем и верни его на руку владельцу. Выбери другого игрока. Он выбирает существо под его контролем и возвращает его на руку владельцу."
    }
   ]
  },
@@ -2360,39 +2299,16 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "move_creature_and_pass_card",
     "targets": [
      {
-      "kind": "own_creature"
+      "kind": "any_creature"
      },
      {
-      "kind": "own_landscape"
+      "kind": "landscape"
      }
     ],
-    "effect": [
-     {
-      "op": "move_creature",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "destination": {
-       "kind": "choice",
-       "index": 1
-      },
-      "side": "own"
-     },
-     {
-      "op": "give_card",
-      "card": {
-       "kind": "choice",
-       "index": 0
-      },
-      "to": {
-       "kind": "teammate_player"
-      }
-     }
-    ],
-    "text": "Перемести свое существо на соседнюю землю под контролем его владельца; затем отдай эту карту партнеру в руку."
+    "text": "Выбери существо и перемести на соседнюю землю под контролем его владельца. Как сделал это можешь отдать карту партнеру в руку."
    }
   ]
  },
@@ -2450,14 +2366,24 @@
     "kind": "passive",
     "effect": {
      "op": "stat_buff",
-     "target": {
-      "kind": "this_lane_own_creature"
-     },
      "stat": "defense",
      "amount": 2,
-     "duration": "aura"
+     "duration": "aura",
+     "target": {
+      "kind": "this_lane_creature"
+     }
     },
-    "text": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием противника."
+    "text": "Твое существо на этой земле получает +2 DEF."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "grant_protection",
+     "target": {
+      "kind": "this_lane_creature"
+     }
+    },
+    "text": "Твое существо на этой земле не может быть поврежден заклинанием противника."
    }
   ]
  },
@@ -2485,7 +2411,6 @@
    },
    {
     "kind": "active",
-    "cost": 1,
     "effect": {
      "op": "move_creature",
      "target": {
@@ -2823,16 +2748,17 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "peek_reorder",
     "targets": [
      {
       "kind": "any_player"
      }
     ],
-    "mechanic": "peek_reorder",
     "params": {
-     "count": 4
+     "count": 4,
+     "draw": 1
     },
-    "text": "Посмотри 4 верхние карты колоды выбранного игрока (в своем виде), верни их обратно. Затем тяни карту — добор выполняется в тот же ход вручную."
+    "text": "Посмотри 4 верхние карты в колоде выбранного игрока и верни их обратно в любом порядке. Затем тяни карту."
    }
   ]
  },
@@ -2879,36 +2805,43 @@
   "abilities": [
    {
     "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_damage_at_most",
+      "amount": 3,
+      "scope": "self"
+     }
+    ],
     "effect": {
      "op": "stat_buff",
-     "target": {
-      "kind": "adjacent_creatures"
-     },
      "stat": "attack",
      "amount": 1,
-     "duration": "aura"
+     "duration": "aura",
+     "target": {
+      "kind": "adjacent_creatures"
+     }
     },
-    "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK."
+    "text": "У каждого соседнего существа +1 ATK."
    },
    {
     "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "adjacent_creatures"
-     },
-     "stat": "attack",
-     "amount": 2,
-     "duration": "aura"
-    },
-    "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK.",
     "conditions": [
      {
       "kind": "while_damage_at_least",
       "amount": 4,
       "scope": "self"
      }
-    ]
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "stat": "attack",
+     "amount": 2,
+     "duration": "aura",
+     "target": {
+      "kind": "adjacent_creatures"
+     }
+    },
+    "text": "Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK."
    }
   ]
  },
@@ -2960,30 +2893,18 @@
    {
     "kind": "passive",
     "trigger": "on_companion_event",
-    "optional": true,
-    "oncePerTurn": true,
     "conditions": [
      {
       "kind": "if_payload_player_self"
-     },
-     {
-      "kind": "if_payload_player_opponent"
      }
     ],
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "amount": 1
-    },
+    "mechanic": "revenue_partner_damage",
     "targets": [
      {
-      "kind": "own_creature"
+      "kind": "lane_creature"
      }
     ],
-    "text": "Во время фазы сражения твоего партнера, первый раз когда нанесен урон противнику, ты можешь нанести 1 урон выбранному существу на своей линии."
+    "text": "Во время фазы сражения твоей и твоего партнера, первый раз когда нанесен урон противнику, другой партнер может нанести 1 урон выбранному существу на 1 из своих линий."
    }
   ]
  },
@@ -3034,6 +2955,13 @@
    {
     "kind": "passive",
     "trigger": "start_of_turn",
+    "conditions": [
+     {
+      "kind": "while_damage_at_least",
+      "amount": 4,
+      "scope": "self"
+     }
+    ],
     "effect": {
      "op": "deal_damage",
      "target": {
@@ -3042,19 +2970,12 @@
      },
      "amount": 3
     },
-    "text": "Если в начале твоего хода у Милашки коалы 4 урона и более, нанеси 3 урона выбранному противнику.",
     "targets": [
      {
       "kind": "opponent_player"
      }
     ],
-    "conditions": [
-     {
-      "kind": "while_own_card_in_play",
-      "cardId": "bubblegum_card_10",
-      "minDamage": 4
-     }
-    ]
+    "text": "Если в начале твоего хода у Милашки коалы 4 урона и более, нанеси 3 урона выбранному противнику."
    }
   ]
  },
@@ -3257,30 +3178,11 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": {
-     "op": "heal_or_damage",
-     "target": {
-      "kind": "this_lane_creature"
-     },
-     "mode": {
-      "kind": "choice",
-      "index": 0
-     },
-     "amount": 1
+    "mechanic": "bomb_heal_or_damage_if_four_damage",
+    "params": {
+     "amount": 4
     },
-    "text": "ПРИЕМ >>> Восстанови или нанеси урон своему существу на этой земле, если у него 4 урона.",
-    "targets": [
-     {
-      "kind": "heal_or_damage"
-     }
-    ],
-    "conditions": [
-     {
-      "kind": "while_damage_exactly",
-      "amount": 4,
-      "scope": "self"
-     }
-    ]
+    "text": "ПРИЕМ >>> Восстанови или нанеси урон своему существу на этой земле, если у него 4 урона."
    }
   ]
  },
@@ -3447,7 +3349,7 @@
       },
       "amount": 1,
       "filter": {
-       "ready": true
+       "flipped": true
       }
      }
     },
@@ -3475,7 +3377,6 @@
      "filter": {
       "type": "spell"
      },
-     "random": true,
      "to": "deck_top"
     },
     "text": "ПРИЕМ >>> Помести заклинание из своей стопки сброса наверх своей колоды."
@@ -3509,7 +3410,7 @@
      {
       "kind": "own_creature",
       "filter": {
-       "ready": false
+       "flipped": true
       }
      }
     ],
@@ -3567,7 +3468,7 @@
      "amount": 2,
      "duration": "aura",
      "filter": {
-      "ready": true
+      "flipped": true
      }
     },
     "text": "+2 АТК каждому Примененному существу под твоим контролем."
@@ -3719,20 +3620,13 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": {
-     "op": "move_creature",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "destination": {
-      "kind": "adjacent_own_land"
-     },
-     "side": "own"
-    },
+    "mechanic": "move_lane_creature_to_adjacent",
     "targets": [
      {
       "kind": "lane_creature"
+     },
+     {
+      "kind": "own_landscape"
      }
     ],
     "text": "ПРИЕМ >>> Перемести существо на соседнюю линию (если она пустует)."
@@ -3755,18 +3649,21 @@
     "kind": "active",
     "effect": {
      "op": "flip_land",
+     "down": true,
      "target": {
       "kind": "choice",
       "index": 0
-     },
-     "down": true
+     }
     },
-    "text": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз.",
     "targets": [
      {
-      "kind": "landscape"
+      "kind": "landscape",
+      "filter": {
+       "landType": "corn"
+      }
      }
-    ]
+    ],
+    "text": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз."
    }
   ]
  },
@@ -4124,7 +4021,7 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "text": "Поменяй любое количество урона между двумя существами под твоим контролем.",
+    "mechanic": "swap_damage",
     "targets": [
      {
       "kind": "own_creature"
@@ -4133,10 +4030,7 @@
       "kind": "own_creature"
      }
     ],
-    "mechanic": "move_damage",
-    "params": {
-     "max": 99
-    }
+    "text": "Поменяй любое количество урона между двумя существами под твоим контролем."
    }
   ]
  },
@@ -4154,22 +4048,22 @@
   "abilities": [
    {
     "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_creature"
-     },
-     "stat": "attack",
-     "amount": 3,
-     "duration": "this_turn"
-    },
-    "text": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 ATK в этом ходу.",
     "conditions": [
      {
       "kind": "while_played_land_type",
       "landType": "rainbow"
      }
-    ]
+    ],
+    "effect": {
+     "op": "stat_buff",
+     "stat": "attack",
+     "amount": 3,
+     "duration": "aura",
+     "target": {
+      "kind": "this_creature"
+     }
+    },
+    "text": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 АТК в этом ходу."
    }
   ]
  },
@@ -4231,7 +4125,7 @@
      {
       "kind": "any_creature",
       "filter": {
-       "ready": true
+       "flipped": true
       }
      }
     ]
@@ -4437,7 +4331,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "mechanic": "draw_discard_rainbow_action",
     "text": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил радужную карту, получи 1 Действие."
    }
@@ -4465,7 +4358,12 @@
      }
     ],
     "mechanic": "discard_to_return_self",
-    "text": "Когда эта карта оказывается в твоей стопке сброса, можешь сбросить карту с руки и вернуть Невероятного опоссума себе в руку."
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ],
+    "text": "Когда эта карта оказывается в твоей стопке сброса, можешь сбросить карту с руки чтобы вернуть Невероятного опоссума себе в руку."
    }
   ]
  },
@@ -4483,24 +4381,13 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": {
-     "op": "grant_modifier",
-     "duration": "this_turn",
-     "modifier": {
-      "op": "counts_as",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "landType": "rainbow"
-     }
-    },
+    "mechanic": "reveal_hand_card_becomes_rainbow",
     "targets": [
      {
       "kind": "own_hand_card"
      }
     ],
-    "text": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой. (У нее нет типа Земли.)"
+    "text": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой."
    }
   ]
  },
@@ -4518,12 +4405,13 @@
     "kind": "passive",
     "effect": {
      "op": "counts_as",
+     "landType": "rainbow",
      "target": {
       "kind": "this_lane_creature"
      },
-     "landType": "rainbow"
+     "duration": "aura"
     },
-    "text": "Все существа на этой линии теряют свой тип Земли и становятся Радужными существами."
+    "text": "Все существа на этой лини теряют свой тип Земли и становятся Радужными существами."
    }
   ]
  },
@@ -4702,21 +4590,24 @@
   "abilities": [
    {
     "kind": "passive",
+    "trigger": "on_draw",
+    "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     }
+    ],
     "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_creature"
-     },
-     "stat": "attack",
-     "amount": {
-      "kind": "per_counter",
-      "counter": "cards_drawn",
-      "scope": "own",
-      "amount": 1
-     },
-     "duration": "this_turn"
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "amount": 1,
+      "target": {
+       "kind": "this_creature"
+      }
+     }
     },
-    "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 ATK в этот ход."
+    "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 АТК в этот ход."
    }
   ]
  },
@@ -4763,16 +4654,22 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
-    "effect": {
-     "op": "return_to_owner",
-     "target": {
-      "kind": "this_lane_creature"
-     }
-    },
     "conditions": [
      {
       "kind": "while_distinct_lands",
-      "min": 3
+      "count": 3
+     }
+    ],
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
+    "targets": [
+     {
+      "kind": "lane_creature"
      }
     ],
     "text": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу."
@@ -4958,16 +4855,8 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
-    "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами.",
-    "targets": [
-     {
-      "kind": "lane_opponent_creature"
-     }
-    ],
-    "mechanic": "swap_lanes",
-    "params": {
-     "opponent": true
-    }
+    "mechanic": "swap_with_opponent_on_lane",
+    "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами."
    }
   ]
  },
@@ -5028,15 +4917,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "sand",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "sand",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле."
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -5053,15 +4947,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "corn",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "corn",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Кукурузной земле."
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Кукурузной земле.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -5280,16 +5179,7 @@
    {
     "kind": "active",
     "cost": 1,
-    "effect": {
-     "op": "draw_cards",
-     "count": {
-      "kind": "per_target",
-      "target": {
-       "kind": "this_lane_creature"
-      },
-      "amount": 1
-     }
-    },
+    "mechanic": "draw_per_creature_on_lane",
     "text": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии."
    }
   ]
@@ -5334,30 +5224,10 @@
    {
     "kind": "active",
     "cost": 1,
-    "effect": [
-     {
-      "op": "deal_damage",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "amount": 1
-     },
-     {
-      "op": "deal_damage",
-      "target": {
-       "kind": "choice",
-       "index": 1
-      },
-      "amount": 1
-     }
-    ],
+    "mechanic": "tower_of_justice_damage",
     "targets": [
      {
       "kind": "lane_creature"
-     },
-     {
-      "kind": "opponent_player"
      }
     ],
     "text": "Потрать 1 действие >>> Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу."
@@ -5424,15 +5294,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "blue",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "blue",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на голубых равнинах."
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на голубых равнинах.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -5449,15 +5324,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "good",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "good",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существ на милых землях."
+    "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существ на милых землях.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -5722,6 +5602,10 @@
   "abilities": [
    {
     "kind": "active",
+    "additionalCost": {
+     "discardFromHand": 1,
+     "landType": "sand"
+    },
     "effect": {
      "op": "deal_damage",
      "target": {
@@ -5729,10 +5613,7 @@
      },
      "amount": 1
     },
-    "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника.",
-    "additionalCost": {
-     "discardFromHand": 1
-    }
+    "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника."
    }
   ]
  },
@@ -5966,7 +5847,7 @@
  {
   "id": "ftg_card_48",
   "name": "Воскресная школа",
-  "type": "spell",
+  "type": "building",
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_48.png",
@@ -5975,19 +5856,19 @@
   "abilities": [
    {
     "kind": "passive",
+    "conditions": [
+     {
+      "kind": "while_lives_even"
+     }
+    ],
     "effect": {
      "op": "stat_buff",
-     "target": {
-      "kind": "this_lane_own_creature"
-     },
      "stat": "attack",
      "amount": 2,
      "duration": "aura",
-     "conditions": [
-      {
-       "kind": "while_lives_even"
-      }
-     ]
+     "target": {
+      "kind": "this_lane_own_creature"
+     }
     },
     "text": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK."
    }
@@ -6130,15 +6011,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "swamp",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "swamp",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на бесполезных болотах."
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на бесполезных болотах.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -6155,15 +6041,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "corn",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "corn",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на кукурузной земле."
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на кукурузной земле.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -6375,24 +6266,7 @@
     "kind": "passive",
     "trigger": "start_of_turn",
     "optional": true,
-    "effect": [
-     {
-      "op": "return_to_owner",
-      "target": {
-       "kind": "this_creature"
-      }
-     },
-     {
-      "op": "stat_buff",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "stat": "defense",
-      "amount": 1,
-      "duration": "this_turn"
-     }
-    ],
+    "mechanic": "bounce_self_and_buff_sand_creature",
     "targets": [
      {
       "kind": "own_creature",
@@ -6582,25 +6456,7 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": [
-     {
-      "op": "reveal_deck_top",
-      "count": 2
-     },
-     {
-      "op": "resolve_revealed",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "to": "hand"
-     }
-    ],
-    "targets": [
-     {
-      "kind": "revealed_card"
-     }
-    ],
+    "mechanic": "reveal_top_two_take_corn",
     "text": "Открой верхние 2 карты своей колоды. Можешь положить открытые Кукурузные карты себе в руку, остальные сбрось."
    }
   ]
@@ -6740,19 +6596,12 @@
     "kind": "passive",
     "trigger": "start_of_turn",
     "optional": true,
-    "conditions": [
+    "mechanic": "bounce_own_creature_with_low_def",
+    "targets": [
      {
-      "kind": "while_effective_def_at_most",
-      "max": 2,
-      "scope": "self"
+      "kind": "own_creature"
      }
     ],
-    "effect": {
-     "op": "return_to_owner",
-     "target": {
-      "kind": "this_creature"
-     }
-    },
     "text": "Если в начале твоего хода у Существа под твоим контролем осталось 2 DEF или менее, то можешь вернуть его в руку владельцу."
    }
   ]
@@ -6866,7 +6715,7 @@
      },
      "amount": {
       "kind": "per_lands",
-      "where": "own",
+      "where": "adjacent",
       "amount": 1,
       "landType": "corn"
      }
@@ -6963,11 +6812,17 @@
     "effect": {
      "op": "deal_damage",
      "target": {
-      "kind": "this_lane_creature"
+      "kind": "choice",
+      "index": 0
      },
      "amount": 1
     },
-    "text": "Когда Зеленая змейка покидает игру, нанеси 1 урон выбранному существу на этой линии. (упрощение: цель — существо линии, без выбора)"
+    "targets": [
+     {
+      "kind": "lane_creature"
+     }
+    ],
+    "text": "Когда Зеленая змейка покидает игру, нанеси 1 урон выбранному существу на этой линии."
    }
   ]
  },
@@ -7134,19 +6989,7 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "move_creature",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "destination": {
-      "kind": "choice",
-      "index": 1
-     },
-     "side": "any"
-    },
-    "text": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне).",
+    "mechanic": "portal_nowhere_shift_opponent",
     "targets": [
      {
       "kind": "opponent_creature"
@@ -7154,7 +6997,8 @@
      {
       "kind": "landscape"
      }
-    ]
+    ],
+    "text": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне)."
    }
   ]
  },
@@ -7200,15 +7044,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "blue",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "blue",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Голубых равнинах."
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Голубых равнинах.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -7225,15 +7074,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "swamp",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "swamp",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах."
+    "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -7281,27 +7135,26 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
+    "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_zone_matches_self"
+     },
+     {
+      "kind": "if_payload_player_self"
+     },
+     {
+      "kind": "if_payload_land_type",
+      "landType": "sand"
+     }
+    ],
     "effect": {
      "op": "return_to_owner",
      "target": {
       "kind": "triggering_instance"
      }
     },
-    "text": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу.",
-    "optional": true,
-    "conditions": [
-     {
-      "kind": "if_payload_land_type",
-      "landType": "sand"
-     },
-     {
-      "kind": "if_payload_player_self"
-     },
-     {
-      "kind": "if_payload_cost",
-      "min": 1
-     }
-    ]
+    "text": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу."
    }
   ]
  },
@@ -7484,11 +7337,8 @@
    {
     "kind": "passive",
     "trigger": "on_leave_play",
-    "effect": {
-     "op": "draw_cards",
-     "count": 1
-    },
-    "text": "Когда Призрачный тик покидает игру, тяни нижнюю карту из своей колоды."
+    "mechanic": "draw_bottom_card",
+    "text": "Когда Призрачный мимик покидает игру, тяни нижнюю карту из своей колоды."
    }
   ]
  },
@@ -7765,15 +7615,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "sand",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "sand",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле."
+    "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -7790,15 +7645,20 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "vs": "defenderZone",
-     "landType": "good",
-     "atkBonus": 2
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "vs": "defenderZone",
+      "landType": "good",
+      "atkBonus": 2
+     }
     },
-    "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Милой земле."
+    "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Милой земле.",
+    "trigger": "on_cast"
    }
   ]
  },
@@ -7850,27 +7710,8 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": [
-     {
-      "op": "draw_cards",
-      "count": 1
-     },
-     {
-      "op": "discard_from_hand",
-      "count": 1
-     }
-    ],
-    "text": "ПРИЕМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту.",
-    "targets": [
-     {
-      "kind": "own_hand_card"
-     }
-    ],
-    "conditions": [
-     {
-      "kind": "while_zone_has_creature"
-     }
-    ]
+    "mechanic": "draw_and_discard_if_creature_on_lane",
+    "text": "ПРИЕМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту."
    }
   ]
  },
@@ -7913,46 +7754,16 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": [
-     {
-      "op": "heal_or_damage",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "mode": {
-       "kind": "choice",
-       "index": 1
-      },
-      "amount": 1
-     },
-     {
-      "op": "give_card",
-      "card": {
-       "kind": "choice",
-       "index": 2
-      },
-      "to": {
-       "kind": "choice",
-       "index": 3
-      }
-     }
-    ],
-    "text": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать какрту в руку своему партнеру.",
+    "mechanic": "high_five_heal_or_damage_and_pass",
     "targets": [
      {
       "kind": "any_creature"
      },
      {
       "kind": "heal_or_damage"
-     },
-     {
-      "kind": "own_hand_card"
-     },
-     {
-      "kind": "any_player"
      }
-    ]
+    ],
+    "text": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнеру."
    }
   ]
  },
@@ -7969,33 +7780,16 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": [
-     {
-      "op": "heal",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "amount": 1
-     },
-     {
-      "op": "heal",
-      "target": {
-       "kind": "choice",
-       "index": 1
-      },
-      "amount": 1
-     }
-    ],
-    "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем.",
+    "mechanic": "duet_heal_own_and_other",
     "targets": [
      {
       "kind": "own_creature"
      },
      {
-      "kind": "lane_creature"
+      "kind": "any_creature"
      }
-    ]
+    ],
+    "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем."
    }
   ]
  },
@@ -8012,27 +7806,8 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": [
-     {
-      "op": "reveal_deck_top",
-      "count": 3
-     },
-     {
-      "op": "resolve_revealed",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "to": "hand",
-      "rest": "discard"
-     }
-    ],
-    "targets": [
-     {
-      "kind": "revealed_card"
-     }
-    ],
-    "text": "Открой 3 верхние карты своей колоды, возьми одну, остальные сбрось."
+    "mechanic": "beach_party_reveal_pick_and_pass",
+    "text": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложть Пляжную вечеринку в руку партнера."
    }
   ]
  },
@@ -8049,16 +7824,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "twins_compare_top_deck",
     "targets": [
      {
       "kind": "any_player"
      }
     ],
-    "mechanic": "compare_reveal_players",
-    "params": {
-     "selfFirst": true
-    },
-    "text": "Открой верхнюю карту своей колоды. Выбранный игрок открывает верхнюю карту своей колоды. Если стоимости совпадают, выбранный игрок берет ее в руку."
+    "text": "Вытяни карту и открой ее. Выбранный игрок открывает верхнюю карту своей колоды. Если стоимость карт совпадает выбранный игрок берет ее себе на руку."
    }
   ]
  },
@@ -8105,7 +7877,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "targets": [
      {
       "kind": "any_creature"
@@ -8217,37 +7988,8 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": [
-     {
-      "op": "freeze_land",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "frozen": true
-     },
-     {
-      "op": "freeze_land",
-      "target": {
-       "kind": "choice",
-       "index": 1
-      },
-      "frozen": true
-     },
-     {
-      "op": "draw_cards",
-      "count": 1
-     }
-    ],
-    "text": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту.",
-    "targets": [
-     {
-      "kind": "landscape"
-     },
-     {
-      "kind": "landscape"
-     }
-    ]
+    "mechanic": "freeze_one_land_each_player_and_draw",
+    "text": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту."
    }
   ]
  },
@@ -8264,8 +8006,8 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "mechanic": "heal_one_per_ice_land",
-    "text": "Сосчитай количество земель с Ледяными жетонами. Восстанови 1 урон с такого же количества дружественных существ."
+    "mechanic": "heal_per_ice_land_friendly_creatures",
+    "text": "Сосчитай количество земель с Ледяными жетонами. Восстанови 1 урон с такого же количества дружественых существ."
    }
   ]
  },
@@ -8283,7 +8025,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "effect": [
      {
       "op": "freeze_land",
@@ -8325,22 +8066,15 @@
    {
     "kind": "passive",
     "trigger": "start_of_battle_phase",
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "each_creature_of_choice_player"
-     },
-     "amount": 1
-    },
-    "targets": [
-     {
-      "kind": "opponent_player"
-     }
-    ],
     "conditions": [
      {
-      "kind": "while_lane_ice_token",
-      "min": 1
+      "kind": "while_lane_ice_token"
+     }
+    ],
+    "mechanic": "damage_each_creature_of_player",
+    "targets": [
+     {
+      "kind": "any_player"
      }
     ],
     "text": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 1 урона каждому существу под контролем выбранного игрока."
@@ -8399,20 +8133,14 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": {
-     "op": "freeze_land",
-     "target": {
-      "kind": "this_lane_lands"
-     },
-     "frozen": true
-    },
-    "text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней.",
     "cost": 1,
+    "mechanic": "freeze_lane_both_lands",
     "targets": [
      {
       "kind": "landscape"
      }
-    ]
+    ],
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней."
    }
   ]
  },
@@ -8435,14 +8163,7 @@
       "kind": "while_adjacent_lanes_empty"
      }
     ],
-    "effect": {
-     "op": "suppress",
-     "target": {
-      "kind": "this_creature"
-     },
-     "spells": true,
-     "creatureAbilities": true
-    },
+    "mechanic": "mint_ice_cream_spell_and_ability_immunity",
     "text": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ."
    }
   ]
@@ -8490,21 +8211,15 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
+    "optional": true,
     "effect": {
      "op": "freeze_land",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "this_lane_land"
      },
      "frozen": true
     },
-    "text": "Когда Замороженный патрилег вступает в игру, можешь Заморозить Землю на этой линии.",
-    "targets": [
-     {
-      "kind": "landscape"
-     }
-    ],
-    "optional": true
+    "text": "Когда Замороженный патрилед вступает в игру, можешь Заморозить Землю на этой линии."
    }
   ]
  },
@@ -8592,7 +8307,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "additionalCost": {
      "destroySelf": true
     },
@@ -8642,7 +8356,12 @@
       }
      }
     ],
-    "text": "Потрать 1 действие, ПРИЕМ >>> Если эта земля пустая, то открывай карты с верху своей колоды до тех пор, пока не найдешь Существо, сыграй его бесплатно на эту землю и замешай открытые карты обратно в свою колоду."
+    "text": "Потрать 1 действие, ПРИЕМ >>> Если эта земля пустая, то открывай карты с верху своей колоды до тех пор, пока не найдешь Существо, сыграй его бесплатно на эту землю и замешай открытые карты обратно в свою колоду.",
+    "conditions": [
+     {
+      "kind": "while_zone_has_no_creature"
+     }
+    ]
    }
   ]
  },
@@ -8682,38 +8401,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": [
-     {
-      "op": "return_to_owner",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      }
-     },
-     {
-      "op": "play_from_hand",
-      "target": {
-       "kind": "choice",
-       "index": 1
-      },
-      "destination": {
-       "kind": "choice",
-       "index": 2
-      }
-     }
-    ],
-    "text": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно.",
+    "mechanic": "bounce_and_replay_free",
     "targets": [
      {
       "kind": "own_creature"
-     },
-     {
-      "kind": "own_hand_card"
-     },
-     {
-      "kind": "landscape"
      }
-    ]
+    ],
+    "text": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно."
    }
   ]
  },
@@ -8732,6 +8426,14 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
+    "conditions": [
+     {
+      "kind": "while_own_turn"
+     },
+     {
+      "kind": "if_payload_other"
+     }
+    ],
     "effect": {
      "op": "heal",
      "target": {
@@ -8740,20 +8442,12 @@
      },
      "amount": 1
     },
-    "text": "Каждый раз когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа.",
     "targets": [
      {
-      "kind": "own_creature"
+      "kind": "any_creature"
      }
     ],
-    "conditions": [
-     {
-      "kind": "if_payload_player_self"
-     },
-     {
-      "kind": "if_payload_other"
-     }
-    ]
+    "text": "Каждый раз когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа."
    }
   ]
  },
@@ -8841,32 +8535,14 @@
    {
     "kind": "passive",
     "trigger": "on_damage_dealt",
-    "effect": {
-     "op": "move_creature",
-     "target": {
-      "kind": "triggering_instance"
-     },
-     "destination": {
-      "kind": "choice",
-      "index": 0
-     },
-     "side": "any"
-    },
-    "text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию.",
-    "targets": [
-     {
-      "kind": "landscape"
-     }
-    ],
+    "optional": true,
     "conditions": [
      {
       "kind": "if_payload_targeted_self"
-     },
-     {
-      "kind": "if_payload_creature"
      }
     ],
-    "optional": true
+    "mechanic": "shift_attacker_to_adjacent_empty",
+    "text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию."
    }
   ]
  },
@@ -9147,19 +8823,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "freeze_land",
-     "target": {
-      "kind": "this_lane_lands"
-     },
-     "frozen": true
-    },
-    "text": "Выбери линию и заморозь обе земли на ней.",
+    "mechanic": "freeze_lane_both_lands",
     "targets": [
      {
       "kind": "landscape"
      }
-    ]
+    ],
+    "text": "Выбери линию и заморозь обе земли на ней."
    }
   ]
  },
@@ -9267,7 +8937,7 @@
      "stat": "attack",
      "amount": {
       "kind": "per_lands",
-      "where": "own",
+      "where": "all",
       "token": true,
       "amount": 1
      },
@@ -9782,7 +9452,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "targets": [
      {
       "kind": "own_landscape"
@@ -9839,15 +9508,15 @@
   "abilities": [
    {
     "kind": "active",
+    "cost": 1,
     "effect": {
      "op": "freeze_land",
      "target": {
-      "kind": "this_lane_lands"
+      "kind": "this_lane_land"
      },
      "frozen": true
     },
-    "text": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
-    "cost": 1
+    "text": "Потрать 1 Действие >>> Заморозь землю на этой линии."
    }
   ]
  },
@@ -9926,27 +9595,18 @@
     "kind": "passive",
     "trigger": "on_damage_dealt",
     "optional": true,
+    "conditions": [
+     {
+      "kind": "if_payload_instance_self"
+     }
+    ],
     "effect": {
      "op": "freeze_land",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "this_lane_land"
      },
      "frozen": true
     },
-    "targets": [
-     {
-      "kind": "landscape"
-     }
-    ],
-    "conditions": [
-     {
-      "kind": "if_payload_creature"
-     },
-     {
-      "kind": "if_payload_other"
-     }
-    ],
     "text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
    }
   ]
@@ -10251,22 +9911,10 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "opponent_discards",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "count": {
-      "kind": "per_lands",
-      "where": "choice",
-      "token": true,
-      "amount": 1
-     }
-    },
+    "mechanic": "ice_lady_discard_per_ice_land",
     "targets": [
      {
-      "kind": "opponent_player"
+      "kind": "any_player"
      }
     ],
     "text": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем."
@@ -10286,6 +9934,11 @@
    {
     "kind": "passive",
     "trigger": "on_freeze",
+    "conditions": [
+     {
+      "kind": "if_payload_zone_matches_self"
+     }
+    ],
     "effect": {
      "op": "deal_damage",
      "target": {
@@ -10294,12 +9947,12 @@
      },
      "amount": 2
     },
-    "text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу.",
     "targets": [
      {
       "kind": "any_creature"
      }
-    ]
+    ],
+    "text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу."
    }
   ]
  },
@@ -10317,31 +9970,14 @@
     "kind": "passive",
     "effect": {
      "op": "suppress",
+     "actives": true,
+     "attacks": true,
      "target": {
       "kind": "this_lane_creature"
      },
-     "attacks": true,
-     "actives": true,
-     "filter": {
-      "zoneToken": true
-     }
+     "duration": "aura"
     },
-    "text": "Существа на землях с ледяными жетонами на этой линии не могут атаковать или использовать способности."
-   },
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "suppress",
-     "target": {
-      "kind": "this_lane_opponent_creature"
-     },
-     "attacks": true,
-     "actives": true,
-     "filter": {
-      "zoneToken": true
-     }
-    },
-    "text": "Существа на землях с ледяными жетонами на этой линии не могут атаковать или использовать способности."
+    "text": "Существа на землях с ледяными жетонами на этой линии, не могут атаковать или использовать способности."
    }
   ]
  },
@@ -10396,21 +10032,15 @@
   "abilities": [
    {
     "kind": "active",
+    "cost": 1,
     "effect": {
      "op": "freeze_land",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "this_lane_land"
      },
      "frozen": true
     },
-    "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии.",
-    "cost": 1,
-    "targets": [
-     {
-      "kind": "landscape"
-     }
-    ]
+    "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии."
    }
   ]
  },
@@ -10538,11 +10168,16 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
-    "additionalCost": {
-     "discardFromHand": 1
-    },
-    "mechanic": "enter_move_lane_creature",
-    "text": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо противника в этой линии на пустую соседнюю линию."
+    "mechanic": "reaper_discard_and_move_lane_creature",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     },
+     {
+      "kind": "own_landscape"
+     }
+    ],
+    "text": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо на этой линии на пустую соседнюю линию (на своей стороне)."
    }
   ]
  },
@@ -10660,7 +10295,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "targets": [
      {
       "kind": "any_creature"
@@ -10743,7 +10377,7 @@
      "stat": "attack",
      "amount": {
       "kind": "per_lands",
-      "where": "own",
+      "where": "adjacent",
       "amount": 1,
       "landType": "corn"
      },
@@ -11098,13 +10732,6 @@
    {
     "kind": "passive",
     "trigger": "start_of_turn",
-    "effect": {
-     "op": "destroy",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     }
-    },
     "conditions": [
      {
       "kind": "while_damage_at_least",
@@ -11112,6 +10739,13 @@
       "scope": "self"
      }
     ],
+    "effect": {
+     "op": "destroy",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     }
+    },
     "targets": [
      {
       "kind": "lane_building"
@@ -11194,22 +10828,26 @@
   "abilities": [
    {
     "kind": "passive",
-    "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "atkBonus": 1
-    },
-    "text": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 ATK в этом ход.",
+    "trigger": "on_creature_attacks",
     "conditions": [
      {
       "kind": "while_counter_at_most",
       "counter": "creature_attack",
-      "scope": "team",
       "max": 0
      }
-    ]
+    ],
+    "effect": {
+     "op": "grant_modifier",
+     "duration": "this_turn",
+     "modifier": {
+      "op": "attack_mod",
+      "target": {
+       "kind": "triggering_instance"
+      },
+      "amount": 1
+     }
+    },
+    "text": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 АТК в этот ход."
    }
   ]
  },
@@ -11226,93 +10864,22 @@
    {
     "kind": "active",
     "cost": 1,
+    "mechanic": "pillow_fort_twin_heal_or_damage",
     "targets": [
      {
       "kind": "own_creature"
      },
      {
-      "kind": "choose_option",
-      "options": [
-       "heal",
-       "damage"
-      ],
-      "label": "Первое существо: восстановить или нанести 2"
+      "kind": "heal_or_damage"
      },
      {
       "kind": "own_creature"
      },
      {
-      "kind": "choose_option",
-      "options": [
-       "heal",
-       "damage"
-      ],
-      "label": "Второе существо: восстановить или нанести 2"
+      "kind": "heal_or_damage"
      }
     ],
-    "effect": [
-     {
-      "op": "heal",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "amount": 2,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 0,
-        "option": "heal"
-       }
-      ]
-     },
-     {
-      "op": "deal_damage",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      },
-      "amount": 2,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 0,
-        "option": "damage"
-       }
-      ]
-     },
-     {
-      "op": "heal",
-      "target": {
-       "kind": "choice",
-       "index": 2
-      },
-      "amount": 2,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 2,
-        "option": "heal"
-       }
-      ]
-     },
-     {
-      "op": "deal_damage",
-      "target": {
-       "kind": "choice",
-       "index": 2
-      },
-      "amount": 2,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 2,
-        "option": "damage"
-       }
-      ]
-     }
-    ],
-    "text": "ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. То же с другим дружественным существом."
+    "text": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. Проделай то же самое с другим дружественным существом."
    }
   ]
  },
@@ -11531,11 +11098,8 @@
    {
     "kind": "passive",
     "trigger": "on_creature_attacks",
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "adjacent_creatures"
-     },
+    "mechanic": "damage_all_creatures_on_adjacent_lanes",
+    "params": {
      "amount": 1
     },
     "text": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии."
@@ -11558,27 +11122,16 @@
     "kind": "passive",
     "effect": {
      "op": "stat_buff",
+     "stat": "attack",
      "target": {
       "kind": "this_creature"
      },
-     "stat": "attack",
      "amount": {
-      "kind": "per_played_name",
-      "matchers": [
-       {
-        "cardIds": [
-         "jake_2v2_card_17",
-         "jake_2v2_card_18",
-         "jake_2v2_card_20",
-         "jake_2v2_card_22"
-        ]
-       }
-      ],
-      "amount": 1
+      "kind": "team_companion_cost"
      },
      "duration": "aura"
     },
-    "text": "+1 ATK за каждого Зебрарога под контролем твоей команды."
+    "text": "+1 АТК за каждую Тимворк под контролем твоей команды."
    },
    {
     "kind": "passive",
@@ -11587,17 +11140,16 @@
     "conditions": [
      {
       "kind": "while_phase",
-      "phase": "combat"
-     },
-     {
-      "kind": "while_own_turn"
+      "phase": "battle"
      }
     ],
-    "mechanic": "self_rescue_on_death",
-    "params": {
-     "destination": "hand"
+    "effect": {
+     "op": "return_to_owner",
+     "target": {
+      "kind": "triggering_instance"
+     }
     },
-    "text": "Если покидает игру в твоей фазе сражения, можешь положить его в свою руку."
+    "text": "Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку."
    }
   ]
  },
@@ -11742,7 +11294,7 @@
  {
   "id": "jake_2v2_card_28",
   "name": "Слинять",
-  "type": "building",
+  "type": "spell",
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_28.png",
@@ -11751,19 +11303,14 @@
   "abilities": [
    {
     "kind": "passive",
-    "trigger": "on_creature_attacks",
-    "conditions": [
+    "trigger": "on_cast",
+    "mechanic": "bale_out_retreat",
+    "targets": [
      {
-      "kind": "if_payload_player_self"
+      "kind": "any_creature"
      }
     ],
-    "effect": {
-     "op": "banish_card",
-     "card": {
-      "kind": "triggering_instance"
-     }
-    },
-    "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед нанесением урона."
+    "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед фазой сражения, сними весь урон с него за это."
    }
   ]
  },
@@ -11849,6 +11396,7 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "each_draw_creature_of_type",
     "targets": [
      {
       "kind": "any_player"
@@ -11857,8 +11405,7 @@
       "kind": "own_landscape"
      }
     ],
-    "mechanic": "each_draw_creature_of_type",
-    "text": "Выбери другого игрока и землю под твоим контролем. Каждый игрок тянет карту существа, соответствующего этой земле."
+    "text": "Выбери другого игрока и землю под твоим контролем. Каждый тянет карту существа соответствующего этой земле."
    }
   ]
  },
@@ -11910,34 +11457,18 @@
    {
     "kind": "passive",
     "trigger": "start_of_battle_phase",
-    "effect": {
-     "op": "play_from_hand",
-     "maxCost": 1,
-     "match": {
-      "type": "creature"
-     }
-    },
-    "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл существ в этот ход, другой партнер может бесплатно сыграть существо стоимостью 1 или менее.",
-    "targets": [
-     {
-      "kind": "own_hand_card"
-     },
-     {
-      "kind": "landscape"
-     }
-    ],
     "conditions": [
      {
-      "kind": "if_payload_ally"
-     },
-     {
       "kind": "while_counter_at_most",
-      "counter": "creature_entered",
-      "scope": "team",
+      "counter": "creatures_entered",
       "max": 0
      }
     ],
-    "optional": true
+    "mechanic": "partner_free_play_creature",
+    "params": {
+     "maxCost": 1
+    },
+    "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл существ в этот ход, другой партнер может бесплатно сыграть существо стоимостью 1 или менее."
    }
   ]
  },
@@ -12044,23 +11575,23 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "opponent_team"
-     },
-     "amount": 1
-    },
-    "text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику.",
     "conditions": [
+     {
+      "kind": "if_payload_player_self"
+     },
      {
       "kind": "if_payload_land_type",
       "landType": "sand"
-     },
-     {
-      "kind": "if_payload_player_self"
      }
-    ]
+    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "each_opponent_player"
+     },
+     "amount": 1
+    },
+    "text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику."
    }
   ]
  },
@@ -12364,24 +11895,17 @@
   "abilities": [
    {
     "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "stat": "attack",
-     "amount": {
-      "kind": "per_counter",
-      "counter": "creature_entered",
-      "scope": "own",
-      "amount": 2
-     },
-     "duration": "aura",
-     "filter": {
-      "landType": "sand"
+    "trigger": "on_cast",
+    "mechanic": "zazo_seeds_buff",
+    "targets": [
+     {
+      "kind": "own_creature",
+      "filter": {
+       "landType": "sand"
+      }
      }
-    },
-    "text": "Песчаные существа получают +2 ATK в этот ход за каждое существо, вступившее в игру в этот ход."
+    ],
+    "text": "Выбранное песчаное существо получает +2 АТК в этот ход за каждое существо, вступившее в игру на соседнюю линию в этот ход."
    }
   ]
  },
@@ -12578,7 +12102,12 @@
      "op": "discard_from_hand",
      "count": 1
     },
-    "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту."
+    "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту.",
+    "targets": [
+     {
+      "kind": "own_hand_card"
+     }
+    ]
    }
   ]
  },
@@ -12826,7 +12355,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "mechanic": "draw_per_zone_enters",
     "text": "ПРИЕМ >>> Тяни карту за каждое существо, введенное в игру на эту землю в этот ход."
    }
@@ -13087,23 +12615,17 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": {
-     "op": "flip_land",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "down": true,
-     "until": "next_own_turn"
-    },
     "additionalCost": {
      "discardFromHand": 1
     },
-    "targets": [
-     {
-      "kind": "landscape"
+    "effect": {
+     "op": "flip_land",
+     "down": true,
+     "until": "next_own_turn",
+     "target": {
+      "kind": "this_lane_land"
      }
-    ],
+    },
     "text": "Сбрось карту, ПРИЕМ >>> Переверни выбранную землю на этой линии лицом вниз до начала твоего следующего хода."
    }
   ]
@@ -13494,24 +13016,8 @@
     "kind": "passive",
     "trigger": "on_enters_play",
     "optional": true,
-    "conditions": [
-     {
-      "kind": "while_empty_lands"
-     }
-    ],
     "mechanic": "soul_twin",
-    "text": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (перемешав после)."
-   },
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "set_instance_flag",
-     "target": {
-      "kind": "this_creature"
-     },
-     "flag": "cannotReturnFromDiscard"
-    },
-    "text": "Нельзя вернуть из сброса."
+    "text": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (если она там есть), после перемешай. Если поле покидает одна, с ней уходит и вторая. Нельзя вернуть из сброса."
    }
   ]
  },
@@ -13554,7 +13060,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "targets": [
      {
       "kind": "choose_option",
@@ -13614,48 +13119,13 @@
    {
     "kind": "passive",
     "effect": {
-     "op": "attack_mod",
+     "op": "defense_mod",
      "target": {
       "kind": "this_creature"
      },
-     "vs": "defenderZone",
-     "landType": "good",
      "atkBonus": 1
     },
-    "text": "+1 АТК против милых и кукурузных существ."
-   },
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "attack_mod",
-     "target": {
-      "kind": "this_creature"
-     },
-     "vs": "defenderZone",
-     "landType": "corn",
-     "atkBonus": 1
-    },
-    "text": "+1 АТК против милых и кукурузных существ."
-   },
-   {
-    "kind": "passive",
-    "trigger": "on_death",
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "payload_player"
-     },
-     "amount": {
-      "kind": "payload_cost",
-      "amount": 1
-     }
-    },
-    "text": "Если Карга убивает существо, твой противник получает урон, равный его стоимости.",
-    "conditions": [
-     {
-      "kind": "if_payload_killer_self"
-     }
-    ]
+    "text": "+1 АТК против милых и кукурузных существ. Если Карга убивает существо, твой противник получает урон, равный его стоимости."
    }
   ]
  },
@@ -13759,17 +13229,17 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "conditions": [
      {
-      "kind": "while_empty_lands"
+      "kind": "while_empty_lands",
+      "min": 1
      }
     ],
     "mechanic": "dig_play_named",
     "params": {
      "cardIds": [
       "lich_card_19",
-      "lich_card_32"
+      "lich_card_17"
      ]
     },
     "text": "ПРИЕМ >>> Перемешай свой сброс в колоду и тяни карты, пока не попадется Коричный зомби или Корова-нежить, после сыграй их бесплатно."
@@ -13840,6 +13310,11 @@
    {
     "kind": "passive",
     "trigger": "on_death",
+    "conditions": [
+     {
+      "kind": "if_payload_other"
+     }
+    ],
     "effect": {
      "op": "deal_damage",
      "target": {
@@ -13847,12 +13322,7 @@
      },
      "amount": 1
     },
-    "text": "Перед смертью наносит 1 урон убившему её существу.",
-    "conditions": [
-     {
-      "kind": "if_payload_killer_self"
-     }
-    ]
+    "text": "Перед смертью больно бросает косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа)."
    }
   ]
  },
@@ -14048,17 +13518,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "redistribute_damage",
-     "among": {
-      "kind": "each_creature_yours"
-     },
-     "cap": "defense"
-    },
+    "mechanic": "redistribute_damage_between_two",
     "targets": [
      {
-      "kind": "damage_distribution",
-      "label": "Распредели урон между существами"
+      "kind": "own_creature"
+     },
+     {
+      "kind": "own_creature"
      }
     ],
     "text": "Распредели урон между двумя существами под твоим контролем, как тебе нужно. Урон на одном существе не может равняться его DEF."
@@ -14222,16 +13688,11 @@
    {
     "kind": "passive",
     "trigger": "on_creature_attacks",
-    "conditions": [
-     {
-      "kind": "if_payload_instance_self"
-     }
-    ],
-    "mechanic": "splash_target_allies",
+    "mechanic": "splash_chosen_target_ally",
     "params": {
      "amount": 2
     },
-    "text": "При атаке существа противника, если рядом с ним есть союзные существа, нанеси одному из них 2 урона."
+    "text": "При атаке существ противника, если рядом с ним есть союзные существа, нанеси одному из них на твой выбор 2 урона."
    }
   ]
  },
@@ -14249,7 +13710,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "effect": [
      {
       "op": "attach_card",
@@ -14448,7 +13908,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "maxUsesPerTurn": 5,
     "additionalCost": {
      "discardFromHand": 1
@@ -14559,7 +14018,8 @@
     ],
     "additionalCost": {
      "discardFromHand": 1
-    }
+    },
+    "maxUsesPerTurn": 99
    }
   ]
  },
@@ -14738,7 +14198,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "conditions": [
      {
       "kind": "while_zone_has_creature"
@@ -14932,7 +14391,6 @@
     "effect": {
      "op": "return_from_discard",
      "count": 1,
-     "random": true,
      "to": "deck_top"
     },
     "optional": true,
@@ -15021,24 +14479,18 @@
    {
     "kind": "passive",
     "trigger": "on_enters_play",
-    "effect": {
-     "op": "deal_damage",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "amount": 3
-    },
     "conditions": [
      {
       "kind": "if_payload_replacing"
      }
     ],
-    "targets": [
-     {
-      "kind": "lane_creature"
-     }
-    ],
+    "effect": {
+     "op": "deal_damage",
+     "target": {
+      "kind": "this_lane_opponent_creature"
+     },
+     "amount": 3
+    },
     "text": "Когда Тупица в наушниках вступает в игру заменяя существо, нанеси 3 урона другому существу на этой линии."
    }
   ]
@@ -15150,49 +14602,10 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "volcano_destroy_and_erupt",
     "targets": [
      {
       "kind": "any_building"
-     },
-     {
-      "kind": "choose_option",
-      "options": [
-       "yes",
-       "no"
-      ],
-      "label": "Нанести 3 урона существу на этой линии?"
-     }
-    ],
-    "effect": [
-     {
-      "op": "destroy",
-      "target": {
-       "kind": "choice",
-       "index": 0
-      }
-     },
-     {
-      "op": "deal_damage",
-      "target": {
-       "kind": "choice_zone_opponent_creature",
-       "index": 0
-      },
-      "amount": 3,
-      "conditions": [
-       {
-        "kind": "if_option",
-        "index": 1,
-        "option": "yes"
-       }
-      ]
-     },
-     {
-      "op": "flip_land",
-      "target": {
-       "kind": "choice_zone_land",
-       "index": 0
-      },
-      "down": true
      }
     ],
     "text": "Уничтожь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии."
@@ -15315,7 +14728,7 @@
       "kind": "opponent_player"
      }
     ],
-    "text": "Выбранный враг сбрасывает карту. Если нет, то нанеси 2 урона каждому его существу."
+    "text": "Выбранный враг может сбросить карту. Если нет, то нанеси 2 Урона каждому его существу."
    }
   ]
  },
@@ -15334,22 +14747,7 @@
    {
     "kind": "passive",
     "trigger": "start_of_turn",
-    "effect": [
-     {
-      "op": "draw_cards",
-      "count": 1,
-      "target": {
-       "kind": "each_player"
-      }
-     },
-     {
-      "op": "opponent_discards",
-      "target": {
-       "kind": "each_player"
-      },
-      "count": 1
-     }
-    ],
+    "mechanic": "each_player_draw_then_discard_choice",
     "text": "В начале твоего хода каждый игрок тянет карту и затем сбрасывает карту."
    }
   ]
@@ -15368,7 +14766,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "mechanic": "discard_cost0_or_reveal_hand",
     "text": "ПРИЕМ >>> Каждый противник сбрасывает карту стоимостью 0 или показывает руку, если таких нет."
    }
@@ -15393,15 +14790,9 @@
     "effect": {
      "op": "remove_token",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "adjacent_own_land"
      }
     },
-    "targets": [
-     {
-      "kind": "landscape"
-     }
-    ],
     "text": "Когда Принцесса Банши вступает в игру, можешь убрать жетон с соседней земли."
    }
   ]
@@ -15425,15 +14816,9 @@
     "effect": {
      "op": "remove_token",
      "target": {
-      "kind": "choice",
-      "index": 0
+      "kind": "adjacent_own_land"
      }
     },
-    "targets": [
-     {
-      "kind": "landscape"
-     }
-    ],
     "text": "Когда Королева Банши вступает в игру, можешь удалить жетон с соседней земли."
    }
   ]
@@ -15461,7 +14846,8 @@
     ],
     "mechanic": "move_damage",
     "params": {
-     "self": true
+     "self": true,
+     "max": 99
     }
    }
   ]
@@ -15573,36 +14959,11 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": [
-     {
-      "op": "heal",
-      "target": {
-       "kind": "adjacent_creatures"
-      },
-      "amount": 2,
-      "conditions": [
-       {
-        "kind": "while_damage_at_most",
-        "amount": 4,
-        "scope": "self"
-       }
-      ]
-     },
-     {
-      "op": "heal",
-      "target": {
-       "kind": "each_creature_yours"
-      },
-      "amount": 2,
-      "conditions": [
-       {
-        "kind": "while_damage_at_least",
-        "amount": 5,
-        "scope": "self"
-       }
-      ]
-     }
-    ],
+    "mechanic": "dr_kukolstein_heal",
+    "params": {
+     "amount": 2,
+     "threshold": 5
+    },
     "text": "ПРИЕМ >>> Восстанови 2 урона с существа на соседней линии. Если на Доке Кукольштейне 5 или более урона, то вместо этого восстанови 2 урона с каждого существа."
    }
   ]
@@ -15744,7 +15105,7 @@
  {
   "id": "marceline_card_26",
   "name": "Авто-ощипыватель",
-  "type": "spell",
+  "type": "building",
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/marceline_card_26.png",
@@ -15753,23 +15114,11 @@
   "abilities": [
    {
     "kind": "active",
-    "effect": {
-     "op": "heal_or_damage",
-     "target": {
-      "kind": "this_lane_creature"
-     },
-     "mode": {
-      "kind": "choice",
-      "index": 0
-     },
+    "mechanic": "heal_or_damage_lane",
+    "params": {
      "amount": 1
     },
-    "text": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии.",
-    "targets": [
-     {
-      "kind": "heal_or_damage"
-     }
-    ]
+    "text": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии."
    }
   ]
  },
@@ -15786,20 +15135,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
-    "effect": {
-     "op": "heal",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "amount": 5
-    },
-    "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше).",
+    "mechanic": "pentaplaster_heal_five_exact",
     "targets": [
      {
       "kind": "own_creature"
      }
-    ]
+    ],
+    "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше)."
    }
   ]
  },
@@ -16051,16 +15393,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "draw_two_and_deal_if_match_and_pass_self",
     "targets": [
      {
       "kind": "opponent_player"
      }
     ],
-    "mechanic": "draw_two_cost_match",
-    "params": {
-     "amount": 2
-    },
-    "text": "Вытяни 2 верхние карты своей колоды. Если они одинаковой стоимости — нанеси 2 урона выбранному противнику."
+    "text": "Вытяни 2 верхних карты из своей колоды. Если они одинаковой стоимости нанеси урон выбранному противнику. Как сделал это, можешь вложить эту карту в руку партнера."
    }
   ]
  },
@@ -16116,31 +15455,16 @@
    {
     "kind": "passive",
     "trigger": "start_of_battle_phase",
-    "effect": {
-     "op": "play_from_hand",
-     "maxCost": 1,
-     "match": {
-      "type": "spell"
-     }
-    },
-    "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее.",
-    "targets": [
-     {
-      "kind": "own_hand_card"
-     }
-    ],
     "conditions": [
      {
-      "kind": "if_payload_ally"
-     },
-     {
-      "kind": "while_counter_at_most",
-      "counter": "spell_cast",
-      "scope": "team",
-      "max": 0
+      "kind": "while_no_spells_played"
      }
     ],
-    "optional": true
+    "mechanic": "partner_free_play_spell",
+    "params": {
+     "maxCost": 1
+    },
+    "text": "Болотное партнерство В начале фазы сражения твоего или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее."
    }
   ]
  },
@@ -16224,13 +15548,13 @@
    {
     "kind": "passive",
     "trigger": "on_cast",
+    "mechanic": "freeze_and_optional_redistribute_tokens",
     "targets": [
      {
       "kind": "landscape"
      }
     ],
-    "mechanic": "freeze_and_spread_tokens",
-    "text": "Заморозь выбранную землю. Ее Ледяные жетоны перемещаются по одному на твои земли без жетонов."
+    "text": "Заморозь выбранную землю. Ты можешь перемещать любое количество Ледяных жетонов на новые земли (1 жетон на землю)."
    }
   ]
  },
@@ -16425,7 +15749,7 @@
      "amount": {
       "kind": "per_discard",
       "every": 5,
-      "amount": 1
+      "amount": -1
      },
      "duration": "aura"
     },
@@ -16447,7 +15771,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "additionalCost": {
      "discardFromHand": 1
     },
@@ -16519,7 +15842,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "additionalCost": {
      "discardFromHand": 1
     },
@@ -16606,7 +15928,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "additionalCost": {
      "destroySelf": true
     },
@@ -16697,7 +16018,8 @@
     "text": "Сбрось карту >>> Твое Существо на этой линии получает +1 ATK в этом ход. (Используй любое количество раз во время своего хода).",
     "additionalCost": {
      "discardFromHand": 1
-    }
+    },
+    "maxUsesPerTurn": 99
    }
   ]
  },
@@ -16776,30 +16098,8 @@
   "abilities": [
    {
     "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "stat": "defense",
-     "amount": 1,
-     "duration": "aura",
-     "filter": {
-      "cardIds": [
-       "bubblegum_card_30",
-       "ftg_card_51",
-       "tree_trunks_card_1",
-       "tree_trunks_card_2",
-       "tree_trunks_card_4",
-       "tree_trunks_card_7",
-       "tree_trunks_card_8",
-       "tree_trunks_card_26",
-       "tree_trunks_card_30",
-       "tree_trunks_card_35"
-      ]
-     }
-    },
-    "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+    "mechanic": "cotton_king_def_aura",
+    "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре."
    },
    {
     "kind": "active",
@@ -16825,7 +16125,7 @@
       "kind": "own_creature"
      }
     ],
-    "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+    "text": "Прием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
    }
   ]
  },
@@ -16890,7 +16190,20 @@
      },
      "duration": "while_flipped"
     },
-    "text": "+1 ATK против болотных и песаных существ (Ведро!)."
+    "text": "Прием >>> весь урон, который должны были получить другие союзные существа, получит она."
+   },
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "stat": "attack",
+     "target": {
+      "kind": "this_creature"
+     },
+     "amount": 1,
+     "duration": "aura"
+    },
+    "text": "+1 АТК против болотных и песчаных существ (Ведро!)."
    }
   ]
  },
@@ -16943,11 +16256,11 @@
   "abilities": [
    {
     "kind": "active",
-    "text": "Приём >>> Самоподрыв. В начале твоего следующего хода взорвётся, нанеся 6 урона существу противника на этой линии или противнику, если линия пуста. Если убит во время хода противника, не взрывается. После самоподрыва сбрось его.",
-    "mechanic": "lane_or_face_damage",
+    "mechanic": "arm_delayed_explosion",
     "params": {
-     "amount": 6
-    }
+     "damage": 6
+    },
+    "text": "Приём >>> Самоподрыв. В начале твоего следующего хода взорвётся, нанеся 6 урона существу противника на этой линии или противнику, если линия пуста. Если убит во время хода противника, не взрывается. После самоподрыва сбрось его."
    }
   ]
  },
@@ -16965,16 +16278,13 @@
   "abilities": [
    {
     "kind": "active",
-    "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него.",
+    "mechanic": "explosive_dude_cleave",
     "targets": [
      {
-      "kind": "opponent_creature"
+      "kind": "lane_opponent_creature"
      }
     ],
-    "mechanic": "splash_damage",
-    "params": {
-     "amount": 1
-    }
+    "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него."
    }
   ]
  },
@@ -17217,7 +16527,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "mechanic": "alley_move",
     "params": {
      "alleyCardId": "tree_trunks_card_26"
@@ -17302,13 +16611,29 @@
   "deckSet": "tree_trunks",
   "abilities": [
    {
+    "kind": "passive",
+    "effect": {
+     "op": "cost_mod",
+     "self": true,
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_creature_yours"
+      },
+      "amount": -1,
+      "excludeSelf": true
+     }
+    },
+    "text": "Стоит на 1 действие меньше за каждое другое существо в игре под твоим контролем."
+   },
+   {
     "kind": "active",
-    "text": "Пироитмяк: нанеси 2 урона существу, у которого осталось меньше всего DEF и еще 1 - тому, у которого больше всего.",
     "mechanic": "min_max_def_damage",
     "params": {
-     "low": 2,
-     "high": 1
-    }
+     "min": 2,
+     "max": 1
+    },
+    "text": "Прием >>> Пирошмяк: нанеси 2 урона существу, у которого осталось меньше всего DEF и ещё 1 - тому, у которого больше всего."
    }
   ]
  },
@@ -17376,56 +16701,7 @@
   "abilities": [
    {
     "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_lane_own_creature"
-     },
-     "stat": "attack",
-     "amount": 1,
-     "duration": "aura",
-     "filter": {
-      "cardIds": [
-       "bubblegum_card_30",
-       "ftg_card_51",
-       "tree_trunks_card_1",
-       "tree_trunks_card_2",
-       "tree_trunks_card_4",
-       "tree_trunks_card_7",
-       "tree_trunks_card_8",
-       "tree_trunks_card_26",
-       "tree_trunks_card_30",
-       "tree_trunks_card_35"
-      ]
-     }
-    },
-    "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
-   },
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_lane_own_creature"
-     },
-     "stat": "defense",
-     "amount": 1,
-     "duration": "aura",
-     "filter": {
-      "cardIds": [
-       "bubblegum_card_30",
-       "ftg_card_51",
-       "tree_trunks_card_1",
-       "tree_trunks_card_2",
-       "tree_trunks_card_4",
-       "tree_trunks_card_7",
-       "tree_trunks_card_8",
-       "tree_trunks_card_26",
-       "tree_trunks_card_30",
-       "tree_trunks_card_35"
-      ]
-     }
-    },
+    "mechanic": "cotton_fort_lane_buff",
     "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
    }
   ]
@@ -17501,7 +16777,6 @@
   "abilities": [
    {
     "kind": "active",
-    "cost": 1,
     "targets": [
      {
       "kind": "any_creature"

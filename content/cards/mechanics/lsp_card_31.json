@@ -1,29 +1,23 @@
 {
- "cardId": "lsp_card_31",
- "name": "Тупица в наушниках",
- "abilities": [
-  {
-   "kind": "passive",
-   "trigger": "on_enters_play",
-   "effect": {
-    "op": "deal_damage",
-    "target": {
-     "kind": "choice",
-     "index": 0
-    },
-    "amount": 3
-   },
-   "conditions": [
+  "cardId": "lsp_card_31",
+  "name": "Тупица в наушниках",
+  "abilities": [
     {
-     "kind": "if_payload_replacing"
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_replacing"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "amount": 3
+      },
+      "text": "Когда Тупица в наушниках вступает в игру заменяя существо, нанеси 3 урона другому существу на этой линии."
     }
-   ],
-   "targets": [
-    {
-     "kind": "lane_creature"
-    }
-   ],
-   "text": "Когда Тупица в наушниках вступает в игру заменяя существо, нанеси 3 урона другому существу на этой линии."
-  }
- ]
+  ]
 }

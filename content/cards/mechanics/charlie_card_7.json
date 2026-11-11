@@ -6,14 +6,24 @@
       "kind": "passive",
       "effect": {
         "op": "stat_buff",
-        "target": {
-          "kind": "this_lane_own_creature"
-        },
         "stat": "defense",
         "amount": 2,
-        "duration": "aura"
+        "duration": "aura",
+        "target": {
+          "kind": "this_lane_creature"
+        }
       },
-      "text": "Твое существо на этой земле получает +2 DEF и не может быть поврежден заклинанием противника."
+      "text": "Твое существо на этой земле получает +2 DEF."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_protection",
+        "target": {
+          "kind": "this_lane_creature"
+        }
+      },
+      "text": "Твое существо на этой земле не может быть поврежден заклинанием противника."
     }
   ]
 }

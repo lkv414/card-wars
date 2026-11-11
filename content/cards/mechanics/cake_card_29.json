@@ -4,15 +4,24 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "effect": {
         "op": "move_building",
-        "target": { "kind": "choice", "index": 0 },
-        "destination": { "kind": "choice", "index": 1 }
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        }
       },
       "targets": [
-        { "kind": "own_building" },
-        { "kind": "landscape" }
+        {
+          "kind": "own_building"
+        },
+        {
+          "kind": "landscape"
+        }
       ],
       "text": "ПРИЕМ >>> Перемести выбранное строение под твоим контролем на любую землю без строения."
     }

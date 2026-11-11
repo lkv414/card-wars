@@ -4,17 +4,22 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "effect": [
         {
           "op": "attach_card",
-          "card": { "kind": "opponent_discard_top" },
-          "to": { "kind": "this_creature" },
+          "card": {
+            "kind": "opponent_discard_top"
+          },
+          "to": {
+            "kind": "this_creature"
+          },
           "from": "discard"
         },
         {
           "op": "stat_buff",
-          "target": { "kind": "this_creature" },
+          "target": {
+            "kind": "this_creature"
+          },
           "stat": "attack",
           "amount": 1,
           "duration": "permanent"

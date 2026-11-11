@@ -3,7 +3,6 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "additionalCost": {
         "discardFromHand": 1
       },

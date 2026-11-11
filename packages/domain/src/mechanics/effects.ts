@@ -1,4 +1,4 @@
-﻿import type { Draft } from 'immer';
+import type { Draft } from 'immer';
 import { drawCards, discardTopDeck, opponentDiscardsRandom } from '../draw';
 import { dealToCreature, dealToPlayer, healPlayer } from '../damage';
 import { DomainError } from '../errors';
@@ -1021,14 +1021,14 @@ function moveCreatureToZone(
   instanceId: string,
   destPlayerId: string,
   zone: number,
-  _side: 'own' | 'any',
+  side: 'own' | 'any',
 ): void {
   const inst = instance(draft, instanceId);
   if (inst.location !== 'field' || inst.slot !== 'creature' || inst.zone === null) return;
-  // The creature keeps its controller; movement is within the owner's lanes
-  // (side 'any' reserved for future cross-side effects).
-  if (destPlayerId !== inst.controller) return;
-  const owner = draft.players[destPlayerId]!;
+  // If moving opponent's creature within their side (side: 'any'), route to inst.controller
+  const targetPlayerId = side === 'any' ? inst.controller : destPlayerId;
+  if (targetPlayerId !== inst.controller) return;
+  const owner = draft.players[targetPlayerId]!;
   if (zone < 0 || zone >= owner.zones.length) return;
   if (zone === inst.zone) return;
   const target = owner.zones[zone]!;
@@ -1038,9 +1038,9 @@ function moveCreatureToZone(
   inst.zone = zone;
   inst.movedThisTurn = true;
   owner.zones[zone]!.creature = instanceId;
-  emit(ctx, { type: 'card_moved', player: destPlayerId, instanceId, fromZone, toZone: zone });
-  bumpCounter(draft, 'line_change', destPlayerId);
-  enqueueTrigger(draft, ctx, 'on_line_change', { instanceId, player: destPlayerId, zone });
+  emit(ctx, { type: 'card_moved', player: targetPlayerId, instanceId, fromZone, toZone: zone });
+  bumpCounter(draft, 'line_change', targetPlayerId);
+  enqueueTrigger(draft, ctx, 'on_line_change', { instanceId, player: targetPlayerId, zone });
 }
 
 /** Return cards from the discard pile (random or first match, filter by data). */

@@ -19,7 +19,7 @@
      },
      "amount": 2,
      "filter": {
-      "ready": true
+      "flipped": true
      }
     },
     "duration": "this_turn"

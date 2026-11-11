@@ -5,30 +5,10 @@
     {
       "kind": "active",
       "cost": 1,
-      "effect": [
-        {
-          "op": "deal_damage",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "amount": 1
-        },
-        {
-          "op": "deal_damage",
-          "target": {
-            "kind": "choice",
-            "index": 1
-          },
-          "amount": 1
-        }
-      ],
+      "mechanic": "tower_of_justice_damage",
       "targets": [
         {
           "kind": "lane_creature"
-        },
-        {
-          "kind": "opponent_player"
         }
       ],
       "text": "Потрать 1 действие >>> Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу."

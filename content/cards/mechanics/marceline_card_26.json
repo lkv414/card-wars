@@ -1,26 +1,14 @@
 {
- "cardId": "marceline_card_26",
- "name": "Авто-ощипыватель",
- "abilities": [
-  {
-   "kind": "active",
-   "effect": {
-    "op": "heal_or_damage",
-    "target": {
-     "kind": "this_lane_creature"
-    },
-    "mode": {
-     "kind": "choice",
-     "index": 0
-    },
-    "amount": 1
-   },
-   "text": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии.",
-   "targets": [
+  "cardId": "marceline_card_26",
+  "name": "Авто-ощипыватель",
+  "abilities": [
     {
-     "kind": "heal_or_damage"
+      "kind": "active",
+      "mechanic": "heal_or_damage_lane",
+      "params": {
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии."
     }
-   ]
-  }
- ]
+  ]
 }

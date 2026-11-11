@@ -5,33 +5,16 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": [
-        {
-          "op": "heal",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "amount": 1
-        },
-        {
-          "op": "heal",
-          "target": {
-            "kind": "choice",
-            "index": 1
-          },
-          "amount": 1
-        }
-      ],
-      "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем.",
+      "mechanic": "duet_heal_own_and_other",
       "targets": [
         {
           "kind": "own_creature"
         },
         {
-          "kind": "lane_creature"
+          "kind": "any_creature"
         }
-      ]
+      ],
+      "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем."
     }
   ]
 }

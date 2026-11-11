@@ -5,6 +5,11 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
       "effect": {
         "op": "opponent_discards",
         "target": {
@@ -17,12 +22,7 @@
           "amount": 1
         }
       },
-      "text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
-      "targets": [
-        {
-          "kind": "opponent_player"
-        }
-      ]
+      "text": "Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса."
     }
   ]
 }

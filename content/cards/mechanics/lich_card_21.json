@@ -5,6 +5,11 @@
     {
       "kind": "passive",
       "trigger": "on_death",
+      "conditions": [
+        {
+          "kind": "if_payload_other"
+        }
+      ],
       "effect": {
         "op": "deal_damage",
         "target": {
@@ -12,12 +17,7 @@
         },
         "amount": 1
       },
-      "text": "Перед смертью наносит 1 урон убившему её существу.",
-      "conditions": [
-        {
-          "kind": "if_payload_killer_self"
-        }
-      ]
+      "text": "Перед смертью больно бросает косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа)."
     }
   ]
 }

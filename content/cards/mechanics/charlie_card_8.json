@@ -6,7 +6,9 @@
       "kind": "passive",
       "effect": {
         "op": "suppress",
-        "target": { "kind": "this_lane_own_creature" },
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
         "spells": true,
         "creatureAbilities": true
       },
@@ -14,14 +16,22 @@
     },
     {
       "kind": "active",
-      "cost": 1,
       "effect": {
         "op": "move_creature",
-        "target": { "kind": "choice", "index": 0 },
-        "destination": { "kind": "this_lane_land" },
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "this_lane_land"
+        },
         "side": "own"
       },
-      "targets": [{ "kind": "own_creature" }],
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
       "text": "ПРИЕМ >>> Перемести существо под твоим контролем на эту землю."
     }
   ]

@@ -4,27 +4,8 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": [
-        {
-          "op": "reveal_deck_top",
-          "count": 3
-        },
-        {
-          "op": "resolve_revealed",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "to": "hand",
-          "rest": "discard"
-        }
-      ],
-      "targets": [
-        {
-          "kind": "revealed_card"
-        }
-      ],
-      "text": "Открой 3 верхние карты своей колоды, возьми одну, остальные сбрось."
+      "mechanic": "beach_party_reveal_pick_and_pass",
+      "text": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложть Пляжную вечеринку в руку партнера."
     }
   ],
   "name": "Пляжная Вечеринка"

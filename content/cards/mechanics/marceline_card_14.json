@@ -13,7 +13,8 @@
       ],
       "mechanic": "move_damage",
       "params": {
-        "self": true
+        "self": true,
+        "max": 99
       }
     }
   ]

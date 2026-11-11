@@ -4,15 +4,15 @@
   "abilities": [
     {
       "kind": "active",
+      "cost": 1,
       "effect": {
         "op": "freeze_land",
         "target": {
-          "kind": "this_lane_lands"
+          "kind": "this_lane_land"
         },
         "frozen": true
       },
-      "text": "Потрать 1 Действие >>> Заморозь землю на этой линии.",
-      "cost": 1
+      "text": "Потрать 1 Действие >>> Заморозь землю на этой линии."
     }
   ]
 }

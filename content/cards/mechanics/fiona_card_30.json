@@ -1,17 +1,18 @@
 {
- "cardId": "fiona_card_30",
- "name": "Очаровательный город",
- "abilities": [
-  {
-   "kind": "passive",
-   "effect": {
-    "op": "counts_as",
-    "target": {
-     "kind": "this_lane_creature"
-    },
-    "landType": "rainbow"
-   },
-   "text": "Все существа на этой линии теряют свой тип Земли и становятся Радужными существами."
-  }
- ]
+  "cardId": "fiona_card_30",
+  "name": "Очаровательный город",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "counts_as",
+        "landType": "rainbow",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "duration": "aura"
+      },
+      "text": "Все существа на этой лини теряют свой тип Земли и становятся Радужными существами."
+    }
+  ]
 }

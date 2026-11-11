@@ -4,19 +4,19 @@
   "abilities": [
     {
       "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_lives_even"
+        }
+      ],
       "effect": {
         "op": "stat_buff",
-        "target": {
-          "kind": "this_lane_own_creature"
-        },
         "stat": "attack",
         "amount": 2,
         "duration": "aura",
-        "conditions": [
-          {
-            "kind": "while_lives_even"
-          }
-        ]
+        "target": {
+          "kind": "this_lane_own_creature"
+        }
       },
       "text": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK."
     }

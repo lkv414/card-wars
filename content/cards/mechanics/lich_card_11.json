@@ -5,48 +5,13 @@
     {
       "kind": "passive",
       "effect": {
-        "op": "attack_mod",
+        "op": "defense_mod",
         "target": {
           "kind": "this_creature"
         },
-        "vs": "defenderZone",
-        "landType": "good",
         "atkBonus": 1
       },
-      "text": "+1 АТК против милых и кукурузных существ."
-    },
-    {
-      "kind": "passive",
-      "effect": {
-        "op": "attack_mod",
-        "target": {
-          "kind": "this_creature"
-        },
-        "vs": "defenderZone",
-        "landType": "corn",
-        "atkBonus": 1
-      },
-      "text": "+1 АТК против милых и кукурузных существ."
-    },
-    {
-      "kind": "passive",
-      "trigger": "on_death",
-      "effect": {
-        "op": "deal_damage",
-        "target": {
-          "kind": "payload_player"
-        },
-        "amount": {
-          "kind": "payload_cost",
-          "amount": 1
-        }
-      },
-      "text": "Если Карга убивает существо, твой противник получает урон, равный его стоимости.",
-      "conditions": [
-        {
-          "kind": "if_payload_killer_self"
-        }
-      ]
+      "text": "+1 АТК против милых и кукурузных существ. Если Карга убивает существо, твой противник получает урон, равный его стоимости."
     }
   ]
 }

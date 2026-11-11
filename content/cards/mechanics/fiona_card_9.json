@@ -4,22 +4,22 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "this_creature"
-        },
-        "stat": "attack",
-        "amount": 3,
-        "duration": "this_turn"
-      },
-      "text": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 ATK в этом ходу.",
       "conditions": [
         {
           "kind": "while_played_land_type",
           "landType": "rainbow"
         }
-      ]
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 АТК в этом ходу."
     }
   ]
 }

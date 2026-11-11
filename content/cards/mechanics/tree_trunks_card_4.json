@@ -4,30 +4,8 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "each_creature_yours"
-        },
-        "stat": "defense",
-        "amount": 1,
-        "duration": "aura",
-        "filter": {
-          "cardIds": [
-            "bubblegum_card_30",
-            "ftg_card_51",
-            "tree_trunks_card_1",
-            "tree_trunks_card_2",
-            "tree_trunks_card_4",
-            "tree_trunks_card_7",
-            "tree_trunks_card_8",
-            "tree_trunks_card_26",
-            "tree_trunks_card_30",
-            "tree_trunks_card_35"
-          ]
-        }
-      },
-      "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+      "mechanic": "cotton_king_def_aura",
+      "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре."
     },
     {
       "kind": "active",
@@ -53,7 +31,7 @@
           "kind": "own_creature"
         }
       ],
-      "text": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
+      "text": "Прием >>> Вылечи существо под твоим контролем на 1 или 2 урона."
     }
   ]
 }

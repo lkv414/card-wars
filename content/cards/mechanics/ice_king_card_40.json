@@ -4,21 +4,15 @@
   "abilities": [
     {
       "kind": "active",
+      "cost": 1,
       "effect": {
         "op": "freeze_land",
         "target": {
-          "kind": "choice",
-          "index": 0
+          "kind": "this_lane_land"
         },
         "frozen": true
       },
-      "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии.",
-      "cost": 1,
-      "targets": [
-        {
-          "kind": "landscape"
-        }
-      ]
+      "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии."
     }
   ]
 }

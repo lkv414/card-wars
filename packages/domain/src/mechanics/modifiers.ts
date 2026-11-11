@@ -673,7 +673,15 @@ export function resolveStatAmount(
     case 'per_played_name': {
       const needle = (cardId: string): boolean => {
         const name = ctx.catalog.getCard(cardId)?.name ?? '';
-        return amount.matchers.some((m) => name.toLowerCase().includes(m.toLowerCase()));
+        return amount.matchers.some((m) => {
+          if (typeof m === 'string') {
+            return name.toLowerCase().includes(m.toLowerCase());
+          }
+          if (m && typeof m === 'object' && 'cardIds' in m && Array.isArray((m as { cardIds: unknown[] }).cardIds)) {
+            return ((m as { cardIds: string[] }).cardIds).includes(cardId);
+          }
+          return false;
+        });
       };
       return draft.turnPlayedCardIds.filter(needle).length * amount.amount;
     }
@@ -951,7 +959,7 @@ export function areActivesSuppressed(
 ): boolean {
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'suppress' || (!effect.actives && !effect.all)) continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, instanceId, undefined)) return true;
+    if (coversInstance(draft, ctx, modSource, effect.target, instanceId, effect.filter)) return true;
   }
   return false;
 }
@@ -964,7 +972,7 @@ export function attacksSuppressed(
 ): boolean {
   for (const { source: modSource, effect } of ruleEffects(draft, ctx)) {
     if (effect.op !== 'suppress' || (!effect.attacks && !effect.all)) continue;
-    if (coversInstance(draft, ctx, modSource, effect.target, attackerId, undefined)) return true;
+    if (coversInstance(draft, ctx, modSource, effect.target, attackerId, effect.filter)) return true;
   }
   return false;
 }

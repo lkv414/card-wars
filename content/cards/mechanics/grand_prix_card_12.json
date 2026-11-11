@@ -4,12 +4,28 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "effect": [
-        { "op": "freeze_land", "target": { "kind": "choice", "index": 0 }, "frozen": true },
-        { "op": "freeze_creature", "target": { "kind": "choice_zone_creature", "index": 0 } }
+        {
+          "op": "freeze_land",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "frozen": true
+        },
+        {
+          "op": "freeze_creature",
+          "target": {
+            "kind": "choice_zone_creature",
+            "index": 0
+          }
+        }
       ],
-      "targets": [{ "kind": "landscape" }],
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
       "text": "ПРИЕМ >>> Заморозь выбранную землю и существо на ней."
     }
   ]

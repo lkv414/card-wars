@@ -4,24 +4,13 @@
   "abilities": [
     {
       "kind": "active",
-      "effect": {
-        "op": "grant_modifier",
-        "duration": "this_turn",
-        "modifier": {
-          "op": "counts_as",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "landType": "rainbow"
-        }
-      },
+      "mechanic": "reveal_hand_card_becomes_rainbow",
       "targets": [
         {
           "kind": "own_hand_card"
         }
       ],
-      "text": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой. (У нее нет типа Земли.)"
+      "text": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой."
     }
   ]
 }

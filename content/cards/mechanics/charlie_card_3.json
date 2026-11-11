@@ -4,34 +4,16 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
+      "mechanic": "charlie_bike_for_two",
       "targets": [
         {
           "kind": "own_creature"
         },
         {
           "kind": "any_player"
-        },
-        {
-          "kind": "own_creature"
         }
       ],
-      "effect": [
-        {
-          "op": "return_to_owner",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          }
-        },
-        {
-          "op": "return_to_owner",
-          "target": {
-            "kind": "choice",
-            "index": 2
-          }
-        }
-      ],
-      "text": "Верни свое существо в руку владельцу. Выбранный игрок возвращает свое существо в руку владельцу."
+      "text": "Выбери существо под твоим контролем и верни его на руку владельцу. Выбери другого игрока. Он выбирает существо под его контролем и возвращает его на руку владельцу."
     }
   ],
   "name": "Велик на двоих"

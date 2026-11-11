@@ -4,36 +4,11 @@
   "abilities": [
     {
       "kind": "active",
-      "effect": [
-        {
-          "op": "heal",
-          "target": {
-            "kind": "adjacent_creatures"
-          },
-          "amount": 2,
-          "conditions": [
-            {
-              "kind": "while_damage_at_most",
-              "amount": 4,
-              "scope": "self"
-            }
-          ]
-        },
-        {
-          "op": "heal",
-          "target": {
-            "kind": "each_creature_yours"
-          },
-          "amount": 2,
-          "conditions": [
-            {
-              "kind": "while_damage_at_least",
-              "amount": 5,
-              "scope": "self"
-            }
-          ]
-        }
-      ],
+      "mechanic": "dr_kukolstein_heal",
+      "params": {
+        "amount": 2,
+        "threshold": 5
+      },
       "text": "ПРИЕМ >>> Восстанови 2 урона с существа на соседней линии. Если на Доке Кукольштейне 5 или более урона, то вместо этого восстанови 2 урона с каждого существа."
     }
   ]

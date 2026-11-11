@@ -4,36 +4,43 @@
   "abilities": [
     {
       "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_damage_at_most",
+          "amount": 3,
+          "scope": "self"
+        }
+      ],
       "effect": {
         "op": "stat_buff",
-        "target": {
-          "kind": "adjacent_creatures"
-        },
         "stat": "attack",
         "amount": 1,
-        "duration": "aura"
+        "duration": "aura",
+        "target": {
+          "kind": "adjacent_creatures"
+        }
       },
-      "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK."
+      "text": "У каждого соседнего существа +1 ATK."
     },
     {
       "kind": "passive",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "adjacent_creatures"
-        },
-        "stat": "attack",
-        "amount": 2,
-        "duration": "aura"
-      },
-      "text": "У каждого соседнего существа +1 ATK. Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK.",
       "conditions": [
         {
           "kind": "while_damage_at_least",
           "amount": 4,
           "scope": "self"
         }
-      ]
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "target": {
+          "kind": "adjacent_creatures"
+        }
+      },
+      "text": "Но если у Сшитого ленивца 4 урона и более, то соседние существа получают +2 ATK."
     }
   ]
 }

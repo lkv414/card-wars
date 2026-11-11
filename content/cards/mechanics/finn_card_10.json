@@ -17,7 +17,7 @@
         {
           "kind": "own_creature",
           "filter": {
-            "ready": false
+            "flipped": true
           }
         }
       ],

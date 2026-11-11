@@ -5,6 +5,11 @@
     {
       "kind": "passive",
       "trigger": "on_freeze",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ],
       "effect": {
         "op": "deal_damage",
         "target": {
@@ -13,12 +18,12 @@
         },
         "amount": 2
       },
-      "text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу.",
       "targets": [
         {
           "kind": "any_creature"
         }
-      ]
+      ],
+      "text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу."
     }
   ]
 }

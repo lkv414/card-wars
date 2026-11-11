@@ -5,21 +5,15 @@
     {
       "kind": "passive",
       "trigger": "on_enters_play",
+      "optional": true,
       "effect": {
         "op": "freeze_land",
         "target": {
-          "kind": "choice",
-          "index": 0
+          "kind": "this_lane_land"
         },
         "frozen": true
       },
-      "text": "Когда Замороженный патрилег вступает в игру, можешь Заморозить Землю на этой линии.",
-      "targets": [
-        {
-          "kind": "landscape"
-        }
-      ],
-      "optional": true
+      "text": "Когда Замороженный патрилед вступает в игру, можешь Заморозить Землю на этой линии."
     }
   ]
 }

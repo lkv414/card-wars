@@ -5,27 +5,16 @@
       "kind": "passive",
       "effect": {
         "op": "stat_buff",
+        "stat": "attack",
         "target": {
           "kind": "this_creature"
         },
-        "stat": "attack",
         "amount": {
-          "kind": "per_played_name",
-          "matchers": [
-            {
-              "cardIds": [
-                "jake_2v2_card_17",
-                "jake_2v2_card_18",
-                "jake_2v2_card_20",
-                "jake_2v2_card_22"
-              ]
-            }
-          ],
-          "amount": 1
+          "kind": "team_companion_cost"
         },
         "duration": "aura"
       },
-      "text": "+1 ATK за каждого Зебрарога под контролем твоей команды."
+      "text": "+1 АТК за каждую Тимворк под контролем твоей команды."
     },
     {
       "kind": "passive",
@@ -34,17 +23,16 @@
       "conditions": [
         {
           "kind": "while_phase",
-          "phase": "combat"
-        },
-        {
-          "kind": "while_own_turn"
+          "phase": "battle"
         }
       ],
-      "mechanic": "self_rescue_on_death",
-      "params": {
-        "destination": "hand"
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "triggering_instance"
+        }
       },
-      "text": "Если покидает игру в твоей фазе сражения, можешь положить его в свою руку."
+      "text": "Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку."
     }
   ],
   "name": "Тренированный крылатый зебрарог"

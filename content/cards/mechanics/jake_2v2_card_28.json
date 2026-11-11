@@ -3,19 +3,14 @@
   "abilities": [
     {
       "kind": "passive",
-      "trigger": "on_creature_attacks",
-      "conditions": [
+      "trigger": "on_cast",
+      "mechanic": "bale_out_retreat",
+      "targets": [
         {
-          "kind": "if_payload_player_self"
+          "kind": "any_creature"
         }
       ],
-      "effect": {
-        "op": "banish_card",
-        "card": {
-          "kind": "triggering_instance"
-        }
-      },
-      "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед нанесением урона."
+      "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед фазой сражения, сними весь урон с него за это."
     }
   ],
   "name": "Слинять"

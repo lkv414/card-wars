@@ -6,8 +6,12 @@
       "kind": "passive",
       "trigger": "on_enters_play",
       "optional": true,
-      "effect": { "op": "remove_token", "target": { "kind": "choice", "index": 0 } },
-      "targets": [{ "kind": "landscape" }],
+      "effect": {
+        "op": "remove_token",
+        "target": {
+          "kind": "adjacent_own_land"
+        }
+      },
       "text": "Когда Королева Банши вступает в игру, можешь удалить жетон с соседней земли."
     }
   ]

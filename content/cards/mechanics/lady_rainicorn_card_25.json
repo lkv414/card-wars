@@ -3,24 +3,17 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "each_creature_yours"
-        },
-        "stat": "attack",
-        "amount": {
-          "kind": "per_counter",
-          "counter": "creature_entered",
-          "scope": "own",
-          "amount": 2
-        },
-        "duration": "aura",
-        "filter": {
-          "landType": "sand"
+      "trigger": "on_cast",
+      "mechanic": "zazo_seeds_buff",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "landType": "sand"
+          }
         }
-      },
-      "text": "Песчаные существа получают +2 ATK в этот ход за каждое существо, вступившее в игру в этот ход."
+      ],
+      "text": "Выбранное песчаное существо получает +2 АТК в этот ход за каждое существо, вступившее в игру на соседнюю линию в этот ход."
     }
   ],
   "name": "Волшебные семена Зазо"

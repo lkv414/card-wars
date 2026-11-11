@@ -6,9 +6,17 @@
       "kind": "passive",
       "trigger": "on_cast",
       "mechanic": "discard_min_cost_or_damage",
-      "params": { "minCost": 0, "amount": 2, "to": "creatures" },
-      "targets": [{ "kind": "opponent_player" }],
-      "text": "Выбранный враг сбрасывает карту. Если нет, то нанеси 2 урона каждому его существу."
+      "params": {
+        "minCost": 0,
+        "amount": 2,
+        "to": "creatures"
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Выбранный враг может сбросить карту. Если нет, то нанеси 2 Урона каждому его существу."
     }
   ]
 }

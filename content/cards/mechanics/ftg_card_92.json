@@ -5,27 +5,26 @@
     {
       "kind": "passive",
       "trigger": "on_enters_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_land_type",
+          "landType": "sand"
+        }
+      ],
       "effect": {
         "op": "return_to_owner",
         "target": {
           "kind": "triggering_instance"
         }
       },
-      "text": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу.",
-      "optional": true,
-      "conditions": [
-        {
-          "kind": "if_payload_land_type",
-          "landType": "sand"
-        },
-        {
-          "kind": "if_payload_player_self"
-        },
-        {
-          "kind": "if_payload_cost",
-          "min": 1
-        }
-      ]
+      "text": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу."
     }
   ]
 }

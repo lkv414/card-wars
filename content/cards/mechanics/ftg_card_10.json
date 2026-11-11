@@ -5,16 +5,8 @@
     {
       "kind": "passive",
       "trigger": "on_enters_play",
-      "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами.",
-      "targets": [
-        {
-          "kind": "lane_opponent_creature"
-        }
-      ],
-      "mechanic": "swap_lanes",
-      "params": {
-        "opponent": true
-      }
+      "mechanic": "swap_with_opponent_on_lane",
+      "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами."
     }
   ]
 }

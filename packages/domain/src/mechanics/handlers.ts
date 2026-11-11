@@ -499,12 +499,16 @@ export const minMaxDefDamage: MechanicHandler = (
   _payload: TriggerPayload | undefined,
   _beneficiary: PlayerId,
 ): void => {
-  const lowAmount = (params?.low as number | undefined) ?? 2;
-  const highAmount = (params?.high as number | undefined) ?? 1;
+  const lowAmount = (params?.low as number | undefined) ?? (params?.min as number | undefined) ?? 2;
+  const highAmount = (params?.high as number | undefined) ?? (params?.max as number | undefined) ?? 1;
   const candidates: Array<{ id: string; def: number }> = [];
   for (const pid of draft.order) {
     for (const zone of draft.players[pid]!.zones) {
-      if (zone.creature) candidates.push({ id: zone.creature, def: computeEff(draft, ctx, zone.creature).defense });
+      if (zone.creature) {
+        const inst = instance(draft, zone.creature);
+        const remainingDef = computeEff(draft, ctx, zone.creature).defense - inst.damage;
+        candidates.push({ id: zone.creature, def: remainingDef });
+      }
     }
   }
   if (candidates.length === 0) return;

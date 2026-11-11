@@ -5,24 +5,8 @@
       "kind": "passive",
       "trigger": "on_enters_play",
       "optional": true,
-      "conditions": [
-        {
-          "kind": "while_empty_lands"
-        }
-      ],
       "mechanic": "soul_twin",
-      "text": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (перемешав после)."
-    },
-    {
-      "kind": "passive",
-      "effect": {
-        "op": "set_instance_flag",
-        "target": {
-          "kind": "this_creature"
-        },
-        "flag": "cannotReturnFromDiscard"
-      },
-      "text": "Нельзя вернуть из сброса."
+      "text": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (если она там есть), после перемешай. Если поле покидает одна, с ней уходит и вторая. Нельзя вернуть из сброса."
     }
   ],
   "name": "Частичка души"

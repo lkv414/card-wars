@@ -4,7 +4,6 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "maxUsesPerTurn": 5,
       "additionalCost": {
         "discardFromHand": 1

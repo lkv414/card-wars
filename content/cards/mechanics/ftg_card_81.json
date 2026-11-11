@@ -1,18 +1,24 @@
 {
- "cardId": "ftg_card_81",
- "name": "Зеленая змейка",
- "abilities": [
-  {
-   "kind": "passive",
-   "trigger": "on_leave_play",
-   "effect": {
-    "op": "deal_damage",
-    "target": {
-     "kind": "this_lane_creature"
-    },
-    "amount": 1
-   },
-   "text": "Когда Зеленая змейка покидает игру, нанеси 1 урон выбранному существу на этой линии. (упрощение: цель — существо линии, без выбора)"
-  }
- ]
+  "cardId": "ftg_card_81",
+  "name": "Зеленая змейка",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Когда Зеленая змейка покидает игру, нанеси 1 урон выбранному существу на этой линии."
+    }
+  ]
 }

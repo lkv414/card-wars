@@ -5,15 +5,20 @@
     {
       "kind": "passive",
       "effect": {
-        "op": "attack_mod",
-        "target": {
-          "kind": "each_creature_yours"
-        },
-        "vs": "defenderZone",
-        "landType": "swamp",
-        "atkBonus": 2
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "vs": "defenderZone",
+          "landType": "swamp",
+          "atkBonus": 2
+        }
       },
-      "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах."
+      "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах.",
+      "trigger": "on_cast"
     }
   ]
 }

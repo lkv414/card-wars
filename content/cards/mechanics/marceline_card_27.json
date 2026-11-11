@@ -5,20 +5,13 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": {
-        "op": "heal",
-        "target": {
-          "kind": "choice",
-          "index": 0
-        },
-        "amount": 5
-      },
-      "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше).",
+      "mechanic": "pentaplaster_heal_five_exact",
       "targets": [
         {
           "kind": "own_creature"
         }
-      ]
+      ],
+      "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше)."
     }
   ]
 }

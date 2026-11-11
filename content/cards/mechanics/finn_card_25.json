@@ -6,18 +6,21 @@
       "kind": "active",
       "effect": {
         "op": "flip_land",
+        "down": true,
         "target": {
           "kind": "choice",
           "index": 0
-        },
-        "down": true
+        }
       },
-      "text": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз.",
       "targets": [
         {
-          "kind": "landscape"
+          "kind": "landscape",
+          "filter": {
+            "landType": "corn"
+          }
         }
-      ]
+      ],
+      "text": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз."
     }
   ]
 }

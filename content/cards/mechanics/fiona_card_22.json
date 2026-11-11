@@ -3,7 +3,6 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "mechanic": "draw_discard_rainbow_action",
       "text": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил радужную карту, получи 1 Действие."
     }

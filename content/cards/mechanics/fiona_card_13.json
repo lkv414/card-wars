@@ -19,7 +19,7 @@
     {
      "kind": "any_creature",
      "filter": {
-      "ready": true
+      "flipped": true
      }
     }
    ]

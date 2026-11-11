@@ -20,7 +20,8 @@
       ],
       "additionalCost": {
         "discardFromHand": 1
-      }
+      },
+      "maxUsesPerTurn": 99
     }
   ]
 }

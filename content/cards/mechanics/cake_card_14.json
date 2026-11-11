@@ -14,7 +14,7 @@
      },
      "amount": -1,
      "filter": {
-      "ready": true
+      "flipped": true
      }
     }
    },

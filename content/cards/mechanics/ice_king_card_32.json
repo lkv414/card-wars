@@ -4,13 +4,16 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": { "op": "suppress", "target": { "kind": "this_lane_creature" }, "attacks": true, "actives": true, "filter": { "zoneToken": true } },
-      "text": "Существа на землях с ледяными жетонами на этой линии не могут атаковать или использовать способности."
-    },
-    {
-      "kind": "passive",
-      "effect": { "op": "suppress", "target": { "kind": "this_lane_opponent_creature" }, "attacks": true, "actives": true, "filter": { "zoneToken": true } },
-      "text": "Существа на землях с ледяными жетонами на этой линии не могут атаковать или использовать способности."
+      "effect": {
+        "op": "suppress",
+        "actives": true,
+        "attacks": true,
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "duration": "aura"
+      },
+      "text": "Существа на землях с ледяными жетонами на этой линии, не могут атаковать или использовать способности."
     }
   ]
 }

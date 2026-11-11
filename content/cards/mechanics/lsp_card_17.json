@@ -3,7 +3,6 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "conditions": [
         {
           "kind": "while_zone_has_creature"

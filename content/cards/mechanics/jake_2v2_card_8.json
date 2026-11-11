@@ -4,93 +4,22 @@
     {
       "kind": "active",
       "cost": 1,
+      "mechanic": "pillow_fort_twin_heal_or_damage",
       "targets": [
         {
           "kind": "own_creature"
         },
         {
-          "kind": "choose_option",
-          "options": [
-            "heal",
-            "damage"
-          ],
-          "label": "Первое существо: восстановить или нанести 2"
+          "kind": "heal_or_damage"
         },
         {
           "kind": "own_creature"
         },
         {
-          "kind": "choose_option",
-          "options": [
-            "heal",
-            "damage"
-          ],
-          "label": "Второе существо: восстановить или нанести 2"
+          "kind": "heal_or_damage"
         }
       ],
-      "effect": [
-        {
-          "op": "heal",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "amount": 2,
-          "conditions": [
-            {
-              "kind": "if_option",
-              "index": 0,
-              "option": "heal"
-            }
-          ]
-        },
-        {
-          "op": "deal_damage",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "amount": 2,
-          "conditions": [
-            {
-              "kind": "if_option",
-              "index": 0,
-              "option": "damage"
-            }
-          ]
-        },
-        {
-          "op": "heal",
-          "target": {
-            "kind": "choice",
-            "index": 2
-          },
-          "amount": 2,
-          "conditions": [
-            {
-              "kind": "if_option",
-              "index": 2,
-              "option": "heal"
-            }
-          ]
-        },
-        {
-          "op": "deal_damage",
-          "target": {
-            "kind": "choice",
-            "index": 2
-          },
-          "amount": 2,
-          "conditions": [
-            {
-              "kind": "if_option",
-              "index": 2,
-              "option": "damage"
-            }
-          ]
-        }
-      ],
-      "text": "ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. То же с другим дружественным существом."
+      "text": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. Проделай то же самое с другим дружественным существом."
     }
   ],
   "name": "Крепость из подушек"

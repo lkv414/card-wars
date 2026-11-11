@@ -4,16 +4,13 @@
   "abilities": [
     {
       "kind": "active",
-      "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него.",
+      "mechanic": "explosive_dude_cleave",
       "targets": [
         {
-          "kind": "opponent_creature"
+          "kind": "lane_opponent_creature"
         }
       ],
-      "mechanic": "splash_damage",
-      "params": {
-        "amount": 1
-      }
+      "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него."
     }
   ]
 }

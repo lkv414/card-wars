@@ -3,12 +3,19 @@
   "name": "Крысолов",
   "abilities": [
     {
-      "kind": "active",
-      "cost": 1,
-      "maxUsesPerTurn": 1,
-      "targets": [{ "kind": "own_creature", "filter": { "flipped": true } }],
-      "mechanic": "arm_replace_attacker",
-      "text": "ПРИЕМ >>> Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него."
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "optional": true,
+      "mechanic": "replace_attacker_with_flooped",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "flipped": true
+          }
+        }
+      ],
+      "text": "Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него."
     }
   ]
 }

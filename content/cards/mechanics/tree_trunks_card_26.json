@@ -3,7 +3,6 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "mechanic": "alley_move",
       "params": {
         "alleyCardId": "tree_trunks_card_26"

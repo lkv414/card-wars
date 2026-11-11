@@ -5,19 +5,13 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": {
-        "op": "freeze_land",
-        "target": {
-          "kind": "this_lane_lands"
-        },
-        "frozen": true
-      },
-      "text": "Выбери линию и заморозь обе земли на ней.",
+      "mechanic": "freeze_lane_both_lands",
       "targets": [
         {
           "kind": "landscape"
         }
-      ]
+      ],
+      "text": "Выбери линию и заморозь обе земли на ней."
     }
   ]
 }

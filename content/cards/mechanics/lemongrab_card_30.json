@@ -1,27 +1,21 @@
 {
- "cardId": "lemongrab_card_30",
- "name": "Воронка",
- "abilities": [
-  {
-   "kind": "active",
-   "effect": {
-    "op": "flip_land",
-    "target": {
-     "kind": "choice",
-     "index": 0
-    },
-    "down": true,
-    "until": "next_own_turn"
-   },
-   "additionalCost": {
-    "discardFromHand": 1
-   },
-   "targets": [
+  "cardId": "lemongrab_card_30",
+  "name": "Воронка",
+  "abilities": [
     {
-     "kind": "landscape"
+      "kind": "active",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "effect": {
+        "op": "flip_land",
+        "down": true,
+        "until": "next_own_turn",
+        "target": {
+          "kind": "this_lane_land"
+        }
+      },
+      "text": "Сбрось карту, ПРИЕМ >>> Переверни выбранную землю на этой линии лицом вниз до начала твоего следующего хода."
     }
-   ],
-   "text": "Сбрось карту, ПРИЕМ >>> Переверни выбранную землю на этой линии лицом вниз до начала твоего следующего хода."
-  }
- ]
+  ]
 }

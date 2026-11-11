@@ -1,18 +1,15 @@
 {
- "cardId": "jake_2v2_card_22",
- "name": "Шипастый зебрарог",
- "abilities": [
-  {
-   "kind": "passive",
-   "trigger": "on_creature_attacks",
-   "effect": {
-    "op": "deal_damage",
-    "target": {
-     "kind": "adjacent_creatures"
-    },
-    "amount": 1
-   },
-   "text": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии."
-  }
- ]
+  "cardId": "jake_2v2_card_22",
+  "name": "Шипастый зебрарог",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "damage_all_creatures_on_adjacent_lanes",
+      "params": {
+        "amount": 1
+      },
+      "text": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии."
+    }
+  ]
 }

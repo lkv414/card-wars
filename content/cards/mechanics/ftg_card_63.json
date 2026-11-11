@@ -6,24 +6,7 @@
       "kind": "passive",
       "trigger": "start_of_turn",
       "optional": true,
-      "effect": [
-        {
-          "op": "return_to_owner",
-          "target": {
-            "kind": "this_creature"
-          }
-        },
-        {
-          "op": "stat_buff",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          },
-          "stat": "defense",
-          "amount": 1,
-          "duration": "this_turn"
-        }
-      ],
+      "mechanic": "bounce_self_and_buff_sand_creature",
       "targets": [
         {
           "kind": "own_creature",

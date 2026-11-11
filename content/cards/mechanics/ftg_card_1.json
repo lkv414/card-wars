@@ -4,21 +4,24 @@
   "abilities": [
     {
       "kind": "passive",
+      "trigger": "on_draw",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
       "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "this_creature"
-        },
-        "stat": "attack",
-        "amount": {
-          "kind": "per_counter",
-          "counter": "cards_drawn",
-          "scope": "own",
-          "amount": 1
-        },
-        "duration": "this_turn"
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "amount": 1,
+          "target": {
+            "kind": "this_creature"
+          }
+        }
       },
-      "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 ATK в этот ход."
+      "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 АТК в этот ход."
     }
   ]
 }

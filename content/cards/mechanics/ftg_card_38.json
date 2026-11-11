@@ -4,6 +4,10 @@
   "abilities": [
     {
       "kind": "active",
+      "additionalCost": {
+        "discardFromHand": 1,
+        "landType": "sand"
+      },
       "effect": {
         "op": "deal_damage",
         "target": {
@@ -11,10 +15,7 @@
         },
         "amount": 1
       },
-      "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника.",
-      "additionalCost": {
-        "discardFromHand": 1
-      }
+      "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника."
     }
   ]
 }

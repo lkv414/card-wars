@@ -4,13 +4,13 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
+      "mechanic": "freeze_and_optional_redistribute_tokens",
       "targets": [
         {
           "kind": "landscape"
         }
       ],
-      "mechanic": "freeze_and_spread_tokens",
-      "text": "Заморозь выбранную землю. Ее Ледяные жетоны перемещаются по одному на твои земли без жетонов."
+      "text": "Заморозь выбранную землю. Ты можешь перемещать любое количество Ледяных жетонов на новые земли (1 жетон на землю)."
     }
   ],
   "name": "Ледяной залп"

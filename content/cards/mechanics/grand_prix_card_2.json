@@ -1,50 +1,20 @@
 {
- "cardId": "grand_prix_card_2",
- "name": "Дай пять!",
- "abilities": [
-  {
-   "kind": "passive",
-   "trigger": "on_cast",
-   "effect": [
+  "cardId": "grand_prix_card_2",
+  "name": "Дай пять!",
+  "abilities": [
     {
-     "op": "heal_or_damage",
-     "target": {
-      "kind": "choice",
-      "index": 0
-     },
-     "mode": {
-      "kind": "choice",
-      "index": 1
-     },
-     "amount": 1
-    },
-    {
-     "op": "give_card",
-     "card": {
-      "kind": "choice",
-      "index": 2
-     },
-     "to": {
-      "kind": "choice",
-      "index": 3
-     }
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "high_five_heal_or_damage_and_pass",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "heal_or_damage"
+        }
+      ],
+      "text": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнеру."
     }
-   ],
-   "text": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать какрту в руку своему партнеру.",
-   "targets": [
-    {
-     "kind": "any_creature"
-    },
-    {
-     "kind": "heal_or_damage"
-    },
-    {
-     "kind": "own_hand_card"
-    },
-    {
-     "kind": "any_player"
-    }
-   ]
-  }
- ]
+  ]
 }

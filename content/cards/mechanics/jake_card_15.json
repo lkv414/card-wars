@@ -3,7 +3,6 @@
   "abilities": [
     {
       "kind": "active",
-      "cost": 1,
       "targets": [
         {
           "kind": "any_creature"

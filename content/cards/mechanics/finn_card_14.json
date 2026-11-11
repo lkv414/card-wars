@@ -13,7 +13,7 @@
         "amount": 2,
         "duration": "aura",
         "filter": {
-          "ready": true
+          "flipped": true
         }
       },
       "text": "+2 АТК каждому Примененному существу под твоим контролем."

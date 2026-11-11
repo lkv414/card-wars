@@ -6,27 +6,18 @@
       "kind": "passive",
       "trigger": "on_damage_dealt",
       "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_instance_self"
+        }
+      ],
       "effect": {
         "op": "freeze_land",
         "target": {
-          "kind": "choice",
-          "index": 0
+          "kind": "this_lane_land"
         },
         "frozen": true
       },
-      "targets": [
-        {
-          "kind": "landscape"
-        }
-      ],
-      "conditions": [
-        {
-          "kind": "if_payload_creature"
-        },
-        {
-          "kind": "if_payload_other"
-        }
-      ],
       "text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
     }
   ]

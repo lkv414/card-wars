@@ -13,7 +13,7 @@
     "amount": 1,
     "duration": "aura",
     "filter": {
-     "ready": true
+     "flipped": true
     }
    },
    "text": "Примененное существо под твоим контролем получает +1 ATK."

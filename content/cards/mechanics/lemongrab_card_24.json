@@ -1,22 +1,22 @@
 {
- "cardId": "lemongrab_card_24",
- "name": "Зебрарог на подбор",
- "abilities": [
-  {
-   "kind": "passive",
-   "effect": {
-    "op": "stat_buff",
-    "target": {
-     "kind": "this_creature"
-    },
-    "stat": "attack",
-    "amount": {
-     "kind": "per_distinct_lands",
-     "amount": 1
-    },
-    "duration": "aura"
-   },
-   "text": "+1 АТК за каждый различный тип земли под твоим контролем."
-  }
- ]
+  "cardId": "lemongrab_card_24",
+  "name": "Зебрарог на подборе",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждый различный тип земли под твоим контролем."
+    }
+  ]
 }

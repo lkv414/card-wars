@@ -1,29 +1,28 @@
 {
-  "cardId": "lich_card_47",
-  "name": "Прямный скелет",
+  "cardId": "fiona_card_1",
+  "name": "Нефтяная вышка",
   "abilities": [
     {
       "kind": "passive",
       "effect": {
         "op": "stat_buff",
         "target": {
-          "kind": "this_creature"
+          "kind": "this_lane_creature"
         },
         "stat": "defense",
         "amount": {
           "kind": "per_target",
           "target": {
-            "kind": "each_creature"
+            "kind": "each_building_yours"
           },
-          "amount": 1,
-          "excludeSelf": true,
+          "amount": 2,
           "filter": {
             "sameCard": true
           }
         },
         "duration": "aura"
       },
-      "text": "«Добрый вечер!»  +1 DEF, если на поле есть ещё один Прямный скелет."
+      "text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
     }
   ]
 }

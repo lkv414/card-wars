@@ -1,22 +1,22 @@
 {
- "cardId": "lemongrab_card_17",
- "name": "Потлезный зебрарог",
- "abilities": [
-  {
-   "kind": "passive",
-   "effect": {
-    "op": "stat_buff",
-    "target": {
-     "kind": "this_creature"
-    },
-    "stat": "defense",
-    "amount": {
-     "kind": "per_distinct_lands",
-     "amount": 1
-    },
-    "duration": "aura"
-   },
-   "text": "+1 DEF за каждый различный тип земли под твоим контролем."
-  }
- ]
+  "cardId": "lemongrab_card_17",
+  "name": "Помпезный зебрарог",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+    }
+  ]
 }

@@ -6,7 +6,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/bmo_card_1.png",
-  "description": "Играй только если под твоим контролем есть существо болотных земель.\nВыбранный противник сбрасывает карту.",
+  "description": "Играй только если под твоим контролем есть существо болотных земель. Выбранный противник сбрасывает карту.",
   "deckSet": "bmo",
   "abilities": [
    {
@@ -109,7 +109,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/bmo_card_6.png",
-  "description": "Твое существо получает +1 ATK на этой линии.",
+  "description": "Твое существо получает +1 АТК на этой линии.",
   "deckSet": "bmo",
   "abilities": [
    {
@@ -620,7 +620,7 @@
   "cost": 2,
   "landType": "swamp",
   "image": "/content/cards/images/bmo_card_36.png",
-  "description": "Каждое твое существо получает +1 ATK этот ход за каждые 5 карт в твоей стопке сброса.",
+  "description": "Каждое твое существо получает +1 АТК этот ход за каждые 5 карт в твоей стопке сброса.",
   "deckSet": "bmo",
   "abilities": [
    {
@@ -714,7 +714,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_1.png",
-  "description": "Каждое твое существо без урона на нем получает +2 ATK в этом ходу.",
+  "description": "Каждое твое существо без урона на нем получает +2 АТК в этот ход.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -743,7 +743,7 @@
   "cost": 2,
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_2.png",
-  "description": "Существа под твоим контролем не получают урон от существ противника в этом ходу.",
+  "description": "Существа под твоим контролем не получают урон от существ противника в этот ход.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -860,7 +860,7 @@
   "image": "/content/cards/images/bubblegum_card_7.png",
   "attack": 2,
   "defense": 7,
-  "description": "Пока на Мыши альбиносе ровно 2 Урона, она получает +2 ATK",
+  "description": "Пока на Мыше альбиносе ровно 2 Урона, она получает +2 ATK",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -949,7 +949,7 @@
   "image": "/content/cards/images/bubblegum_card_12.png",
   "attack": 1,
   "defense": 9,
-  "description": "Пока на Стене шоколада нет урона, она получает +3 ATK.",
+  "description": "Пока на Стене шоколада нет урона, она получает +3 АТК.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -980,7 +980,7 @@
   "cost": 2,
   "landType": "good",
   "image": "/content/cards/images/bubblegum_card_14.png",
-  "description": "Выбранное существо под твоим контролем получает +X ATK в этом ходу, где X это число урона на нем.",
+  "description": "Выбранное существо под твоим контролем получает +X АТК в этот ход, где X это число урона на нем.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -1050,7 +1050,7 @@
   "image": "/content/cards/images/bubblegum_card_18.png",
   "attack": 2,
   "defense": 10,
-  "description": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 ATK.",
+  "description": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 АТК.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -1291,7 +1291,7 @@
   "image": "/content/cards/images/bubblegum_card_30.png",
   "attack": 1,
   "defense": 8,
-  "description": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 ATK.",
+  "description": "Пока на Хлопковой мыши ровно 4 урона, она получает +4 АТК.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -1325,7 +1325,7 @@
   "image": "/content/cards/images/bubblegum_card_33.png",
   "attack": 0,
   "defense": 7,
-  "description": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 ATK.",
+  "description": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 АТК.",
   "deckSet": "bubblegum",
   "abilities": [
    {
@@ -1359,6 +1359,7 @@
   "image": "/content/cards/images/bubblegum_card_35.png",
   "attack": 1,
   "defense": 5,
+  "description": "Муу.",
   "deckSet": "bubblegum",
   "abilities": []
  },
@@ -1503,7 +1504,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/cake_card_9.png",
-  "description": "Выбранное существо получает +2 ATK в этом ходу за каждое примененное существо под твоим контролем.",
+  "description": "Выбранное существо получает +2 АТК в этом ходу за каждое примененное существо под твоим контролем.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -1585,7 +1586,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/cake_card_12.png",
-  "description": "Каждое твое существо на земле со строением получает +2 ATK в этом ходу.",
+  "description": "Каждое твое существо на земле со строением получает +2 АТК в этом ходу.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -1614,7 +1615,7 @@
   "cost": 5,
   "landType": "corn",
   "image": "/content/cards/images/cake_card_14.png",
-  "description": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем.\nТвое существо на этой линии получает +5 DEF.",
+  "description": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем. Твое существо на этой линии получает +5 DEF.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -1776,7 +1777,7 @@
   "image": "/content/cards/images/cake_card_22.png",
   "attack": 1,
   "defense": 8,
-  "description": "Примененное существо под твоим контролем получает +1 ATK.",
+  "description": "Примененное существо под твоим контролем получает +1 АТК.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -1856,7 +1857,7 @@
   "image": "/content/cards/images/cake_card_26.png",
   "attack": 2,
   "defense": 6,
-  "description": "Кукурузная Валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем.",
+  "description": "Кукурузная валькирия получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -1906,7 +1907,7 @@
   "image": "/content/cards/images/cake_card_28.png",
   "attack": 1,
   "defense": 6,
-  "description": "Царица полей получает +1 ATK за каждое применное существо под твоим контролем.",
+  "description": "Царица полей получает +1 АТК за каждое примененное существо под твоим контролем.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -1943,7 +1944,7 @@
   "image": "/content/cards/images/cake_card_29.png",
   "attack": 2,
   "defense": 6,
-  "description": "ПРИЕМ >>> Перемести выбраное строение под твоим контролем на любую землю без строения.",
+  "description": "ПРИЕМ >>> Перемести выбранное строение под твоим контролем на любую землю без строения.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -2069,7 +2070,7 @@
   "image": "/content/cards/images/cake_card_36.png",
   "attack": 0,
   "defense": 10,
-  "description": "ПРИЕМ >>> Огненное торнадо получает +3 ATK пока применено.",
+  "description": "ПРИЕМ >>> Огненное торнадо получает +3 АТК пока применено.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -2135,7 +2136,7 @@
   "cost": 2,
   "landType": "corn",
   "image": "/content/cards/images/cake_card_40.png",
-  "description": "Дополнительная стоимость: примени существо под твоим контролем.\nПросмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду.",
+  "description": "Дополнительная стоимость: примени существо под твоим контролем. Просмотри свою колоду в поисках строения и введи его в игру. Затем перемешай свою колоду.",
   "deckSet": "cake",
   "abilities": [
    {
@@ -2319,7 +2320,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/charlie_card_4.png",
-  "description": "В первый раз когда ты или твой партнёр сыграете Радужное заклинание стоимостью 0 во время своего хода, другой партнёр может скопировать его и выбрать новую цель.",
+  "description": "Радужное партнерство В первый раз когда ты или твой партнер сыграете Радужное заклинание стоимостью 0 во время своего хода, другой партнер может скопировать его и выбрать новую цель.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -2353,7 +2354,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/charlie_card_5.png",
-  "description": "Выбери существо и перемести на соседнюю землю под контролем его владельца. Как сделал это можешь отдать карту партнёру в руку.",
+  "description": "Выбери существо и перемести на соседнюю землю под контролем его владельца. Как сделал это можешь отдать карту партнеру в руку.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -2467,7 +2468,7 @@
   "cost": 2,
   "landType": "blue",
   "image": "/content/cards/images/charlie_card_8.png",
-  "description": "Твое существо на этой земле не может стать целью заклинаний или способностей существ противника.\nПРИЕМ >>> Перемести Существо под твоим контролем на эту землю.",
+  "description": "Твое существо на этой земле не может стать целью заклинаний или способностей существ противника. ПРИЕМ >>> Перемести Существо под твоим контролем на эту землю.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -2550,7 +2551,7 @@
   "image": "/content/cards/images/charlie_card_11.png",
   "attack": 2,
   "defense": 7,
-  "description": "+1 ATK за каждое существо, сменившее линию во время твоего хода.",
+  "description": "+1 АТК за каждое существо, сменившее линию во время твоего хода.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -2582,7 +2583,7 @@
   "image": "/content/cards/images/charlie_card_13.png",
   "attack": 0,
   "defense": 8,
-  "description": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой линии.\nПотрать 1 действие >>> Перемести Пиромансера на пустую землю под твоим контролем.",
+  "description": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой лини. Потрать 1 действие >>> Перемести Пиромансера на пустую землю под твоим контролем.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -2920,7 +2921,7 @@
   "image": "/content/cards/images/charlie_card_27.png",
   "attack": 2,
   "defense": 8,
-  "description": "Пока у Набитого орангутана 4 и более урона, его ATK удваивается.",
+  "description": "Пока у Набитого орангутана 4 и более урона, его АТК удваивается.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -2953,7 +2954,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/charlie_card_28.png",
-  "description": "Во время фазы сражения твоего партнера, первый раз когда нанесен урон противнику, другой партнер может нанести 1 урон выбранному существу на 1 из своих линий.",
+  "description": "Во время фазы сражения твоей и твоего партнера, первый раз когда нанесен урон противнику, другой партнер может нанести 1 урон выбранному существу на 1 из своих линий.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -3202,7 +3203,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/charlie_card_38.png",
-  "description": "Выбери существо под своим контролем, нанеси ему урон равный его ATK и затем удвой его ATK в этом ходу.",
+  "description": "Выбери существо под своим контролем, нанеси ему урон равный его АТК и затем удвой его АТК в этом ходу.",
   "deckSet": "charlie",
   "abilities": [
    {
@@ -3664,7 +3665,7 @@
   "image": "/content/cards/images/finn_card_21.png",
   "attack": 3,
   "defense": 4,
-  "description": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этом ходу.",
+  "description": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этот ход.",
   "deckSet": "finn",
   "abilities": [
    {
@@ -3845,7 +3846,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/finn_card_31.png",
-  "description": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК.",
+  "description": "Каждое существо, сменившее линиЮ в этом ходу, получает +2 АТК.",
   "deckSet": "finn",
   "abilities": [
    {
@@ -3871,7 +3872,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/finn_card_32.png",
-  "description": "Наносит 1 Урон каждому существу противника.",
+  "description": "Наносит 1 урон каждому существу противника.",
   "deckSet": "finn",
   "abilities": [
    {
@@ -3924,6 +3925,31 @@
   ]
  },
  {
+  "id": "finn_card_37",
+  "name": "Великолепный замок",
+  "type": "building",
+  "cost": 1,
+  "landType": "rainbow",
+  "image": "/content/cards/images/finn_card_37.png",
+  "description": "Твое существо получает +3 DEF на этой линии.",
+  "deckSet": "finn",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": 3,
+     "duration": "aura"
+    },
+    "text": "Твое существо получает +3 DEF на этой линии."
+   }
+  ]
+ },
+ {
   "id": "finn_card_39",
   "name": "Сопли гнома",
   "type": "spell",
@@ -3941,6 +3967,40 @@
      "count": 3
     },
     "text": "Тяни 3 карты."
+   }
+  ]
+ },
+ {
+  "id": "fiona_card_1",
+  "name": "Нефтяная вышка",
+  "type": "building",
+  "cost": 2,
+  "landType": "blue",
+  "image": "/content/cards/images/fiona_card_1.png",
+  "description": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем.",
+  "deckSet": "fiona",
+  "abilities": [
+   {
+    "kind": "passive",
+    "effect": {
+     "op": "stat_buff",
+     "target": {
+      "kind": "this_lane_creature"
+     },
+     "stat": "defense",
+     "amount": {
+      "kind": "per_target",
+      "target": {
+       "kind": "each_building_yours"
+      },
+      "amount": 2,
+      "filter": {
+       "sameCard": true
+      }
+     },
+     "duration": "aura"
+    },
+    "text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
    }
   ]
  },
@@ -3986,7 +4046,7 @@
   "cost": 2,
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_4.png",
-  "description": "Восстанови 2 урона с каждого существа под твоим контролем. Существа под твоим контролем теряют свой тип земли и становятся Радужными на этом ходу.",
+  "description": "Восстанови 2 урона с каждого существа под твоим контролем. Существа под твоим контролем теряют свой тип земли и становятся Радужными на этот ход.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4089,7 +4149,7 @@
   "image": "/content/cards/images/fiona_card_9.png",
   "attack": 1,
   "defense": 6,
-  "description": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 ATK в этом ходу.",
+  "description": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 АТК в этом ходу.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4187,7 +4247,7 @@
   "image": "/content/cards/images/fiona_card_14.png",
   "attack": 2,
   "defense": 6,
-  "description": "Когда в игре, Кроха слон считается также Радужным существом.\n(В дополнении к Равнинному существу.)",
+  "description": "Когда в игре, Кроха слон считается также Радужным существом. (В дополнении к Равнинному существу.)",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4248,7 +4308,7 @@
   "image": "/content/cards/images/fiona_card_16.png",
   "attack": 1,
   "defense": 7,
-  "description": "Матриарх Вайда получает +1 ATK за каждое Радужное существо под твоим контролем.",
+  "description": "Матриарх Вайда получает +1 АТК за каждое Радужное существо под твоим контролем.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4284,7 +4344,7 @@
   "image": "/content/cards/images/fiona_card_17.png",
   "attack": 1,
   "defense": 6,
-  "description": "Бизнес пес получает +2 ATK за каждую карту сыгранную в этом ход с “пес” или “щенок” в названии.",
+  "description": "Бизнес пес получает +2 АТК за каждую карту сыгранную в этот ход с \"пес\" или \"щенок\" в названии.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4318,7 +4378,7 @@
   "image": "/content/cards/images/fiona_card_18.png",
   "attack": 1,
   "defense": 10,
-  "description": "Твои Радужные существа получают +1 ATK.",
+  "description": "Твои Радужные существа получают +1 АТК.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4372,7 +4432,7 @@
   "image": "/content/cards/images/fiona_card_22.png",
   "attack": 1,
   "defense": 6,
-  "description": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если мы сбросил радужную карту таким способом, получи 1 Действие.",
+  "description": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил радужную карту таким способом, получи 1 Действие.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4451,7 +4511,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/fiona_card_30.png",
-  "description": "Все существа на этой линии теряют свой тип Земли и становятся Радужными существами.",
+  "description": "Все существа на этой лини теряют свой тип Земли и становятся Радужными существами.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4486,40 +4546,6 @@
      }
     },
     "text": "Центр знаний получает игровой текст строений под твоим контролем на соседних линиях (но не их имена)."
-   }
-  ]
- },
- {
-  "id": "fiona_card_32",
-  "name": "Нефтяная Вышка",
-  "type": "building",
-  "cost": 2,
-  "landType": "blue",
-  "image": "/content/cards/images/fiona_card_32.png",
-  "description": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем.",
-  "deckSet": "fiona",
-  "abilities": [
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_lane_creature"
-     },
-     "stat": "defense",
-     "amount": {
-      "kind": "per_target",
-      "target": {
-       "kind": "each_building_yours"
-      },
-      "amount": 2,
-      "filter": {
-       "sameCard": true
-      }
-     },
-     "duration": "aura"
-    },
-    "text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
    }
   ]
  },
@@ -4599,7 +4625,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/fiona_card_38.png",
-  "description": "Выбранное существо получает +1 ATK за каждые 2 вытянутые тобой карты в этом ходу.",
+  "description": "Выбранное существо получает +1 АТК за каждые 2 вытянутые тобой карты в этом ходу.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4637,7 +4663,7 @@
   "cost": 2,
   "landType": "rainbow",
   "image": "/content/cards/images/fiona_card_40.png",
-  "description": "Каждое существо, под твоим контролем получает +2 ATK в этом ходу. Тяни 2 карты.",
+  "description": "Каждое существо, под твоим контролем получает +2 АТК в этом ходу. Тяни 2 карты.",
   "deckSet": "fiona",
   "abilities": [
    {
@@ -4671,7 +4697,7 @@
   "image": "/content/cards/images/ftg_card_1.png",
   "attack": 1,
   "defense": 5,
-  "description": "Вский раз когда ты тянешь карту, Голубой король вечеринок получает +1 ATK в этом ход.",
+  "description": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -4762,7 +4788,7 @@
   "image": "/content/cards/images/ftg_card_4.png",
   "attack": 1,
   "defense": 6,
-  "description": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 2 меньше.",
+  "description": "ПРИЕМ >>> Твое следующее заклинание в этот ход стоит на 2 меньше.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -4815,7 +4841,7 @@
   "image": "/content/cards/images/ftg_card_6.png",
   "attack": 3,
   "defense": 7,
-  "description": "Каждое существо сменившее линию в этом ход получает +3 ATK в этом ход. (Не действует на существ противника.)",
+  "description": "Каждое существо сменившее линию в этот ход получает +3 АТК в этот ход. (Не действует на существ противника.)",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -4842,7 +4868,7 @@
   "image": "/content/cards/images/ftg_card_7.png",
   "attack": 3,
   "defense": 8,
-  "description": "Противники не могут играть карты стоимостью О.",
+  "description": "Противники не могут играть карты стоимостью 0.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -4868,7 +4894,7 @@
   "image": "/content/cards/images/ftg_card_8.png",
   "attack": 5,
   "defense": 6,
-  "description": "Черничный пироклоп стоит на 1 меньше за каждое сыгранное заклинание в этом ход.",
+  "description": "Черничный пироклоп стоит на 1 меньше за каждое сыгранное заклинание в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -4952,7 +4978,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_12.png",
-  "description": "Подготовь неактивное Существо под твоим контролем. Оно получает +2 ATK в этом ход.",
+  "description": "Подготовь неактивное Существо под твоим контролем. Оно получает +2 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -4996,7 +5022,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_13.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует существо на Песчаной земле.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5021,7 +5047,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_14.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Кукурузной земле.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует существо на Кукурузной земле.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5073,7 +5099,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_16.png",
-  "description": "Подготовь каждое существо сменившее линию в этом ход. Каждое из них получает +2 ATK в этом ход.",
+  "description": "Подготовь каждое существо сменившее линию в этот ход. Каждое из них получает +2 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5218,7 +5244,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/ftg_card_19.png",
-  "description": "ПРИЕМ >>> Если твое существо на этой линии перемещено сюда с другой линии в этом ход, оно получает +3 ATK в этом ход.",
+  "description": "ПРИЕМ >>> Если твое существо на этой линии перемещено сюда с другой линии в этот ход, оно получает +3 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5277,7 +5303,7 @@
   "image": "/content/cards/images/ftg_card_24.png",
   "attack": 3,
   "defense": 6,
-  "description": "Камнеспрут получает +1 ATK пока атакует существ на песчаных землях.",
+  "description": "Камнеспрут получает +1 АТК пока атакует существ на песчаных землях.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5363,7 +5389,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_27.png",
-  "description": "Каждое твое существо на бесполезных болотах получает +2 ATK в этом ход.",
+  "description": "Каждое твое существо на бесполезных болотах получает +2 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5392,7 +5418,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_28.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на голубых равнинах.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует существо на голубых равнинах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5417,7 +5443,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_29.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на милых землях.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует существо на милых землях.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5442,7 +5468,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/ftg_card_30.png",
-  "description": "Играй только если ты сыграл не-кукурузные карты в этом ход. Нанеси 5 урона выбранному существу.",
+  "description": "Играй только если ты сыграл не-кукурузные карты в этот ход. Нанеси 5 урона выбранному существу.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5480,7 +5506,7 @@
   "image": "/content/cards/images/ftg_card_31.png",
   "attack": 0,
   "defense": 6,
-  "description": "Пока мы контролируешь 3 или более различных типов земель, Лимонное желе получает +3 ATK.",
+  "description": "Пока ты контролируешь 3 или более различных типов земель, Лимонное желе получает +3 АТК.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -5866,7 +5892,7 @@
   "image": "/content/cards/images/ftg_card_44.png",
   "attack": 2,
   "defense": 6,
-  "description": "ПРИЕМ >>> Уничтожь выбранное строение на линии стрельба Дэна.",
+  "description": "ПРИЕМ >>> Уничтожь выбранное строение на линии стрельца Дэна.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6066,7 +6092,7 @@
   "image": "/content/cards/images/ftg_card_52.png",
   "attack": 2,
   "defense": 10,
-  "description": "Пока на Подушке боли ровно 6 урона, она получает +6 ATK.",
+  "description": "Пока на Подушке боли ровно 6 урона, она получает +6 АТК.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6098,7 +6124,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/ftg_card_53.png",
-  "description": "Каждое твое существо получает +2 ATK, пока атакует существ на бесполезных болотах.",
+  "description": "Каждое твое существо получает +2 АТК, пока атакует существ на бесполезных болотах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6123,7 +6149,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/ftg_card_54.png",
-  "description": "Каждое твое существо получает +2 ATK, пока атакует существ на кукурузной земле.",
+  "description": "Каждое твое существо получает +2 АТК, пока атакует существ на кукурузной земле.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6183,7 +6209,7 @@
   "image": "/content/cards/images/ftg_card_57.png",
   "attack": 1,
   "defense": 4,
-  "description": "Привидение получает +2 ATK пока защищается от существ на бесполезных болотах.",
+  "description": "Привидение получает +2 АТК пока защищается от существ на бесполезных болотах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6209,7 +6235,7 @@
   "image": "/content/cards/images/ftg_card_58.png",
   "attack": 1,
   "defense": 4,
-  "description": "Дух ведьмы получает +2 ATK пока защищается от существ на голубых равнинах.",
+  "description": "Дух ведьмы получает +2 АТК пока защищается от существ на голубых равнинах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6235,7 +6261,7 @@
   "image": "/content/cards/images/ftg_card_59.png",
   "attack": 1,
   "defense": 4,
-  "description": "Дух дерева получает +2 ATK пока защищается от существ на кукурузных полях.",
+  "description": "Дух дерева получает +2 АТК пока защищается от существ на кукурузных полях.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6261,7 +6287,7 @@
   "image": "/content/cards/images/ftg_card_60.png",
   "attack": 3,
   "defense": 6,
-  "description": "Морская ведьма получает +1 ATK пока атакует существ на бесполезных болотах.",
+  "description": "Морская ведьма получает +1 АТК пока атакует существ на бесполезных болотах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6288,7 +6314,7 @@
   "image": "/content/cards/images/ftg_card_61.png",
   "attack": 3,
   "defense": 6,
-  "description": "Приодетый волк получает +1 ATK пока атакует существ на кукурузных полях.",
+  "description": "Приодетый волк получает +1 АТК пока атакует существ на кукурузных полях.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6315,7 +6341,7 @@
   "image": "/content/cards/images/ftg_card_62.png",
   "attack": 3,
   "defense": 6,
-  "description": "Красавчик Тимми получает +1 ATK пока атакует существ на песчаных землях.",
+  "description": "Красавчик Тимми получает +1 АТК пока атакует существ на песчаных землях.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6444,7 +6470,7 @@
   "cost": 2,
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_66.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ход.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6524,7 +6550,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_68.png",
-  "description": "Каждое существо противника получает -1 ATK в этом ход.",
+  "description": "Каждое существо противника получает -1 АТК в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6616,7 +6642,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/ftg_card_71.png",
-  "description": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 ATK.",
+  "description": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 АТК.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6650,7 +6676,7 @@
   "image": "/content/cards/images/ftg_card_72.png",
   "attack": 1,
   "defense": 4,
-  "description": "Дейви Бонз получает +2 ATK пока защищается от существ на песчаной земле.",
+  "description": "Дейви Бонз получает +2 АТК пока защищается от существ на песчаной земле.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6863,7 +6889,7 @@
   "image": "/content/cards/images/ftg_card_79.png",
   "attack": 3,
   "defense": 3,
-  "description": "Когда Песочный шакал на Милой земле и когда он побеждает существо противника ты восстанавливаешь 3 НР.",
+  "description": "Когда Песочный шакал на Милой земле и когда он побеждает существо противника ты восстанавливаешь 3 HP.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -6988,7 +7014,7 @@
   "image": "/content/cards/images/ftg_card_83.png",
   "attack": 2,
   "defense": 7,
-  "description": "Соседние Кукурузные существа получают +1 ATK.",
+  "description": "Соседние Кукурузные существа получают +1 АТК.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7049,7 +7075,7 @@
   "image": "/content/cards/images/ftg_card_85.png",
   "attack": 0,
   "defense": 9,
-  "description": "+2 ATK за каждую твою пустую землю.",
+  "description": "+2 АТК за каждую твою пустую землю.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7168,7 +7194,7 @@
   "cost": 1,
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_89.png",
-  "description": "Каждое твое существо получает +2 ATK, пока атакует существ на Голубых равнинах.",
+  "description": "Каждое твое существо получает +2 АТК, пока атакует существ на Голубых равнинах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7193,7 +7219,7 @@
   "cost": 1,
   "landType": "sand",
   "image": "/content/cards/images/ftg_card_90.png",
-  "description": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах.",
+  "description": "Каждое твое существо получает +2 АТК, пока атакует существ на Бесполезных болотах.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7288,7 +7314,7 @@
   "image": "/content/cards/images/ftg_card_97.png",
   "attack": 1,
   "defense": 7,
-  "description": "+1 ATK за каждую карту сброшенную игроками (включая тебя) с руки в этом ходу.",
+  "description": "+1 АТК за каждую карту сброшенную игроками (включая тебя) с руки в этот ход.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7353,7 +7379,7 @@
   "image": "/content/cards/images/ftg_card_99.png",
   "attack": 1,
   "defense": 8,
-  "description": "В начале своего хода посмотри верхнюю крту своей колоды. Можешь положить ее вниз своей колоды.",
+  "description": "В начале своего хода посмотри верхнюю карту своей колоды. Можешь положить ее вниз своей колоды.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7445,14 +7471,14 @@
  },
  {
   "id": "ftg_card_102",
-  "name": "Призрачный тик",
+  "name": "Призрачный мимик",
   "type": "creature",
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_102.png",
   "attack": 1,
   "defense": 9,
-  "description": "Когда Призрачный тик покидает игру, тяни нижнюю карту из своей колоды.",
+  "description": "Когда Призрачный мимик покидает игру, тяни нижнюю карту из своей колоды.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7628,7 +7654,7 @@
   "image": "/content/cards/images/ftg_card_109.png",
   "attack": 1,
   "defense": 8,
-  "description": "ПРИЕМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
+  "description": "ПРИЕМ >>> Выбери название карты. Выбери игрока. Удади из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7733,7 +7759,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_112.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует Существо на Песчаной земле.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует Существо на Песчаной земле.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7758,7 +7784,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_113.png",
-  "description": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Милой земле.",
+  "description": "Каждое твое существо получает +2 АТК в этот ход, пока атакует существо на Милой земле.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7783,7 +7809,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/ftg_card_114.png",
-  "description": "Потрать 1 Действие >>> Выбранное Существо на этой линии получает +1 ATK в этом ходу за каждые 5 карт в твоей стопке сброса.",
+  "description": "Потрать 1 Действие >>> Выбранное Существо на этой линии получает +1 АТК в этот ход за каждые 5 карт в твоей стопке сброса.",
   "deckSet": "ftg",
   "abilities": [
    {
@@ -7881,7 +7907,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_2.png",
-  "description": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать какрту в руку своему партнеру.",
+  "description": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнеру.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -7980,7 +8006,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/grand_prix_card_4.png",
-  "description": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложить Пляжную вечеринку в руку партнера.",
+  "description": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложть Пляжную вечеринку в руку партнера.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -8074,7 +8100,7 @@
   "image": "/content/cards/images/grand_prix_card_7.png",
   "attack": 3,
   "defense": 8,
-  "description": "ПРИЕМ >>> Выбранное существо получает столько +ATK сколько стоят все карты партнерства под контролем твоей команды.",
+  "description": "ПРИЕМ >>> Выбранное существо получает столько +АТК сколько стоят все карты партнерства под контролем твоей команды.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -8108,7 +8134,7 @@
   "cost": 1,
   "landType": "sand",
   "image": "/content/cards/images/grand_prix_card_8.png",
-  "description": "В начале фазы сражения твоей или твоего партнера, если ты или партнер сыграл существо стоимостью 2 и более в этот ход, другой партнер может тянуть карту.",
+  "description": "Песчаное партнерство В начале фазы сражения твоей или твоего партнера, если ты или партнер сыграл существо стоимостью 2 и более в этот ход, другой партнер может тянуть карту.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -8451,14 +8477,14 @@
  },
  {
   "id": "grand_prix_card_19",
-  "name": "Замороженный патрилег",
+  "name": "Замороженный патрилед",
   "type": "creature",
   "cost": 1,
   "landType": "ice",
   "image": "/content/cards/images/grand_prix_card_19.png",
   "attack": 1,
   "defense": 6,
-  "description": "Когда Замороженный патрилег вступает в игру, можешь Заморозить Землю на этой линии.",
+  "description": "Когда Замороженный патрилед вступает в игру, можешь Заморозить Землю на этой линии.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -8520,41 +8546,13 @@
   ]
  },
  {
-  "id": "grand_prix_card_23",
-  "name": "Мягкий рекрум",
-  "type": "creature",
-  "cost": 1,
-  "landType": "ice",
-  "image": "/content/cards/images/grand_prix_card_23.png",
-  "attack": 2,
-  "defense": 5,
-  "description": "Когда Мягкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
-  "deckSet": "grand_prix",
-  "abilities": [
-   {
-    "kind": "passive",
-    "trigger": "on_enters_play",
-    "effect": {
-     "op": "gain_actions",
-     "amount": 1
-    },
-    "text": "Когда Мягкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
-    "conditions": [
-     {
-      "kind": "while_lane_empty_opponent"
-     }
-    ]
-   }
-  ]
- },
- {
   "id": "grand_prix_card_24",
   "name": "Товарищество",
   "type": "companion",
   "cost": 2,
   "landType": "ice",
   "image": "/content/cards/images/grand_prix_card_24.png",
-  "description": "Каждый раз когда существо противника наносит урон твоей Команде, нанеси 1 уон Команде противника.",
+  "description": "Ледяное партнерство Каждый раз когда существо противника наносит урон твоей Команде, нанеси 1 урон Команде противника.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -8768,7 +8766,7 @@
   "image": "/content/cards/images/grand_prix_card_32.png",
   "attack": 1,
   "defense": 7,
-  "description": "+1 АТК за каждую землю Бесполезных болотом в игре.",
+  "description": "+1 АТК за каждую землю Бесполезных болот в игре.",
   "deckSet": "grand_prix",
   "abilities": [
    {
@@ -8988,7 +8986,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/gunter_card_1.png",
-  "description": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника).",
+  "description": "Каждое существо в игре получает +1 АТК в этом ходу (включая существ противника).",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9108,7 +9106,7 @@
   "cost": 2,
   "landType": "ice",
   "image": "/content/cards/images/gunter_card_9.png",
-  "description": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном.",
+  "description": "Твое существо на этой земле получает +1 АТК во время твоего хода за каждую землю с Ледяным жетоном.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9174,7 +9172,7 @@
   "image": "/content/cards/images/gunter_card_12.png",
   "attack": 2,
   "defense": 6,
-  "description": "Ледяной душегуб вступает в игру только на земле с ледяным жетоном.",
+  "description": "Ледяной душегуб вступает в игру только на земли с ледяным жетоном.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9223,7 +9221,7 @@
   "image": "/content/cards/images/gunter_card_15.png",
   "attack": 2,
   "defense": 6,
-  "description": "+4 ATK, если обе земли на этой линии имеют Ледяные жетоны.",
+  "description": "+4 АТК, если обе земли на этой линии имеют Ледяные жетоны.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9256,7 +9254,7 @@
   "image": "/content/cards/images/gunter_card_16.png",
   "attack": 1,
   "defense": 7,
-  "description": "Ледяной диверсант получает +1 ATK за каждую землю с ледяным жетоном.",
+  "description": "Ледяной диверсант получает +1 АТК за каждую землю с Ледяным жетоном.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9483,7 +9481,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/gunter_card_26.png",
-  "description": "Выбранное существо под твоим контролем получает +2 ATK за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
+  "description": "Выбранное существо под твоим контролем получает +2 АТК за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9548,7 +9546,7 @@
   "image": "/content/cards/images/gunter_card_30.png",
   "attack": 3,
   "defense": 4,
-  "description": "Усталый библиотекарь вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его.",
+  "description": "Усталый библиотекарь вступает в игру неактивным и не подготовлен в начале твоего хода. Всякий раз, когда он меняет линию, подготовь его.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9624,7 +9622,7 @@
   "image": "/content/cards/images/gunter_card_34.png",
   "attack": 4,
   "defense": 5,
-  "description": "В начале своего хода перемести Усталого вомбама на пустую землю под твоим контролем. Если не смог, то перемести на пустую землю твоего противника.",
+  "description": "В начале своего хода перемести Усталого вомбата на пустую землю под твоим контролем. Если не смог, то перемести на пустую землю твоего противника.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9647,7 +9645,7 @@
   "image": "/content/cards/images/gunter_card_36.png",
   "attack": 5,
   "defense": 6,
-  "description": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его.",
+  "description": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода. Всякий раз, когда он меняет линию, подготовь его.",
   "deckSet": "gunter",
   "abilities": [
    {
@@ -9862,7 +9860,7 @@
   "image": "/content/cards/images/ice_king_card_8.png",
   "attack": 1,
   "defense": 8,
-  "description": "Существа на землях с ледяным жетоном получают -1 АТК.",
+  "description": "Существа на землях с ледяным жетоном получают -1 ATK.",
   "deckSet": "ice_king",
   "abilities": [
    {
@@ -9955,7 +9953,7 @@
  },
  {
   "id": "ice_king_card_14",
-  "name": "Защищенный Водила",
+  "name": "Зашибенный Водила",
   "type": "creature",
   "cost": 1,
   "landType": "ice",
@@ -10114,7 +10112,7 @@
   "image": "/content/cards/images/ice_king_card_23.png",
   "attack": 2,
   "defense": 9,
-  "description": "Ослепительная Люси получает +1 АТК за каждую землю с ледяным жетоном под контролем игроков.",
+  "description": "Ослепительная Люси получает +1 ATK за каждую землю с ледяным жетоном под контролем игроков.",
   "deckSet": "ice_king",
   "abilities": [
    {
@@ -10366,7 +10364,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/ice_king_card_37.png",
-  "description": "Нанеси 1 Урон выбранному существу. Если это существо на земле с Ледным жетоном, то вместо 1 нанеси 3 Урона.",
+  "description": "Нанеси 1 Урон выбранному существу. Если это существо на земле с Ледяным жетоном, то вместо 1 нанеси 3 Урона.",
   "deckSet": "ice_king",
   "abilities": [
    {
@@ -10695,7 +10693,7 @@
   "image": "/content/cards/images/jake_card_18.png",
   "attack": 0,
   "defense": 7,
-  "description": "Царь полей получает +1 ATK за каждое другое Кукурузное существо под твоим контролем.",
+  "description": "Царь полей получает +1 АТК за каждое другое Кукурузное существо под твоим контролем.",
   "deckSet": "jake",
   "abilities": [
    {
@@ -10732,7 +10730,7 @@
   "image": "/content/cards/images/jake_card_19.png",
   "attack": 1,
   "defense": 6,
-  "description": "+1 ATK за каждое соседнее Кукурузное поле.",
+  "description": "+1 АТК за каждое соседнее Кукурузное поле.",
   "deckSet": "jake",
   "abilities": [
    {
@@ -10842,7 +10840,7 @@
   "cost": 2,
   "landType": "rainbow",
   "image": "/content/cards/images/jake_card_28.png",
-  "description": "Каждое твое Кукурузное существо получает +1 ATK в этом ходу за каждый уникальный тип земель под твоим контролем.",
+  "description": "Каждое твое Кукурузное существо получает +1 АТК в этом ходу за каждый уникальный тип земель под твоим контролем.",
   "deckSet": "jake",
   "abilities": [
    {
@@ -11002,6 +11000,7 @@
   "image": "/content/cards/images/jake_card_37.png",
   "attack": 2,
   "defense": 7,
+  "description": "Она отвлекает тебя клинком, чтобы отдубасить тебя сумкой.",
   "deckSet": "jake",
   "abilities": []
  },
@@ -11057,7 +11056,7 @@
   "image": "/content/cards/images/jake_2v2_card_3.png",
   "attack": 3,
   "defense": 8,
-  "description": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 ATK в этом ходу.",
+  "description": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 АТК в этом ходу.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11129,7 +11128,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/jake_2v2_card_5.png",
-  "description": "Дружественные существа получают +1 ATK до начала следующей фазы сражения. Затем каждое существо наносит урон равный его ATK существу противника на этой линии.",
+  "description": "Дружественные существа получают +1 АТК до начала следующей фазы сражения. Затем каждое существо наносит урон равный его АТК существу противника на этой линии.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11190,7 +11189,7 @@
   "cost": 2,
   "landType": "good",
   "image": "/content/cards/images/jake_2v2_card_7.png",
-  "description": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 ATK в этом ход.",
+  "description": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 АТК в этот ход.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11360,7 +11359,7 @@
   "image": "/content/cards/images/jake_2v2_card_15.png",
   "attack": 3,
   "defense": 8,
-  "description": "Пока у ЛОбнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
+  "description": "Пока у Обнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11493,7 +11492,7 @@
   "image": "/content/cards/images/jake_2v2_card_20.png",
   "attack": 2,
   "defense": 6,
-  "description": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа.",
+  "description": "Когда Защищенный зебрарог атакует, можешь восстановить 1 урон у соседнего существа.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11552,7 +11551,7 @@
   "image": "/content/cards/images/jake_2v2_card_23.png",
   "attack": 3,
   "defense": 7,
-  "description": "+1 ATK за каждую Тимборк под контролем твоей команды. Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку.",
+  "description": "+1 АТК за каждую Тимворк под контролем твоей команды. Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11747,7 +11746,7 @@
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/jake_2v2_card_28.png",
-  "description": "Когда выбранное существо атакует в этом ход, оно покидает игру перед фазой сражения, сними весь урон с него за это.",
+  "description": "Когда выбранное существо атакует в этот ход, оно покидает игру перед фазой сражения, сними весь урон с него за это.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11801,7 +11800,7 @@
   "image": "/content/cards/images/jake_2v2_card_30.png",
   "attack": 1,
   "defense": 8,
-  "description": "Когда Кормежник вступает в игру, следующее существо введенное в игру в этом ход будет стоить на 1 меньше.",
+  "description": "Когда Кормежник вступает в игру, следующее существо введенное в игру в этот ход будет стоить на 1 меньше.",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11870,7 +11869,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/jake_2v2_card_36.png",
-  "description": "Если выбранное существо под твоим контролем наносит 1 и более урона противнику в этом ход, то нанеси 2 урона этому же противнику. Как сделал это, передай какрту в руку своему партнеру.",
+  "description": "Если выбранное существо под твоим контролем наносит 1 и более урона противнику в этот ход, то нанеси 2 урона этому же противнику. Как сделал это, передай карту в руку своему партнеру. 2V2",
   "deckSet": "jake_2v2",
   "abilities": [
    {
@@ -11999,7 +11998,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_6.png",
   "attack": 1,
   "defense": 12,
-  "description": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 ATK в этом ходу.",
+  "description": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 АТК в этот ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12074,7 +12073,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_10.png",
   "attack": 2,
   "defense": 10,
-  "description": "Когда песчаное существо вступает в игру во время твоего хода (включая Акулу), оно получает +1 ATK в этом ходу.",
+  "description": "Когда песчаное существо вступает в игру во время твоего хода (включая Акулу), оно получает +1 АТК в этот ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12111,7 +12110,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_12.png",
   "attack": 2,
   "defense": 9,
-  "description": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо вступившее в игру в этом ходу.",
+  "description": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо вступившее в игру в этом ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12179,7 +12178,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_16.png",
   "attack": 2,
   "defense": 7,
-  "description": "ПРИЕМ >>> Получи 1 Действие в этом ходу.",
+  "description": "ПРИЕМ >>> Получи 1 Действие в этот ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12201,7 +12200,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_17.png",
   "attack": 0,
   "defense": 4,
-  "description": "+2 ATK за каждый Домашний кактус под твоим контролем.",
+  "description": "+2 АТК за каждый Домашний кактус под твоим контролем.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12237,7 +12236,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_19.png",
   "attack": 5,
   "defense": 6,
-  "description": "Замерянный голем стоит на 1 меньше за каждое другое существо сыгранное в этом ходу.",
+  "description": "Затерянный голем стоит на 1 меньше за каждое другое существо сыгранное в этот ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12360,7 +12359,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lady_rainicorn_card_25.png",
-  "description": "Выбранное песчаное существо получает +2 ATK в этом ход за каждое существо, вступившее в игру на соседнюю линию в этом ходу.",
+  "description": "Выбранное песчаное существо получает +2 АТК в этот ход за каждое существо, вступившее в игру на соседнюю линию в этот ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12395,7 +12394,6 @@
   "image": "/content/cards/images/lady_rainicorn_card_33.png",
   "attack": 1,
   "defense": 5,
-  "description": "Ложись на песок, подвигай руками и ногами, и она придет к тебе.",
   "deckSet": "lady_rainicorn",
   "abilities": []
  },
@@ -12408,7 +12406,7 @@
   "image": "/content/cards/images/lady_rainicorn_card_36.png",
   "attack": 0,
   "defense": 6,
-  "description": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этом ходу.",
+  "description": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 АТК в этот ход.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12440,56 +12438,13 @@
   ]
  },
  {
-  "id": "lady_rainicorn_card_37",
-  "name": "Персиковая Джинни",
-  "type": "spell",
-  "cost": 0,
-  "landType": "rainbow",
-  "image": "/content/cards/images/lady_rainicorn_card_37.png",
-  "description": "Когда песнаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этот ход.",
-  "deckSet": "lady_rainicorn",
-  "abilities": [
-   {
-    "kind": "passive",
-    "trigger": "on_enters_play",
-    "conditions": [
-     {
-      "kind": "if_payload_land_type",
-      "landType": "sand"
-     },
-     {
-      "kind": "if_payload_player_self"
-     },
-     {
-      "kind": "if_payload_other"
-     }
-    ],
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "each_creature_yours"
-     },
-     "stat": "attack",
-     "amount": 1,
-     "duration": "this_turn",
-     "filter": {
-      "cardIds": [
-       "lady_rainicorn_card_36"
-      ]
-     }
-    },
-    "text": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этот ход."
-   }
-  ]
- },
- {
   "id": "lady_rainicorn_card_38",
   "name": "Непустой гроб",
   "type": "spell",
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lady_rainicorn_card_38.png",
-  "description": "Следующее существо сыгранное тобой в этом ход стоит на 2 действия меньше.",
+  "description": "Следующее существо сыгранное тобой в этот ход стоит на 2 действия меньше.",
   "deckSet": "lady_rainicorn",
   "abilities": [
    {
@@ -12705,7 +12660,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_9.png",
-  "description": "Выбри свое существо и верни его на руку.",
+  "description": "Выбери свое существо и верни его на руку.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -12734,7 +12689,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_11.png",
-  "description": "Выбранное существо под твоим контролем получет -5 АТК в этом ход.\nТяни карту.",
+  "description": "Выбранное существо под твоим контролем получает -5 АТК в этот ход. Тяни карту.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -12803,7 +12758,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lemongrab_card_14.png",
-  "description": "Каждое существо на этой линии получаем -1 АТК (минимум 0).",
+  "description": "Каждое существо на этой линии получает -1 АТК (минимум 0).",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -12866,7 +12821,7 @@
   "cost": 2,
   "landType": "sand",
   "image": "/content/cards/images/lemongrab_card_16.png",
-  "description": "ПРИЕМ >>> Тяни карту за каждое существо введённое в игру на эту землю в этом ход.",
+  "description": "ПРИЕМ >>> Тяни карту за каждое существo введённое в игру на эту землю в этот ход.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -12879,7 +12834,7 @@
  },
  {
   "id": "lemongrab_card_17",
-  "name": "Потлезный зебрарог",
+  "name": "Помпезный зебрарог",
   "type": "creature",
   "cost": 1,
   "landType": "corn",
@@ -12978,38 +12933,8 @@
   ]
  },
  {
-  "id": "lemongrab_card_23",
-  "name": "Кукурузный глазастик",
-  "type": "creature",
-  "cost": 2,
-  "landType": "corn",
-  "image": "/content/cards/images/lemongrab_card_23.png",
-  "attack": 4,
-  "defense": 1,
-  "description": "+1 DEF за каждую различную землю под твоим контролем.",
-  "deckSet": "lemongrab",
-  "abilities": [
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_creature"
-     },
-     "stat": "defense",
-     "amount": {
-      "kind": "per_distinct_lands",
-      "amount": 1
-     },
-     "duration": "aura"
-    },
-    "text": "+1 DEF за каждую различную землю под твоим контролем."
-   }
-  ]
- },
- {
   "id": "lemongrab_card_24",
-  "name": "Зебрарог на подбор",
+  "name": "Зебрарог на подборе",
   "type": "creature",
   "cost": 1,
   "landType": "corn",
@@ -13046,7 +12971,7 @@
   "image": "/content/cards/images/lemongrab_card_26.png",
   "attack": 2,
   "defense": 8,
-  "description": "Когда Рок-н-рольщик вступает в игру, переверни землю на этой линии лицом вниз.\nКогда он покидает игру, переверни ее лицом вверх.",
+  "description": "Когда Рок-н-рольщик вступает в игру, переверни землю на этой линии лицом вниз. Когда он покидает игру, переверни ее лицом вверх.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -13077,12 +13002,12 @@
  },
  {
   "id": "lemongrab_card_28",
-  "name": "Лавина таиса",
+  "name": "Лавина маиса",
   "type": "spell",
   "cost": 1,
   "landType": "corn",
   "image": "/content/cards/images/lemongrab_card_28.png",
-  "description": "Каждое твое существо получаем +1 АТК в этом ходу за каждую землю в игре, перевернутую лицом вниз.",
+  "description": "Каждое твое существо получает +1 АТК в этом ходу за каждую землю в игре, перевернутую лицом вниз.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -13254,7 +13179,7 @@
   "image": "/content/cards/images/lemongrab_card_33.png",
   "attack": 0,
   "defense": 4,
-  "description": "Когда существо под твоим контролем покидает игру, можешь подложить его под эту карту.\n+1 АТК и +1 DEF за каждую карту под ней. Когда она покидает игру сбрось все карты под ней.",
+  "description": "Когда существо под твоим контролем покидает игру, можешь подложить его под эту карту. +1 ATK и +1 DEF за каждую карту под ней. Когда она покидает игру, сбрось все карты под ней.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -13360,7 +13285,7 @@
   "image": "/content/cards/images/lemongrab_card_36.png",
   "attack": 2,
   "defense": 4,
-  "description": "В начале своего хода можешь вернуть Пескомага в руку его владельца. Если сделаешь это, каждое существо под твоим контролем получаем +1 в этом ход.",
+  "description": "В начале своего хода можешь вернуть Пескомага в руку его владельца. Если сделаешь это, каждое существо под твоим контролем получает +1 в этот ход.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -13397,7 +13322,7 @@
   "image": "/content/cards/images/lemongrab_card_37.png",
   "attack": 3,
   "defense": 3,
-  "description": "Пока противник контролируем твое существо, Ска-пион стоит на 1 меньше, чтобы сыграть его.",
+  "description": "Пока противник контролирует твое существо, Ска-пион стоит на 1 меньше, чтобы сыграть его.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -13423,7 +13348,7 @@
   "cost": 1,
   "landType": "sand",
   "image": "/content/cards/images/lemongrab_card_39.png",
-  "description": "Каждое твое существо получаем +1 АТК в этом ходу за каждое существо введённое в игру в этом ходу.",
+  "description": "Каждое твое существо получает +1 АТК в этом ходу за каждое существо введённое в игру в этом ход.",
   "deckSet": "lemongrab",
   "abilities": [
    {
@@ -13456,7 +13381,7 @@
   "image": "/content/cards/images/lich_card_1.png",
   "attack": 1,
   "defense": 7,
-  "description": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 1 меньше.",
+  "description": "ПРИЕМ >>> Твое следующее заклинание в этот ход стоит на 1 меньше.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -13743,7 +13668,7 @@
   "image": "/content/cards/images/lich_card_13.png",
   "attack": 3,
   "defense": 5,
-  "description": "Обжор поглощает другие души (и всё остальное). Если призрачное существо под твоим контролем умирает, положи его карту под обжора - он получит +1 АТК и +2 DEF навсегда.",
+  "description": "Обжор поглощает другие души (и всё остальное). Если призрачное существо под твоим контролем умирает, положи его карту под обжора - он получит +1 ATK и +2 DEF навсегда.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -13829,7 +13754,7 @@
   "image": "/content/cards/images/lich_card_16.png",
   "attack": 0,
   "defense": 7,
-  "description": "Прием >>> Перемешай сброс рубашкой вверх и тяни карты, пока не попадётся Коричный зомби или Прячный скелет, после сыграй их. Если места нет, прием не работает.",
+  "description": "Прием >>> Перемешай сброс рубашкой вверх и тяни карты, пока не попадётся Коричный зомби или Приятный скелет, после сыграй их. Если места нет, прием не работает.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -13853,14 +13778,14 @@
  },
  {
   "id": "lich_card_17",
-  "name": "Прячный скелет",
+  "name": "Приятный скелет",
   "type": "creature",
   "cost": 1,
   "landType": "ghost",
   "image": "/content/cards/images/lich_card_17.png",
   "attack": 2,
   "defense": 4,
-  "description": "\"Добрый вечер!\"\n+1 DEF, если на поле есть ещё один Прячный скелет.",
+  "description": "+1 DEF, если на поле есть ещё один Приятный скелет.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -13897,7 +13822,6 @@
   "image": "/content/cards/images/lich_card_19.png",
   "attack": 1,
   "defense": 6,
-  "description": "\"Не такой уж и сладкий\"",
   "deckSet": "lich",
   "abilities": []
  },
@@ -13910,7 +13834,7 @@
   "image": "/content/cards/images/lich_card_21.png",
   "attack": 3,
   "defense": 3,
-  "description": "Перед смертью больно бросаем косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа).",
+  "description": "Перед смертью больно бросает косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа).",
   "deckSet": "lich",
   "abilities": [
    {
@@ -13965,7 +13889,7 @@
   "image": "/content/cards/images/lich_card_26.png",
   "attack": 1,
   "defense": 6,
-  "description": "Если у противника под контролем находится 2 существа или меньше, получаем +1 АТК.",
+  "description": "Если у противника под контролем находится 2 существа или меньше, получает +1 ATK.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14022,7 +13946,7 @@
   "cost": 1,
   "landType": "ghost",
   "image": "/content/cards/images/lich_card_29.png",
-  "description": "За каждое погибшее на этой линии существо (твоё или противника) восстанавливаем 1 урон всем твоим существам.",
+  "description": "За каждое погибшее на этой линии существо (твоё или противника) восстанавливает 1 урон всем твоим существам.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14082,7 +14006,6 @@
   "image": "/content/cards/images/lich_card_32.png",
   "attack": 1,
   "defense": 4,
-  "description": "\"Му?\"",
   "deckSet": "lich",
   "abilities": []
  },
@@ -14095,7 +14018,7 @@
   "image": "/content/cards/images/lich_card_34.png",
   "attack": 1,
   "defense": 6,
-  "description": "Получаем +1 АТК, когда атакуем существ с жёлтым цветом на них (он просто его не любит).",
+  "description": "Получает +1 АТК, когда атакует существ с жёлтым цветом на них (он просто его не любит).",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14265,7 +14188,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lich_card_42.png",
-  "description": "+2 АТК на этом ходу существу с наименьшим значением АТК из существ под твоим контролем, находящихся в игре. Если таких несколько, применяй на любое из них.",
+  "description": "+2 АТК на этот ход существу с наименьшим значением АТК из существ под твоим контролем, находящихся в игре. Если таких несколько, применяй на любое из них.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14293,7 +14216,7 @@
   "image": "/content/cards/images/lich_card_43.png",
   "attack": 4,
   "defense": 3,
-  "description": "Не отличает своих от чужих.\n\nПри атаке существ противника, если рядом с ним есть союзные существа, нанеси одному из них на твой выбор 2 урона.",
+  "description": "Не отличает своих от чужих. При атаке существ противника, если рядом с ним есть союзные существа, нанеси одному из них на твой выбор 2 урона.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14321,7 +14244,7 @@
   "image": "/content/cards/images/lich_card_44.png",
   "attack": 1,
   "defense": 9,
-  "description": "Питается павшими.\nПриём >>> Уничтожь верхнюю карту сброса противника и получи постоянно +1 АТК. Положи эту карту под него, сбрось все при смерти.",
+  "description": "Питается павшими. Приём >>> Уничтожь верхнюю карту сброса противника и получи постоянно +1 АТК. Положи эту карту под него, сбрось все при смерти.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14380,43 +14303,6 @@
   ]
  },
  {
-  "id": "lich_card_47",
-  "name": "Прямный скелет",
-  "type": "creature",
-  "cost": 1,
-  "landType": "ghost",
-  "image": "/content/cards/images/lich_card_47.png",
-  "attack": 2,
-  "defense": 4,
-  "description": "\"Добрый вечер!\"\n\n+1 DEF, если на поле есть ещё один Прямный скелет.",
-  "deckSet": "lich",
-  "abilities": [
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_creature"
-     },
-     "stat": "defense",
-     "amount": {
-      "kind": "per_target",
-      "target": {
-       "kind": "each_creature"
-      },
-      "amount": 1,
-      "excludeSelf": true,
-      "filter": {
-       "sameCard": true
-      }
-     },
-     "duration": "aura"
-    },
-    "text": "«Добрый вечер!»  +1 DEF, если на поле есть ещё один Прямный скелет."
-   }
-  ]
- },
- {
   "id": "lich_card_48",
   "name": "Муррризрак",
   "type": "creature",
@@ -14425,7 +14311,7 @@
   "image": "/content/cards/images/lich_card_48.png",
   "attack": 1,
   "defense": 4,
-  "description": "Считается призрачным и милым существом одновременно.\nКошачьи жизни: после уничтожения может быть воскрешен с полными жизнями (только 1 раз, по желанию). После этого нельзя вернуть из сброса.",
+  "description": "Считается призрачным и милым существом одновременно. Кошачьи жизни: после уничтожения может быть воскрешен с полными жизнями (только 1 раз, по желанию). После этого нельзя вернуть из сброса.",
   "deckSet": "lich",
   "abilities": [
    {
@@ -14519,7 +14405,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/lsp_card_3.png",
-  "description": "Выбранное существо под твоим контролем получает +1 ATK в этом ход за каждые 5 карт в твоей стопке сброса.",
+  "description": "Выбранное существо под твоим контролем получает +1 АТК в этот ход за каждые 5 карт в твоей стопке сброса.",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -14557,7 +14443,7 @@
   "image": "/content/cards/images/lsp_card_4.png",
   "attack": 1,
   "defense": 5,
-  "description": "Сбрось карту >>> Нога дракона получает +1 ATK в этом ход. (Используй до 5 раз во время своего каждого хода.)",
+  "description": "Сбрось карту >>> Нога дракона получает +1 АТК в этот ход. (Используй до 5 раз во время своего каждого хода.)",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -14590,7 +14476,7 @@
   "image": "/content/cards/images/lsp_card_6.png",
   "attack": 0,
   "defense": 3,
-  "description": "+2 ATK за каждые 5 карт в твоей стпоке сброса.",
+  "description": "+2 АТК за каждые 5 карт в твоей стопке сброса.",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -14621,7 +14507,7 @@
   "image": "/content/cards/images/lsp_card_8.png",
   "attack": 1,
   "defense": 6,
-  "description": "Сбрось карту >>> Геркулаз получает +4 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+  "description": "Сбрось карту >>> Геркулаз получает +4 АТК в этот ход. (Используй только один раз в каждый свой ход.)",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -14900,7 +14786,7 @@
   "cost": 1,
   "landType": "blue",
   "image": "/content/cards/images/lsp_card_19.png",
-  "description": "Выбранное существо под твоим контролем получает +2 ATK в этом ход, за каждое заклинание (включая это) сыгранное мобой в этом ход.",
+  "description": "Выбранное существо под твоим контролем получает +2 АТК в этот ход, за каждое заклинание (включая это) сыгранное тобой в этом ход.",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -15068,7 +14954,7 @@
   "image": "/content/cards/images/lsp_card_27.png",
   "attack": 1,
   "defense": 7,
-  "description": "Когда Липкий мозг вступает в игру заменяя существо, он получает +2 ATK в этом ход.",
+  "description": "Когда Липкий мозг вступает в игру заменяя существо, он получает +2 АТК в этот ход.",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -15194,7 +15080,7 @@
   "image": "/content/cards/images/lsp_card_35.png",
   "attack": 0,
   "defense": 5,
-  "description": "Сбрось карту >>> Хороший песик получает +2 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+  "description": "Сбрось карту >>> Хороший песик получает +2 АТК в этот ход. (Используй только один раз в каждый свой ход.)",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -15223,7 +15109,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/lsp_card_37.png",
-  "description": "Выбранное Болотное существо под твоим контролем получает +2 ATK в этом ход.",
+  "description": "Выбранное Болотное существо под твоим контролем получает +2 АТК в этот ход.",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -15258,7 +15144,7 @@
   "cost": 1,
   "landType": "rainbow",
   "image": "/content/cards/images/lsp_card_39.png",
-  "description": "Уничножь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии.",
+  "description": "Уничтожь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии.",
   "deckSet": "lsp",
   "abilities": [
    {
@@ -15320,7 +15206,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/marceline_card_1.png",
-  "description": "Когда враг сбрасывает карту, твое существо на этой линии получает +1 ATK до конца следующего хода.",
+  "description": "Когда враг сбрасывает карту, твое существо на этой линии получает +1 АТК до конца следующего хода.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -15589,7 +15475,7 @@
   "image": "/content/cards/images/marceline_card_15.png",
   "attack": 1,
   "defense": 11,
-  "description": "Когда враг сбрасывает карту, нанеси ему 1 Урон..",
+  "description": "Когда враг сбрасывает карту, нанеси ему 1 Урон.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -15790,7 +15676,7 @@
   "image": "/content/cards/images/marceline_card_24.png",
   "attack": 0,
   "defense": 10,
-  "description": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней.",
+  "description": "Яростная цыпа получает +1 АТК за каждую единицу урона на ней.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -15894,7 +15780,7 @@
   "cost": 1,
   "landType": "good",
   "image": "/content/cards/images/marceline_card_27.png",
-  "description": "Восстанови ровно 5 урона с существа под твоим контрлем (ни больше, ни меньше).",
+  "description": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше).",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -15961,7 +15847,7 @@
   "image": "/content/cards/images/marceline_card_31.png",
   "attack": 2,
   "defense": 9,
-  "description": "Пока на Бумажном тигре ровно 5 урона, он получает +5 ATK.",
+  "description": "Пока на Бумажном тигре ровно 5 урона, он получает +5 АТК.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -15993,7 +15879,7 @@
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/marceline_card_33.png",
-  "description": "Выбранное существо получает X ATK в этом ходу, где X это число различных типов земель под контролем твоего противника.",
+  "description": "Выбранное существо получает X АТК в этот ход, где X это число различных типов земель под контролем твоего противника.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -16068,14 +15954,14 @@
  },
  {
   "id": "marceline_card_36",
-  "name": "Яросная цыпа",
+  "name": "Яростная цыпа",
   "type": "creature",
   "cost": 0,
   "landType": "rainbow",
   "image": "/content/cards/images/marceline_card_36.png",
   "attack": 0,
   "defense": 5,
-  "description": "Яросная цыпа получает +1 ATK за каждый урон на ней.",
+  "description": "Яростная цыпа получает +1 АТК за каждый урон на ней.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -16097,36 +15983,6 @@
   ]
  },
  {
-  "id": "marceline_card_38",
-  "name": "Яросная наседка",
-  "type": "creature",
-  "cost": 2,
-  "landType": "good",
-  "image": "/content/cards/images/marceline_card_38.png",
-  "attack": 0,
-  "defense": 10,
-  "description": "Яросная цыпа получает +1 ATK за каждую единицу урона на ней.",
-  "deckSet": "marceline",
-  "abilities": [
-   {
-    "kind": "passive",
-    "effect": {
-     "op": "stat_buff",
-     "target": {
-      "kind": "this_creature"
-     },
-     "stat": "attack",
-     "amount": {
-      "kind": "per_damage",
-      "amount": 1
-     },
-     "duration": "aura"
-    },
-    "text": "Яросная цыпа получает +1 ATK за каждую единицу урона на ней."
-   }
-  ]
- },
- {
   "id": "marceline_card_39",
   "name": "Яростный петух",
   "type": "creature",
@@ -16135,7 +15991,7 @@
   "image": "/content/cards/images/marceline_card_39.png",
   "attack": 0,
   "defense": 8,
-  "description": "Яростный петух получает +1 ATK за каждую единицу урона на нем.",
+  "description": "Яростный петух получает +1 АТК за каждую единицу урона на нем.",
   "deckSet": "marceline",
   "abilities": [
    {
@@ -16215,7 +16071,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_7.png",
-  "description": "Твое Существо на этой линии получает +3 ATK.\nВ начале каждого своего хода, сбрось карту.",
+  "description": "Твое Существо на этой линии получает +3 АТК. В начале каждого своего хода, сбрось карту.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16254,7 +16110,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_8.png",
-  "description": "В начале фазы сражения твоей или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее.",
+  "description": "Болотное партнерство В начале фазы сражения твоего или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16387,7 +16243,7 @@
   "image": "/content/cards/images/monika_card_12.png",
   "attack": 3,
   "defense": 9,
-  "description": "Когда Бригадир десерт атакует, нанеси 2 урона выбранному Существу противника на замле с Ледяным жетоном.",
+  "description": "Когда Бригадир десерт атакует, нанеси 2 урона выбранному Существу противника на земле с Ледяным жетоном.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16464,14 +16320,14 @@
  },
  {
   "id": "monika_card_21",
-  "name": "Мяжкий рекрум",
+  "name": "Мягкий рекрут",
   "type": "creature",
   "cost": 1,
   "landType": "ice",
   "image": "/content/cards/images/monika_card_21.png",
   "attack": 2,
   "defense": 5,
-  "description": "Когда Мяжкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
+  "description": "Когда Мягкий рекрут вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16527,7 +16383,7 @@
   "image": "/content/cards/images/monika_card_25.png",
   "attack": 2,
   "defense": 6,
-  "description": "Когда Крок-каскадер вступает в игру, тяни карту за каждое существо, которое отправилось в сброс в этом ход.",
+  "description": "Когда Крок-каскадер вступает в игру, тяни карту за каждое существо, которое отправилось в сброс в этот ход.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16586,7 +16442,7 @@
   "image": "/content/cards/images/monika_card_28.png",
   "attack": 2,
   "defense": 6,
-  "description": "Сбрось карту >>>\nКрок-исследователь получает +ATK равную стоимости сброшенной карты (используй только во время своего хода).",
+  "description": "Сбрось карту >>> Крок-исследователь получает +АТК равную стоимости сброшенной карты (используй только во время своего хода).",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16625,7 +16481,7 @@
   "image": "/content/cards/images/monika_card_30.png",
   "attack": 1,
   "defense": 5,
-  "description": "Когда Крок-эколог на Ледяной земле, он получает +2 ATK.",
+  "description": "Когда Крок-эколог на Ледяной земле, он получает +2 АТК.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16719,7 +16575,7 @@
   "image": "/content/cards/images/monika_card_34.png",
   "attack": 1,
   "defense": 6,
-  "description": "Потрать 1 Действие, ПРИЕМ >>>\nНанеси 1 урон каждому существу противника в игре.",
+  "description": "Потрать 1 Действие, ПРИЕМ >>> Нанеси 1 урон каждому существу противника в игре.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16745,7 +16601,7 @@
   "image": "/content/cards/images/monika_card_35.png",
   "attack": 2,
   "defense": 6,
-  "description": "Уничтожь Тошнотного клопа >>>\nУничтожь выбранное Существо противника на этой линии и любое существо с таким же именем в игре.",
+  "description": "Уничтожь Тошнотного клопа >>> Уничтожь выбранное Существо противника на этой линии и любое существо с таким же именем в игре.",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16771,7 +16627,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_37.png",
-  "description": "Существа противника получают -2 ATK в этом ход (минимум 0).",
+  "description": "Существа противника получают -2 АТК в этот ход (минимум 0).",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16824,7 +16680,7 @@
   "cost": 1,
   "landType": "swamp",
   "image": "/content/cards/images/monika_card_39.png",
-  "description": "Сбрось карту >>> Твое Существо на этой линии получает +1 ATK в этом ход. (Используй любое количество раз во время своего хода).",
+  "description": "Сбрось карту >>> Твое Существо на этой линии получает +1 АТК в этот ход. (Используй любое количество раз во время своего хода).",
   "deckSet": "monika",
   "abilities": [
    {
@@ -16854,7 +16710,7 @@
   "image": "/content/cards/images/tree_trunks_card_1.png",
   "attack": 2,
   "defense": 10,
-  "description": "Если у Хлопкового великана осталось 3 DEF или меньше, его ATK увеличивается в 2 раза.",
+  "description": "Если у Хлопкового великана осталось 3 DEF или меньше, его АТК увеличивается в 2 раза.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -16889,7 +16745,7 @@
   "image": "/content/cards/images/tree_trunks_card_2.png",
   "attack": 2,
   "defense": 6,
-  "description": "Укротитель: +1 ATK против существ со стоимостью ровно 2.",
+  "description": "Укротитель: +1 АТК против существ со стоимостью ровно 2.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -16915,7 +16771,7 @@
   "image": "/content/cards/images/tree_trunks_card_4.png",
   "attack": 2,
   "defense": 7,
-  "description": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре.\nПрием >>> Вылечи существо под твоим контролем на 1 или 2 урона.",
+  "description": "+1 DEF каждому хлопковому существу под твоим контролем, пока Король в игре. Прием >>> Вылечи существо под твоим контролем на 1 или 2 урона.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -16982,7 +16838,7 @@
   "image": "/content/cards/images/tree_trunks_card_5.png",
   "attack": 2,
   "defense": 10,
-  "description": "Бей её сильнее - ей всё равно.\nПодушка боли не может получить больше 4 урона за удар существа противника, зато магия наносит ей на 2 единицы урона больше.",
+  "description": "Бей её сильнее - ей всё равно. Подушка боли не может получить больше 4 урона за удар существа противника, зато магия наносит ей на 2 единицы урона больше.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17018,7 +16874,7 @@
   "image": "/content/cards/images/tree_trunks_card_7.png",
   "attack": 1,
   "defense": 12,
-  "description": "+1 ATK против болотных и песаных существ (Ведро!).\nПрием >>> Весь урон, который должны были получить другие союзные существа, получит она.",
+  "description": "+1 АТК против болотных и песчаных существ (Ведро!). Прием >>> весь урон, который должны были получить другие союзные существа, получит она.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17131,7 +16987,6 @@
   "image": "/content/cards/images/tree_trunks_card_14.png",
   "attack": 4,
   "defense": 2,
-  "description": "Он очень зол.",
   "deckSet": "tree_trunks",
   "abilities": []
  },
@@ -17144,7 +16999,7 @@
   "image": "/content/cards/images/tree_trunks_card_16.png",
   "attack": 2,
   "defense": 9,
-  "description": "Убивая существо, положи его карту под Берсеркорову, чтобы получить навсегда +1 ATK. Скинь все карты, если Берсеркорова выходит из игры.",
+  "description": "Убивая существо, положи его карту под Берсеркорову, чтобы получить навсегда +1 АТК. Скинь все карты, если Берсеркорова выходит из игры.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17192,7 +17047,7 @@
   "image": "/content/cards/images/tree_trunks_card_18.png",
   "attack": 1,
   "defense": 7,
-  "description": "Если на поле присутствует Мамуля камнепух под твоим контролем, при защите Малыш получает +2 ATK.",
+  "description": "Если на поле присутствует Мамуля камнепух под твоим контролем, при защите Малыш получает +2 АТК.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17223,7 +17078,7 @@
   "image": "/content/cards/images/tree_trunks_card_20.png",
   "attack": 3,
   "defense": 7,
-  "description": "Если на поле присутствует Малыш камнепух под твоим контролем, Мамуля получает +1 ATK за каждого.",
+  "description": "Если на поле присутствует Малыш камнепух под твоим контролем, Мамуля получает +1 АТК за каждого.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17380,7 +17235,7 @@
   "image": "/content/cards/images/tree_trunks_card_28.png",
   "attack": 2,
   "defense": 4,
-  "description": "Каждый раз после того, как существо противника наносит Косячьей Девятке урон, можешь переместить её на пустую соседнюю землю.",
+  "description": "Каждый раз после того, как существо противника наносит Котячьей Девятке урон, можешь переместить её на пустую соседнюю землю.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17443,7 +17298,7 @@
   "image": "/content/cards/images/tree_trunks_card_32.png",
   "attack": 0,
   "defense": 8,
-  "description": "Стоит на 1 действие меньше за каждое другое существо в игре под твоим контролем.\nПрием >>> Пироитмяк: нанеси 2 урона существу, у которого осталось меньше всего DEF и ещё 1 - тому, у которого больше всего.",
+  "description": "Стоит на 1 действие меньше за каждое другое существо в игре под твоим контролем. Прием >>> Пирошмяк: нанеси 2 урона существу, у которого осталось меньше всего DEF и ещё 1 - тому, у которого больше всего.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17466,7 +17321,7 @@
   "image": "/content/cards/images/tree_trunks_card_33.png",
   "attack": 1,
   "defense": 3,
-  "description": "Ей просто норм.\n+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+  "description": "Ей просто норм. +2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
   "deckSet": "tree_trunks",
   "abilities": [
    {
@@ -17641,7 +17496,7 @@
   "image": "/content/cards/images/tree_trunks_card_39.png",
   "attack": 0,
   "defense": 5,
-  "description": "\"Не бейте меня, пожалуйста!\"\nПриём >>> Если у тебя 10 жизней или больше, +1 ATK любому существу в игре на этом ходу, иначе +3. Не суммируется с приемами.",
+  "description": "\"Не бейте меня, пожалуйста!\" Приём >>> Если у тебя 10 жизней или больше, +1 АТК любому существу в игре на этот ход, иначе +3. Не суммируется с приемами.",
   "deckSet": "tree_trunks",
   "abilities": [
    {

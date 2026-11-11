@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a deduplicated content catalog from the corrected scan JSONs."""
+"""Build a deduplicated content catalog from verified re-OCR vision scans."""
 import argparse
 import hashlib
 import json
@@ -10,9 +10,10 @@ from collections import Counter, defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "исходники", "карты")
+REOCR = os.path.join(ROOT, "исходники", "cards_reocr")
 OLD = os.path.join(ROOT, "content")
 OUT = os.path.join(ROOT, "content-new")
-REPORT = os.path.join(ROOT, ".tmp-reocr", "content_build_report.md")
+REPORT = os.path.join(ROOT, "исходники", "cards_reocr", "content_build_report.md")
 
 LAT2CYR = str.maketrans(
     {
@@ -58,8 +59,10 @@ def norm_desc(value):
 
 def sim(a, b):
     import difflib
-
-    return difflib.SequenceMatcher(None, norm_desc(a), norm_desc(b)).ratio()
+    na, nb = norm_desc(a), norm_desc(b)
+    if na == nb:
+        return 1.0
+    return difflib.SequenceMatcher(None, na, nb).ratio()
 
 
 def natural(key):
@@ -96,26 +99,30 @@ def medoid_description(scans):
 
 def load_scans():
     scans = []
-    for filename in sorted(os.listdir(SRC), key=natural):
+    for filename in sorted(os.listdir(REOCR), key=natural):
         if not filename.endswith(".json"):
             continue
-        data = read_json(os.path.join(SRC, filename))
+        rdata = read_json(os.path.join(REOCR, filename))
+        sdata = read_json(os.path.join(SRC, filename))
         stem = filename[:-5]
+        img_path = os.path.join(SRC, stem + ".png")
+        sha256 = hashlib.sha256(open(img_path, "rb").read()).hexdigest()
         scans.append(
             {
                 "file": filename,
                 "stem": stem,
                 "pack": stem.split("_card_")[0] if "_card_" in stem else "other",
-                "name": data.get("name", ""),
-                "type": data.get("type", ""),
-                "typeCategory": data.get("typeCategory", ""),
-                "landType": data.get("landType", ""),
-                "cost": data.get("cost"),
-                "attack": data.get("attack"),
-                "defense": data.get("defense"),
-                "description": data.get("description") or "",
-                "flavor": data.get("flavor") or "",
-                "sha256": data.get("sha256"),
+                "name": rdata.get("name_ru") or sdata.get("name") or "",
+                "name_en": rdata.get("name_en") or "",
+                "type": rdata.get("type") or sdata.get("type") or "",
+                "typeCategory": sdata.get("typeCategory") or "creature",
+                "landType": sdata.get("landType") or "rainbow",
+                "cost": rdata.get("cost"),
+                "attack": rdata.get("attack"),
+                "defense": rdata.get("defense"),
+                "description": (rdata.get("description") or "").strip(),
+                "flavor": (rdata.get("flavor") or "").strip(),
+                "sha256": sha256,
             }
         )
     return scans
@@ -131,7 +138,7 @@ def cluster_by_description(group):
             if score > best_score:
                 best_score = score
                 best = cluster
-        if best is not None and best_score >= 0.9:
+        if best is not None and best_score >= 0.75:
             best.append(scan)
         else:
             clusters.append([scan])
@@ -155,9 +162,12 @@ def build_card(cluster, prefix):
     flavors = Counter(scan["flavor"] for scan in scans if scan["flavor"])
     flavor = flavors.most_common(1)[0][0] if flavors else representative["flavor"]
     types = Counter(scan["type"] for scan in scans)
+    names_en = Counter(scan["name_en"] for scan in scans if scan["name_en"])
+    name_en = names_en.most_common(1)[0][0] if names_en else ""
     return {
         "id": card_id,
         "name": name,
+        "name_en": name_en,
         "type": types.most_common(1)[0][0],
         "typeCategory": scans[0]["typeCategory"],
         "landType": scans[0]["landType"],
@@ -188,6 +198,7 @@ def main():
             norm_name(scan["name"]),
             scan["typeCategory"],
             scan["landType"],
+            scan["cost"],
             scan["attack"],
             scan["defense"],
         )
@@ -277,6 +288,7 @@ def main():
             for desc, stems in by_desc.items():
                 details.append(f"{', '.join(stems)}")
             lines.append(f"- {group[0]['name']}: " + " | ".join(details))
+    os.makedirs(os.path.dirname(REPORT), exist_ok=True)
     open(REPORT, "w", encoding="utf-8").write("\n".join(lines) + "\n")
     print(f"cards: {len(cards)} (scans {len(scans)}), companions: {len(companion)}")
     print(f"report: {REPORT}")

@@ -6,7 +6,7 @@
   "type": "Радужное заклинание",
   "attack": 3,
   "defense": 1,
-  "description": "Поберегись!",
-  "flavor": "",
+  "description": "",
+  "flavor": "Поберегись!",
   "set_code": "CP4"
 }

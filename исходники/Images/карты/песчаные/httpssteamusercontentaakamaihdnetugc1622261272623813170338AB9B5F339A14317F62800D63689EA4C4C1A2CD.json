@@ -1,0 +1,15 @@
+{
+  "name": "Зелёная кобра",
+  "name_en": "GREEN COBRA",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда зелёная кобра выходит из игры, нанеси 1 урон выбранному существу в этой зоне.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "bee0211b8af544bdfc66e4cd095e97e1de6aeba07b71916bf7686ff60dea925a",
+  "landType": "sandy"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Зелёный огр тусовщик",
+  "name_en": "PARTY GREEN OGRE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда существо под твоим контролем выходит из игры, сними 1 урон с зелёного огра тусовщика.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "30e8c8ab8c4b461b4b8961d0b4369fcdf0815ea24000a42097890385dc372ef5",
+  "landType": "sandy"
+}

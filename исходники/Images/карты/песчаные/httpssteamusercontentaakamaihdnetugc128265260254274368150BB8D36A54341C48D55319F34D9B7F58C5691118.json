@@ -1,0 +1,15 @@
+{
+  "name": "Камнекраб навигатор",
+  "name_en": "SAND CRAB NAVIGATOR",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Каждый раз, когда камнекраб навигатор получает урон от существа, ты можешь переместить это существо на соседнюю пустую землю.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "6f20734a3932e8ca18e0ee6995b5516ec82dafdcaf86c306737369c32a5f95e3",
+  "landType": "sandy"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Остров тусовок",
+  "name_en": "PARTY ISLAND",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Перемести существо с этой зоны в пустую. Ты можешь переместить другое существо под твоим контролем в эту зону.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "0b62456a91b7b818acd5fad21de221129d5909eaea97d3d28ac73fe2250222c2",
+  "landType": "sandy"
+}

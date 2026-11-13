@@ -1,0 +1,15 @@
+{
+  "name": "Песчаный краб моряк",
+  "name_en": "SAND CRAB SAILOR",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Когда песчаный краб моряк входит в игру, ты можешь бесплатно разыграть существо за 1 действие.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "0b01a21961890023b6dd9d7583c5a2302afe553b49b13c367957161aed67c600",
+  "landType": "sandy"
+}

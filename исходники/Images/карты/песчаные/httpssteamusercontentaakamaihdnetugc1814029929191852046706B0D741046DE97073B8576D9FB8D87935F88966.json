@@ -1,0 +1,15 @@
+{
+  "name": "Циклон",
+  "name_en": "CYCLONE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 4 урона всем существам\nне за 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "70848e9502cf1bb07c40638b69acd4947498c42d13d1d160561ac418212dc5cc",
+  "landType": "sandy"
+}

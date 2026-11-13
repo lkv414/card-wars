@@ -1,0 +1,15 @@
+{
+  "name": "Зелёная кактугидра",
+  "name_en": "GREEN CACTUS HYDRA",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 4,
+  "description": "+2 к атаке за каждую зелёную кактугидру\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9333ff5b2b307c5c735707b3f6bb927193b79cc52daa9835f1da748137031e3c",
+  "landType": "sandy"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Освежающие апартаменты",
+  "name_en": "REFRESHING APARTMENTS",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твои существа в этой зоне получают +1 к атаке за каждую разыгранную в этот ход не песчаную карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "84c8f09c25902ffcab861c94d1f0aaa30ebdb1d41586db964b4c7f168e01bfde",
+  "landType": "sandy"
+}

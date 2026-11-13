@@ -1,0 +1,15 @@
+{
+  "name": "Обжигающая подача",
+  "name_en": "SCORCHING SERVE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное существо под контролем соперника. Каждый соперник берёт карты, равной стоимости этого существа.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "f2fa1e536567f22cfe6384ee6aa92bb3802a1eebfe1a02f50060d7704e4288bf",
+  "landType": "sandy"
+}

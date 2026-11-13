@@ -1,0 +1,15 @@
+{
+  "name": "Жестокая Чаша",
+  "name_en": "CRUEL CUP",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 2,
+  "description": "После того как ты разыграл\nзаклинание, нанеси 2 урона существу\nпод контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9073967c5258e75d62cfe641bcc085b1a944ffc9801f63451985f3860a3ad381",
+  "landType": "sandy"
+}

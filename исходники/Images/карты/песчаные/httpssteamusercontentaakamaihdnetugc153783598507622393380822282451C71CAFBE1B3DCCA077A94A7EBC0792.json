@@ -1,0 +1,15 @@
+{
+  "name": "Мариачи",
+  "name_en": "MARIACHI",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "ФЛЮП >>> Нанеси выбранному существу\n1 урон за каждое существо, которое\nвошло в игру в этом ходу.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "dda7e7240ed9b587cf5e5d535493c3ba65683702fe7c6ba10c9a8e10e13ae024",
+  "landType": "sandy"
+}

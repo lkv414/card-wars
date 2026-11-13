@@ -1,0 +1,15 @@
+{
+  "name": "Химический стакан",
+  "name_en": "CHEMICAL BEAKER",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда ты разыгрываешь своё первое заклинание в каждом ходу, ты можешь применить его эффекты второй раз.\n(Ты можешь выбрать разные цели.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7c36730acf55d8dd09958aecbb4f42247a3b5e9e9ffee1daa2d009d5051cb094",
+  "landType": "sandy"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Зелье энергии",
+  "name_en": "ENERGY POTION",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Получи 2 действия в\nтвой следующий ход.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "bf202c2f0d310246c146bfcc64e8584e1242bea3cc6c30448edbf0959d132233",
+  "landType": "corn"
+}

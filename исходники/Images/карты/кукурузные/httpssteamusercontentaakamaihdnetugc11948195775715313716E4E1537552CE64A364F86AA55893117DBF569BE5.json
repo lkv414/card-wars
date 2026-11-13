@@ -1,0 +1,15 @@
+{
+  "name": "Почитаемый кукугоблин",
+  "name_en": "REVERED CORN GOBLIN",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 4,
+  "description": "Поглощение\nФЛЮП >>> Убери 1 или 2 жетона\n(кроме урона) с выбранного существа.\nЗатем положи столько же урона на\nвыбранное существо.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f78ff2836362121e62eb7df85ddea2b67ca74a5d2ca02e345617c71912ec0c59",
+  "landType": "corn"
+}

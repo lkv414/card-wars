@@ -1,0 +1,15 @@
+{
+  "name": "Лагерь зёрнышек",
+  "name_en": "KERNELS CAMP",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Существа под твоим контролем за\n1 действие в этой зоне получают\n+1 к атаке и +1 к защите.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d4f89a8cc9d3cf4b9fe5534a77332b9022f191cb8eb8c04342b7aa5f15b28d11",
+  "landType": "corn"
+}

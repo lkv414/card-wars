@@ -1,0 +1,15 @@
+{
+  "name": "Тыквустьер",
+  "name_en": "PUMPKINEER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 5,
+  "description": "ФЛЮП >>> Нанеси 1 урон выбранному существу. Сделай это по разу за каждое кукурузное поле под твоим контролем.\nНельзя выбрать одно существо больше одного раза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a64b11d8dfaa74ef446ddd99d2bd6f9be6bd8ae7c4f7c0fbafb3a4ef2895ecb2",
+  "landType": "corn"
+}

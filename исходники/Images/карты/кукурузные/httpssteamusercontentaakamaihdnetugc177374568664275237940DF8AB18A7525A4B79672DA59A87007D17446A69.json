@@ -1,0 +1,15 @@
+{
+  "name": "Кукурузный друид",
+  "name_en": "CORN DRUID",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Флюпнутые существа под твоим контролем получают +1 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "69a0820b4af8b128c5ab135ecb38d089e6e96863e469c77f9bd3e35208915c7c",
+  "landType": "corn"
+}

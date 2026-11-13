@@ -1,0 +1,15 @@
+{
+  "name": "Кукурузная королева",
+  "name_en": "CORN QUEEN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "+1 к атаке за каждое флюпнутое существо\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "17b5b0a41e8dfbfe9c812bda2fb6c8df5b7fddd021ed49dcc16479785395add1",
+  "landType": "corn"
+}

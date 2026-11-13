@@ -1,0 +1,15 @@
+{
+  "name": "Сено на выброс",
+  "name_en": "HAY IS FOR HORSES",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Когда выбранное существо атакует в этот ход, если оно выходит из игры во время фазы атаки, вместо этого сними с него весь урон.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "2b9c65116ad45cc1f113b15a9b1a9d3ddad96ebf1cd8de20996127bf4d0698e1",
+  "landType": "corn"
+}

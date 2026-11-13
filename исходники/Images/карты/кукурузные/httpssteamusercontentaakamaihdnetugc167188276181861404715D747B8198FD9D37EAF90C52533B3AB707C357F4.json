@@ -1,0 +1,15 @@
+{
+  "name": "Медведь пират",
+  "name_en": "CORN PIRATE",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 3,
+  "description": "Находясь на бесполезном болоте, медведь пират наносит тройной урон.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "ea12ca53a94b7620de22aeb8031ef49748ebfcabf7137e56be8c769da7d233d6",
+  "landType": "corn"
+}

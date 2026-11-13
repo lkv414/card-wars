@@ -1,0 +1,15 @@
+{
+  "name": "Моднявая кукузебра",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "+1 к защите за каждый уникальный тип\nземель под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dc3e6811227fcaa022e9bb2a2bb2be1a0b90f51304d8ed5df92d42e28628d7ff",
+  "landType": "corn"
+}

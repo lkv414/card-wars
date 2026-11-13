@@ -1,0 +1,15 @@
+{
+  "name": "Ритм брёвен",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под твоим\nконтролем в зоне со строением\nполучает +2 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "38d3dd740dc08294462934dddfbea2d9382a05d595c513a520602934f883d8ff",
+  "landType": "corn"
+}

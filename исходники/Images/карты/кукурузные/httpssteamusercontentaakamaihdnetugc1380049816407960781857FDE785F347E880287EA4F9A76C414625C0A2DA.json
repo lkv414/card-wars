@@ -1,0 +1,15 @@
+{
+  "name": "Фермер-покатун",
+  "name_en": "UNICYCLE FARMER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 12,
+  "description": "Когда фермер-покатун выходит из игры,\nнанеси сопернику 1 урон за каждую карту\nна его руке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "506a831859c35c178310516181645fb6aa05591039607e2ebafb7d9b0df990d9",
+  "landType": "corn"
+}

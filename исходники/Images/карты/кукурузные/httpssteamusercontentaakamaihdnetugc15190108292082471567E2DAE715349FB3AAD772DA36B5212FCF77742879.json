@@ -1,0 +1,15 @@
+{
+  "name": "Зерно обновления",
+  "name_en": "CORN RENEWAL",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси урон выбранному существу,\nравный количеству урона на одном\nиз твоих существ.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d0683ee9eecd501e1bef96b7ffa787eb7da3db4e6aec145f50fa1e1bfe139fd9",
+  "landType": "corn"
+}

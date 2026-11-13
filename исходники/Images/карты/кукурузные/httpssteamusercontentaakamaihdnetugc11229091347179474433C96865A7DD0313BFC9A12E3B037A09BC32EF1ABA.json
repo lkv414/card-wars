@@ -1,0 +1,15 @@
+{
+  "name": "Горящий Итан",
+  "name_en": "Burning Ethan",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 4,
+  "description": "Когда горящий Итан выходит из игры,\nвозьми карту за каждое кукурузное\nполе под твоим контролем.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "27b5e723e77eaf8a3c0e2aed9379cedcc5a5c64d142263a391cf8592953f59ce",
+  "landType": "corn"
+}

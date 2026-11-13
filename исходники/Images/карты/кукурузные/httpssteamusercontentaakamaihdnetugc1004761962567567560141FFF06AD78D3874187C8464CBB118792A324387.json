@@ -1,0 +1,15 @@
+{
+  "name": "Кукурузный ронин",
+  "name_en": "CORN RONIN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "+1 к атаке за каждое соседнее кукурузное поле.",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "3d66b21c388bfcf2892a4079801df3a8ae2c47ff10f76016512748b8235aa6ce",
+  "landType": "corn"
+}

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Card Wars · Сверка карт и JSON</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="logo">
+          <span class="logo-badge">CW</span>
+          <span class="logo-title">Card Wars · Сверка сканов и JSON</span>
+        </div>
+        <div class="stats-badge" id="stats-badge">Загрузка...</div>
+      </div>
+
+      <div class="topbar-center">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="search" id="search" placeholder="Поиск по названию, английскому имени или тексту..." autocomplete="off">
+          <button id="clear-search" class="clear-btn hidden">&times;</button>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <label class="filter-toggle">
+          <input type="checkbox" id="filter-unverified">
+          <span>Только непроверенные</span>
+        </label>
+        <div class="view-toggles">
+          <button class="view-btn active" data-view="grid" title="Сетка">☷ Сетка</button>
+          <button class="view-btn" data-view="split" title="Сплит">◫ Сплит</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CATEGORY TABS -->
+    <nav class="cat-nav" id="cat-nav">
+      <!-- Generated dynamically -->
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="main-content">
+      <!-- Grid View Container -->
+      <div class="grid-view" id="grid-view">
+        <div class="cards-grid" id="cards-grid"></div>
+        <div class="pagination-bar" id="pagination-bar"></div>
+      </div>
+
+      <!-- Split / Inspector View Container -->
+      <div class="split-view hidden" id="split-view">
+        <div class="split-list" id="split-list"></div>
+        <div class="split-inspector" id="split-inspector">
+          <div class="inspector-placeholder">Выберите карту из списка для сверки</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FULLSCREEN MODAL / LIGHTBOX -->
+    <div class="modal hidden" id="modal">
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h2 id="modal-title">Название карты</h2>
+            <span class="modal-subtitle" id="modal-subtitle"></span>
+          </div>
+          <div class="modal-nav">
+            <button class="nav-btn" id="prev-card" title="Предыдущая (←)">←</button>
+            <span class="nav-counter" id="nav-counter">1 / 972</span>
+            <button class="nav-btn" id="next-card" title="Следующая (→)">→</button>
+            <button class="close-btn" id="close-modal" title="Закрыть (Esc)">✕</button>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <!-- Left: High-Res Scan -->
+          <div class="modal-scan-col">
+            <div class="scan-wrapper" id="scan-wrapper">
+              <img id="modal-img" src="" alt="Scan">
+              <div class="scan-controls">
+                <button id="zoom-in" title="Приблизить">+</button>
+                <button id="zoom-out" title="Отдалить">-</button>
+                <button id="zoom-reset" title="Сброс">1:1</button>
+                <button id="rotate-btn" title="Повернуть">↻</button>
+              </div>
+            </div>
+            <div class="scan-meta" id="scan-meta">
+              <span class="meta-item" id="meta-file"></span>
+              <span class="meta-item" id="meta-sha"></span>
+            </div>
+          </div>
+
+          <!-- Right: JSON Editor / Inspector -->
+          <div class="modal-form-col">
+            <div class="form-header">
+              <div class="verify-action">
+                <label class="verify-checkbox-label">
+                  <input type="checkbox" id="modal-verified">
+                  <span class="verify-badge">✓ Отмечено как проверено</span>
+                </label>
+              </div>
+              <div class="tab-actions">
+                <button class="tab-btn active" data-tab="form">Поля</button>
+                <button class="tab-btn" data-tab="json">Raw JSON</button>
+              </div>
+            </div>
+
+            <!-- Form Tab -->
+            <form class="card-form" id="card-form">
+              <div class="form-row">
+                <div class="form-group flex-2">
+                  <label>Название (RU)</label>
+                  <input type="text" id="f-name" class="input">
+                </div>
+                <div class="form-group flex-2">
+                  <label>Name (EN)</label>
+                  <input type="text" id="f-name-en" class="input">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label>Стоимость</label>
+                  <input type="number" id="f-cost" class="input">
+                </div>
+                <div class="form-group flex-1">
+                  <label>Атака ⚔</label>
+                  <input type="number" id="f-attack" class="input" placeholder="null">
+                </div>
+                <div class="form-group flex-1">
+                  <label>Защита 🛡</label>
+                  <input type="number" id="f-defense" class="input" placeholder="null">
+                </div>
+                <div class="form-group flex-2">
+                  <label>Земля (landType)</label>
+                  <input type="text" id="f-land" class="input">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-2">
+                  <label>Строка типа</label>
+                  <input type="text" id="f-type" class="input">
+                </div>
+                <div class="form-group flex-1">
+                  <label>Категория</label>
+                  <select id="f-category" class="input">
+                    <option value="creature">creature</option>
+                    <option value="spell">spell</option>
+                    <option value="building">building</option>
+                    <option value="hero">hero</option>
+                    <option value="land">land</option>
+                    <option value="teamwork">teamwork</option>
+                    <option value="back">back</option>
+                  </select>
+                </div>
+                <div class="form-group flex-1">
+                  <label>Сет / Код</label>
+                  <input type="text" id="f-set" class="input">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Текст правил и свойств (description)</label>
+                <textarea id="f-description" class="textarea" rows="4"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Художественный курсивный текст (flavor)</label>
+                <textarea id="f-flavor" class="textarea" rows="2"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="save-btn">Сохранить изменения</button>
+                <span class="save-status" id="save-status"></span>
+              </div>
+            </form>
+
+            <!-- Raw JSON Tab -->
+            <div class="json-tab hidden" id="json-tab">
+              <pre><code id="raw-json"></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast hidden" id="toast"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -16,3 +16,7 @@ node_modules/
 # сборки и локальное состояние wrangler/клиента
 apps/server/.wrangler/
 apps/client/dist/
+
+__pycache__/
+*.pyc
+исходники/PDF/

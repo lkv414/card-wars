@@ -1,0 +1,15 @@
+{
+  "name": "Кисонька-Вязанька",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 7,
+  "description": "Кисонька-вязанька находится\nпод воздействием строений\nна соседних землях.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "85ebdd2a76ded29cc46194b83fb1369d734709e667c2408d28302680904420a9",
+  "landType": "nice"
+}

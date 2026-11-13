@@ -1,0 +1,15 @@
+{
+  "name": "Штопаный щенок",
+  "name_en": "PATCHWORK PUPPY",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Нанеси 3 урона штопаному щенку >>> штопаный щенок получает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "6061d5bf1978f078a3ca07f27d61dde7276066456e08fe7e59a6351833ed9b06",
+  "landType": "nice"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Многосемянная бомба",
+  "name_en": "MULTISEED BOMB",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Сними или нанеси урон твоему существу в этой зоне, пока на нём не станет 4 урона.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "dcf52fb3ace473b4d546f31cb0bd4fb3b897e712958d5e1f97c6439ba24d2abb",
+  "landType": "nice"
+}

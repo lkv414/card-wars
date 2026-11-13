@@ -1,0 +1,15 @@
+{
+  "name": "Лис Пушок",
+  "name_en": "FLUFFY FOX",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если количество урона, нанесённого лису пушку, равно 4 или больше, он игнорирует первые 2 урона от существ под контролем соперника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "49e3b1776a75b3fb90dc653ce2e554f86ad113a4c0eafdd60310e62a1aff695e",
+  "landType": "nice"
+}

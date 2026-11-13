@@ -1,0 +1,15 @@
+{
+  "name": "Сочная молния",
+  "name_en": "JUICY LIGHTNING",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 2 урона с каждого существа\nпод твоим контролем. Если в твоём\nсбросе 3 или более заклинаний,\nположи 4 на каждое существо\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "d678fb93bab095d635fd386c448975dc653740cd1d8cfc1fb766c61876a3efa4",
+  "landType": "nice"
+}

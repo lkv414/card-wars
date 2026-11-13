@@ -1,0 +1,15 @@
+{
+  "name": "Пухлый пингвин",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 10,
+  "description": "Когда ты снимаешь урон с пухлого пингвина, положи +1 к атаке на каждое существо под твоим контролем.",
+  "flavor": "",
+  "set_code": "ЗА",
+  "sha256": "acc7a533f39f05bdf8f3da13600ce553d5dc75f3090bee06357670d2f04dae51",
+  "landType": "nice"
+}

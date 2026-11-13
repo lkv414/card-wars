@@ -1,0 +1,15 @@
+{
+  "name": "Солидарность",
+  "name_en": "SOLIDARITY",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "Первое существо, которое атакует другое существо в ход твоей команды, получает +1 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "90d4063622603555b9299523506a38484c1c11d20fb433ff4ba9fa4db264dddc",
+  "landType": "nice"
+}

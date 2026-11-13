@@ -1,0 +1,15 @@
+{
+  "name": "Клубничный Слайм",
+  "name_en": "Strawberry Slime",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если ты контролируешь 3 или более уникальных типов земель, когда Клубничный Слайм входит в игру, сними 4 урона с каждого существа под твоим контролем.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "4f901015df49ca7c4aedd3942d75730abbfe5e7cd701ee2e46edd1f739bb6dc7",
+  "landType": "nice"
+}

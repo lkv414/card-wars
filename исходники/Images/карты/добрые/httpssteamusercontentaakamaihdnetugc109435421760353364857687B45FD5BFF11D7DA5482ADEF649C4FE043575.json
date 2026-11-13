@@ -1,0 +1,15 @@
+{
+  "name": "Жизнерадостный гном",
+  "name_en": "HAPPY GNOME",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Нанеси 1 урон каждому существу под контролем соперника, которое находится на песчаной земле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "6d463b0c664d869e0c2875994fae15c733a7942b80937b1c09ea4802a73a5af4",
+  "landType": "nice"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Домашняя Школа",
+  "name_en": "HOMESCHOOLING",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "В начале твоего хода, если ты контролируешь существо в этой зоне, на котором лежит 3 или более жетонов урона, возьми 1 карту.",
+  "flavor": "",
+  "set_code": "ЛИМИТНЫЙ ПРОМО",
+  "sha256": "2ad57d767c1ac74e6c9cc769d6a360b4baa71fea05f0054f83dcd4fee9ce2f5c",
+  "landType": "nice"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Ванильный ангел",
+  "name_en": "VANILLA ANGEL",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Потрать 1 действие >>> Сними\nвесь урон с ванильного ангела.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cf913c3975d52e6aa782245bd2c115ba24f3db1adaaf522717ac41eb8eb8930e",
+  "landType": "nice"
+}

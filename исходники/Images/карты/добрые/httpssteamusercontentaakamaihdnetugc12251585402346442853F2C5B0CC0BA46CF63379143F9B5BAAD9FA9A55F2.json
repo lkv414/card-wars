@@ -1,0 +1,15 @@
+{
+  "name": "Фей-чабан",
+  "name_en": "FAIRIE HERD",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Каждое соседнее доброземельное существо получает +2 к защите.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c5d17096e4acc7c85ce7f599623d5504fa9638882998ac4351a3dcd1c986321a",
+  "landType": "nice"
+}

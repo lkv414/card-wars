@@ -1,0 +1,15 @@
+{
+  "name": "Полированный броненосец",
+  "name_en": "POLISHED ARMADILLO",
+  "cost": 4,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 13,
+  "description": "Грохот\nЕсли ты разыгрываешь другое существо\nс эффектом «Грохот», оно стоит\nна 1 действие меньше.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d7d9c5789dd924b5c140f81f63f471faa5548fcf5f93ea56016f1b1a717d2b13",
+  "landType": "nice"
+}

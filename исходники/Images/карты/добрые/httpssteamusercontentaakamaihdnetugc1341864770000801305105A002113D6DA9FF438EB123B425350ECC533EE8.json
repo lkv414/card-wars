@@ -1,0 +1,15 @@
+{
+  "name": "Галантный броненосец",
+  "name_en": "DAPPER ARMADILLO",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда галантный броненосец входит в игру,\nты можешь снять 3 урона с другого существа.\nЕсли на том существе всё ещё есть урон,\nвозьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "87ab3cd23f709cf5ca11dd8cafa655eb1451ef58237b482a787d238b0177bff4",
+  "landType": "nice"
+}

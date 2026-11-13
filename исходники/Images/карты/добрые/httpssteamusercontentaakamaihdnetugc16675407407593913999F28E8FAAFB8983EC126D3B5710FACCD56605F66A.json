@@ -1,0 +1,15 @@
+{
+  "name": "Синяя сахарная вата",
+  "name_en": "BLUE COTTON CANDY",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними с выбранного существа под твоим контролем 3 урона или меньше.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ca7fea0c76383db76eeafedde5cc98e529dc5dcb99bf056f769c706b06dbadda",
+  "landType": "nice"
+}

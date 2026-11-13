@@ -1,0 +1,15 @@
+{
+  "name": "Лозюка Глазюка",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда Лозюка Глазюка входит в игру,\nесли у тебя в сбросе 3 или больше\nзаклинаний, положи на неё +3 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0a5fd29648891208f533a000859cc223ee4aee194387c4e7d128eb73aed5d872",
+  "landType": "nice"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Мятнозмей",
+  "name_en": "PEPPERMINT SNAKE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Когда мятнозмей наносит урон жизням соперника, ты восстанавливаешь столько жизней, сколько нанёс урона.\n(Не может быть больше 25 жизней.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "789688e947654bc3819659323f07e0fa7ee00d9a5c739fd1ea39a84c68336a32",
+  "landType": "nice"
+}

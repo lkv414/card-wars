@@ -1,0 +1,15 @@
+{
+  "name": "Стена шоколада",
+  "name_en": "CHOCOLATE WALL",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Пока количество урона, нанесённого стене шоколада, равно 0, он получает +3 к атаке.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "285ff767c0818bda8eab4d6c357688d1f74974f83049ea18c02eb2e658364ba3",
+  "landType": "nice"
+}

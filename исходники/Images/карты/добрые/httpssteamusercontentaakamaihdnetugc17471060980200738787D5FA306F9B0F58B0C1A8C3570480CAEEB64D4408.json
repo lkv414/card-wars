@@ -1,0 +1,15 @@
+{
+  "name": "Свиток свежего дыхания",
+  "name_en": "MINTY FRESH SCROLL",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под твоим контролем получает +2 к атаке в этот ход, пока атакует существо на бесполезном болоте.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "da917ea821e57cbe579df1ee346b52d4d093861807c31d7c4d15ddd5bbd8ff00",
+  "landType": "nice"
+}

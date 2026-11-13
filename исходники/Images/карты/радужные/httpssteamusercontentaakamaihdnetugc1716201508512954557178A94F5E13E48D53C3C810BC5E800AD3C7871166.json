@@ -1,0 +1,15 @@
+{
+  "name": "Аксолотль",
+  "name_en": "AXOLOTL",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "ФЛЮП >>> Выбранный игрок\nвосстанавливает 3 жизни.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b12fdd4262365f3eb2d61a9d97091fd6a438893f86687b948268e3305743ba55",
+  "landType": "rainbow"
+}

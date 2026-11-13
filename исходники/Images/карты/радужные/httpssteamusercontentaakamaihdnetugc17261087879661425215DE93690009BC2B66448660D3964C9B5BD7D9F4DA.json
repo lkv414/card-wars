@@ -1,0 +1,15 @@
+{
+  "name": "Птичий налёт",
+  "name_en": "BIRD STRIKE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни на руку выбранное существо,\nкоторым ты владеешь.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "aed696c5e72bbefc98a7d61c9bfabe85e8b5a8d04e3bdba1f932df21e9d48803",
+  "landType": "rainbow"
+}

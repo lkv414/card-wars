@@ -1,0 +1,15 @@
+{
+  "name": "Костяная палочка",
+  "name_en": "BONE WAND",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Можешь сыграть эту карту, только если\nконтролируешь хотя бы одно\nболотное существо.\nВыбранный соперник сбрасывает\n1 карту с руки.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "afea2ab0c536bc6484a9a8bf5208db8b242391abaaebe8412cd87e90e26b3857",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Свинья",
+  "name_en": "PIG",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "ФЛЮП >>> Переверни лицевой стороной\nвниз выбранное кукурузное\nполе в этой зоне.",
+  "flavor": "",
+  "set_code": "finn",
+  "sha256": "68131a453c13bf55b0a1bd66bbe59caeb6fa635adb8ac3ab2b8bbceac9e99c0d",
+  "landType": "rainbow"
+}

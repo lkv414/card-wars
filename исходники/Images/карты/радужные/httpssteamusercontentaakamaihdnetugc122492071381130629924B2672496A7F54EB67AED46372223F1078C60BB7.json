@@ -1,0 +1,15 @@
+{
+  "name": "Корова",
+  "name_en": "COW",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "",
+  "flavor": "Мууу.",
+  "set_code": "bubblegum",
+  "sha256": "f986abe165c186218f64803d641616869f228c996adbe9c893bf645755b2e474",
+  "landType": "rainbow"
+}

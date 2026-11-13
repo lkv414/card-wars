@@ -1,0 +1,15 @@
+{
+  "name": "Сердечный ангел",
+  "name_en": "HEART ANGEL",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 7,
+  "description": "Пока количество урона нанесённого\nсердечному ангелу равно 3\nон получает +3 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "04aa3553c286c0181a085143ae27afe99a1f0263a0831e31845a1ad93fd36020",
+  "landType": "rainbow"
+}

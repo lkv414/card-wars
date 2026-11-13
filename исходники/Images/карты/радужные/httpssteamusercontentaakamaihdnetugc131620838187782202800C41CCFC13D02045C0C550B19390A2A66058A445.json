@@ -1,0 +1,15 @@
+{
+  "name": "Кенгуру Пэт",
+  "name_en": "KANGAROO PET",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 3,
+  "description": "Когда кенгуру пэт наносит урон сопернику, положи ♜ на дружественное существо.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cb6fe265b4a6750d93f5106f5ac0e376383978057bc2abbc9155d9584e8684ac",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Защитник королевства",
+  "name_en": "KINGDOM DEFENDER",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Уничтожь защитника королевства >>>\nОтмени действие проклятия.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "b49d559b95030d5bffad62c49d1ec8bf26e47d9c13c76aabe4499e6774462238",
+  "landType": "rainbow"
+}

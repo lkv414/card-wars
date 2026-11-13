@@ -1,0 +1,15 @@
+{
+  "name": "Зачарованный праздник",
+  "name_en": "ENCHANTED PARTY",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести выбранное существо на соседнюю пустую землю, под контролем его владельца. После розыгрыша ты можешь положить это заклинание на руку напарника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "079ba5657832154aa4ae9ed72ae134f7c63fdb0bfa2ff5883eae3ec488c40b92",
+  "landType": "rainbow"
+}

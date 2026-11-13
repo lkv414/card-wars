@@ -1,0 +1,15 @@
+{
+  "name": "Горн мечей",
+  "name_en": "SWORD HORN",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Положи 1 урон на выбранное существо.\nПовтори это за каждые 2 заклинания\nв твоём сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "39ea4355319238b7a46ab24b70f3099db3951b495ae45e929f8309bb324c0b30",
+  "landType": "rainbow"
+}

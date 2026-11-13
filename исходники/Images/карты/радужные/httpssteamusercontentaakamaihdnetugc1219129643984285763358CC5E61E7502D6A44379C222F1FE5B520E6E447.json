@@ -1,0 +1,15 @@
+{
+  "name": "Королевское процветание",
+  "name_en": "ROYAL PROSPERITY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый игрок берёт 2 карты.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "d7882da17fba73f0d492cc861cd7607224133020e7d5a91a6a0fa67c3179499d",
+  "landType": "rainbow"
+}

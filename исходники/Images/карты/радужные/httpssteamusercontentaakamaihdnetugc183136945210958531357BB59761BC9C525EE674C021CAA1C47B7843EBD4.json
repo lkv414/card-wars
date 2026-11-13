@@ -1,0 +1,15 @@
+{
+  "name": "Бочка",
+  "name_en": "BARREL",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Бочка получает +1 к атаке\nи +1 к защите за каждую другую\nБочку в игре.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "58122e05d6d9ec3eb8273a927dd1ae7027716aeb789e388fb32402bb09b544d1",
+  "landType": "rainbow"
+}

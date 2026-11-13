@@ -1,0 +1,15 @@
+{
+  "name": "Ундинка-блондинка",
+  "name_en": "BLONDE MERMAID",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 9,
+  "description": "",
+  "flavor": "Её котёл — океан, её ингредиенты — всё затонувшее в нём.",
+  "set_code": "s24",
+  "sha256": "83a21f3311e15359bc7c895adc963b721eb7847070773a07455235a0b04c87ed",
+  "landType": "rainbow"
+}

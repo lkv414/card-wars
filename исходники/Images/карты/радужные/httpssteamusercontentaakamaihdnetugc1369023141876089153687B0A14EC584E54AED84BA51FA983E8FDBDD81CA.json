@@ -1,0 +1,15 @@
+{
+  "name": "Яростная цыпа",
+  "name_en": "RAGE CHICK",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 5,
+  "description": "Яростная цыпа получает +Х к атаке, где Х - количество нанесённого ей урона.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "0bc248cc8e48c078c3e5cff2ad2029a14421fe14390100a635f6682336350eae",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Летучая кенгумышь",
+  "name_en": "FLYING ROO MOUSE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 1,
+  "description": "Когда летучая кенгумышь наносит\nурон сопернику, положи на неё ⚔️.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b61e3a68b75f3271fb9e069117b02713dfb4ad09fda6b3a7ee52cb5f22f25839",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Синюшный талисман",
+  "name_en": "BLUE TALISMAN",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное равнинное существо\nпод твоим контролем получает\n+2 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4b4882a2c00b1cfb39138c1303a3a703b5df161039c6ff1cd717c7133fbad5ab",
+  "landType": "rainbow"
+}

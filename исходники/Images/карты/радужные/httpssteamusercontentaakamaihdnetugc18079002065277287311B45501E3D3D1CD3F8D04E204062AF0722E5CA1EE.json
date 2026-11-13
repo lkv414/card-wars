@@ -1,0 +1,15 @@
+{
+  "name": "Ледяной лазутчик",
+  "name_en": "ICE SNEAKER",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда Ледяной лазутчик входит в игру,\nзаморозь его землю.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "c6816f50b1739df0cba824ff505e4f4ba9ebfe53de96b0f4dcb898cf7940152d",
+  "landType": "rainbow"
+}

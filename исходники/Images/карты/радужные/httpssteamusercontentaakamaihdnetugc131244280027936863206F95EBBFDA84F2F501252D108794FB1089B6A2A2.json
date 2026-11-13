@@ -1,0 +1,15 @@
+{
+  "name": "Пони",
+  "name_en": "PONY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "",
+  "flavor": "Кто здесь милый пони?\nДа ты конечно!",
+  "set_code": "fiona",
+  "sha256": "971f97f9568cce062207d537dcbd646b95327659ef3d9ff7db9035c594e5a5c8",
+  "landType": "rainbow"
+}

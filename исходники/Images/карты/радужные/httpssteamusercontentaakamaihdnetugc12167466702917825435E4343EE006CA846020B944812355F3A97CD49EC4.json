@@ -1,0 +1,15 @@
+{
+  "name": "Коммуникация",
+  "name_en": "COMMUNICATION",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "Первый раз, когда ты или твой напарник разыгрываете радужное заклинание за 0 действий во время своего хода, твой напарник может скопировать его и может выбрать новые цели.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "4a20028ceb5b251ad5f4fd3c0a4a676e610caaa5951822e24b9f15da8d7c39f2",
+  "landType": "rainbow"
+}

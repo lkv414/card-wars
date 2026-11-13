@@ -1,0 +1,15 @@
+{
+  "name": "Кровавая крепость",
+  "name_en": "Bloody Keep",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает +1 к атаке.",
+  "flavor": "",
+  "set_code": "lich",
+  "sha256": "d1c29e121b7dc019654c0a4c8b89913d11285ee1b7f9850b7d3ef129034b2cd1"
+}

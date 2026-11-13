@@ -1,0 +1,15 @@
+{
+  "name": "Пляжное барбекю",
+  "name_en": "BEACH BARBECUE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Раскрой 3 карты твоей колоды.\nВозьми 1 карту и сбрось остальные.\nПосле розыгрыша ты можешь положить это заклинание на руку напарника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "97e001412b4039eda1087efa33aa49444c1d19762f3258e65553cc294dd9761c",
+  "landType": "rainbow"
+}

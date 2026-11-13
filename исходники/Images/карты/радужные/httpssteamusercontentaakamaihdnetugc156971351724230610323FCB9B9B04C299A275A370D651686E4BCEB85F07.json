@@ -1,0 +1,15 @@
+{
+  "name": "Водопад мечей",
+  "name_en": "SWORD FALL",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси каждому существу под\nконтролем соперника урон,\nравный его атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "aa91aee4e6897a020cb745dda9122aca25720ee27d9ad4aae61dc03878db793d",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Амулет гибели титанов",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное существо\nи потеряй жизни, равные его атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2585a93035b6f33492893d9a3ce7a420dcb8dd0796bb5dfb8c90bf606e7f40da",
+  "landType": "rainbow"
+}

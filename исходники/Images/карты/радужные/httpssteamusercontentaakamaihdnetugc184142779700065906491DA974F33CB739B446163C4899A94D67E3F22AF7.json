@@ -1,0 +1,15 @@
+{
+  "name": "Фонтан слёз",
+  "name_en": "FOUNTAIN OF TEARS",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Пока количество урона, нанесённого твоему существу в этой зоне, равно 3, оно получает +3 к атаке.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "69c05ce41f22ca3b7d26b9b604e6d99c355a1e57b5e83a74f3868aee1b881b35",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Небесный замок",
+  "name_en": "SKY CASTLE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне\nполучают +3 к защите.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "05c8090a6cb69ac4785e7adb4cafa803d256661bae76d31cd41f1089021a3b4a",
+  "landType": "rainbow"
+}

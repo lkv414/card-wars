@@ -1,0 +1,15 @@
+{
+  "name": "Волшебные семена Зазо",
+  "name_en": "ZAZO'S MAGIC SEEDS",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное песчаное существо получает\n+2 к атаке в этот ход за каждое существо,\nкоторое вошло в игру в соседнюю зону\nв этом ходу.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "b33fe9aa5da91f4052bf1ddaf38bd6bfe99c7aec74fa42d7f69cc6bf118ed463"
+}

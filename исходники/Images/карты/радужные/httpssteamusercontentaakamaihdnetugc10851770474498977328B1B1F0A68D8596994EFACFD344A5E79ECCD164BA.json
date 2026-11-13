@@ -1,0 +1,15 @@
+{
+  "name": "Тандемный велосипед",
+  "name_en": "TANDEM BICYCLE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни на руку выбранное существо под твоим контролем на руку владельца.\nВыбранный соперник возвращает на руку выбранное существо под своим контролем на руку владельца.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "ab9aa085a3e8e1cf1d3a3f2cc73f9cc2719b7c998d52ef1baf5a4c9c37bc25e8",
+  "landType": "rainbow"
+}

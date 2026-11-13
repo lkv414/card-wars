@@ -1,0 +1,15 @@
+{
+  "name": "Осьмикамень",
+  "name_en": "OCTO-STONE",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Осьмикамень получает +1 к атаке, пока атакует существо на песчаной земле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "dcb26db464c357c6541e1d0ea6ad53f8ec106cfc50c514543e1a66a161699b71",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Крепкое рукопожатие",
+  "name_en": "FIRM HANDSHAKE",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 5 урона себе\nи выбранному сопернику.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "975645a2c005ce4f3f78c033c6fb675d2f5e0f9a97aa08fd07a81c47eae124f2",
+  "landType": "rainbow"
+}

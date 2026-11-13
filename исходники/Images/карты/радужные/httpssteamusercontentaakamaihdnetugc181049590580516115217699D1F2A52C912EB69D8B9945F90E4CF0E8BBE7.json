@@ -1,0 +1,15 @@
+{
+  "name": "Краб перевозчик",
+  "name_en": "FERRY CRAB",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Когда краб перевозчик входит в игру,\nты можешь разыграть бесплатно\nкарту за 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a96be60a49f4b06130b76ee4cef06b146c700aa4de657c43b3d69b95360fef0a",
+  "landType": "rainbow"
+}

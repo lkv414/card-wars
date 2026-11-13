@@ -1,0 +1,15 @@
+{
+  "name": "Шок-коробка",
+  "name_en": "SHOCK BOX",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый игрок может выбрать до 3 карт из своего сброса и перемешать их в колоду. Восстанови 1 жизнь за каждую выбранную карту.",
+  "flavor": "",
+  "set_code": "3Л",
+  "sha256": "9441956996e2b1fad901d1bc45d4910db69a253a79d4098b11ca499e15965fd5",
+  "landType": "rainbow"
+}

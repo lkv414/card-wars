@@ -1,0 +1,15 @@
+{
+  "name": "Козлик",
+  "name_en": "GOAT",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Если при входе в игру козлик заменяет другое существо возьми 1 карту.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "9a3cf34f2e2069191d2a32fccbfab700f5d2a0a820276c7b6127cd205a5c9543",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Морская ведьма",
+  "name_en": "SEA WITCH",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Морская ведьма получает +1 к атаке пока атакует существо на бесполезном болоте.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "ad7d272b86e6e6f9d092ed393d5412952a8b73753868ab0485a1966eeac282e7",
+  "landType": "rainbow"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ВрубиКаМнеРок!",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Переверни лицевой стороной вниз\nвыбранную землю до начала твоего\nследующего хода.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "edf04bfd9a0efe69903577f2c9a191ca1130d9c362bf185237cc0c44d7d825fd",
+  "landType": "rainbow"
+}

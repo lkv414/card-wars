@@ -1,0 +1,15 @@
+{
+  "name": "Динамитя",
+  "name_en": "Dynamite",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 5,
+  "description": "Когда Динамитя выходит из игры,\nнанеси 1 урон каждому существу под\nконтролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "bf366320a78d698d365b092b143e622fd6cab362be9dbca4e4bdb3f03d02810c",
+  "landType": "rainbow"
+}

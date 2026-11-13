@@ -1,0 +1,15 @@
+{
+  "name": "Попугательная Вышка",
+  "name_en": "SCARE-TOWER",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо в этой зоне получает -1 к атаке (не может быть ниже 0).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cfdc4f14779ee6c42f3e09b75fdacf08905f3f9277adfcfa62daab3dd6009cbd",
+  "landType": "rainbow"
+}

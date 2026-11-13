@@ -1,0 +1,15 @@
+{
+  "name": "Уютная печная",
+  "name_en": "COZY KILN",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда горящее существо под контролем соперника в этой зоне покидает игру, подожги владельца того существа.\n(В начале своего хода он получает 1 урон за каждый жетон ожога.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7c3a8b5290fbf0c01f2e6cf19f9c3eae910236034fa6a4367abf16271498390c",
+  "landType": "rainbow"
+}

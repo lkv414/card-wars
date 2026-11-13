@@ -1,0 +1,18 @@
+{
+  "name": "Энергия тусовки",
+  "name_en": "PARTY ENERGY",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести всех существ под твоим контролем в другую зону.\nКаждое существо, которое переместилось в другую зону получает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "514525a26467aafcdafb9622d8022da6eaded625234196e46839208053ada7c9",
+  "landType": "sandy",
+  "id": "party-energy-514525a",
+  "kind": "card",
+  "image": "/content/cards/sandy/party-energy-514525a.webp"
+}

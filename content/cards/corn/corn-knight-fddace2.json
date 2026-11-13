@@ -1,0 +1,18 @@
+{
+  "name": "Кожукирия",
+  "name_en": "CORN KNIGHT",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "+2 к атаке и +2 к защите, если ты\nконтролируешь строение в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fddace2258d2901623fdc075d5eb4e0e8e413a27f4dee08161dc1e097081ef5b",
+  "landType": "corn",
+  "id": "corn-knight-fddace2",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-knight-fddace2.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Кукурузный скипетр",
+  "name_en": "CORN SCEPTER",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 1 урон выбранному существу\nза каждое кукурузное поле\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "328226d2606a92d290a99db392dbf64f51ce554344127faf54e5726e30e92cb4",
+  "landType": "rainbow",
+  "id": "corn-scepter-328226d",
+  "kind": "card",
+  "image": "/content/cards/rainbow/corn-scepter-328226d.webp"
+}

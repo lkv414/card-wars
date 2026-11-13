@@ -1,0 +1,13 @@
+{
+  "name": "Деревяшка",
+  "name_en": "Tree Trunks",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход ты можешь сбросить карту,\nназвание которой связано с пирогом,\nи получить 1 действие.",
+  "flavor": "",
+  "set_code": "tree_trunks",
+  "sha256": "7eaac7c5818a311e7201cfdc65f32d61e25b485f1f2c1fe55c898ac4547ed5e9",
+  "id": "tree-trunks-7eaac7c",
+  "kind": "hero",
+  "image": "/content/heroes/tree-trunks-7eaac7c.webp"
+}

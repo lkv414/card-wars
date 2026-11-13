@@ -1,0 +1,18 @@
+{
+  "name": "Рука помощи",
+  "name_en": "HELPING HAND",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "ФЛЮП >>> Верни строение\nиз твоего сброса на руку.",
+  "flavor": "",
+  "set_code": "cake",
+  "sha256": "f41c9b344d3b457c7389d50db84df825c084bad538f5b253f30b8fdae1ef93a2",
+  "id": "helping-hand-f41c9b3",
+  "kind": "card",
+  "image": "/content/cards/rainbow/helping-hand-f41c9b3.webp"
+}

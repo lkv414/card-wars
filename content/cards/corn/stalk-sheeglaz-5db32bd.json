@@ -1,0 +1,18 @@
+{
+  "name": "Стебельковый шееглаз",
+  "name_en": "STALK SHEEGLAZ",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда стебельковый шееглаз входит в игру, каждое существо в игре с «шееглаз» в названии получает +1 к атаке в этот ход за каждое существо с «шееглаз» в названии.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "5db32bd05562238ceeb1b9116b6fd26d1ec0642083de68067078480e23472889",
+  "landType": "corn",
+  "id": "stalk-sheeglaz-5db32bd",
+  "kind": "card",
+  "image": "/content/cards/corn/stalk-sheeglaz-5db32bd.webp"
+}

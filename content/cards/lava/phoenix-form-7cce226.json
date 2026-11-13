@@ -1,0 +1,18 @@
+{
+  "name": "Форма феникса",
+  "name_en": "PHOENIX FORM",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Положи 2 существ из твоего сброса.\nВ конце твоего хода уничтожь\nэтих существ.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "7cce22641fe790ac57fadf09b7ec5a1c1a1eee53f89d6b449da6c3b038aecf87",
+  "landType": "lava",
+  "id": "phoenix-form-7cce226",
+  "kind": "card",
+  "image": "/content/cards/lava/phoenix-form-7cce226.webp"
+}

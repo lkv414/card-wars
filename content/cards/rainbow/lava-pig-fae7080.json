@@ -1,0 +1,18 @@
+{
+  "name": "Лавовая Свинья",
+  "name_en": "Lava Pig",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "ФЛЮП >>> Переверни лицевой стороной вниз выбранную лавовую землю в этой зоне.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "fae70808dd68fa4627df7a895a6f051fd801e04725e1c8790e5c8d991fdfd593",
+  "landType": "rainbow",
+  "id": "lava-pig-fae7080",
+  "kind": "card",
+  "image": "/content/cards/rainbow/lava-pig-fae7080.webp"
+}

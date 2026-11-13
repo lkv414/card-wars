@@ -1,0 +1,18 @@
+{
+  "name": "Ёж прилипала",
+  "name_en": "STICKY HEDGEHOG",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Пока количество урона, нанесённого ежу прилипале, равно 4 или более, он наносит урон выбранному сопернику вместо существа под контролем соперника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "201e53e7785f82e1f124894778a202d5cfd2a1dcb4e2b346b9181f092f6a6557",
+  "landType": "nice",
+  "id": "sticky-hedgehog-201e53e",
+  "kind": "card",
+  "image": "/content/cards/nice/sticky-hedgehog-201e53e.webp"
+}

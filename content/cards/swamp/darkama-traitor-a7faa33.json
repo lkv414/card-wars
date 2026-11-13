@@ -1,0 +1,18 @@
+{
+  "name": "Мракама предатель",
+  "name_en": "DARKAMA TRAITOR",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда мракама предатель входит в игру,\nкаждый игрок может сбросить 1 карту,\nчтобы положить 1 рану на одно из своих существ.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a7faa334d469a2894a090849366a3fcfe67866c577dcff84590840574ebc8198",
+  "landType": "swamp",
+  "id": "darkama-traitor-a7faa33",
+  "kind": "card",
+  "image": "/content/cards/swamp/darkama-traitor-a7faa33.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Снежная лавина",
+  "name_en": "SNOW AVALANCHE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона каждому существу\nпод контролем соперника на земле\nс жетоном мороза.",
+  "flavor": "",
+  "set_code": "gunter",
+  "sha256": "b00dd42e9d1cffa57f5cc3a958cd3e5bcbed8b5ae6c9f4a139030b29c2bdb79c",
+  "landType": "rainbow",
+  "id": "snow-avalanche-b00dd42",
+  "kind": "card",
+  "image": "/content/cards/rainbow/snow-avalanche-b00dd42.webp"
+}

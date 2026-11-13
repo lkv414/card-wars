@@ -1,0 +1,18 @@
+{
+  "name": "Лавовые муравьи",
+  "name_en": "LAVA ANTS",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Если ты разыграл 2 или более\nне лавовых карт в этот ход,\nположи ⤉ на лавовых муравьёв.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8026c619cddd508a489ff0492623fdd863799dbc161b8b0e36fa8b31bd1ba29d",
+  "landType": "lava",
+  "id": "lava-ants-8026c61",
+  "kind": "card",
+  "image": "/content/cards/lava/lava-ants-8026c61.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Ватный крылоглаз",
+  "name_en": "COTTON WING EYE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Пока количество урона, нанесённого ватному крылоглазу, равно 4, он получает +4 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "88b4c0982999f4e1b714d0101bd8ef0f9255b4ffe5ab95d46715137888e7d5a8",
+  "landType": "nice",
+  "id": "cotton-wing-eye-88b4c09",
+  "kind": "card",
+  "image": "/content/cards/nice/cotton-wing-eye-88b4c09.webp"
+}

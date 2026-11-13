@@ -1,0 +1,18 @@
+{
+  "name": "Сансара",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Поменяй местами двух существ под твоим контролем, если все существа под твоим контролем с призраками.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fa20e659b701f730e7dbca2c7cf3fb229f8bb77edb0363c233621378c7b4b164",
+  "id": "sansara-fa20e65",
+  "kind": "card",
+  "image": "/content/cards/halloween/sansara-fa20e65.webp"
+}

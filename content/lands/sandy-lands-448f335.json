@@ -1,0 +1,14 @@
+{
+  "name": "Песчаные земли",
+  "name_en": "Sandy Lands",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "sandy",
+  "description": "",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "448f33549b24b94d6fb7bf1eec235b21c9b2202571ad4e02016b8678e26278f2",
+  "id": "sandy-lands-448f335",
+  "kind": "land",
+  "image": "/content/lands/sandy-lands-448f335.webp"
+}

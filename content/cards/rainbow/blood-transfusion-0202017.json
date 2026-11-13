@@ -1,0 +1,18 @@
+{
+  "name": "Переливание крови",
+  "name_en": "BLOOD TRANSFUSION",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Удали из игры 1 карту из сброса любого игрока. Сними Х урона с выбранного существа, где Х - стоимость удалённой карты.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "02020174f0af79a576bf667bb808d8bbccd2d8c60f32ac0eb7b512eeba1fb9d2",
+  "landType": "rainbow",
+  "id": "blood-transfusion-0202017",
+  "kind": "card",
+  "image": "/content/cards/rainbow/blood-transfusion-0202017.webp"
+}

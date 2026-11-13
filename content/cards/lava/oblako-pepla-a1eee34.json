@@ -1,0 +1,18 @@
+{
+  "name": "Облако пепла",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона выбранному существу\nпод контролем соперника и\nкаждому соседнему существу.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "a1eee345f1757ec214608741836717e6903eb938985f153b166c0f3ee5f94f5c",
+  "landType": "lava",
+  "id": "oblako-pepla-a1eee34",
+  "kind": "card",
+  "image": "/content/cards/lava/oblako-pepla-a1eee34.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Милашка",
+  "name_en": "CUTE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 6,
+  "description": "ФЛЮП >>> Ты восстанавливаешь 1 жизнь.\n(Не может быть больше 25.)",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "8c8184521dfc1a59af687cb27781af0457d665c617cab0ddea7d7c8abe10db92",
+  "landType": "nice",
+  "id": "cute-8c81845",
+  "kind": "card",
+  "image": "/content/cards/nice/cute-8c81845.webp"
+}

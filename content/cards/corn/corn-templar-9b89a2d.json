@@ -1,0 +1,18 @@
+{
+  "name": "Кукурузный тамплиер",
+  "name_en": "CORN TEMPLAR",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "ФЛЮП >>> Сними с кукурузного тамплиера 1 урон.",
+  "flavor": "",
+  "set_code": "cake",
+  "sha256": "9b89a2d1b4be01461685e608fdbd0c037f711d29dbf4961207c34c6d2461dcaa",
+  "landType": "corn",
+  "id": "corn-templar-9b89a2d",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-templar-9b89a2d.webp"
+}

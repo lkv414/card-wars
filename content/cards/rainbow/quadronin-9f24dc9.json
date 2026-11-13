@@ -1,0 +1,18 @@
+{
+  "name": "Квадронин",
+  "name_en": "QUADRONIN",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 6,
+  "description": "В начале твоего хода, нанеси 2 урона\nкаждому сопернику с 4 или больше\nкартами на руке.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "9f24dc9ff21b002e345de9e6f19ba54e01bb20a942b93dd8841bb69997b5eecf",
+  "landType": "rainbow",
+  "id": "quadronin-9f24dc9",
+  "kind": "card",
+  "image": "/content/cards/rainbow/quadronin-9f24dc9.webp"
+}

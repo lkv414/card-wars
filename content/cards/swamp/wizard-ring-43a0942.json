@@ -1,0 +1,18 @@
+{
+  "name": "Колдунский перстень",
+  "name_en": "WIZARD RING",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое твоё существо получает +1 к атаке в этот ход за каждые 5 карт в твоём сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "43a0942fe1792e9103c546d241f38ebfa9e643341fcb98c810775db89450a6ef",
+  "landType": "swamp",
+  "id": "wizard-ring-43a0942",
+  "kind": "card",
+  "image": "/content/cards/swamp/wizard-ring-43a0942.webp"
+}

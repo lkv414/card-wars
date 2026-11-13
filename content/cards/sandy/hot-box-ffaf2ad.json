@@ -1,0 +1,18 @@
+{
+  "name": "Горячий ящик",
+  "name_en": "HOT BOX",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда существо под контролем соперника выходит из игры в этой зоне, нанеси 2 урона владельцу этого существа и возьми 1 карту.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "ffaf2ad0493ef526943845680c4c4be5a138aaa59e743340923185e4e267bcad",
+  "landType": "sandy",
+  "id": "hot-box-ffaf2ad",
+  "kind": "card",
+  "image": "/content/cards/sandy/hot-box-ffaf2ad.webp"
+}

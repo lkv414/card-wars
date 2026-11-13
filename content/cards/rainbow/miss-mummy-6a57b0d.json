@@ -1,0 +1,18 @@
+{
+  "name": "Мисс мумия",
+  "name_en": "MISS MUMMY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "В начале твоего хода можешь вернуть Мисс мумию на руку владельца. Тогда выбранное песчаное существо под твоим контролем получает +1 к защите.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6a57b0dfbe78c6b7fe36211d95c82bf4a56a5734a0dcb9c0774da77bceb39528",
+  "landType": "rainbow",
+  "id": "miss-mummy-6a57b0d",
+  "kind": "card",
+  "image": "/content/cards/rainbow/miss-mummy-6a57b0d.webp"
+}

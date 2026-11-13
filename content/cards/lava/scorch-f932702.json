@@ -1,0 +1,18 @@
+{
+  "name": "Сожжение",
+  "name_en": "SCORCH",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона выбранному существу.\nЕсли у тебя на руке не больше 1 карты,\nнанеси 5 урона вместо этого.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f932702350d95417b59843e7870d3b6cece169eb319f9ae17c6f7b9704778710",
+  "landType": "lava",
+  "id": "scorch-f932702",
+  "kind": "card",
+  "image": "/content/cards/lava/scorch-f932702.webp"
+}

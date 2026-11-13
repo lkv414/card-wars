@@ -1,0 +1,18 @@
+{
+  "name": "Призрак счастья и удачи",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Когда призрак счастья и удачи входит в игру и атакует, ты можешь раскрыть верхнюю карту своей колоды. Если это радужная карта, ты можешь взять её на руку.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "bac365e08f0efc7854bfcdd030967d2d20def080e7aaac017aea95cedadd36f9",
+  "landType": "rainbow",
+  "id": "prizrak-schastya-i-udachi-bac365e",
+  "kind": "card",
+  "image": "/content/cards/rainbow/prizrak-schastya-i-udachi-bac365e.webp"
+}

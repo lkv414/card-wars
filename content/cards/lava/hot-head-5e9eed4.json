@@ -1,0 +1,18 @@
+{
+  "name": "Жаркоголовый",
+  "name_en": "HOT HEAD",
+  "cost": 3,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 7,
+  "description": "Жаркоголовый стоит на 1 действие меньше за каждое существо под твоим контролем за 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "5e9eed49ef6773a7e79b26a2c93fc5c61614340589b7aed576a7365889e364b2",
+  "landType": "lava",
+  "id": "hot-head-5e9eed4",
+  "kind": "card",
+  "image": "/content/cards/lava/hot-head-5e9eed4.webp"
+}

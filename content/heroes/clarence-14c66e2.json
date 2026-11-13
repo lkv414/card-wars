@@ -1,0 +1,13 @@
+{
+  "name": "Кларенс",
+  "name_en": "Clarence",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Когда ты первый раз за ход разыгрываешь карту с призраком, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "14c66e28aed30a95f3ada22457380217fb0a27a8b05f5747cde3c792141a86f1",
+  "id": "clarence-14c66e2",
+  "kind": "hero",
+  "image": "/content/heroes/clarence-14c66e2.webp"
+}

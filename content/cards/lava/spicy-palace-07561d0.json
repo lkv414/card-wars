@@ -1,0 +1,18 @@
+{
+  "name": "Жгучий дворец",
+  "name_en": "SPICY PALACE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Если ты разыграл 2 или более не лавовые карты, дружественное существо в этой зоне получает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "07561d04c09df5cc576383feb8a5ceeafafd646aedbab1de40cef2bccd70f16e",
+  "landType": "lava",
+  "id": "spicy-palace-07561d0",
+  "kind": "card",
+  "image": "/content/cards/lava/spicy-palace-07561d0.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Шарот",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "+2 к защите за каждые 5 карт в твоём сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "62223d7e380c928c33d10892e2a92b792c92a94206cb88aff2511072c8e4b057",
+  "landType": "swamp",
+  "id": "sharot-62223d7",
+  "kind": "card",
+  "image": "/content/cards/swamp/sharot-62223d7.webp"
+}

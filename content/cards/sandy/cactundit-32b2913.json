@@ -1,0 +1,18 @@
+{
+  "name": "Кактундит",
+  "name_en": "CACTUNDIT",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Соседние кукурузные существа получают +1 к атаке.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "32b291346e59ac524f6c84f0b9a980544f9422b0125cc078cc99eb258bfd853c",
+  "landType": "sandy",
+  "id": "cactundit-32b2913",
+  "kind": "card",
+  "image": "/content/cards/sandy/cactundit-32b2913.webp"
+}

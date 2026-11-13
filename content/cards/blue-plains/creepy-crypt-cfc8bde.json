@@ -1,0 +1,18 @@
+{
+  "name": "Жуткий склеп",
+  "name_en": "CREEPY CRYPT",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда твоё существо в этой зоне\nвыходит из игры, нанеси 2 урона\nвыбранному сопернику.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "cfc8bde30741733efa5d329e908f92e13b30ee9062b29520ef26978aa9bcff09",
+  "landType": "blue",
+  "id": "creepy-crypt-cfc8bde",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/creepy-crypt-cfc8bde.webp"
+}

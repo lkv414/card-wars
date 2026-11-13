@@ -1,0 +1,18 @@
+{
+  "name": "Овечка Любашка",
+  "name_en": "Cuddly Lamb",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "В начале твоего хода, если количество урона, нанесённого овечке любашке, равно 4 или больше, нанеси 2 урона выбранному существу под контролем соперника в этой зоне.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "a509d0650650d35723e01ad2f32b3de4c7f51e4956e43bace0f30ee2d6857b5d",
+  "landType": "nice",
+  "id": "cuddly-lamb-a509d06",
+  "kind": "card",
+  "image": "/content/cards/nice/cuddly-lamb-a509d06.webp"
+}

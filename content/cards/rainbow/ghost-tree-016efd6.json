@@ -1,0 +1,18 @@
+{
+  "name": "Призрачное дерево",
+  "name_en": "GHOST TREE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Призрачное дерево получает\n+2 к атаке пока защищается\nот существа на кукурузном поле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "016efd631f1474b784bef618f550cdc2ea6163255bff5aa80aa5fff1b16834bc",
+  "landType": "rainbow",
+  "id": "ghost-tree-016efd6",
+  "kind": "card",
+  "image": "/content/cards/rainbow/ghost-tree-016efd6.webp"
+}

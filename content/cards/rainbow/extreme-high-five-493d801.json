@@ -1,0 +1,18 @@
+{
+  "name": "Экстремальная пятюня",
+  "name_en": "EXTREME HIGH FIVE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними или нанеси 1 урон\nвыбранному существу. После розыгрыша\nты можешь положить это заклинание\nна руку напарника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "493d80197db92c0cd7238fc1b7013a134c29ffb4ed6dc092fc38fecd8e0a1f1f",
+  "landType": "rainbow",
+  "id": "extreme-high-five-493d801",
+  "kind": "card",
+  "image": "/content/cards/rainbow/extreme-high-five-493d801.webp"
+}

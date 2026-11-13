@@ -1,0 +1,18 @@
+{
+  "name": "Свинарник",
+  "name_en": "PIG PEN",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Существа под твоим контролем\nв этой зоне получают +2 к защите.\nЕсли ты контролируешь существо со\nсловом «свинья» в названии в этой зоне,\nоно получает +5 к защите.",
+  "flavor": "",
+  "set_code": "ПРОМО",
+  "sha256": "6823a4c4d87982c50e05d8d71224cd18b1905712fb2c2423a5989370171b798f",
+  "landType": "rainbow",
+  "id": "pig-pen-6823a4c",
+  "kind": "card",
+  "image": "/content/cards/rainbow/pig-pen-6823a4c.webp"
+}

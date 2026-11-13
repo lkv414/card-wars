@@ -1,0 +1,18 @@
+{
+  "name": "Док. Пироклоп",
+  "name_en": "DR. CYCLOPS",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 8,
+  "description": "Каждый раз, когда ты разыгрываешь заклинание, ты восстанавливаешь 2 жизни. Если у тебя полное здоровье, нанеси 2 урона выбранному сопернику.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "d1205669c532df0ab20c32726c7bfcf48dd5aa3307e64d90b5f0c4432a467065",
+  "landType": "nice",
+  "id": "dr-cyclops-d120566",
+  "kind": "card",
+  "image": "/content/cards/nice/dr-cyclops-d120566.webp"
+}

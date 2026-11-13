@@ -1,0 +1,18 @@
+{
+  "name": "Извергающийся колосс",
+  "name_en": "ERUPTING COLOSSUS",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 10,
+  "description": "Если у тебя не больше 1 карты на руке, удвой весь урон наносимый всем существам от любого источника.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "1e5340896dd62b95a88339dd86593719dbbc5292c66d0bdfbda221ed79560aa2",
+  "landType": "lava",
+  "id": "erupting-colossus-1e53408",
+  "kind": "card",
+  "image": "/content/cards/lava/erupting-colossus-1e53408.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Заплатка",
+  "name_en": "PATCH",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перераспредели урон между\nсуществами под твоим контролем\n(ни одно существо не может иметь\nурона больше, чем защита).",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "6f8fdd1666f7a7f1ef3ad160f832c81584bc18c17c09c621467bf6c5be289cda",
+  "landType": "nice",
+  "id": "patch-6f8fdd1",
+  "kind": "card",
+  "image": "/content/cards/nice/patch-6f8fdd1.webp"
+}

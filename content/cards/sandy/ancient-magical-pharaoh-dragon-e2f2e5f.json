@@ -1,0 +1,18 @@
+{
+  "name": "Древний магический фараон-дракон",
+  "name_en": "ANCIENT MAGICAL PHARAOH DRAGON",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 6,
+  "defense": 6,
+  "description": "Когда Древний магический фараон-дракон входит в игру или выходит из игры, перемешай сброс и поменяй его местами с твоей колодой.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "e2f2e5f36f8922407e9d0a1fe6545101847edd943280c4a03afe46cc1b34184b",
+  "landType": "sandy",
+  "id": "ancient-magical-pharaoh-dragon-e2f2e5f",
+  "kind": "card",
+  "image": "/content/cards/sandy/ancient-magical-pharaoh-dragon-e2f2e5f.webp"
+}

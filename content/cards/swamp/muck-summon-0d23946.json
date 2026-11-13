@@ -1,0 +1,18 @@
+{
+  "name": "Призыв грязи",
+  "name_en": "Muck Summon",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона каждому существу\nпод контролем соперника.\nКогда ты сбрасываешь призыв грязи,\nты можешь разыграть его бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0d23946af1e65648f134bab18a7f2a4683f901405cb686ce60aededc05d95c51",
+  "landType": "swamp",
+  "id": "muck-summon-0d23946",
+  "kind": "card",
+  "image": "/content/cards/swamp/muck-summon-0d23946.webp"
+}

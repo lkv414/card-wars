@@ -1,0 +1,18 @@
+{
+  "name": "Джин Стрюзан",
+  "name_en": "JEAN STREUSAN",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 11,
+  "description": "+2 к атаке за каждое флюпнутое\nсущество под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f875cd48d5b3844fa38d8c314b0eb52286592bc6b45efb405ee43a96b045891c",
+  "landType": "blue",
+  "id": "jean-streusan-f875cd4",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/jean-streusan-f875cd4.webp"
+}

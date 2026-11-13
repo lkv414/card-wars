@@ -1,0 +1,18 @@
+{
+  "name": "Бывалая кукузебра",
+  "name_en": "VETERAN CORN HORSE",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Когда бывалая кукузебра атакует, нанеси 2 урона выбранному сопернику.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "879b85b9529f6e4235289330114512ef97ec8793726e16c51adab9cf25de4b4e",
+  "landType": "corn",
+  "id": "veteran-corn-horse-879b85b",
+  "kind": "card",
+  "image": "/content/cards/corn/veteran-corn-horse-879b85b.webp"
+}

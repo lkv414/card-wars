@@ -1,0 +1,18 @@
+{
+  "name": "Доктор Влад Мягкий",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "landType": "nice",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "ФЛЮП >>> Сними 2 урона со всех своих существ, если количество урона, нанесенного доктору владу мягкому, равно 5 или больше, твои существа получают +2 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1ad0233cd75f6670a4ad875a6391f1ee080ad93b3620a1cccce3222dc8a81aa4",
+  "id": "doktor-vlad-myagkiy-1ad0233",
+  "kind": "card",
+  "image": "/content/cards/halloween/doktor-vlad-myagkiy-1ad0233.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Оранжевый Слайм",
+  "name_en": "Orange Slime",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если ты контролируешь 3 или более\nуникальных типов земель, когда\nОранжевый Слайм входит в игру,\nнанеси 3 урона сопернику.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "d93de1469d6b592773f1dade14a4bf025101dbb5ef34c4998ba932706c849772",
+  "landType": "swamp",
+  "id": "orange-slime-d93de14",
+  "kind": "card",
+  "image": "/content/cards/swamp/orange-slime-d93de14.webp"
+}

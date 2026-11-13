@@ -1,0 +1,18 @@
+{
+  "name": "Хрустальный шар",
+  "name_en": "CRYSTAL BALL",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Назови карту и раскрой карту твоей колоды. Если это названная карта,\nразыграй её бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "326d83701e20e7e0ac4afe425d2beba6f7ed8648af985614938738994d3d80c1",
+  "landType": "rainbow",
+  "id": "crystal-ball-326d837",
+  "kind": "card",
+  "image": "/content/cards/rainbow/crystal-ball-326d837.webp"
+}

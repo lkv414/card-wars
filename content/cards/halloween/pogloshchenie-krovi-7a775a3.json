@@ -1,0 +1,18 @@
+{
+  "name": "Поглощение крови",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними Х урона с выбранного существа\nи возьми Х карт, где Х стоимость\nвыбранного существа.\nУдали эту карту из игры.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7a775a31e1893d5e83e8fb80e6e25a141dd82a2a91b1327a4e8a93c0503ac801",
+  "id": "pogloshchenie-krovi-7a775a3",
+  "kind": "card",
+  "image": "/content/cards/halloween/pogloshchenie-krovi-7a775a3.webp"
+}

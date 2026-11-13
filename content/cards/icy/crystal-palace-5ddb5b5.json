@@ -1,0 +1,18 @@
+{
+  "name": "Хрустальный дворец",
+  "name_en": "CRYSTAL PALACE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда на землю в этой зоне кладётся\nжетон мороза, наноси 2 урона\nвыбранному существу.",
+  "flavor": "",
+  "set_code": "ice_king",
+  "sha256": "5ddb5b5a33b2cd1789c9559ef647cbf8bb882b04ee633ef9bcdf0d29283c8c3d",
+  "landType": "icy",
+  "id": "crystal-palace-5ddb5b5",
+  "kind": "card",
+  "image": "/content/cards/icy/crystal-palace-5ddb5b5.webp"
+}

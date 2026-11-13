@@ -1,0 +1,18 @@
+{
+  "name": "Близнецы",
+  "name_en": "TWINS",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми карту и раскрой её.\nЗатем другой выбранный игрок\nраскрывает карту своей колоды.\nЕсли их стоимость совпадает,\nвыбранный игрок берёт свою карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "45220a6e8e6eca4eba7d0ab8ec4219c7db7995352c50cd93b29218e9e6890e2d",
+  "landType": "rainbow",
+  "id": "twins-45220a6",
+  "kind": "card",
+  "image": "/content/cards/rainbow/twins-45220a6.webp"
+}

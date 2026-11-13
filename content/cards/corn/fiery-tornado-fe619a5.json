@@ -1,0 +1,18 @@
+{
+  "name": "Огненное торнадо",
+  "name_en": "FIERY TORNADO",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 10,
+  "description": "ФЛЮП >>> +3 к атаке пока Флюпнуто.",
+  "flavor": "",
+  "set_code": "cake",
+  "sha256": "fe619a5f09cfd94337f59230e483952db3918ce4fa3f542d91ef643966f6ba81",
+  "landType": "corn",
+  "id": "fiery-tornado-fe619a5",
+  "kind": "card",
+  "image": "/content/cards/corn/fiery-tornado-fe619a5.webp"
+}

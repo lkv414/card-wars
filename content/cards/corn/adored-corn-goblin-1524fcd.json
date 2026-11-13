@@ -1,0 +1,18 @@
+{
+  "name": "Обожаемый кукугоблин",
+  "name_en": "ADORED CORN GOBLIN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Поглощение\nФЛЮП >>> Следующее существо,\nкоторое ты разыграешь в этом ходу,\nстоит на 1 действие меньше.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1524fcd438295972d54a79ef22e26cf3f3e6642c9e40c82a6f3d1ca85aca75a2",
+  "landType": "corn",
+  "id": "adored-corn-goblin-1524fcd",
+  "kind": "card",
+  "image": "/content/cards/corn/adored-corn-goblin-1524fcd.webp"
+}

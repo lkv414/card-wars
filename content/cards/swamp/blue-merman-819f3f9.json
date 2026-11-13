@@ -1,0 +1,18 @@
+{
+  "name": "Синий русал",
+  "name_en": "BLUE MERMAN",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 5,
+  "description": "ФЛЮП >>> Возьми карту,\nзатем сбрось карту.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "819f3f9f80082bf4f9736187b4acbd087503fc574d525815d946b5c3d81812ce",
+  "landType": "swamp",
+  "id": "blue-merman-819f3f9",
+  "kind": "card",
+  "image": "/content/cards/swamp/blue-merman-819f3f9.webp"
+}

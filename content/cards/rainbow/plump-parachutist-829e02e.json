@@ -1,0 +1,18 @@
+{
+  "name": "Пухлый арашютист",
+  "name_en": "PLUMP PARACHUTIST",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "Когда пухлый арашютист входит в игру, перемести его на любую пустую землю, а затем переверни эту землю лицевой стороной вниз. Когда пухлый арашютист выходит из игры, переверни эту землю лицевой стороной вверх.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "829e02e973de7927bd5665537a2f6286ced73eb76eed3ee620add9808d1d2dc3",
+  "landType": "rainbow",
+  "id": "plump-parachutist-829e02e",
+  "kind": "card",
+  "image": "/content/cards/rainbow/plump-parachutist-829e02e.webp"
+}

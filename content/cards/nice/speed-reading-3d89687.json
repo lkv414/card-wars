@@ -1,0 +1,18 @@
+{
+  "name": "Скорочтение",
+  "name_en": "SPEED READING",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми 2 карты, затем сбрось\n2 карты. Если ты сбросил равнинное\nзаклинание, ты можешь повторить\nэтого эффект 1 раз.",
+  "flavor": "",
+  "set_code": "ЛИМИТНЫЙ ПРОМО",
+  "sha256": "3d8968706d8212678958485cd4534c7967abbb2e646612bdca4bcadee421757f",
+  "landType": "nice",
+  "id": "speed-reading-3d89687",
+  "kind": "card",
+  "image": "/content/cards/nice/speed-reading-3d89687.webp"
+}

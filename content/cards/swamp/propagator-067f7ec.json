@@ -1,0 +1,18 @@
+{
+  "name": "ПропаКрок",
+  "name_en": "PROPAGATOR",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Когда ПропаКрок входит в игру, назови карту. Раскрой верхнюю карту твоей колоды. Если это названная карта, сбрось её и получи 2 действия.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "067f7ec93f4839a37d34c1dea05d5f8e21afc315f0baea3121072f8d70a2b66d",
+  "landType": "swamp",
+  "id": "propagator-067f7ec",
+  "kind": "card",
+  "image": "/content/cards/swamp/propagator-067f7ec.webp"
+}

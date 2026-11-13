@@ -1,0 +1,18 @@
+{
+  "name": "Газы тыквы",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Раскрой 3 карты твоей колоды.\nЕсли среди них есть карты с тыквой,\nто возьми 1, а остальные сбрось.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3030da33259b2230cc101a50aaeac1d3a9d48497b423243a34d5caba5c78082a",
+  "id": "gazy-tykvy-3030da3",
+  "kind": "card",
+  "image": "/content/cards/halloween/gazy-tykvy-3030da3.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Обезумевшая кошатница",
+  "name_en": "CRAZY CAT LADY",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 10,
+  "description": "Радужные существа под твоим контролем\nполучают +1 к атаке.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "84d725102a1d7132acb7993e20223d65408fb262736847e552ce591a21352d4a",
+  "landType": "blue",
+  "id": "crazy-cat-lady-84d7251",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/crazy-cat-lady-84d7251.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Призрачный Мимимик",
+  "name_en": "GHOST MIMIMIC",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Когда Призрачный Мимимик выходит из игры, возьми нижнюю карту своей колоды.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "30b2abbe15ef597121d9405dcc39b03bfcb160af2bcb21790cbcfc85e0aa15e9",
+  "landType": "swamp",
+  "id": "ghost-mimimic-30b2abb",
+  "kind": "card",
+  "image": "/content/cards/swamp/ghost-mimimic-30b2abb.webp"
+}

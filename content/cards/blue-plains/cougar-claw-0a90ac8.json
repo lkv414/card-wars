@@ -1,0 +1,18 @@
+{
+  "name": "Лапа пумы",
+  "name_en": "COUGAR CLAW",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни в подготовленное положение\nсущество под твоим контролем.\nОно получает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "0a90ac8f768e3cf10ed08b1f53ea0cda16fc180cd305cbc93662eda26fad2d09",
+  "landType": "blue",
+  "id": "cougar-claw-0a90ac8",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/cougar-claw-0a90ac8.webp"
+}

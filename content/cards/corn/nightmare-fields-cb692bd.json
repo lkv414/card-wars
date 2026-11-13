@@ -1,0 +1,18 @@
+{
+  "name": "Поля кошмара",
+  "name_en": "NIGHTMARE FIELDS",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси сопернику 1 урон за каждую карту на его руке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cb692bd2df4eff613d56564b90234e275588ed864d212090cbecda3e197a4665",
+  "landType": "corn",
+  "id": "nightmare-fields-cb692bd",
+  "kind": "card",
+  "image": "/content/cards/corn/nightmare-fields-cb692bd.webp"
+}

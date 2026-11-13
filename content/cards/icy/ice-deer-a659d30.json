@@ -1,0 +1,18 @@
+{
+  "name": "Королень",
+  "name_en": "ICE DEER",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 4,
+  "description": "ФЛЮП >>> Возьми 1 карту за каждую землю с жетоном мороза под контролем игроков.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a659d30eca4c061e38c83041dbb439973cb66cc2a1b7cc9b1ee248411cf9fe2c",
+  "landType": "icy",
+  "id": "ice-deer-a659d30",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-deer-a659d30.webp"
+}

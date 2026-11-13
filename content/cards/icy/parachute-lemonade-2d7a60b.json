@@ -1,0 +1,18 @@
+{
+  "name": "Скоро-мороженный лимонад",
+  "name_en": "PARACHUTE LEMONADE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Посчитай количество земель с жетонами мороза. Сними 1 урон с стольких дружественных существ.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "2d7a60b42411952f051a758160588155f5581546525f3a7dbafd5f9fb3b904a1",
+  "landType": "icy",
+  "id": "parachute-lemonade-2d7a60b",
+  "kind": "card",
+  "image": "/content/cards/icy/parachute-lemonade-2d7a60b.webp"
+}

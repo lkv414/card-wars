@@ -1,0 +1,18 @@
+{
+  "name": "Песчаный краб ловкач",
+  "name_en": "SANDY CRAB TRICKSTER",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Каждый раз, когда существо входит в игру во время твоего хода, ты можешь поменять его местами с песчаным крабом ловкачом.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "60d70df9b6444b321da5a169eb1256c82cca9680df2953e5eadc4a2bd1704725",
+  "landType": "sandy",
+  "id": "sandy-crab-trickster-60d70df",
+  "kind": "card",
+  "image": "/content/cards/sandy/sandy-crab-trickster-60d70df.webp"
+}

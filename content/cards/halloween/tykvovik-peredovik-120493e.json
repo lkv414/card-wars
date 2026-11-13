@@ -1,0 +1,18 @@
+{
+  "name": "Тыквовик-передовик",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "landType": "icy",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Сбрось карту с тыквой, ФЛЮП >>>\nЗаморозь выбранную землю.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "120493eec77b90f9f8de452abc5ffe210a9556aa312808c9c68278cf69c52707",
+  "id": "tykvovik-peredovik-120493e",
+  "kind": "card",
+  "image": "/content/cards/halloween/tykvovik-peredovik-120493e.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Лампир, пушистый клыкастик",
+  "name_en": "FLUFFY FANG LAMB",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "После атаки сними 1 урон с Лампира.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b93eacc4071fdeccb0b63c6e226962a0d6e8cbb058f941b90df8f3c5785033c0",
+  "landType": "rainbow",
+  "id": "fluffy-fang-lamb-b93eacc",
+  "kind": "card",
+  "image": "/content/cards/rainbow/fluffy-fang-lamb-b93eacc.webp"
+}

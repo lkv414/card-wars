@@ -1,0 +1,18 @@
+{
+  "name": "Демоническая мощь",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "landType": "blue",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Твои существа получают +2 к атаке\nв этом ходу. Уничтожь сколько угодно\nсуществ под твоим контролем. Твои\nсущества получают дополнительно\n+2 к атаке в этом ходу за каждое\nуничтоженное таким образом.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e71227c6d387142de0fc378e82e87b0b34992d6935c51d98ab58c21e88f0ed30",
+  "id": "demonicheskaya-moshch-e71227c",
+  "kind": "card",
+  "image": "/content/cards/halloween/demonicheskaya-moshch-e71227c.webp"
+}

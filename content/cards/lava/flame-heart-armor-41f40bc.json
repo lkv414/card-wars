@@ -1,0 +1,18 @@
+{
+  "name": "Латы пламенного сердца",
+  "name_en": "FLAME HEART ARMOR",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги выбранное дружественное существо и сними с него весь урон.\nВозьми 1 карту.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "41f40bc444baa3c69fb146180b7bc9ed11c82debfec0c9182447f2382e75c382",
+  "landType": "lava",
+  "id": "flame-heart-armor-41f40bc",
+  "kind": "card",
+  "image": "/content/cards/lava/flame-heart-armor-41f40bc.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Мило-топка",
+  "name_en": "CUTE-FIRE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Твои другие лавовые существа получают +1 к атаке.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "c19c9d26e0426d6f9198b3f7f41d2b844b87bc2349d7941b7e2ee3694a6eb670",
+  "landType": "lava",
+  "id": "cute-fire-c19c9d2",
+  "kind": "card",
+  "image": "/content/cards/lava/cute-fire-c19c9d2.webp"
+}

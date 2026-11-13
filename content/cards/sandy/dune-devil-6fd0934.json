@@ -1,0 +1,18 @@
+{
+  "name": "Дюнный дьяволёнок",
+  "name_en": "DUNE DEVIL",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Когда дюнный дьяволёнок входит в игру,\nнанеси урон каждому существу в игре\n(включая всех твоих).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6fd0934a54c4a6eefe42cc3baee27f3712ba357dbb0781cb48e3a4d6f2213866",
+  "landType": "sandy",
+  "id": "dune-devil-6fd0934",
+  "kind": "card",
+  "image": "/content/cards/sandy/dune-devil-6fd0934.webp"
+}

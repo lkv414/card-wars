@@ -1,0 +1,18 @@
+{
+  "name": "Коала милашка",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Если количество урона, нанесённого коале милашке, равно 4 или больше,\nона получает +2 к атаке.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "8e625c8fd994364f2aa27762c79eda8ace8dbfcfbff41ed6bb63566f42597928",
+  "landType": "nice",
+  "id": "koala-milashka-8e625c8",
+  "kind": "card",
+  "image": "/content/cards/nice/koala-milashka-8e625c8.webp"
+}

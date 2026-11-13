@@ -1,0 +1,18 @@
+{
+  "name": "Травяные ракеты",
+  "name_en": "GRASS ROCKETS",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Когда дружественные существа наносят урон в этом ходу, сними с них урон, равный нанесённому урону.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "989c786167eca9fdf32810b3575e604af29bb90a4df12ccc5ecb67d65b768540",
+  "landType": "nice",
+  "id": "grass-rockets-989c786",
+  "kind": "card",
+  "image": "/content/cards/nice/grass-rockets-989c786.webp"
+}

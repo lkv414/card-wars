@@ -1,0 +1,18 @@
+{
+  "name": "Испытание огнём",
+  "name_en": "TRIAL BY FIRE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Раскрой 2 верхние карты твоей колоды. Разыграй 1 карту бесплатно и остальные сбрось. Если у тебя на руке не больше 1 карты, ты можешь взять на руку сброшенную карту.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "ce706e7e27c29a8c1326d165a8cdb4fbe4b7d22b5607efa215a54adc6de88762",
+  "landType": "lava",
+  "id": "trial-by-fire-ce706e7",
+  "kind": "card",
+  "image": "/content/cards/lava/trial-by-fire-ce706e7.webp"
+}

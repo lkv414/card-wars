@@ -1,0 +1,13 @@
+{
+  "name": "Волшебный Чел",
+  "name_en": "Magic Man",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Когда ты разыграешь карты\nсо стоимостью 2, нанеси 2 урона\nсуществу под контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "367b086009123956e840be99d84cd463b41f6c6901badeb5e036fcd8af8d1796",
+  "id": "magic-man-367b086",
+  "kind": "hero",
+  "image": "/content/heroes/magic-man-367b086.webp"
+}

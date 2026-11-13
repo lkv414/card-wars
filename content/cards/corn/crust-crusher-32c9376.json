@@ -1,0 +1,18 @@
+{
+  "name": "Крушитель корок",
+  "name_en": "CRUST CRUSHER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Крушитель корок может находиться на одной земле с другим существом. Когда другое существо на этой земле получает урон, вместо этого нанеси урон крушителю корок.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "32c9376b17231c26928df46aca9c26b0e7a21c75ed3c66d34de6b38f0999f977",
+  "landType": "corn",
+  "id": "crust-crusher-32c9376",
+  "kind": "card",
+  "image": "/content/cards/corn/crust-crusher-32c9376.webp"
+}

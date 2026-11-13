@@ -1,0 +1,18 @@
+{
+  "name": "За борт!",
+  "name_en": "OVERBOARD!",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни на руку выбранное существо, которым ты владеешь, разыграй его бесплатно.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "dbee8325914be295ad14009968e78ab41cdbf466e520332f47b408d317259ff2",
+  "landType": "sandy",
+  "id": "overboard-dbee832",
+  "kind": "card",
+  "image": "/content/cards/sandy/overboard-dbee832.webp"
+}

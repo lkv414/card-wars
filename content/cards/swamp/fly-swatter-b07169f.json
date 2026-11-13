@@ -1,0 +1,18 @@
+{
+  "name": "Мушка-хлопушка",
+  "name_en": "FLY SWATTER",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Каждый соперник сбрасывает\n1 карту стоимостью 0 или показывает руку,\nесли у него таких нету.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "b07169fb9b1a9cc9f18135365774d16fa8fed55479d97e9eb7ba636c1eb8357c",
+  "landType": "swamp",
+  "id": "fly-swatter-b07169f",
+  "kind": "card",
+  "image": "/content/cards/swamp/fly-swatter-b07169f.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Глазастый тип",
+  "name_en": "EYE GUY",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "В начале твоего хода посмотри верхнюю карту своей колоды. Ты можешь положить её под низ колоды.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "aedf9a6e9cfedc972ff10fd6ba52868921fdbf8213ac34755d927de3750057c7",
+  "landType": "swamp",
+  "id": "eye-guy-aedf9a6",
+  "kind": "card",
+  "image": "/content/cards/swamp/eye-guy-aedf9a6.webp"
+}

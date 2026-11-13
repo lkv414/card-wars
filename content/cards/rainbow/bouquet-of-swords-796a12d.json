@@ -1,0 +1,18 @@
+{
+  "name": "Букет мечей",
+  "name_en": "BOUQUET OF SWORDS",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 1 урон выбранному существу за каждую карту, которую ты взял в этом ходу.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "796a12d08f2c089a472953642c1e2dcab98ebfd79b0de3231142282c172f9913",
+  "landType": "rainbow",
+  "id": "bouquet-of-swords-796a12d",
+  "kind": "card",
+  "image": "/content/cards/rainbow/bouquet-of-swords-796a12d.webp"
+}

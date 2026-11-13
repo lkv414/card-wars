@@ -1,0 +1,18 @@
+{
+  "name": "Культист головорез",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "landType": "blue",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Когда культист головорез входит в игру,\nуничтожь выбранное флюпнутое существо.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9deaaf740073f4000f860f4b6764a6b5d189b6c7458c3e79c55b95e059b77448",
+  "id": "kultist-golovorez-9deaaf7",
+  "kind": "card",
+  "image": "/content/cards/halloween/kultist-golovorez-9deaaf7.webp"
+}

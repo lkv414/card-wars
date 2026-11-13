@@ -1,0 +1,18 @@
+{
+  "name": "Шоколадная Такуся",
+  "name_en": "CHOCOLATE TACO",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "В начале фазы атаки, если в этой\nзоне есть земля с жетоном мороза,\nнанеси 1 урон каждому существу\nпод контролем выбранного игрока.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "e244577ca1a59c8dcc770a4bc0a2799b17ee157c0afb8a8f6841a375be09c2c1",
+  "landType": "icy",
+  "id": "chocolate-taco-e244577",
+  "kind": "card",
+  "image": "/content/cards/icy/chocolate-taco-e244577.webp"
+}

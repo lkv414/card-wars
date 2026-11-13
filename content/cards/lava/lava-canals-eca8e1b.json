@@ -1,0 +1,18 @@
+{
+  "name": "Лавоканалы",
+  "name_en": "Lava Canals",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Нанеси 1 урон существу под контролем соперника в этой зоне за каждый жетон ожога на существах в других зонах.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "eca8e1b10484378e04e8d34f244860a34e2871ba70237e26f27bf64a31901bd1",
+  "landType": "lava",
+  "id": "lava-canals-eca8e1b",
+  "kind": "card",
+  "image": "/content/cards/lava/lava-canals-eca8e1b.webp"
+}

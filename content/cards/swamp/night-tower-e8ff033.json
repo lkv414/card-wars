@@ -1,0 +1,18 @@
+{
+  "name": "Башня ночи",
+  "name_en": "NIGHT TOWER",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Если у соперника нет существа\nв этой зоне, он сбрасывает 1 карту.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "e8ff033dc9c34a39d5d32f4534a7d3cdfa7b09bbc73a68214a1b440a58e3b9ed",
+  "landType": "swamp",
+  "id": "night-tower-e8ff033",
+  "kind": "card",
+  "image": "/content/cards/swamp/night-tower-e8ff033.webp"
+}

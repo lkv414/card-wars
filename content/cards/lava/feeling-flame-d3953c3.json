@@ -1,0 +1,18 @@
+{
+  "name": "Огонёк Чувств",
+  "name_en": "FEELING FLAME",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги выбранное существо и положи эту карту под него. В начале твоего хода ты можешь положить эту карту под соседнее существо и поджечь его. Если существо, находящееся над картой, выходит из игры, сбрось эту карту.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "d3953c34624aac3bf6be48dfc874a6aed84f2d017802aa65cf2022ae8cedaccc",
+  "landType": "lava",
+  "id": "feeling-flame-d3953c3",
+  "kind": "card",
+  "image": "/content/cards/lava/feeling-flame-d3953c3.webp"
+}

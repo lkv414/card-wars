@@ -1,0 +1,18 @@
+{
+  "name": "Амбар истины",
+  "name_en": "TRUTH SILO",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 2 действия >>> Укради случайную карту с руки соперника и разыграй её бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "af9c27783a8530682798dabe5b94513b1f69d43cf9ee93f45eb7d91bc7bc21e1",
+  "landType": "corn",
+  "id": "truth-silo-af9c277",
+  "kind": "card",
+  "image": "/content/cards/corn/truth-silo-af9c277.webp"
+}

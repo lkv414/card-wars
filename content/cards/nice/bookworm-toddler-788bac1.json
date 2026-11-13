@@ -1,0 +1,18 @@
+{
+  "name": "Грамотей-карапуз",
+  "name_en": "BOOKWORM TODDLER",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда грамотей-карапуз наносит урон жизням соперника, возьми столько карт, сколько нанёс урона.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "788bac1b5a6b57299b11906f0b5d1a2c477ddd9cb9ae0c5acb9539ebbadc5ace",
+  "landType": "nice",
+  "id": "bookworm-toddler-788bac1",
+  "kind": "card",
+  "image": "/content/cards/nice/bookworm-toddler-788bac1.webp"
+}

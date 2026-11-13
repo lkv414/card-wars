@@ -1,0 +1,18 @@
+{
+  "name": "Поднятие целины",
+  "name_en": "BREAK NEW GROUND",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Можешь перевернуть лицевой стороной вверх одну из твоих земель и можешь переместить одно из твоих строений в одну из зон на твоей стороне, где нет строений.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3ab3b06c04143640b578243b6a76b95942192b406534f858bc07609e8eafe850",
+  "landType": "rainbow",
+  "id": "break-new-ground-3ab3b06",
+  "kind": "card",
+  "image": "/content/cards/rainbow/break-new-ground-3ab3b06.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Крылоглаз-альбинос",
+  "name_en": "ALBINO WING EYE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Пока количество урона, нанесённого\nкрылоглазу-альбиносу, равно 2,\nон получает +2 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "865ca44018ee44477415ffc0430b016f2ffcaa290159fc8e94d6ea5cc032f948",
+  "landType": "nice",
+  "id": "albino-wing-eye-865ca44",
+  "kind": "card",
+  "image": "/content/cards/nice/albino-wing-eye-865ca44.webp"
+}

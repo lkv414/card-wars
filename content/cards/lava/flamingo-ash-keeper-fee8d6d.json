@@ -1,0 +1,18 @@
+{
+  "name": "Огнеминго Хранитель Пепла",
+  "name_en": "FLAMINGO ASH KEEPER",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда огнеминго хранитель пепла входит в игру, ты можешь сбросить карту, чтобы поджечь существо под контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fee8d6de6be770f47299f64adfa0a33802172f8b0863e67370ede65e0bdab7f3",
+  "landType": "lava",
+  "id": "flamingo-ash-keeper-fee8d6d",
+  "kind": "card",
+  "image": "/content/cards/lava/flamingo-ash-keeper-fee8d6d.webp"
+}

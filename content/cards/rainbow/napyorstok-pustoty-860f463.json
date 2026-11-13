@@ -1,0 +1,18 @@
+{
+  "name": "Напёрсток пустоты",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 2 жизни, получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "860f4634b76264866f76927c2107f9cbb88dd5ecdd0a456c405caa32f96be4d9",
+  "landType": "rainbow",
+  "id": "napyorstok-pustoty-860f463",
+  "kind": "card",
+  "image": "/content/cards/rainbow/napyorstok-pustoty-860f463.webp"
+}

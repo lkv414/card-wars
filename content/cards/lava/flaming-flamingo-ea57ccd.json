@@ -1,0 +1,18 @@
+{
+  "name": "Огнеминго пылающий",
+  "name_en": "FLAMING FLAMINGO",
+  "cost": 0,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда Огнеминго пылающий наносит\nурон существу, подожги то существо,\nесли оно не горело.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ea57ccdb8fe1dbd5fd14c5b63420b25df1cb24ac7a2aaa24065e902a914e08a2",
+  "landType": "lava",
+  "id": "flaming-flamingo-ea57ccd",
+  "kind": "card",
+  "image": "/content/cards/lava/flaming-flamingo-ea57ccd.webp"
+}

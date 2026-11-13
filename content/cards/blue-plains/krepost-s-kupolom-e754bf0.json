@@ -1,0 +1,18 @@
+{
+  "name": "Крепость с куполом",
+  "name_en": null,
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает\n+2 к защите и не может получать\nурон от заклинаний соперника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "e754bf014bc2294213eac6c19212e901fc7abd3b84e09ebdee2640f59f4dc2e4",
+  "landType": "blue",
+  "id": "krepost-s-kupolom-e754bf0",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/krepost-s-kupolom-e754bf0.webp"
+}

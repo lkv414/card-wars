@@ -1,0 +1,18 @@
+{
+  "name": "Холодно-горячо",
+  "name_en": "HOT-COLD",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги всех существ на замороженных землях, затем заморозь каждую землю с горящим существом.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "08ac76cfd0828c5de785225e50929962ae0eebbdc256804d43c82b90de3198e6",
+  "landType": "icy",
+  "id": "hot-cold-08ac76c",
+  "kind": "card",
+  "image": "/content/cards/icy/hot-cold-08ac76c.webp"
+}

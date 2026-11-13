@@ -1,0 +1,18 @@
+{
+  "name": "Нейромант",
+  "name_en": "NEUROMANCER",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "ФЛЮП >>> Разыграй карту\nстоимостью 0 из твоего сброса.\nВ конце хода, удали её из игры.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "e9f83fb563f8e84faf06949ab6ad07e757777725de5650956b3ffc1d3bd8bb0b",
+  "landType": "blue",
+  "id": "neuromancer-e9f83fb",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/neuromancer-e9f83fb.webp"
+}

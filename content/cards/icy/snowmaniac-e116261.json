@@ -1,0 +1,18 @@
+{
+  "name": "Дурка-Снегурка",
+  "name_en": "SNOWMANIAC",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "Когда Дурка-Снегурка входит в игру,\nзаморозь обе земли в её зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e11626142a40654152bbeb7be309d79233d06709d601390f50e09285931233bf",
+  "landType": "icy",
+  "id": "snowmaniac-e116261",
+  "kind": "card",
+  "image": "/content/cards/icy/snowmaniac-e116261.webp"
+}

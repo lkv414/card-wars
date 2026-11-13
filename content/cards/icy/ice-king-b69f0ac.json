@@ -1,0 +1,18 @@
+{
+  "name": "Леднериус",
+  "name_en": "ICE KING",
+  "cost": 9,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 8,
+  "defense": 5,
+  "description": "Стоимость Леднериуса уменьшается\nна 1 действие за каждую землю с жетоном\nмороза под контролем 2 выбранных игроков.\nВ конце твоего хода потеряй 5 жизней или\nза каждую землю с жетоном мороза,\nв зависимости от того, какое значение больше.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "b69f0acc7918288ef900d7f22a99728953ef0f9e5e6f036adb9fd5a978904bc3",
+  "landType": "icy",
+  "id": "ice-king-b69f0ac",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-king-b69f0ac.webp"
+}

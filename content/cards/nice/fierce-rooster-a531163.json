@@ -1,0 +1,18 @@
+{
+  "name": "Яростный петух",
+  "name_en": "FIERCE ROOSTER",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 8,
+  "description": "Яростный петух получает +Х к атаке, где Х - количество нанесённого ему урона.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "a531163018307ff32820bd04a57781be36c96f199169ed5ef915c03e2dfe0479",
+  "landType": "nice",
+  "id": "fierce-rooster-a531163",
+  "kind": "card",
+  "image": "/content/cards/nice/fierce-rooster-a531163.webp"
+}

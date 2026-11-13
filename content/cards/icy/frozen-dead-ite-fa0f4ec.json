@@ -1,0 +1,18 @@
+{
+  "name": "Мёрзлый умертвитель",
+  "name_en": "FROZEN DEAD-ITE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Мёрзлый умертвитель может\nвойти в игру на землю, где лежит\nжетон мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fa0f4ec1e69c04f9d0a5f470a19305c0badbf7810e4e0a851625315bbab686eb",
+  "landType": "icy",
+  "id": "frozen-dead-ite-fa0f4ec",
+  "kind": "card",
+  "image": "/content/cards/icy/frozen-dead-ite-fa0f4ec.webp"
+}

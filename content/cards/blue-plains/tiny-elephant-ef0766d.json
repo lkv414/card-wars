@@ -1,0 +1,18 @@
+{
+  "name": "Кроха слонёнок",
+  "name_en": "TINY ELEPHANT",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Пока в игре, кроха слонёнок является\nодновременно равнинным и\nрадужным существом.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "ef0766db5e7c9618ae2eff13964d3e11e11cde9f4e08a63fcdf3285bc8b1e47c",
+  "landType": "blue",
+  "id": "tiny-elephant-ef0766d",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/tiny-elephant-ef0766d.webp"
+}

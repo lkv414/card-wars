@@ -1,0 +1,18 @@
+{
+  "name": "Обнимашки",
+  "name_en": "Hugs",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное существо под твоим контролем, а затем уничтожь выбранное существо под контролем соперника в его зоне.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "6eb6d20c52cf78c14843cc34cbcbfced660ec2129396cfdeb0596d32207a9eda",
+  "landType": "nice",
+  "id": "hugs-6eb6d20",
+  "kind": "card",
+  "image": "/content/cards/nice/hugs-6eb6d20.webp"
+}

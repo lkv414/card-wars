@@ -1,0 +1,18 @@
+{
+  "name": "Пылающие хижины",
+  "name_en": "FLAMING HUTS",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда ты поджигаешь существо под контролем соперника, нанеси ему 1 дополнительный урон.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4c44785dbdb5dcaf549f1bf09a39b28e5f3fb890911546980be771e9a43af096",
+  "landType": "lava",
+  "id": "flaming-huts-4c44785",
+  "kind": "card",
+  "image": "/content/cards/lava/flaming-huts-4c44785.webp"
+}

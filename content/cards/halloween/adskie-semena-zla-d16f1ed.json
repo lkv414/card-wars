@@ -1,0 +1,18 @@
+{
+  "name": "Адские семена зла",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо получает +2 к атаке в этот ход за каждое существо, которое было уничтожено в соседней зоне в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d16f1ed70aeda1ed7873f2ace67eae90ab72c4a50d07d3cc42fb45c3bee1421c",
+  "id": "adskie-semena-zla-d16f1ed",
+  "kind": "card",
+  "image": "/content/cards/halloween/adskie-semena-zla-d16f1ed.webp"
+}

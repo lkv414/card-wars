@@ -1,0 +1,18 @@
+{
+  "name": "Шитый ленивец",
+  "name_en": "STITCHED SLOTH",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 8,
+  "description": "Каждое соседнее существо получает +1 к атаке. Если количество урона, нанесённого шитому ленивцу, равно 4 или больше, каждое соседнее существо получает вместо этого +2 к атаке.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "35943f35a7c6dfcbf5a5260be4c43822ef0991adc6ad46bbc7483e7319bbf23b",
+  "landType": "nice",
+  "id": "stitched-sloth-35943f3",
+  "kind": "card",
+  "image": "/content/cards/nice/stitched-sloth-35943f3.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Змеиный взор",
+  "name_en": "SNAKE EYES",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под твоим контролем получает +2 к атаке в этот ход, пока атакует существо на бесполезом болоте.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "bd050e0b844c650a7507ecb0c41c353f1385c132c5bf46860002e2e52708a778",
+  "landType": "sandy",
+  "id": "snake-eyes-bd050e0",
+  "kind": "card",
+  "image": "/content/cards/sandy/snake-eyes-bd050e0.webp"
+}

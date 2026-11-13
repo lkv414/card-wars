@@ -1,0 +1,18 @@
+{
+  "name": "Кремократия",
+  "name_en": "Creamocracy",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери тип земель.\nНанеси 2 урона каждому существу\nне на выбранном типе земли.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "d657fa0eef87521c2366cdef969bd37b5752ce5121252514ddc6feb84fe9f1b6",
+  "landType": "corn",
+  "id": "creamocracy-d657fa0",
+  "kind": "card",
+  "image": "/content/cards/corn/creamocracy-d657fa0.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Синюшный злопыхатель",
+  "name_en": "BLUE DETRACTOR",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 9,
+  "description": "Когда синюшный злопыхатель перемещается в другую зону,\nбери карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3bace18c235554ef4645d2b0eacb189395de38a641c9c77efb182ed77939b87c",
+  "landType": "blue",
+  "id": "blue-detractor-3bace18",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/blue-detractor-3bace18.webp"
+}

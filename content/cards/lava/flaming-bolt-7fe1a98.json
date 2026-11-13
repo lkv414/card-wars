@@ -1,0 +1,18 @@
+{
+  "name": "Пламенный прострел",
+  "name_en": "FLAMING BOLT",
+  "cost": 0,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожжи выбранное существо, а затем нанеси ему 1 дополнительный урон.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7fe1a984db76db96026bda152d2800ccf247c4c5a011372e3e97f988e4360dd0",
+  "landType": "lava",
+  "id": "flaming-bolt-7fe1a98",
+  "kind": "card",
+  "image": "/content/cards/lava/flaming-bolt-7fe1a98.webp"
+}

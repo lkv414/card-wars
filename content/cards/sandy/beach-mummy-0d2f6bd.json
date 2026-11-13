@@ -1,0 +1,18 @@
+{
+  "name": "Пляжная мумия",
+  "name_en": "BEACH MUMMY",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Верни на руку владельца существо в соседней зоне.",
+  "flavor": "",
+  "set_code": "ftg",
+  "sha256": "0d2f6bd9ef55de8f16dd6526851b1fc6ff45de15670199f9fe094300dfaa12dc",
+  "landType": "sandy",
+  "id": "beach-mummy-0d2f6bd",
+  "kind": "card",
+  "image": "/content/cards/sandy/beach-mummy-0d2f6bd.webp"
+}

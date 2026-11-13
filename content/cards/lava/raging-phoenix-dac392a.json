@@ -1,0 +1,18 @@
+{
+  "name": "Яростный феникс",
+  "name_en": "RAGING PHOENIX",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Яростный феникс получает +1 к атаке за каждый жетон ожога на существах.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "dac392a57af75f168f52f827bb3e28599ad61144d0cc870cfa3a40a4820a4754",
+  "landType": "lava",
+  "id": "raging-phoenix-dac392a",
+  "kind": "card",
+  "image": "/content/cards/lava/raging-phoenix-dac392a.webp"
+}

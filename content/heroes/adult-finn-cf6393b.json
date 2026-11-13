@@ -1,0 +1,13 @@
+{
+  "name": "Взрослый Финн",
+  "name_en": "Adult Finn",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "В начале твоего хода положи 1 ⚔ на Взрослого Финна.\nОдин раз за ход: Убери все ⚔ у Взрослого Финна и нанеси выбранной цели столько урона, сколько жетонов было убрано.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cf6393bcc5a480ae019429e2b663f9ebf25d0a0f78741d1b71af2cdaabb73586",
+  "id": "adult-finn-cf6393b",
+  "kind": "hero",
+  "image": "/content/heroes/adult-finn-cf6393b.webp"
+}

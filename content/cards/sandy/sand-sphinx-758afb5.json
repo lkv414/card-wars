@@ -1,0 +1,18 @@
+{
+  "name": "Песчаный сфинкс",
+  "name_en": "SAND SPHINX",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Верни на руку владельца\nсущество под твоим контролем\nв этой зоне.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "758afb5054c0663d37d94767894f4958c69c369ccb758203fc94d6e72f05c2cd",
+  "landType": "sandy",
+  "id": "sand-sphinx-758afb5",
+  "kind": "card",
+  "image": "/content/cards/sandy/sand-sphinx-758afb5.webp"
+}

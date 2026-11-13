@@ -1,0 +1,18 @@
+{
+  "name": "Тимми волшебные глазки",
+  "name_en": "TIMMY MAGIC EYES",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Тимми волшебные глазки получает\n+1 к атаке пока атакует существо\nна синих равнинах.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "e450fd83f867d5986d44ba9b87329e9c5167c337a0852d8edff522945ccc7bf5",
+  "landType": "rainbow",
+  "id": "timmy-magic-eyes-e450fd8",
+  "kind": "card",
+  "image": "/content/cards/rainbow/timmy-magic-eyes-e450fd8.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Поля хаоса",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "landType": "corn",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери 2 существ с призрак под твоим контролем. Нанесите урон, равный сумме их атак.\n(Но не больше 8.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b7f11ae0bc686a737a3df23cf9dadb23fb603046daebcbe44a63f8b8f925fcd1",
+  "id": "polya-khaosa-b7f11ae",
+  "kind": "card",
+  "image": "/content/cards/halloween/polya-khaosa-b7f11ae.webp"
+}

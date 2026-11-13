@@ -1,0 +1,18 @@
+{
+  "name": "Подпитай Пламя",
+  "name_en": "FEED THE FLAME",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Если под контролем соперника\nнаходится 2 горящих существа,\nположи 3 [+] на выбранное\nдружественное существо.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "c231d46264bb2e497ed5d8ee6fb728eaec8f66e3ca0baa8a805e3ddc4fadfae5",
+  "landType": "lava",
+  "id": "feed-the-flame-c231d46",
+  "kind": "card",
+  "image": "/content/cards/lava/feed-the-flame-c231d46.webp"
+}

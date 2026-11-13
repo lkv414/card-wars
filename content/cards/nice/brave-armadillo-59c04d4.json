@@ -1,0 +1,18 @@
+{
+  "name": "Отважный броненосец",
+  "name_en": "BRAVE ARMADILLO",
+  "cost": 3,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 2,
+  "description": "Грохот\nКогда отважный броненосец побеждает существо под контролем соперника, ты восстанавливаешь 2 жизни и наносишь 2 урона выбранному сопернику.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "59c04d4cd45d64ae799354a9d217ced98688ccc049b06538acd4a9ec84deca3b",
+  "landType": "nice",
+  "id": "brave-armadillo-59c04d4",
+  "kind": "card",
+  "image": "/content/cards/nice/brave-armadillo-59c04d4.webp"
+}

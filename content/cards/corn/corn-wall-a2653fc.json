@@ -1,0 +1,18 @@
+{
+  "name": "Стена початков",
+  "name_en": "CORN WALL",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "+1 к защите за каждое кукурузное\nполе в игре (у всех игроков).",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "a2653fc528abfdde69352923bac18e2afd568683212dabe8957f358c60836226",
+  "landType": "corn",
+  "id": "corn-wall-a2653fc",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-wall-a2653fc.webp"
+}

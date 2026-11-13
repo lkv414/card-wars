@@ -1,0 +1,18 @@
+{
+  "name": "Товарищество",
+  "name_en": "CAMARADERIE",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый раз, когда существо под контролем соперника наносит урон вашей команде, нанеси 1 урон команде соперника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "7901f2d39300643e0ba43ac2d7a74281c7f6801c31499a3a6235ee93e894b4b6",
+  "landType": "icy",
+  "id": "camaraderie-7901f2d",
+  "kind": "card",
+  "image": "/content/cards/icy/camaraderie-7901f2d.webp"
+}

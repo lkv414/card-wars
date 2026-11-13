@@ -1,0 +1,18 @@
+{
+  "name": "Взаимодействие",
+  "name_en": "COOPERATION",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "В начале фазы атаки твоей или напарника, если ты или твой напарник не разыграли существ в этот ход, твой напарник может бесплатно разыграть существо за 1 действие или меньше.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "f937956d1e00a9d0375dc383364c927c5d19da4997d2c7b098df49985ae74bbc",
+  "landType": "corn",
+  "id": "cooperation-f937956",
+  "kind": "card",
+  "image": "/content/cards/corn/cooperation-f937956.webp"
+}

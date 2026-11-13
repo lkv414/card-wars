@@ -1,0 +1,18 @@
+{
+  "name": "Остролист",
+  "name_en": "HOLLY",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 10,
+  "description": "Если у тебя в сбросе 10 или больше карт, остролист стоит на 2 действия меньше.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "e9940a4c7742c440c4139baab77ce789a2f6575fd9b34eee88c55e4d4ae341c5",
+  "landType": "swamp",
+  "id": "holly-e9940a4",
+  "kind": "card",
+  "image": "/content/cards/swamp/holly-e9940a4.webp"
+}

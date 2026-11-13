@@ -1,0 +1,18 @@
+{
+  "name": "Алмазный Дэн",
+  "name_en": "DIAMOND DAN",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 2,
+  "description": "Если алмазный дэн выходит из игры,\nнаходясь на доброй земеле,\nверни его на руку владельца.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "c772f23a70fee8b30f9303ad5719564baafe5a86090de6fb0a2f9af4c8b92ce3",
+  "landType": "sandy",
+  "id": "diamond-dan-c772f23",
+  "kind": "card",
+  "image": "/content/cards/sandy/diamond-dan-c772f23.webp"
+}

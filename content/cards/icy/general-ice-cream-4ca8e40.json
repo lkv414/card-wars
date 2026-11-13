@@ -1,0 +1,18 @@
+{
+  "name": "Генерал Морожбан",
+  "name_en": "GENERAL ICE CREAM",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 9,
+  "description": "Когда генерал морожбан атакует,\nнанеси 2 урона выбранному существу\nна земле с жетоном мороза.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "4ca8e40e9ce95fae4920470c19f2790e564234277f4321264f368104728f3d8d",
+  "landType": "icy",
+  "id": "general-ice-cream-4ca8e40",
+  "kind": "card",
+  "image": "/content/cards/icy/general-ice-cream-4ca8e40.webp"
+}

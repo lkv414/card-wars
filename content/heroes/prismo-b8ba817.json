@@ -1,0 +1,13 @@
+{
+  "name": "Призмо",
+  "name_en": "Prismo",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, если ты разыграл 2 карты с разным типом земель, ты можешь положить ⚔ на своё существо.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b8ba817b051d43467499785a97ec98a300f931a9f4fb82b93da9f8ec1a759f7e",
+  "id": "prismo-b8ba817",
+  "kind": "hero",
+  "image": "/content/heroes/prismo-b8ba817.webp"
+}

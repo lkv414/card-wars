@@ -1,0 +1,14 @@
+{
+  "name": "Бесполезное болото",
+  "name_en": "Useless Swamps",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "swamp",
+  "description": "",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "8ea1ff274eb81812c0024103d4b1419e4cbaf0b29ad022685ea5febbc9f686db",
+  "id": "useless-swamps-8ea1ff2",
+  "kind": "land",
+  "image": "/content/lands/useless-swamps-8ea1ff2.webp"
+}

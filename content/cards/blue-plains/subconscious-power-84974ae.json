@@ -1,0 +1,18 @@
+{
+  "name": "Подсознательная мощь",
+  "name_en": "SUBCONSCIOUS POWER",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо под твоим контролем получает в этом ходу +2 к атаке за каждое сыгранное тобой в этом ходу заклинание (включая это).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "84974ae647b6e1826910a363810645931a209861e1d041f6f76d9b959ab57a4a",
+  "landType": "blue",
+  "id": "subconscious-power-84974ae",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/subconscious-power-84974ae.webp"
+}

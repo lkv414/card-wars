@@ -1,0 +1,18 @@
+{
+  "name": "Тинато крадущийся",
+  "name_en": "SWAMP STALKER",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 2,
+  "description": "Когда ты сбрасываешь тинато крадущегося,\nты можешь разыграть его бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3fd7335cf908559fb1e15f106b0ef45f62f09bb7c91d13f159fec9ca9c51d5c4",
+  "landType": "swamp",
+  "id": "swamp-stalker-3fd7335",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-stalker-3fd7335.webp"
+}

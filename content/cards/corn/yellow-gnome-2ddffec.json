@@ -1,0 +1,18 @@
+{
+  "name": "Жёлтый Гном",
+  "name_en": "YELLOW GNOME",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Нанеси 1 урон каждому существу под контролем соперника, которое находится на доброй земле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "2ddffec28f53cb97768efb50edaace9f0312bdda30d2fbf3986214938e9d0a49",
+  "landType": "corn",
+  "id": "yellow-gnome-2ddffec",
+  "kind": "card",
+  "image": "/content/cards/corn/yellow-gnome-2ddffec.webp"
+}

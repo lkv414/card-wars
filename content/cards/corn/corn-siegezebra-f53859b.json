@@ -1,0 +1,18 @@
+{
+  "name": "Осадная кукузебра",
+  "name_en": "CORN SIEGEZEBRA",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если ты разыграл 2 не кукурузные\nкарты, урон осадной кукузебры\nудваивается в этот ход.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f53859b28490fb800695d61b4396d9fb83e0d5cd98ce2673000f5e9fcb193267",
+  "landType": "corn",
+  "id": "corn-siegezebra-f53859b",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-siegezebra-f53859b.webp"
+}

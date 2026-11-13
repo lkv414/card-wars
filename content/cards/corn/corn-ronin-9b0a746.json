@@ -1,0 +1,18 @@
+{
+  "name": "Золотой Ниндзя",
+  "name_en": "CORN RONIN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Когда золотой ниндзя входит в игру,\nнанеси 1 урон выбранному существу\nза каждый уникальный тип земель\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "9b0a746d6eb6bae8d26abed35d5777536805a561a4ccfa839d06f2e064682253",
+  "landType": "corn",
+  "id": "corn-ronin-9b0a746",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-ronin-9b0a746.webp"
+}

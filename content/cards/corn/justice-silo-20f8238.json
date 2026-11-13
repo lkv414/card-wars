@@ -1,0 +1,18 @@
+{
+  "name": "Бункер правосудия",
+  "name_en": "JUSTICE SILO",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие >>> нанеси 1 урон\nвыбранному существу в этой зоне и\n1 урон тому, кто его контролирует.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "20f82380aad2228d9a72aa5ee57592deb38a17cfb1b62e98123d88836f1b37f2",
+  "landType": "corn",
+  "id": "justice-silo-20f8238",
+  "kind": "card",
+  "image": "/content/cards/corn/justice-silo-20f8238.webp"
+}

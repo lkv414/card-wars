@@ -1,0 +1,13 @@
+{
+  "name": "Лич",
+  "name_en": "The Lich",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Уничтожь одно из твоих\nсуществ >>> Получи 1 действие.\n(Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "599b4e08c607a1295299ec460e0b10854914e053ad215f146de6ce6a66512b13",
+  "id": "the-lich-599b4e0",
+  "kind": "hero",
+  "image": "/content/heroes/the-lich-599b4e0.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Странствующий волшебник",
+  "name_en": "WANDERING WIZARD",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Когда странствующий волшебник входит в\nигру, существо под контролем соперника\nв этой зоне и странствующий волшебник\nменяются сторонами.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "4b97133091561c9e671ad261cac1ff3ac71f5e048dad40928afa4bc845fae556",
+  "landType": "blue",
+  "id": "wandering-wizard-4b97133",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/wandering-wizard-4b97133.webp"
+}

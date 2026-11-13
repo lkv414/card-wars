@@ -1,0 +1,18 @@
+{
+  "name": "Бондарь",
+  "name_en": "COOPER",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "ФЛЮП >>> Выбранное существо получает +Х к атаке в этот ход, где Х - общая стоимость карт командной работы под контролем твоей команды.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "187002f5fd9859223a3189d84c169a03579301806aadb7230e0f9ea134a41e12",
+  "landType": "sandy",
+  "id": "cooper-187002f",
+  "kind": "card",
+  "image": "/content/cards/sandy/cooper-187002f.webp"
+}

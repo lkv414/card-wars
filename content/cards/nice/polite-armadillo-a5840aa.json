@@ -1,0 +1,18 @@
+{
+  "name": "Учтивый броненосец",
+  "name_en": "Polite Armadillo",
+  "cost": 6,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 8,
+  "defense": 16,
+  "description": "Грохот\nКогда учтивый броненосец входит в игру, нанеси 8 урона каждому другому существу (включая твоих).",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "a5840aa4fdabf68d0c9637468fe8acff0a32f1b458d01d34cb102ccf9df4c408",
+  "landType": "nice",
+  "id": "polite-armadillo-a5840aa",
+  "kind": "card",
+  "image": "/content/cards/nice/polite-armadillo-a5840aa.webp"
+}

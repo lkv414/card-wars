@@ -1,0 +1,18 @@
+{
+  "name": "Синий Огр Тусовщик",
+  "name_en": "BLUE PARTY OGRE",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Каждый раз когда ты добираешь карту, Синий Огр Тусовщик получает +1 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "314c842c9a8f3507984301f7b0a78c102cd980d4530146f9e6d498aabcc9b28f",
+  "landType": "blue",
+  "id": "blue-party-ogre-314c842",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/blue-party-ogre-314c842.webp"
+}

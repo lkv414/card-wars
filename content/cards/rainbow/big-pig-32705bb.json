@@ -1,0 +1,18 @@
+{
+  "name": "Большая свинья",
+  "name_en": "BIG PIG",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "В начале своего хода можешь положить карту в игру со словом «свинья» в названии из своей руки,\nили вернуть карту на руку.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "32705bb779a68dd42948e9bfcb840f8834b2921dd2a8b02ab05c8a94220fc232",
+  "landType": "rainbow",
+  "id": "big-pig-32705bb",
+  "kind": "card",
+  "image": "/content/cards/rainbow/big-pig-32705bb.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Горнило Великана",
+  "name_en": "GIANT'S CRUCIBLE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Подожги выбранное существо под твоим контролем и положи [1] на него.\n(Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "430faaa16e315595c8554a4ecd53848deadb1fbb15589022748ad6b0dfb374d1",
+  "landType": "lava",
+  "id": "giant-s-crucible-430faaa",
+  "kind": "card",
+  "image": "/content/cards/lava/giant-s-crucible-430faaa.webp"
+}

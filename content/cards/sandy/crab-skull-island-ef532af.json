@@ -1,0 +1,18 @@
+{
+  "name": "Остров черепа краба",
+  "name_en": "CRAB SKULL ISLAND",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие и ФЛЮП >>> Если ты не контролируешь существо в этой зоне, раскрой карты твоей колоды, пока не раскроешь существо, разыграй его бесплатно в эту зону. Перемешай раскрытые карты в колоду.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "ef532afffb4d37c24eca9a5782c608b7ded803ad2307f4c934b82c5eded7cc70",
+  "landType": "sandy",
+  "id": "crab-skull-island-ef532af",
+  "kind": "card",
+  "image": "/content/cards/sandy/crab-skull-island-ef532af.webp"
+}

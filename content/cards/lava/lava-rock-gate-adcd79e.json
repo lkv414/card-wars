@@ -1,0 +1,18 @@
+{
+  "name": "Врата лавокамня",
+  "name_en": "LAVA ROCK GATE",
+  "cost": 0,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие и ФЛЮП >>>\nПодожги выбранное существо\nв этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "adcd79e415a9bfd6883443bd6f188947c72f476b0842f00296798ecc87d7ad87",
+  "landType": "lava",
+  "id": "lava-rock-gate-adcd79e",
+  "kind": "card",
+  "image": "/content/cards/lava/lava-rock-gate-adcd79e.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Лихо бесоглазое",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда первый раз за ход лихо бесоглазое\nуничтожается, верни его на руку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "11146c986a9dc0a90f2b55f468072fcbda3f7ba6abe6eb9c9cbf63f70c2a5d06",
+  "id": "likho-besoglazoe-11146c9",
+  "kind": "card",
+  "image": "/content/cards/halloween/likho-besoglazoe-11146c9.webp"
+}

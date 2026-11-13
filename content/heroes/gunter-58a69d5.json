@@ -1,0 +1,13 @@
+{
+  "name": "Гантер",
+  "name_en": "Gunter",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Существа под твоим контролем, находящиеся на земле с жетоном мороза, получают +1 к атаке.",
+  "flavor": "",
+  "set_code": "gunter",
+  "sha256": "58a69d5e0fe3241c351b51168dd247a51a2b709c6ecf8aa4db6941489326cd46",
+  "id": "gunter-58a69d5",
+  "kind": "hero",
+  "image": "/content/heroes/gunter-58a69d5.webp"
+}

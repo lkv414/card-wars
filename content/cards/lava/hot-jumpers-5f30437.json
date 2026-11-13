@@ -1,0 +1,18 @@
+{
+  "name": "Горячие прыгуны",
+  "name_en": "HOT JUMPERS",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Когда ты поджигаешь существо, положи ♆ на горячих прыгунов.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "5f304376c92d5999eb6e6bbc1e402dafdb12e6c796f39c2652c36a97c4442719",
+  "landType": "lava",
+  "id": "hot-jumpers-5f30437",
+  "kind": "card",
+  "image": "/content/cards/lava/hot-jumpers-5f30437.webp"
+}

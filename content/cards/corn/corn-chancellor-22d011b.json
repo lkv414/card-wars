@@ -1,0 +1,18 @@
+{
+  "name": "Кукуканцлер",
+  "name_en": "CORN CHANCELLOR",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 10,
+  "description": "Когда кукуканцлер входит в игру, выбери букву. Другие существа под твоим контролем, названия которых начинаются на эту букву, получают +3 к атаке.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "22d011b93477f19b1e2812618d2953de1e9acde64ac5137d1b15d4864001ff91",
+  "landType": "corn",
+  "id": "corn-chancellor-22d011b",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-chancellor-22d011b.webp"
+}

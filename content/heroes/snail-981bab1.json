@@ -1,0 +1,13 @@
+{
+  "name": "Улитка",
+  "name_en": "Snail",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Когда у тебя 15 жизней или меньше,\nвозьми 1 карту в начале своего хода.\nКогда у тебя 5 жизней или меньше,\nвозьми 2 карты в начале своего хода.",
+  "flavor": "",
+  "set_code": "ПРОМО",
+  "sha256": "981bab1f866f7dd1eeae6fbfda74cfc4564330d67857e0d99cb5940e18cf0726",
+  "id": "snail-981bab1",
+  "kind": "hero",
+  "image": "/content/heroes/snail-981bab1.webp"
+}

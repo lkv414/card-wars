@@ -1,0 +1,18 @@
+{
+  "name": "Ледяной спецназ",
+  "name_en": "ICE OPS",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "+1 к атаке за каждую землю\nс жетоном мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e6cf30c7ab470fc8fa65f487b90f587e0d4ee6177a0b2d032aa6cc8445cd9cfb",
+  "landType": "icy",
+  "id": "ice-ops-e6cf30c",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-ops-e6cf30c.webp"
+}

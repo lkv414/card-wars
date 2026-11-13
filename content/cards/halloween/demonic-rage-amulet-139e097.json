@@ -1,0 +1,18 @@
+{
+  "name": "Амулет демонической ярости",
+  "name_en": "DEMONIC RAGE AMULET",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное существо.\nНанеси противнику урон,\nравный атаке выбранного существа.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "139e097b23fc055b0ef9da1ac713a9b4031439df94b945042b449f94916a9c0e",
+  "id": "demonic-rage-amulet-139e097",
+  "kind": "card",
+  "image": "/content/cards/halloween/demonic-rage-amulet-139e097.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Ледоклык лавинопард",
+  "name_en": "ICE-FANG AVALANCHE LEOPARD",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Каждый раз, когда другой игрок сбрасывает карту, ты можешь взять 1 карту.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "d626453b1620029ec8f7b8102fa55aaf2d09bc48f5b93d31d25f1190966c1f00",
+  "landType": "icy",
+  "id": "ice-fang-avalanche-leopard-d626453",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-fang-avalanche-leopard-d626453.webp"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Леденящий лавинопард",
+  "name_en": "FROSTY AVALANCHE LEOPARD",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Если леденящий лавинопард наносит урон сопернику, он сбрасывает заклинание или показывает руку, если у него таких нет.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d2feeef6346d77aed008757a7a15cb5e4ebcd6f6ae48109640c1c3a4e2d36f90",
+  "landType": "icy",
+  "id": "frosty-avalanche-leopard-d2feeef",
+  "kind": "card",
+  "image": "/content/cards/icy/frosty-avalanche-leopard-d2feeef.webp"
+}

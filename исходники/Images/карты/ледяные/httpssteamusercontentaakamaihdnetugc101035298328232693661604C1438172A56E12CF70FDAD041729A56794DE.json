@@ -1,0 +1,15 @@
+{
+  "name": "Ас Берг",
+  "name_en": "ICE BERG",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "+4 к атаке, если на обеих землях в этой зоне лежат жетоны мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "21a1fa8de6abc924f98542cc3f94a844a10b608b5123584b92dc086953297615",
+  "landType": "icy"
+}

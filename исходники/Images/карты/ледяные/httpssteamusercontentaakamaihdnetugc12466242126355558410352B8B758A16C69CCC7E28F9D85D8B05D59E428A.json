@@ -1,0 +1,15 @@
+{
+  "name": "Ледяная песнь",
+  "name_en": "ICE SONG",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь 1 землю под контролем каждого игрока, возьми 1 карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "ffb693068b31f14d008a426781dea0a41f397f7bd2152bf3c6f0a9f4663a701c",
+  "landType": "icy"
+}

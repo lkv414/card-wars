@@ -1,0 +1,15 @@
+{
+  "name": "УЗИ*",
+  "name_en": "UZI*",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь выбранную землю, а затем возьми 1 карту.",
+  "flavor": "*Ультразамораживающее излучение.",
+  "set_code": null,
+  "sha256": "141d751c4d1ec143ba847a4c8c8c4677ae121b26208d09ee92d8c380b9afb53e",
+  "landType": "icy"
+}

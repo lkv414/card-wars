@@ -1,0 +1,15 @@
+{
+  "name": "Мокачино Артиллерист",
+  "name_en": "MOCHACCINO ARTILLERIST",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 4,
+  "description": "Потрать 1 действие и ФЛЮП >>>\nНанеси 2 урона выбранному существу.\nЕсли существо уничтожено этим\nспособом, заморозь землю,\nна которой оно было.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "88ec11001da19c19f6980e687c6f5e540f522fa8f37d7c2e3f45172acaf184fe",
+  "landType": "icy"
+}

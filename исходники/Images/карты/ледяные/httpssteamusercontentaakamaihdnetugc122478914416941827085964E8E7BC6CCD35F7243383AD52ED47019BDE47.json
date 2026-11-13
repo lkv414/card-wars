@@ -1,0 +1,15 @@
+{
+  "name": "Ультра Пёс",
+  "name_en": "ULTRA DOG",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "ФЛЮП >>> Заморозь выбранную землю, на которой есть существо.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "92b69a0a03479e0b5d54164c5b82cf20edb30c30975610a6c2813abbf259f67d",
+  "landType": "icy"
+}

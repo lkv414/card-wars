@@ -1,0 +1,15 @@
+{
+  "name": "Ледогенератор",
+  "name_en": "ICE GENERATOR",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось любой жетон с выбранной земли\nи ФЛЮП >>> Заморозь другую\nземлю и возьми 1 карту.",
+  "flavor": "",
+  "set_code": "3Л",
+  "sha256": "7c2b098b487e80700843b014ffd8868b699a1de4c73cad4caa85eddc65950865",
+  "landType": "icy"
+}

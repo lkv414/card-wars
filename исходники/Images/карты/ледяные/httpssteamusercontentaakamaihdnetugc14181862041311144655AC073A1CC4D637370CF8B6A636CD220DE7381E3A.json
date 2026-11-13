@@ -1,0 +1,15 @@
+{
+  "name": "Хаски на Аляске",
+  "name_en": "ALASKA HUSKY",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "ФЛЮП >>> Перемести хаски на Аляске на любую твою пустую землю. Если хотя бы одна земля в зоне, куда ты переместил хаски, заморожена, получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7007cd247e444fd6a0f024deafd468bae23cb4ae676f0b39c11d5fc057585980",
+  "landType": "icy"
+}

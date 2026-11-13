@@ -1,0 +1,15 @@
+{
+  "name": "Ледяная база",
+  "name_en": "ICE BASE",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда ледяная база входит в игру,\nзаморозь обе земли в этой зоне.\nТы можешь разыгрывать существ в этой\nзоне, даже если земля заморожена.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "552247fd96b218ba57ede1e676e01ad2a8ea4e2845f9a3db646cf65e5ac86bd5",
+  "landType": "icy"
+}

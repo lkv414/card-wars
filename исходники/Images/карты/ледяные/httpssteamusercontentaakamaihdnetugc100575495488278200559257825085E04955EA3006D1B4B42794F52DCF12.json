@@ -1,0 +1,15 @@
+{
+  "name": "Белоснежный шторм",
+  "name_en": "BLIZZARD",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый игрок показывает свою руку и сбрасывает все карты за 1 действие. Затем каждый игрок берёт 2 карты.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "82f3e8ef39b6ee425b50572dc87539b21c71d5ca706515f2cf347f0b301f99e7",
+  "landType": "icy"
+}

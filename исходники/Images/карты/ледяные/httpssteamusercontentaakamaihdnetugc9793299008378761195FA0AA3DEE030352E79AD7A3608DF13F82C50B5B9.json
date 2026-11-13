@@ -1,0 +1,15 @@
+{
+  "name": "Снежкомёт",
+  "name_en": "SNOWBALL THROWER",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Сбрось жетон мороза с земли, на которой находится снежкомёт >>> Нанеси 3 урона выбранному существу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1336be33566c12f651c374408ba5425cf88568e01d1ec707c69feb88cab626fa",
+  "landType": "icy"
+}

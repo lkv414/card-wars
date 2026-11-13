@@ -1,0 +1,15 @@
+{
+  "name": "Охладуй",
+  "name_en": "COOL IT",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери зону.\nЗаморозь обе земли в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "66011f306e64b5a898bd246567661ab9e2e08e7364143f6354f3a309012b0c8b",
+  "landType": "icy"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Охлаждённый воин",
+  "name_en": "FROSTY WARRIOR",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "+3 к атаке, если соперник не контролирует существо в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9f32cc012e75ef65d216a050e118a8eee2d31bc7ab94f57945a5b3c3e1dda44e",
+  "landType": "icy"
+}

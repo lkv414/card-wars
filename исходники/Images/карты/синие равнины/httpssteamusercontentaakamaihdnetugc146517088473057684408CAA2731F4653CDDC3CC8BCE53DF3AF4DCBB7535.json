@@ -1,0 +1,15 @@
+{
+  "name": "Мозголип",
+  "name_en": null,
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Если при входе в игру мозголип заменяет\nдругое существо, в этом ходу он получает\n+2 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0462f29b85b53b88cc9ce739f984dcfea19c373024aec2cecebf878b1e257210",
+  "landType": "blue"
+}

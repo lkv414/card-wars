@@ -1,0 +1,15 @@
+{
+  "name": "Синюшный властелин",
+  "name_en": "BLUE OVERLORD",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 4,
+  "description": "В начале своего хода перемести синюшного властелина на любую пустую землю под твоим контролем. Если не можешь, уничтожь его.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e7b2548302b939ec57166786db2a3b2280d906e5eec49f86fabf0c8322cb5136",
+  "landType": "blue"
+}

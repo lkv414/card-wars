@@ -1,0 +1,15 @@
+{
+  "name": "Пирамидия",
+  "name_en": "PYRAMIDIA",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Если в этой зоне есть существо под твоим контролем, получи 1 действие. Можешь потратить его только на то, чтобы сыграть существо в эту зону.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "cb8339d66315d4d5af1ff5ced71017be59a835d546458a61b38b735328b20911",
+  "landType": "blue"
+}

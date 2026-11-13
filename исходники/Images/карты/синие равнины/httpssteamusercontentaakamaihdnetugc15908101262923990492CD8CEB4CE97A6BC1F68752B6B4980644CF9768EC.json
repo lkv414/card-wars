@@ -1,0 +1,15 @@
+{
+  "name": "Синюшный ВигВам",
+  "name_en": "BLUE WIGWAM",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Перемести существо\nиз соседней зоны в эту\n(если она пустая).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "20ae9705471bd304f4757484a686ebf6a0ebe4d16255dab31ae9ab45a371b1ff",
+  "landType": "blue"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Невыносимый опоссум",
+  "name_en": "UNBEARABLE POSSUM",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Когда невыносимый опоссум попадает\nв сброс, ты можешь сбросить 1 карту,\nчтобы вернуть его на руку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "664503af75b3f721f0b2136347feed340de915827d55a6f9e0e5f451a7763bd1",
+  "landType": "blue"
+}

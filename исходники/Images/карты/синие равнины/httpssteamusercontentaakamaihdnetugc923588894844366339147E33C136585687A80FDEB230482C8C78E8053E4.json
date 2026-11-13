@@ -1,0 +1,15 @@
+{
+  "name": "Синюшный Матриарх",
+  "name_en": "Blue Matriarch",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "+1 к атаке за каждое радужное существо\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0ef73f443c157c686147bd28b7542a5629c667dcff40ebbb0261974b517f041d",
+  "landType": "blue"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Грамотей из будущего",
+  "name_en": "FUTURE SCHOLAR",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Если при входе в игру грамотей из будущего заменяет другое существо, получи 1 действие.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "d2a3976067e059b0b49aa2576c2b707a05ee17f3013214d8d1347d85d572d157",
+  "landType": "blue"
+}

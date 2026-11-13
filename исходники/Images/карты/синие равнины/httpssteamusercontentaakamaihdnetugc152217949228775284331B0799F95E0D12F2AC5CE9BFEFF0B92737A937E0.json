@@ -1,0 +1,15 @@
+{
+  "name": "Раскалённый фантом",
+  "name_en": "SEARING PHANTOM",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Когда ты разыгрываешь второе\nзаклинание каждый ход, можешь\nвернуть в подготовленное положение\nсущество под твоим контролем.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "65d49adf573a5a6d1110d8e79371194b1c5d9eccf2a6d422a0076c323e941f5e",
+  "landType": "blue"
+}

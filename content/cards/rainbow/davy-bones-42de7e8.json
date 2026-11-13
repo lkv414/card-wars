@@ -14,5 +14,19 @@
   "landType": "rainbow",
   "id": "davy-bones-42de7e8",
   "kind": "card",
-  "image": "/content/cards/rainbow/davy-bones-42de7e8.webp"
+  "image": "/content/cards/rainbow/davy-bones-42de7e8.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "defense_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "landType": "sand",
+        "atkBonus": 2
+      },
+      "text": "Дейви Бонз получает +2 ATK пока защищается от существ на песчаной земле."
+    }
+  ]
 }

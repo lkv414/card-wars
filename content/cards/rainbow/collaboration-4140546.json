@@ -14,5 +14,24 @@
   "landType": "rainbow",
   "id": "collaboration-4140546",
   "kind": "card",
-  "image": "/content/cards/rainbow/collaboration-4140546.webp"
+  "image": "/content/cards/rainbow/collaboration-4140546.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_companion_event",
+      "oncePerTurn": true,
+      "conditions": [
+        {
+          "kind": "if_payload_land_type",
+          "landType": "rainbow"
+        }
+      ],
+      "mechanic": "arm_free_play",
+      "params": {
+        "landType": "rainbow",
+        "costFromPayload": true
+      },
+      "text": "В первый раз в ход, когда ты или партнер сыграли Радужное заклинание, другой партнер может сыграть Радужное заклинание той же стоимости бесплатно."
+    }
+  ]
 }

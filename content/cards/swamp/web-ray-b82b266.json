@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "web-ray-b82b266",
   "kind": "card",
-  "image": "/content/cards/swamp/web-ray-b82b266.webp"
+  "image": "/content/cards/swamp/web-ray-b82b266.webp",
+  "abilities": []
 }

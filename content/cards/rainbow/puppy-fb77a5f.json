@@ -14,5 +14,22 @@
   "landType": "rainbow",
   "id": "puppy-fb77a5f",
   "kind": "card",
-  "image": "/content/cards/rainbow/puppy-fb77a5f.webp"
+  "image": "/content/cards/rainbow/puppy-fb77a5f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "grant_modifier",
+        "modifier": {
+          "op": "suppress",
+          "all": true,
+          "target": {
+            "kind": "this_lane_opponent_building"
+          }
+        },
+        "duration": "while_flipped"
+      },
+      "text": "ПРИЕМ >>> Строения противника в этой линии без текста пока Пес применен."
+    }
+  ]
 }

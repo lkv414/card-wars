@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "corn-goblin-guard-a105ec6",
   "kind": "card",
-  "image": "/content/cards/corn/corn-goblin-guard-a105ec6.webp"
+  "image": "/content/cards/corn/corn-goblin-guard-a105ec6.webp",
+  "abilities": []
 }

@@ -14,5 +14,30 @@
   "landType": "swamp",
   "id": "tree-of-the-undead-9aa8208",
   "kind": "card",
-  "image": "/content/cards/swamp/tree-of-the-undead-9aa8208.webp"
+  "image": "/content/cards/swamp/tree-of-the-undead-9aa8208.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "remove_from_game",
+        "from": {
+          "kind": "choice",
+          "index": 1
+        },
+        "name": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "ПРИЕМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
+      "targets": [
+        {
+          "kind": "visible_card"
+        },
+        {
+          "kind": "any_player"
+        }
+      ]
+    }
+  ]
 }

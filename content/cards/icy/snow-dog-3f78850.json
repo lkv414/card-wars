@@ -14,5 +14,20 @@
   "landType": "icy",
   "id": "snow-dog-3f78850",
   "kind": "card",
-  "image": "/content/cards/icy/snow-dog-3f78850.webp"
+  "image": "/content/cards/icy/snow-dog-3f78850.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "ПРИЕМ >>> Каждое соседнее существо получает +2 АТК."
+    }
+  ]
 }

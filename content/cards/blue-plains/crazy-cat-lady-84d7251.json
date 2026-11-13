@@ -14,5 +14,23 @@
   "landType": "blue",
   "id": "crazy-cat-lady-84d7251",
   "kind": "card",
-  "image": "/content/cards/blue-plains/crazy-cat-lady-84d7251.webp"
+  "image": "/content/cards/blue-plains/crazy-cat-lady-84d7251.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "landType": "rainbow"
+        }
+      },
+      "text": "Твои Радужные существа получают +1 ATK."
+    }
+  ]
 }

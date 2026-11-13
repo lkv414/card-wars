@@ -14,5 +14,21 @@
   "sha256": "fa20e659b701f730e7dbca2c7cf3fb229f8bb77edb0363c233621378c7b4b164",
   "id": "sansara-fa20e65",
   "kind": "card",
-  "image": "/content/cards/halloween/sansara-fa20e65.webp"
+  "image": "/content/cards/halloween/sansara-fa20e65.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "min_attack_own"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "+2 АТК на этом ходу существу с наименьшим значением АТК из существ под твоим контролем."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "butter-ram-4a50eb5",
   "kind": "card",
-  "image": "/content/cards/corn/butter-ram-4a50eb5.webp"
+  "image": "/content/cards/corn/butter-ram-4a50eb5.webp",
+  "abilities": []
 }

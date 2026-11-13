@@ -14,5 +14,18 @@
   "landType": "nice",
   "id": "champion-s-emblem-8730934",
   "kind": "card",
-  "image": "/content/cards/nice/champion-s-emblem-8730934.webp"
+  "image": "/content/cards/nice/champion-s-emblem-8730934.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Выбранному существу противника наносится урон, равный половине его максимальной DEF. Если показатель DEF нечётный, округляй вверх.",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "mechanic": "half_def_damage"
+    }
+  ]
 }

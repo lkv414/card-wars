@@ -14,5 +14,19 @@
   "landType": "icy",
   "id": "frost-dragon-5342dc1",
   "kind": "card",
-  "image": "/content/cards/icy/frost-dragon-5342dc1.webp"
+  "image": "/content/cards/icy/frost-dragon-5342dc1.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Потрать 1 Действие >>> Заморозь землю на этой линии."
+    }
+  ]
 }

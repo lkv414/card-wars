@@ -14,5 +14,17 @@
   "landType": "blue",
   "id": "blue-goober-24bc2a4",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blue-goober-24bc2a4.webp"
+  "image": "/content/cards/blue-plains/blue-goober-24bc2a4.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "reveal_hand_card_becomes_rainbow",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "ПРИЕМ >>> Покажи карту с руки. До конца твоего хода эта карта становится Радужной картой."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "feed-the-flame-c231d46",
   "kind": "card",
-  "image": "/content/cards/lava/feed-the-flame-c231d46.webp"
+  "image": "/content/cards/lava/feed-the-flame-c231d46.webp",
+  "abilities": []
 }

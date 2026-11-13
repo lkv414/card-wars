@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "cute-fire-c19c9d2",
   "kind": "card",
-  "image": "/content/cards/lava/cute-fire-c19c9d2.webp"
+  "image": "/content/cards/lava/cute-fire-c19c9d2.webp",
+  "abilities": []
 }

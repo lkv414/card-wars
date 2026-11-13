@@ -9,5 +9,6 @@
   "sha256": "3a2514264a2d3e31c2344b6465a9687339dbd31af56bfa4573410374d0f286d5",
   "id": "king-of-ooo-3a25142",
   "kind": "hero",
-  "image": "/content/heroes/king-of-ooo-3a25142.webp"
+  "image": "/content/heroes/king-of-ooo-3a25142.webp",
+  "ability": null
 }

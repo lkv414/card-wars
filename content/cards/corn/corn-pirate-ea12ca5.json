@@ -14,5 +14,20 @@
   "landType": "corn",
   "id": "corn-pirate-ea12ca5",
   "kind": "card",
-  "image": "/content/cards/corn/corn-pirate-ea12ca5.webp"
+  "image": "/content/cards/corn/corn-pirate-ea12ca5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "vs": "ownZone",
+        "landType": "swamp",
+        "multiplier": 3
+      },
+      "text": "Когда Пиратский медведь на бесполезных болотах, он наносит тройной урон."
+    }
+  ]
 }

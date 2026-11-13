@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "triple-threat-cf9f735",
   "kind": "card",
-  "image": "/content/cards/swamp/triple-threat-cf9f735.webp"
+  "image": "/content/cards/swamp/triple-threat-cf9f735.webp",
+  "abilities": []
 }

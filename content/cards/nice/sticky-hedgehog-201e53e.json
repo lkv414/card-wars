@@ -14,5 +14,25 @@
   "landType": "nice",
   "id": "sticky-hedgehog-201e53e",
   "kind": "card",
-  "image": "/content/cards/nice/sticky-hedgehog-201e53e.webp"
+  "image": "/content/cards/nice/sticky-hedgehog-201e53e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "face": true
+      },
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 4,
+          "scope": "self"
+        }
+      ],
+      "text": "Пока у ЛОбнимашного ежа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника."
+    }
+  ]
 }

@@ -14,5 +14,25 @@
   "landType": "corn",
   "id": "strong-lumberjack-6a292b7",
   "kind": "card",
-  "image": "/content/cards/corn/strong-lumberjack-6a292b7.webp"
+  "image": "/content/cards/corn/strong-lumberjack-6a292b7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_building_yours"
+          },
+          "amount": 1
+        }
+      },
+      "text": "Когда лесоруб вступает в игру, нанеси 1 урон противнику за каждое строение под твоим контролем."
+    }
+  ]
 }

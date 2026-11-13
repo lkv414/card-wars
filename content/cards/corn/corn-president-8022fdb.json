@@ -14,5 +14,14 @@
   "landType": "corn",
   "id": "corn-president-8022fdb",
   "kind": "card",
-  "image": "/content/cards/corn/corn-president-8022fdb.webp"
+  "image": "/content/cards/corn/corn-president-8022fdb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "soul_twin",
+      "text": "Когда играешь Частичку из руки, можешь тут же сыграть вторую из колоды (если она там есть), после перемешай. Если поле покидает одна, с ней уходит и вторая. Нельзя вернуть из сброса."
+    }
+  ]
 }

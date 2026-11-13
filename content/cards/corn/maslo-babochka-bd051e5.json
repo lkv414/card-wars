@@ -14,5 +14,21 @@
   "landType": "corn",
   "id": "maslo-babochka-bd051e5",
   "kind": "card",
-  "image": "/content/cards/corn/maslo-babochka-bd051e5.webp"
+  "image": "/content/cards/corn/maslo-babochka-bd051e5.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_building_yours"
+          },
+          "amount": 1
+        }
+      },
+      "text": "ПРИЕМ >>> Тяни карту за каждое строение под твоим контролем."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flaming-huts-4c44785",
   "kind": "card",
-  "image": "/content/cards/lava/flaming-huts-4c44785.webp"
+  "image": "/content/cards/lava/flaming-huts-4c44785.webp",
+  "abilities": []
 }

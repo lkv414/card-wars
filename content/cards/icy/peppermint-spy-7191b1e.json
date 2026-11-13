@@ -14,5 +14,17 @@
   "landType": "icy",
   "id": "peppermint-spy-7191b1e",
   "kind": "card",
-  "image": "/content/cards/icy/peppermint-spy-7191b1e.webp"
+  "image": "/content/cards/icy/peppermint-spy-7191b1e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_adjacent_lanes_empty"
+        }
+      ],
+      "mechanic": "mint_ice_cream_spell_and_ability_immunity",
+      "text": "Пока на соседних линиях нет существ, Мятной мороженке нельзя нанести урон заклинаниями или способностями существ."
+    }
+  ]
 }

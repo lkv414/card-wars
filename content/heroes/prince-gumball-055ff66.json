@@ -9,5 +9,6 @@
   "sha256": "055ff6667f4bb847228d420642e5146ac8d9c907bd71908e0392b387b746eb89",
   "id": "prince-gumball-055ff66",
   "kind": "hero",
-  "image": "/content/heroes/prince-gumball-055ff66.webp"
+  "image": "/content/heroes/prince-gumball-055ff66.webp",
+  "ability": null
 }

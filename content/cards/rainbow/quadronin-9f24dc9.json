@@ -14,5 +14,25 @@
   "landType": "rainbow",
   "id": "quadronin-9f24dc9",
   "kind": "card",
-  "image": "/content/cards/rainbow/quadronin-9f24dc9.webp"
+  "image": "/content/cards/rainbow/quadronin-9f24dc9.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "conditions": [
+        {
+          "kind": "while_opponents_hand_at_least",
+          "min": 4
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "amount": 2
+      },
+      "text": "В начале своего хода нанеси 2 урона противнику с 4мя или более картами в руке."
+    }
+  ]
 }

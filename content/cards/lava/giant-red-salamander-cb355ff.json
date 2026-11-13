@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "giant-red-salamander-cb355ff",
   "kind": "card",
-  "image": "/content/cards/lava/giant-red-salamander-cb355ff.webp"
+  "image": "/content/cards/lava/giant-red-salamander-cb355ff.webp",
+  "abilities": []
 }

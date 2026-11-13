@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "skull-hut-d04c60c",
   "kind": "card",
-  "image": "/content/cards/sandy/skull-hut-d04c60c.webp"
+  "image": "/content/cards/sandy/skull-hut-d04c60c.webp",
+  "abilities": []
 }

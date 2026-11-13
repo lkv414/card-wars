@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "grass-rockets-989c786",
   "kind": "card",
-  "image": "/content/cards/nice/grass-rockets-989c786.webp"
+  "image": "/content/cards/nice/grass-rockets-989c786.webp",
+  "abilities": []
 }

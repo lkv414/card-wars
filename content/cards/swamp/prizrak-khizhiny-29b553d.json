@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "prizrak-khizhiny-29b553d",
   "kind": "card",
-  "image": "/content/cards/swamp/prizrak-khizhiny-29b553d.webp"
+  "image": "/content/cards/swamp/prizrak-khizhiny-29b553d.webp",
+  "abilities": []
 }

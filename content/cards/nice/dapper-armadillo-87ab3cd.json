@@ -14,5 +14,26 @@
   "landType": "nice",
   "id": "dapper-armadillo-87ab3cd",
   "kind": "card",
-  "image": "/content/cards/nice/dapper-armadillo-87ab3cd.webp"
+  "image": "/content/cards/nice/dapper-armadillo-87ab3cd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "Если у противника под контролем находится 2 существа или меньше, получаем +1 АТК.",
+      "conditions": [
+        {
+          "kind": "while_opponent_creatures_at_most",
+          "max": 2
+        }
+      ]
+    }
+  ]
 }

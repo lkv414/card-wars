@@ -14,5 +14,28 @@
   "landType": "corn",
   "id": "corn-wing-eye-8757745",
   "kind": "card",
-  "image": "/content/cards/corn/corn-wing-eye-8757745.webp"
+  "image": "/content/cards/corn/corn-wing-eye-8757745.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        }
+      },
+      "text": "Потрать 1 Действие >>> Нанеси 1 урон выбранному существу на этой линии за каждый различный тип земли под твоим контролем.",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ]
+    }
+  ]
 }

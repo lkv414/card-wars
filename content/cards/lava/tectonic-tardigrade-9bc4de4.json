@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "tectonic-tardigrade-9bc4de4",
   "kind": "card",
-  "image": "/content/cards/lava/tectonic-tardigrade-9bc4de4.webp"
+  "image": "/content/cards/lava/tectonic-tardigrade-9bc4de4.webp",
+  "abilities": []
 }

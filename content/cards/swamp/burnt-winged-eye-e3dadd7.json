@@ -14,5 +14,17 @@
   "landType": "swamp",
   "id": "burnt-winged-eye-e3dadd7",
   "kind": "card",
-  "image": "/content/cards/swamp/burnt-winged-eye-e3dadd7.webp"
+  "image": "/content/cards/swamp/burnt-winged-eye-e3dadd7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_discard_count",
+          "min": 10
+        }
+      ],
+      "text": "Играй Пламенную мышь только если у тебя 10 или более карт в стопке сброса."
+    }
+  ]
 }

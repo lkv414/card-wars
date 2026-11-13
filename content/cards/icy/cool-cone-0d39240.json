@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "cool-cone-0d39240",
   "kind": "card",
-  "image": "/content/cards/icy/cool-cone-0d39240.webp"
+  "image": "/content/cards/icy/cool-cone-0d39240.webp",
+  "abilities": []
 }

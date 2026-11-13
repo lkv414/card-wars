@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flame-wheel-086348e",
   "kind": "card",
-  "image": "/content/cards/lava/flame-wheel-086348e.webp"
+  "image": "/content/cards/lava/flame-wheel-086348e.webp",
+  "abilities": []
 }

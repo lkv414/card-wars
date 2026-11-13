@@ -14,5 +14,26 @@
   "sha256": "751e435d6bac3df07a55b1f2b1ce308a5b3ccd66d46390dfff8cb3a3faa6aa3d",
   "id": "vrubimkapotykve-751e435",
   "kind": "card",
-  "image": "/content/cards/halloween/vrubimkapotykve-751e435.webp"
+  "image": "/content/cards/halloween/vrubimkapotykve-751e435.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "flip_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "down": true,
+        "until": "next_own_turn"
+      },
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Переверни выбранную землю лицом вниз до начала твоего следующего хода."
+    }
+  ]
 }

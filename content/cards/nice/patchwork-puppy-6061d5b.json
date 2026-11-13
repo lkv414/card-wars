@@ -14,5 +14,29 @@
   "landType": "nice",
   "id": "patchwork-puppy-6061d5b",
   "kind": "card",
-  "image": "/content/cards/nice/patchwork-puppy-6061d5b.webp"
+  "image": "/content/cards/nice/patchwork-puppy-6061d5b.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "this_creature"
+          },
+          "amount": 3
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "this_creature"
+          },
+          "stat": "attack",
+          "amount": 2,
+          "duration": "this_turn"
+        }
+      ],
+      "text": "Нанеси 3 урона Щенку в заплатках >>> Он получает +2 ATK в этом ходу."
+    }
+  ]
 }

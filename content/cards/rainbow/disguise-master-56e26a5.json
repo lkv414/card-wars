@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "disguise-master-56e26a5",
   "kind": "card",
-  "image": "/content/cards/rainbow/disguise-master-56e26a5.webp"
+  "image": "/content/cards/rainbow/disguise-master-56e26a5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "stat": "attack",
+        "amount": -1,
+        "duration": "this_turn"
+      },
+      "text": "Каждое существо противника получает -1 ATK в этом ход."
+    }
+  ]
 }

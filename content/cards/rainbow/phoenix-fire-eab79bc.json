@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "phoenix-fire-eab79bc",
   "kind": "card",
-  "image": "/content/cards/rainbow/phoenix-fire-eab79bc.webp"
+  "image": "/content/cards/rainbow/phoenix-fire-eab79bc.webp",
+  "abilities": []
 }

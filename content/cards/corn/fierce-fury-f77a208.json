@@ -14,5 +14,36 @@
   "landType": "corn",
   "id": "fierce-fury-f77a208",
   "kind": "card",
-  "image": "/content/cards/corn/fierce-fury-f77a208.webp"
+  "image": "/content/cards/corn/fierce-fury-f77a208.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 2,
+          "filter": {
+            "flipped": true
+          }
+        },
+        "duration": "this_turn"
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбранное существо получает +2 ATK в этом ходу за каждое примененное существо под твоим контролем."
+    }
+  ]
 }

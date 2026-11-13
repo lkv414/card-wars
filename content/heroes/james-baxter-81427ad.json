@@ -9,5 +9,6 @@
   "sha256": "81427ad3f4f4b583bd3cc23320482f6451d5bf4fffe7a614130607e84fa8ac4c",
   "id": "james-baxter-81427ad",
   "kind": "hero",
-  "image": "/content/heroes/james-baxter-81427ad.webp"
+  "image": "/content/heroes/james-baxter-81427ad.webp",
+  "ability": null
 }

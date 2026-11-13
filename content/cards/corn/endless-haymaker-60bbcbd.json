@@ -14,5 +14,19 @@
   "landType": "corn",
   "id": "endless-haymaker-60bbcbd",
   "kind": "card",
-  "image": "/content/cards/corn/endless-haymaker-60bbcbd.webp"
+  "image": "/content/cards/corn/endless-haymaker-60bbcbd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "self_damage_then_destroy",
+      "params": {},
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо."
+    }
+  ]
 }

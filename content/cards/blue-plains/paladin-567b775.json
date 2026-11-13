@@ -14,5 +14,20 @@
   "landType": "blue",
   "id": "paladin-567b775",
   "kind": "card",
-  "image": "/content/cards/blue-plains/paladin-567b775.webp"
+  "image": "/content/cards/blue-plains/paladin-567b775.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_own_creature_moved_this_turn"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "Каждое существо сменившее линию в этом ход получает +3 ATK в этом ход. (Не действует на существ противника.)"
+    }
+  ]
 }

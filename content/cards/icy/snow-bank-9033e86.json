@@ -14,5 +14,32 @@
   "landType": "icy",
   "id": "snow-bank-9033e86",
   "kind": "card",
-  "image": "/content/cards/icy/snow-bank-9033e86.webp"
+  "image": "/content/cards/icy/snow-bank-9033e86.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "remove_token",
+          "target": {
+            "kind": "this_lane_land"
+          }
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 3
+        }
+      ],
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику."
+    }
+  ]
 }

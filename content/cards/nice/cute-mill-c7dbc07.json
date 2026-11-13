@@ -14,5 +14,28 @@
   "landType": "nice",
   "id": "cute-mill-c7dbc07",
   "kind": "card",
-  "image": "/content/cards/nice/cute-mill-c7dbc07.webp"
+  "image": "/content/cards/nice/cute-mill-c7dbc07.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "heal_or_damage",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "mode": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "text": "Потрать 1 Действие >>> Восстанови или нанеси 2 урона своему существу на этой линии.",
+      "targets": [
+        {
+          "kind": "heal_or_damage"
+        }
+      ]
+    }
+  ]
 }

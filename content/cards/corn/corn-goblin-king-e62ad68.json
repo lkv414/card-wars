@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "corn-goblin-king-e62ad68",
   "kind": "card",
-  "image": "/content/cards/corn/corn-goblin-king-e62ad68.webp"
+  "image": "/content/cards/corn/corn-goblin-king-e62ad68.webp",
+  "abilities": []
 }

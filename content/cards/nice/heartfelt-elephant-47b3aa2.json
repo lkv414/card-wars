@@ -14,5 +14,33 @@
   "landType": "nice",
   "id": "heartfelt-elephant-47b3aa2",
   "kind": "card",
-  "image": "/content/cards/nice/heartfelt-elephant-47b3aa2.webp"
+  "image": "/content/cards/nice/heartfelt-elephant-47b3aa2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_targeted_self"
+        },
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Каждый раз когда Привлекательный слон становится целью заклинания противника, нанеси 2 урона выбранному существу противника."
+    }
+  ]
 }

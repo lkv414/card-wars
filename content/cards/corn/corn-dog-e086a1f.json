@@ -14,5 +14,50 @@
   "landType": "corn",
   "id": "corn-dog-e086a1f",
   "kind": "card",
-  "image": "/content/cards/corn/corn-dog-e086a1f.webp"
+  "image": "/content/cards/corn/corn-dog-e086a1f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "amount": 1,
+          "landType": "corn"
+        },
+        "duration": "aura"
+      },
+      "text": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "amount": 1,
+          "landType": "corn"
+        },
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_land_count",
+            "landType": "corn",
+            "max": 3
+          }
+        ]
+      },
+      "text": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK."
+    }
+  ]
 }

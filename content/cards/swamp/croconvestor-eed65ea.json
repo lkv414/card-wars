@@ -14,5 +14,18 @@
   "landType": "swamp",
   "id": "croconvestor-eed65ea",
   "kind": "card",
-  "image": "/content/cards/swamp/croconvestor-eed65ea.webp"
+  "image": "/content/cards/swamp/croconvestor-eed65ea.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "mechanic": "dig_play_companion",
+      "params": {
+        "count": 3
+      },
+      "text": "ПРИЕМ >>> Сбрось карту >>> Открой 3 верхние карты своей колоды. Сыграй открытое партнерство бесплатно, остальное сбрось."
+    }
+  ]
 }

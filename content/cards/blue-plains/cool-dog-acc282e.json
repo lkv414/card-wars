@@ -14,5 +14,18 @@
   "landType": "blue",
   "id": "cool-dog-acc282e",
   "kind": "card",
-  "image": "/content/cards/blue-plains/cool-dog-acc282e.webp"
+  "image": "/content/cards/blue-plains/cool-dog-acc282e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "attacks": true
+      },
+      "text": "Твои существа на соседних линиях не могут быть атакованы."
+    }
+  ]
 }

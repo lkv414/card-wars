@@ -14,5 +14,36 @@
   "landType": "nice",
   "id": "hugs-6eb6d20",
   "kind": "card",
-  "image": "/content/cards/nice/hugs-6eb6d20.webp"
+  "image": "/content/cards/nice/hugs-6eb6d20.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "destroy",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "destroy",
+          "target": {
+            "kind": "choice",
+            "index": 1
+          }
+        }
+      ],
+      "text": "Уничтожь выбранное существо под твоим контролем, и затем уничтожь выбранное существо противника на этой линии.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ]
+    }
+  ]
 }

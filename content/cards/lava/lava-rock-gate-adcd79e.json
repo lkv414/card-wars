@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "lava-rock-gate-adcd79e",
   "kind": "card",
-  "image": "/content/cards/lava/lava-rock-gate-adcd79e.webp"
+  "image": "/content/cards/lava/lava-rock-gate-adcd79e.webp",
+  "abilities": []
 }

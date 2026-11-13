@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "frostbitten-98c4682",
   "kind": "card",
-  "image": "/content/cards/icy/frostbitten-98c4682.webp"
+  "image": "/content/cards/icy/frostbitten-98c4682.webp",
+  "abilities": []
 }

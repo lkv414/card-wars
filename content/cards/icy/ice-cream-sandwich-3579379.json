@@ -14,5 +14,18 @@
   "landType": "icy",
   "id": "ice-cream-sandwich-3579379",
   "kind": "card",
-  "image": "/content/cards/icy/ice-cream-sandwich-3579379.webp"
+  "image": "/content/cards/icy/ice-cream-sandwich-3579379.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "freeze_lane_both_lands",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Потрать 1 Действие, ПРИЕМ >>> Выбери линию и заморозь обе земли на ней."
+    }
+  ]
 }

@@ -14,5 +14,25 @@
   "landType": "swamp",
   "id": "fish-er-man-f12a270",
   "kind": "card",
-  "image": "/content/cards/swamp/fish-er-man-f12a270.webp"
+  "image": "/content/cards/swamp/fish-er-man-f12a270.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "amount": 2
+      },
+      "text": "Если Рыболов вступает в игру на Голубые равнины, то нанеси 2 Урона каждому противнику.",
+      "conditions": [
+        {
+          "kind": "while_on_land_type",
+          "landType": "blue"
+        }
+      ]
+    }
+  ]
 }

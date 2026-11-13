@@ -14,5 +14,26 @@
   "landType": "swamp",
   "id": "deadlands-2814cdb",
   "kind": "card",
-  "image": "/content/cards/swamp/deadlands-2814cdb.webp"
+  "image": "/content/cards/swamp/deadlands-2814cdb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_card_discarded",
+      "conditions": [
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "next_turn"
+      },
+      "text": "Когда враг сбрасывает карту, твоё существо на этой линии получает +1 ATK до конца следующего хода."
+    }
+  ]
 }

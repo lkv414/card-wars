@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "oasis-defender-4d62fc4",
   "kind": "card",
-  "image": "/content/cards/sandy/oasis-defender-4d62fc4.webp"
+  "image": "/content/cards/sandy/oasis-defender-4d62fc4.webp",
+  "abilities": []
 }

@@ -14,5 +14,26 @@
   "landType": "swamp",
   "id": "blue-merman-819f3f9",
   "kind": "card",
-  "image": "/content/cards/swamp/blue-merman-819f3f9.webp"
+  "image": "/content/cards/swamp/blue-merman-819f3f9.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "draw_cards",
+          "count": 1
+        },
+        {
+          "op": "discard_from_hand",
+          "count": 1
+        }
+      ],
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "ПРИЕМ >>> Тяни карту. Затем сбрось карту."
+    }
+  ]
 }

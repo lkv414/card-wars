@@ -14,5 +14,6 @@
   "landType": "blue",
   "id": "extortion-e8ce2da",
   "kind": "card",
-  "image": "/content/cards/blue-plains/extortion-e8ce2da.webp"
+  "image": "/content/cards/blue-plains/extortion-e8ce2da.webp",
+  "abilities": []
 }

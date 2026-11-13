@@ -14,5 +14,25 @@
   "landType": "nice",
   "id": "patch-6f8fdd1",
   "kind": "card",
-  "image": "/content/cards/nice/patch-6f8fdd1.webp"
+  "image": "/content/cards/nice/patch-6f8fdd1.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "redistribute_damage",
+        "among": {
+          "kind": "each_creature_yours"
+        },
+        "cap": "defense"
+      },
+      "targets": [
+        {
+          "kind": "damage_distribution",
+          "label": "Перераспредели урон"
+        }
+      ],
+      "text": "Перераспредели урон на существах под твоим контролем (сделай это так, чтобы урона было не больше DEF)."
+    }
+  ]
 }

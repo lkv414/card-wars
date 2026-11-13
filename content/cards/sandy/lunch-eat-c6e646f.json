@@ -14,5 +14,12 @@
   "landType": "sandy",
   "id": "lunch-eat-c6e646f",
   "kind": "card",
-  "image": "/content/cards/sandy/lunch-eat-c6e646f.webp"
+  "image": "/content/cards/sandy/lunch-eat-c6e646f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "draw_per_zone_enters",
+      "text": "ПРИЕМ >>> Тяни карту за каждое существо, введенное в игру на эту землю в этот ход."
+    }
+  ]
 }

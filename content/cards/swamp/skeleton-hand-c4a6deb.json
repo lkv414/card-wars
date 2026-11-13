@@ -14,5 +14,20 @@
   "landType": "swamp",
   "id": "skeleton-hand-c4a6deb",
   "kind": "card",
-  "image": "/content/cards/swamp/skeleton-hand-c4a6deb.webp"
+  "image": "/content/cards/swamp/skeleton-hand-c4a6deb.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "text": "ПРИЕМ >>> Сбрось 3 верхние карты своей колоды. За каждое заклинание сброшенное таким образом, выбранный игрок сбрасывает карту.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "mechanic": "mill_spell_discard",
+      "params": {
+        "count": 3
+      }
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "sha256": "0ecd71f3d7d91803f1fee29a72a7d55c919ad0e422f29c32ff4db2983c70480f",
   "id": "simon-petrikov-0ecd71f",
   "kind": "hero",
-  "image": "/content/heroes/simon-petrikov-0ecd71f.webp"
+  "image": "/content/heroes/simon-petrikov-0ecd71f.webp",
+  "ability": null
 }

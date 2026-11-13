@@ -14,5 +14,19 @@
   "landType": "icy",
   "id": "ice-cream-captain-e6bc7ce",
   "kind": "card",
-  "image": "/content/cards/icy/ice-cream-captain-e6bc7ce.webp"
+  "image": "/content/cards/icy/ice-cream-captain-e6bc7ce.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_token_players",
+          "amount": -1
+        }
+      },
+      "text": "Капитан мороженка стоит на 1 меньше за каждого игрока чьи земли с Ледяным жетоном."
+    }
+  ]
 }

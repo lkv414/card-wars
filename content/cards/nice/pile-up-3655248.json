@@ -14,5 +14,26 @@
   "landType": "nice",
   "id": "pile-up-3655248",
   "kind": "card",
-  "image": "/content/cards/nice/pile-up-3655248.webp"
+  "image": "/content/cards/nice/pile-up-3655248.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "stat": "attack",
+          "amount": 1,
+          "duration": "this_turn"
+        },
+        {
+          "op": "lane_strike_all"
+        }
+      ],
+      "text": "Дружественные существа получают +1 ATK до начала следующей фазы сражения. Затем каждое существо наносит урон, равный его ATK, существу противника на этой линии."
+    }
+  ]
 }

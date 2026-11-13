@@ -9,5 +9,6 @@
   "sha256": "f73dd9e70e1f99a8368b11a2f48a3852c75e5b8792c94603da78a8cc1315e3ad",
   "id": "don-john-f73dd9e",
   "kind": "hero",
-  "image": "/content/heroes/don-john-f73dd9e.webp"
+  "image": "/content/heroes/don-john-f73dd9e.webp",
+  "ability": null
 }

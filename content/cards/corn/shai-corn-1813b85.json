@@ -14,5 +14,28 @@
   "landType": "corn",
   "id": "shai-corn-1813b85",
   "kind": "card",
-  "image": "/content/cards/corn/shai-corn-1813b85.webp"
+  "image": "/content/cards/corn/shai-corn-1813b85.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "flip_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "down": true
+      },
+      "text": "Когда Червь шелухи вступает в игру, переверни Кукурузное поле под твоим контролем лицом вниз.",
+      "targets": [
+        {
+          "kind": "own_landscape",
+          "filter": {
+            "landType": "corn"
+          }
+        }
+      ]
+    }
+  ]
 }

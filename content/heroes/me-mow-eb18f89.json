@@ -9,5 +9,6 @@
   "sha256": "eb18f8995c0ea29976bf22f35b2947d41171723ef8c5ad827c18fc5529ed2273",
   "id": "me-mow-eb18f89",
   "kind": "hero",
-  "image": "/content/heroes/me-mow-eb18f89.webp"
+  "image": "/content/heroes/me-mow-eb18f89.webp",
+  "ability": null
 }

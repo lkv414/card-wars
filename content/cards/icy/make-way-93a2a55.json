@@ -14,5 +14,38 @@
   "landType": "icy",
   "id": "make-way-93a2a55",
   "kind": "card",
-  "image": "/content/cards/icy/make-way-93a2a55.webp"
+  "image": "/content/cards/icy/make-way-93a2a55.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "freeze_land",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "frozen": true
+        },
+        {
+          "op": "freeze_land",
+          "target": {
+            "kind": "choice",
+            "index": 1
+          },
+          "frozen": true
+        }
+      ],
+      "text": "Заморозь две выбранные земли.",
+      "targets": [
+        {
+          "kind": "landscape"
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
 }

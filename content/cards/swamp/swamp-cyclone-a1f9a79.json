@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "swamp-cyclone-a1f9a79",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-cyclone-a1f9a79.webp"
+  "image": "/content/cards/swamp/swamp-cyclone-a1f9a79.webp",
+  "abilities": []
 }

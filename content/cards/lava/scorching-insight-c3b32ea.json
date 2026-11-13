@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "scorching-insight-c3b32ea",
   "kind": "card",
-  "image": "/content/cards/lava/scorching-insight-c3b32ea.webp"
+  "image": "/content/cards/lava/scorching-insight-c3b32ea.webp",
+  "abilities": []
 }

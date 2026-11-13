@@ -14,5 +14,25 @@
   "landType": "rainbow",
   "id": "all-metal-racket-dbf0f7c",
   "kind": "card",
-  "image": "/content/cards/rainbow/all-metal-racket-dbf0f7c.webp"
+  "image": "/content/cards/rainbow/all-metal-racket-dbf0f7c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "text": "Нанеси 2 урона выбранному существу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
 }

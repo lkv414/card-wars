@@ -9,5 +9,6 @@
   "sha256": "6285ceb331a377b147d63142630d95ef6957ad917a6567f7cd6bb894f9be2ac4",
   "id": "orgalorg-6285ceb",
   "kind": "hero",
-  "image": "/content/heroes/orgalorg-6285ceb.webp"
+  "image": "/content/heroes/orgalorg-6285ceb.webp",
+  "ability": null
 }

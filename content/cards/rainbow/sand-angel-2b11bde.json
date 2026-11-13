@@ -14,5 +14,7 @@
   "landType": "rainbow",
   "id": "sand-angel-2b11bde",
   "kind": "card",
-  "image": "/content/cards/rainbow/sand-angel-2b11bde.webp"
+  "image": "/content/cards/rainbow/sand-angel-2b11bde.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

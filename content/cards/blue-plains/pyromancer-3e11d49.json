@@ -14,5 +14,74 @@
   "landType": "blue",
   "id": "pyromancer-3e11d49",
   "kind": "card",
-  "image": "/content/cards/blue-plains/pyromancer-3e11d49.webp"
+  "image": "/content/cards/blue-plains/pyromancer-3e11d49.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой линии.",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ]
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_line_change",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "Каждый раз, когда Пиромансер помещается на землю, нанеси 3 урона выбранному существу в этой линии.",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ]
+    },
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "this_creature"
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 0
+        },
+        "side": "own"
+      },
+      "text": "Потрать 1 действие >>> Перемести Пиромансера на пустую землю под своим контролем.",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
 }

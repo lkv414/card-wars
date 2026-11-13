@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "vent-guard-b4e806a",
   "kind": "card",
-  "image": "/content/cards/lava/vent-guard-b4e806a.webp"
+  "image": "/content/cards/lava/vent-guard-b4e806a.webp",
+  "abilities": []
 }

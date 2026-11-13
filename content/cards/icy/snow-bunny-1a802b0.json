@@ -14,5 +14,27 @@
   "landType": "icy",
   "id": "snow-bunny-1a802b0",
   "kind": "card",
-  "image": "/content/cards/icy/snow-bunny-1a802b0.webp"
+  "image": "/content/cards/icy/snow-bunny-1a802b0.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "text": "Уничтожь Снежного Кролика >>> Заморозь выбранную землю.",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "additionalCost": {
+        "destroySelf": true
+      }
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "corn-siegezebra-f53859b",
   "kind": "card",
-  "image": "/content/cards/corn/corn-siegezebra-f53859b.webp"
+  "image": "/content/cards/corn/corn-siegezebra-f53859b.webp",
+  "abilities": []
 }

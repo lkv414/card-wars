@@ -14,5 +14,27 @@
   "landType": "icy",
   "id": "bobsled-6bbe5b2",
   "kind": "card",
-  "image": "/content/cards/icy/bobsled-6bbe5b2.webp"
+  "image": "/content/cards/icy/bobsled-6bbe5b2.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "ПРИЕМ >>> Нанеси 3 урона выбранному существу на земле с ледяным жетоном.",
+      "targets": [
+        {
+          "kind": "any_creature",
+          "filter": {
+            "zoneToken": true
+          }
+        }
+      ]
+    }
+  ]
 }

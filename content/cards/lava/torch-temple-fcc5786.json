@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "torch-temple-fcc5786",
   "kind": "card",
-  "image": "/content/cards/lava/torch-temple-fcc5786.webp"
+  "image": "/content/cards/lava/torch-temple-fcc5786.webp",
+  "abilities": []
 }

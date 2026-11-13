@@ -14,5 +14,7 @@
   "landType": "rainbow",
   "id": "pony-971f97f",
   "kind": "card",
-  "image": "/content/cards/rainbow/pony-971f97f.webp"
+  "image": "/content/cards/rainbow/pony-971f97f.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

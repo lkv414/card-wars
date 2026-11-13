@@ -14,5 +14,7 @@
   "landType": "rainbow",
   "id": "slobber-guy-3387183",
   "kind": "card",
-  "image": "/content/cards/rainbow/slobber-guy-3387183.webp"
+  "image": "/content/cards/rainbow/slobber-guy-3387183.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

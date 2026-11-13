@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "spell-reservoir-de9372e",
   "kind": "card",
-  "image": "/content/cards/rainbow/spell-reservoir-de9372e.webp"
+  "image": "/content/cards/rainbow/spell-reservoir-de9372e.webp",
+  "abilities": []
 }

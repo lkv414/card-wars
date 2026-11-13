@@ -14,5 +14,27 @@
   "landType": "rainbow",
   "id": "obstacle-course-ab176ea",
   "kind": "card",
-  "image": "/content/cards/rainbow/obstacle-course-ab176ea.webp"
+  "image": "/content/cards/rainbow/obstacle-course-ab176ea.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": 2
+      },
+      "text": "Восстанови себе 2 жизни за каждое уничтоженное существо под твоим контролем на этой линии.",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ]
+    }
+  ]
 }

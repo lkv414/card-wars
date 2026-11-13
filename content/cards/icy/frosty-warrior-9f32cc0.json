@@ -14,5 +14,25 @@
   "landType": "icy",
   "id": "frosty-warrior-9f32cc0",
   "kind": "card",
-  "image": "/content/cards/icy/frosty-warrior-9f32cc0.webp"
+  "image": "/content/cards/icy/frosty-warrior-9f32cc0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "+3 АТК пока твой противник не контролирует существо на этой линии.",
+      "conditions": [
+        {
+          "kind": "while_lane_empty_opponent"
+        }
+      ]
+    }
+  ]
 }

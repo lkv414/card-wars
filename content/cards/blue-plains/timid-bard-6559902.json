@@ -14,5 +14,24 @@
   "landType": "blue",
   "id": "timid-bard-6559902",
   "kind": "card",
-  "image": "/content/cards/blue-plains/timid-bard-6559902.webp"
+  "image": "/content/cards/blue-plains/timid-bard-6559902.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 1,
+          "filter": {
+            "flipped": true
+          }
+        }
+      },
+      "text": "ПРИЕМ >>> Тяни карту за каждое примененное существо под твоим контролем (включая это)."
+    }
+  ]
 }

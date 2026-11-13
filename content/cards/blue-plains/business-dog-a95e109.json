@@ -14,5 +14,27 @@
   "landType": "blue",
   "id": "business-dog-a95e109",
   "kind": "card",
-  "image": "/content/cards/blue-plains/business-dog-a95e109.webp"
+  "image": "/content/cards/blue-plains/business-dog-a95e109.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_played_name",
+          "matchers": [
+            "пес",
+            "щенок"
+          ],
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "Бизнес пес получает +2 ATK за каждую карту сыгранную в этот ход с «пес» или «щенок» в названии."
+    }
+  ]
 }

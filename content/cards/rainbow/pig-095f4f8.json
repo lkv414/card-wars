@@ -14,5 +14,27 @@
   "landType": "rainbow",
   "id": "pig-095f4f8",
   "kind": "card",
-  "image": "/content/cards/rainbow/pig-095f4f8.webp"
+  "image": "/content/cards/rainbow/pig-095f4f8.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "flip_land",
+        "down": true,
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "landscape",
+          "filter": {
+            "landType": "corn"
+          }
+        }
+      ],
+      "text": "ПРИЕМ >>> Выбери и переверни Кукурузное поле на этой линии лицом вниз."
+    }
+  ]
 }

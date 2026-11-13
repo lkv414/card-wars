@@ -14,5 +14,20 @@
   "landType": "rainbow",
   "id": "pig-pen-6823a4c",
   "kind": "card",
-  "image": "/content/cards/rainbow/pig-pen-6823a4c.webp"
+  "image": "/content/cards/rainbow/pig-pen-6823a4c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "defense",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "Твое существо получает +3 DEF на этой линии."
+    }
+  ]
 }

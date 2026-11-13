@@ -14,5 +14,23 @@
   "landType": "corn",
   "id": "corn-trampoliner-0619d33",
   "kind": "card",
-  "image": "/content/cards/corn/corn-trampoliner-0619d33.webp"
+  "image": "/content/cards/corn/corn-trampoliner-0619d33.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждый различный тип земли под твоим контролем."
+    }
+  ]
 }

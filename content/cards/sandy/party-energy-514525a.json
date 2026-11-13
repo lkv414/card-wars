@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "party-energy-514525a",
   "kind": "card",
-  "image": "/content/cards/sandy/party-energy-514525a.webp"
+  "image": "/content/cards/sandy/party-energy-514525a.webp",
+  "abilities": []
 }

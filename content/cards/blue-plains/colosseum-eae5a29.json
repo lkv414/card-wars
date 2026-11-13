@@ -14,5 +14,6 @@
   "landType": "blue",
   "id": "colosseum-eae5a29",
   "kind": "card",
-  "image": "/content/cards/blue-plains/colosseum-eae5a29.webp"
+  "image": "/content/cards/blue-plains/colosseum-eae5a29.webp",
+  "abilities": []
 }

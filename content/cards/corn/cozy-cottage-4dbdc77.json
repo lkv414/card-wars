@@ -14,5 +14,16 @@
   "landType": "corn",
   "id": "cozy-cottage-4dbdc77",
   "kind": "card",
-  "image": "/content/cards/corn/cozy-cottage-4dbdc77.webp"
+  "image": "/content/cards/corn/cozy-cottage-4dbdc77.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "land_count_mod",
+        "landType": "corn",
+        "amount": 1
+      },
+      "text": "Ферма считается за дополнительную Кукурузную землю под твоим контролем."
+    }
+  ]
 }

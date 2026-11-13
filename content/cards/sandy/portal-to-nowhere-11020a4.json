@@ -14,5 +14,21 @@
   "landType": "sandy",
   "id": "portal-to-nowhere-11020a4",
   "kind": "card",
-  "image": "/content/cards/sandy/portal-to-nowhere-11020a4.webp"
+  "image": "/content/cards/sandy/portal-to-nowhere-11020a4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "portal_nowhere_shift_opponent",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Передвинь 1 существо противника на соседнюю пустую линию (на его стороне)."
+    }
+  ]
 }

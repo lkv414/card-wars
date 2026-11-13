@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "sky-burial-tower-0d9104a",
   "kind": "card",
-  "image": "/content/cards/swamp/sky-burial-tower-0d9104a.webp"
+  "image": "/content/cards/swamp/sky-burial-tower-0d9104a.webp",
+  "abilities": []
 }

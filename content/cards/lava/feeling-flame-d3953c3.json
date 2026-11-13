@@ -14,5 +14,22 @@
   "landType": "lava",
   "id": "feeling-flame-d3953c3",
   "kind": "card",
-  "image": "/content/cards/lava/feeling-flame-d3953c3.webp"
+  "image": "/content/cards/lava/feeling-flame-d3953c3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "mechanic": "sacrifice_half_def_draw",
+      "params": {
+        "full": 3,
+        "else": 2
+      },
+      "text": "Уничтожь существо под твоим контролем. Если урон на нем меньше половины его DEF, тяни 3 карты, иначе 2."
+    }
+  ]
 }

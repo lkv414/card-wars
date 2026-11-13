@@ -14,5 +14,21 @@
   "landType": "corn",
   "id": "burning-ethan-27b5e72",
   "kind": "card",
-  "image": "/content/cards/corn/burning-ethan-27b5e72.webp"
+  "image": "/content/cards/corn/burning-ethan-27b5e72.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 1
+        }
+      },
+      "text": "Когда Итан Огонек покидает игру, тяни 1 карту за каждую кукурузную землю под твоим контролем."
+    }
+  ]
 }

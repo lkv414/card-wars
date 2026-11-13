@@ -14,5 +14,80 @@
   "landType": "blue",
   "id": "tax-reduction-350aa50",
   "kind": "card",
-  "image": "/content/cards/blue-plains/tax-reduction-350aa50.webp"
+  "image": "/content/cards/blue-plains/tax-reduction-350aa50.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": [
+            "own",
+            "opponent",
+            "both",
+            "skip"
+          ],
+          "label": "Поменять местами строения: свои / противника / обе пары / пропустить"
+        },
+        {
+          "kind": "own_building"
+        },
+        {
+          "kind": "own_building"
+        },
+        {
+          "kind": "opponent_building"
+        },
+        {
+          "kind": "opponent_building"
+        }
+      ],
+      "effect": [
+        {
+          "op": "swap_field_cards",
+          "a": {
+            "kind": "choice",
+            "index": 1
+          },
+          "b": {
+            "kind": "choice",
+            "index": 2
+          },
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 0,
+              "options": [
+                "own",
+                "both"
+              ]
+            }
+          ]
+        },
+        {
+          "op": "swap_field_cards",
+          "a": {
+            "kind": "choice",
+            "index": 3
+          },
+          "b": {
+            "kind": "choice",
+            "index": 4
+          },
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 0,
+              "options": [
+                "opponent",
+                "both"
+              ]
+            }
+          ]
+        }
+      ],
+      "text": "Можешь поменять местами два своих строения на различных линиях под своим контролем. Можешь поменять местами два строения противника на различных линиях под его контролем."
+    }
+  ]
 }

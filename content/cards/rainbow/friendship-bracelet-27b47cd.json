@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "friendship-bracelet-27b47cd",
   "kind": "card",
-  "image": "/content/cards/rainbow/friendship-bracelet-27b47cd.webp"
+  "image": "/content/cards/rainbow/friendship-bracelet-27b47cd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "swap_damage",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Поменяй любое количество урона между двумя существами под твоим контролем."
+    }
+  ]
 }

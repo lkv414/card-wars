@@ -14,5 +14,18 @@
   "landType": "corn",
   "id": "truth-silo-af9c277",
   "kind": "card",
-  "image": "/content/cards/corn/truth-silo-af9c277.webp"
+  "image": "/content/cards/corn/truth-silo-af9c277.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 2,
+      "mechanic": "steal_and_play_from_hand",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Потрать 2 действия >>> Укради случайную карту с руки противника и сыграй ее бесплатно."
+    }
+  ]
 }

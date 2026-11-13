@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "sharot-62223d7",
   "kind": "card",
-  "image": "/content/cards/swamp/sharot-62223d7.webp"
+  "image": "/content/cards/swamp/sharot-62223d7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 DEF за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
 }

@@ -14,5 +14,28 @@
   "landType": "sandy",
   "id": "sand-castle-792f692",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-castle-792f692.webp"
+  "image": "/content/cards/sandy/sand-castle-792f692.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "additionalCost": {
+        "destroySelf": true
+      },
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_lane_own_creature"
+          }
+        },
+        {
+          "op": "play_from_hand",
+          "destination": {
+            "kind": "this_lane_land"
+          }
+        }
+      ],
+      "text": "ПРИЕМ >>> Сбрось Песочный замок из игры >>> Возьми свое существо на этой земле в руку и сыграй его бесплатно."
+    }
+  ]
 }

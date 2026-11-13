@@ -14,5 +14,16 @@
   "landType": "corn",
   "id": "spiny-corn-zebra-2645758",
   "kind": "card",
-  "image": "/content/cards/corn/spiny-corn-zebra-2645758.webp"
+  "image": "/content/cards/corn/spiny-corn-zebra-2645758.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "damage_all_creatures_on_adjacent_lanes",
+      "params": {
+        "amount": 1
+      },
+      "text": "Когда Шипастый зебрарог атакует, нанеси 1 урон каждому существу на соседней линии."
+    }
+  ]
 }

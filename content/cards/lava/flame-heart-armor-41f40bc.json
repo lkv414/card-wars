@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flame-heart-armor-41f40bc",
   "kind": "card",
-  "image": "/content/cards/lava/flame-heart-armor-41f40bc.webp"
+  "image": "/content/cards/lava/flame-heart-armor-41f40bc.webp",
+  "abilities": []
 }

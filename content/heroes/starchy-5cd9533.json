@@ -9,5 +9,6 @@
   "sha256": "5cd95335d4879effdf1abbe67dd2d7f9ccd465617fe16f64bceeaed532f05963",
   "id": "starchy-5cd9533",
   "kind": "hero",
-  "image": "/content/heroes/starchy-5cd9533.webp"
+  "image": "/content/heroes/starchy-5cd9533.webp",
+  "ability": null
 }

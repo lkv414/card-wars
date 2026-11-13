@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "rock-mermaid-318829d",
   "kind": "card",
-  "image": "/content/cards/swamp/rock-mermaid-318829d.webp"
+  "image": "/content/cards/swamp/rock-mermaid-318829d.webp",
+  "abilities": []
 }

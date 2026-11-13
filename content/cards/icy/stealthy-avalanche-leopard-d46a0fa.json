@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "stealthy-avalanche-leopard-d46a0fa",
   "kind": "card",
-  "image": "/content/cards/icy/stealthy-avalanche-leopard-d46a0fa.webp"
+  "image": "/content/cards/icy/stealthy-avalanche-leopard-d46a0fa.webp",
+  "abilities": []
 }

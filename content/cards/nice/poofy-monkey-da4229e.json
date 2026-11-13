@@ -14,5 +14,28 @@
   "landType": "nice",
   "id": "poofy-monkey-da4229e",
   "kind": "card",
-  "image": "/content/cards/nice/poofy-monkey-da4229e.webp"
+  "image": "/content/cards/nice/poofy-monkey-da4229e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 0,
+        "duration": "aura",
+        "multiplier": 2,
+        "conditions": [
+          {
+            "kind": "while_damage_at_least",
+            "amount": 4,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока у Набитого орангутана 4 и более урона, его ATK удваивается."
+    }
+  ]
 }

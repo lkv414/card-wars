@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "friendship-potion-36a4ec9",
   "kind": "card",
-  "image": "/content/cards/rainbow/friendship-potion-36a4ec9.webp"
+  "image": "/content/cards/rainbow/friendship-potion-36a4ec9.webp",
+  "abilities": []
 }

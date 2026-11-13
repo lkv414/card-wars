@@ -14,5 +14,16 @@
   "landType": "blue",
   "id": "gnome-snot-077c28d",
   "kind": "card",
-  "image": "/content/cards/blue-plains/gnome-snot-077c28d.webp"
+  "image": "/content/cards/blue-plains/gnome-snot-077c28d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": 3
+      },
+      "text": "Тяни 3 карты."
+    }
+  ]
 }

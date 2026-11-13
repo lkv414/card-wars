@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flaming-flamingo-f5438d2",
   "kind": "card",
-  "image": "/content/cards/lava/flaming-flamingo-f5438d2.webp"
+  "image": "/content/cards/lava/flaming-flamingo-f5438d2.webp",
+  "abilities": []
 }

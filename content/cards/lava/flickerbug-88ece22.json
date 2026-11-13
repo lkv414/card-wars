@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flickerbug-88ece22",
   "kind": "card",
-  "image": "/content/cards/lava/flickerbug-88ece22.webp"
+  "image": "/content/cards/lava/flickerbug-88ece22.webp",
+  "abilities": []
 }

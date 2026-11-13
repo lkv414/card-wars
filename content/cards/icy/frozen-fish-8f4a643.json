@@ -14,5 +14,25 @@
   "landType": "icy",
   "id": "frozen-fish-8f4a643",
   "kind": "card",
-  "image": "/content/cards/icy/frozen-fish-8f4a643.webp"
+  "image": "/content/cards/icy/frozen-fish-8f4a643.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_instance_self"
+        }
+      ],
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
+    }
+  ]
 }

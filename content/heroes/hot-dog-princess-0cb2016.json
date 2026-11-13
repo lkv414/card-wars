@@ -9,5 +9,6 @@
   "sha256": "0cb20163b9db7849cdfaf593cb3b1785aad8e47ffda62badf4b6bd71ca84b3e5",
   "id": "hot-dog-princess-0cb2016",
   "kind": "hero",
-  "image": "/content/heroes/hot-dog-princess-0cb2016.webp"
+  "image": "/content/heroes/hot-dog-princess-0cb2016.webp",
+  "ability": null
 }

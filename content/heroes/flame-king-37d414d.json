@@ -9,5 +9,6 @@
   "sha256": "37d414db5510bedee5d42b783cf9f416deb35c6b2ad7b164e19db30fc02f02ac",
   "id": "flame-king-37d414d",
   "kind": "hero",
-  "image": "/content/heroes/flame-king-37d414d.webp"
+  "image": "/content/heroes/flame-king-37d414d.webp",
+  "ability": null
 }

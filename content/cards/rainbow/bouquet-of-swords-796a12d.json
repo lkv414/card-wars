@@ -14,5 +14,30 @@
   "landType": "rainbow",
   "id": "bouquet-of-swords-796a12d",
   "kind": "card",
-  "image": "/content/cards/rainbow/bouquet-of-swords-796a12d.webp"
+  "image": "/content/cards/rainbow/bouquet-of-swords-796a12d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_counter",
+          "counter": "cards_drawn",
+          "scope": "own",
+          "amount": 1
+        }
+      },
+      "text": "Нанеси 1 урон выбранному существу за каждую вытянутую тобой карту в этом ходу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "darkama-traitor-a7faa33",
   "kind": "card",
-  "image": "/content/cards/swamp/darkama-traitor-a7faa33.webp"
+  "image": "/content/cards/swamp/darkama-traitor-a7faa33.webp",
+  "abilities": []
 }

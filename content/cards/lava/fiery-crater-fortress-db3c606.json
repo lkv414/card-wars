@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "fiery-crater-fortress-db3c606",
   "kind": "card",
-  "image": "/content/cards/lava/fiery-crater-fortress-db3c606.webp"
+  "image": "/content/cards/lava/fiery-crater-fortress-db3c606.webp",
+  "abilities": []
 }

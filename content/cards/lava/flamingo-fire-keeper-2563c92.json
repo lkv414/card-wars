@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flamingo-fire-keeper-2563c92",
   "kind": "card",
-  "image": "/content/cards/lava/flamingo-fire-keeper-2563c92.webp"
+  "image": "/content/cards/lava/flamingo-fire-keeper-2563c92.webp",
+  "abilities": []
 }

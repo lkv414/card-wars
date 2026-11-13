@@ -14,5 +14,25 @@
   "landType": "nice",
   "id": "pie-rain-ca1d4d3",
   "kind": "card",
-  "image": "/content/cards/nice/pie-rain-ca1d4d3.webp"
+  "image": "/content/cards/nice/pie-rain-ca1d4d3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "vs": "defenderZone",
+          "landType": "corn",
+          "atkBonus": 2
+        }
+      },
+      "text": "Каждое твое существо получает +2 ATK, пока атакует существ на кукурузной земле.",
+      "trigger": "on_cast"
+    }
+  ]
 }

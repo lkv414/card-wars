@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "giant-s-crucible-430faaa",
   "kind": "card",
-  "image": "/content/cards/lava/giant-s-crucible-430faaa.webp"
+  "image": "/content/cards/lava/giant-s-crucible-430faaa.webp",
+  "abilities": []
 }

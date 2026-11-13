@@ -14,5 +14,25 @@
   "landType": "sandy",
   "id": "snake-eyes-bd050e0",
   "kind": "card",
-  "image": "/content/cards/sandy/snake-eyes-bd050e0.webp"
+  "image": "/content/cards/sandy/snake-eyes-bd050e0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "vs": "defenderZone",
+          "landType": "swamp",
+          "atkBonus": 2
+        }
+      },
+      "text": "Каждое твое существо получает +2 ATK, пока атакует существ на Бесполезных болотах.",
+      "trigger": "on_cast"
+    }
+  ]
 }

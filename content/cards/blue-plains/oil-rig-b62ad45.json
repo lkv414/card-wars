@@ -14,5 +14,29 @@
   "landType": "blue",
   "id": "oil-rig-b62ad45",
   "kind": "card",
-  "image": "/content/cards/blue-plains/oil-rig-b62ad45.webp"
+  "image": "/content/cards/blue-plains/oil-rig-b62ad45.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_building_yours"
+          },
+          "amount": 2,
+          "filter": {
+            "sameCard": true
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
+    }
+  ]
 }

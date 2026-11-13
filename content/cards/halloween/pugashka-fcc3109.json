@@ -14,5 +14,17 @@
   "sha256": "fcc31097f27a2f419747ac84ecbb42a74ed0345ab6cdd03c9a21149b96d94d9e",
   "id": "pugashka-fcc3109",
   "kind": "card",
-  "image": "/content/cards/halloween/pugashka-fcc3109.webp"
+  "image": "/content/cards/halloween/pugashka-fcc3109.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "explosive_dude_cleave",
+      "targets": [
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ],
+      "text": "Приём >>> нанеси 1 Урон существу противника перед собой и еще двум существам по бокам от него."
+    }
+  ]
 }

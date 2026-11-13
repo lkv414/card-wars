@@ -14,5 +14,19 @@
   "landType": "blue",
   "id": "cyclops-blessing-95c54c3",
   "kind": "card",
-  "image": "/content/cards/blue-plains/cyclops-blessing-95c54c3.webp"
+  "image": "/content/cards/blue-plains/cyclops-blessing-95c54c3.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "type": "spell"
+        },
+        "to": "deck_top"
+      },
+      "text": "ПРИЕМ >>> Помести заклинание из своей стопки сброса наверх своей колоды."
+    }
+  ]
 }

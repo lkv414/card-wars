@@ -14,5 +14,31 @@
   "landType": "icy",
   "id": "frozen-bananus-b9078f7",
   "kind": "card",
-  "image": "/content/cards/icy/frozen-bananus-b9078f7.webp"
+  "image": "/content/cards/icy/frozen-bananus-b9078f7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "while_lane_ice_token",
+          "min": 1
+        }
+      ],
+      "text": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 2 урона выбранному противнику."
+    }
+  ]
 }

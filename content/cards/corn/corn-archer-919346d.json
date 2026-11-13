@@ -14,5 +14,21 @@
   "landType": "corn",
   "id": "corn-archer-919346d",
   "kind": "card",
-  "image": "/content/cards/corn/corn-archer-919346d.webp"
+  "image": "/content/cards/corn/corn-archer-919346d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 3
+      },
+      "additionalCost": {
+        "destroyOwnBuilding": 1
+      },
+      "text": "Уничтожь Строение под твоим контролем, ПРИЕМ >>> Нанеси 3 урона каждому существу противника."
+    }
+  ]
 }

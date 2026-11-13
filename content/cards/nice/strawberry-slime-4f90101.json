@@ -14,5 +14,25 @@
   "landType": "nice",
   "id": "strawberry-slime-4f90101",
   "kind": "card",
-  "image": "/content/cards/nice/strawberry-slime-4f90101.webp"
+  "image": "/content/cards/nice/strawberry-slime-4f90101.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "amount": 4
+      },
+      "conditions": [
+        {
+          "kind": "while_distinct_lands",
+          "min": 3
+        }
+      ],
+      "text": "Если под твоим контролем 3 или более различных типов земель, то когда Клубничное желе вступает в игру, восстанови 4 урона с каждого существа под твоим контролем."
+    }
+  ]
 }

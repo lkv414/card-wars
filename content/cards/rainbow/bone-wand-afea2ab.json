@@ -14,5 +14,35 @@
   "landType": "rainbow",
   "id": "bone-wand-afea2ab",
   "kind": "card",
-  "image": "/content/cards/rainbow/bone-wand-afea2ab.webp"
+  "image": "/content/cards/rainbow/bone-wand-afea2ab.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_own_creature_on_land_type",
+          "landType": "swamp"
+        }
+      ],
+      "text": "Играй только если под твоим контролем есть существо болотных земель."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "count": 1
+      },
+      "text": "Выбранный противник сбрасывает карту.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ]
+    }
+  ]
 }

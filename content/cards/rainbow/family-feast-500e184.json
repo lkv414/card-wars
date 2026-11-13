@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "family-feast-500e184",
   "kind": "card",
-  "image": "/content/cards/rainbow/family-feast-500e184.webp"
+  "image": "/content/cards/rainbow/family-feast-500e184.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "charlie_bike_for_two",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Выбери существо под твоим контролем и верни его на руку владельцу. Выбери другого игрока. Он выбирает существо под его контролем и возвращает его на руку владельцу."
+    }
+  ]
 }

@@ -14,5 +14,22 @@
   "landType": "blue",
   "id": "lonely-panda-ea60f83",
   "kind": "card",
-  "image": "/content/cards/blue-plains/lonely-panda-ea60f83.webp"
+  "image": "/content/cards/blue-plains/lonely-panda-ea60f83.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "conditions": [
+        {
+          "kind": "while_no_other_creatures",
+          "scope": "own"
+        }
+      ],
+      "text": "Когда одинокая панда вступает в игру и под твоим контролем нет других существ, тяни карту."
+    }
+  ]
 }

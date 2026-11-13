@@ -14,5 +14,24 @@
   "landType": "sandy",
   "id": "diamond-dan-c772f23",
   "kind": "card",
-  "image": "/content/cards/sandy/diamond-dan-c772f23.webp"
+  "image": "/content/cards/sandy/diamond-dan-c772f23.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "triggering_instance"
+        }
+      },
+      "text": "Когда Бриллиантовый Дэн покидает игру с Милой земли, верни его владельцу в руку.",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_land_type",
+          "landType": "good"
+        }
+      ]
+    }
+  ]
 }

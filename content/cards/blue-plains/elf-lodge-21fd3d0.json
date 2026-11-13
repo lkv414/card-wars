@@ -14,5 +14,13 @@
   "landType": "blue",
   "id": "elf-lodge-21fd3d0",
   "kind": "card",
-  "image": "/content/cards/blue-plains/elf-lodge-21fd3d0.webp"
+  "image": "/content/cards/blue-plains/elf-lodge-21fd3d0.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "draw_per_creature_on_lane",
+      "text": "Потрать 1 Действие >>> Тяни карту за каждое существо на этой линии."
+    }
+  ]
 }

@@ -14,5 +14,29 @@
   "landType": "blue",
   "id": "blue-matriarch-0ef73f4",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blue-matriarch-0ef73f4.webp"
+  "image": "/content/cards/blue-plains/blue-matriarch-0ef73f4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 1,
+          "filter": {
+            "landType": "rainbow"
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "Матриарх Вайда получает +1 ATK за каждое Радужное существо под твоим контролем."
+    }
+  ]
 }

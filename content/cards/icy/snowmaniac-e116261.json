@@ -14,5 +14,19 @@
   "landType": "icy",
   "id": "snowmaniac-e116261",
   "kind": "card",
-  "image": "/content/cards/icy/snowmaniac-e116261.webp"
+  "image": "/content/cards/icy/snowmaniac-e116261.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_lands"
+        },
+        "frozen": true
+      },
+      "text": "Когда Ледяная снегобаба вступает в игру заморозь обе земли на ее линии."
+    }
+  ]
 }

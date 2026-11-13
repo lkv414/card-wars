@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "cyclone-70848e9",
   "kind": "card",
-  "image": "/content/cards/sandy/cyclone-70848e9.webp"
+  "image": "/content/cards/sandy/cyclone-70848e9.webp",
+  "abilities": []
 }

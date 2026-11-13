@@ -14,5 +14,27 @@
   "landType": "rainbow",
   "id": "cat-astrophe-bf991ec",
   "kind": "card",
-  "image": "/content/cards/rainbow/cat-astrophe-bf991ec.webp"
+  "image": "/content/cards/rainbow/cat-astrophe-bf991ec.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "destroy_own_n",
+        "count": {
+          "kind": "chosen_amount",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "amount",
+          "min": 0,
+          "max": 4,
+          "label": "Сколько существ уничтожить"
+        }
+      ],
+      "text": "Уничтожь любое число существ под твоим контролем. Тяни карту за каждого существа уничтоженного таким образом."
+    }
+  ]
 }

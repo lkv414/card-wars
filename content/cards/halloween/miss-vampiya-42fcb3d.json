@@ -14,5 +14,45 @@
   "sha256": "42fcb3d9d62aac5ae793ef441d0cccb7baefb2955e4107045f4d454383b6a5dd",
   "id": "miss-vampiya-42fcb3d",
   "kind": "card",
-  "image": "/content/cards/halloween/miss-vampiya-42fcb3d.webp"
+  "image": "/content/cards/halloween/miss-vampiya-42fcb3d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+      "conditions": [
+        {
+          "kind": "while_own_card_in_play",
+          "cardId": "tree_trunks_card_16"
+        }
+      ]
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
+      "conditions": [
+        {
+          "kind": "while_own_card_in_play",
+          "cardId": "tree_trunks_card_16"
+        }
+      ]
+    }
+  ]
 }

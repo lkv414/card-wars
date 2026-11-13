@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flaming-dilo-a832d34",
   "kind": "card",
-  "image": "/content/cards/lava/flaming-dilo-a832d34.webp"
+  "image": "/content/cards/lava/flaming-dilo-a832d34.webp",
+  "abilities": []
 }

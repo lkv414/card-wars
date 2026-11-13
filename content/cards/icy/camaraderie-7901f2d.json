@@ -14,5 +14,30 @@
   "landType": "icy",
   "id": "camaraderie-7901f2d",
   "kind": "card",
-  "image": "/content/cards/icy/camaraderie-7901f2d.webp"
+  "image": "/content/cards/icy/camaraderie-7901f2d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_enemy_creature"
+        },
+        {
+          "kind": "if_payload_team_target"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "opponent_team"
+        },
+        "amount": 1
+      },
+      "text": "Каждый раз когда существо противника наносит урон твоей Команде, нанеси 1 уон Команде противника."
+    }
+  ]
 }

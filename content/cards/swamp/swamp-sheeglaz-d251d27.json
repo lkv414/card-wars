@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "swamp-sheeglaz-d251d27",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-sheeglaz-d251d27.webp"
+  "image": "/content/cards/swamp/swamp-sheeglaz-d251d27.webp",
+  "abilities": []
 }

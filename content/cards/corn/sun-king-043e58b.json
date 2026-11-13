@@ -14,5 +14,16 @@
   "landType": "corn",
   "id": "sun-king-043e58b",
   "kind": "card",
-  "image": "/content/cards/corn/sun-king-043e58b.webp"
+  "image": "/content/cards/corn/sun-king-043e58b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "land_count_mod",
+        "landType": "corn",
+        "amount": 1
+      },
+      "text": "Солнечный король считается за дополнительную кукурузную землю под твоим контролем."
+    }
+  ]
 }

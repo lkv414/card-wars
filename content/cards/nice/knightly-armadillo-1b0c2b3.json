@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "knightly-armadillo-1b0c2b3",
   "kind": "card",
-  "image": "/content/cards/nice/knightly-armadillo-1b0c2b3.webp"
+  "image": "/content/cards/nice/knightly-armadillo-1b0c2b3.webp",
+  "abilities": []
 }

@@ -14,5 +14,18 @@
   "sha256": "f41c9b344d3b457c7389d50db84df825c084bad538f5b253f30b8fdae1ef93a2",
   "id": "helping-hand-f41c9b3",
   "kind": "card",
-  "image": "/content/cards/rainbow/helping-hand-f41c9b3.webp"
+  "image": "/content/cards/rainbow/helping-hand-f41c9b3.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "type": "building"
+        }
+      },
+      "text": "ПРИЕМ >>> Верни строение из стопки сброса себе в руку."
+    }
+  ]
 }

@@ -14,5 +14,24 @@
   "landType": "blue",
   "id": "biomancer-33b0de3",
   "kind": "card",
-  "image": "/content/cards/blue-plains/biomancer-33b0de3.webp"
+  "image": "/content/cards/blue-plains/biomancer-33b0de3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_line_change",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": 2
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "text": "Каждый раз когда существо под твоим контролем меняет линию, восстанови 2 урона у Биомансера."
+    }
+  ]
 }

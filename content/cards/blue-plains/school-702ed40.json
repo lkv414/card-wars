@@ -14,5 +14,12 @@
   "landType": "blue",
   "id": "school-702ed40",
   "kind": "card",
-  "image": "/content/cards/blue-plains/school-702ed40.webp"
+  "image": "/content/cards/blue-plains/school-702ed40.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "grant_random_discard_active",
+      "text": "ПРИЕМ >>> Твое существо на этой линии теряет все способности и получает Прием случайного существа (с приемом) из твоей стопки сброса до конца хода."
+    }
+  ]
 }

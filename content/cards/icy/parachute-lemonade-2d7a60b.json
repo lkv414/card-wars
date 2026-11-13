@@ -14,5 +14,13 @@
   "landType": "icy",
   "id": "parachute-lemonade-2d7a60b",
   "kind": "card",
-  "image": "/content/cards/icy/parachute-lemonade-2d7a60b.webp"
+  "image": "/content/cards/icy/parachute-lemonade-2d7a60b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "heal_per_ice_land_friendly_creatures",
+      "text": "Сосчитай количество земель с Ледяными жетонами. Восстанови 1 урон с такого же количества дружественых существ."
+    }
+  ]
 }

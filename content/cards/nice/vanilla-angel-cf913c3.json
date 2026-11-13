@@ -14,5 +14,22 @@
   "landType": "nice",
   "id": "vanilla-angel-cf913c3",
   "kind": "card",
-  "image": "/content/cards/nice/vanilla-angel-cf913c3.webp"
+  "image": "/content/cards/nice/vanilla-angel-cf913c3.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        }
+      },
+      "text": "Потрать 1 Действие >>> Восстанови весь урон с Майонезного ангела.",
+      "cost": 1
+    }
+  ]
 }

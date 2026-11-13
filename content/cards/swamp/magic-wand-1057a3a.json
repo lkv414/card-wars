@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "magic-wand-1057a3a",
   "kind": "card",
-  "image": "/content/cards/swamp/magic-wand-1057a3a.webp"
+  "image": "/content/cards/swamp/magic-wand-1057a3a.webp",
+  "abilities": []
 }

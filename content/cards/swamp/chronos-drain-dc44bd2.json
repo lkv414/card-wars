@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "chronos-drain-dc44bd2",
   "kind": "card",
-  "image": "/content/cards/swamp/chronos-drain-dc44bd2.webp"
+  "image": "/content/cards/swamp/chronos-drain-dc44bd2.webp",
+  "abilities": []
 }

@@ -9,5 +9,6 @@
   "sha256": "250b0009b55351e33e8a7b6a4f246e79e51c7d19a9f8dbec9e6cc72ff7e5aa3c",
   "id": "cinnamon-bun-250b000",
   "kind": "hero",
-  "image": "/content/heroes/cinnamon-bun-250b000.webp"
+  "image": "/content/heroes/cinnamon-bun-250b000.webp",
+  "ability": null
 }

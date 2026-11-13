@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "phoenix-talisman-2c04f31",
   "kind": "card",
-  "image": "/content/cards/nice/phoenix-talisman-2c04f31.webp"
+  "image": "/content/cards/nice/phoenix-talisman-2c04f31.webp",
+  "abilities": []
 }

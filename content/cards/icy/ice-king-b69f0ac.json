@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "ice-king-b69f0ac",
   "kind": "card",
-  "image": "/content/cards/icy/ice-king-b69f0ac.webp"
+  "image": "/content/cards/icy/ice-king-b69f0ac.webp",
+  "abilities": []
 }

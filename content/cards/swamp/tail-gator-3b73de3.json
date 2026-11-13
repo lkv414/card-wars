@@ -14,5 +14,21 @@
   "landType": "swamp",
   "id": "tail-gator-3b73de3",
   "kind": "card",
-  "image": "/content/cards/swamp/tail-gator-3b73de3.webp"
+  "image": "/content/cards/swamp/tail-gator-3b73de3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_counter",
+          "counter": "creature_died",
+          "scope": "all",
+          "amount": 1
+        }
+      },
+      "text": "Когда Крок-каскадер вступает в игру, тяни карту за каждое существо, которое отправилось в сброс в этом ход."
+    }
+  ]
 }

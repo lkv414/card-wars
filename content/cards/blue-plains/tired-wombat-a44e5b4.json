@@ -14,5 +14,16 @@
   "landType": "blue",
   "id": "tired-wombat-a44e5b4",
   "kind": "card",
-  "image": "/content/cards/blue-plains/tired-wombat-a44e5b4.webp"
+  "image": "/content/cards/blue-plains/tired-wombat-a44e5b4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "start_turn_move_or_discard",
+      "params": {
+        "fallback": "opponent_land"
+      },
+      "text": "В начале своего хода перемести Усталого вомбама на пустую землю под твоим контролем. Если не смог, то перемести на пустую землю твоего противника."
+    }
+  ]
 }

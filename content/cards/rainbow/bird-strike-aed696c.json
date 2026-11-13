@@ -14,5 +14,24 @@
   "landType": "rainbow",
   "id": "bird-strike-aed696c",
   "kind": "card",
-  "image": "/content/cards/rainbow/bird-strike-aed696c.webp"
+  "image": "/content/cards/rainbow/bird-strike-aed696c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Выбри свое существо и верни его на руку.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
 }

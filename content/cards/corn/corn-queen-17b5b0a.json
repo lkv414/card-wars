@@ -14,5 +14,30 @@
   "landType": "corn",
   "id": "corn-queen-17b5b0a",
   "kind": "card",
-  "image": "/content/cards/corn/corn-queen-17b5b0a.webp"
+  "image": "/content/cards/corn/corn-queen-17b5b0a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 1,
+          "excludeSelf": true,
+          "filter": {
+            "flipped": true
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "Царица полей получает +1 ATK за каждое применное существо под твоим контролем."
+    }
+  ]
 }

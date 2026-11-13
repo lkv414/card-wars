@@ -14,5 +14,15 @@
   "landType": "nice",
   "id": "coopveyor-15e9a0d",
   "kind": "card",
-  "image": "/content/cards/nice/coopveyor-15e9a0d.webp"
+  "image": "/content/cards/nice/coopveyor-15e9a0d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "heal_or_damage_lane",
+      "params": {
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Восстанови или нанеси 1 урон своему существу на этой линии."
+    }
+  ]
 }

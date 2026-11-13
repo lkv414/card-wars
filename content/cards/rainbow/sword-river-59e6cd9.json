@@ -14,5 +14,27 @@
   "landType": "rainbow",
   "id": "sword-river-59e6cd9",
   "kind": "card",
-  "image": "/content/cards/rainbow/sword-river-59e6cd9.webp"
+  "image": "/content/cards/rainbow/sword-river-59e6cd9.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "stat": "attack",
+          "amount": 2,
+          "duration": "this_turn"
+        },
+        {
+          "op": "draw_cards",
+          "count": 2
+        }
+      ],
+      "text": "Каждое существо, под твоим контролем получает +2 ATK в этом ходу. Тяни 2 карты."
+    }
+  ]
 }

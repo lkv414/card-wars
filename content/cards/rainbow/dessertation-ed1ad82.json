@@ -14,5 +14,20 @@
   "landType": "rainbow",
   "id": "dessertation-ed1ad82",
   "kind": "card",
-  "image": "/content/cards/rainbow/dessertation-ed1ad82.webp"
+  "image": "/content/cards/rainbow/dessertation-ed1ad82.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "stat": "defense",
+        "amount": -2,
+        "duration": "aura"
+      },
+      "text": "Существо противника на этой линии получает -2 DEF."
+    }
+  ]
 }

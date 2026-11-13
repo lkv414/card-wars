@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "speed-reading-3d89687",
   "kind": "card",
-  "image": "/content/cards/nice/speed-reading-3d89687.webp"
+  "image": "/content/cards/nice/speed-reading-3d89687.webp",
+  "abilities": []
 }

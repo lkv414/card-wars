@@ -14,5 +14,23 @@
   "landType": "blue",
   "id": "jean-streusan-f875cd4",
   "kind": "card",
-  "image": "/content/cards/blue-plains/jean-streusan-f875cd4.webp"
+  "image": "/content/cards/blue-plains/jean-streusan-f875cd4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "filter": {
+          "flipped": true
+        }
+      },
+      "text": "+2 АТК каждому Примененному существу под твоим контролем."
+    }
+  ]
 }

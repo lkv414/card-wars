@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "sandbox-play-74a2cf4",
   "kind": "card",
-  "image": "/content/cards/sandy/sandbox-play-74a2cf4.webp"
+  "image": "/content/cards/sandy/sandbox-play-74a2cf4.webp",
+  "abilities": []
 }

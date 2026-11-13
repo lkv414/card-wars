@@ -14,5 +14,25 @@
   "sha256": "e905418a77201b5a1c004879c3e86afe6362b283f0cbe539124b6e5488f36e45",
   "id": "tykvennaya-sakharnaya-vata-e905418",
   "kind": "card",
-  "image": "/content/cards/halloween/tykvennaya-sakharnaya-vata-e905418.webp"
+  "image": "/content/cards/halloween/tykvennaya-sakharnaya-vata-e905418.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "text": "Восстанови до 3 Урона с выбранного существа под твоим контролем.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
 }

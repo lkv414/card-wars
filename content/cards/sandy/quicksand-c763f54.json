@@ -14,5 +14,18 @@
   "landType": "sandy",
   "id": "quicksand-c763f54",
   "kind": "card",
-  "image": "/content/cards/sandy/quicksand-c763f54.webp"
+  "image": "/content/cards/sandy/quicksand-c763f54.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "bounce_and_replay_free",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Возьми выбранное существо под твоим контролем в руку, затем сыграй его бесплатно."
+    }
+  ]
 }

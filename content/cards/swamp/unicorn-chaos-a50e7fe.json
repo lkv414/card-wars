@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "unicorn-chaos-a50e7fe",
   "kind": "card",
-  "image": "/content/cards/swamp/unicorn-chaos-a50e7fe.webp"
+  "image": "/content/cards/swamp/unicorn-chaos-a50e7fe.webp",
+  "abilities": []
 }

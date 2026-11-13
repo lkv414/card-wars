@@ -14,5 +14,23 @@
   "landType": "corn",
   "id": "corn-druid-69a0820",
   "kind": "card",
-  "image": "/content/cards/corn/corn-druid-69a0820.webp"
+  "image": "/content/cards/corn/corn-druid-69a0820.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "flipped": true
+        }
+      },
+      "text": "Примененное существо под твоим контролем получает +1 ATK."
+    }
+  ]
 }

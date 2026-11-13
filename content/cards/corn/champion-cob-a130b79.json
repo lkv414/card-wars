@@ -14,5 +14,43 @@
   "landType": "corn",
   "id": "champion-cob-a130b79",
   "kind": "card",
-  "image": "/content/cards/corn/champion-cob-a130b79.webp"
+  "image": "/content/cards/corn/champion-cob-a130b79.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_zone_has_building"
+          }
+        ]
+      },
+      "text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_zone_has_building"
+          }
+        ]
+      },
+      "text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+    }
+  ]
 }

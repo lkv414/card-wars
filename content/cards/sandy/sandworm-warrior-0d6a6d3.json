@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "sandworm-warrior-0d6a6d3",
   "kind": "card",
-  "image": "/content/cards/sandy/sandworm-warrior-0d6a6d3.webp"
+  "image": "/content/cards/sandy/sandworm-warrior-0d6a6d3.webp",
+  "abilities": []
 }

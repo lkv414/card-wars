@@ -14,5 +14,26 @@
   "landType": "swamp",
   "id": "crococop-af42ab7",
   "kind": "card",
-  "image": "/content/cards/swamp/crococop-af42ab7.webp"
+  "image": "/content/cards/swamp/crococop-af42ab7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_on_land_type",
+            "landType": "ice"
+          }
+        ]
+      },
+      "text": "Когда Крок-эколог на Ледяной земле, он получает +2 ATK."
+    }
+  ]
 }

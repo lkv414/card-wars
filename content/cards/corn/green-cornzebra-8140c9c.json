@@ -14,5 +14,25 @@
   "landType": "corn",
   "id": "green-cornzebra-8140c9c",
   "kind": "card",
-  "image": "/content/cards/corn/green-cornzebra-8140c9c.webp"
+  "image": "/content/cards/corn/green-cornzebra-8140c9c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Когда Зеленый зебрарог атакует, нанеси 1 урон выбранному противнику."
+    }
+  ]
 }

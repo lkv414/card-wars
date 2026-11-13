@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "sword-horn-39ea435",
   "kind": "card",
-  "image": "/content/cards/rainbow/sword-horn-39ea435.webp"
+  "image": "/content/cards/rainbow/sword-horn-39ea435.webp",
+  "abilities": []
 }

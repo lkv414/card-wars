@@ -14,5 +14,30 @@
   "landType": "sandy",
   "id": "sand-crab-cutter-6fc4801",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-crab-cutter-6fc4801.webp"
+  "image": "/content/cards/sandy/sand-crab-cutter-6fc4801.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_other"
+        },
+        {
+          "kind": "while_own_turn"
+        },
+        {
+          "kind": "if_payload_zone_adjacent"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "triggering_instance"
+        },
+        "amount": 2
+      },
+      "text": "Каждый раз когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии."
+    }
+  ]
 }

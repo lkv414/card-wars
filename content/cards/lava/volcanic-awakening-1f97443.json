@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "volcanic-awakening-1f97443",
   "kind": "card",
-  "image": "/content/cards/lava/volcanic-awakening-1f97443.webp"
+  "image": "/content/cards/lava/volcanic-awakening-1f97443.webp",
+  "abilities": []
 }

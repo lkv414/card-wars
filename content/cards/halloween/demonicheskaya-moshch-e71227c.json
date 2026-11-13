@@ -14,5 +14,32 @@
   "sha256": "e71227c6d387142de0fc378e82e87b0b34992d6935c51d98ab58c21e88f0ed30",
   "id": "demonicheskaya-moshch-e71227c",
   "kind": "card",
-  "image": "/content/cards/halloween/demonicheskaya-moshch-e71227c.webp"
+  "image": "/content/cards/halloween/demonicheskaya-moshch-e71227c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "spell_cast",
+          "scope": "own",
+          "amount": 2
+        },
+        "duration": "this_turn"
+      },
+      "text": "Выбранное существо под твоим контролем получает +2 ATK в этом ход, за каждое заклинание (включая это) сыгранное тобой в этом ход.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
 }

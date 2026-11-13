@@ -14,5 +14,13 @@
   "landType": "icy",
   "id": "ice-song-ffb6930",
   "kind": "card",
-  "image": "/content/cards/icy/ice-song-ffb6930.webp"
+  "image": "/content/cards/icy/ice-song-ffb6930.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "freeze_one_land_each_player_and_draw",
+      "text": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту."
+    }
+  ]
 }

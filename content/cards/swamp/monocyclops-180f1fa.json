@@ -14,5 +14,13 @@
   "landType": "swamp",
   "id": "monocyclops-180f1fa",
   "kind": "card",
-  "image": "/content/cards/swamp/monocyclops-180f1fa.webp"
+  "image": "/content/cards/swamp/monocyclops-180f1fa.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "each_player_draw_then_discard_choice",
+      "text": "В начале твоего хода каждый игрок тянет карту и затем сбрасывает карту."
+    }
+  ]
 }

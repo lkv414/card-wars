@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "bounce-house-742c381",
   "kind": "card",
-  "image": "/content/cards/sandy/bounce-house-742c381.webp"
+  "image": "/content/cards/sandy/bounce-house-742c381.webp",
+  "abilities": []
 }

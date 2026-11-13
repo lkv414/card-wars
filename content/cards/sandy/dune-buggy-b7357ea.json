@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "dune-buggy-b7357ea",
   "kind": "card",
-  "image": "/content/cards/sandy/dune-buggy-b7357ea.webp"
+  "image": "/content/cards/sandy/dune-buggy-b7357ea.webp",
+  "abilities": []
 }

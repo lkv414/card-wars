@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "hot-spirals-3f88e98",
   "kind": "card",
-  "image": "/content/cards/lava/hot-spirals-3f88e98.webp"
+  "image": "/content/cards/lava/hot-spirals-3f88e98.webp",
+  "abilities": []
 }

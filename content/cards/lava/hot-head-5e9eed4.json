@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "hot-head-5e9eed4",
   "kind": "card",
-  "image": "/content/cards/lava/hot-head-5e9eed4.webp"
+  "image": "/content/cards/lava/hot-head-5e9eed4.webp",
+  "abilities": []
 }

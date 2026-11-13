@@ -9,5 +9,25 @@
   "sha256": "0757aa36e792410211933e77fe71b6c3bba3a01025676acc92f2da50431e18d6",
   "id": "marceline-0757aa3",
   "kind": "hero",
-  "image": "/content/heroes/marceline-0757aa3.webp"
+  "image": "/content/heroes/marceline-0757aa3.webp",
+  "ability": {
+    "kind": "passive",
+    "effect": {
+      "op": "stat_buff",
+      "target": {
+        "kind": "each_creature_yours"
+      },
+      "stat": "attack",
+      "amount": 1,
+      "duration": "aura"
+    },
+    "conditions": [
+      {
+        "kind": "while_damage_at_least",
+        "amount": 5,
+        "scope": "target"
+      }
+    ],
+    "text": "У твоих существ с уроном 5 и более, +1 АТК."
+  }
 }

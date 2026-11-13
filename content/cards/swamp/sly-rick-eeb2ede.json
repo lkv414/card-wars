@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "sly-rick-eeb2ede",
   "kind": "card",
-  "image": "/content/cards/swamp/sly-rick-eeb2ede.webp"
+  "image": "/content/cards/swamp/sly-rick-eeb2ede.webp",
+  "abilities": []
 }

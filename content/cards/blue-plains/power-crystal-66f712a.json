@@ -14,5 +14,25 @@
   "landType": "blue",
   "id": "power-crystal-66f712a",
   "kind": "card",
-  "image": "/content/cards/blue-plains/power-crystal-66f712a.webp"
+  "image": "/content/cards/blue-plains/power-crystal-66f712a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": 5,
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Выбранный игрок тянет 5 карт.",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ]
+    }
+  ]
 }

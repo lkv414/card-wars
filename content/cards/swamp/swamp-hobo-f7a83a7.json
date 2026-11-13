@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "swamp-hobo-f7a83a7",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-hobo-f7a83a7.webp"
+  "image": "/content/cards/swamp/swamp-hobo-f7a83a7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "conditions": [
+        {
+          "kind": "while_self_flipped"
+        }
+      ],
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "count": 1
+      },
+      "text": "Если Бездомный болот покидает игру, пока подготовлен, каждый противник сбрасывает карту."
+    }
+  ]
 }

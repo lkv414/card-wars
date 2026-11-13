@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "delta-dominance-e70a8f9",
   "kind": "card",
-  "image": "/content/cards/swamp/delta-dominance-e70a8f9.webp"
+  "image": "/content/cards/swamp/delta-dominance-e70a8f9.webp",
+  "abilities": []
 }

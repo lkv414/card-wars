@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "lava-canals-eca8e1b",
   "kind": "card",
-  "image": "/content/cards/lava/lava-canals-eca8e1b.webp"
+  "image": "/content/cards/lava/lava-canals-eca8e1b.webp",
+  "abilities": []
 }

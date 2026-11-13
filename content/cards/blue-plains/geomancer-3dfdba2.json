@@ -14,5 +14,29 @@
   "landType": "blue",
   "id": "geomancer-3dfdba2",
   "kind": "card",
-  "image": "/content/cards/blue-plains/geomancer-3dfdba2.webp"
+  "image": "/content/cards/blue-plains/geomancer-3dfdba2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "this_creature"
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 0
+        },
+        "side": "own"
+      },
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "В начале своего хода можешь переместить Геомансера на пустую землю под своим контролем."
+    }
+  ]
 }

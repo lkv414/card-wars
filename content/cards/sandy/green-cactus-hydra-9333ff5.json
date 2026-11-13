@@ -14,5 +14,29 @@
   "landType": "sandy",
   "id": "green-cactus-hydra-9333ff5",
   "kind": "card",
-  "image": "/content/cards/sandy/green-cactus-hydra-9333ff5.webp"
+  "image": "/content/cards/sandy/green-cactus-hydra-9333ff5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 2,
+          "filter": {
+            "sameCard": true
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "+2 ATK за каждый Домашний кактус под твоим контролем."
+    }
+  ]
 }

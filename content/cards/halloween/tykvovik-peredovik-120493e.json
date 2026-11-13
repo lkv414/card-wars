@@ -14,5 +14,30 @@
   "sha256": "120493eec77b90f9f8de452abc5ffe210a9556aa312808c9c68278cf69c52707",
   "id": "tykvovik-peredovik-120493e",
   "kind": "card",
-  "image": "/content/cards/halloween/tykvovik-peredovik-120493e.webp"
+  "image": "/content/cards/halloween/tykvovik-peredovik-120493e.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "transfer_token",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "landscape"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую землю."
+    }
+  ]
 }

@@ -14,5 +14,17 @@
   "landType": "nice",
   "id": "kisonka-vyazanka-85ebdd2",
   "kind": "card",
-  "image": "/content/cards/nice/kisonka-vyazanka-85ebdd2.webp"
+  "image": "/content/cards/nice/kisonka-vyazanka-85ebdd2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "inherit_adjacent_buildings",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "На Вязаного котенка действуют строения соседних земель (слева и справа)."
+    }
+  ]
 }

@@ -9,5 +9,23 @@
   "sha256": "3b8f8e4d86e0f20c02dde3f181956cf3f6655255aff765c4db8c87ec1c39698f",
   "id": "lumpy-space-princess-3b8f8e4",
   "kind": "hero",
-  "image": "/content/heroes/lumpy-space-princess-3b8f8e4.webp"
+  "image": "/content/heroes/lumpy-space-princess-3b8f8e4.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_card_played",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "draw_cards",
+      "count": 1
+    },
+    "conditions": [
+      {
+        "kind": "if_payload_replacing"
+      },
+      {
+        "kind": "if_payload_player_self"
+      }
+    ],
+    "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
 }

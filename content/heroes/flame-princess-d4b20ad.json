@@ -9,5 +9,6 @@
   "sha256": "d4b20ad817bac3a1259660a6cfd16c3f2b336493ebc390ab6b415011c45e432d",
   "id": "flame-princess-d4b20ad",
   "kind": "hero",
-  "image": "/content/heroes/flame-princess-d4b20ad.webp"
+  "image": "/content/heroes/flame-princess-d4b20ad.webp",
+  "ability": null
 }

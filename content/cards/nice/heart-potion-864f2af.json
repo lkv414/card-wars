@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "heart-potion-864f2af",
   "kind": "card",
-  "image": "/content/cards/nice/heart-potion-864f2af.webp"
+  "image": "/content/cards/nice/heart-potion-864f2af.webp",
+  "abilities": []
 }

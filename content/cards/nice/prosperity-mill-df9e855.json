@@ -14,5 +14,26 @@
   "landType": "nice",
   "id": "prosperity-mill-df9e855",
   "kind": "card",
-  "image": "/content/cards/nice/prosperity-mill-df9e855.webp"
+  "image": "/content/cards/nice/prosperity-mill-df9e855.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_undamaged",
+            "scope": "target"
+          }
+        ]
+      },
+      "text": "Пока на твоем существе на этой линии нет урона, оно получает +2 ATK."
+    }
+  ]
 }

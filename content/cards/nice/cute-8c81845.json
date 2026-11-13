@@ -14,5 +14,18 @@
   "landType": "nice",
   "id": "cute-8c81845",
   "kind": "card",
-  "image": "/content/cards/nice/cute-8c81845.webp"
+  "image": "/content/cards/nice/cute-8c81845.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Восстанови себе 1 HP. (Но не более 25.)"
+    }
+  ]
 }

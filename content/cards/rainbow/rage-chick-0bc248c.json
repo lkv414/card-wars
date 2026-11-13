@@ -14,5 +14,23 @@
   "landType": "rainbow",
   "id": "rage-chick-0bc248c",
   "kind": "card",
-  "image": "/content/cards/rainbow/rage-chick-0bc248c.webp"
+  "image": "/content/cards/rainbow/rage-chick-0bc248c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Яросная цыпа получает +1 ATK за каждый урон на ней."
+    }
+  ]
 }

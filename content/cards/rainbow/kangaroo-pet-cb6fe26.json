@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "kangaroo-pet-cb6fe26",
   "kind": "card",
-  "image": "/content/cards/rainbow/kangaroo-pet-cb6fe26.webp"
+  "image": "/content/cards/rainbow/kangaroo-pet-cb6fe26.webp",
+  "abilities": []
 }

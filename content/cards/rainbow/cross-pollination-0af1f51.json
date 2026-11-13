@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "cross-pollination-0af1f51",
   "kind": "card",
-  "image": "/content/cards/rainbow/cross-pollination-0af1f51.webp"
+  "image": "/content/cards/rainbow/cross-pollination-0af1f51.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Каждое твое существо получает +2 ATK в этом ход."
+    }
+  ]
 }

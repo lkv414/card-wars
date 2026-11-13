@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "snake-eye-ring-ec469e3",
   "kind": "card",
-  "image": "/content/cards/rainbow/snake-eye-ring-ec469e3.webp"
+  "image": "/content/cards/rainbow/snake-eye-ring-ec469e3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "random": true,
+        "filter": {
+          "type": "creature",
+          "landType": "swamp"
+        }
+      },
+      "text": "Верни случайное болотное существо из своей стопки сброса себе в руку."
+    }
+  ]
 }

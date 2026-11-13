@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "witch-slap-15e0096",
   "kind": "card",
-  "image": "/content/cards/rainbow/witch-slap-15e0096.webp"
+  "image": "/content/cards/rainbow/witch-slap-15e0096.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Выбранный противник сбрасывает до 5 карт, затем получает 1 урон за каждую карту сброшенную таким образом.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "mechanic": "discard_then_damage",
+      "params": {
+        "count": 5
+      }
+    }
+  ]
 }

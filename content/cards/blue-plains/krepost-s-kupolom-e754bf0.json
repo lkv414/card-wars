@@ -14,5 +14,30 @@
   "landType": "blue",
   "id": "krepost-s-kupolom-e754bf0",
   "kind": "card",
-  "image": "/content/cards/blue-plains/krepost-s-kupolom-e754bf0.webp"
+  "image": "/content/cards/blue-plains/krepost-s-kupolom-e754bf0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura",
+        "target": {
+          "kind": "this_lane_creature"
+        }
+      },
+      "text": "Твое существо на этой земле получает +2 DEF."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_protection",
+        "target": {
+          "kind": "this_lane_creature"
+        }
+      },
+      "text": "Твое существо на этой земле не может быть поврежден заклинанием противника."
+    }
+  ]
 }

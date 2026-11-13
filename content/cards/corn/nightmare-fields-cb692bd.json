@@ -14,5 +14,28 @@
   "landType": "corn",
   "id": "nightmare-fields-cb692bd",
   "kind": "card",
-  "image": "/content/cards/corn/nightmare-fields-cb692bd.webp"
+  "image": "/content/cards/corn/nightmare-fields-cb692bd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "target_hand_size",
+          "amount": 1
+        }
+      },
+      "text": "Наносят 1 урон противнику за каждую карту в его руке.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ]
+    }
+  ]
 }

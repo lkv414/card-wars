@@ -14,5 +14,30 @@
   "landType": "corn",
   "id": "caddy-woodsman-21606e3",
   "kind": "card",
-  "image": "/content/cards/corn/caddy-woodsman-21606e3.webp"
+  "image": "/content/cards/corn/caddy-woodsman-21606e3.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_building",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "own_building"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ПРИЕМ >>> Перемести выбранное строение под твоим контролем на любую землю без строения."
+    }
+  ]
 }

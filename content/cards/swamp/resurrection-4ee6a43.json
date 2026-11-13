@@ -14,5 +14,37 @@
   "landType": "swamp",
   "id": "resurrection-4ee6a43",
   "kind": "card",
-  "image": "/content/cards/swamp/resurrection-4ee6a43.webp"
+  "image": "/content/cards/swamp/resurrection-4ee6a43.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "play_from_discard",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "destination": {
+            "kind": "choice",
+            "index": 1
+          }
+        }
+      ],
+      "text": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
+      "targets": [
+        {
+          "kind": "own_discard_card",
+          "filter": {
+            "cardType": "creature",
+            "maxCost": 2
+          }
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
 }

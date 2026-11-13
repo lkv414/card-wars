@@ -14,5 +14,23 @@
   "landType": "blue",
   "id": "cool-guy-8bcd0db",
   "kind": "card",
-  "image": "/content/cards/blue-plains/cool-guy-8bcd0db.webp"
+  "image": "/content/cards/blue-plains/cool-guy-8bcd0db.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+    }
+  ]
 }

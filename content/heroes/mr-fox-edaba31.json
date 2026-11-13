@@ -9,5 +9,6 @@
   "sha256": "edaba317c9c99715741b77b6aedc288ac17ed0ea79cf8c5562d60d0c9287893d",
   "id": "mr-fox-edaba31",
   "kind": "hero",
-  "image": "/content/heroes/mr-fox-edaba31.webp"
+  "image": "/content/heroes/mr-fox-edaba31.webp",
+  "ability": null
 }

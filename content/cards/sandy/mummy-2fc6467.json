@@ -14,5 +14,15 @@
   "landType": "sandy",
   "id": "mummy-2fc6467",
   "kind": "card",
-  "image": "/content/cards/sandy/mummy-2fc6467.webp"
+  "image": "/content/cards/sandy/mummy-2fc6467.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Получи 1 Действие в этом ходу."
+    }
+  ]
 }

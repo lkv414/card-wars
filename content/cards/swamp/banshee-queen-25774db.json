@@ -14,5 +14,19 @@
   "landType": "swamp",
   "id": "banshee-queen-25774db",
   "kind": "card",
-  "image": "/content/cards/swamp/banshee-queen-25774db.webp"
+  "image": "/content/cards/swamp/banshee-queen-25774db.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "effect": {
+        "op": "remove_token",
+        "target": {
+          "kind": "adjacent_own_land"
+        }
+      },
+      "text": "Когда Королева Банши вступает в игру, можешь удалить жетон с соседней земли."
+    }
+  ]
 }

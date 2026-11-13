@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "snowman-advancer-dac643d",
   "kind": "card",
-  "image": "/content/cards/icy/snowman-advancer-dac643d.webp"
+  "image": "/content/cards/icy/snowman-advancer-dac643d.webp",
+  "abilities": []
 }

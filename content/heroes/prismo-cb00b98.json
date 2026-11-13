@@ -9,5 +9,24 @@
   "sha256": "cb00b98248885f96d3ceab2a78e291745776f4d04dae6dcc9d74e090cb7c7cd8",
   "id": "prismo-cb00b98",
   "kind": "hero",
-  "image": "/content/heroes/prismo-cb00b98.webp"
+  "image": "/content/heroes/prismo-cb00b98.webp",
+  "ability": {
+    "kind": "passive",
+    "effect": {
+      "op": "stat_buff",
+      "target": {
+        "kind": "each_creature_yours"
+      },
+      "stat": "defense",
+      "amount": 1,
+      "duration": "aura"
+    },
+    "conditions": [
+      {
+        "kind": "while_distinct_lands",
+        "min": 4
+      }
+    ],
+    "text": "Если у тебя нет одинаковых земель, у твоих существ +1 DEF."
+  }
 }

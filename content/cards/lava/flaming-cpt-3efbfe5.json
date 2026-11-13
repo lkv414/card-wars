@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flaming-cpt-3efbfe5",
   "kind": "card",
-  "image": "/content/cards/lava/flaming-cpt-3efbfe5.webp"
+  "image": "/content/cards/lava/flaming-cpt-3efbfe5.webp",
+  "abilities": []
 }

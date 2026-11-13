@@ -14,5 +14,26 @@
   "landType": "corn",
   "id": "corn-plate-zebra-73b6f2d",
   "kind": "card",
-  "image": "/content/cards/corn/corn-plate-zebra-73b6f2d.webp"
+  "image": "/content/cards/corn/corn-plate-zebra-73b6f2d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "optional": true,
+      "text": "Когда Защищенный зебрарог атакует, можешь восстстановить 1 урон у соседнего существа.",
+      "targets": [
+        {
+          "kind": "adjacent_creature"
+        }
+      ]
+    }
+  ]
 }

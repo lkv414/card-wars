@@ -14,5 +14,39 @@
   "landType": "nice",
   "id": "coop-38a5fd4",
   "kind": "card",
-  "image": "/content/cards/nice/coop-38a5fd4.webp"
+  "image": "/content/cards/nice/coop-38a5fd4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "this_lane_own_creature"
+          },
+          "amount": {
+            "kind": "chosen_amount",
+            "index": 0
+          }
+        },
+        {
+          "op": "heal",
+          "target": {
+            "kind": "self_player"
+          },
+          "amount": 1
+        }
+      ],
+      "targets": [
+        {
+          "kind": "amount",
+          "min": 1,
+          "max": 2,
+          "label": "Урон своему существу"
+        }
+      ],
+      "text": "В начале твоего хода нанеси 1 или 2 Урона своему существу на этой линии, затем восстанови 1 HP (максимум 25)."
+    }
+  ]
 }

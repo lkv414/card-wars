@@ -14,5 +14,31 @@
   "landType": "swamp",
   "id": "toilet-of-doom-4645e8b",
   "kind": "card",
-  "image": "/content/cards/swamp/toilet-of-doom-4645e8b.webp"
+  "image": "/content/cards/swamp/toilet-of-doom-4645e8b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Выбранное существо под твоим контролем получает +1 ATK в этом ход за каждые 5 карт в твоей стопке сброса.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
 }

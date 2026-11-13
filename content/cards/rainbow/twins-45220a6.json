@@ -14,5 +14,18 @@
   "landType": "rainbow",
   "id": "twins-45220a6",
   "kind": "card",
-  "image": "/content/cards/rainbow/twins-45220a6.webp"
+  "image": "/content/cards/rainbow/twins-45220a6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "twins_compare_top_deck",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Вытяни карту и открой ее. Выбранный игрок открывает верхнюю карту своей колоды. Если стоимость карт совпадает выбранный игрок берет ее себе на руку."
+    }
+  ]
 }

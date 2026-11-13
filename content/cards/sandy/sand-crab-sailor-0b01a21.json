@@ -14,5 +14,28 @@
   "landType": "sandy",
   "id": "sand-crab-sailor-0b01a21",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-crab-sailor-0b01a21.webp"
+  "image": "/content/cards/sandy/sand-crab-sailor-0b01a21.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "play_from_hand",
+        "maxCost": 1,
+        "match": {
+          "type": "creature"
+        }
+      },
+      "text": "Когда песочный краб пират вступает в игру, можешь бесплатно сыграть существо стоимостью 1.",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "optional": true
+    }
+  ]
 }

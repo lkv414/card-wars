@@ -14,5 +14,26 @@
   "landType": "swamp",
   "id": "doc-death-c499198",
   "kind": "card",
-  "image": "/content/cards/swamp/doc-death-c499198.webp"
+  "image": "/content/cards/swamp/doc-death-c499198.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "additionalCost": {
+        "destroyOwnCreature": 1
+      },
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии."
+    }
+  ]
 }

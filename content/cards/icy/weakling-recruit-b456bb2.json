@@ -14,5 +14,18 @@
   "landType": "icy",
   "id": "weakling-recruit-b456bb2",
   "kind": "card",
-  "image": "/content/cards/icy/weakling-recruit-b456bb2.webp"
+  "image": "/content/cards/icy/weakling-recruit-b456bb2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "dodge",
+        "target": {
+          "kind": "this_creature"
+        },
+        "min": 4
+      },
+      "text": "Когда Прозрачный ниндзя атакован другим существом (но не заклинанием или приёмом), у него есть шанс избежать атаки. Кидай кубик: на 4 и больше урон не прошёл."
+    }
+  ]
 }

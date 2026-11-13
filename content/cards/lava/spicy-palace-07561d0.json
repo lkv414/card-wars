@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "spicy-palace-07561d0",
   "kind": "card",
-  "image": "/content/cards/lava/spicy-palace-07561d0.webp"
+  "image": "/content/cards/lava/spicy-palace-07561d0.webp",
+  "abilities": []
 }

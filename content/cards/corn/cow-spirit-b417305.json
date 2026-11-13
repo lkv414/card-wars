@@ -14,5 +14,23 @@
   "landType": "corn",
   "id": "cow-spirit-b417305",
   "kind": "card",
-  "image": "/content/cards/corn/cow-spirit-b417305.webp"
+  "image": "/content/cards/corn/cow-spirit-b417305.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "landType": "corn"
+        }
+      },
+      "text": "Каждое соседнее кукурузное существо получает +1 DEF."
+    }
+  ]
 }

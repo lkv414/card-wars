@@ -14,5 +14,24 @@
   "landType": "rainbow",
   "id": "pyosik-eae1c71",
   "kind": "card",
-  "image": "/content/cards/rainbow/pyosik-eae1c71.webp"
+  "image": "/content/cards/rainbow/pyosik-eae1c71.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Сбрось карту >>> Хороший песик получает +2 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
 }

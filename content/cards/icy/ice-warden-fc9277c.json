@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "ice-warden-fc9277c",
   "kind": "card",
-  "image": "/content/cards/icy/ice-warden-fc9277c.webp"
+  "image": "/content/cards/icy/ice-warden-fc9277c.webp",
+  "abilities": []
 }

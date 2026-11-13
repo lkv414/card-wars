@@ -14,5 +14,24 @@
   "landType": "sandy",
   "id": "one-way-portal-c72228f",
   "kind": "card",
-  "image": "/content/cards/sandy/one-way-portal-c72228f.webp"
+  "image": "/content/cards/sandy/one-way-portal-c72228f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Верни выбранное существо его владельцу в руку.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
 }

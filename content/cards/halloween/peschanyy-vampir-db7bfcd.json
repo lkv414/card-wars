@@ -14,5 +14,25 @@
   "sha256": "db7bfcd15f53a96c39502db0e37c126f25ccde39feb8721c015cf6de54d02e2b",
   "id": "peschanyy-vampir-db7bfcd",
   "kind": "card",
-  "image": "/content/cards/halloween/peschanyy-vampir-db7bfcd.webp"
+  "image": "/content/cards/halloween/peschanyy-vampir-db7bfcd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        {
+          "op": "draw_cards",
+          "count": 2
+        }
+      ],
+      "text": "В начале своего хода можешь вернуть Муми Ба в руку его владельца. Если сделаешь это, тяни две карты."
+    }
+  ]
 }

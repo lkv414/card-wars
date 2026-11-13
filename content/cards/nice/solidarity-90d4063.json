@@ -14,5 +14,30 @@
   "landType": "nice",
   "id": "solidarity-90d4063",
   "kind": "card",
-  "image": "/content/cards/nice/solidarity-90d4063.webp"
+  "image": "/content/cards/nice/solidarity-90d4063.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "conditions": [
+        {
+          "kind": "while_counter_at_most",
+          "counter": "creature_attack",
+          "max": 0
+        }
+      ],
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "triggering_instance"
+          },
+          "amount": 1
+        }
+      },
+      "text": "Первое существо, которое атакует другое существо в течении ходов твоей команды, получает +1 АТК в этот ход."
+    }
+  ]
 }

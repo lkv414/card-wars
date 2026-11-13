@@ -14,5 +14,18 @@
   "landType": "sandy",
   "id": "brainstorm-9eef4f2",
   "kind": "card",
-  "image": "/content/cards/sandy/brainstorm-9eef4f2.webp"
+  "image": "/content/cards/sandy/brainstorm-9eef4f2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "each_creature_yours"
+        }
+      },
+      "text": "Верни всех своих существ в игре себе в руку (включая украденных существ)."
+    }
+  ]
 }

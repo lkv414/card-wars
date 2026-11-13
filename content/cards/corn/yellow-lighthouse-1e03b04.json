@@ -14,5 +14,13 @@
   "landType": "corn",
   "id": "yellow-lighthouse-1e03b04",
   "kind": "card",
-  "image": "/content/cards/corn/yellow-lighthouse-1e03b04.webp"
+  "image": "/content/cards/corn/yellow-lighthouse-1e03b04.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "draw_to_lane_players",
+      "text": "В начале твоего хода каждый игрок, который контролирует существо на этой линии, тянет карту."
+    }
+  ]
 }

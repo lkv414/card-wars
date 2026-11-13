@@ -14,5 +14,50 @@
   "landType": "lava",
   "id": "phoenix-form-7cce226",
   "kind": "card",
-  "image": "/content/cards/lava/phoenix-form-7cce226.webp"
+  "image": "/content/cards/lava/phoenix-form-7cce226.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "destroy",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "play_from_discard",
+          "target": {
+            "kind": "choice",
+            "index": 1
+          },
+          "destination": {
+            "kind": "choice",
+            "index": 2
+          },
+          "from": "any"
+        }
+      ],
+      "text": "Уничтожь своё существо без урона на нём, затем возьми и бесплатно сыграй любое существо из твоего сброса или сброса противника.",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "undamaged": true
+          }
+        },
+        {
+          "kind": "any_discard_card",
+          "filter": {
+            "cardType": "creature"
+          }
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
 }

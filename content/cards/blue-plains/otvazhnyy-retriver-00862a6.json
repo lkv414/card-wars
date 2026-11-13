@@ -14,5 +14,17 @@
   "landType": "blue",
   "id": "otvazhnyy-retriver-00862a6",
   "kind": "card",
-  "image": "/content/cards/blue-plains/otvazhnyy-retriver-00862a6.webp"
+  "image": "/content/cards/blue-plains/otvazhnyy-retriver-00862a6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "optional": true,
+      "text": "Каждый раз когда Игривый ретривер атакует, можешь тянуть карту."
+    }
+  ]
 }

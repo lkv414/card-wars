@@ -14,5 +14,14 @@
   "landType": "blue",
   "id": "flushed-cleric-58a0642",
   "kind": "card",
-  "image": "/content/cards/blue-plains/flushed-cleric-58a0642.webp"
+  "image": "/content/cards/blue-plains/flushed-cleric-58a0642.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "start_turn_move_or_discard",
+      "params": {},
+      "text": "В начале своего хода перемести Тонущего клирика на пустую землю под твоим контролем. Если не смог, то сбрось его."
+    }
+  ]
 }

@@ -14,5 +14,31 @@
   "landType": "nice",
   "id": "stitched-squirrel-2c71356",
   "kind": "card",
-  "image": "/content/cards/nice/stitched-squirrel-2c71356.webp"
+  "image": "/content/cards/nice/stitched-squirrel-2c71356.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 4,
+          "scope": "self"
+        }
+      ],
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "lane_building"
+        }
+      ],
+      "text": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии."
+    }
+  ]
 }

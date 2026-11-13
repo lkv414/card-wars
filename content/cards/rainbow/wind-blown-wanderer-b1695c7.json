@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "wind-blown-wanderer-b1695c7",
   "kind": "card",
-  "image": "/content/cards/rainbow/wind-blown-wanderer-b1695c7.webp"
+  "image": "/content/cards/rainbow/wind-blown-wanderer-b1695c7.webp",
+  "abilities": []
 }

@@ -14,5 +14,20 @@
   "sha256": "84b90dc41d85fa173f4bdce13320b4c84d3c947e9f08e52155923491e0ecd5c5",
   "id": "prizrachnaya-pechnaya-84b90dc",
   "kind": "card",
-  "image": "/content/cards/halloween/prizrachnaya-pechnaya-84b90dc.webp"
+  "image": "/content/cards/halloween/prizrachnaya-pechnaya-84b90dc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "defense",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "Твое существо получает +3 DEF на этой линии."
+    }
+  ]
 }

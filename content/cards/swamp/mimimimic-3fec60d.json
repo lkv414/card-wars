@@ -14,5 +14,16 @@
   "landType": "swamp",
   "id": "mimimimic-3fec60d",
   "kind": "card",
-  "image": "/content/cards/swamp/mimimimic-3fec60d.webp"
+  "image": "/content/cards/swamp/mimimimic-3fec60d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "damage_opponents_with_empty_hand",
+      "params": {
+        "amount": 3
+      },
+      "text": "В начале своего хода нанеси 3 урона каждому противнику без карт в руке."
+    }
+  ]
 }

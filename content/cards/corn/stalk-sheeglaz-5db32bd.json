@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "stalk-sheeglaz-5db32bd",
   "kind": "card",
-  "image": "/content/cards/corn/stalk-sheeglaz-5db32bd.webp"
+  "image": "/content/cards/corn/stalk-sheeglaz-5db32bd.webp",
+  "abilities": []
 }

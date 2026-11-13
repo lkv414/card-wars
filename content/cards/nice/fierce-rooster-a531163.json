@@ -14,5 +14,23 @@
   "landType": "nice",
   "id": "fierce-rooster-a531163",
   "kind": "card",
-  "image": "/content/cards/nice/fierce-rooster-a531163.webp"
+  "image": "/content/cards/nice/fierce-rooster-a531163.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Яростный петух получает +1 ATK за каждую единицу урона на нем."
+    }
+  ]
 }

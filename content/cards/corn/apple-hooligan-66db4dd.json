@@ -14,5 +14,17 @@
   "landType": "corn",
   "id": "apple-hooligan-66db4dd",
   "kind": "card",
-  "image": "/content/cards/corn/apple-hooligan-66db4dd.webp"
+  "image": "/content/cards/corn/apple-hooligan-66db4dd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "land_flip_protection",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Земля Яблочного стража не может быть перевернута лицом вниз эффектами противника."
+    }
+  ]
 }

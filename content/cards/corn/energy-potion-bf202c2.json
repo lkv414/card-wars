@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "energy-potion-bf202c2",
   "kind": "card",
-  "image": "/content/cards/corn/energy-potion-bf202c2.webp"
+  "image": "/content/cards/corn/energy-potion-bf202c2.webp",
+  "abilities": []
 }

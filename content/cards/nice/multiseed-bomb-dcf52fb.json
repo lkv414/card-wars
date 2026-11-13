@@ -14,5 +14,15 @@
   "landType": "nice",
   "id": "multiseed-bomb-dcf52fb",
   "kind": "card",
-  "image": "/content/cards/nice/multiseed-bomb-dcf52fb.webp"
+  "image": "/content/cards/nice/multiseed-bomb-dcf52fb.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "bomb_heal_or_damage_if_four_damage",
+      "params": {
+        "amount": 4
+      },
+      "text": "ПРИЕМ >>> Восстанови или нанеси урон своему существу на этой земле, если у него 4 урона."
+    }
+  ]
 }

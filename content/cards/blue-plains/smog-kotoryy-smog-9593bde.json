@@ -14,5 +14,18 @@
   "landType": "blue",
   "id": "smog-kotoryy-smog-9593bde",
   "kind": "card",
-  "image": "/content/cards/blue-plains/smog-kotoryy-smog-9593bde.webp"
+  "image": "/content/cards/blue-plains/smog-kotoryy-smog-9593bde.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "additionalCost": {
+        "destroyOwnCreature": 1
+      },
+      "text": "Уничтожь существо под твоим контролем, ПРИЕМ >>> Вытяни карту."
+    }
+  ]
 }

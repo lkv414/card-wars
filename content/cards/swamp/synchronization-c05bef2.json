@@ -14,5 +14,21 @@
   "landType": "swamp",
   "id": "synchronization-c05bef2",
   "kind": "card",
-  "image": "/content/cards/swamp/synchronization-c05bef2.webp"
+  "image": "/content/cards/swamp/synchronization-c05bef2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "conditions": [
+        {
+          "kind": "while_no_spells_played"
+        }
+      ],
+      "mechanic": "partner_free_play_spell",
+      "params": {
+        "maxCost": 1
+      },
+      "text": "Болотное партнерство В начале фазы сражения твоего или твоего партнера, если ты или партнер не сыграл заклинания в этот ход, другой партнер может бесплатно сыграть заклинание стоимостью 1 или менее."
+    }
+  ]
 }

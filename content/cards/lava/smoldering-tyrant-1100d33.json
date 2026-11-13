@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "smoldering-tyrant-1100d33",
   "kind": "card",
-  "image": "/content/cards/lava/smoldering-tyrant-1100d33.webp"
+  "image": "/content/cards/lava/smoldering-tyrant-1100d33.webp",
+  "abilities": []
 }

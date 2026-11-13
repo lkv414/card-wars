@@ -14,5 +14,21 @@
   "landType": "sandy",
   "id": "wandering-golem-0af756f",
   "kind": "card",
-  "image": "/content/cards/sandy/wandering-golem-0af756f.webp"
+  "image": "/content/cards/sandy/wandering-golem-0af756f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "all",
+          "amount": -1
+        }
+      },
+      "text": "Замерянный голем стоит на 1 меньше за каждое другое существо сыгранное в этом ходу."
+    }
+  ]
 }

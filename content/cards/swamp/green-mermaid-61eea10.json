@@ -14,5 +14,21 @@
   "landType": "swamp",
   "id": "green-mermaid-61eea10",
   "kind": "card",
-  "image": "/content/cards/swamp/green-mermaid-61eea10.webp"
+  "image": "/content/cards/swamp/green-mermaid-61eea10.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "Уничтожь Зеленую сирену >>> Нанеси 1 урон каждому существу противника.",
+      "additionalCost": {
+        "destroySelf": true
+      }
+    }
+  ]
 }

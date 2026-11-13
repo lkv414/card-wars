@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "lieutenant-mushroom-bfd8de5",
   "kind": "card",
-  "image": "/content/cards/swamp/lieutenant-mushroom-bfd8de5.webp"
+  "image": "/content/cards/swamp/lieutenant-mushroom-bfd8de5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "active_opponent_players"
+        },
+        "count": 3
+      },
+      "conditions": [
+        {
+          "kind": "while_opponents_turn"
+        }
+      ],
+      "text": "Когда Лейтенант Гриб покидает игру во время хода противника, этот противник сбрасывает 3 карты."
+    }
+  ]
 }

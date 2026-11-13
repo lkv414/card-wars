@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "buffed-potion-5e087ac",
   "kind": "card",
-  "image": "/content/cards/nice/buffed-potion-5e087ac.webp"
+  "image": "/content/cards/nice/buffed-potion-5e087ac.webp",
+  "abilities": []
 }

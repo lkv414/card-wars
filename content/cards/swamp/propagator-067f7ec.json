@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "propagator-067f7ec",
   "kind": "card",
-  "image": "/content/cards/swamp/propagator-067f7ec.webp"
+  "image": "/content/cards/swamp/propagator-067f7ec.webp",
+  "abilities": []
 }

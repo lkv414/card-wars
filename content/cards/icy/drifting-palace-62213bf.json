@@ -14,5 +14,30 @@
   "landType": "icy",
   "id": "drifting-palace-62213bf",
   "kind": "card",
-  "image": "/content/cards/icy/drifting-palace-62213bf.webp"
+  "image": "/content/cards/icy/drifting-palace-62213bf.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "token": true,
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "conditions": [
+        {
+          "kind": "while_own_turn"
+        }
+      ],
+      "text": "Твое существо на этой земле получает +1 ATK во время твоего хода за каждую землю с Ледяным жетоном."
+    }
+  ]
 }

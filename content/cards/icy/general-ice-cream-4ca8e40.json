@@ -14,5 +14,28 @@
   "landType": "icy",
   "id": "general-ice-cream-4ca8e40",
   "kind": "card",
-  "image": "/content/cards/icy/general-ice-cream-4ca8e40.webp"
+  "image": "/content/cards/icy/general-ice-cream-4ca8e40.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "opponent_creature",
+          "filter": {
+            "zoneToken": true
+          }
+        }
+      ],
+      "text": "Когда Бригадир десерт атакует, нанеси 2 урона выбранному Существу противника на замле с Ледяным жетоном."
+    }
+  ]
 }

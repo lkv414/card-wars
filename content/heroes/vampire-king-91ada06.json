@@ -9,5 +9,6 @@
   "sha256": "91ada0635f0abdd4ae8147f49a9126e2c76d024d058bf583a03d60f32b91028d",
   "id": "vampire-king-91ada06",
   "kind": "hero",
-  "image": "/content/heroes/vampire-king-91ada06.webp"
+  "image": "/content/heroes/vampire-king-91ada06.webp",
+  "ability": null
 }

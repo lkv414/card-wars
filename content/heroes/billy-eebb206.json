@@ -9,5 +9,13 @@
   "sha256": "eebb20683453153439b157d7571054934e56ef09a4ccfc4bae4232aca495e39b",
   "id": "billy-eebb206",
   "kind": "hero",
-  "image": "/content/heroes/billy-eebb206.webp"
+  "image": "/content/heroes/billy-eebb206.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "start_of_turn",
+    "effect": {
+      "op": "win_if_opponents_deck_empty"
+    },
+    "text": "Если к началу твоего хода колода каждого противника опустела — победа."
+  }
 }

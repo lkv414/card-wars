@@ -14,5 +14,19 @@
   "landType": "sandy",
   "id": "lady-bug-a591110",
   "kind": "card",
-  "image": "/content/cards/sandy/lady-bug-a591110.webp"
+  "image": "/content/cards/sandy/lady-bug-a591110.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "mechanic": "bounce_own_creature_with_low_def",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Если в начале твоего хода у Существа под твоим контролем осталось 2 DEF или менее, то можешь вернуть его в руку владельцу."
+    }
+  ]
 }

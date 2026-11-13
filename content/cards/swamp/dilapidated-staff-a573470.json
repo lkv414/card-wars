@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "dilapidated-staff-a573470",
   "kind": "card",
-  "image": "/content/cards/swamp/dilapidated-staff-a573470.webp"
+  "image": "/content/cards/swamp/dilapidated-staff-a573470.webp",
+  "abilities": []
 }

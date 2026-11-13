@@ -14,5 +14,22 @@
   "landType": "swamp",
   "id": "bald-squatter-4cf7511",
   "kind": "card",
-  "image": "/content/cards/swamp/bald-squatter-4cf7511.webp"
+  "image": "/content/cards/swamp/bald-squatter-4cf7511.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": 1
+      },
+      "text": "Сбрось карту >>> Восстанови 1 Урон с Лысого заседателя. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
 }

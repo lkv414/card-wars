@@ -14,5 +14,22 @@
   "landType": "nice",
   "id": "rainbow-wing-eye-1de5376",
   "kind": "card",
-  "image": "/content/cards/nice/rainbow-wing-eye-1de5376.webp"
+  "image": "/content/cards/nice/rainbow-wing-eye-1de5376.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        }
+      },
+      "text": "В начале своего хода, восстанови 1 HP за каждый различный тип земли под твоим контролем (но не более 25)."
+    }
+  ]
 }

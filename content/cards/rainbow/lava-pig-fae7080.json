@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "lava-pig-fae7080",
   "kind": "card",
-  "image": "/content/cards/rainbow/lava-pig-fae7080.webp"
+  "image": "/content/cards/rainbow/lava-pig-fae7080.webp",
+  "abilities": []
 }

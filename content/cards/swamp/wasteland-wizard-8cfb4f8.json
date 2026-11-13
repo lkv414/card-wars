@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "wasteland-wizard-8cfb4f8",
   "kind": "card",
-  "image": "/content/cards/swamp/wasteland-wizard-8cfb4f8.webp"
+  "image": "/content/cards/swamp/wasteland-wizard-8cfb4f8.webp",
+  "abilities": []
 }

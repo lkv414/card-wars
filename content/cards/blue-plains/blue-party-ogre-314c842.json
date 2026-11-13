@@ -14,5 +14,28 @@
   "landType": "blue",
   "id": "blue-party-ogre-314c842",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blue-party-ogre-314c842.webp"
+  "image": "/content/cards/blue-plains/blue-party-ogre-314c842.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_draw",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "amount": 1,
+          "target": {
+            "kind": "this_creature"
+          }
+        }
+      },
+      "text": "Всякий раз когда ты тянешь карту, Голубой король вечеринок получает +1 АТК в этот ход."
+    }
+  ]
 }

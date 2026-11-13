@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "trash-bonfire-6db6c37",
   "kind": "card",
-  "image": "/content/cards/lava/trash-bonfire-6db6c37.webp"
+  "image": "/content/cards/lava/trash-bonfire-6db6c37.webp",
+  "abilities": []
 }

@@ -14,5 +14,30 @@
   "sha256": "7ce3e8f98a27c5fa321eef754379511897809ff0f576bbb4960c92237475aed9",
   "id": "krov-vampira-7ce3e8f",
   "kind": "card",
-  "image": "/content/cards/halloween/krov-vampira-7ce3e8f.webp"
+  "image": "/content/cards/halloween/krov-vampira-7ce3e8f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Выбери существо Голубых равнин под твоим контролем, оно получит +2 АТК в этом ходу.",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "landType": "blue"
+          }
+        }
+      ]
+    }
+  ]
 }

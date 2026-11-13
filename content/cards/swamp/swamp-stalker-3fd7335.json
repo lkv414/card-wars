@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "swamp-stalker-3fd7335",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-stalker-3fd7335.webp"
+  "image": "/content/cards/swamp/swamp-stalker-3fd7335.webp",
+  "abilities": []
 }

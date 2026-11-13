@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "hot-jumpers-5f30437",
   "kind": "card",
-  "image": "/content/cards/lava/hot-jumpers-5f30437.webp"
+  "image": "/content/cards/lava/hot-jumpers-5f30437.webp",
+  "abilities": []
 }

@@ -14,5 +14,16 @@
   "landType": "blue",
   "id": "blue-detractor-3bace18",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blue-detractor-3bace18.webp"
+  "image": "/content/cards/blue-plains/blue-detractor-3bace18.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_line_change",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Когда Мародер Вайда меняет линию во время хода, тяни карту."
+    }
+  ]
 }

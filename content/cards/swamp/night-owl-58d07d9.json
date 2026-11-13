@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "night-owl-58d07d9",
   "kind": "card",
-  "image": "/content/cards/swamp/night-owl-58d07d9.webp"
+  "image": "/content/cards/swamp/night-owl-58d07d9.webp",
+  "abilities": []
 }

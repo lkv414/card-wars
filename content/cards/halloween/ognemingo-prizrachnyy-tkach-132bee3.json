@@ -14,5 +14,16 @@
   "sha256": "132bee300475c91c14f40d084ef19558a3b3467d46db586228e06aca1388154e",
   "id": "ognemingo-prizrachnyy-tkach-132bee3",
   "kind": "card",
-  "image": "/content/cards/halloween/ognemingo-prizrachnyy-tkach-132bee3.webp"
+  "image": "/content/cards/halloween/ognemingo-prizrachnyy-tkach-132bee3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "splash_chosen_target_ally",
+      "params": {
+        "amount": 2
+      },
+      "text": "При атаке существ противника, если рядом с ним есть союзные существа, нанеси одному из них на твой выбор 2 урона."
+    }
+  ]
 }

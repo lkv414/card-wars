@@ -14,5 +14,28 @@
   "landType": "sandy",
   "id": "sand-jackal-39db75e",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-jackal-39db75e.webp"
+  "image": "/content/cards/sandy/sand-jackal-39db75e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": 3
+      },
+      "text": "Когда Песочный шакал на Милой земле и когда он побеждает существо противника ты восстанавливаешь 3 НР.",
+      "conditions": [
+        {
+          "kind": "if_payload_killer_self"
+        },
+        {
+          "kind": "while_on_land_type",
+          "landType": "good"
+        }
+      ]
+    }
+  ]
 }

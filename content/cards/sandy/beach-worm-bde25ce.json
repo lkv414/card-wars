@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "beach-worm-bde25ce",
   "kind": "card",
-  "image": "/content/cards/sandy/beach-worm-bde25ce.webp"
+  "image": "/content/cards/sandy/beach-worm-bde25ce.webp",
+  "abilities": []
 }

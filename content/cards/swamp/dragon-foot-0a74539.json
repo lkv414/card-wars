@@ -14,5 +14,25 @@
   "landType": "swamp",
   "id": "dragon-foot-0a74539",
   "kind": "card",
-  "image": "/content/cards/swamp/dragon-foot-0a74539.webp"
+  "image": "/content/cards/swamp/dragon-foot-0a74539.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "maxUsesPerTurn": 5,
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn"
+      },
+      "targets": [],
+      "text": "ПРИЕМ >>> Сбрось карту >>> Нога дракона получает +1 ATK в этот ход. (Используй до 5 раз во время своего каждого хода.)"
+    }
+  ]
 }

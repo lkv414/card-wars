@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "cyclops-90eb04a",
   "kind": "card",
-  "image": "/content/cards/rainbow/cyclops-90eb04a.webp"
+  "image": "/content/cards/rainbow/cyclops-90eb04a.webp",
+  "abilities": []
 }

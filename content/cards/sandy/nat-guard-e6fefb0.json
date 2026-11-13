@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "nat-guard-e6fefb0",
   "kind": "card",
-  "image": "/content/cards/sandy/nat-guard-e6fefb0.webp"
+  "image": "/content/cards/sandy/nat-guard-e6fefb0.webp",
+  "abilities": []
 }

@@ -14,5 +14,24 @@
   "landType": "corn",
   "id": "mr-slicer-e3e2bac",
   "kind": "card",
-  "image": "/content/cards/corn/mr-slicer-e3e2bac.webp"
+  "image": "/content/cards/corn/mr-slicer-e3e2bac.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ],
+      "text": "ПРИЕМ >>> Нанеси 2 урона выбранному существу противника на этой линии."
+    }
+  ]
 }

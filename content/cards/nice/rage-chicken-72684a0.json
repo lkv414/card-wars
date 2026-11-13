@@ -14,5 +14,23 @@
   "landType": "nice",
   "id": "rage-chicken-72684a0",
   "kind": "card",
-  "image": "/content/cards/nice/rage-chicken-72684a0.webp"
+  "image": "/content/cards/nice/rage-chicken-72684a0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней."
+    }
+  ]
 }

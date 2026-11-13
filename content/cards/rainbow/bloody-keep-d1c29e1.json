@@ -14,5 +14,20 @@
   "sha256": "d1c29e121b7dc019654c0a4c8b89913d11285ee1b7f9850b7d3ef129034b2cd1",
   "id": "bloody-keep-d1c29e1",
   "kind": "card",
-  "image": "/content/cards/rainbow/bloody-keep-d1c29e1.webp"
+  "image": "/content/cards/rainbow/bloody-keep-d1c29e1.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "Твоё существо на этой линии получает +1 АТК."
+    }
+  ]
 }

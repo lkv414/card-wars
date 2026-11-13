@@ -14,5 +14,24 @@
   "landType": "blue",
   "id": "threat-redirect-29c680e",
   "kind": "card",
-  "image": "/content/cards/blue-plains/threat-redirect-29c680e.webp"
+  "image": "/content/cards/blue-plains/threat-redirect-29c680e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "move_damage",
+      "params": {
+        "max": 3
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ],
+      "text": "Перемести 3 и менее урона с существа под твоим контролем на выбранное существо противника на этой линии."
+    }
+  ]
 }

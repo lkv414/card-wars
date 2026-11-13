@@ -14,5 +14,25 @@
   "landType": "blue",
   "id": "blue-chief-99ecdb8",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blue-chief-99ecdb8.webp"
+  "image": "/content/cards/blue-plains/blue-chief-99ecdb8.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "spell_cast",
+          "scope": "own",
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "Вождь Вайда получает +2 АТК за каждое сыгранное тобой заклинание в этом ходу."
+    }
+  ]
 }

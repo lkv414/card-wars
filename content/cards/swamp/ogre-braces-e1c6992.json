@@ -14,5 +14,23 @@
   "landType": "swamp",
   "id": "ogre-braces-e1c6992",
   "kind": "card",
-  "image": "/content/cards/swamp/ogre-braces-e1c6992.webp"
+  "image": "/content/cards/swamp/ogre-braces-e1c6992.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        }
+      },
+      "text": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
 }

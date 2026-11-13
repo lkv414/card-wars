@@ -14,5 +14,21 @@
   "landType": "blue",
   "id": "blueberry-genie-cc2481c",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blueberry-genie-cc2481c.webp"
+  "image": "/content/cards/blue-plains/blueberry-genie-cc2481c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "draw_cards",
+        "count": 2
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_replacing"
+        }
+      ],
+      "text": "Когда Черничная Джинни вступает в игру заменяя существо, тяни две карты."
+    }
+  ]
 }

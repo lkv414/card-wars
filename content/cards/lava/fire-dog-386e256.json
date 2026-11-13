@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "fire-dog-386e256",
   "kind": "card",
-  "image": "/content/cards/lava/fire-dog-386e256.webp"
+  "image": "/content/cards/lava/fire-dog-386e256.webp",
+  "abilities": []
 }

@@ -14,5 +14,12 @@
   "landType": "swamp",
   "id": "swamp-merman-167c43a",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-merman-167c43a.webp"
+  "image": "/content/cards/swamp/swamp-merman-167c43a.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "text": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса. Нанеси урон каждому существу равный стоимости действий карты.",
+      "mechanic": "discard_top_damage"
+    }
+  ]
 }

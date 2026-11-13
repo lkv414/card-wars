@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "ancient-comet-1d1ab54",
   "kind": "card",
-  "image": "/content/cards/rainbow/ancient-comet-1d1ab54.webp"
+  "image": "/content/cards/rainbow/ancient-comet-1d1ab54.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "redistribute_damage_between_two",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Распредели урон между двумя существами под твоим контролем, как тебе нужно. Урон на одном существе не может равняться его DEF."
+    }
+  ]
 }

@@ -14,5 +14,22 @@
   "landType": "swamp",
   "id": "flooding-8a2dab0",
   "kind": "card",
-  "image": "/content/cards/swamp/flooding-8a2dab0.webp"
+  "image": "/content/cards/swamp/flooding-8a2dab0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "stat": "attack",
+        "amount": -2,
+        "duration": "this_turn",
+        "floorAttack": 0
+      },
+      "text": "Существа противника получают -2 ATK в этом ход (минимум 0)."
+    }
+  ]
 }

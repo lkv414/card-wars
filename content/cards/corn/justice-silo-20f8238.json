@@ -14,5 +14,18 @@
   "landType": "corn",
   "id": "justice-silo-20f8238",
   "kind": "card",
-  "image": "/content/cards/corn/justice-silo-20f8238.webp"
+  "image": "/content/cards/corn/justice-silo-20f8238.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "tower_of_justice_damage",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Потрать 1 действие >>> Нанеси 1 урон выбранному существу на этой линии и 1 урон его владельцу."
+    }
+  ]
 }

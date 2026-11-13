@@ -14,5 +14,25 @@
   "landType": "sandy",
   "id": "surfing-lobster-a2da343",
   "kind": "card",
-  "image": "/content/cards/sandy/surfing-lobster-a2da343.webp"
+  "image": "/content/cards/sandy/surfing-lobster-a2da343.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "landType": "swamp",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждую землю Бесполезных болотом в игре."
+    }
+  ]
 }

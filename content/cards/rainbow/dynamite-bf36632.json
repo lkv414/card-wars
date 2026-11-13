@@ -14,5 +14,19 @@
   "landType": "rainbow",
   "id": "dynamite-bf36632",
   "kind": "card",
-  "image": "/content/cards/rainbow/dynamite-bf36632.webp"
+  "image": "/content/cards/rainbow/dynamite-bf36632.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "amount": 1
+      },
+      "text": "Когда Бабах покидает игру нанеси 1 урон каждому соседнему существу."
+    }
+  ]
 }

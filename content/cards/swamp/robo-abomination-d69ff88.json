@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "robo-abomination-d69ff88",
   "kind": "card",
-  "image": "/content/cards/swamp/robo-abomination-d69ff88.webp"
+  "image": "/content/cards/swamp/robo-abomination-d69ff88.webp",
+  "abilities": []
 }

@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "hostile-corn-goblin-16c770c",
   "kind": "card",
-  "image": "/content/cards/corn/hostile-corn-goblin-16c770c.webp"
+  "image": "/content/cards/corn/hostile-corn-goblin-16c770c.webp",
+  "abilities": []
 }

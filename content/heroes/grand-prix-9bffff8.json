@@ -9,5 +9,23 @@
   "sha256": "9bffff8d1cc1d9d7ba10cd9f9056641d60d73753707ab7b06270ec0f4afddb2f",
   "id": "grand-prix-9bffff8",
   "kind": "hero",
-  "image": "/content/heroes/grand-prix-9bffff8.webp"
+  "image": "/content/heroes/grand-prix-9bffff8.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_card_played",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "draw_cards",
+      "count": 1
+    },
+    "conditions": [
+      {
+        "kind": "if_payload_replacing"
+      },
+      {
+        "kind": "if_payload_player_self"
+      }
+    ],
+    "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
 }

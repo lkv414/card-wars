@@ -14,5 +14,27 @@
   "landType": "nice",
   "id": "pillow-fort-80aaaf5",
   "kind": "card",
-  "image": "/content/cards/nice/pillow-fort-80aaaf5.webp"
+  "image": "/content/cards/nice/pillow-fort-80aaaf5.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "pillow_fort_twin_heal_or_damage",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "heal_or_damage"
+        },
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "heal_or_damage"
+        }
+      ],
+      "text": "Потрать 1 Действие, ПРИЕМ >>> Восстанови или нанеси 2 урона выбранному существу под твоим контролем на этой земле. Проделай то же самое с другим дружественным существом."
+    }
+  ]
 }

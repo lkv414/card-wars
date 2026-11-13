@@ -14,5 +14,28 @@
   "landType": "sandy",
   "id": "sand-witch-ecdf058",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-witch-ecdf058.webp"
+  "image": "/content/cards/sandy/sand-witch-ecdf058.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_land_type",
+          "landType": "sand"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "amount": 1
+      },
+      "text": "Когда Сэндвич или другое песчаное существо вступает в игру под твоим контролем, нанеси 1 урон своему противнику."
+    }
+  ]
 }

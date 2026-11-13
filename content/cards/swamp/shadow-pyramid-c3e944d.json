@@ -14,5 +14,12 @@
   "landType": "swamp",
   "id": "shadow-pyramid-c3e944d",
   "kind": "card",
-  "image": "/content/cards/swamp/shadow-pyramid-c3e944d.webp"
+  "image": "/content/cards/swamp/shadow-pyramid-c3e944d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "draw_and_discard_if_creature_on_lane",
+      "text": "ПРИЕМ >>> Тяни карту. Если ты контролируешь существо на этой линии, сбрось карту."
+    }
+  ]
 }

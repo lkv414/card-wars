@@ -14,5 +14,19 @@
   "landType": "swamp",
   "id": "banshee-princess-a675298",
   "kind": "card",
-  "image": "/content/cards/swamp/banshee-princess-a675298.webp"
+  "image": "/content/cards/swamp/banshee-princess-a675298.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "effect": {
+        "op": "remove_token",
+        "target": {
+          "kind": "adjacent_own_land"
+        }
+      },
+      "text": "Когда Принцесса Банши вступает в игру, можешь убрать жетон с соседней земли."
+    }
+  ]
 }

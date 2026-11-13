@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "mudcake-zombies-f458783",
   "kind": "card",
-  "image": "/content/cards/swamp/mudcake-zombies-f458783.webp"
+  "image": "/content/cards/swamp/mudcake-zombies-f458783.webp",
+  "abilities": []
 }

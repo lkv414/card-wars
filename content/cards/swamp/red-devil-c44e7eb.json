@@ -14,5 +14,18 @@
   "landType": "swamp",
   "id": "red-devil-c44e7eb",
   "kind": "card",
-  "image": "/content/cards/swamp/red-devil-c44e7eb.webp"
+  "image": "/content/cards/swamp/red-devil-c44e7eb.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "cost": 0
+        }
+      },
+      "text": "ПРИЕМ >>> Верни карту стоимостью 0 из своей стопки сброса себе в руку."
+    }
+  ]
 }

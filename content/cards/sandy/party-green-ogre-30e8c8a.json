@@ -14,5 +14,27 @@
   "landType": "sandy",
   "id": "party-green-ogre-30e8c8a",
   "kind": "card",
-  "image": "/content/cards/sandy/party-green-ogre-30e8c8a.webp"
+  "image": "/content/cards/sandy/party-green-ogre-30e8c8a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": 1
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "text": "Когда существо под твоим контролем покидает игру, восстанови 1 урон с Зеленого короля вечеринок."
+    }
+  ]
 }

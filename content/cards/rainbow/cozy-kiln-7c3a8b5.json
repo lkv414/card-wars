@@ -14,5 +14,18 @@
   "landType": "rainbow",
   "id": "cozy-kiln-7c3a8b5",
   "kind": "card",
-  "image": "/content/cards/rainbow/cozy-kiln-7c3a8b5.webp"
+  "image": "/content/cards/rainbow/cozy-kiln-7c3a8b5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "damage_bonus",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "amount": 1
+      },
+      "text": "Каждый раз когда существо противника на этой линии получает урон, прибавь к значению 1."
+    }
+  ]
 }

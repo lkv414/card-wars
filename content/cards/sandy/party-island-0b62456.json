@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "party-island-0b62456",
   "kind": "card",
-  "image": "/content/cards/sandy/party-island-0b62456.webp"
+  "image": "/content/cards/sandy/party-island-0b62456.webp",
+  "abilities": []
 }

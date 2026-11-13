@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flame-crawler-e693c20",
   "kind": "card",
-  "image": "/content/cards/lava/flame-crawler-e693c20.webp"
+  "image": "/content/cards/lava/flame-crawler-e693c20.webp",
+  "abilities": []
 }

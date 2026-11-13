@@ -14,5 +14,23 @@
   "landType": "corn",
   "id": "corn-archer-078347e",
   "kind": "card",
-  "image": "/content/cards/corn/corn-archer-078347e.webp"
+  "image": "/content/cards/corn/corn-archer-078347e.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "lane_building"
+        }
+      ],
+      "text": "ПРИЕМ >>> Уничтожь выбранное строение на линии стрельба Дэна."
+    }
+  ]
 }

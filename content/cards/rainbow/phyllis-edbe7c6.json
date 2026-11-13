@@ -14,5 +14,7 @@
   "landType": "rainbow",
   "id": "phyllis-edbe7c6",
   "kind": "card",
-  "image": "/content/cards/rainbow/phyllis-edbe7c6.webp"
+  "image": "/content/cards/rainbow/phyllis-edbe7c6.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

@@ -14,5 +14,17 @@
   "landType": "corn",
   "id": "feeder-e9df6fc",
   "kind": "card",
-  "image": "/content/cards/corn/feeder-e9df6fc.webp"
+  "image": "/content/cards/corn/feeder-e9df6fc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "grant_discount",
+        "cardType": "creature",
+        "amount": -1
+      },
+      "text": "Когда Кормежник вступает в игру, следующее существо введенное в игру в этом ход будет стоить на 1 меньше."
+    }
+  ]
 }

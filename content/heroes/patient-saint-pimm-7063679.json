@@ -9,5 +9,6 @@
   "sha256": "706367932852605c2e1c684cc4d2eceb0de45d2a87e3ed54e9dd0fb6e6e9edbe",
   "id": "patient-saint-pimm-7063679",
   "kind": "hero",
-  "image": "/content/heroes/patient-saint-pimm-7063679.webp"
+  "image": "/content/heroes/patient-saint-pimm-7063679.webp",
+  "ability": null
 }

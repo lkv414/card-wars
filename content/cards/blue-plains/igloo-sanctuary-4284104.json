@@ -14,5 +14,25 @@
   "landType": "blue",
   "id": "igloo-sanctuary-4284104",
   "kind": "card",
-  "image": "/content/cards/blue-plains/igloo-sanctuary-4284104.webp"
+  "image": "/content/cards/blue-plains/igloo-sanctuary-4284104.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "this_turn",
+        "conditions": [
+          {
+            "kind": "while_target_moved_this_turn"
+          }
+        ]
+      },
+      "text": "ПРИЕМ >>> Если твое существо на этой линии перемещено сюда с другой линии в этом ход, оно получает +3 ATK в этом ход."
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "sha256": "3dee24310c69790ac8fd6ded2f7e66a47c9d24dea77984faad7aa4c9eaa6d18f",
   "id": "ghost-princess-3dee243",
   "kind": "hero",
-  "image": "/content/heroes/ghost-princess-3dee243.webp"
+  "image": "/content/heroes/ghost-princess-3dee243.webp",
+  "ability": null
 }

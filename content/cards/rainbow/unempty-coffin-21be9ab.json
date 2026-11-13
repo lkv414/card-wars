@@ -14,5 +14,17 @@
   "landType": "rainbow",
   "id": "unempty-coffin-21be9ab",
   "kind": "card",
-  "image": "/content/cards/rainbow/unempty-coffin-21be9ab.webp"
+  "image": "/content/cards/rainbow/unempty-coffin-21be9ab.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "grant_discount",
+        "cardType": "creature",
+        "amount": -2
+      },
+      "text": "Следующее существо сыгранное тобой в этом ход стоит на 2 действия меньше."
+    }
+  ]
 }

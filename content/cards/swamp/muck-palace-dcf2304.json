@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "muck-palace-dcf2304",
   "kind": "card",
-  "image": "/content/cards/swamp/muck-palace-dcf2304.webp"
+  "image": "/content/cards/swamp/muck-palace-dcf2304.webp",
+  "abilities": []
 }

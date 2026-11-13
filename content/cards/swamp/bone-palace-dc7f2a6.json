@@ -14,5 +14,21 @@
   "landType": "swamp",
   "id": "bone-palace-dc7f2a6",
   "kind": "card",
-  "image": "/content/cards/swamp/bone-palace-dc7f2a6.webp"
+  "image": "/content/cards/swamp/bone-palace-dc7f2a6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "triggers": [
+          "on_enters_play",
+          "on_leave_play"
+        ]
+      },
+      "text": "У существ противника на этой линии не срабатывают эффекты вступления в игру и покидания игры."
+    }
+  ]
 }

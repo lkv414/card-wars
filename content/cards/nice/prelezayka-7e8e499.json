@@ -14,5 +14,32 @@
   "landType": "nice",
   "id": "prelezayka-7e8e499",
   "kind": "card",
-  "image": "/content/cards/nice/prelezayka-7e8e499.webp"
+  "image": "/content/cards/nice/prelezayka-7e8e499.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 4,
+          "scope": "self"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Если в начале твоего хода у Милашки коалы 4 урона и более, нанеси 3 урона выбранному противнику."
+    }
+  ]
 }

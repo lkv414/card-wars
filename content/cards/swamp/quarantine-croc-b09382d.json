@@ -14,5 +14,19 @@
   "landType": "swamp",
   "id": "quarantine-croc-b09382d",
   "kind": "card",
-  "image": "/content/cards/swamp/quarantine-croc-b09382d.webp"
+  "image": "/content/cards/swamp/quarantine-croc-b09382d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "cost": 1,
+      "text": "Потрать 1 Действие, ПРИЕМ >>>\nНанеси 1 урон каждому существу противника в игре."
+    }
+  ]
 }

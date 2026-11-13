@@ -14,5 +14,25 @@
   "landType": "swamp",
   "id": "black-paladin-0cd4585",
   "kind": "card",
-  "image": "/content/cards/swamp/black-paladin-0cd4585.webp"
+  "image": "/content/cards/swamp/black-paladin-0cd4585.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "cards_discarded",
+          "scope": "all",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждую карту сброшенную игроками (включая тебя) с руки в этом ходу."
+    }
+  ]
 }

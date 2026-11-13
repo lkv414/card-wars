@@ -14,5 +14,26 @@
   "landType": "nice",
   "id": "chocolate-wall-285ff76",
   "kind": "card",
-  "image": "/content/cards/nice/chocolate-wall-285ff76.webp"
+  "image": "/content/cards/nice/chocolate-wall-285ff76.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_undamaged",
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока на Стене шоколада нет урона, она получает +3 ATK."
+    }
+  ]
 }

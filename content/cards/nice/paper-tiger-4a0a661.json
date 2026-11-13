@@ -14,5 +14,27 @@
   "landType": "nice",
   "id": "paper-tiger-4a0a661",
   "kind": "card",
-  "image": "/content/cards/nice/paper-tiger-4a0a661.webp"
+  "image": "/content/cards/nice/paper-tiger-4a0a661.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 5,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_damage_exactly",
+            "amount": 5,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока на Бумажном тигре ровно 5 урона, он получает +5 ATK."
+    }
+  ]
 }

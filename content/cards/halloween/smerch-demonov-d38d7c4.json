@@ -14,5 +14,6 @@
   "sha256": "d38d7c491acdaec99be06c8e5e979c2ba123c5fdbbb2379561b8d4ef46698072",
   "id": "smerch-demonov-d38d7c4",
   "kind": "card",
-  "image": "/content/cards/halloween/smerch-demonov-d38d7c4.webp"
+  "image": "/content/cards/halloween/smerch-demonov-d38d7c4.webp",
+  "abilities": []
 }

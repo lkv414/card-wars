@@ -14,5 +14,19 @@
   "landType": "sandy",
   "id": "sand-crab-navigator-6f20734",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-crab-navigator-6f20734.webp"
+  "image": "/content/cards/sandy/sand-crab-navigator-6f20734.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_targeted_self"
+        }
+      ],
+      "mechanic": "shift_attacker_to_adjacent_empty",
+      "text": "Каждый раз когда Камнекраб регулировщик получает урон от существа, можешь переместить это существо на пустую соседнюю линию."
+    }
+  ]
 }

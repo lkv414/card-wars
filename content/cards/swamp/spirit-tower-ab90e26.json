@@ -14,5 +14,27 @@
   "landType": "swamp",
   "id": "spirit-tower-ab90e26",
   "kind": "card",
-  "image": "/content/cards/swamp/spirit-tower-ab90e26.webp"
+  "image": "/content/cards/swamp/spirit-tower-ab90e26.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "mechanic": "borrow_creature",
+      "text": "ПРИЕМ >>> Если ты не контролируешь существ на этой линии, перемести выбранное существо на свою сторону и подготовь его. В конце хода верни его владельцу.",
+      "conditions": [
+        {
+          "kind": "while_zone_has_no_creature"
+        }
+      ],
+      "params": {
+        "returnAtEndOfTurn": true,
+        "readyTarget": true
+      }
+    }
+  ]
 }

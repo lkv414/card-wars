@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "crusher-ad970d3",
   "kind": "card",
-  "image": "/content/cards/swamp/crusher-ad970d3.webp"
+  "image": "/content/cards/swamp/crusher-ad970d3.webp",
+  "abilities": []
 }

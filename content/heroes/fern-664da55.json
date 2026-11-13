@@ -9,5 +9,6 @@
   "sha256": "664da55395ab839366b236d7c179875a025d6625619448282fb53cdcece667c9",
   "id": "fern-664da55",
   "kind": "hero",
-  "image": "/content/heroes/fern-664da55.webp"
+  "image": "/content/heroes/fern-664da55.webp",
+  "ability": null
 }

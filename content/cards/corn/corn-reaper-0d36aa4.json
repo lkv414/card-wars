@@ -14,5 +14,21 @@
   "landType": "corn",
   "id": "corn-reaper-0d36aa4",
   "kind": "card",
-  "image": "/content/cards/corn/corn-reaper-0d36aa4.webp"
+  "image": "/content/cards/corn/corn-reaper-0d36aa4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "reaper_discard_and_move_lane_creature",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "text": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо на этой линии на пустую соседнюю линию (на своей стороне)."
+    }
+  ]
 }

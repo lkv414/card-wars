@@ -14,5 +14,19 @@
   "landType": "swamp",
   "id": "smoldering-oldie-9d78c46",
   "kind": "card",
-  "image": "/content/cards/swamp/smoldering-oldie-9d78c46.webp"
+  "image": "/content/cards/swamp/smoldering-oldie-9d78c46.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "each_player"
+        },
+        "count": 2
+      },
+      "text": "Когда Старик-разбойник вступает в игру, каждый игрок сбрасывает 2 карты."
+    }
+  ]
 }

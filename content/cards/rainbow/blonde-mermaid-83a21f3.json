@@ -14,5 +14,7 @@
   "landType": "rainbow",
   "id": "blonde-mermaid-83a21f3",
   "kind": "card",
-  "image": "/content/cards/rainbow/blonde-mermaid-83a21f3.webp"
+  "image": "/content/cards/rainbow/blonde-mermaid-83a21f3.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

@@ -14,5 +14,26 @@
   "sha256": "fd518f9177afe60a13d5da6b9e5a7f3e9d22c1c871aa0c018e15d30f6f74d344",
   "id": "svyataya-tykva-fd518f9",
   "kind": "card",
-  "image": "/content/cards/halloween/svyataya-tykva-fd518f9.webp"
+  "image": "/content/cards/halloween/svyataya-tykva-fd518f9.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "flipped": true,
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Каждое твое существо получаем +1 АТК в этом ходу за каждую землю в игре, перевернутую лицом вниз."
+    }
+  ]
 }

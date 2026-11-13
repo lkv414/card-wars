@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "deadly-clash-a0605c6",
   "kind": "card",
-  "image": "/content/cards/sandy/deadly-clash-a0605c6.webp"
+  "image": "/content/cards/sandy/deadly-clash-a0605c6.webp",
+  "abilities": []
 }

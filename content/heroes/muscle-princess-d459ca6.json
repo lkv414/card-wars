@@ -9,5 +9,6 @@
   "sha256": "d459ca6b0df231c4cb06cd41a9d707601c5bbbbc064cf97966ebe350090dbd78",
   "id": "muscle-princess-d459ca6",
   "kind": "hero",
-  "image": "/content/heroes/muscle-princess-d459ca6.webp"
+  "image": "/content/heroes/muscle-princess-d459ca6.webp",
+  "ability": null
 }

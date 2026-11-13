@@ -14,5 +14,23 @@
   "sha256": "9598612e4c735127b007776479f7e1c3cbf0c3aedadd8b33b1f20eb28a388f88",
   "id": "tykvozavr-reks-9598612",
   "kind": "card",
-  "image": "/content/cards/halloween/tykvozavr-reks-9598612.webp"
+  "image": "/content/cards/halloween/tykvozavr-reks-9598612.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 1,
+          "scope": "self"
+        }
+      ],
+      "text": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту."
+    }
+  ]
 }

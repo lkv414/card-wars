@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "extreme-high-five-493d801",
   "kind": "card",
-  "image": "/content/cards/rainbow/extreme-high-five-493d801.webp"
+  "image": "/content/cards/rainbow/extreme-high-five-493d801.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "high_five_heal_or_damage_and_pass",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "heal_or_damage"
+        }
+      ],
+      "text": "Восстанови или нанеси 1 урон выбранному существу. Как сделал это, можешь передать карту в руку своему партнеру."
+    }
+  ]
 }

@@ -14,5 +14,7 @@
   "sha256": "e606e8e98ecb2aae2d6f66e2c2e5234b016e3026f502b2a2f164163b7c0737a6",
   "id": "kozlik-satany-e606e8e",
   "kind": "card",
-  "image": "/content/cards/halloween/kozlik-satany-e606e8e.webp"
+  "image": "/content/cards/halloween/kozlik-satany-e606e8e.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

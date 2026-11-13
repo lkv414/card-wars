@@ -14,5 +14,31 @@
   "landType": "blue",
   "id": "dragon-paw-c02811b",
   "kind": "card",
-  "image": "/content/cards/blue-plains/dragon-paw-c02811b.webp"
+  "image": "/content/cards/blue-plains/dragon-paw-c02811b.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        },
+        "side": "own"
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ПРИЕМ >>> Отправь существо под твоим контролем на пустую линию."
+    }
+  ]
 }

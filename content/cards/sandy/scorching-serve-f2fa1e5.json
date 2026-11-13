@@ -14,5 +14,18 @@
   "landType": "sandy",
   "id": "scorching-serve-f2fa1e5",
   "kind": "card",
-  "image": "/content/cards/sandy/scorching-serve-f2fa1e5.webp"
+  "image": "/content/cards/sandy/scorching-serve-f2fa1e5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Уничтожь выбранное существо противника. Каждый противник тянет столько карт сколько стоило это существо.",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "mechanic": "destroy_draw_cost"
+    }
+  ]
 }

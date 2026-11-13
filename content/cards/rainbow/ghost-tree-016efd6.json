@@ -14,5 +14,19 @@
   "landType": "rainbow",
   "id": "ghost-tree-016efd6",
   "kind": "card",
-  "image": "/content/cards/rainbow/ghost-tree-016efd6.webp"
+  "image": "/content/cards/rainbow/ghost-tree-016efd6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "defense_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "landType": "corn",
+        "atkBonus": 2
+      },
+      "text": "Дух дерева получает +2 ATK пока защищается от существ на кукурузных полях."
+    }
+  ]
 }

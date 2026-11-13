@@ -14,5 +14,16 @@
   "landType": "lava",
   "id": "lava-ants-8026c61",
   "kind": "card",
-  "image": "/content/cards/lava/lava-ants-8026c61.webp"
+  "image": "/content/cards/lava/lava-ants-8026c61.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "grant_discount",
+        "cardType": "spell",
+        "amount": -1
+      },
+      "text": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 1 меньше."
+    }
+  ]
 }

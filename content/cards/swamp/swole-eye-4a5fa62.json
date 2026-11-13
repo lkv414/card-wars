@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "swole-eye-4a5fa62",
   "kind": "card",
-  "image": "/content/cards/swamp/swole-eye-4a5fa62.webp"
+  "image": "/content/cards/swamp/swole-eye-4a5fa62.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 4,
+        "duration": "this_turn"
+      },
+      "text": "Сбрось карту >>> Геркулаз получает +4 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
 }

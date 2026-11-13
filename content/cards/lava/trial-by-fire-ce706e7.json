@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "trial-by-fire-ce706e7",
   "kind": "card",
-  "image": "/content/cards/lava/trial-by-fire-ce706e7.webp"
+  "image": "/content/cards/lava/trial-by-fire-ce706e7.webp",
+  "abilities": []
 }

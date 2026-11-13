@@ -14,5 +14,21 @@
   "landType": "nice",
   "id": "happy-gnome-6d463b0",
   "kind": "card",
-  "image": "/content/cards/nice/happy-gnome-6d463b0.webp"
+  "image": "/content/cards/nice/happy-gnome-6d463b0.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1,
+        "filter": {
+          "zoneLandType": "sand"
+        }
+      },
+      "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Песчаных землях."
+    }
+  ]
 }

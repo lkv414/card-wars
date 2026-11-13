@@ -9,5 +9,6 @@
   "sha256": "36c970411638b3fb51faa220ca801c865b637c9d944ec8e3cf46ee7d0f01aa8d",
   "id": "the-lich-36c9704",
   "kind": "hero",
-  "image": "/content/heroes/the-lich-36c9704.webp"
+  "image": "/content/heroes/the-lich-36c9704.webp",
+  "ability": null
 }

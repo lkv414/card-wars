@@ -9,5 +9,34 @@
   "sha256": "1ef4002a5a87080d35c6555be5cdaf12d8a9bc33546e880174ba457dba50d484",
   "id": "lady-rainicorn-1ef4002",
   "kind": "hero",
-  "image": "/content/heroes/lady-rainicorn-1ef4002.webp"
+  "image": "/content/heroes/lady-rainicorn-1ef4002.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_return_to_hand",
+    "conditions": [
+      {
+        "kind": "if_payload_player_self"
+      },
+      {
+        "kind": "while_counter_at_least",
+        "counter": "returned_to_hand",
+        "min": 2,
+        "scope": "own"
+      },
+      {
+        "kind": "while_counter_at_most",
+        "counter": "returned_to_hand",
+        "max": 2,
+        "scope": "own"
+      }
+    ],
+    "effect": {
+      "op": "heal",
+      "target": {
+        "kind": "self_player"
+      },
+      "amount": 2
+    },
+    "text": "Если во время своего хода ты возвращаешь себе на руку 2 или более существ из игры или из своего сброса, ты восстанавливаешь 2 HP."
+  }
 }

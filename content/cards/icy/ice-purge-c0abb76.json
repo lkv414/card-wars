@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "ice-purge-c0abb76",
   "kind": "card",
-  "image": "/content/cards/icy/ice-purge-c0abb76.webp"
+  "image": "/content/cards/icy/ice-purge-c0abb76.webp",
+  "abilities": []
 }

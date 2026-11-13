@@ -14,5 +14,25 @@
   "landType": "rainbow",
   "id": "napyorstok-pustoty-860f463",
   "kind": "card",
-  "image": "/content/cards/rainbow/napyorstok-pustoty-860f463.webp"
+  "image": "/content/cards/rainbow/napyorstok-pustoty-860f463.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "self_player"
+          },
+          "amount": 2
+        },
+        {
+          "op": "gain_actions",
+          "amount": 1
+        }
+      ],
+      "text": "Потеряй 2 здоровья, получи 1 действие."
+    }
+  ]
 }

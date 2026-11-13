@@ -14,5 +14,19 @@
   "landType": "rainbow",
   "id": "ice-sneaker-c6816f5",
   "kind": "card",
-  "image": "/content/cards/rainbow/ice-sneaker-c6816f5.webp"
+  "image": "/content/cards/rainbow/ice-sneaker-c6816f5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Когда Ледяной лазутчик вступает в игру, заморозь его землю."
+    }
+  ]
 }

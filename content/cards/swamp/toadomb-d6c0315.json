@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "toadomb-d6c0315",
   "kind": "card",
-  "image": "/content/cards/swamp/toadomb-d6c0315.webp"
+  "image": "/content/cards/swamp/toadomb-d6c0315.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "conditions": [
+        {
+          "kind": "while_self_flipped"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 2
+      },
+      "text": "Если Болотная бомба-лягушка покидает игру пока подготовлена, нанеси 2 урона каждому существу противника."
+    }
+  ]
 }

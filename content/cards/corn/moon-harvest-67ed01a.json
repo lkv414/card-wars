@@ -14,5 +14,36 @@
   "landType": "corn",
   "id": "moon-harvest-67ed01a",
   "kind": "card",
-  "image": "/content/cards/corn/moon-harvest-67ed01a.webp"
+  "image": "/content/cards/corn/moon-harvest-67ed01a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "play_from_discard",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "destination": {
+            "kind": "choice",
+            "index": 1
+          }
+        }
+      ],
+      "text": "Верни строение из стопки сброса в игру.",
+      "targets": [
+        {
+          "kind": "own_discard_card",
+          "filter": {
+            "cardType": "building"
+          }
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
 }

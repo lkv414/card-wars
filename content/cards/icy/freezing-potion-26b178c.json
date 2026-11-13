@@ -14,5 +14,27 @@
   "landType": "icy",
   "id": "freezing-potion-26b178c",
   "kind": "card",
-  "image": "/content/cards/icy/freezing-potion-26b178c.webp"
+  "image": "/content/cards/icy/freezing-potion-26b178c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "any_creature",
+          "filter": {
+            "zoneToken": true
+          }
+        }
+      ],
+      "text": "Уничтожь выбранное существо на земле с Ледяным жетоном."
+    }
+  ]
 }

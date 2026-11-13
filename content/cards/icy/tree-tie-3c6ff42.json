@@ -14,5 +14,25 @@
   "landType": "icy",
   "id": "tree-tie-3c6ff42",
   "kind": "card",
-  "image": "/content/cards/icy/tree-tie-3c6ff42.webp"
+  "image": "/content/cards/icy/tree-tie-3c6ff42.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "token": true,
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Ослепительная Люси получает +1 АТК за каждую землю с ледяным жетоном под контролем игроков."
+    }
+  ]
 }

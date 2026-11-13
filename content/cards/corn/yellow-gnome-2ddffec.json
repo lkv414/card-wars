@@ -14,5 +14,21 @@
   "landType": "corn",
   "id": "yellow-gnome-2ddffec",
   "kind": "card",
-  "image": "/content/cards/corn/yellow-gnome-2ddffec.webp"
+  "image": "/content/cards/corn/yellow-gnome-2ddffec.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1,
+        "filter": {
+          "zoneLandType": "good"
+        }
+      },
+      "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на милой земле."
+    }
+  ]
 }

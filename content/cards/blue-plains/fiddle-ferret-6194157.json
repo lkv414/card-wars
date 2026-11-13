@@ -14,5 +14,12 @@
   "landType": "blue",
   "id": "fiddle-ferret-6194157",
   "kind": "card",
-  "image": "/content/cards/blue-plains/fiddle-ferret-6194157.webp"
+  "image": "/content/cards/blue-plains/fiddle-ferret-6194157.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "draw_discard_rainbow_action",
+      "text": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил радужную карту, получи 1 Действие."
+    }
+  ]
 }

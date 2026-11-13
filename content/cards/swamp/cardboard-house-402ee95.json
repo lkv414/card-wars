@@ -14,5 +14,28 @@
   "landType": "swamp",
   "id": "cardboard-house-402ee95",
   "kind": "card",
-  "image": "/content/cards/swamp/cardboard-house-402ee95.webp"
+  "image": "/content/cards/swamp/cardboard-house-402ee95.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": -1
+        }
+      },
+      "text": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие."
+    },
+    {
+      "kind": "active",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие."
+    }
+  ]
 }

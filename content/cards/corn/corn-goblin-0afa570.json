@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "corn-goblin-0afa570",
   "kind": "card",
-  "image": "/content/cards/corn/corn-goblin-0afa570.webp"
+  "image": "/content/cards/corn/corn-goblin-0afa570.webp",
+  "abilities": []
 }

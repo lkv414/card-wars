@@ -14,5 +14,67 @@
   "landType": "sandy",
   "id": "gum-camel-3950298",
   "kind": "card",
-  "image": "/content/cards/sandy/gum-camel-3950298.webp"
+  "image": "/content/cards/sandy/gum-camel-3950298.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "attach_card",
+        "card": {
+          "kind": "triggering_instance"
+        },
+        "to": {
+          "kind": "this_creature"
+        },
+        "from": "field"
+      },
+      "text": "Когда существо под твоим контролем покидает игру, можешь подложить его под эту карту."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "attached_count",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждую карту под ней."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "attached_count",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "+1 DEF за каждую карту под ней. Когда она покидает игру, сбрось все карты под ней."
+    }
+  ]
 }

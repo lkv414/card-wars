@@ -14,5 +14,25 @@
   "landType": "nice",
   "id": "minty-fresh-scroll-da917ea",
   "kind": "card",
-  "image": "/content/cards/nice/minty-fresh-scroll-da917ea.webp"
+  "image": "/content/cards/nice/minty-fresh-scroll-da917ea.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "vs": "defenderZone",
+          "landType": "swamp",
+          "atkBonus": 2
+        }
+      },
+      "text": "Каждое твое существо получает +2 ATK, пока атакует существ на бесполезных болотах.",
+      "trigger": "on_cast"
+    }
+  ]
 }

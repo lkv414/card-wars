@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "kingdom-defender-b49d559",
   "kind": "card",
-  "image": "/content/cards/rainbow/kingdom-defender-b49d559.webp"
+  "image": "/content/cards/rainbow/kingdom-defender-b49d559.webp",
+  "abilities": []
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flaming-bolt-7fe1a98",
   "kind": "card",
-  "image": "/content/cards/lava/flaming-bolt-7fe1a98.webp"
+  "image": "/content/cards/lava/flaming-bolt-7fe1a98.webp",
+  "abilities": []
 }

@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "utopic-junk-yard-a140cdd",
   "kind": "card",
-  "image": "/content/cards/swamp/utopic-junk-yard-a140cdd.webp"
+  "image": "/content/cards/swamp/utopic-junk-yard-a140cdd.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn"
+      },
+      "text": "Сбрось карту >>> Твое Существо на этой линии получает +1 ATK в этом ход. (Используй любое количество раз во время своего хода).",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "maxUsesPerTurn": 99
+    }
+  ]
 }

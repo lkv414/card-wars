@@ -14,5 +14,27 @@
   "landType": "nice",
   "id": "miss-puff-88ef784",
   "kind": "card",
-  "image": "/content/cards/nice/miss-puff-88ef784.webp"
+  "image": "/content/cards/nice/miss-puff-88ef784.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 7,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_damage_exactly",
+            "amount": 7,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока на Мисс Пушинке ровно 7 Урона, она получает +7 ATK."
+    }
+  ]
 }

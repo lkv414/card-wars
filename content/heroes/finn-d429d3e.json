@@ -9,5 +9,38 @@
   "sha256": "d429d3e3f131ac99d24bc30562ca410190f533c9cdae9748c7fef34f215b154e",
   "id": "finn-d429d3e",
   "kind": "hero",
-  "image": "/content/heroes/finn-d429d3e.webp"
+  "image": "/content/heroes/finn-d429d3e.webp",
+  "ability": {
+    "kind": "passive",
+    "effect": {
+      "op": "grant_ability",
+      "target": {
+        "kind": "each_creature_yours"
+      },
+      "ability": {
+        "kind": "active",
+        "effect": {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 1
+        },
+        "targets": [
+          {
+            "kind": "any_creature"
+          }
+        ],
+        "conditions": [
+          {
+            "kind": "while_undamaged",
+            "scope": "self"
+          }
+        ],
+        "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу"
+      }
+    },
+    "text": "Существа под твоим контролем, не получившие урон, получают «ПРИЕМ >>> Нанеси 1 урон выбранному существу»."
+  }
 }

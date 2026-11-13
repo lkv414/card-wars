@@ -14,5 +14,13 @@
   "landType": "blue",
   "id": "wandering-wizard-4b97133",
   "kind": "card",
-  "image": "/content/cards/blue-plains/wandering-wizard-4b97133.webp"
+  "image": "/content/cards/blue-plains/wandering-wizard-4b97133.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "swap_with_opponent_on_lane",
+      "text": "Когда Волшебник-гастролер вступает в игру, Существо противника на этой линии и Волшебник-гастролер меняются местами."
+    }
+  ]
 }

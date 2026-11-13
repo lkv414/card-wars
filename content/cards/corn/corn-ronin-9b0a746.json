@@ -14,5 +14,28 @@
   "landType": "corn",
   "id": "corn-ronin-9b0a746",
   "kind": "card",
-  "image": "/content/cards/corn/corn-ronin-9b0a746.webp"
+  "image": "/content/cards/corn/corn-ronin-9b0a746.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда золотой ниндзя вступает в игру, нанеси 1 урон выбранному существу за каждый различный тип земли под твоим контролем."
+    }
+  ]
 }

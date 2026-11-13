@@ -14,5 +14,23 @@
   "landType": "sandy",
   "id": "beach-mummy-0d2f6bd",
   "kind": "card",
-  "image": "/content/cards/sandy/beach-mummy-0d2f6bd.webp"
+  "image": "/content/cards/sandy/beach-mummy-0d2f6bd.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "adjacent_any_creature"
+        }
+      ],
+      "text": "ПРИЕМ >>> Верни существо на соседней линии в руку владельцу."
+    }
+  ]
 }

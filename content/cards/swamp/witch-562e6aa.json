@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "witch-562e6aa",
   "kind": "card",
-  "image": "/content/cards/swamp/witch-562e6aa.webp"
+  "image": "/content/cards/swamp/witch-562e6aa.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_card_discarded",
+      "conditions": [
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "payload_player"
+        },
+        "amount": 1
+      },
+      "text": "Когда враг сбрасывает карту, нанеси ему 1 урон."
+    }
+  ]
 }

@@ -14,5 +14,40 @@
   "landType": "corn",
   "id": "dressirovannaya-kukuzebra-c8fb2bc",
   "kind": "card",
-  "image": "/content/cards/corn/dressirovannaya-kukuzebra-c8fb2bc.webp"
+  "image": "/content/cards/corn/dressirovannaya-kukuzebra-c8fb2bc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": {
+          "kind": "team_companion_cost"
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждую Тимворк под контролем твоей команды."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_phase",
+          "phase": "battle"
+        }
+      ],
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "triggering_instance"
+        }
+      },
+      "text": "Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку."
+    }
+  ]
 }

@@ -14,5 +14,28 @@
   "landType": "nice",
   "id": "cuddllesaurus-rex-26f695f",
   "kind": "card",
-  "image": "/content/cards/nice/cuddllesaurus-rex-26f695f.webp"
+  "image": "/content/cards/nice/cuddllesaurus-rex-26f695f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "draw_cards",
+          "count": 1
+        },
+        {
+          "op": "draw_cards",
+          "count": 1,
+          "conditions": [
+            {
+              "kind": "while_effective_def_at_most",
+              "max": 2,
+              "scope": "self"
+            }
+          ]
+        }
+      ],
+      "text": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две."
+    }
+  ]
 }

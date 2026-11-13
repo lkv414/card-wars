@@ -14,5 +14,25 @@
   "landType": "blue",
   "id": "pink-cotton-candy-e37ff05",
   "kind": "card",
-  "image": "/content/cards/blue-plains/pink-cotton-candy-e37ff05.webp"
+  "image": "/content/cards/blue-plains/pink-cotton-candy-e37ff05.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "vs": "defenderZone",
+          "landType": "sand",
+          "atkBonus": 2
+        }
+      },
+      "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существо на Песчаной земле.",
+      "trigger": "on_cast"
+    }
+  ]
 }

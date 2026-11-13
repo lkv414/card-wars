@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "ice-touch-f355487",
   "kind": "card",
-  "image": "/content/cards/icy/ice-touch-f355487.webp"
+  "image": "/content/cards/icy/ice-touch-f355487.webp",
+  "abilities": []
 }

@@ -9,5 +9,30 @@
   "sha256": "0b475495831f1f471fb2e7dcd71fc33585642da1c6f87aff1a544e7e4e785a4f",
   "id": "jake-2x2-0b47549",
   "kind": "hero",
-  "image": "/content/heroes/jake-2x2-0b47549.webp"
+  "image": "/content/heroes/jake-2x2-0b47549.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_damage_dealt",
+    "oncePerTurn": true,
+    "optional": true,
+    "effect": {
+      "op": "deal_damage",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      },
+      "amount": 1
+    },
+    "targets": [
+      {
+        "kind": "any_creature"
+      }
+    ],
+    "conditions": [
+      {
+        "kind": "if_payload_other"
+      }
+    ],
+    "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях."
+  }
 }

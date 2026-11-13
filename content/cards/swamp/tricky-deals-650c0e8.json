@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "tricky-deals-650c0e8",
   "kind": "card",
-  "image": "/content/cards/swamp/tricky-deals-650c0e8.webp"
+  "image": "/content/cards/swamp/tricky-deals-650c0e8.webp",
+  "abilities": []
 }

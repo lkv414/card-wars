@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "rushing-waves-c19f5fd",
   "kind": "card",
-  "image": "/content/cards/swamp/rushing-waves-c19f5fd.webp"
+  "image": "/content/cards/swamp/rushing-waves-c19f5fd.webp",
+  "abilities": []
 }

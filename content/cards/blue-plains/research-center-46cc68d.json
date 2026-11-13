@@ -14,5 +14,17 @@
   "landType": "blue",
   "id": "research-center-46cc68d",
   "kind": "card",
-  "image": "/content/cards/blue-plains/research-center-46cc68d.webp"
+  "image": "/content/cards/blue-plains/research-center-46cc68d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "inherit_adjacent_buildings",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Центр знаний получает игровой текст строений под твоим контролем на соседних линиях (но не их имена)."
+    }
+  ]
 }

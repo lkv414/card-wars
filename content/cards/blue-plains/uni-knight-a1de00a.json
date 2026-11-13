@@ -14,5 +14,27 @@
   "landType": "blue",
   "id": "uni-knight-a1de00a",
   "kind": "card",
-  "image": "/content/cards/blue-plains/uni-knight-a1de00a.webp"
+  "image": "/content/cards/blue-plains/uni-knight-a1de00a.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": -10,
+        "duration": "this_turn"
+      },
+      "cost": 1,
+      "text": "Потрать 1 действие >>> Выбери существо на этой линии, оно получает -10 АТК в этом ходу.",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ]
+    }
+  ]
 }

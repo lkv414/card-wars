@@ -9,5 +9,6 @@
   "sha256": "53a517fe0d845cadb90117b762565955036ec3be4c0f4cabc532bef3281e98a0",
   "id": "football-53a517f",
   "kind": "hero",
-  "image": "/content/heroes/football-53a517f.webp"
+  "image": "/content/heroes/football-53a517f.webp",
+  "ability": null
 }

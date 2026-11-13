@@ -14,5 +14,22 @@
   "landType": "corn",
   "id": "log-sink-f1c06e5",
   "kind": "card",
-  "image": "/content/cards/corn/log-sink-f1c06e5.webp"
+  "image": "/content/cards/corn/log-sink-f1c06e5.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "effect": {
+        "op": "flip_land",
+        "down": true,
+        "until": "next_own_turn",
+        "target": {
+          "kind": "this_lane_land"
+        }
+      },
+      "text": "Сбрось карту, ПРИЕМ >>> Переверни выбранную землю на этой линии лицом вниз до начала твоего следующего хода."
+    }
+  ]
 }

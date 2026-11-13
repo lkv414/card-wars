@@ -14,5 +14,26 @@
   "landType": "corn",
   "id": "baby-corn-zebra-0eb9db0",
   "kind": "card",
-  "image": "/content/cards/corn/baby-corn-zebra-0eb9db0.webp"
+  "image": "/content/cards/corn/baby-corn-zebra-0eb9db0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_phase",
+          "phase": "combat"
+        },
+        {
+          "kind": "while_own_turn"
+        }
+      ],
+      "mechanic": "self_rescue_on_death",
+      "params": {
+        "destination": "deck_top"
+      },
+      "text": "Если Молодой крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить его на верх своей колоды."
+    }
+  ]
 }

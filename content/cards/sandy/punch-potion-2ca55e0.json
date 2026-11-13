@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "punch-potion-2ca55e0",
   "kind": "card",
-  "image": "/content/cards/sandy/punch-potion-2ca55e0.webp"
+  "image": "/content/cards/sandy/punch-potion-2ca55e0.webp",
+  "abilities": []
 }

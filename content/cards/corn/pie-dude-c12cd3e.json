@@ -14,5 +14,22 @@
   "landType": "corn",
   "id": "pie-dude-c12cd3e",
   "kind": "card",
-  "image": "/content/cards/corn/pie-dude-c12cd3e.webp"
+  "image": "/content/cards/corn/pie-dude-c12cd3e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "optional": true,
+      "mechanic": "replace_attacker_with_flooped",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "flipped": true
+          }
+        }
+      ],
+      "text": "Когда Крысолов атакует существо противника, можешь атаковать примененным существом под твоим контролем вместо него."
+    }
+  ]
 }

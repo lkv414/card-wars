@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "spazzy-cola-db1b51d",
   "kind": "card",
-  "image": "/content/cards/rainbow/spazzy-cola-db1b51d.webp"
+  "image": "/content/cards/rainbow/spazzy-cola-db1b51d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn"
+      },
+      "text": "Каждое существо в игре получает +1 ATK в этом ходу (включая существ противника)."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "living-sands-2e377a6",
   "kind": "card",
-  "image": "/content/cards/sandy/living-sands-2e377a6.webp"
+  "image": "/content/cards/sandy/living-sands-2e377a6.webp",
+  "abilities": []
 }

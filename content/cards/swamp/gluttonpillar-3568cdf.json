@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "gluttonpillar-3568cdf",
   "kind": "card",
-  "image": "/content/cards/swamp/gluttonpillar-3568cdf.webp"
+  "image": "/content/cards/swamp/gluttonpillar-3568cdf.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 ATK за каждые 5 карт в твоей стпоке сброса."
+    }
+  ]
 }

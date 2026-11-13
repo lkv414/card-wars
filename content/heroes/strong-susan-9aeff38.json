@@ -9,5 +9,16 @@
   "sha256": "9aeff38f7f6097d2c455585d8442f917b84d48098ea57e82c368a59671b39533",
   "id": "strong-susan-9aeff38",
   "kind": "hero",
-  "image": "/content/heroes/strong-susan-9aeff38.webp"
+  "image": "/content/heroes/strong-susan-9aeff38.webp",
+  "ability": {
+    "kind": "active",
+    "text": "Потрать 1 действие и уничтожь существо под своим контролем >>> Нанеси урон, равный его стоимости, каждому существу противника.",
+    "cost": 1,
+    "targets": [
+      {
+        "kind": "own_creature"
+      }
+    ],
+    "mechanic": "sacrifice_cost_damage"
+  }
 }

@@ -9,5 +9,6 @@
   "sha256": "8c73b80ee1a87831fab8651b52d10fc2b4e81ef72539e8e244c944251647134a",
   "id": "death-8c73b80",
   "kind": "hero",
-  "image": "/content/heroes/death-8c73b80.webp"
+  "image": "/content/heroes/death-8c73b80.webp",
+  "ability": null
 }

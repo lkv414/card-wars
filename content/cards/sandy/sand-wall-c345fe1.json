@@ -14,5 +14,33 @@
   "landType": "sandy",
   "id": "sand-wall-c345fe1",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-wall-c345fe1.webp"
+  "image": "/content/cards/sandy/sand-wall-c345fe1.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Если другое песчаное существо, одно или более, вступает в игру во время твоего хода, Песчаная стена получает +2 ATK в этом ходу.",
+      "conditions": [
+        {
+          "kind": "if_payload_land_type",
+          "landType": "sand"
+        },
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ]
+    }
+  ]
 }

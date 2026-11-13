@@ -9,5 +9,6 @@
   "sha256": "eb91a319fca422e55e5c16784e092d2c17beebe252c0678e8c3a8767b99715ab",
   "id": "grob-gob-glob-grod-eb91a31",
   "kind": "hero",
-  "image": "/content/heroes/grob-gob-glob-grod-eb91a31.webp"
+  "image": "/content/heroes/grob-gob-glob-grod-eb91a31.webp",
+  "ability": null
 }

@@ -14,5 +14,30 @@
   "landType": "icy",
   "id": "crystal-palace-5ddb5b5",
   "kind": "card",
-  "image": "/content/cards/icy/crystal-palace-5ddb5b5.webp"
+  "image": "/content/cards/icy/crystal-palace-5ddb5b5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_freeze",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда земля на этой линии становится замороженной, нанеси 2 Урона выбранному существу."
+    }
+  ]
 }

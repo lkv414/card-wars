@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "hot-scorpion-30144ec",
   "kind": "card",
-  "image": "/content/cards/lava/hot-scorpion-30144ec.webp"
+  "image": "/content/cards/lava/hot-scorpion-30144ec.webp",
+  "abilities": []
 }

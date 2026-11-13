@@ -9,5 +9,6 @@
   "sha256": "981bab1f866f7dd1eeae6fbfda74cfc4564330d67857e0d99cb5940e18cf0726",
   "id": "snail-981bab1",
   "kind": "hero",
-  "image": "/content/heroes/snail-981bab1.webp"
+  "image": "/content/heroes/snail-981bab1.webp",
+  "ability": null
 }

@@ -14,5 +14,13 @@
   "landType": "swamp",
   "id": "ghost-mimimic-30b2abb",
   "kind": "card",
-  "image": "/content/cards/swamp/ghost-mimimic-30b2abb.webp"
+  "image": "/content/cards/swamp/ghost-mimimic-30b2abb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "mechanic": "draw_bottom_card",
+      "text": "Когда Призрачный мимик покидает игру, тяни нижнюю карту из своей колоды."
+    }
+  ]
 }

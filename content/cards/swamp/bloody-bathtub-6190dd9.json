@@ -14,5 +14,23 @@
   "landType": "swamp",
   "id": "bloody-bathtub-6190dd9",
   "kind": "card",
-  "image": "/content/cards/swamp/bloody-bathtub-6190dd9.webp"
+  "image": "/content/cards/swamp/bloody-bathtub-6190dd9.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "discard_min_cost_or_damage",
+      "params": {
+        "minCost": 2,
+        "amount": 5,
+        "to": "player"
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Выбранный враг сбрасывает карту стоимостью 2 или более. Если нет, то нанеси 5 урона этому врагу."
+    }
+  ]
 }

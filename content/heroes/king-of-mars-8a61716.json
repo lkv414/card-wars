@@ -9,5 +9,6 @@
   "sha256": "8a61716d6a9b04e9acf3d2d772eeedd75d17849dc4da918b08c443ebebd493e3",
   "id": "king-of-mars-8a61716",
   "kind": "hero",
-  "image": "/content/heroes/king-of-mars-8a61716.webp"
+  "image": "/content/heroes/king-of-mars-8a61716.webp",
+  "ability": null
 }

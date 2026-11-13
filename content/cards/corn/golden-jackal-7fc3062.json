@@ -14,5 +14,22 @@
   "landType": "corn",
   "id": "golden-jackal-7fc3062",
   "kind": "card",
-  "image": "/content/cards/corn/golden-jackal-7fc3062.webp"
+  "image": "/content/cards/corn/golden-jackal-7fc3062.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "additionalCost": {
+        "discardFromHand": 1,
+        "landType": "sand"
+      },
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника."
+    }
+  ]
 }

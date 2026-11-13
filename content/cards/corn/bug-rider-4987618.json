@@ -14,5 +14,43 @@
   "landType": "corn",
   "id": "bug-rider-4987618",
   "kind": "card",
-  "image": "/content/cards/corn/bug-rider-4987618.webp"
+  "image": "/content/cards/corn/bug-rider-4987618.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Кукурузные рыцари получают +1 ATK за каждое Кукурузное поле под твоим контролем."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "Кукурузные рыцари получают +2 DEF за каждое Кукурузное поле под твоим контролем."
+    }
+  ]
 }

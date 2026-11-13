@@ -14,5 +14,27 @@
   "landType": "rainbow",
   "id": "fountain-of-tears-69c05ce",
   "kind": "card",
-  "image": "/content/cards/rainbow/fountain-of-tears-69c05ce.webp"
+  "image": "/content/cards/rainbow/fountain-of-tears-69c05ce.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_damage_exactly",
+            "amount": 3,
+            "scope": "target"
+          }
+        ]
+      },
+      "text": "Пока у твоего существа на этой линии ровно 3 урона, оно получает +3 ATK."
+    }
+  ]
 }

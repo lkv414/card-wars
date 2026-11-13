@@ -14,5 +14,32 @@
   "landType": "rainbow",
   "id": "green-cotton-candy-ac01206",
   "kind": "card",
-  "image": "/content/cards/rainbow/green-cotton-candy-ac01206.webp"
+  "image": "/content/cards/rainbow/green-cotton-candy-ac01206.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal_or_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "mode": {
+          "kind": "choice",
+          "index": 1
+        },
+        "amount": 1
+      },
+      "text": "Восстанови или нанеси 1 Урон выбранному существу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "heal_or_damage"
+        }
+      ]
+    }
+  ]
 }

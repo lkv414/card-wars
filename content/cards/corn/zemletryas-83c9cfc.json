@@ -14,5 +14,25 @@
   "landType": "corn",
   "id": "zemletryas-83c9cfc",
   "kind": "card",
-  "image": "/content/cards/corn/zemletryas-83c9cfc.webp"
+  "image": "/content/cards/corn/zemletryas-83c9cfc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "flipped": true,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 АТК за каждую землю в игре, перевернутую лицом вниз."
+    }
+  ]
 }

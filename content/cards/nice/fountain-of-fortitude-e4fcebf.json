@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "fountain-of-fortitude-e4fcebf",
   "kind": "card",
-  "image": "/content/cards/nice/fountain-of-fortitude-e4fcebf.webp"
+  "image": "/content/cards/nice/fountain-of-fortitude-e4fcebf.webp",
+  "abilities": []
 }

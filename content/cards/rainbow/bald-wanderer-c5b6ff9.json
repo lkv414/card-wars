@@ -14,5 +14,16 @@
   "landType": "rainbow",
   "id": "bald-wanderer-c5b6ff9",
   "kind": "card",
-  "image": "/content/cards/rainbow/bald-wanderer-c5b6ff9.webp"
+  "image": "/content/cards/rainbow/bald-wanderer-c5b6ff9.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "discard_top_deck",
+        "count": 1
+      },
+      "text": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса."
+    }
+  ]
 }

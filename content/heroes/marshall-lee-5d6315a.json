@@ -9,5 +9,6 @@
   "sha256": "5d6315ad4c6a3c4baa986d5ce8f755365e1d57d4849a84c19a930148eae54c42",
   "id": "marshall-lee-5d6315a",
   "kind": "hero",
-  "image": "/content/heroes/marshall-lee-5d6315a.webp"
+  "image": "/content/heroes/marshall-lee-5d6315a.webp",
+  "ability": null
 }

@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "principaligator-9973cdd",
   "kind": "card",
-  "image": "/content/cards/swamp/principaligator-9973cdd.webp"
+  "image": "/content/cards/swamp/principaligator-9973cdd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": -1
+        },
+        "duration": "aura"
+      },
+      "text": "Существо противника на этой линии получает -1 DEF за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
 }

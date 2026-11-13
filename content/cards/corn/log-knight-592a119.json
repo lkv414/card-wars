@@ -14,5 +14,28 @@
   "landType": "corn",
   "id": "log-knight-592a119",
   "kind": "card",
-  "image": "/content/cards/corn/log-knight-592a119.webp"
+  "image": "/content/cards/corn/log-knight-592a119.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "play_from_hand",
+        "match": {
+          "type": "building"
+        },
+        "destination": {
+          "kind": "this_lane_land"
+        }
+      },
+      "text": "ПРИЕМ >>> Положи строение со своей руки на эту линию (если на ней нет строения).",
+      "targets": [
+        {
+          "kind": "own_hand_card",
+          "filter": {
+            "cardType": "building"
+          }
+        }
+      ]
+    }
+  ]
 }

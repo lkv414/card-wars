@@ -14,5 +14,18 @@
   "landType": "icy",
   "id": "cool-it-66011f3",
   "kind": "card",
-  "image": "/content/cards/icy/cool-it-66011f3.webp"
+  "image": "/content/cards/icy/cool-it-66011f3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "freeze_lane_both_lands",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Выбери линию и заморозь обе земли на ней."
+    }
+  ]
 }

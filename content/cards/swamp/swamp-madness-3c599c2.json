@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "swamp-madness-3c599c2",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-madness-3c599c2.webp"
+  "image": "/content/cards/swamp/swamp-madness-3c599c2.webp",
+  "abilities": []
 }

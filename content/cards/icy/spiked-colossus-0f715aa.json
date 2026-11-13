@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "spiked-colossus-0f715aa",
   "kind": "card",
-  "image": "/content/cards/icy/spiked-colossus-0f715aa.webp"
+  "image": "/content/cards/icy/spiked-colossus-0f715aa.webp",
+  "abilities": []
 }

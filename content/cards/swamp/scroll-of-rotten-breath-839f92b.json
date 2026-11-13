@@ -14,5 +14,25 @@
   "landType": "swamp",
   "id": "scroll-of-rotten-breath-839f92b",
   "kind": "card",
-  "image": "/content/cards/swamp/scroll-of-rotten-breath-839f92b.webp"
+  "image": "/content/cards/swamp/scroll-of-rotten-breath-839f92b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "grant_modifier",
+        "duration": "this_turn",
+        "modifier": {
+          "op": "attack_mod",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "vs": "defenderZone",
+          "landType": "good",
+          "atkBonus": 2
+        }
+      },
+      "text": "Каждое твое существо получает +2 ATK в этом ходу, пока атакует существо на Милой земле.",
+      "trigger": "on_cast"
+    }
+  ]
 }

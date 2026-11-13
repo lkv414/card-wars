@@ -14,5 +14,29 @@
   "landType": "swamp",
   "id": "awesome-non-human-spider-dc5d0c7",
   "kind": "card",
-  "image": "/content/cards/swamp/awesome-non-human-spider-dc5d0c7.webp"
+  "image": "/content/cards/swamp/awesome-non-human-spider-dc5d0c7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "В начале своего хода нанеси 1 урон выбранному существу за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
 }

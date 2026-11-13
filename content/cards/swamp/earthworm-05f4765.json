@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "earthworm-05f4765",
   "kind": "card",
-  "image": "/content/cards/swamp/earthworm-05f4765.webp"
+  "image": "/content/cards/swamp/earthworm-05f4765.webp",
+  "abilities": []
 }

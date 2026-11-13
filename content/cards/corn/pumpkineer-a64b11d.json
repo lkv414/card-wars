@@ -14,5 +14,30 @@
   "landType": "corn",
   "id": "pumpkineer-a64b11d",
   "kind": "card",
-  "image": "/content/cards/corn/pumpkineer-a64b11d.webp"
+  "image": "/content/cards/corn/pumpkineer-a64b11d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "mechanic": "damage_once_per_land",
+      "params": {
+        "landType": "corn",
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Наносит 1 урон выбранному существу. Повтори это за каждое Кукурузное поле под твоим контролем. (Может повредить каждое существо только 1 раз.)"
+    }
+  ]
 }

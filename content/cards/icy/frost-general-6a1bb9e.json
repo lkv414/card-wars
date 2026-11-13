@@ -14,5 +14,22 @@
   "landType": "icy",
   "id": "frost-general-6a1bb9e",
   "kind": "card",
-  "image": "/content/cards/icy/frost-general-6a1bb9e.webp"
+  "image": "/content/cards/icy/frost-general-6a1bb9e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature"
+        },
+        "amount": 1,
+        "filter": {
+          "zoneToken": true
+        }
+      },
+      "text": "В начале своего хода нанеси 1 урон каждому существу на земле с ледяным жетоном."
+    }
+  ]
 }

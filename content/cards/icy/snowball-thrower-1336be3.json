@@ -14,5 +14,32 @@
   "landType": "icy",
   "id": "snowball-thrower-1336be3",
   "kind": "card",
-  "image": "/content/cards/icy/snowball-thrower-1336be3.webp"
+  "image": "/content/cards/icy/snowball-thrower-1336be3.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "remove_token",
+          "target": {
+            "kind": "this_lane_land"
+          }
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 3
+        }
+      ],
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "ПРИЕМ >>> Удали Ледяной жетон с земли Снежка >>> Нанеси 3 урона выбранному существу."
+    }
+  ]
 }

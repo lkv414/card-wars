@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "flying-roo-mouse-b61e3a6",
   "kind": "card",
-  "image": "/content/cards/rainbow/flying-roo-mouse-b61e3a6.webp"
+  "image": "/content/cards/rainbow/flying-roo-mouse-b61e3a6.webp",
+  "abilities": []
 }

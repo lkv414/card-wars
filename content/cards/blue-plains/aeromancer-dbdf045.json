@@ -14,5 +14,22 @@
   "landType": "blue",
   "id": "aeromancer-dbdf045",
   "kind": "card",
-  "image": "/content/cards/blue-plains/aeromancer-dbdf045.webp"
+  "image": "/content/cards/blue-plains/aeromancer-dbdf045.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "swap_creatures",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда Аэромансер вступает в игру, можешь поменять местами 2 существ выбранного игрока."
+    }
+  ]
 }

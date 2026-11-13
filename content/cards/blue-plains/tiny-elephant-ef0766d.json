@@ -14,5 +14,18 @@
   "landType": "blue",
   "id": "tiny-elephant-ef0766d",
   "kind": "card",
-  "image": "/content/cards/blue-plains/tiny-elephant-ef0766d.webp"
+  "image": "/content/cards/blue-plains/tiny-elephant-ef0766d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "counts_as",
+        "target": {
+          "kind": "this_creature"
+        },
+        "landType": "rainbow"
+      },
+      "text": "Когда в игре, Кроха слон считается также Радужным существом."
+    }
+  ]
 }

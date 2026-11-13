@@ -14,5 +14,24 @@
   "landType": "rainbow",
   "id": "bigfoot-9bf6d5d",
   "kind": "card",
-  "image": "/content/cards/rainbow/bigfoot-9bf6d5d.webp"
+  "image": "/content/cards/rainbow/bigfoot-9bf6d5d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "flip_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "down": false
+      },
+      "targets": [
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "text": "ПРИЕМ >>> Переверни выбранную землю под твоим контролем лицом вверх."
+    }
+  ]
 }

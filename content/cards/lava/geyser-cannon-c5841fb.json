@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "geyser-cannon-c5841fb",
   "kind": "card",
-  "image": "/content/cards/lava/geyser-cannon-c5841fb.webp"
+  "image": "/content/cards/lava/geyser-cannon-c5841fb.webp",
+  "abilities": []
 }

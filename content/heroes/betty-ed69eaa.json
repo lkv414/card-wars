@@ -9,5 +9,6 @@
   "sha256": "ed69eaa409b222088829ad63e2d228b3b010250ca69749861dad075f24c746e9",
   "id": "betty-ed69eaa",
   "kind": "hero",
-  "image": "/content/heroes/betty-ed69eaa.webp"
+  "image": "/content/heroes/betty-ed69eaa.webp",
+  "ability": null
 }

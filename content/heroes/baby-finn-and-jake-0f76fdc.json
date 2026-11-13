@@ -9,5 +9,6 @@
   "sha256": "0f76fdcb7745e2bc70e386a3ae80a5ecf69306eae9db7d82b60bdfd27e6394e6",
   "id": "baby-finn-and-jake-0f76fdc",
   "kind": "hero",
-  "image": "/content/heroes/baby-finn-and-jake-0f76fdc.webp"
+  "image": "/content/heroes/baby-finn-and-jake-0f76fdc.webp",
+  "ability": null
 }

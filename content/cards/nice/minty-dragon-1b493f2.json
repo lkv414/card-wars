@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "minty-dragon-1b493f2",
   "kind": "card",
-  "image": "/content/cards/nice/minty-dragon-1b493f2.webp"
+  "image": "/content/cards/nice/minty-dragon-1b493f2.webp",
+  "abilities": []
 }

@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "goat-9a3cf34",
   "kind": "card",
-  "image": "/content/cards/rainbow/goat-9a3cf34.webp"
+  "image": "/content/cards/rainbow/goat-9a3cf34.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_replacing"
+        }
+      ],
+      "text": "Когда Козел вступает в игру заменяя существо, тяни карту."
+    }
+  ]
 }

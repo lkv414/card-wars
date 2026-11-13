@@ -14,5 +14,18 @@
   "landType": "rainbow",
   "id": "matchy-matchy-66b1019",
   "kind": "card",
-  "image": "/content/cards/rainbow/matchy-matchy-66b1019.webp"
+  "image": "/content/cards/rainbow/matchy-matchy-66b1019.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "draw_two_and_deal_if_match_and_pass_self",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Вытяни 2 верхних карты из своей колоды. Если они одинаковой стоимости нанеси урон выбранному противнику. Как сделал это, можешь вложить эту карту в руку партнера."
+    }
+  ]
 }

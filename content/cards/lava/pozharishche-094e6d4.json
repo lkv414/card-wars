@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "pozharishche-094e6d4",
   "kind": "card",
-  "image": "/content/cards/lava/pozharishche-094e6d4.webp"
+  "image": "/content/cards/lava/pozharishche-094e6d4.webp",
+  "abilities": []
 }

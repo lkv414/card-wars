@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "baron-hiccough-ef60c99",
   "kind": "card",
-  "image": "/content/cards/swamp/baron-hiccough-ef60c99.webp"
+  "image": "/content/cards/swamp/baron-hiccough-ef60c99.webp",
+  "abilities": []
 }

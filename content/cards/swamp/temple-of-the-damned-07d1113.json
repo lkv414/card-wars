@@ -14,5 +14,34 @@
   "landType": "swamp",
   "id": "temple-of-the-damned-07d1113",
   "kind": "card",
-  "image": "/content/cards/swamp/temple-of-the-damned-07d1113.webp"
+  "image": "/content/cards/swamp/temple-of-the-damned-07d1113.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "Твое Существо на этой линии получает +3 ATK."
+    },
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "discard_from_hand",
+        "count": 1
+      },
+      "text": "В начале каждого своего хода, сбрось карту.",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ]
+    }
+  ]
 }

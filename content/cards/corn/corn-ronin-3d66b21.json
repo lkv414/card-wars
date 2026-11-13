@@ -14,5 +14,25 @@
   "landType": "corn",
   "id": "corn-ronin-3d66b21",
   "kind": "card",
-  "image": "/content/cards/corn/corn-ronin-3d66b21.webp"
+  "image": "/content/cards/corn/corn-ronin-3d66b21.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "adjacent",
+          "amount": 1,
+          "landType": "corn"
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждое соседнее Кукурузное поле."
+    }
+  ]
 }

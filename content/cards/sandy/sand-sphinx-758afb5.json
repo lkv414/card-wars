@@ -14,5 +14,17 @@
   "landType": "sandy",
   "id": "sand-sphinx-758afb5",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-sphinx-758afb5.webp"
+  "image": "/content/cards/sandy/sand-sphinx-758afb5.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "this_lane_creature"
+        }
+      },
+      "text": "ПРИЕМ >>> Верни существо под твоим контролем на этой линии в руку владельцу."
+    }
+  ]
 }

@@ -14,5 +14,33 @@
   "landType": "icy",
   "id": "ultra-dog-92b69a0",
   "kind": "card",
-  "image": "/content/cards/icy/ultra-dog-92b69a0.webp"
+  "image": "/content/cards/icy/ultra-dog-92b69a0.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "freeze_land",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "frozen": true
+        },
+        {
+          "op": "freeze_creature",
+          "target": {
+            "kind": "choice_zone_creature",
+            "index": 0
+          }
+        }
+      ],
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ПРИЕМ >>> Заморозь выбранную землю и существо на ней."
+    }
+  ]
 }

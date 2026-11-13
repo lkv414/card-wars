@@ -14,5 +14,6 @@
   "landType": "nice",
   "id": "nurse-4c785fd",
   "kind": "card",
-  "image": "/content/cards/nice/nurse-4c785fd.webp"
+  "image": "/content/cards/nice/nurse-4c785fd.webp",
+  "abilities": []
 }

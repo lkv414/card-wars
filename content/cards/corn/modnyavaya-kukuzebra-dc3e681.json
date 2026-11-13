@@ -14,5 +14,23 @@
   "landType": "corn",
   "id": "modnyavaya-kukuzebra-dc3e681",
   "kind": "card",
-  "image": "/content/cards/corn/modnyavaya-kukuzebra-dc3e681.webp"
+  "image": "/content/cards/corn/modnyavaya-kukuzebra-dc3e681.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+    }
+  ]
 }

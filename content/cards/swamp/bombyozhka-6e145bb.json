@@ -14,5 +14,23 @@
   "landType": "swamp",
   "id": "bombyozhka-6e145bb",
   "kind": "card",
-  "image": "/content/cards/swamp/bombyozhka-6e145bb.webp"
+  "image": "/content/cards/swamp/bombyozhka-6e145bb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "discard_min_cost_or_damage",
+      "params": {
+        "minCost": 0,
+        "amount": 2,
+        "to": "creatures"
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Выбранный враг может сбросить карту. Если нет, то нанеси 2 Урона каждому его существу."
+    }
+  ]
 }

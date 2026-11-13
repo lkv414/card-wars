@@ -14,5 +14,17 @@
   "landType": "blue",
   "id": "mozgolip-0462f29",
   "kind": "card",
-  "image": "/content/cards/blue-plains/mozgolip-0462f29.webp"
+  "image": "/content/cards/blue-plains/mozgolip-0462f29.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "no_retaliation",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Настолько крутые ребята, что существа противника просто не могут дать им сдачи (не получают урон при нападении на существо противника)."
+    }
+  ]
 }

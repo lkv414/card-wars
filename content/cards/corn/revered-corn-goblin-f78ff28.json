@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "revered-corn-goblin-f78ff28",
   "kind": "card",
-  "image": "/content/cards/corn/revered-corn-goblin-f78ff28.webp"
+  "image": "/content/cards/corn/revered-corn-goblin-f78ff28.webp",
+  "abilities": []
 }

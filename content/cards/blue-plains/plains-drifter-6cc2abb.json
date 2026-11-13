@@ -14,5 +14,16 @@
   "landType": "blue",
   "id": "plains-drifter-6cc2abb",
   "kind": "card",
-  "image": "/content/cards/blue-plains/plains-drifter-6cc2abb.webp"
+  "image": "/content/cards/blue-plains/plains-drifter-6cc2abb.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "grant_discount",
+        "cardType": "spell",
+        "amount": -2
+      },
+      "text": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 2 меньше."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "molten-ritualist-332f3c6",
   "kind": "card",
-  "image": "/content/cards/lava/molten-ritualist-332f3c6.webp"
+  "image": "/content/cards/lava/molten-ritualist-332f3c6.webp",
+  "abilities": []
 }

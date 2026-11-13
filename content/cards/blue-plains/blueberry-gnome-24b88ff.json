@@ -14,5 +14,21 @@
   "landType": "blue",
   "id": "blueberry-gnome-24b88ff",
   "kind": "card",
-  "image": "/content/cards/blue-plains/blueberry-gnome-24b88ff.webp"
+  "image": "/content/cards/blue-plains/blueberry-gnome-24b88ff.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1,
+        "filter": {
+          "zoneLandType": "swamp"
+        }
+      },
+      "text": "ПРИЕМ >>> Нанеси 1 урон каждому существу противника на Бесполезных болотах."
+    }
+  ]
 }

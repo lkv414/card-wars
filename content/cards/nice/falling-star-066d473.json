@@ -14,5 +14,24 @@
   "landType": "nice",
   "id": "falling-star-066d473",
   "kind": "card",
-  "image": "/content/cards/nice/falling-star-066d473.webp"
+  "image": "/content/cards/nice/falling-star-066d473.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "grant_modifier",
+        "modifier": {
+          "op": "damage_immunity",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 999,
+          "from": "attacks"
+        },
+        "duration": "this_turn"
+      },
+      "text": "Существа под твоим контролем не получают урон от существ противника в этом ходу."
+    }
+  ]
 }

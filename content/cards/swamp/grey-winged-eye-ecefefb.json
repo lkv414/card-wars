@@ -14,5 +14,21 @@
   "landType": "swamp",
   "id": "grey-winged-eye-ecefefb",
   "kind": "card",
-  "image": "/content/cards/swamp/grey-winged-eye-ecefefb.webp"
+  "image": "/content/cards/swamp/grey-winged-eye-ecefefb.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "random": true,
+        "filter": {
+          "type": "creature",
+          "landType": "swamp"
+        }
+      },
+      "text": "Потрать 1 действие >>> Верни случайное болотное существо из своей стопки сброса себе в руку.",
+      "cost": 1
+    }
+  ]
 }

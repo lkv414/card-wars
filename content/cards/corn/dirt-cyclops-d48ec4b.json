@@ -14,5 +14,25 @@
   "landType": "corn",
   "id": "dirt-cyclops-d48ec4b",
   "kind": "card",
-  "image": "/content/cards/corn/dirt-cyclops-d48ec4b.webp"
+  "image": "/content/cards/corn/dirt-cyclops-d48ec4b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "flipped": true,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 АТК за каждую землю в игре перевернутую лицом вниз."
+    }
+  ]
 }

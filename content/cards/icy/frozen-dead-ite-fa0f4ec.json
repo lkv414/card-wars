@@ -14,5 +14,16 @@
   "landType": "icy",
   "id": "frozen-dead-ite-fa0f4ec",
   "kind": "card",
-  "image": "/content/cards/icy/frozen-dead-ite-fa0f4ec.webp"
+  "image": "/content/cards/icy/frozen-dead-ite-fa0f4ec.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_zone_ice_token"
+        }
+      ],
+      "text": "Ледяной душегуб вступает в игру только на земле с ледяным жетоном."
+    }
+  ]
 }

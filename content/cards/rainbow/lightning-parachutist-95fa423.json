@@ -14,5 +14,38 @@
   "landType": "rainbow",
   "id": "lightning-parachutist-95fa423",
   "kind": "card",
-  "image": "/content/cards/rainbow/lightning-parachutist-95fa423.webp"
+  "image": "/content/cards/rainbow/lightning-parachutist-95fa423.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "enter_move_to_empty",
+      "params": {},
+      "text": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "set_instance_flag",
+        "target": {
+          "kind": "this_creature"
+        },
+        "flag": "cannotReplace"
+      },
+      "text": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою."
+    },
+    {
+      "kind": "passive",
+      "trigger": "start_of_next_turn",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": 1
+      },
+      "text": "Когда Статичный поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего следующего хода нанеси 1 урон своему герою."
+    }
+  ]
 }

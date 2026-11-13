@@ -14,5 +14,31 @@
   "landType": "swamp",
   "id": "lighthouse-3731207",
   "kind": "card",
-  "image": "/content/cards/swamp/lighthouse-3731207.webp"
+  "image": "/content/cards/swamp/lighthouse-3731207.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Потрать 1 Действие >>> Выбранное Существо на этой линии получает +1 ATK в этом ходу за каждые 5 карт в твоей стопке сброса.",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ]
+    }
+  ]
 }

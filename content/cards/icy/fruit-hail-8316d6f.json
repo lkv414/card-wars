@@ -14,5 +14,24 @@
   "landType": "icy",
   "id": "fruit-hail-8316d6f",
   "kind": "card",
-  "image": "/content/cards/icy/fruit-hail-8316d6f.webp"
+  "image": "/content/cards/icy/fruit-hail-8316d6f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Уничтожь выбранное строение противника.",
+      "targets": [
+        {
+          "kind": "opponent_building"
+        }
+      ]
+    }
+  ]
 }

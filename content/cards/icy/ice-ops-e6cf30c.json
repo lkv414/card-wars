@@ -14,5 +14,25 @@
   "landType": "icy",
   "id": "ice-ops-e6cf30c",
   "kind": "card",
-  "image": "/content/cards/icy/ice-ops-e6cf30c.webp"
+  "image": "/content/cards/icy/ice-ops-e6cf30c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "token": true,
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Ледяной диверсант получает +1 ATK за каждую землю с ледяным жетоном."
+    }
+  ]
 }

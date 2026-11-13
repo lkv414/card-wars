@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "precious-corn-goblin-4c6f6a7",
   "kind": "card",
-  "image": "/content/cards/corn/precious-corn-goblin-4c6f6a7.webp"
+  "image": "/content/cards/corn/precious-corn-goblin-4c6f6a7.webp",
+  "abilities": []
 }

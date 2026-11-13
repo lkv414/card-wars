@@ -14,5 +14,44 @@
   "landType": "blue",
   "id": "monday-warrior-51fc6dc",
   "kind": "card",
-  "image": "/content/cards/blue-plains/monday-warrior-51fc6dc.webp"
+  "image": "/content/cards/blue-plains/monday-warrior-51fc6dc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": [
+        {
+          "op": "set_instance_flag",
+          "target": {
+            "kind": "this_creature"
+          },
+          "flag": "entersTapped"
+        },
+        {
+          "op": "set_instance_flag",
+          "target": {
+            "kind": "this_creature"
+          },
+          "flag": "noReady"
+        }
+      ],
+      "text": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_line_change",
+      "effect": {
+        "op": "unflip",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_instance_self"
+        }
+      ],
+      "text": "Усталый воин вступает в игру неактивным и не подготовлен в начале твоего хода.\nВсякий раз, когда он меняет линию, подготовь его."
+    }
+  ]
 }

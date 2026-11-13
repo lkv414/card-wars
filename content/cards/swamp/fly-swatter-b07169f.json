@@ -14,5 +14,12 @@
   "landType": "swamp",
   "id": "fly-swatter-b07169f",
   "kind": "card",
-  "image": "/content/cards/swamp/fly-swatter-b07169f.webp"
+  "image": "/content/cards/swamp/fly-swatter-b07169f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "discard_cost0_or_reveal_hand",
+      "text": "ПРИЕМ >>> Каждый противник сбрасывает карту стоимостью 0 или показывает руку, если таких нет."
+    }
+  ]
 }

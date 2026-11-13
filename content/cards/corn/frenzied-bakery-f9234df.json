@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "frenzied-bakery-f9234df",
   "kind": "card",
-  "image": "/content/cards/corn/frenzied-bakery-f9234df.webp"
+  "image": "/content/cards/corn/frenzied-bakery-f9234df.webp",
+  "abilities": []
 }

@@ -14,5 +14,18 @@
   "landType": "corn",
   "id": "corn-templar-9b89a2d",
   "kind": "card",
-  "image": "/content/cards/corn/corn-templar-9b89a2d.webp"
+  "image": "/content/cards/corn/corn-templar-9b89a2d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Восстанови 1 урон у Кукурузного тамплиера."
+    }
+  ]
 }

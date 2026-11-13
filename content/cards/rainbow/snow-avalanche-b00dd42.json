@@ -14,5 +14,22 @@
   "landType": "rainbow",
   "id": "snow-avalanche-b00dd42",
   "kind": "card",
-  "image": "/content/cards/rainbow/snow-avalanche-b00dd42.webp"
+  "image": "/content/cards/rainbow/snow-avalanche-b00dd42.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 2,
+        "filter": {
+          "zoneToken": true
+        }
+      },
+      "text": "Нанеси 2 урона каждому существу противника на земле с Ледяными фишками."
+    }
+  ]
 }

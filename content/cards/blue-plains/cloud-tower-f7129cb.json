@@ -14,5 +14,39 @@
   "landType": "blue",
   "id": "cloud-tower-f7129cb",
   "kind": "card",
-  "image": "/content/cards/blue-plains/cloud-tower-f7129cb.webp"
+  "image": "/content/cards/blue-plains/cloud-tower-f7129cb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "spells": true,
+        "creatureAbilities": true
+      },
+      "text": "Твоё существо на этой земле не может стать целью заклинаний или способностей существ противника."
+    },
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "this_lane_land"
+        },
+        "side": "own"
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "ПРИЕМ >>> Перемести существо под твоим контролем на эту землю."
+    }
+  ]
 }

@@ -14,5 +14,27 @@
   "landType": "nice",
   "id": "koala-milashka-8e625c8",
   "kind": "card",
-  "image": "/content/cards/nice/koala-milashka-8e625c8.webp"
+  "image": "/content/cards/nice/koala-milashka-8e625c8.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_damage_at_least",
+            "amount": 4,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока у Милашки коалы 4 урона и более, она получает +2 ATK."
+    }
+  ]
 }

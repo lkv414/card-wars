@@ -14,5 +14,26 @@
   "sha256": "272c40a33e2ce44f2c46c9bb8312964e1cf03ac4017d033549630078821edb9b",
   "id": "demonolopendara-272c40a",
   "kind": "card",
-  "image": "/content/cards/halloween/demonolopendara-272c40a.webp"
+  "image": "/content/cards/halloween/demonolopendara-272c40a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "counts_as",
+        "target": {
+          "kind": "this_creature"
+        },
+        "landType": "ghost"
+      },
+      "text": "Считается призрачным (и милым) существом одновременно."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "optional": true,
+      "oncePerGame": true,
+      "mechanic": "cat_lives",
+      "text": "Кошачьи жизни: после уничтожения может быть воскрешен с полными жизнями (только 1 раз, по желанию). После этого нельзя вернуть из сброса."
+    }
+  ]
 }

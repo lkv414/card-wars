@@ -9,5 +9,6 @@
   "sha256": "3613a3a902fc7bdaa2b723aa8161665f1afa06eefdd30a14c0c04746a458af76",
   "id": "hunson-abadeer-3613a3a",
   "kind": "hero",
-  "image": "/content/heroes/hunson-abadeer-3613a3a.webp"
+  "image": "/content/heroes/hunson-abadeer-3613a3a.webp",
+  "ability": null
 }

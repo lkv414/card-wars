@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "sky-fortress-b05a010",
   "kind": "card",
-  "image": "/content/cards/rainbow/sky-fortress-b05a010.webp"
+  "image": "/content/cards/rainbow/sky-fortress-b05a010.webp",
+  "abilities": []
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flamingo-flamethrower-f6c9c8b",
   "kind": "card",
-  "image": "/content/cards/lava/flamingo-flamethrower-f6c9c8b.webp"
+  "image": "/content/cards/lava/flamingo-flamethrower-f6c9c8b.webp",
+  "abilities": []
 }

@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "fishing-hole-3b01d07",
   "kind": "card",
-  "image": "/content/cards/icy/fishing-hole-3b01d07.webp"
+  "image": "/content/cards/icy/fishing-hole-3b01d07.webp",
+  "abilities": []
 }

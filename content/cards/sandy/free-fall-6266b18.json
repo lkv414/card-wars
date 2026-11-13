@@ -14,5 +14,26 @@
   "landType": "sandy",
   "id": "free-fall-6266b18",
   "kind": "card",
-  "image": "/content/cards/sandy/free-fall-6266b18.webp"
+  "image": "/content/cards/sandy/free-fall-6266b18.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "all",
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Каждое твое существо получаем +1 АТК в этом ходу за каждое существо введённое в игру в этом ходу."
+    }
+  ]
 }

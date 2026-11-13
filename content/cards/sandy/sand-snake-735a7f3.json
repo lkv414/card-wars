@@ -14,5 +14,25 @@
   "landType": "sandy",
   "id": "sand-snake-735a7f3",
   "kind": "card",
-  "image": "/content/cards/sandy/sand-snake-735a7f3.webp"
+  "image": "/content/cards/sandy/sand-snake-735a7f3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 4
+      },
+      "targets": [
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ],
+      "text": "Когда Песчаный змей вступает в игру, нанеси 4 урона выбранному существу противника на этой линии."
+    }
+  ]
 }

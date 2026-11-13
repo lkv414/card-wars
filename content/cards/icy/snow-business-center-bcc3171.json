@@ -14,5 +14,19 @@
   "landType": "icy",
   "id": "snow-business-center-bcc3171",
   "kind": "card",
-  "image": "/content/cards/icy/snow-business-center-bcc3171.webp"
+  "image": "/content/cards/icy/snow-business-center-bcc3171.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Потрать 1 действие >>> Заморозь выбранную землю на этой линии."
+    }
+  ]
 }

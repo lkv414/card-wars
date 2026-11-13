@@ -14,5 +14,18 @@
   "landType": "sandy",
   "id": "overboard-dbee832",
   "kind": "card",
-  "image": "/content/cards/sandy/overboard-dbee832.webp"
+  "image": "/content/cards/sandy/overboard-dbee832.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Верни выбранное существо владельцу в руку. Получи количество действий равных ее стоимости.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "mechanic": "return_cost_actions"
+    }
+  ]
 }

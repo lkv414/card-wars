@@ -14,5 +14,22 @@
   "landType": "swamp",
   "id": "shakedown-jerk-8b07c52",
   "kind": "card",
-  "image": "/content/cards/swamp/shakedown-jerk-8b07c52.webp"
+  "image": "/content/cards/swamp/shakedown-jerk-8b07c52.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "Сбрось карту >>> Нанеси 1 Урон каждому существу противника. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
 }

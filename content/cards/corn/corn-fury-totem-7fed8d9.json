@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "corn-fury-totem-7fed8d9",
   "kind": "card",
-  "image": "/content/cards/corn/corn-fury-totem-7fed8d9.webp"
+  "image": "/content/cards/corn/corn-fury-totem-7fed8d9.webp",
+  "abilities": []
 }

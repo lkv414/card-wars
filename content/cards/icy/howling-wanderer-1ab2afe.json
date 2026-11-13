@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "howling-wanderer-1ab2afe",
   "kind": "card",
-  "image": "/content/cards/icy/howling-wanderer-1ab2afe.webp"
+  "image": "/content/cards/icy/howling-wanderer-1ab2afe.webp",
+  "abilities": []
 }

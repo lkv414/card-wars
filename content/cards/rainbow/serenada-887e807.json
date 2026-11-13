@@ -14,5 +14,33 @@
   "sha256": "887e8076df34f6716b05880adaa9a379dd3ab0f65db279830edac735f8070d85",
   "id": "serenada-887e807",
   "kind": "card",
-  "image": "/content/cards/rainbow/serenada-887e807.webp"
+  "image": "/content/cards/rainbow/serenada-887e807.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "cards_drawn",
+          "scope": "own",
+          "amount": 1,
+          "every": 2
+        },
+        "duration": "this_turn"
+      },
+      "text": "Выбранное существо получает +1 ATK за каждые 2 вытянутые тобой карты в этом ходу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
 }

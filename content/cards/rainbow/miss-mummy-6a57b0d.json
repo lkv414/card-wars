@@ -14,5 +14,22 @@
   "landType": "rainbow",
   "id": "miss-mummy-6a57b0d",
   "kind": "card",
-  "image": "/content/cards/rainbow/miss-mummy-6a57b0d.webp"
+  "image": "/content/cards/rainbow/miss-mummy-6a57b0d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "mechanic": "bounce_self_and_buff_sand_creature",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "landType": "sand"
+          }
+        }
+      ],
+      "text": "В начале своего хода можешь вернуть Мисс Муми в руку владельцу. Если сделаешь это, выбранное Песчаное Существо под твоим контролем получает +1 DEF."
+    }
+  ]
 }

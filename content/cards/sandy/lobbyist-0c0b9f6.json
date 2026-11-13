@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "lobbyist-0c0b9f6",
   "kind": "card",
-  "image": "/content/cards/sandy/lobbyist-0c0b9f6.webp"
+  "image": "/content/cards/sandy/lobbyist-0c0b9f6.webp",
+  "abilities": []
 }

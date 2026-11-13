@@ -14,5 +14,22 @@
   "landType": "blue",
   "id": "learn-kung-fu-dc0ea7a",
   "kind": "card",
-  "image": "/content/cards/blue-plains/learn-kung-fu-dc0ea7a.webp"
+  "image": "/content/cards/blue-plains/learn-kung-fu-dc0ea7a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "ready_per_type",
+      "params": {
+        "types": [
+          "corn",
+          "rainbow",
+          "swamp",
+          "blue",
+          "sand"
+        ]
+      },
+      "text": "Подготовь 1 существо каждого типа под своим контролем (Кукуруза, Радуга, Болота, Равнина, Песок)."
+    }
+  ]
 }

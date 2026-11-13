@@ -14,5 +14,16 @@
   "landType": "rainbow",
   "id": "clone-354f48b",
   "kind": "card",
-  "image": "/content/cards/rainbow/clone-354f48b.webp"
+  "image": "/content/cards/rainbow/clone-354f48b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "arm_free_play",
+      "params": {
+        "nameRequired": true
+      },
+      "text": "Сыграй свое следующее существо или строение бесплатно, если существо или строение с таким же именем уже в игре."
+    }
+  ]
 }

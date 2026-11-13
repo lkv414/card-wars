@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "molten-potion-692f118",
   "kind": "card",
-  "image": "/content/cards/lava/molten-potion-692f118.webp"
+  "image": "/content/cards/lava/molten-potion-692f118.webp",
+  "abilities": []
 }

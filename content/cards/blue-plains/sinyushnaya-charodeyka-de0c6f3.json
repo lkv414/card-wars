@@ -14,5 +14,29 @@
   "landType": "blue",
   "id": "sinyushnaya-charodeyka-de0c6f3",
   "kind": "card",
-  "image": "/content/cards/blue-plains/sinyushnaya-charodeyka-de0c6f3.webp"
+  "image": "/content/cards/blue-plains/sinyushnaya-charodeyka-de0c6f3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "actives": true
+      },
+      "text": "Существа на этой линии не могут использовать Приемы."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "actives": true
+      },
+      "text": "Существа на этой линии не могут использовать Приемы."
+    }
+  ]
 }

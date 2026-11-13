@@ -14,5 +14,22 @@
   "landType": "blue",
   "id": "passing-wisdom-fbcb84f",
   "kind": "card",
-  "image": "/content/cards/blue-plains/passing-wisdom-fbcb84f.webp"
+  "image": "/content/cards/blue-plains/passing-wisdom-fbcb84f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "peek_reorder",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "params": {
+        "count": 4,
+        "draw": 1
+      },
+      "text": "Посмотри 4 верхние карты в колоде выбранного игрока и верни их обратно в любом порядке. Затем тяни карту."
+    }
+  ]
 }

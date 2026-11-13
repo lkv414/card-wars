@@ -14,5 +14,16 @@
   "landType": "blue",
   "id": "chronomancer-aa39098",
   "kind": "card",
-  "image": "/content/cards/blue-plains/chronomancer-aa39098.webp"
+  "image": "/content/cards/blue-plains/chronomancer-aa39098.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_line_change",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "Каждый раз когда Хрономансер меняет линию, получи 1 действие."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "blinding-flash-791204c",
   "kind": "card",
-  "image": "/content/cards/lava/blinding-flash-791204c.webp"
+  "image": "/content/cards/lava/blinding-flash-791204c.webp",
+  "abilities": []
 }

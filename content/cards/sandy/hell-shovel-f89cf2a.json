@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "hell-shovel-f89cf2a",
   "kind": "card",
-  "image": "/content/cards/sandy/hell-shovel-f89cf2a.webp"
+  "image": "/content/cards/sandy/hell-shovel-f89cf2a.webp",
+  "abilities": []
 }

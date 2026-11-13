@@ -14,5 +14,28 @@
   "landType": "blue",
   "id": "mind-architect-23d8d2e",
   "kind": "card",
-  "image": "/content/cards/blue-plains/mind-architect-23d8d2e.webp"
+  "image": "/content/cards/blue-plains/mind-architect-23d8d2e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "unflip",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Когда Архитектор разума вступает в игру, можешь повернуть примененное существо под своим контролем.",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "flipped": true
+          }
+        }
+      ],
+      "optional": true
+    }
+  ]
 }

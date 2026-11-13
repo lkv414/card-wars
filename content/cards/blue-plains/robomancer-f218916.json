@@ -14,5 +14,25 @@
   "landType": "blue",
   "id": "robomancer-f218916",
   "kind": "card",
-  "image": "/content/cards/blue-plains/robomancer-f218916.webp"
+  "image": "/content/cards/blue-plains/robomancer-f218916.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "line_change",
+          "scope": "own",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждое существо, сменившее линию во время твоего хода."
+    }
+  ]
 }

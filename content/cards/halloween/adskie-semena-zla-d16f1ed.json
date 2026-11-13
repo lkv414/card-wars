@@ -14,5 +14,21 @@
   "sha256": "d16f1ed70aeda1ed7873f2ace67eae90ab72c4a50d07d3cc42fb45c3bee1421c",
   "id": "adskie-semena-zla-d16f1ed",
   "kind": "card",
-  "image": "/content/cards/halloween/adskie-semena-zla-d16f1ed.webp"
+  "image": "/content/cards/halloween/adskie-semena-zla-d16f1ed.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_moved_this_turn"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК."
+    }
+  ]
 }

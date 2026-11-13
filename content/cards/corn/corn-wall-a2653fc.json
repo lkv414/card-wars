@@ -14,5 +14,25 @@
   "landType": "corn",
   "id": "corn-wall-a2653fc",
   "kind": "card",
-  "image": "/content/cards/corn/corn-wall-a2653fc.webp"
+  "image": "/content/cards/corn/corn-wall-a2653fc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "amount": 1,
+          "landType": "corn"
+        },
+        "duration": "aura"
+      },
+      "text": "+1 DEF за каждое Кукурузное поле в игре (у всех игроков)."
+    }
+  ]
 }

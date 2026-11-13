@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "spell-storm-d1e0bf7",
   "kind": "card",
-  "image": "/content/cards/sandy/spell-storm-d1e0bf7.webp"
+  "image": "/content/cards/sandy/spell-storm-d1e0bf7.webp",
+  "abilities": []
 }

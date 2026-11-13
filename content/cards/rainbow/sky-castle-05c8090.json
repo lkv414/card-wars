@@ -14,5 +14,25 @@
   "landType": "rainbow",
   "id": "sky-castle-05c8090",
   "kind": "card",
-  "image": "/content/cards/rainbow/sky-castle-05c8090.webp"
+  "image": "/content/cards/rainbow/sky-castle-05c8090.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_lives_even"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "target": {
+          "kind": "this_lane_own_creature"
+        }
+      },
+      "text": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK."
+    }
+  ]
 }

@@ -14,5 +14,18 @@
   "landType": "lava",
   "id": "blacksmith-7fbf96a",
   "kind": "card",
-  "image": "/content/cards/lava/blacksmith-7fbf96a.webp"
+  "image": "/content/cards/lava/blacksmith-7fbf96a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "defense_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "atkBonus": 1
+      },
+      "text": "+1 АТК против милых и кукурузных существ. Если Карга убивает существо, твой противник получает урон, равный его стоимости."
+    }
+  ]
 }

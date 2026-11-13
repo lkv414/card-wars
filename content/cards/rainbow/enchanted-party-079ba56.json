@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "enchanted-party-079ba56",
   "kind": "card",
-  "image": "/content/cards/rainbow/enchanted-party-079ba56.webp"
+  "image": "/content/cards/rainbow/enchanted-party-079ba56.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "move_creature_and_pass_card",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Выбери существо и перемести на соседнюю землю под контролем его владельца. Как сделал это можешь отдать карту партнеру в руку."
+    }
+  ]
 }

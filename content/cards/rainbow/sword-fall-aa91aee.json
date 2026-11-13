@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "sword-fall-aa91aee",
   "kind": "card",
-  "image": "/content/cards/rainbow/sword-fall-aa91aee.webp"
+  "image": "/content/cards/rainbow/sword-fall-aa91aee.webp",
+  "abilities": []
 }

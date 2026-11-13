@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "wizard-tower-a30e859",
   "kind": "card",
-  "image": "/content/cards/sandy/wizard-tower-a30e859.webp"
+  "image": "/content/cards/sandy/wizard-tower-a30e859.webp",
+  "abilities": []
 }

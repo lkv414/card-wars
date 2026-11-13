@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "swamp-boa-5baecb5",
   "kind": "card",
-  "image": "/content/cards/swamp/swamp-boa-5baecb5.webp"
+  "image": "/content/cards/swamp/swamp-boa-5baecb5.webp",
+  "abilities": []
 }

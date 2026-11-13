@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "duet-4ad6ab2",
   "kind": "card",
-  "image": "/content/cards/rainbow/duet-4ad6ab2.webp"
+  "image": "/content/cards/rainbow/duet-4ad6ab2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "duet_heal_own_and_other",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем."
+    }
+  ]
 }

@@ -14,5 +14,17 @@
   "landType": "nice",
   "id": "culling-ec84375",
   "kind": "card",
-  "image": "/content/cards/nice/culling-ec84375.webp"
+  "image": "/content/cards/nice/culling-ec84375.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "reset_and_refill",
+      "params": {
+        "draw": 5,
+        "actions": 3
+      },
+      "text": "Ты сбрасываешь всех существ из игры и все карты с руки. Затем тяни 5 карт. У тебя есть 3 действия, чтобы сыграть существ."
+    }
+  ]
 }

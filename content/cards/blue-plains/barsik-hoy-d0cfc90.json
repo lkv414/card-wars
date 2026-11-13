@@ -14,5 +14,20 @@
   "landType": "blue",
   "id": "barsik-hoy-d0cfc90",
   "kind": "card",
-  "image": "/content/cards/blue-plains/barsik-hoy-d0cfc90.webp"
+  "image": "/content/cards/blue-plains/barsik-hoy-d0cfc90.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_moved_this_turn"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Каждое существо, сменившее линию в этом ходу, получает +2 АТК в этом ходу."
+    }
+  ]
 }

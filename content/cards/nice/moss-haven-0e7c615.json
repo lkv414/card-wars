@@ -14,5 +14,12 @@
   "landType": "nice",
   "id": "moss-haven-0e7c615",
   "kind": "card",
-  "image": "/content/cards/nice/moss-haven-0e7c615.webp"
+  "image": "/content/cards/nice/moss-haven-0e7c615.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "cotton_fort_lane_buff",
+      "text": "Хлопковые существа на этой линии под твоим контролем получают +1 ATK и +1 DEF."
+    }
+  ]
 }

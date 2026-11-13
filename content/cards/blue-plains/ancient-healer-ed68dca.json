@@ -14,5 +14,7 @@
   "landType": "blue",
   "id": "ancient-healer-ed68dca",
   "kind": "card",
-  "image": "/content/cards/blue-plains/ancient-healer-ed68dca.webp"
+  "image": "/content/cards/blue-plains/ancient-healer-ed68dca.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

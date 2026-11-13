@@ -14,5 +14,33 @@
   "landType": "rainbow",
   "id": "black-hole-necklace-71216c4",
   "kind": "card",
-  "image": "/content/cards/rainbow/black-hole-necklace-71216c4.webp"
+  "image": "/content/cards/rainbow/black-hole-necklace-71216c4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "stat": "attack",
+          "amount": -5,
+          "duration": "this_turn"
+        },
+        {
+          "op": "draw_cards",
+          "count": 1
+        }
+      ],
+      "text": "Выбранное существо под твоим контролем получет -5 АТК в этом ходу. Тяни карту.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
 }

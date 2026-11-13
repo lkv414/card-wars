@@ -9,5 +9,6 @@
   "sha256": "5e5c61066957c0216a41508fba0c73c5a177338c511987f674f1acdba1e05453",
   "id": "party-god-5e5c610",
   "kind": "hero",
-  "image": "/content/heroes/party-god-5e5c610.webp"
+  "image": "/content/heroes/party-god-5e5c610.webp",
+  "ability": null
 }

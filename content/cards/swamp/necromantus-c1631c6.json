@@ -14,5 +14,19 @@
   "landType": "swamp",
   "id": "necromantus-c1631c6",
   "kind": "card",
-  "image": "/content/cards/swamp/necromantus-c1631c6.webp"
+  "image": "/content/cards/swamp/necromantus-c1631c6.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "type": "creature"
+        },
+        "random": true
+      },
+      "text": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в руку."
+    }
+  ]
 }

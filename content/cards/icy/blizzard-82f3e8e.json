@@ -14,5 +14,6 @@
   "landType": "icy",
   "id": "blizzard-82f3e8e",
   "kind": "card",
-  "image": "/content/cards/icy/blizzard-82f3e8e.webp"
+  "image": "/content/cards/icy/blizzard-82f3e8e.webp",
+  "abilities": []
 }

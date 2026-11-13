@@ -14,5 +14,18 @@
   "landType": "nice",
   "id": "bandaid-pentagon-e17e8f6",
   "kind": "card",
-  "image": "/content/cards/nice/bandaid-pentagon-e17e8f6.webp"
+  "image": "/content/cards/nice/bandaid-pentagon-e17e8f6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "pentaplaster_heal_five_exact",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Восстанови ровно 5 урона с существа под твоим контролем (ни больше, ни меньше)."
+    }
+  ]
 }

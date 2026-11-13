@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "lava-lamp-eels-3a2eb11",
   "kind": "card",
-  "image": "/content/cards/lava/lava-lamp-eels-3a2eb11.webp"
+  "image": "/content/cards/lava/lava-lamp-eels-3a2eb11.webp",
+  "abilities": []
 }

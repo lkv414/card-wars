@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "general-mode-forge-d44a616",
   "kind": "card",
-  "image": "/content/cards/lava/general-mode-forge-d44a616.webp"
+  "image": "/content/cards/lava/general-mode-forge-d44a616.webp",
+  "abilities": []
 }

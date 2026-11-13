@@ -14,5 +14,7 @@
   "landType": "rainbow",
   "id": "rhino-100a206",
   "kind": "card",
-  "image": "/content/cards/rainbow/rhino-100a206.webp"
+  "image": "/content/cards/rainbow/rhino-100a206.webp",
+  "abilities": [],
+  "flavorOnly": true
 }

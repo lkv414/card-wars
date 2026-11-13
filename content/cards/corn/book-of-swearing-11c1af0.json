@@ -14,5 +14,6 @@
   "landType": "corn",
   "id": "book-of-swearing-11c1af0",
   "kind": "card",
-  "image": "/content/cards/corn/book-of-swearing-11c1af0.webp"
+  "image": "/content/cards/corn/book-of-swearing-11c1af0.webp",
+  "abilities": []
 }

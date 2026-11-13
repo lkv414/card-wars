@@ -14,5 +14,6 @@
   "landType": "rainbow",
   "id": "holy-scythe-80e28ad",
   "kind": "card",
-  "image": "/content/cards/rainbow/holy-scythe-80e28ad.webp"
+  "image": "/content/cards/rainbow/holy-scythe-80e28ad.webp",
+  "abilities": []
 }

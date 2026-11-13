@@ -14,5 +14,21 @@
   "landType": "rainbow",
   "id": "vampire-lord-40d3d9f",
   "kind": "card",
-  "image": "/content/cards/rainbow/vampire-lord-40d3d9f.webp"
+  "image": "/content/cards/rainbow/vampire-lord-40d3d9f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": {
+          "kind": "payload_damage"
+        }
+      },
+      "text": "Когда Лорд Вампиров наносит урон, он восстанавливает то же количество урона у себя."
+    }
+  ]
 }

@@ -14,5 +14,24 @@
   "landType": "corn",
   "id": "corn-amulet-ba2f44a",
   "kind": "card",
-  "image": "/content/cards/corn/corn-amulet-ba2f44a.webp"
+  "image": "/content/cards/corn/corn-amulet-ba2f44a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn",
+        "filter": {
+          "zoneLandType": "swamp"
+        }
+      },
+      "text": "Каждое твое существо на бесполезных болотах получает +2 ATK в этом ход."
+    }
+  ]
 }

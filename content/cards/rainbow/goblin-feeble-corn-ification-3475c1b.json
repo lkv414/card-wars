@@ -14,5 +14,18 @@
   "landType": "rainbow",
   "id": "goblin-feeble-corn-ification-3475c1b",
   "kind": "card",
-  "image": "/content/cards/rainbow/goblin-feeble-corn-ification-3475c1b.webp"
+  "image": "/content/cards/rainbow/goblin-feeble-corn-ification-3475c1b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "mechanic": "arm_damage_echo",
+      "text": "Если выбранное существо под твоим контролем наносит 1+ урона в этот ход, нанеси 2 урона этому же противнику."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "swamp",
   "id": "sludge-of-liberty-1ebc4b2",
   "kind": "card",
-  "image": "/content/cards/swamp/sludge-of-liberty-1ebc4b2.webp"
+  "image": "/content/cards/swamp/sludge-of-liberty-1ebc4b2.webp",
+  "abilities": []
 }

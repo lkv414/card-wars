@@ -14,5 +14,29 @@
   "landType": "blue",
   "id": "psychic-cutthroat-7cf4efc",
   "kind": "card",
-  "image": "/content/cards/blue-plains/psychic-cutthroat-7cf4efc.webp"
+  "image": "/content/cards/blue-plains/psychic-cutthroat-7cf4efc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "optional": true,
+      "text": "Когда Пси-фехтовальщик вступает в игру, можешь нанести 3 Урона выбранному примененному существу.",
+      "targets": [
+        {
+          "kind": "any_creature",
+          "filter": {
+            "flipped": true
+          }
+        }
+      ]
+    }
+  ]
 }

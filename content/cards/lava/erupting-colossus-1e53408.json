@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "erupting-colossus-1e53408",
   "kind": "card",
-  "image": "/content/cards/lava/erupting-colossus-1e53408.webp"
+  "image": "/content/cards/lava/erupting-colossus-1e53408.webp",
+  "abilities": []
 }

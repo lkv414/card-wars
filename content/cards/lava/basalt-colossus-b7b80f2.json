@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "basalt-colossus-b7b80f2",
   "kind": "card",
-  "image": "/content/cards/lava/basalt-colossus-b7b80f2.webp"
+  "image": "/content/cards/lava/basalt-colossus-b7b80f2.webp",
+  "abilities": []
 }

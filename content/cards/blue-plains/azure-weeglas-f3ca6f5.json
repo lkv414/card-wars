@@ -14,5 +14,24 @@
   "landType": "blue",
   "id": "azure-weeglas-f3ca6f5",
   "kind": "card",
-  "image": "/content/cards/blue-plains/azure-weeglas-f3ca6f5.webp"
+  "image": "/content/cards/blue-plains/azure-weeglas-f3ca6f5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "conditions": [
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "payload_killer"
+        },
+        "amount": 1
+      },
+      "text": "Перед смертью больно бросает косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа)."
+    }
+  ]
 }

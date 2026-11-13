@@ -14,5 +14,28 @@
   "landType": "sandy",
   "id": "cooper-187002f",
   "kind": "card",
-  "image": "/content/cards/sandy/cooper-187002f.webp"
+  "image": "/content/cards/sandy/cooper-187002f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "team_companion_cost"
+        },
+        "duration": "permanent"
+      },
+      "text": "ПРИЕМ >>> Выбранное существо получает +ATK, равный стоимости всех карт партнерства под контролем твоей команды."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "flamingo-ash-keeper-fee8d6d",
   "kind": "card",
-  "image": "/content/cards/lava/flamingo-ash-keeper-fee8d6d.webp"
+  "image": "/content/cards/lava/flamingo-ash-keeper-fee8d6d.webp",
+  "abilities": []
 }

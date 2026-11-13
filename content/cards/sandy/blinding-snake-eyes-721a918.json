@@ -14,5 +14,6 @@
   "landType": "sandy",
   "id": "blinding-snake-eyes-721a918",
   "kind": "card",
-  "image": "/content/cards/sandy/blinding-snake-eyes-721a918.webp"
+  "image": "/content/cards/sandy/blinding-snake-eyes-721a918.webp",
+  "abilities": []
 }

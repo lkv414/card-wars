@@ -14,5 +14,30 @@
   "landType": "blue",
   "id": "duplicrow-10c4038",
   "kind": "card",
-  "image": "/content/cards/blue-plains/duplicrow-10c4038.webp"
+  "image": "/content/cards/blue-plains/duplicrow-10c4038.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature"
+          },
+          "amount": 1,
+          "excludeSelf": true,
+          "filter": {
+            "sameCard": true
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "«Добрый вечер!» +1 DEF, если на поле есть ещё один Прячный скелет."
+    }
+  ]
 }

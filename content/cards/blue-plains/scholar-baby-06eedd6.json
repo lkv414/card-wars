@@ -14,5 +14,26 @@
   "landType": "blue",
   "id": "scholar-baby-06eedd6",
   "kind": "card",
-  "image": "/content/cards/blue-plains/scholar-baby-06eedd6.webp"
+  "image": "/content/cards/blue-plains/scholar-baby-06eedd6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_played_land_type",
+          "landType": "rainbow"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Если в этом ходу ты сыграл хотябы одну Радужную карту, Младший школяр получает +3 АТК в этом ходу."
+    }
+  ]
 }

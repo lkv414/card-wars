@@ -14,5 +14,13 @@
   "landType": "rainbow",
   "id": "royal-party-7b72757",
   "kind": "card",
-  "image": "/content/cards/rainbow/royal-party-7b72757.webp"
+  "image": "/content/cards/rainbow/royal-party-7b72757.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "beach_party_reveal_pick_and_pass",
+      "text": "Открой 3 верхние карты своей колоды, вытяни одну, остальные сбрось. Как сделал это можешь вложть Пляжную вечеринку в руку партнера."
+    }
+  ]
 }

@@ -14,5 +14,12 @@
   "landType": "corn",
   "id": "hulking-lumberjack-aad34fb",
   "kind": "card",
-  "image": "/content/cards/corn/hulking-lumberjack-aad34fb.webp"
+  "image": "/content/cards/corn/hulking-lumberjack-aad34fb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "allow_extra_building_on_lane",
+      "text": "Можешь сыграть дополнительное строение на этой земле."
+    }
+  ]
 }

@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "raging-phoenix-dac392a",
   "kind": "card",
-  "image": "/content/cards/lava/raging-phoenix-dac392a.webp"
+  "image": "/content/cards/lava/raging-phoenix-dac392a.webp",
+  "abilities": []
 }

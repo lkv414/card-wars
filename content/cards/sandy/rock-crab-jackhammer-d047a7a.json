@@ -14,5 +14,30 @@
   "landType": "sandy",
   "id": "rock-crab-jackhammer-d047a7a",
   "kind": "card",
-  "image": "/content/cards/sandy/rock-crab-jackhammer-d047a7a.webp"
+  "image": "/content/cards/sandy/rock-crab-jackhammer-d047a7a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "triggering_instance"
+        },
+        "amount": {
+          "kind": "payload_damage",
+          "amount": 1
+        }
+      },
+      "text": "Каждый раз когда Камнекраб получает урон от существа, он наносит столько же урона этому же существу.",
+      "conditions": [
+        {
+          "kind": "if_payload_targeted_self"
+        },
+        {
+          "kind": "if_payload_creature"
+        }
+      ]
+    }
+  ]
 }

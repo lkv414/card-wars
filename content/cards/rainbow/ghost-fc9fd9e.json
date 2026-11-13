@@ -14,5 +14,19 @@
   "landType": "rainbow",
   "id": "ghost-fc9fd9e",
   "kind": "card",
-  "image": "/content/cards/rainbow/ghost-fc9fd9e.webp"
+  "image": "/content/cards/rainbow/ghost-fc9fd9e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "defense_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "landType": "swamp",
+        "atkBonus": 2
+      },
+      "text": "Привидение получает +2 ATK пока защищается от существ на бесполезных болотах."
+    }
+  ]
 }

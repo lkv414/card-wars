@@ -14,5 +14,24 @@
   "landType": "swamp",
   "id": "dark-angel-f7c31f8",
   "kind": "card",
-  "image": "/content/cards/swamp/dark-angel-f7c31f8.webp"
+  "image": "/content/cards/swamp/dark-angel-f7c31f8.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
 }

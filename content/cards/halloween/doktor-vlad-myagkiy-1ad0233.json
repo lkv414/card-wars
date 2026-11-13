@@ -14,5 +14,51 @@
   "sha256": "1ad0233cd75f6670a4ad875a6391f1ee080ad93b3620a1cccce3222dc8a81aa4",
   "id": "doktor-vlad-myagkiy-1ad0233",
   "kind": "card",
-  "image": "/content/cards/halloween/doktor-vlad-myagkiy-1ad0233.webp"
+  "image": "/content/cards/halloween/doktor-vlad-myagkiy-1ad0233.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": [
+            "all",
+            "one"
+          ],
+          "label": "Оглушительный «Кудах!»"
+        }
+      ],
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "each_creature_opponent"
+          },
+          "amount": 1,
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 0,
+              "option": "all"
+            }
+          ]
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "this_lane_opponent_creature"
+          },
+          "amount": 3,
+          "conditions": [
+            {
+              "kind": "if_option",
+              "index": 0,
+              "option": "one"
+            }
+          ]
+        }
+      ],
+      "text": "Приём: Оглушительный «Кудах!». Наносит 1 урон всем существам противника ИЛИ 3 урона существу перед Духом воплекура."
+    }
+  ]
 }

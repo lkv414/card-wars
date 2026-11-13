@@ -14,5 +14,28 @@
   "landType": "nice",
   "id": "gooser-4619504",
   "kind": "card",
-  "image": "/content/cards/nice/gooser-4619504.webp"
+  "image": "/content/cards/nice/gooser-4619504.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "draw_cards",
+          "count": 1
+        },
+        {
+          "op": "draw_cards",
+          "count": 1,
+          "conditions": [
+            {
+              "kind": "while_damage_at_least",
+              "amount": 5,
+              "scope": "self"
+            }
+          ]
+        }
+      ],
+      "text": "ПРИЕМ >>> Тяни карту. Если у Утки-менестреля 5 или более урона, то тяни еще одну."
+    }
+  ]
 }

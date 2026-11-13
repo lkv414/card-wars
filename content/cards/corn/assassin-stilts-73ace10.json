@@ -14,5 +14,18 @@
   "landType": "corn",
   "id": "assassin-stilts-73ace10",
   "kind": "card",
-  "image": "/content/cards/corn/assassin-stilts-73ace10.webp"
+  "image": "/content/cards/corn/assassin-stilts-73ace10.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "bale_out_retreat",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда выбранное существо атакует в этот ход, оно покидает игру перед фазой сражения, сними весь урон с него за это."
+    }
+  ]
 }

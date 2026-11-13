@@ -14,5 +14,6 @@
   "landType": "lava",
   "id": "scorch-f932702",
   "kind": "card",
-  "image": "/content/cards/lava/scorch-f932702.webp"
+  "image": "/content/cards/lava/scorch-f932702.webp",
+  "abilities": []
 }

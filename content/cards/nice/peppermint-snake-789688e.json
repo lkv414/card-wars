@@ -14,5 +14,27 @@
   "landType": "nice",
   "id": "peppermint-snake-789688e",
   "kind": "card",
-  "image": "/content/cards/nice/peppermint-snake-789688e.webp"
+  "image": "/content/cards/nice/peppermint-snake-789688e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": {
+          "kind": "payload_damage"
+        }
+      },
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "text": "Когда Мятный змей наносит урон противнику, можешь восстановить столько же HP (но не более 25)."
+    }
+  ]
 }

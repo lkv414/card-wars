@@ -1,0 +1,15 @@
+{
+  "name": "Робомерзость",
+  "name_en": "ROBO-ABOMINATION",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "Когда робомерзость выходит из игры, выбранный игрок сбрасывает карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d69ff889cc9c822d8de8eb2931bf33f16912d382e7217f299f68888ff6682393",
+  "landType": "swamp"
+}

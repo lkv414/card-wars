@@ -1,0 +1,15 @@
+{
+  "name": "Крушитель",
+  "name_en": "CRUSHER",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "ФЛЮП >>> Выбери название карты.\nУдали из игры все карты с этим\nназванием из сброса выбранного\nигрока.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "ad970d3cc551753c66c86fd7042cb79c93f79fdec9ffbee24b33adfbf69e46c0",
+  "landType": "swamp"
+}

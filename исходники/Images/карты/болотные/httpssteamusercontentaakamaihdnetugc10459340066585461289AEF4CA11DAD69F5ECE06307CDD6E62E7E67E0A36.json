@@ -1,0 +1,15 @@
+{
+  "name": "Красный дьяволёнок",
+  "name_en": "RED DEVIL",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "ФЛЮП >>> Верни карту стоимостью 0\nиз твоего сброса на руку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c44e7ebab6e21ce4a353ac032b78db5fc7456366c6a84992518c4ef6e5464dc2",
+  "landType": "swamp"
+}

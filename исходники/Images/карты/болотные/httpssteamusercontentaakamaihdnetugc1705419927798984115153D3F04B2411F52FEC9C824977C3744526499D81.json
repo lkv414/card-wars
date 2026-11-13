@@ -1,0 +1,15 @@
+{
+  "name": "Болотный ангел-банши",
+  "name_en": "SWAMP ANGEL-BANSHEE",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Потрать 1 действие >>> Перемести весь\nурон с этого существа на выбранное.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "bb7726d24cd8a71327d648afdcbcc4f88b49adeada97f80381495cf53c4bacce",
+  "landType": "swamp"
+}

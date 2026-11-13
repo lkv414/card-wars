@@ -1,0 +1,15 @@
+{
+  "name": "Грязепирожные Зомби",
+  "name_en": "MUDCAKE ZOMBIES",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Когда грязепирожные зомби входят в\nигру, каждый игрок сбрасывает 1 карту,\nзатем берёт 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f458783e76943cbeeb92947c8131d9cb7c4368394c1ea8e8099c877736c67231",
+  "landType": "swamp"
+}

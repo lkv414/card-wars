@@ -1,0 +1,15 @@
+{
+  "name": "Чёрный паладин",
+  "name_en": "BLACK PALADIN",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "+1 к атаке за каждую сброшенную карту всеми игроками (включая тебя) в этом ходу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "0cd4585218b89b7dab621c59f67a3c052ee72bef37d0464f90c22c31368bc063",
+  "landType": "swamp"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Ветхий посох",
+  "name_en": "DILAPIDATED STAFF",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Добавь урон выбранному существу,\nпока у него не останется 1 защита.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "a573470fe33d078dff20938a197a05f1322144c9b7c26fb106122c2a36694d15",
+  "landType": "swamp"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Принцесса банши",
+  "name_en": "BANSHEE PRINCESS",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Когда принцесса банши входит в игру,\nможешь сбросить любой жетон\nс соседней земли.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "a675298ef5190a2234809dc520bddde48125b5b1f190bdb605f5950057380efc",
+  "landType": "swamp"
+}

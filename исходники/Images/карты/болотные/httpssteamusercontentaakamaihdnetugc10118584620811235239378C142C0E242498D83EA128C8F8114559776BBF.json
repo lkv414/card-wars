@@ -1,0 +1,15 @@
+{
+  "name": "Моноциклоп",
+  "name_en": "MONOCYCLOPS",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 10,
+  "description": "В начале твоего хода каждый игрок берет 1 карту, а затем сбрасывает 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "180f1fafe01ff61fd69733bf3ae3705f5e9cd61b915c5eebb0c76d2619a151e4",
+  "landType": "swamp"
+}

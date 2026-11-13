@@ -1,0 +1,15 @@
+{
+  "name": "Королева банши",
+  "name_en": "BANSHEE QUEEN",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 9,
+  "description": "Когда королева банши входит в игру,\nможешь сбросить любой жетон\nс соседней земли.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "25774db86ced0f7fbb888ce4a957f1f3eca15211162b9e5ad8f27414df2160db",
+  "landType": "swamp"
+}

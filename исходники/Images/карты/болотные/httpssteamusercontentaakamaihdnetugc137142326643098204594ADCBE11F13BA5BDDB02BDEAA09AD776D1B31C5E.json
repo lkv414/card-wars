@@ -1,0 +1,15 @@
+{
+  "name": "Поглощение эфира",
+  "name_en": "ETHER DRAIN",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 3 урона существу и ты восстанавливаешь 3 жизни. Повтори этот эффект за каждого игрока с не больше 1 картой на руке.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "981660ff5b271e2d1ac455fe4e28ec44f96b2860c29f0870bfa91e96d85b3669",
+  "landType": "swamp"
+}

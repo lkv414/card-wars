@@ -1,0 +1,15 @@
+{
+  "name": "ДиректоКрок",
+  "name_en": "Principaligator",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 7,
+  "description": "Существо под контролем соперника\nв этой зоне получает -1 к защите\nза каждые 5 карт в твоём сбросе.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "9973cdd858d2930f77a9d26b969a33d5a1c2e28450bef2c4471c923c8981e4e9",
+  "landType": "swamp"
+}

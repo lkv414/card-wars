@@ -1,0 +1,15 @@
+{
+  "name": "Гряземёт",
+  "name_en": "MUD CATAPULT",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Каждый раз, когда соперник сбрасывает карту, положи на гряземёт Ⓐ.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4973275e61f8b4a2c5dd6bac8f1fe5a177889e6c3ba635f0f04f766ae10c3b4f",
+  "landType": "swamp"
+}

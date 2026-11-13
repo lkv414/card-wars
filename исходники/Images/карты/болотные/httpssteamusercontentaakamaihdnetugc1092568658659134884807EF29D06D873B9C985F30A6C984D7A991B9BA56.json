@@ -1,0 +1,15 @@
+{
+  "name": "Мариновщик",
+  "name_en": "PICKLER",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Уничтожь мариновщика >>> Нанеси\n3 урона выбранному существу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "783ab2c21569a0db1df67a552597df7cba639b516cd293dc714e2fdf922b117c",
+  "landType": "swamp"
+}

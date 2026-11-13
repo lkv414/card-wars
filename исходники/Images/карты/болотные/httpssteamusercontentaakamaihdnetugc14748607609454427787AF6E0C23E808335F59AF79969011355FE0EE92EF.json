@@ -1,0 +1,15 @@
+{
+  "name": "Ведьмак",
+  "name_en": "WITCH",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 2,
+  "description": "Каждый раз, когда соперник сбрасывает карту, наноси ему 1 урон.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "562e6aa29c8d890a7631dee6f5278566fdcd217fe809f328d4324c7d53741834",
+  "landType": "swamp"
+}

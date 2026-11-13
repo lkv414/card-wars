@@ -1,0 +1,15 @@
+{
+  "name": "Костяной дворец",
+  "name_en": "BONE PALACE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "У существ под контролем соперника в этой зоне не действуют способности на вход в игру и выход из игры.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dc7f2a632738cedf58a6544f46677494d80c53f3eed06b548f0ea6a882f4996e",
+  "landType": "swamp"
+}

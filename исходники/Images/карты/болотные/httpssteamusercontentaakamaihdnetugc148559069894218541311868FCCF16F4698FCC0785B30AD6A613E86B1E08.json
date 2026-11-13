@@ -1,0 +1,15 @@
+{
+  "name": "Нотная тетрадь смерти",
+  "name_en": "Death Note",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранный соперник сбрасывает 1 карту\nс руки за каждые 5 карт в твоем сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7171665cd67a6d3b19d3a11bef09179086aabb1cc807cc1f00049d17e0584d4c",
+  "landType": "swamp"
+}

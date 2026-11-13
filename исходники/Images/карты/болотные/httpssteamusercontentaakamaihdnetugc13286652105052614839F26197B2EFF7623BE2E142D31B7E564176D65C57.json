@@ -1,0 +1,15 @@
+{
+  "name": "Дворец трясины",
+  "name_en": "Muck Palace",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает +3 к атаке. В начале своего хода сбрось 1 карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "dcf23043bbfa3bee51680f3f5cbf6e61ea90ce5ba125210d81d946d33e81ec3b",
+  "landType": "swamp"
+}

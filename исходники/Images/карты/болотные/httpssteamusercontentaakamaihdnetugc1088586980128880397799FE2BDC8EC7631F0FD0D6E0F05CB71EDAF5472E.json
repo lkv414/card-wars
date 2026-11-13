@@ -1,0 +1,15 @@
+{
+  "name": "Фонтан болота",
+  "name_en": "SWAMP FOUNTAIN",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось карту >>> Твоё существо в этой зоне получает +1 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "0e51cbb5466204b7b6e9dda87af974ae993379f4f7f930feac3954348b814116",
+  "landType": "swamp"
+}

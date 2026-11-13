@@ -1,0 +1,15 @@
+{
+  "name": "Тлеющий старина",
+  "name_en": "SMOLDERING OLDIE",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Когда тлеющий старина входит в игру, каждый игрок сбрасывает 2 карты.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "9d78c467edd25a2d776861ba6748c61f4a22300258538441d9c21ae25bc26ff8",
+  "landType": "swamp"
+}

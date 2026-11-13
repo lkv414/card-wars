@@ -1,0 +1,15 @@
+{
+  "name": "Утилетопическая свалка",
+  "name_en": "UTOPIC JUNK YARD",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Первый раз за ход, когда другой игрок сбрасывает карту с руки, положи 1 на дружественное существо в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a140cdd427a70ed7e4611f4492ffca0c872b417a2923666ec6c2716a7dd9145e",
+  "landType": "swamp"
+}

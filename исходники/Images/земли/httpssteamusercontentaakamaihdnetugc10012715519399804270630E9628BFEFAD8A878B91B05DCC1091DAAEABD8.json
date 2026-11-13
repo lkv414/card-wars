@@ -1,0 +1,11 @@
+{
+  "name": "Лавовые земли",
+  "name_en": "Lava Lands",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "lava",
+  "description": "",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1b34cd3de96eb7aa2aae7d848a6c507c482a420b2ae4332983d2dca53dee5b92"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Ледяные земли",
+  "name_en": "Icy Lands",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "icy",
+  "description": "",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "780036ad43f7b8b521aa0010b33d73073d088e530f86e3867157219305c7d63e"
+}

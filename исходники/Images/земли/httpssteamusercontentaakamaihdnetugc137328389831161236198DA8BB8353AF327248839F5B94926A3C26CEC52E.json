@@ -1,0 +1,11 @@
+{
+  "name": "Синие равнины",
+  "name_en": "Blue Plains",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "blue",
+  "description": "",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "3492f70b95fa03a1f206902f9d8eb256cf7899fffe738c30463d18d4508f25c4"
+}

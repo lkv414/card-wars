@@ -1,0 +1,10 @@
+{
+  "name": "Рекардо",
+  "name_en": "Ricardio",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Когда тебе наносят смертельный урон,\nты получаешь 10 здоровья.\nИспользуй только 1 раз за игру.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ab40f25b62f23c2597b14e88de39ad0d444e87ac459eefa9b9fa2218a8d9893b"
+}

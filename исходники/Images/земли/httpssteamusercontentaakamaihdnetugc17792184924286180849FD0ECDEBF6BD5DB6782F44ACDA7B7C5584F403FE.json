@@ -1,0 +1,11 @@
+{
+  "name": "Милые земли",
+  "name_en": "Nice Lands",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "nice",
+  "description": "",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "1ea01c4ab4abf7a19f912ad6dd737b905fc0b945c3340ad4b946c9eed45b6478"
+}

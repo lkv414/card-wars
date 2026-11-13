@@ -1,0 +1,11 @@
+{
+  "name": "Кукурузное поле",
+  "name_en": "Cornfield",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "corn",
+  "description": "",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "6bb998707b9d7962b1b1bfc0251b7777ce6d1d3d1997a6002dd6de5c8ca65536"
+}

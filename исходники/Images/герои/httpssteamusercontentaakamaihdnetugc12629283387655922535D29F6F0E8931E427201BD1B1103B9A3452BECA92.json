@@ -1,0 +1,10 @@
+{
+  "name": "Джейк",
+  "name_en": "Jake",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Существа под твоим контролем получают +2 к атаке на перевёрнутых землях.",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "e93a01c7909d4dc3dbbf00b952f81ace2903d9af40b94cd4e1e16b11d0ae1c99"
+}

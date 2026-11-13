@@ -1,0 +1,10 @@
+{
+  "name": "Мятный Батлер",
+  "name_en": "Peppermint Butler",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, если у тебя на руке\nне больше 1 карты, можешь нанести\n2 урона выбранному существу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "48aae031ed927dc2b3e19cbc170ecd03119537c94153f131dcc0b7521d07a3bf"
+}

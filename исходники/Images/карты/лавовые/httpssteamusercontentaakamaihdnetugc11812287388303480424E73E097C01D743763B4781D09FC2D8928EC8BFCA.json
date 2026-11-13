@@ -1,0 +1,15 @@
+{
+  "name": "Тектоническая тихоходка",
+  "name_en": "TECTONIC TARDIGRADE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Если ты разыграл 2 или более не лавовых\nкарт, Тектоническая тихоходка не\nполучает урона от существ под\nконтролем соперника в этот ход.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9bc4de4a5bb8d5300c849ac63eed402ec7c85ddfaa1af5cd007f05801135da8e",
+  "landType": "lava"
+}

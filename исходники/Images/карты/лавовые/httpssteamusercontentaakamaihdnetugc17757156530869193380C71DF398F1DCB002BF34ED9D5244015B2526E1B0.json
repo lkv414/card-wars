@@ -1,0 +1,15 @@
+{
+  "name": "Огнеминго\nхранитель огня",
+  "name_en": "FLAMINGO FIRE KEEPER",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Убери жетон ожога с существа под\nконтролем соперника >>> Нанеси\n1 урон выбранному сопернику.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2563c9203c9918a9d88c2e5dc1a70e00ea860ebf388a7fa6ffc6da706ffb476d",
+  "landType": "lava"
+}

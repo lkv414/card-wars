@@ -1,0 +1,15 @@
+{
+  "name": "Лаволамповые угри",
+  "name_en": "LAVA LAMP EELS",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Сбрось карту >>>\nПодожги выбранное существо.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3a2eb1175570813232ba7abd22043726c6222a48c725b43e4154aa7b7197d80e",
+  "landType": "lava"
+}

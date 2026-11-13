@@ -1,0 +1,15 @@
+{
+  "name": "Расплавленное зелье",
+  "name_en": "MOLTEN POTION",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги выбранное существо.\nНанеси 2 урона каждому горящему\nсуществу под контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "692f1184bbfd79561ac15638faf54d301ed681da4589ae24140236f52508d973",
+  "landType": "lava"
+}

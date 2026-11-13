@@ -1,0 +1,15 @@
+{
+  "name": "Страж жерлоба",
+  "name_en": "VENT GUARD",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 1,
+  "description": "Когда страж жерлоба выходит из игры, нанеси 3 урона существу под контролем соперника.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "b4e806a1bb3647e845ddd4bf5dc061a1a993ed6b2c481de5e26215468fd831fe",
+  "landType": "lava"
+}

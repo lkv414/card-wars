@@ -1,0 +1,15 @@
+{
+  "name": "Пугашка",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "landType": "nice",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 6,
+  "description": "ФЛЮП >>> Нанеси 1 урон сопернику.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fcc31097f27a2f419747ac84ecbb42a74ed0345ab6cdd03c9a21149b96d94d9e"
+}

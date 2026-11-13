@@ -1,0 +1,15 @@
+{
+  "name": "Лилит",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Уничтожь лилит >>> уничтожь другое существо в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7a33e47ac951c96efd868ede97ddbe646440458e3b850136e156ad40ef40a177"
+}

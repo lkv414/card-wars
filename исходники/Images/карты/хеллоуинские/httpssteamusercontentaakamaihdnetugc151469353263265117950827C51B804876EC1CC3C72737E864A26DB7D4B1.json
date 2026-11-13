@@ -1,0 +1,15 @@
+{
+  "name": "Демонические спирали",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "landType": "lava",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 6 урона выбранному существу.\nЕсли оно уничтожается этим\nспособом, получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "617b13206083a6f5b089ebdaed957e08d8c65c1f40de684da0fa81cb9ea50a61"
+}

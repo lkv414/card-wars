@@ -1,0 +1,15 @@
+{
+  "name": "Тыквенный скипетр",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Твои 2 следующие карты с тыквой стоят на 1 действие меньше.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b2db0f3e227575e4518be13191a006a8a358b78ef4514cb2c71c440ee4bf3f76"
+}

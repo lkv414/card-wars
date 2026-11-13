@@ -1,0 +1,15 @@
+{
+  "name": "Кошмарный солдат-дух",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "landType": "blue",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "+3 к атаке за каждое соседнее существо.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "64a413b0e7a49065f9b71c450ff702770ca1e098180a7b545b3a11835ccad33d"
+}

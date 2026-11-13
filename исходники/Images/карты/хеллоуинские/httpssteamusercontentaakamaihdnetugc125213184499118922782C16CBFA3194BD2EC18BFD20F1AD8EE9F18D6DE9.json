@@ -1,0 +1,15 @@
+{
+  "name": "Смерч демонов",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "landType": "sandy",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни всех существ уничтоженных\nв этом ходу, которыми ты владеешь\nна руку.\nУдали эту карты из игры.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d38d7c491acdaec99be06c8e5e979c2ba123c5fdbbb2379561b8d4ef46698072"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Крутой пёс",
+  "name_en": "COOL DOG",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "На твоих существ в соседних\nзонах нельзя нападать.",
+  "flavor": "",
+  "set_code": "finn",
+  "sha256": "acc282ef3a0534eff65dd9a3867b9ac2991731d9fe9e64ca20ff27df08197360",
+  "landType": "blue"
+}

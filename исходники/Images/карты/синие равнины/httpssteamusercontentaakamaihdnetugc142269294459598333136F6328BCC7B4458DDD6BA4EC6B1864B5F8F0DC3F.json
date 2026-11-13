@@ -1,0 +1,15 @@
+{
+  "name": "Колизей",
+  "name_en": "COLOSSEUM",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Верни существо в\nподготовленное положение в этой зоне,\nзатем нанеси ему 1 урон.",
+  "flavor": "",
+  "set_code": "3Л",
+  "sha256": "eae5a292e7920a820a1d74801db50b7922c8f1dbaade4c47a57f1df62ad96385",
+  "landType": "blue"
+}

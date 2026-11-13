@@ -1,0 +1,15 @@
+{
+  "name": "Синюшный Вождь",
+  "name_en": "BLUE CHIEF",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "+2 к атаке в этот ход за\nкаждое заклинание, которое\nты сыграл в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "99ecdb8469afb0ef68e8e6aea96314a9ea028128183d706835c692eb6758f3ed",
+  "landType": "blue"
+}

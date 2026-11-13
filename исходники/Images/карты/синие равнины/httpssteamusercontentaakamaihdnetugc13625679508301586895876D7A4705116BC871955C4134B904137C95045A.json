@@ -1,0 +1,15 @@
+{
+  "name": "Необъятный солдат-дух",
+  "name_en": "HUGE SPIRIT SOLDIER",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Каждое соседнее существо получает +1 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "13e6841fc3539e5ee67b34712853d4a8baf08dd7368c672ef87e7d34e576cf67",
+  "landType": "blue"
+}

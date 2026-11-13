@@ -1,0 +1,15 @@
+{
+  "name": "Смог, который смог",
+  "name_en": null,
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Уничтожь существо под твоим контролем\nи ФЛЮП >>> Возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9593bde8890a9df9f9200a720c99077390e199794311cf24f04632f6c245797b",
+  "landType": "blue"
+}

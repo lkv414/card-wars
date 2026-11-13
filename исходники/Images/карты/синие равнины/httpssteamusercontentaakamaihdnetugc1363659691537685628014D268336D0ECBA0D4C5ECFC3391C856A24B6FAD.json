@@ -1,0 +1,15 @@
+{
+  "name": "Мистический заклинатель",
+  "name_en": "MYSTICAL SPELLCASTER",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "В конце твоего хода, если ты разыграл 2 или более не равнинных карт в этом ходу, сними 2 урона с выбранного существа в соседней зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0f6e099e8b50bb2c28cd48d49fd855430b13dde4b681e614f2a6749851319005",
+  "landType": "blue"
+}

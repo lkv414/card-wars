@@ -1,0 +1,15 @@
+{
+  "name": "Одинокая панда",
+  "name_en": "LONELY PANDA",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Если ты не контролируешь других\nсуществ, когда одинокая панда\nвходит в игру, возьми 1 карту.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "ea60f837b98f5913b0c1324b8e53e77891a46ffbf7a177d767c9f8fedcc034ff",
+  "landType": "blue"
+}

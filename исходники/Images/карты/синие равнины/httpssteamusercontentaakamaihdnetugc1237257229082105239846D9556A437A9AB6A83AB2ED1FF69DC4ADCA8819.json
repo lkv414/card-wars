@@ -1,0 +1,15 @@
+{
+  "name": "Стеснительный бард",
+  "name_en": "TIMID BARD",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "ФЛЮП >>> Возьми 1 карту за каждое флюпнутое существо под твоим контролем, включая это.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "655990298d0a97edbc65186f940191693715a72dcb8b27aec9023f6460c349d9",
+  "landType": "blue"
+}

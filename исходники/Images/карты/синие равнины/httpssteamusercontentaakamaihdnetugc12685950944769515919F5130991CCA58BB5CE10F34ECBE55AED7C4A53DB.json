@@ -1,0 +1,15 @@
+{
+  "name": "Голубичный джинн",
+  "name_en": "BLUEBERRY GENIE",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если при входе в игру голубичный джинн заменяет другое существо,\nвозьми 2 карты.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cc2481c74d947514700c72bc7111613facde38eb7196ddee612e9402e69be632",
+  "landType": "blue"
+}

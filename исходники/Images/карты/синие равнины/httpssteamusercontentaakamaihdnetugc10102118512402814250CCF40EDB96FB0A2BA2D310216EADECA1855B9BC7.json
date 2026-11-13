@@ -1,0 +1,15 @@
+{
+  "name": "Маленький Отморозок",
+  "name_en": "COOL GUY",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 1,
+  "description": "+1 к защите за каждый уникальный\nтип земель под твоим контролем.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "8bcd0db7b7954c2e09da97a8ed6c21915b3483a7b4a2e6473ef25529b515a265",
+  "landType": "blue"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Искаженное заклинание",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Поменяй местами двух существ под твоим контролем.\n(Они меняют зоны одновременно)",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "b717638c72a2ea60f08880a68c1523cc08bee92911f5223575c494c80422c632",
+  "landType": "blue"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Синюшный гном",
+  "name_en": "BLUEBERRY GNOME",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Нанеси 1 урон каждому\nсуществу под контролем соперника,\nкоторое находится на бесполезном болоте.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "24b88ff3672a429d873a5957c7469cf1c9edc077c10fb9ee4205dba4aa0f2ed0",
+  "landType": "blue"
+}

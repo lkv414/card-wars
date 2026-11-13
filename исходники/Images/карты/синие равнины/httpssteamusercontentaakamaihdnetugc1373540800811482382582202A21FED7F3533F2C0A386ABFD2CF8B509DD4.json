@@ -1,0 +1,15 @@
+{
+  "name": "Благо одноглазое",
+  "name_en": "CYCLOPS BLESSING",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 5,
+  "description": "ФЛЮП >>> Положи любое заклинание из твоего сброса на верх колоды.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "95c54c37e74e25197347c6881e6548c3930a0890cb3a6bf8c3bbc0ecb3a4a733",
+  "landType": "blue"
+}

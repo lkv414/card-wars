@@ -1,0 +1,15 @@
+{
+  "name": "Отважный ретривер",
+  "name_en": null,
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Каждый раз, когда отважный ретривер\nатакует, можешь взять 1 карту.",
+  "flavor": "«Много мячей. Вау»",
+  "set_code": null,
+  "sha256": "00862a601eeb096107b1547e1fe5cc639ed572afd50a7722fb95b21da3dd6091",
+  "landType": "blue"
+}

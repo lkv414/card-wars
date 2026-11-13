@@ -1,0 +1,16 @@
+{
+  "name": "Красноречивый броненосец",
+  "name_en": "Eloquent Armadillo",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Когда красноречивый броненосец\nзаменяет существо,\nположи на него 4.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2f5c508cbbd7b3d5c0cab194e2ffb65f1f0b8324e64eb9e88e429a351a345bc4",
+  "landType": "nice",
+  "id": "eloquent-armadillo-2f5c508"
+}

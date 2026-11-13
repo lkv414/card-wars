@@ -1,0 +1,16 @@
+{
+  "name": "Призрачный ниндзя",
+  "name_en": "GHOST NINJA",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Когда призрачный ниндзя наносит урон\nсопернику, этот соперник не может\nразыгрывать заклинания в следующий ход.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "e39b62373b482ef16bbd90f0f661c6b15df1e0bb8793ab13c20bf6d084fe0155",
+  "landType": "blue",
+  "id": "ghost-ninja-e39b623"
+}

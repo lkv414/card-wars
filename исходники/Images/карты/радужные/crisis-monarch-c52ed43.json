@@ -1,0 +1,16 @@
+{
+  "name": "Кризисный монарх",
+  "name_en": "CRISIS MONARCH",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 9,
+  "defense": 3,
+  "description": "Когда кризисный монарх входит в игру,\nуничтожь один из своих барьеров\nи получи его эффект.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "c52ed43ba3e792e4ae87951b32e340be0d15c59fa948fbe5aeebda3310747351",
+  "landType": "rainbow",
+  "id": "crisis-monarch-c52ed43"
+}

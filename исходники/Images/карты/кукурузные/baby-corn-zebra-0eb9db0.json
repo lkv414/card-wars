@@ -1,0 +1,16 @@
+{
+  "name": "Молодая кукузебра",
+  "name_en": "BABY CORN ZEBRA",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 5,
+  "description": "Если молодая кукузебра выходит из игры во время фазы атаки, ты можешь положить его на верх твоей колоды.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "0eb9db00757a49a5c6dd133d2eb8e5b238b9c62f1eb68487776859f0d0c215ec",
+  "landType": "corn",
+  "id": "baby-corn-zebra-0eb9db0"
+}

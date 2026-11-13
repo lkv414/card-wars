@@ -1,0 +1,16 @@
+{
+  "name": "Разбудильник",
+  "name_en": "ALARM CLOCK",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни в подготовленное положение всех существ под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6b108b9b1f2f6e26c03eb1c92e7c6a2b67e3615f17c0fcd7c2113653b3a7e419",
+  "landType": "blue",
+  "id": "alarm-clock-6b108b9"
+}

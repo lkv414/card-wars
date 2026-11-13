@@ -1,0 +1,16 @@
+{
+  "name": "Колючая кукузебра",
+  "name_en": "SPINY CORN ZEBRA",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Когда колючая кукузебра атакует, нанеси 1 урон каждому соседнему существу под контролем соперника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "2645758495508a57c3c9163e0c18426f1011f5f741649d051c49461ddfe68278",
+  "landType": "corn",
+  "id": "spiny-corn-zebra-2645758"
+}

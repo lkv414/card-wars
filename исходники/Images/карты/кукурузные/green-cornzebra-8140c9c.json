@@ -1,0 +1,16 @@
+{
+  "name": "Зелёная кукузебра",
+  "name_en": "GREEN CORNZEBRA",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда зелёная кукузебра атакует, нанеси 1 урон выбранному сопернику.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "8140c9c16e394f27070ad506dd187dc02eb1c9145c8164b3f326b88585bb2876",
+  "landType": "corn",
+  "id": "green-cornzebra-8140c9c"
+}

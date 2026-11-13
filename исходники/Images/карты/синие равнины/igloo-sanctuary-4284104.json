@@ -1,0 +1,16 @@
+{
+  "name": "Иглу святилище",
+  "name_en": "IGLOO SANCTUARY",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Если твоё существо в\nэтой зоне переместилось с другой зоны\nв этот ход, оно получает +3 к атаке\nв этом ходу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "4284104837bd641d368fe5d6137df2147192b61fe5018242fb3e963216cf8aa9",
+  "landType": "blue",
+  "id": "igloo-sanctuary-4284104"
+}

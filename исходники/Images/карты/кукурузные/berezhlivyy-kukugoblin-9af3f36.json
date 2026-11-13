@@ -1,0 +1,16 @@
+{
+  "name": "Бережливый кукугоблин",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Поглощение\nФЛЮП >>> Возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9af3f3664c4cdd02f277daae0a59639e13128b84e80e1ecaee9014b132a8e2ef",
+  "landType": "corn",
+  "id": "berezhlivyy-kukugoblin-9af3f36"
+}

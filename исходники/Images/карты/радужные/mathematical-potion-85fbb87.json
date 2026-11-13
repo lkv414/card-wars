@@ -1,0 +1,16 @@
+{
+  "name": "Математическое зелье",
+  "name_en": "MATHEMATICAL POTION",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми 3 карты, затем положи\n1 карту с руки наверх\nтвоей колоды.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "85fbb879df219cab0905b41643ee72d568dfc96cf2b67098883c725d210d0e3b",
+  "landType": "rainbow",
+  "id": "mathematical-potion-85fbb87"
+}

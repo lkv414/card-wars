@@ -1,0 +1,16 @@
+{
+  "name": "Мастер маскировки",
+  "name_en": "DISGUISE MASTER",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под контролем соперника получает -1 к атаке\nв этот ход.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "56e26a53186b1f17315b477db25e5abd51b32228b0f4a1ce295222c9ae23b8f8",
+  "landType": "rainbow",
+  "id": "disguise-master-56e26a5"
+}

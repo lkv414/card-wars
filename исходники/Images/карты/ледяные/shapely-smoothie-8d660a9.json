@@ -1,0 +1,16 @@
+{
+  "name": "Фигуристый Смузи",
+  "name_en": "SHAPELY SMOOTHIE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "ФЛЮП >>> Перемести выбранный жетон мороза с одной земли на другую землю.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "8d660a99ca438d6c5092476d94782728340e1403afb86a9776b4ec62bac1d8e3",
+  "landType": "icy",
+  "id": "shapely-smoothie-8d660a9"
+}

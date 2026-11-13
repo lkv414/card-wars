@@ -1,0 +1,16 @@
+{
+  "name": "Песчаный Шакал",
+  "name_en": "SAND JACKAL",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Пока Песчаный Шакал находится на доброй земле, ты восстанавливаешь 3 жизни, когда он уничтожает существо соперника.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "39db75ed2f0f7ec75a5b46e2c113fe7501574c277edc0ebe2db7ae6504201cab",
+  "landType": "sandy",
+  "id": "sand-jackal-39db75e"
+}

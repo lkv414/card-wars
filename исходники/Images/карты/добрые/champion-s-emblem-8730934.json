@@ -1,0 +1,16 @@
+{
+  "name": "Эмблема чемпиона",
+  "name_en": "CHAMPION'S EMBLEM",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 3 урона с выбранного существа.\nЕсли на том существе всё ещё есть\nурон, получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "87309340cae2cf6a8903a4d36582f69eaed2bb1299a37e0daeee49e30e1dca3d",
+  "landType": "nice",
+  "id": "champion-s-emblem-8730934"
+}

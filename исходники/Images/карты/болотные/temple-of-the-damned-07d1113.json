@@ -1,0 +1,16 @@
+{
+  "name": "Храм проклятых",
+  "name_en": "TEMPLE OF THE DAMNED",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Существо под контролем соперника в этой зоне получает -2 к атаке.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "07d1113280f82f8ccd67e2e2354a70b9252237a1c77705c8e5a21422b225120b",
+  "landType": "swamp",
+  "id": "temple-of-the-damned-07d1113"
+}

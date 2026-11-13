@@ -1,0 +1,16 @@
+{
+  "name": "Блудный голем",
+  "name_en": "WANDERING GOLEM",
+  "cost": 3,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 5,
+  "defense": 6,
+  "description": "Блудный голем стоит на 1 действие меньше за каждое другое существо, которое ты сыграл в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0af756fd22954c7256e60014564b312c1fd38927598f8287ea7d0f542ed31168",
+  "landType": "sandy",
+  "id": "wandering-golem-0af756f"
+}

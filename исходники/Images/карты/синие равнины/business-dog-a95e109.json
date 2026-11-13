@@ -1,0 +1,16 @@
+{
+  "name": "Деловой пёс",
+  "name_en": "BUSINESS DOG",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "+2 к атаке в этот ход за каждую\nкарту, которую ты сыграл в этом\nходу, со словом «Пёс» или «Щенок»\nв названии.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "a95e109eb46a80f0a09099ef61fc0906458537fb6cb1ca93766800a1f7556d62",
+  "landType": "blue",
+  "id": "business-dog-a95e109"
+}

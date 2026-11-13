@@ -1,0 +1,16 @@
+{
+  "name": "Рука скелета",
+  "name_en": "SKELETON HAND",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "ФЛЮП >>> Сбрось 3 верхние карты твоей колоды. За каждое заклинание, сброшенное таким образом, выбранный игрок сбрасывает карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c4a6debbb4d861b1d2f06bb16f6c514bb79c7b12081e697af1499c2564dbfaf9",
+  "landType": "swamp",
+  "id": "skeleton-hand-c4a6deb"
+}

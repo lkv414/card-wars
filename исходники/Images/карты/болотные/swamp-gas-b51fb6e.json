@@ -1,0 +1,16 @@
+{
+  "name": "Болотный газ",
+  "name_en": "SWAMP GAS",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 3 урона выбранному существу.\nЕсли оно уничтожается этим\nспособом, владелец существа\nсбрасывает 1 карту.",
+  "flavor": "",
+  "set_code": "3Л",
+  "sha256": "b51fb6e8abb0cbf3d2144fc30f9aa2cf1a950f823c3bc51c542abc32e374c37c",
+  "landType": "swamp",
+  "id": "swamp-gas-b51fb6e"
+}

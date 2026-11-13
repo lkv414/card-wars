@@ -1,0 +1,16 @@
+{
+  "name": "Болотный удав",
+  "name_en": "SWAMP BOA",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 12,
+  "description": "Уничтожь существо под твоим\nконтролем >>> Положи 2 на\nболотного удава и сними\nс него 2 урона.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "5baecb5a1f611346244795d77d70384232cda2953a56c05e670b3b28aa01d199",
+  "landType": "swamp",
+  "id": "swamp-boa-5baecb5"
+}

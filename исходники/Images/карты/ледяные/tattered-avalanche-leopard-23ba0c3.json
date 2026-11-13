@@ -1,0 +1,16 @@
+{
+  "name": "Потрёпаный лавинопард",
+  "name_en": "TATTERED AVALANCHE LEOPARD",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 2,
+  "description": "ФЛЮП >>> Каждый игрок берёт\nи сбрасывает карту за каждую землю\nс жетоном мороза. Заморозь землю\nпод контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "23ba0c354c2a16d7efeffd172f6454ac4fada9861894cc6a337515a8905473a7",
+  "landType": "icy",
+  "id": "tattered-avalanche-leopard-23ba0c3"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Билли",
+  "name_en": "Billy",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Если колода твоего соперника кончилась,\nты выиграл.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "eebb20683453153439b157d7571054934e56ef09a4ccfc4bae4232aca495e39b",
+  "id": "billy-eebb206"
+}

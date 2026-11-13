@@ -1,0 +1,16 @@
+{
+  "name": "Филлис",
+  "name_en": "PHYLLIS",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "",
+  "flavor": "Меч отвлекает внимание, а сумочка бьёт прямо под дых.",
+  "set_code": "jake",
+  "sha256": "edbe7c68b0b23805ed261a2a2f983b77c8409f7751189860f5d9dbcafcbd0535",
+  "landType": "rainbow",
+  "id": "phyllis-edbe7c6"
+}

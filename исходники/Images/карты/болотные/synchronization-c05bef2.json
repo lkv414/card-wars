@@ -1,0 +1,16 @@
+{
+  "name": "Синхронизация",
+  "name_en": "SYNCHRONIZATION",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "В начале фазы атаки твой или напарника, если ты или твой напарник не разыгрывали заклинаний в этот ход, твой напарник может разыграть заклинание за 1 действие или меньше бесплатно.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "c05bef2159ac7f620b3a86d8b6fa95eb726cd19981bda42924e0639f5fa85e78",
+  "landType": "swamp",
+  "id": "synchronization-c05bef2"
+}

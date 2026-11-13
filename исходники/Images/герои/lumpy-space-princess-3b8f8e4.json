@@ -1,0 +1,11 @@
+{
+  "name": "Принцесса Пупырка",
+  "name_en": "Lumpy Space Princess",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "В первый раз за ход, когда ты заменяешь существо, возьми карту.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "3b8f8e4d86e0f20c02dde3f181956cf3f6655255aff765c4db8c87ec1c39698f",
+  "id": "lumpy-space-princess-3b8f8e4"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Лорд вампиров",
+  "name_en": "VAMPIRE LORD",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда Лорд вампиров наносит урон,\nсними с него столько урона,\nсколько он нанес.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "40d3d9fd582315d02eb8a4c4ee225b50211f62e277d13435c63189c036263692",
+  "landType": "rainbow",
+  "id": "vampire-lord-40d3d9f"
+}

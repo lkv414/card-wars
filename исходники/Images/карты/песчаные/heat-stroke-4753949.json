@@ -1,0 +1,16 @@
+{
+  "name": "Тепловой удар",
+  "name_en": "HEAT STROKE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Начиная с тебя, каждый игрок выбирает существо, которое ещё не выбирали в этот раз, и наносит ему 4 урона.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "47539493b1bb5a9103977b0623d88e8d96da53d590801cbaf1d052bf1593f926",
+  "landType": "sandy",
+  "id": "heat-stroke-4753949"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Гейзерная пушка",
+  "name_en": "GEYSER CANNON",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Если у тебя на руке не больше 1 карты, удвой атаку у дружественных существ в этой зоне.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "c5841fbbfe5837d1d9f92db741b3052bf153fccc67b7bfbd4c368c16e467e67f",
+  "landType": "lava",
+  "id": "geyser-cannon-c5841fb"
+}

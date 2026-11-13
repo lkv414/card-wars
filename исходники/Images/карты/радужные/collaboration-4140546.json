@@ -1,0 +1,16 @@
+{
+  "name": "Коллаборация",
+  "name_en": "COLLABORATION",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "Первый раз, когда ты или твой напарник разыгрываете радужное заклинание в свой ход, твой напарник может разыграть бесплатно радужное заклинание с той же стоимостью.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "41405461634122f05cd24bbfc5b152918b25f965838a701fbc130239b053bdb4",
+  "landType": "rainbow",
+  "id": "collaboration-4140546"
+}

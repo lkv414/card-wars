@@ -1,0 +1,16 @@
+{
+  "name": "Талисман Феникса",
+  "name_en": "PHOENIX TALISMAN",
+  "cost": 0,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Когда дружественное существо уничтожается в этот ход,\nверни его на руку владельца.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2c04f31f64155b7c86fc5ddffd4a8a3dd1ccca9ea972a03a3abedaea15fd334f",
+  "landType": "nice",
+  "id": "phoenix-talisman-2c04f31"
+}

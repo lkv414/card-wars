@@ -1,0 +1,11 @@
+{
+  "name": "Леди Ливнерог",
+  "name_en": "Lady Rainicorn",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Если в этом ходу ты вернул на руку 2 или больше\nсуществ из игры или из стопки сброса,\nты восстанавливаешь 2 жизни.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "1ef4002a5a87080d35c6555be5cdaf12d8a9bc33546e880174ba457dba50d484",
+  "id": "lady-rainicorn-1ef4002"
+}

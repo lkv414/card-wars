@@ -1,0 +1,16 @@
+{
+  "name": "Кольцо змееглаза",
+  "name_en": "SNAKE EYE RING",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни случайное болотное существо\nиз твоего сброса на руку.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "ec469e3fd49fbdd5d9254e54a2b9f321b30f5808af6e50049e7e69ed4926d6aa",
+  "landType": "rainbow",
+  "id": "snake-eye-ring-ec469e3"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Узы чистой любви",
+  "name_en": "PURE LOVE BONDS",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда ты разыгрываешь заклинание,\nсними 1 урон с дружественных существ\nв этой зоне. Если у тебя нет существ\nв этой зоне, выбранный игрок\nвосстанавливает 1 жизнь.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e4c8c791e354387e53fbc4573c0be6f9d9168d37cc39a7d90c002f00d2cbe6b6",
+  "landType": "nice",
+  "id": "pure-love-bonds-e4c8c79"
+}

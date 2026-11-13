@@ -1,0 +1,16 @@
+{
+  "name": "Нахал в наушниках",
+  "name_en": "HEADPHONE BRAT",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Если при входе в игру Нахал в наушниках\nзаменяет другое существо, нанеси 3 урона\nдругому существу в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "01bf537f6eaebe8c53b3bf149b2d8fdcf1b17ea29bf246a59bd0efc3fccf1121",
+  "landType": "blue",
+  "id": "headphone-brat-01bf537"
+}

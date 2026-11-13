@@ -1,0 +1,16 @@
+{
+  "name": "Зелье сдвига",
+  "name_en": "SHIFT POTION",
+  "cost": 0,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни в подготовленное положение строение под твоим контролем. Ты можешь переместить его на пустую дружественную землю.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "fd143cd62cff1339d8d1b04159378b71a00722304c35443a75c90527756d141d",
+  "landType": "blue",
+  "id": "shift-potion-fd143cd"
+}

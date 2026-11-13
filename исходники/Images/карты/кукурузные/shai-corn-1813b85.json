@@ -1,0 +1,16 @@
+{
+  "name": "Шаи-Кукуруз",
+  "name_en": "SHAI-CORN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 5,
+  "defense": 4,
+  "description": "Когда Шаи-Кукуруз входит в игру,\nпереверни лицевой стороной вниз любое\nкукурузное поле под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1813b858aa09b192c1fbc2fc07b154145696280c2958148d34912f4d9032e0e5",
+  "landType": "corn",
+  "id": "shai-corn-1813b85"
+}

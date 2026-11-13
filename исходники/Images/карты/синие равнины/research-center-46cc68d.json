@@ -1,0 +1,16 @@
+{
+  "name": "Исследовательский центр",
+  "name_en": "RESEARCH CENTER",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Исследовательский центр получает\nигровой текст соседних строений\nпод твоим контролем\n(Но не их названия).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "46cc68d76de9ddbb3f815cefc00821d96facb06908e36ff4654b5db9493d65f5",
+  "landType": "blue",
+  "id": "research-center-46cc68d"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Огнеминго жарострел",
+  "name_en": "FLAMINGO FLAMETHROWER",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Когда огнеминго жарострел атакует горящее существо, ты можешь нанести 2 урона другому существу. Если то другое существо не горит, подожги его.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "f6c9c8bc8501e72acc8c2b51e4540d0eb613e2fc2424c335ab62b98dc1a2e4bd",
+  "landType": "lava",
+  "id": "flamingo-flamethrower-f6c9c8b"
+}

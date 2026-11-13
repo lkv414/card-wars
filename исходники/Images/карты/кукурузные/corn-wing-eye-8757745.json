@@ -1,0 +1,16 @@
+{
+  "name": "Кукурузный Крылоглаз",
+  "name_en": "CORN WING-EYE",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Потрать 1 действие >>> Нанеси 1 урон\nвыбранному существу в этой зоне\nза каждый уникальный тип земель\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "87577454c9490026806fbddb37cebbddfab27dc7594a27c5349b562b177c4208",
+  "landType": "corn",
+  "id": "corn-wing-eye-8757745"
+}

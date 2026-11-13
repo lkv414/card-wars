@@ -1,0 +1,16 @@
+{
+  "name": "Тоте́м ярокорна",
+  "name_en": "CORN FURY TOTEM",
+  "cost": 0,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное дружественное существо\nполучает +2 к атаке в этот ход.\nЕсли это существо побеждает другое\nсущество в этот ход, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7fed8d96acd6ca7dcd74b380407e365372b1af84d55337bf369fdbfa98c137d9",
+  "landType": "corn",
+  "id": "corn-fury-totem-7fed8d9"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Призрак полей",
+  "name_en": "FIELD GHOST",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 10,
+  "description": "В начале твоего хода каждый\nигрок берёт карту.",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "8c022e501a39dbb12368fed3c7fbc134f8b3d0a51c38fba5140a2f9edcacbd2c",
+  "landType": "corn",
+  "id": "field-ghost-8c022e5"
+}

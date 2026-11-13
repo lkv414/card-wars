@@ -1,0 +1,16 @@
+{
+  "name": "Эльфийский шатёр",
+  "name_en": "ELF LODGE",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие >>> Возьми карту за каждое существо в этой зоне.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "21fd3d0cc71c01a3d0f55448da1ab007333f511fc83aa5607739be720aaf38a2",
+  "landType": "blue",
+  "id": "elf-lodge-21fd3d0"
+}

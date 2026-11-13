@@ -1,0 +1,16 @@
+{
+  "name": "Развеяться!",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "landType": "icy",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь 1 землю за каждое существо с призрак под вашим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dd59c95fd00c1f005de9ea1fafd2b43b18398ebd28f61c8b1d3e4f26e05f38a5",
+  "id": "razveyatsya-dd59c95"
+}

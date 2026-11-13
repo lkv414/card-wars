@@ -1,0 +1,16 @@
+{
+  "name": "Курвейер",
+  "name_en": "COOPVEYOR",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Сними 1 урон с твоего существа\nв этой зоне или нанеси 1 урон твоему\nсуществу в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "15e9a0dbf0edcfa0cc09fe0ac6c032e73c052fdc1622b9bb68d9c804bbaa682e",
+  "landType": "nice",
+  "id": "coopveyor-15e9a0d"
+}

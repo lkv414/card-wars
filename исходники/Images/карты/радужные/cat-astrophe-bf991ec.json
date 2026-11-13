@@ -1,0 +1,16 @@
+{
+  "name": "КотоВасия",
+  "name_en": "CAT-ASTROPHE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь сколько угодно существ\nпод твоим контролем. Возьми 1 карту\nза каждое существо, уничтоженное\nтаким образом.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "bf991ecac3889331a9a2c88460b173b41781c706f3e3c62e9e5aa267a968c46c",
+  "landType": "rainbow",
+  "id": "cat-astrophe-bf991ec"
+}

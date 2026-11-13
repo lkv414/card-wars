@@ -1,0 +1,16 @@
+{
+  "name": "Ска-рпион",
+  "name_en": "SKA-RPION",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Ска-рпион стоит на 1 дествие меньше, пока соперник контролирует существо, которым ты владеешь.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "184a6fe2f7d77acb6bc29064c7c92b2872cac64cce19a8257c9d80d36d17e8ee",
+  "landType": "sandy",
+  "id": "ska-rpion-184a6fe"
+}

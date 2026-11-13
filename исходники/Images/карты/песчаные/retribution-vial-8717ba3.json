@@ -1,0 +1,16 @@
+{
+  "name": "Склянка возмездия",
+  "name_en": "RETRIBUTION VIAL",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести весь урон с одного существа под твоим контролем на выбранное существо под контролем соперника. Верни существо под твоим контролем на руку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8717ba35c1ad8bb29206990af806cbd7ca4f5f8833af5f02bc96afe82342113c",
+  "landType": "sandy",
+  "id": "retribution-vial-8717ba3"
+}

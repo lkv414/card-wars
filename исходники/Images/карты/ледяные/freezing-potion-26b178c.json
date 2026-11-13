@@ -1,0 +1,16 @@
+{
+  "name": "Обжигающе морозное зелье",
+  "name_en": "FREEZING POTION",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги выбранное существо.\nПоложи ⚔ на другое существо.\nЗаморозь землю.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "26b178c2066aba8e574f515b33d645dfba568dcd5139b725abab19202d74e16c",
+  "landType": "icy",
+  "id": "freezing-potion-26b178c"
+}

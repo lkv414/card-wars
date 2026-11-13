@@ -1,0 +1,16 @@
+{
+  "name": "Стена песка",
+  "name_en": "SAND WALL",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 12,
+  "description": "Если во время твоего хода в игру входит одно или несколько других песчаных существ, стена песка получает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "c345fe1bf1230c2a71b540bf3cabc4e55a401dbcde94ffd5a4b8af67be0d69bd",
+  "landType": "sandy",
+  "id": "sand-wall-c345fe1"
+}

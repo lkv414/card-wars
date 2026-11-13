@@ -1,0 +1,16 @@
+{
+  "name": "Кровавый замок",
+  "name_en": "BLOODY CASTLE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый раз когда существо под контролем соперника в этой зоне получает урон, увеличьте его на 1.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2af5ebe0dd5911ae567e4d92074c47cb7973d81d012513deb1e266258baf1e1f",
+  "landType": "rainbow",
+  "id": "bloody-castle-2af5ebe"
+}

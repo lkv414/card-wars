@@ -1,0 +1,16 @@
+{
+  "name": "Музыкальный стул",
+  "name_en": "MUSICAL CHAIRS",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Замени до 2 своих земель на те,\nчто не участвуют в игре.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "7e00c38f28c6edcd60369d9f52a2251b7543cbf1ba02cc7e69b761ca5386ec44",
+  "landType": "rainbow",
+  "id": "musical-chairs-7e00c38"
+}

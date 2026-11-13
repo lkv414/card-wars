@@ -1,0 +1,16 @@
+{
+  "name": "Слитый клирик",
+  "name_en": "FLUSHED CLERIC",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "В начале своего хода перемести слитого клирика на любую пустую землю под твоим контролем. Если не можешь, сбрось 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "58a06427c136689a1867fe29a91dec2f763e589c90be3eb1e73caf6adda96f0f",
+  "landType": "blue",
+  "id": "flushed-cleric-58a0642"
+}

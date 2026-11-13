@@ -1,0 +1,16 @@
+{
+  "name": "Клон",
+  "name_en": "CLONE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Разыграй своё следующее существо\nили строение бесплатно,\nесли существо или строение\nс таким названием уже в игре.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "354f48b41b60093462c430ae670d0d87c610214269c164dc1c76c87df4c19a82",
+  "landType": "rainbow",
+  "id": "clone-354f48b"
+}

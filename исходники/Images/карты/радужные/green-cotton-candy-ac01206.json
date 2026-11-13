@@ -1,0 +1,16 @@
+{
+  "name": "Зелёная сахарная вата",
+  "name_en": "GREEN COTTON CANDY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 1 урон с выбранного существа\nили нанеси 1 урон выбранному существу.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "ac012068e9049cb7b2146b2f31ded9c57dbde3e52c605609afc309050eb00f74",
+  "landType": "rainbow",
+  "id": "green-cotton-candy-ac01206"
+}

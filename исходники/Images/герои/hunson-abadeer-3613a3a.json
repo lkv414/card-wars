@@ -1,0 +1,11 @@
+{
+  "name": "Хансон Абадир",
+  "name_en": "Hunson Abadeer",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, можешь уничтожить существо под твоим контролем, чтобы поджечь соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3613a3a902fc7bdaa2b723aa8161665f1afa06eefdd30a14c0c04746a458af76",
+  "id": "hunson-abadeer-3613a3a"
+}

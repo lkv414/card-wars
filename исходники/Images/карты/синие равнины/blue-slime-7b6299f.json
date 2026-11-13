@@ -1,0 +1,16 @@
+{
+  "name": "Голубой Слайм",
+  "name_en": "BLUE SLIME",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если ты контролируешь 3 или более\nуникальных типов земель, когда\nГолубой Слайм входит в игру, верни\nна руку владельца существо\nв этой зоне.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "7b6299f4f9dd2feababbd3bf81b017d5e5af10379c6f2246daef1c71b546738a",
+  "landType": "blue",
+  "id": "blue-slime-7b6299f"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Обожрусеница",
+  "name_en": "GLUTTONPILLAR",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 3,
+  "description": "+2 к атаке за каждые 5 карт\nв твоём сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3568cdffc07f7d85f8737f0002126e90e8701a25b68d9cb881afbadd6791d576",
+  "landType": "swamp",
+  "id": "gluttonpillar-3568cdf"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Песчаная пирамида",
+  "name_en": "SAND PYRAMID",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 2 действия >>> Верни каждое существо в этой зоне на руку владельца.\n(Работает на обоих игроков.)",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "c7ecfeb30c43c28120276469a15649ead78c65391045b0f8fabac4d0168cd2e3",
+  "landType": "sandy",
+  "id": "sand-pyramid-c7ecfeb"
+}

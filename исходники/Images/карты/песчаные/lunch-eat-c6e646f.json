@@ -1,0 +1,16 @@
+{
+  "name": "Залеталовка",
+  "name_en": "LUNCH EAT",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Возьми 1 карту за каждое существо, которое вошло в игру на эту землю в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c6e646fc57c1ded904c41730e54259658154e8ff057d6d2f6f5005a54883a252",
+  "landType": "sandy",
+  "id": "lunch-eat-c6e646f"
+}

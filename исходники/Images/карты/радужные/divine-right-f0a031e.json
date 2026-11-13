@@ -1,0 +1,16 @@
+{
+  "name": "Божественное право",
+  "name_en": "DIVINE RIGHT",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый игрок восстанавливает\n15 жизней.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "f0a031e8d4f57d0ab4a234dbdd0e9d3b99f1a4b83dc798870d37c144aabee18b",
+  "landType": "rainbow",
+  "id": "divine-right-f0a031e"
+}

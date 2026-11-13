@@ -1,0 +1,16 @@
+{
+  "name": "Зелёный гном",
+  "name_en": "GREEN GNOME",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Нанеси 1 урон каждому существу под контролем соперника, которое находится на синей равнине.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "cfb722ff23547825411d9204128bc3bd3d1a8bab8bfb0a7ebb468f4aa519ba57",
+  "landType": "sandy",
+  "id": "green-gnome-cfb722f"
+}

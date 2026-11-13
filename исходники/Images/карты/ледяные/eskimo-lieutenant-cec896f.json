@@ -1,0 +1,16 @@
+{
+  "name": "Лейтенант эскимо",
+  "name_en": "ESKIMO LIEUTENANT",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Каждый раз, когда земля замораживается, возьми 1 карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "cec896f22da08517c12ee3a7a386198c03874dec129d792e84ee2f22df617164",
+  "landType": "icy",
+  "id": "eskimo-lieutenant-cec896f"
+}

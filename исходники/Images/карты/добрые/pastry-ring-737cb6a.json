@@ -1,0 +1,16 @@
+{
+  "name": "Кондитерский перстень",
+  "name_en": "PASTRY RING",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под твоим контролем получает +2 к атаке в этот ход, пока атакует существо на кукурузном поле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "737cb6a1d9c80fa08bf1cf096d9861faa87eb349817ac704864f7133fdcf8cbe",
+  "landType": "nice",
+  "id": "pastry-ring-737cb6a"
+}

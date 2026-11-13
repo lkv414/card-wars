@@ -1,0 +1,16 @@
+{
+  "name": "Грязная Игра",
+  "name_en": "DIRTY PLAY",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подбрось монету. Орёл, выбранный соперник получает на 1 действие меньше в свой ход. Решка, получи 1 действие. Удали карту из игры.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "5a7a910dbcec8b1db7205bfd0be4d4da61f178c2821ce213ccd0309d422e317e",
+  "landType": "sandy",
+  "id": "dirty-play-5a7a910"
+}

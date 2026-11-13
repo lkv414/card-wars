@@ -1,0 +1,16 @@
+{
+  "name": "Сердечный слонёнок",
+  "name_en": "HEARTFELT ELEPHANT",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 4,
+  "description": "Каждый раз, когда сердечный слонёнок становится целью заклинания соперника, нанеси 2 урона выбранному сопернику.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "47b3aa2e29706199926bf71d896e4d7a3573d6ad764ce6961430834da367495c",
+  "landType": "nice",
+  "id": "heartfelt-elephant-47b3aa2"
+}

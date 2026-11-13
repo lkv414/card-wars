@@ -1,0 +1,16 @@
+{
+  "name": "Ходули убийцы",
+  "name_en": "ASSASSIN STILTS",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Твои существа за 1 действие получают +1 к атаке в этот ход.\nЕсли ты контролируешь 3 или больше существ за 1 действие, получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "73ace10628c3a713ce11313f4888c191ead1520eb548d9a8054ef49a0ff8bcc6",
+  "landType": "corn",
+  "id": "assassin-stilts-73ace10"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Десертационная",
+  "name_en": "DESSERTATION",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Пока у тебя чётное число жизней,\nсущество под твоим контролем\nв этой зоне получает +2 к атаке.",
+  "flavor": "",
+  "set_code": "ПРОМО",
+  "sha256": "ed1ad8269ece8183e98006f692abafff24b62887abf4d5977ccb30e653b2c7ca",
+  "landType": "rainbow",
+  "id": "dessertation-ed1ad82"
+}

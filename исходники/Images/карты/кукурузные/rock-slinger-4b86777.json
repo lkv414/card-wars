@@ -1,0 +1,16 @@
+{
+  "name": "Камнемес",
+  "name_en": "ROCK SLINGER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда камнемес входит в игру,\nпереверни лицевой стороной вниз\nлюбую землю в этой зоне.\n\nКогда камнемес выходит из игры,\nпереверни её лицевой стороной вверх.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4b8677749fad1fc9293ded25545cd859d98532411650981a14fb0aa3d16d8ab5",
+  "landType": "corn",
+  "id": "rock-slinger-4b86777"
+}

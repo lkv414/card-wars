@@ -1,0 +1,16 @@
+{
+  "name": "Грязекагинава свободы",
+  "name_en": "SLUDGE OF LIBERTY",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 5,
+  "description": "Грязекагинава свободы стоит на 2 действия меньше, если у тебя нет других карт на руке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1ebc4b2031f0eb7858b7e98d9ddd508c52469b5a8b67adcdbf4ff707c6959dfd",
+  "landType": "swamp",
+  "id": "sludge-of-liberty-1ebc4b2"
+}

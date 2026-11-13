@@ -1,0 +1,16 @@
+{
+  "name": "Призрак",
+  "name_en": "GHOST",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Призрак получает +2 к атаке пока защищается от существ на бесполезных болотах.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "fc9fd9e0282cf4e6cd85e9cacf2295f5e335fd741ceb39f27738b3f6c332664e",
+  "landType": "rainbow",
+  "id": "ghost-fc9fd9e"
+}

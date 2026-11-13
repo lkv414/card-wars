@@ -1,0 +1,16 @@
+{
+  "name": "Песчаный змей",
+  "name_en": "SAND SNAKE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 9,
+  "description": "Когда песчаный змей входит в игру,\nнанеси 4 урона выбранному существу\nпод контролем соперника в этой зоне.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "735a7f3a81d156c67d10841b9869a65bc471bc4a6b552030876dd323fb748d79",
+  "landType": "sandy",
+  "id": "sand-snake-735a7f3"
+}

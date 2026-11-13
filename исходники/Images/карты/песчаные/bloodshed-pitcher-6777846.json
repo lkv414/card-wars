@@ -1,0 +1,16 @@
+{
+  "name": "Кувшин кровопролития",
+  "name_en": "BLOODSHED PITCHER",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "Когда кувшин кровопролития входит в игру, сбрось 3 верхние карты твоей колоды. За каждое заклинание, сброшенное таким образом, нанеси 2 урона выбранному существу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6777846c93071cdcb7a1f648f13c2be11ec99d8825875c0508ed628b837e4cca",
+  "landType": "sandy",
+  "id": "bloodshed-pitcher-6777846"
+}

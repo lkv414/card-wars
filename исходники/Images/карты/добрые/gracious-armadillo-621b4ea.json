@@ -1,0 +1,16 @@
+{
+  "name": "Милостивый броненосец",
+  "name_en": "GRACIOUS ARMADILLO",
+  "cost": 4,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 16,
+  "description": "Грохот\nКогда существо под контролем соперника атакует, ты можешь выбрать его целью атаки милостивого броненосца.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "621b4eab4639cac1ee8647731ea76572906fe4d2ff270088edef9b9beb8f7ad3",
+  "landType": "nice",
+  "id": "gracious-armadillo-621b4ea"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "БиМО",
+  "name_en": "BMO",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Сбрось карту >>> Нанеси 1 урон\nвыбранному существу.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "f0dc3512fae6325690ef73cac1443bdbf7c17bffd35c0647cabdc35148b0fdb0",
+  "id": "bmo-f0dc351"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Пиромант",
+  "name_en": "PYROMANCER",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 8,
+  "description": "Каждый раз, когда пиромант входит на пустую землю, ты можешь нанести 2 урона выбранному существу в этой зоне.\nПотрать 1 действие >>> Перемести пироманта на пустую землю под твоим контролем.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "3e11d49bcc1fe9db8d89f8ff23c0fa5e4f7d2f10218d57bbac71cf0ca5ea0e38",
+  "landType": "blue",
+  "id": "pyromancer-3e11d49"
+}

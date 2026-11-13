@@ -1,0 +1,11 @@
+{
+  "name": "Космическая сова",
+  "name_en": "Cosmic Owl",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Потрать 1 действие >>> Посмотри\n4 верхние карты твоей колоды и\nпоменяй их местами.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8fca998a6e1641dd40f42a2998ae0d752bab7ece2eac3ba22c9cfc391f3d9692",
+  "id": "cosmic-owl-8fca998"
+}

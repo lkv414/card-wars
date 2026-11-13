@@ -1,0 +1,16 @@
+{
+  "name": "Снежный пёс",
+  "name_en": "SNOW DOG",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "ФЛЮП >>> Каждое соседнее существо получает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": "ice_king",
+  "sha256": "3f78850793c436a9187ba1fa27c233b969299dc569609f13ec4e1bc0d7ba88c6",
+  "landType": "icy",
+  "id": "snow-dog-3f78850"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Адская лопата",
+  "name_en": "HELL SHOVEL",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 1 урон выбранному существу за каждое заклинание в твоём сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f89cf2a5e79424ac2e5c0e5d18dcae5d48e68ce951f4c5c242d63e882c0a46ef",
+  "landType": "sandy",
+  "id": "hell-shovel-f89cf2a"
+}

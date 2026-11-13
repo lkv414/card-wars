@@ -1,0 +1,16 @@
+{
+  "name": "Качок циклоп",
+  "name_en": "SWOLL CYCLOPS",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8c0e138fe5bfb3c5aa8f2bb16d9a7ee253fc9f5b8b0434b74cb2bcb93da15777",
+  "landType": "rainbow",
+  "id": "swoll-cyclops-8c0e138"
+}

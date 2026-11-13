@@ -1,0 +1,16 @@
+{
+  "name": "Огнеминго пожиратель огня",
+  "name_en": "FLAMINGO FIRE EATER",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Первый раз, когда ты поджигаешь существо в каждом ходу, возьми 1 карту.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "119c921fcd408fc7bc3e7d87dbe771b3af895f77232b0167a1b75d50750468d0",
+  "landType": "lava",
+  "id": "flamingo-fire-eater-119c921"
+}

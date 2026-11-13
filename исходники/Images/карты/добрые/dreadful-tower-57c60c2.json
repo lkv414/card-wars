@@ -1,0 +1,16 @@
+{
+  "name": "Ужасающая башня",
+  "name_en": "DREADFUL TOWER",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь существо под твоим\nконтролем в этой зоне\nи ФЛЮП >>> Разыграй бесплатно\n2 карты с верха твоей колоды.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "57c60c2680baab8d0ae6d1b86ad1448673d8666b9f8575f552fc1ada29dbe913",
+  "landType": "nice",
+  "id": "dreadful-tower-57c60c2"
+}

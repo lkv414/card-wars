@@ -1,0 +1,16 @@
+{
+  "name": "Дрессированная\nкукузебра",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 7,
+  "description": "+1 к атаке за каждую карту командной\nработы под контролем твоей команды.\nЕсли дрессированная кукузебра выходит\nиз игры во время фазы атаки, ты\nможешь вернуть его на руку.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "c8fb2bc769eb2396cdc9f3289fa0a45a8ae584b5e0a08a455520f0760cd59d3b",
+  "landType": "corn",
+  "id": "dressirovannaya-kukuzebra-c8fb2bc"
+}

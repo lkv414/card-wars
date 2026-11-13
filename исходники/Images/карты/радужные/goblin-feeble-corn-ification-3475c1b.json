@@ -1,0 +1,16 @@
+{
+  "name": "Кукугоблификация",
+  "name_en": "GOBLIN-FEEBLE-CORN-IFICATION",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Существо получает Поглощение в этот ход.\n(Если то существо заменяется в этот ход,\nположи его под существо, которое его\nзаменило. Новое существо получает его\nатаку, защиту и все жетоны, включая урон.)",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "3475c1b87ab333bc6feffd67ef6fd42080781aa7b86375cbd20af435daa8cab0",
+  "landType": "rainbow",
+  "id": "goblin-feeble-corn-ification-3475c1b"
+}

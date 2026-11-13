@@ -1,0 +1,16 @@
+{
+  "name": "Тушкунай вымогатель",
+  "name_en": "SHAKEDOWN JERK",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 9,
+  "description": "Сбрось карту >>> Сними 3 урона\nс тушкуная вымогателя.\n(Лимит: 1 раз за ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8b07c52fcb01341e0d295ce4e3979b1e880779795226d79e604d66109edbc3f4",
+  "landType": "swamp",
+  "id": "shakedown-jerk-8b07c52"
+}

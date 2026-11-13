@@ -1,0 +1,16 @@
+{
+  "name": "Лесомойка",
+  "name_en": "LOG SINK",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось карту, ФЛЮП >>> Переверни\nлицевой стороной вниз выбранную\nземлю в этой зоне до начала твоего\nследующего хода.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f1c06e58c3ff53e6a960e2b720a39f71dab58cac46ea8c8172f2fe7713e8b2ab",
+  "landType": "corn",
+  "id": "log-sink-f1c06e5"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Сладкое мясное изобилие",
+  "name_en": "SWEET MEAT OVERLOAD",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранный игрок восстанавливает\n1 жизнь за каждую карту,\nкоторую удалили из игры.",
+  "flavor": "",
+  "set_code": "ЛИМИТНЫЙ ПРОМО",
+  "sha256": "c9fd445bf35d70ffaa31c10ee884a93d56c59f1a732409f3b91b0ce7e7c99514",
+  "landType": "swamp",
+  "id": "sweet-meat-overload-c9fd445"
+}

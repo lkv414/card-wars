@@ -1,0 +1,16 @@
+{
+  "name": "Хилый новобранец",
+  "name_en": "WEAKLING RECRUIT",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 5,
+  "description": "Когда хилый новобранец входит в игру, если твой соперник не контролирует существо в этой зоне, получи 1 действие.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "b456bb22c9596c11c70764a1f0c479428f5286f3ddc47ed7935e015b5f025cc6",
+  "landType": "icy",
+  "id": "weakling-recruit-b456bb2"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Серый крылоглаз",
+  "name_en": "GREY WINGED-EYE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Потрать 1 действие >>> Верни случайное болотное существо из твоего сброса на руку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ecefefbe3a0c8eeedf6725f97e632b357ee9ac3aa9c8236c77021f0dd08390a8",
+  "landType": "swamp",
+  "id": "grey-winged-eye-ecefefb"
+}

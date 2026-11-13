@@ -1,0 +1,16 @@
+{
+  "name": "Смертельная схватка",
+  "name_en": "DEADLY CLASH",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери зону. Существа в этой зоне атакуют друг друга, пока одно из них не будет побеждено.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "a0605c68d2cb8e6c76a285c023f5342796a784d551c01e28b541345bbbe451ce",
+  "landType": "sandy",
+  "id": "deadly-clash-a0605c6"
+}

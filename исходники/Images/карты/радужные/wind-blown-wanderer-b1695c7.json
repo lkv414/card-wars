@@ -1,0 +1,16 @@
+{
+  "name": "Ветроклятый скиталец",
+  "name_en": "WIND-BLOWN WANDERER",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "ФЛЮП >>> Перемести один любой жетон (кроме урона) с любого существа или земли на другое существо или землю.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "b1695c71e4891fef8f1d759c73160cb37c7d4dc307c6c26c838e14f3b00b3679",
+  "landType": "rainbow",
+  "id": "wind-blown-wanderer-b1695c7"
+}

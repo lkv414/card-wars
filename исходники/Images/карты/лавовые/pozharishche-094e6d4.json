@@ -1,0 +1,16 @@
+{
+  "name": "Пожарище",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 1 урон всем существам под контролем соперника за каждый жетон ожого на этом существе.\nВозьми 1 карту.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "094e6d44b32e2eded4c71c088331dd14a199e8b33c61cfd427384cabbb8218c4",
+  "landType": "lava",
+  "id": "pozharishche-094e6d4"
+}

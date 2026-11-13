@@ -1,0 +1,16 @@
+{
+  "name": "Животворящая башня",
+  "name_en": "LIVING TOWER",
+  "cost": 0,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "В начале твоего хода, сними 1 урон с дружественных существ в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6b8a39744a9558e4273245441451cdb312f1bca2f56a86e27a6fd4aa82e427ae",
+  "landType": "nice",
+  "id": "living-tower-6b8a397"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Фонтан стойкости",
+  "name_en": "FOUNTAIN OF FORTITUDE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Пока эта карта находится в игре,\nтвоё максимальное здоровье\nувеличивается на 5.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "e4fcebf431a7615584031a5aaca9dc1d3f6d42f2204fe21b3404593879b2d8a7",
+  "landType": "nice",
+  "id": "fountain-of-fortitude-e4fcebf"
+}

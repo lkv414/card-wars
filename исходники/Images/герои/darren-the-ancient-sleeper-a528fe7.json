@@ -1,0 +1,11 @@
+{
+  "name": "Даррен Давно Заснувший",
+  "name_en": "Darren the Ancient Sleeper",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Сбрось 2 карты или 1 карту с тыквой >>> Переверни выбранную землю лицевой стороной вниз, до начала твоего следующего хода.\n(Не больше 1 раза за ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a528fe758e15d7689f842247c37bfd8eb7c0eee388c807600bc1ad5c824ada5f",
+  "id": "darren-the-ancient-sleeper-a528fe7"
+}

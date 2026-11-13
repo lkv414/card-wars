@@ -1,0 +1,16 @@
+{
+  "name": "Сила труселей",
+  "name_en": "PANTS POWER",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное болотное существо\nпод твоим контролем получает\nв этом ходу +2 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9079d1d50b52c8411c0f353352e2dd54bd2c5a056dd312be3cd5bc135b570576",
+  "landType": "rainbow",
+  "id": "pants-power-9079d1d"
+}

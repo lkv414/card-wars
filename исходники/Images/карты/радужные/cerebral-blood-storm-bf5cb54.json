@@ -1,0 +1,16 @@
+{
+  "name": "Церебральный кровавый шторм",
+  "name_en": "CEREBRAL BLOOD STORM",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 1 урон каждому существу под контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "bf5cb545a05e5fefb5b3f12a994954ffe4c2b9107aaa550e906184f8f59e9c46",
+  "landType": "rainbow",
+  "id": "cerebral-blood-storm-bf5cb54"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Маяк",
+  "name_en": "LIGHTHOUSE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие >>> Выбранное\nсущество в этой зоне получает\n+1 к атаке за каждые 5 карт\nв твоём сбросе в этом ходу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "3731207e4504cc367cd2b9b10fd1446f91283432e515e0584ce98325b888dbf4",
+  "landType": "swamp",
+  "id": "lighthouse-3731207"
+}

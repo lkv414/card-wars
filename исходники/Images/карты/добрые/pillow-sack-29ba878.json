@@ -1,0 +1,16 @@
+{
+  "name": "Мешок тук",
+  "name_en": "PILLOW SACK",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Пока количество урона, нанесённого мешку тук, равно 6, он получает +6 к атаке.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "29ba87881e35a546aa5ff4f94088ff535c3a4dd880b02da51d2f806341ded976",
+  "landType": "nice",
+  "id": "pillow-sack-29ba878"
+}

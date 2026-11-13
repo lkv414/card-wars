@@ -1,0 +1,16 @@
+{
+  "name": "Мшистый приют",
+  "name_en": "MOSS HAVEN",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "В начале твоего хода ты можешь убрать 1 жетон (кроме урона) с дружественного существа или земли под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0e7c615a55d0e911b700734bc6f5549b87d0801a113668cc61448b8f7ec822e9",
+  "landType": "nice",
+  "id": "moss-haven-0e7c615"
+}

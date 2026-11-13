@@ -1,0 +1,16 @@
+{
+  "name": "Стильный волчара",
+  "name_en": "DAPPER WOLF",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Стильный волчара получает +1 к атаке пока атакует существо на кукурузном поле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "f2cb7bb7196da8d8bf11fb843c96cd4485e7737e4ac167baf1a687ebc7a03a56",
+  "landType": "rainbow",
+  "id": "dapper-wolf-f2cb7bb"
+}

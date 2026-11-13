@@ -1,0 +1,16 @@
+{
+  "name": "Вихрь мечей",
+  "name_en": "SWORD WHIRLWIND",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни выбранное дружественное существо на руку владельца. Верни выбранное существо под контролем соперника на руку владельца.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dfcfe9344539a28761a45e4a096eadb263edb65c1a5cfaba5eb4450ed1da4692",
+  "landType": "blue",
+  "id": "sword-whirlwind-dfcfe93"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Жгучее прозрение",
+  "name_en": "SCORCHING INSIGHT",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги выбранное существо.\nЕсли у тебя на руке не больше 1 карты,\nвозьми 3 карты.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c3b32ea22d644fff3378cd18ec95b5711defc258c12b6c230164f08ca772f1d4",
+  "landType": "lava",
+  "id": "scorching-insight-c3b32ea"
+}

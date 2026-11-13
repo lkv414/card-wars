@@ -1,0 +1,16 @@
+{
+  "name": "Железная няня",
+  "name_en": "IRON NANNY",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 15,
+  "description": "Когда другое существо с атакой 3 или меньше входит в игру, положи +2 к атаке на железную няню.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "4167108964d5f215d29ea263bdb70d327408adb2db1ee29681b3110aeff14ee7",
+  "landType": "nice",
+  "id": "iron-nanny-4167108"
+}

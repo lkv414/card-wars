@@ -1,0 +1,16 @@
+{
+  "name": "Утконос",
+  "name_en": "PLATYPUS",
+  "cost": 0,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 3,
+  "description": "+1 к атаке за каждую карту стоимостью 0 в твоём сбросе.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "3921ee9eba2e81a5067e42a87c8590cba0d18a4c9e6cdf9ef654d00bbdef8b43",
+  "landType": "blue",
+  "id": "platypus-3921ee9"
+}

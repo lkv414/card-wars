@@ -1,0 +1,16 @@
+{
+  "name": "Зимний ткач",
+  "name_en": "WINTER WEAVER",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 2,
+  "description": "ФЛЮП >>> Возьми 1 карту. Каждый игрок у кого на земле жетон мороза сбрасывает 1 карту.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "40310f5a3fff871493538dc8e81921d863d82393a2d6bef1062d27837d1b6913",
+  "landType": "icy",
+  "id": "winter-weaver-40310f5"
+}

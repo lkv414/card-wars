@@ -1,0 +1,16 @@
+{
+  "name": "Мастер-Кузнец",
+  "name_en": "BLACKSMITH",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Сбрось карту >>> Положи на выбранное дружественное существо столько ⚔, сколько стоила сброшенная карта.\n(Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "7fbf96a5d28def3a11f64067a807ef2419cb3549a5c0558fb3205875ab08c939",
+  "landType": "lava",
+  "id": "blacksmith-7fbf96a"
+}

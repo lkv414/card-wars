@@ -1,0 +1,16 @@
+{
+  "name": "Огнеминго ткач огня",
+  "name_en": "FLAMINGO FIRE WEAVER",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "ФЛЮП >>> Подожги каждое существо\nв выбранной зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "890662f4746efe4e68e4548a9c8ee95ba294e2eb968c8ec147fc96a2c51901af",
+  "landType": "lava",
+  "id": "flamingo-fire-weaver-890662f"
+}

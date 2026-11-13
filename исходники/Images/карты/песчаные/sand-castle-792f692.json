@@ -1,0 +1,16 @@
+{
+  "name": "Песчаный замок",
+  "name_en": "SAND CASTLE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь песчаный замок >>> Верни твоё существо в этой зоне на руку, разыграй его бесплатно.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "792f6928c8b1e01f7ff73865f6702ec64dbffd26b8e378a9db771a2ac636e06d",
+  "landType": "sandy",
+  "id": "sand-castle-792f692"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Река мечей",
+  "name_en": "SWORD RIVER",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под твоим контролем\nполучают +2 к атаке в этом ходу.\nВозьми 2 карты.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "59e6cd91533d014b5e05533b31f7b22c1da4d65ac0814fef074dbb288e316f52",
+  "landType": "rainbow",
+  "id": "sword-river-59e6cd9"
+}

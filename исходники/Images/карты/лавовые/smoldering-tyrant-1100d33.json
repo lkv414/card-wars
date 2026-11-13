@@ -1,0 +1,16 @@
+{
+  "name": "Тлеющий тиран",
+  "name_en": "SMOLDERING TYRANT",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если у тебя на руке не больше 1 карты, удвой атаку тлеющего тирана.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "1100d338072fd3a32b3fb8895002190e4bd296802d5444351f9556be0b63b655",
+  "landType": "lava",
+  "id": "smoldering-tyrant-1100d33"
+}

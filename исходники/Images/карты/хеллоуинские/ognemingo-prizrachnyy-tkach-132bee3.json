@@ -1,0 +1,16 @@
+{
+  "name": "Огнеминго, призрачный ткач",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "landType": "lava",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "ФЛЮП >>> Подожжи выбранное существо. Если огнеминго, призрачный ткач находится на земле призраков, то также подожжи соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "132bee300475c91c14f40d084ef19558a3b3467d46db586228e06aca1388154e",
+  "id": "ognemingo-prizrachnyy-tkach-132bee3"
+}

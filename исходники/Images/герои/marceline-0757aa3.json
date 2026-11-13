@@ -1,0 +1,11 @@
+{
+  "name": "Марселин",
+  "name_en": "Marceline",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Если количество урона, нанесённого любому твоему существу, равно 5 или больше, оно получает +1 к атаке.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "0757aa36e792410211933e77fe71b6c3bba3a01025676acc92f2da50431e18d6",
+  "id": "marceline-0757aa3"
+}

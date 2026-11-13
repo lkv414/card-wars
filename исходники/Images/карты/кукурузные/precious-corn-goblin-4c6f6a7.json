@@ -1,0 +1,16 @@
+{
+  "name": "Драгоценный кукугоблин",
+  "name_en": "PRECIOUS CORN GOBLIN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 3,
+  "description": "Поглощение\nФЛЮП >>> Сними 2 урона или убери 1 жетон (кроме урона) с выбранного дружественного существа.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4c6f6a7f506ea856913d5ec9bf8f60daffe81282c83058e958b65ff50f809009",
+  "landType": "corn",
+  "id": "precious-corn-goblin-4c6f6a7"
+}

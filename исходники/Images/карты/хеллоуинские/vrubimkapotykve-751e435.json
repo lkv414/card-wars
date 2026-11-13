@@ -1,0 +1,16 @@
+{
+  "name": "ВрубимКаПоТыкве",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Переверни лицевой стороной вниз\nвыбранную землю до начала твоего\nследующего хода. Если ты перевернул\nземлю с существом с тыквой, то\nпереверни еще одну до начала твоего\nследующего хода.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "751e435d6bac3df07a55b1f2b1ce308a5b3ccd66d46390dfff8cb3a3faa6aa3d",
+  "id": "vrubimkapotykve-751e435"
+}

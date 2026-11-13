@@ -1,0 +1,16 @@
+{
+  "name": "Кожурыцарь",
+  "name_en": "CORN KNIGHT",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": null,
+  "defense": null,
+  "description": "+1 к атаке и +2 к защите за каждое кукурузное поле под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "272b8b941fc5b448dfe931c67943f1af1c9cb6c6be78725b0ecb315e9df48a80",
+  "landType": "corn",
+  "id": "corn-knight-272b8b9"
+}

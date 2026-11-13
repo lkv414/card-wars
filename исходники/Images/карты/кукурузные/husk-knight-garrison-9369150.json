@@ -1,0 +1,16 @@
+{
+  "name": "Гарнизон кожурыцарей",
+  "name_en": "Husk Knight Garrison",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает\n+1 к атаке и +1 к защите за каждое\nкукурузное существо под\nтвоим контролем.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "936915072c287d5b0bd2d9cc43e03908b4d4b117ef89483b2ccd14b31c8d8096",
+  "landType": "corn",
+  "id": "husk-knight-garrison-9369150"
+}

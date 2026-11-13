@@ -1,0 +1,16 @@
+{
+  "name": "Лучник Дэн",
+  "name_en": "CORN ARCHER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "ФЛЮП >>> Уничтожь\nвыбранное строение в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "078347e304f59c97ba97aa3746e3fda98578cf7b517117ff77dceb325d4846dc",
+  "landType": "corn",
+  "id": "corn-archer-078347e"
+}

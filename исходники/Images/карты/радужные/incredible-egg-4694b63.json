@@ -1,0 +1,16 @@
+{
+  "name": "Невероятное яйцо",
+  "name_en": "INCREDIBLE EGG",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Открой 2 верхние карты своей колоды.\nТы можешь взять в руку кукурузные\nкарты, а остальные сбрось.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "4694b6355d5ecb068c387faa277cbb33590204713ad747eb81eb9e37a5a4145e",
+  "landType": "rainbow",
+  "id": "incredible-egg-4694b63"
+}

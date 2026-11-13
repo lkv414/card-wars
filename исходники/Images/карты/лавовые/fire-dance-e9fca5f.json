@@ -1,0 +1,16 @@
+{
+  "name": "Танец огня",
+  "name_en": "FIRE DANCE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Положи существо с твоего сброса.\nДобавь ему урона, пока у него\nне останется 1 защита.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "e9fca5f49844ee3c37f4b52d05f6a46c5300a97374e1df8dcf1ea8b905ee9a3a",
+  "landType": "lava",
+  "id": "fire-dance-e9fca5f"
+}

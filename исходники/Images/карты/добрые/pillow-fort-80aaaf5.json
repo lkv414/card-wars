@@ -1,0 +1,16 @@
+{
+  "name": "Крепость из подушек",
+  "name_en": "PILLOW FORT",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие и ФЛЮП >>> Сними\nили нанеси 2 урона существу под твоим\nконтролем в этой зоне.\nЗатем сделай то же самое с другим\nдружественным существом.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "80aaaf5a029cfc8a3275e11d30b6183356bd15ce6972b533fdfb0d3096eca044",
+  "landType": "nice",
+  "id": "pillow-fort-80aaaf5"
+}

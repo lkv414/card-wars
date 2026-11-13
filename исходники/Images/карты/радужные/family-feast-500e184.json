@@ -1,0 +1,16 @@
+{
+  "name": "Семейное застолье",
+  "name_en": "FAMILY FEAST",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери другого игрока и землю под твоим контролем. Возьми 1 карту за каждое его существо, которое соответствует той земле.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "500e1849b55c580f378c100f0c4100e65399f630b2ab074f9a5004d154bc71ba",
+  "landType": "rainbow",
+  "id": "family-feast-500e184"
+}

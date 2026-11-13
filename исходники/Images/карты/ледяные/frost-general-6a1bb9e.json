@@ -1,0 +1,16 @@
+{
+  "name": "Генерал Мороз",
+  "name_en": "FROST GENERAL",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 10,
+  "description": "В начале твоего хода наносит 1 урон\nкаждому существу на земле\nс жетоном мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6a1bb9effca010f3ec31dc48785a6ef757cc2c1b78e9adece29ee2224d92c1e3",
+  "landType": "icy",
+  "id": "frost-general-6a1bb9e"
+}

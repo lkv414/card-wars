@@ -1,0 +1,16 @@
+{
+  "name": "Бобзлей",
+  "name_en": "BOBSLED",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 5,
+  "description": "ФЛЮП >>> Нанеси 3 урона выбранному\nсуществу на любой земле\nс жетоном мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6bbe5b22d7480793a1b7220dcef5f075f905277eac88d94ded4e3066ea39c516",
+  "landType": "icy",
+  "id": "bobsled-6bbe5b2"
+}

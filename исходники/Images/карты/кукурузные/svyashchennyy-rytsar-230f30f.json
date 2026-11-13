@@ -1,0 +1,16 @@
+{
+  "name": "Священный Рыцарь",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 13,
+  "description": "Если в текущем месяце 31 день, каждый раз, когда существо уничтожается, положи 1 жетон атаки на Священного Рыцаря.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "230f30f4ad6abeb5291861315cd2771ed91a2476ecb04098aacda85f45632efd",
+  "landType": "corn",
+  "id": "svyashchennyy-rytsar-230f30f"
+}

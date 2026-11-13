@@ -1,0 +1,16 @@
+{
+  "name": "Священная коса",
+  "name_en": "HOLY SCYTHE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное существо.\nЕго владелец восстанавливает\n5 жизней.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "80e28adeb91b20478f20146dc36c76f260ec9fcdc34ceeb212b54628342985ac",
+  "landType": "rainbow",
+  "id": "holy-scythe-80e28ad"
+}

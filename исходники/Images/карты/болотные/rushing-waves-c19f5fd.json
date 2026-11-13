@@ -1,0 +1,16 @@
+{
+  "name": "Проточные волны",
+  "name_en": "RUSHING WAVES",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь всех существ в зоне.\nНачиная с тебя, каждый игрок может положить существо с руки на свою землю в этой зоне.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "c19f5fd3760f517f168046e87c93b55abee4666bf2a407784c7afeaf3383d7db",
+  "landType": "swamp",
+  "id": "rushing-waves-c19f5fd"
+}

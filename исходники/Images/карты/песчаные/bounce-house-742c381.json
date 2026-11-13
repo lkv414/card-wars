@@ -1,0 +1,16 @@
+{
+  "name": "Батутный домик",
+  "name_en": "BOUNCE HOUSE",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": 8,
+  "description": "Когда тебе наносят урон, вместо себя нанеси урон батутному домику.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "742c381bf50fd48fb353e6df794b11338314c066772c0ef47d743787a2c24388",
+  "landType": "sandy",
+  "id": "bounce-house-742c381"
+}

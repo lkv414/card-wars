@@ -1,0 +1,16 @@
+{
+  "name": "Аэромант",
+  "name_en": "AEROMANCER",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "Когда аэромант входит в игру, ты можешь поменять местами двух существ под контролем выбранного игрока.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "dbdf045e10a0516faba3ef77e41af28ae99f9968c4129f0383617ffdf6fa5050",
+  "landType": "blue",
+  "id": "aeromancer-dbdf045"
+}

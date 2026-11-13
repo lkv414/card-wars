@@ -1,0 +1,16 @@
+{
+  "name": "Кукугоблин страж",
+  "name_en": "CORN GOBLIN GUARD",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 5,
+  "description": "Поглощение\nКукугоблин страж не может атаковать\n(но может защищаться).",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "a105ec600e67a28e7094f69e36b2338763d43f70bc7d7339e07b36a7c3180c52",
+  "landType": "corn",
+  "id": "corn-goblin-guard-a105ec6"
+}

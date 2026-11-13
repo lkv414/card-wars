@@ -1,0 +1,16 @@
+{
+  "name": "Лыжню!",
+  "name_en": "MAKE WAY!",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь 2 выбранные земли.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "93a2a5529844f9e5d8a289d2a1fb2c467cddb59512043454ce2ebe1304e3c211",
+  "landType": "icy",
+  "id": "make-way-93a2a55"
+}

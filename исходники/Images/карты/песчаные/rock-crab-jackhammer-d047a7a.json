@@ -1,0 +1,16 @@
+{
+  "name": "Камнекраб отбойник",
+  "name_en": "ROCK CRAB JACKHAMMER",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда камнекраб отбойник получает урон от существа, он наносит этому существу столько же урона.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "d047a7a137069eabedc28663bd4d35eb4a1fab41305b553b6276d46bc767bd77",
+  "landType": "sandy",
+  "id": "rock-crab-jackhammer-d047a7a"
+}

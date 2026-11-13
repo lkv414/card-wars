@@ -1,0 +1,16 @@
+{
+  "name": "Тыквенная сахарная вата",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "landType": "nice",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними с выбранного существа под твоим контролем 3 урона или меньше. Если выбранное существо с тыквой, то положи на него ⚔.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e905418a77201b5a1c004879c3e86afe6362b283f0cbe539124b6e5488f36e45",
+  "id": "tykvennaya-sakharnaya-vata-e905418"
+}

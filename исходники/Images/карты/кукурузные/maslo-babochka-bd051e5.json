@@ -1,0 +1,16 @@
+{
+  "name": "Масло-бабочка",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "ФЛЮП >>> Возьми карту за каждое строение под твоим контролем.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "bd051e5512bb627f830ca05177f10479b9b7d55ddf5c6be698f4e81513e6c3db",
+  "landType": "corn",
+  "id": "maslo-babochka-bd051e5"
+}

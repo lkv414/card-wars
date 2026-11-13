@@ -1,0 +1,16 @@
+{
+  "name": "Мистер Слайсер",
+  "name_en": "MR. SLICER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "ФЛЮП >>> Нанеси 2 урона\nвыбранному существу под контролем\nсоперника в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e3e2bacd49f38fad5869e18c741b40178d06fb36bcf6315e71a693d2113c47d0",
+  "landType": "corn",
+  "id": "mr-slicer-e3e2bac"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Ледзиратель",
+  "name_en": "ICE WARDEN",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 13,
+  "description": "Существа под контролем соперника на любой земле с жетоном мороза получают двойной урон.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "fc9277cc7409efff58a1fcad864b6a6d2a8cdb4d9bc73151c78a99e7a7901960",
+  "landType": "icy",
+  "id": "ice-warden-fc9277c"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Мавзолей",
+  "name_en": "MAUSOLEUM",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает\n+1 к защите за каждые 5 карт\nв твоём сбросе.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "ef6f976fb44cfb2d09b7b2ee4b5ca4a9914988f9d7a2ede00cc60ef0471f5843",
+  "landType": "swamp",
+  "id": "mausoleum-ef6f976"
+}

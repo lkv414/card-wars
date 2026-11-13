@@ -1,0 +1,16 @@
+{
+  "name": "Теневая пирамида",
+  "name_en": "SHADOW PYRAMID",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Возьми карту. Если ты контролируешь существо в этой зоне,\nсбрось карту.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "c3e944d958d1bc2e118f7c301707c36b0728bfefefce832dd0c8335c084aa8f4",
+  "landType": "swamp",
+  "id": "shadow-pyramid-c3e944d"
+}

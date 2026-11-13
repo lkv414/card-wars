@@ -1,0 +1,16 @@
+{
+  "name": "Шербетный залп",
+  "name_en": "SHERBET BLAST",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь выбранную землю. Ты можешь переместить любое количество жетонов мороза на новые земли\n(1 жетон на землю).",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "5e13af1955d98254122684ebdd2cc0dc1c26b388b232e0716a227ae3ce385265",
+  "landType": "icy",
+  "id": "sherbet-blast-5e13af1"
+}

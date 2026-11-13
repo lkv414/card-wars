@@ -1,0 +1,16 @@
+{
+  "name": "Костёр феникса",
+  "name_en": "PHOENIX FIRE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда существо в этой зоне уничтожено,\nты можешь уничтожить костёр феникса,\nчтобы вернуть это существо обратно\nв эту же зону.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "eab79bc9a7c889f1e213102573d97e4167e8fb5f726f3131b0e91824acc9ef1b",
+  "landType": "rainbow",
+  "id": "phoenix-fire-eab79bc"
+}

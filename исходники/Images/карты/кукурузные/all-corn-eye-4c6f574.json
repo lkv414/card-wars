@@ -1,0 +1,16 @@
+{
+  "name": "Всекурузное око",
+  "name_en": "ALL-CORN EYE",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 1,
+  "description": "+1 к защите за каждый уникальный тип земель под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4c6f574bbacdff50d55962d6684f42bebd15ba2f282e2e20847dafbb53ac2553",
+  "landType": "corn",
+  "id": "all-corn-eye-4c6f574"
+}

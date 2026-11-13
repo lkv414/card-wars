@@ -1,0 +1,16 @@
+{
+  "name": "Тыкворот",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "landType": "swamp",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "+2 к защите за каждые 2 карты\nс тыквой в сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9d152be81d94544d069677ea08b7c285dae864d1935f9c0073f4052d8031613d",
+  "id": "tykvorot-9d152be"
+}

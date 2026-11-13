@@ -1,0 +1,16 @@
+{
+  "name": "Поднимучие пески",
+  "name_en": "QUICKSAND",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни выбранное существо под твоим контролем на руку владельца. Получи столько действий, сколько стоила карта, которую ты вернул.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c763f543c31ad7cfc3d621c4c7cb1a88d481f52e283b8c1b4e7fbc38b2f26875",
+  "landType": "sandy",
+  "id": "quicksand-c763f54"
+}

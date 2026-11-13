@@ -1,0 +1,16 @@
+{
+  "name": "Призрак хижины",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда существо входит в эту зону, тот,\nкто его контролирует, сбрасывает 1 карту.\nЕсли он это делает, то берёт 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "29b553d77d3ecae61da2e9c192f65d3c7db55cd22bf1842ccfa5965b1b2c132f",
+  "landType": "swamp",
+  "id": "prizrak-khizhiny-29b553d"
+}

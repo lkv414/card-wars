@@ -1,0 +1,16 @@
+{
+  "name": "Сглаз",
+  "name_en": "JINX",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбери двух игроков. Каждый раскрывает случайную карту из своей руки. Если их стоимости не совпадают, они сбрасывают эти карты.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "77698bbf0b334e707af9af5ebd1e37f3fd94487de479c1d46cdf4f00511dedfc",
+  "landType": "rainbow",
+  "id": "jinx-77698bb"
+}

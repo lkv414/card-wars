@@ -1,0 +1,16 @@
+{
+  "name": "Пироклоп",
+  "name_en": "PIECLOPS",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Когда пироклоп входит в игру, сними 1 урон с каждого соседнего существа.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "978f5e46755166fecac573d070eeeba5a91d69f79297a0469d8a23c13cbbad02",
+  "landType": "nice",
+  "id": "pieclops-978f5e4"
+}

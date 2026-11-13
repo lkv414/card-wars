@@ -1,0 +1,16 @@
+{
+  "name": "Ледяная коробка",
+  "name_en": "ICE BOX",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Каждый раз, когда соперник сбрасывает карту чтобы сбросить жетон мороза, наноси ему 1 урон и ты восстанавливаешь 1 жизнь.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "0922877db5cfe7bfde9ab53619240d7f93f9ef94aa3fdfface75a50780421279",
+  "landType": "icy",
+  "id": "ice-box-0922877"
+}

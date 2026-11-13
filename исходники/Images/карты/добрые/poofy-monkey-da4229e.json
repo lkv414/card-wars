@@ -1,0 +1,16 @@
+{
+  "name": "Дутая макака",
+  "name_en": "POOFY MONKEY",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Если количество урона, нанесённого дутой макаке, равно 4 или больше, его атака удваивается.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "da4229edece2367c516bce9f24220e2dc9b1c63bc670f6f9a714861cb94213a8",
+  "landType": "nice",
+  "id": "poofy-monkey-da4229e"
+}

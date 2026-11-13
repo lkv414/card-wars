@@ -1,0 +1,16 @@
+{
+  "name": "Зелёная русалка",
+  "name_en": "GREEN MERMAID",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Уничтожь зелёную русалку >>>\nНанеси 1 урон каждому существу\nпод контролем соперника.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "61eea108809acc55df3f565dd6948ac63bf9bc68a2910acc7acde5d5bca392ee",
+  "landType": "swamp",
+  "id": "green-mermaid-61eea10"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Кэдди-дровосека",
+  "name_en": "CADDY WOODSMAN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "ФЛЮП >>> Перемести выбранное\nстроение под твоим контролем\nна любую пустую зону.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "21606e3396c185a820d985fda8b067f6e83c8e5a8c3e0018d1cb4df083854bde",
+  "landType": "corn",
+  "id": "caddy-woodsman-21606e3"
+}

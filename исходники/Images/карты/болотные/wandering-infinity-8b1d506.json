@@ -1,0 +1,16 @@
+{
+  "name": "Бродячая бесконечность",
+  "name_en": "WANDERING INFINITY",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Сбрось карту >>> Нанеси 1 урон\nдругому существу в этой зоне.\n(Используй сколько угодно\nраз за твой ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8b1d506b1f2c2f77eabc6df5cd3a477ac58242ac465d5d792ffbe953fa02ae5e",
+  "landType": "swamp",
+  "id": "wandering-infinity-8b1d506"
+}

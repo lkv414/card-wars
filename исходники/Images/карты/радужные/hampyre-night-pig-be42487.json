@@ -1,0 +1,16 @@
+{
+  "name": "Хампир, Ночная Свинья",
+  "name_en": "HAMPYRE, NIGHT PIG",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 1,
+  "description": "Когда Хампир атакует,\nты восстанавливаешь жизни,\nравные его атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "be424874ed2ab1ed2cd9ec727cd32c868e51232b875ab977d51fdc20dd9d018b",
+  "landType": "rainbow",
+  "id": "hampyre-night-pig-be42487"
+}

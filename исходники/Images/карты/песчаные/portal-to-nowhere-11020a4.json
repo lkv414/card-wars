@@ -1,0 +1,16 @@
+{
+  "name": "Портал в никуда",
+  "name_en": "PORTAL TO NOWHERE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести 1 существо под контролем соперника на соседнюю землю.\n(С его стороны.)",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "11020a4e86335cbb37337b4c07d8d510f3febe2c00cde08a2c6139b61314fb87",
+  "landType": "sandy",
+  "id": "portal-to-nowhere-11020a4"
+}

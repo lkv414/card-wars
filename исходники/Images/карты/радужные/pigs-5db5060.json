@@ -1,0 +1,16 @@
+{
+  "name": "Свиньи",
+  "name_en": "PIGS",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Когда свиньи входят или выходят из игры, ты можешь нанести 1 урон выбранному существу.",
+  "flavor": "",
+  "set_code": "ПРОМО",
+  "sha256": "5db50600a9c03ee530bb98633753fac196b90b21302e9d423588f34e081c11a8",
+  "landType": "rainbow",
+  "id": "pigs-5db5060"
+}

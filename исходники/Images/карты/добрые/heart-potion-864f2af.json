@@ -1,0 +1,16 @@
+{
+  "name": "Сердечное зелье",
+  "name_en": "HEART POTION",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 5 урона с выбранного существа или выбранный игрок восстанавливает 5 жизней. Если на том существе нет урона или у того игрока полное здоровье, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "864f2af7259fe71cc0466490b430eaa177642149b6349c4382230b6e0cb281d6",
+  "landType": "nice",
+  "id": "heart-potion-864f2af"
+}

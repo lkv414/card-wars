@@ -1,0 +1,16 @@
+{
+  "name": "Спашенька",
+  "name_en": "SPA-ZZZ",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Перед тем как ты начнёшь нападать, если на\nэтой земле есть повёрнутое существо под\nтвоим контролем, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "69270726f8578f8f95929819a4dcd8613baaaa0af0ab074df9d6a33a16378069",
+  "landType": "blue",
+  "id": "spa-zzz-6927072"
+}

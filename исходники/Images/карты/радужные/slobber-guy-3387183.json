@@ -1,0 +1,16 @@
+{
+  "name": "Слюнявый парень",
+  "name_en": "SLOBBER GUY",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 9,
+  "description": "",
+  "flavor": "Дамочки его любят, если у них\nесть водостойкие туфли.",
+  "set_code": null,
+  "sha256": "338718307b8daa2e88a598d4029032f1d6d9a70560ed39e80a4cf93942b5986c",
+  "landType": "rainbow",
+  "id": "slobber-guy-3387183"
+}

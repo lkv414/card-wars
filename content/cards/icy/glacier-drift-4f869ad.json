@@ -1,0 +1,19 @@
+{
+  "name": "Ледниковый дрифт",
+  "name_en": "GLACIER DRIFT",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести выбранное дружественное существо в пустую зону. Заморозь землю под конролем соперника в той зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4f869adfa95f521ec3f991b1ae8cd5455f8d784c56124d75e007d968627a5900",
+  "landType": "icy",
+  "id": "glacier-drift-4f869ad",
+  "kind": "card",
+  "image": "/content/cards/icy/glacier-drift-4f869ad.webp",
+  "abilities": []
+}

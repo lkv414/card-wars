@@ -1,0 +1,19 @@
+{
+  "name": "Барон Кургана",
+  "name_en": "BARON HICCOUGH",
+  "cost": 3,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 5,
+  "defense": 12,
+  "description": "Барон кургана стоит на 1 действие меньше за каждые 5 карт в сбросе соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ef60c996961b30ea4b22ac59c6bbc27ba07802c2a6e2463fe64b37f69154e783",
+  "landType": "swamp",
+  "id": "baron-hiccough-ef60c99",
+  "kind": "card",
+  "image": "/content/cards/swamp/baron-hiccough-ef60c99.webp",
+  "abilities": []
+}

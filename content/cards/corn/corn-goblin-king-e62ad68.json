@@ -1,0 +1,19 @@
+{
+  "name": "Король кукугоблин",
+  "name_en": "CORN GOBLIN KING",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Когда король кукугоблин заменяется,\nперемести его на пустую\nдружественную зону.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "e62ad680b581b1c13506174f6eccada4d3c1edb16a6fc2fba32cbafd85d94e69",
+  "landType": "corn",
+  "id": "corn-goblin-king-e62ad68",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-goblin-king-e62ad68.webp",
+  "abilities": []
+}

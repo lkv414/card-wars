@@ -1,0 +1,41 @@
+{
+  "name": "Дутая макака",
+  "name_en": "POOFY MONKEY",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Если количество урона, нанесённого дутой макаке, равно 4 или больше, его атака удваивается.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "da4229edece2367c516bce9f24220e2dc9b1c63bc670f6f9a714861cb94213a8",
+  "landType": "nice",
+  "id": "poofy-monkey-da4229e",
+  "kind": "card",
+  "image": "/content/cards/nice/poofy-monkey-da4229e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 0,
+        "duration": "aura",
+        "multiplier": 2,
+        "conditions": [
+          {
+            "kind": "while_damage_at_least",
+            "amount": 4,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока у Набитого орангутана 4 и более урона, его ATK удваивается."
+    }
+  ]
+}

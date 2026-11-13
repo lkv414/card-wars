@@ -1,0 +1,32 @@
+{
+  "name": "Зимние выкрутасы",
+  "name_en": "WINTER ANTICS",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранный игрок сбрасывает 1 карту\nс руки за каждую землю с жетоном\nмороза под его контролем.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "40c9f2f05a4e0eb89c84bde49202696303a732264bc1eec779addb34c17c3bae",
+  "landType": "icy",
+  "id": "winter-antics-40c9f2f",
+  "kind": "card",
+  "image": "/content/cards/icy/winter-antics-40c9f2f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "each_opponent_land"
+        },
+        "frozen": true
+      },
+      "text": "Заморозь каждую землю твоего противника."
+    }
+  ]
+}

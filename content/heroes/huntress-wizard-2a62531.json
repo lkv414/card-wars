@@ -1,0 +1,44 @@
+{
+  "name": "Охотница колдунья",
+  "name_en": "Huntress Wizard",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "В начале игры выбери слово из 3 или более\nбукв. Каждый раз, когда ты разыгрываешь\nкарту с этим словом в названии, нанеси\n1 урон выбранному существу под\nконтролем соперника.",
+  "flavor": "",
+  "set_code": "ftg",
+  "sha256": "2a62531a469342f917430611c6ad5983d7dbd7d5180c736dfe2848a6896aabc0",
+  "id": "huntress-wizard-2a62531",
+  "kind": "hero",
+  "image": "/content/heroes/huntress-wizard-2a62531.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_card_played",
+    "conditions": [
+      {
+        "kind": "if_payload_player_self"
+      },
+      {
+        "kind": "if_payload_name_contains"
+      }
+    ],
+    "effect": {
+      "op": "deal_damage",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      },
+      "amount": 1
+    },
+    "targets": [
+      {
+        "kind": "opponent_creature"
+      }
+    ],
+    "text": "В начале игры выбери слово из 3х и более букв. Когда играешь карту с этим словом в названии, нанеси 1 урон выбранному существу под контролем противника."
+  },
+  "wordSetup": {
+    "min": 3,
+    "max": 40,
+    "label": "Слово (3+ букв)"
+  }
+}

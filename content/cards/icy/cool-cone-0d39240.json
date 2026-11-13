@@ -1,0 +1,19 @@
+{
+  "name": "Кафе «холодный рожок»",
+  "name_en": "COOL CONE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда кафе «холодный рожок» входит в игру, заморозь землю под контролем соперника в этой зоне. Чтобы убрать жетон мороза с этой земли, соперник сбрасывает дополнительно 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0d392402b4e26248a685c7c763d33418d62fa7e75d5c5079d542d79829143001",
+  "landType": "icy",
+  "id": "cool-cone-0d39240",
+  "kind": "card",
+  "image": "/content/cards/icy/cool-cone-0d39240.webp",
+  "abilities": []
+}

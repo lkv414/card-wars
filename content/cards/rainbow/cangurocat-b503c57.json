@@ -1,0 +1,19 @@
+{
+  "name": "Кенгукошка",
+  "name_en": "Cangurocat",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 3,
+  "description": "Первый раз, когда кенгукошка наносит урон сопернику, положи на неё жетон мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b503c57f53a892ecfe6c1ffd13da45d5ec6454fe5ea16c380fc7be60372ac1a4",
+  "landType": "rainbow",
+  "id": "cangurocat-b503c57",
+  "kind": "card",
+  "image": "/content/cards/rainbow/cangurocat-b503c57.webp",
+  "abilities": []
+}

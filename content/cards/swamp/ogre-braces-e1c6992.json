@@ -1,0 +1,36 @@
+{
+  "name": "Брекеты огра",
+  "name_en": "OGRE BRACES",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Ты восстанавливаешь 1 жизнь\nза каждые 5 карт в твоём сбросе.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "e1c699216a9f632711f50a207d8e70ba095a2fdc4da4f9f7b4a154615086877a",
+  "landType": "swamp",
+  "id": "ogre-braces-e1c6992",
+  "kind": "card",
+  "image": "/content/cards/swamp/ogre-braces-e1c6992.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        }
+      },
+      "text": "Восстанови себе 1 HP за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
+}

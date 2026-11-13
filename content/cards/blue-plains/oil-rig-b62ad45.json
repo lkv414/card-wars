@@ -1,0 +1,42 @@
+{
+  "name": "Нефтекачка",
+  "name_en": "OIL RIG",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает +2 к защите за каждую Нефтекачку под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b62ad458f1e2da9d4a7b08d235d0c1075b16fbf8c130137e8d3e1d570fa0dcdf",
+  "landType": "blue",
+  "id": "oil-rig-b62ad45",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/oil-rig-b62ad45.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_building_yours"
+          },
+          "amount": 2,
+          "filter": {
+            "sameCard": true
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "Твое существо на этой земле получает +2 DEF за каждую Нефтяную вышку под твоим контролем."
+    }
+  ]
+}

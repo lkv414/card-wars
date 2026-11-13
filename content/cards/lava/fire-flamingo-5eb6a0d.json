@@ -1,0 +1,19 @@
+{
+  "name": "Огнеминго пожарный",
+  "name_en": "FIRE FLAMINGO",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Огнеминго пожарный игнорирует первые 2 урона, которые ему наносят горящие существа, на каждом ходу.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "5eb6a0df053200eb39622c83187687f745cd9a57021e79aa255b14207c3f5940",
+  "landType": "lava",
+  "id": "fire-flamingo-5eb6a0d",
+  "kind": "card",
+  "image": "/content/cards/lava/fire-flamingo-5eb6a0d.webp",
+  "abilities": []
+}

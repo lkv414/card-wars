@@ -1,0 +1,44 @@
+{
+  "name": "Ошарашенный пень",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Уничтожь ошарашенный пень >>>\nВыбранный соперник сбрасывает 1 карту\nза каждые 5 карт в твоём сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e0cf909e7d33ca663bf32036a53f0c97cecbe81e2bb59306e4bb66439ecb4f30",
+  "landType": "swamp",
+  "id": "osharashennyy-pen-e0cf909",
+  "kind": "card",
+  "image": "/content/cards/swamp/osharashennyy-pen-e0cf909.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "count": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        }
+      },
+      "text": "Уничтожь Пень с булавой >>> Выбранный противник сбрасывает карту за каждые 5 карт в твоей стопке сброса.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "additionalCost": {
+        "destroySelf": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Песчаные рыцари",
+  "name_en": "SAND KNIGHTS",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "+2 к атаке, если ты контролируешь хотя бы одну синюю равнину.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "f3311aa9feba32b54d2736b691e402e281a657c822244e299de78d490aa13d47",
+  "landType": "sandy",
+  "id": "sand-knights-f3311aa",
+  "kind": "card",
+  "image": "/content/cards/sandy/sand-knights-f3311aa.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "+2 ATK если под твоим контролем Голубые равнины.",
+      "conditions": [
+        {
+          "kind": "while_land_count",
+          "landType": "blue",
+          "min": 1
+        }
+      ]
+    }
+  ]
+}

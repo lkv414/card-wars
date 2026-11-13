@@ -1,0 +1,19 @@
+{
+  "name": "Болотный циклон",
+  "name_en": "SWAMP CYCLONE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемешай твой сброс.\nВерни 2 случайные карты из твоего\nсброса на руку, остальные карты\nположи под низ твоей колоды и\nудали эту карту из игры.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "a1f9a79f427cdbe31eb83520eaeac990c5dda1a6e18f9fa8ca409da43fd2aa3b",
+  "landType": "swamp",
+  "id": "swamp-cyclone-a1f9a79",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-cyclone-a1f9a79.webp",
+  "abilities": []
+}

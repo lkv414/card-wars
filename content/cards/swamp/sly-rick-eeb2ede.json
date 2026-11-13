@@ -1,0 +1,19 @@
+{
+  "name": "Хитрый Рик",
+  "name_en": "Sly Rick",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 4,
+  "description": "ФЛЮП >>> Ты и твой соперник раскрывает\nслучайную карту из своей колоды. Если\nстоимость твоей карты выше, ты можешь\nразыграть её бесплатно. Если нет, ты можешь\nснять 3 урона выбранному существу. Каждый\nигрок перемешивает все не разыгранные\nкарты обратно в свою колоду.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "eeb2ede1aee6963155e1c04cff77e3a4fc4140600772d22dab9443f679bf4115",
+  "landType": "swamp",
+  "id": "sly-rick-eeb2ede",
+  "kind": "card",
+  "image": "/content/cards/swamp/sly-rick-eeb2ede.webp",
+  "abilities": []
+}

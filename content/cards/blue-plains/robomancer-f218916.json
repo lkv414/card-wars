@@ -1,0 +1,38 @@
+{
+  "name": "Робомант",
+  "name_en": "ROBOMANCER",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "+1 к атаке за каждое существо,\nкоторое переместилось в другую\nзону в этом ходу.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "f2189165480e8d2c64b39aacc40d9f895b38ac517e1a42e10836fd291fcaa1d2",
+  "landType": "blue",
+  "id": "robomancer-f218916",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/robomancer-f218916.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_counter",
+          "counter": "line_change",
+          "scope": "own",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждое существо, сменившее линию во время твоего хода."
+    }
+  ]
+}

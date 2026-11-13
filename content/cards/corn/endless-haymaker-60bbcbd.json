@@ -1,0 +1,32 @@
+{
+  "name": "Бесконечный сенокос",
+  "name_en": "ENDLESS HAYMAKER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси урон себе, равный оставшейся\nзащите выбранного существа,\nзатем уничтожь его.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "60bbcbd81c1b4abd62858b1cbb5a94256aaf9320c6ef93b1d68cda0d5f53ca7e",
+  "landType": "corn",
+  "id": "endless-haymaker-60bbcbd",
+  "kind": "card",
+  "image": "/content/cards/corn/endless-haymaker-60bbcbd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "self_damage_then_destroy",
+      "params": {},
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбери существо и нанеси себе урон равный остатку DEF, затем уничтожь существо."
+    }
+  ]
+}

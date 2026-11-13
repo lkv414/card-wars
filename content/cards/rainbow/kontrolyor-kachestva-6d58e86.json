@@ -1,0 +1,19 @@
+{
+  "name": "Контролёр качества",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 10,
+  "description": "Когда контролёр качества выходит\nиз игры, замешай его в\nисследовательские заметки.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "6d58e86c3fc05b75bba23c605776ee76b30fdd87b19290cce5ea11ae5b6b3c32",
+  "landType": "rainbow",
+  "id": "kontrolyor-kachestva-6d58e86",
+  "kind": "card",
+  "image": "/content/cards/rainbow/kontrolyor-kachestva-6d58e86.webp",
+  "abilities": []
+}

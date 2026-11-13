@@ -1,0 +1,39 @@
+{
+  "name": "Док Смерть",
+  "name_en": "DOC DEATH",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Уничтожьте существо под твоим контролем\nи ФЛЮП >>> Уничтожьте выбранное\nсущество под контролем\nсоперника в этой зоне.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "c499198153668a513fe70daac304fa484e23d2b8b6957a2f6239e8e0692a3a96",
+  "landType": "swamp",
+  "id": "doc-death-c499198",
+  "kind": "card",
+  "image": "/content/cards/swamp/doc-death-c499198.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "additionalCost": {
+        "destroyOwnCreature": 1
+      },
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Уничтожь существо под своим контролем, ПРИЕМ >>> Уничтожь выбранное существо на этой линии."
+    }
+  ]
+}

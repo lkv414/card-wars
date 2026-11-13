@@ -1,0 +1,49 @@
+{
+  "name": "Лютый фурор",
+  "name_en": "FIERCE FURY",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо получает в этом ходу\n+2 к атаке за каждое флюпнутое существо\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f77a208028d23e7719473a669a776424ce44b5f93727d86180f0cf9f9c352423",
+  "landType": "corn",
+  "id": "fierce-fury-f77a208",
+  "kind": "card",
+  "image": "/content/cards/corn/fierce-fury-f77a208.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 2,
+          "filter": {
+            "flipped": true
+          }
+        },
+        "duration": "this_turn"
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбранное существо получает +2 ATK в этом ходу за каждое примененное существо под твоим контролем."
+    }
+  ]
+}

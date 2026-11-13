@@ -1,0 +1,53 @@
+{
+  "name": "Розовая ундинка",
+  "name_en": "Pink Undine",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Сбрось карту >>> Нанеси 1 урон каждому\nсуществу под контролем соперника.\n(Используй только 1 раз за твой ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "56330179de503120a34db0d28a167da5cd8f8294136f482cf2862415912fa397",
+  "landType": "swamp",
+  "id": "pink-undine-5633017",
+  "kind": "card",
+  "image": "/content/cards/swamp/pink-undine-5633017.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "permanent"
+      },
+      "text": "Начиная со следующего твоего хода каждый ход получает +1 DEF навсегда."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "stat": "attack",
+        "amount": -1,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_undamaged",
+            "scope": "target"
+          }
+        ]
+      },
+      "text": "Существа противника на этой линии без урона на них, видя дух, паникуют и теряют 1 АТК."
+    }
+  ]
+}

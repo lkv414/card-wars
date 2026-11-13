@@ -1,0 +1,67 @@
+{
+  "name": "Огнешторм фениксов",
+  "name_en": "PHOENIX FIRE STORM",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "Когда огнешторм фениксов входит в игру, если у тебя на руке не больше 1 карты, подожги каждое существо под контролем соперника.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "c7d1fdadff19e974eb4bf17ef00b714cbd4ad6dabb5896cdcebf396156bbce9c",
+  "landType": "lava",
+  "id": "phoenix-fire-storm-c7d1fda",
+  "kind": "card",
+  "image": "/content/cards/lava/phoenix-fire-storm-c7d1fda.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_other"
+        },
+        {
+          "kind": "if_payload_land_type",
+          "landType": "ghost"
+        }
+      ],
+      "effect": [
+        {
+          "op": "attach_card",
+          "card": {
+            "kind": "triggering_instance"
+          },
+          "to": {
+            "kind": "this_creature"
+          },
+          "from": "death"
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "this_creature"
+          },
+          "stat": "attack",
+          "amount": 1,
+          "duration": "permanent"
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "this_creature"
+          },
+          "stat": "defense",
+          "amount": 2,
+          "duration": "permanent"
+        }
+      ],
+      "text": "Обжор поглощает другие души (и всё остальное). Если призрачное существо под твоим контролем умирает, положи его карту под обжора — он получит +1 АТК и +2 DEF навсегда."
+    }
+  ]
+}

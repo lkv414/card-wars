@@ -1,0 +1,46 @@
+{
+  "name": "Кольцо пушистости",
+  "name_en": "FLUFFINESS RING",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо под твоим контролем получает +Х к атаке в этом ходу, где Х – количество урона, нанесённого этому существу.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "0c1e05a47558abd9227fc36bd933b8bb0e8000dafbf8704dc10f9048ce42ab03",
+  "landType": "nice",
+  "id": "fluffiness-ring-0c1e05a",
+  "kind": "card",
+  "image": "/content/cards/nice/fluffiness-ring-0c1e05a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "duration": "this_turn",
+        "amount": {
+          "kind": "target_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        }
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Выбранное существо под твоим контролем получает +X ATK в этом ходу, где X это число урона на нем."
+    }
+  ]
+}

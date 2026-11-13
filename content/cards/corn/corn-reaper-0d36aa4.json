@@ -1,0 +1,34 @@
+{
+  "name": "Жнец",
+  "name_en": "CORN REAPER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Чтобы разыграть эту карту, сбрось карту. Когда Жнец входит в игру, перемести выбранное существо в этой зоне в соседнюю пустую зону под твоим контролем.",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "0d36aa4bfc693ebacddcf98a03d5416018abae8c70e082fc68c269c406f2f8e3",
+  "landType": "corn",
+  "id": "corn-reaper-0d36aa4",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-reaper-0d36aa4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "reaper_discard_and_move_lane_creature",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "text": "Дополнительная плата: сбрось карту. Когда Жнец вступает в игру, перемести существо на этой линии на пустую соседнюю линию (на своей стороне)."
+    }
+  ]
+}

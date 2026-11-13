@@ -1,0 +1,19 @@
+{
+  "name": "Огнеминго капитан",
+  "name_en": "FLAMING CPT.",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 2,
+  "description": "Когда огнеминго капитан наносит урон сопернику, подожги его.\n(В начале своего хода он получает 1 урон за каждый жетон ожога.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3efbfe52f7b15788ed4aebc8de192d5e3997b6f113936182ba718ccf33ddc2b4",
+  "landType": "lava",
+  "id": "flaming-cpt-3efbfe5",
+  "kind": "card",
+  "image": "/content/cards/lava/flaming-cpt-3efbfe5.webp",
+  "abilities": []
+}

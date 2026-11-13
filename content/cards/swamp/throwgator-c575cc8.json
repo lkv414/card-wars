@@ -1,0 +1,41 @@
+{
+  "name": "КрокКидала",
+  "name_en": "THROWGATOR",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 5,
+  "defense": 3,
+  "description": "Когда кроккидала входит в игру,\nперемести выбранное существо под\nконтролем соперника в его зону\n(если она пустая).",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "c575cc8afe70fbf3828c40fd20d9653db9ab3d168d5ddbdeb68ff8e227567ba3",
+  "landType": "swamp",
+  "id": "throwgator-c575cc8",
+  "kind": "card",
+  "image": "/content/cards/swamp/throwgator-c575cc8.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "this_lane_opponent_land"
+        },
+        "side": "any"
+      },
+      "text": "Когда Крок-зачинщик вступает в игру, передвинь выбранное существо противника на линию Крок-зачинщика (если она пуста).",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ]
+    }
+  ]
+}

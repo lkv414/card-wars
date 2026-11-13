@@ -1,0 +1,19 @@
+{
+  "name": "Мятный дракон",
+  "name_en": "MINTY DRAGON",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 4,
+  "description": "Когда мятный дракон уничтожается,\nвыбранный соперник сбрасывает\n2 карты.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "1b493f2846a9ee0b36ef6b2d4741aa8549b344b1dc58433f3988f1faeb97a449",
+  "landType": "nice",
+  "id": "minty-dragon-1b493f2",
+  "kind": "card",
+  "image": "/content/cards/nice/minty-dragon-1b493f2.webp",
+  "abilities": []
+}

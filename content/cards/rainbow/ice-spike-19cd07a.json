@@ -1,0 +1,20 @@
+{
+  "name": "Шипулька",
+  "name_en": "ICE SPIKE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 1,
+  "description": "Побереги-и-ись!",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "19cd07aeff29c53db668d6fbdfac031833c0d942a042ec6af9e5e3b4522688ca",
+  "landType": "rainbow",
+  "id": "ice-spike-19cd07a",
+  "kind": "card",
+  "image": "/content/cards/rainbow/ice-spike-19cd07a.webp",
+  "abilities": [],
+  "flavorOnly": true
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Нерасколотый пенёк",
+  "name_en": "UNSPLIT STUMP",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Каждый раз когда соперник берёт карту, нанеси 1 урон сопернику.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "9779024a6b77adf24b7a79973d0930e488963c530727c363b6b6a18fe0e46b27",
+  "landType": "sandy",
+  "id": "unsplit-stump-9779024",
+  "kind": "card",
+  "image": "/content/cards/sandy/unsplit-stump-9779024.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_draw",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "payload_player"
+        },
+        "amount": 1
+      },
+      "text": "Каждый раз когда противник тянет карту, нанеси ему 1 урон.",
+      "conditions": [
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ]
+    }
+  ]
+}

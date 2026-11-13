@@ -1,0 +1,33 @@
+{
+  "name": "Моника",
+  "name_en": "Monica",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, ты можешь вернуть\nв подготовленное положение\nфлюпнутое существо.",
+  "flavor": "",
+  "set_code": "Is101",
+  "sha256": "403c05b63ec91d56e81776c768c2b6e3b11eb9bf90e89294a19377256a32f575",
+  "id": "monica-403c05b",
+  "kind": "hero",
+  "image": "/content/heroes/monica-403c05b.webp",
+  "ability": {
+    "kind": "active",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "unflip",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      }
+    },
+    "targets": [
+      {
+        "kind": "own_creature",
+        "filter": {
+          "flipped": true
+        }
+      }
+    ],
+    "text": "Раз за свой ход можешь повернуть применённое существо."
+  }
+}

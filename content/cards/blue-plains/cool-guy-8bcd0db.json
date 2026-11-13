@@ -1,0 +1,36 @@
+{
+  "name": "Маленький Отморозок",
+  "name_en": "COOL GUY",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 1,
+  "description": "+1 к защите за каждый уникальный\nтип земель под твоим контролем.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "8bcd0db7b7954c2e09da97a8ed6c21915b3483a7b4a2e6473ef25529b515a265",
+  "landType": "blue",
+  "id": "cool-guy-8bcd0db",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/cool-guy-8bcd0db.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 DEF за каждый различный тип земли под твоим контролем."
+    }
+  ]
+}

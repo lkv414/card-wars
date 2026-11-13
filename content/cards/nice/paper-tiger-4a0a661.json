@@ -1,0 +1,40 @@
+{
+  "name": "Бумажный тигрик",
+  "name_en": "PAPER TIGER",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Пока количество урона, нанесённого бумажному тигрику, равно 5,\nон получает +5 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4a0a66190d63dcf4d4f6f0e538d509d78a60a54e2c78e7ade5a622a8f385692e",
+  "landType": "nice",
+  "id": "paper-tiger-4a0a661",
+  "kind": "card",
+  "image": "/content/cards/nice/paper-tiger-4a0a661.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 5,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_damage_exactly",
+            "amount": 5,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока на Бумажном тигре ровно 5 урона, он получает +5 ATK."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "Мельница процветания",
+  "name_en": "PROSPERITY MILL",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Пока количество урона, нанесённого твоему существу в этой зоне, равно 0, оно получает +2 к атаке.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "df9e855a159613bf7cdaa3a751c45bd018dfb7221f519510e51580514d8d3872",
+  "landType": "nice",
+  "id": "prosperity-mill-df9e855",
+  "kind": "card",
+  "image": "/content/cards/nice/prosperity-mill-df9e855.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_undamaged",
+            "scope": "target"
+          }
+        ]
+      },
+      "text": "Пока на твоем существе на этой линии нет урона, оно получает +2 ATK."
+    }
+  ]
+}

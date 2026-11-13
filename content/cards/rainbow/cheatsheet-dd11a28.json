@@ -1,0 +1,19 @@
+{
+  "name": "Шпаргалка",
+  "name_en": "CHEATSHEET",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми 1 карту.\nСледующие 2 карты со словом «зелье»\nв названии, которые ты разыграешь в\nэтой ход, стоят на 1 действие меньше.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dd11a287f85ff885f58c575cc88adf4d5f77ed8d06edb477b7e404d1edab244e",
+  "landType": "rainbow",
+  "id": "cheatsheet-dd11a28",
+  "kind": "card",
+  "image": "/content/cards/rainbow/cheatsheet-dd11a28.webp",
+  "abilities": []
+}

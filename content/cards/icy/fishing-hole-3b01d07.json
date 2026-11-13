@@ -1,0 +1,19 @@
+{
+  "name": "Рыбацкая Лунка",
+  "name_en": "FISHING HOLE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Раскрой карты с верха своей колоды, пока не раскроешь существо. Перемешай все остальные открытые карты обратно в колоду и положи это существо наверх колоды.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "3b01d07fa62c37ac36ca006705e3231b2367d7ae9cd260393272eaf01648ee4e",
+  "landType": "icy",
+  "id": "fishing-hole-3b01d07",
+  "kind": "card",
+  "image": "/content/cards/icy/fishing-hole-3b01d07.webp",
+  "abilities": []
+}

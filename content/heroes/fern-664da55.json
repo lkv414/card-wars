@@ -1,0 +1,14 @@
+{
+  "name": "Фёрн",
+  "name_en": "Fern",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, когда ты заменяешь существо, следующее существо стоимостью 1, которое ты разыграешь в этот ход, становится бесплатным.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "664da55395ab839366b236d7c179875a025d6625619448282fb53cdcece667c9",
+  "id": "fern-664da55",
+  "kind": "hero",
+  "image": "/content/heroes/fern-664da55.webp",
+  "ability": null
+}

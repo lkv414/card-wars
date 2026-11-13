@@ -1,0 +1,19 @@
+{
+  "name": "Бродячая мастерская",
+  "name_en": "WANDERING WORKSHOP",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Положи 1 на существо в этой зоне. Затем перемести бродячую мастерскую в соседнюю пустую зону.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "0d717571b14d6bd5cf7d0b9df910fd96f663004e1b7ac5f13504afe46e09608b",
+  "landType": "rainbow",
+  "id": "wandering-workshop-0d71757",
+  "kind": "card",
+  "image": "/content/cards/rainbow/wandering-workshop-0d71757.webp",
+  "abilities": []
+}

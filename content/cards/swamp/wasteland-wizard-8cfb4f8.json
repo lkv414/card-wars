@@ -1,0 +1,19 @@
+{
+  "name": "Пустошный чародей",
+  "name_en": "WASTELAND WIZARD",
+  "cost": 0,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 5,
+  "description": "Когда пустошный чародей входит\nв игру, сбрось 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8cfb4f889867f73e2f7bcd3d75791b3446ce5d78b2382eba711a629c0cbed47a",
+  "landType": "swamp",
+  "id": "wasteland-wizard-8cfb4f8",
+  "kind": "card",
+  "image": "/content/cards/swamp/wasteland-wizard-8cfb4f8.webp",
+  "abilities": []
+}

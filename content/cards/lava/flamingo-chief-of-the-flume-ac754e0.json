@@ -1,0 +1,19 @@
+{
+  "name": "Огнеминго начальник шлейфа",
+  "name_en": "FLAMINGO CHIEF OF THE FLUME",
+  "cost": 4,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 10,
+  "description": "Огнеминго начальник шлейфа стоит на 1 действие меньше за каждый жетон ожога на существах.\nКогда Огнеминго начальник шлейфа наносит урон существу, подожги его.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ac754e054b63cebf05788cd8f5b332e190b499c28d32fe176bd94dbc16edcc00",
+  "landType": "lava",
+  "id": "flamingo-chief-of-the-flume-ac754e0",
+  "kind": "card",
+  "image": "/content/cards/lava/flamingo-chief-of-the-flume-ac754e0.webp",
+  "abilities": []
+}

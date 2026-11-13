@@ -1,0 +1,19 @@
+{
+  "name": "Колюще-режущее торнадо",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Убери все жетоны (кроме урона)\nс существ, земель и игроков.\nЗатем нанеси 2 урона выбранному\nсуществу за каждый убранный жетон.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "176b385aee4101ad3c4a90a9a82c3fedabeac8f68210902655d129cd05e69c3f",
+  "landType": "rainbow",
+  "id": "kolyushche-rezhushchee-tornado-176b385",
+  "kind": "card",
+  "image": "/content/cards/rainbow/kolyushche-rezhushchee-tornado-176b385.webp",
+  "abilities": []
+}

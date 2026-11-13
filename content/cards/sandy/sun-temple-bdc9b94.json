@@ -1,0 +1,44 @@
+{
+  "name": "Храм Солнца",
+  "name_en": "SUN TEMPLE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда песчаное существо под твоим контролем стоимостью 1 или выше входит в игру в этой зоне, ты можешь вернуть его на руку владельца.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "bdc9b940290852d32375b16bc8bb25d90d85fd71b865f0e4adcd4e8cd72d57ac",
+  "landType": "sandy",
+  "id": "sun-temple-bdc9b94",
+  "kind": "card",
+  "image": "/content/cards/sandy/sun-temple-bdc9b94.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_land_type",
+          "landType": "sand"
+        }
+      ],
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "triggering_instance"
+        }
+      },
+      "text": "Когда на этой линии вступает в игру песчаное существо под твоим контролем, стоимостью 1 и более, можешь вернуть его на руку владельцу."
+    }
+  ]
+}

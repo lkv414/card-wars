@@ -1,0 +1,19 @@
+{
+  "name": "Лоббист",
+  "name_en": "LOBBYIST",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 7,
+  "description": "Уловка\nКаждый раз когда ты должен участвовать в голосовании, ты можешь потерять 2 жизни, что бы добавить +1 к своему голосу. (Лимит: Один раз за голосование. Необходимо объявить при выкладывании карт.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "0c0b9f69285e534f66af9b936e5114abf4b96aa12cbd38925bffcb2cf606b433",
+  "landType": "sandy",
+  "id": "lobbyist-0c0b9f6",
+  "kind": "card",
+  "image": "/content/cards/sandy/lobbyist-0c0b9f6.webp",
+  "abilities": []
+}

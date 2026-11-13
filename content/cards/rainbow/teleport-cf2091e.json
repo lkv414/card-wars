@@ -1,0 +1,45 @@
+{
+  "name": "Телепорт",
+  "name_en": "TELEPORT",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести одно из твоих существ\nв одну из пустых зон на\nтвоей стороне.",
+  "flavor": "",
+  "set_code": "finn",
+  "sha256": "cf2091e7e7d6df0cb8925272c7043ce06df06c0b75c3b335ff5e34630d0d4120",
+  "landType": "rainbow",
+  "id": "teleport-cf2091e",
+  "kind": "card",
+  "image": "/content/cards/rainbow/teleport-cf2091e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        },
+        "side": "own"
+      },
+      "text": "Перемести одно из своих существ на одну из своих пустых линий.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

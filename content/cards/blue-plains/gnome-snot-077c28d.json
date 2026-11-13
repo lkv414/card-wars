@@ -1,0 +1,29 @@
+{
+  "name": "Гномьи сопли",
+  "name_en": "GNOME SNOT",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми 3 карты.",
+  "flavor": "",
+  "set_code": "finn",
+  "sha256": "077c28d852ade8258136428c7c0e593190a7751f65316e378e093e3396395fb2",
+  "landType": "blue",
+  "id": "gnome-snot-077c28d",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/gnome-snot-077c28d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": 3
+      },
+      "text": "Тяни 3 карты."
+    }
+  ]
+}

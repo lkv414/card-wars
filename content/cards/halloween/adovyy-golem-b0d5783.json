@@ -1,0 +1,19 @@
+{
+  "name": "Адовый голем",
+  "name_en": "",
+  "cost": 3,
+  "land_type": "Песчаные земли",
+  "landType": "sandy",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 5,
+  "defense": 6,
+  "description": "Адовый голем стоит на 1 действие\nменьше, за каждое существо\nуничтоженное в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "b0d5783b1fd0ab1174e6caef93671745a63e878ca4de81695233562c52bcae63",
+  "id": "adovyy-golem-b0d5783",
+  "kind": "card",
+  "image": "/content/cards/halloween/adovyy-golem-b0d5783.webp",
+  "abilities": []
+}

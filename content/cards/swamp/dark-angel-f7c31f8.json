@@ -1,0 +1,37 @@
+{
+  "name": "Тёмный ангел",
+  "name_en": "DARK ANGEL",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 5,
+  "description": "+1 к атаке за каждые 5 карт в твоем сбросе.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "f7c31f8dc2521321c1c6521a3342e2c7031ed6808958524cab910b8f9583e423",
+  "landType": "swamp",
+  "id": "dark-angel-f7c31f8",
+  "kind": "card",
+  "image": "/content/cards/swamp/dark-angel-f7c31f8.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 ATK за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
+}

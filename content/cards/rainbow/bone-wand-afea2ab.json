@@ -1,0 +1,48 @@
+{
+  "name": "Костяная палочка",
+  "name_en": "BONE WAND",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Можешь сыграть эту карту, только если\nконтролируешь хотя бы одно\nболотное существо.\nВыбранный соперник сбрасывает\n1 карту с руки.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "afea2ab0c536bc6484a9a8bf5208db8b242391abaaebe8412cd87e90e26b3857",
+  "landType": "rainbow",
+  "id": "bone-wand-afea2ab",
+  "kind": "card",
+  "image": "/content/cards/rainbow/bone-wand-afea2ab.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_own_creature_on_land_type",
+          "landType": "swamp"
+        }
+      ],
+      "text": "Играй только если под твоим контролем есть существо болотных земель."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "count": 1
+      },
+      "text": "Выбранный противник сбрасывает карту.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ]
+    }
+  ]
+}

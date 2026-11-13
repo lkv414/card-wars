@@ -1,0 +1,42 @@
+{
+  "name": "Грязекатана угнетатель",
+  "name_en": "MUDANA OPPRESSOR",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 2,
+  "description": "Грязекатана получает +2 к атаке за каждого игрока с не более 1 картой на руке.",
+  "flavor": "",
+  "set_code": "II",
+  "sha256": "d23663c6eb8925f68def886ea6d40a48c0719f366fd71aa22dcc37d1366c86bd",
+  "landType": "swamp",
+  "id": "mudana-oppressor-d23663c",
+  "kind": "card",
+  "image": "/content/cards/swamp/mudana-oppressor-d23663c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "adjacent_creatures"
+          },
+          "amount": 1,
+          "filter": {
+            "landType": "ghost"
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "Прозрачный вышибала получает бонус +1 АТК за каждое другое призрачное существо на соседних землях."
+    }
+  ]
+}

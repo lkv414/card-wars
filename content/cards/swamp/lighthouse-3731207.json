@@ -1,0 +1,44 @@
+{
+  "name": "Маяк",
+  "name_en": "LIGHTHOUSE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие >>> Выбранное\nсущество в этой зоне получает\n+1 к атаке за каждые 5 карт\nв твоём сбросе в этом ходу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "3731207e4504cc367cd2b9b10fd1446f91283432e515e0584ce98325b888dbf4",
+  "landType": "swamp",
+  "id": "lighthouse-3731207",
+  "kind": "card",
+  "image": "/content/cards/swamp/lighthouse-3731207.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Потрать 1 Действие >>> Выбранное Существо на этой линии получает +1 ATK в этом ходу за каждые 5 карт в твоей стопке сброса.",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ]
+    }
+  ]
+}

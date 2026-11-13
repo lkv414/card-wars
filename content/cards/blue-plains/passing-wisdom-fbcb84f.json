@@ -1,0 +1,35 @@
+{
+  "name": "Передача мудрости",
+  "name_en": "PASSING WISDOM",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Посмотри 4 верхние карты колоды\nвыбранного игрока и положи их\nобратно в любом порядке.\nВозьми 1 карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "fbcb84ff23675eceddc26cb9423d8432cd668d6e484b87f52a9c2196a42d7ef6",
+  "landType": "blue",
+  "id": "passing-wisdom-fbcb84f",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/passing-wisdom-fbcb84f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "peek_reorder",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "params": {
+        "count": 4,
+        "draw": 1
+      },
+      "text": "Посмотри 4 верхние карты в колоде выбранного игрока и верни их обратно в любом порядке. Затем тяни карту."
+    }
+  ]
+}

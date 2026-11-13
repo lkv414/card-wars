@@ -1,0 +1,31 @@
+{
+  "name": "Дружеский выстрел",
+  "name_en": "FRIENDLY SHOT",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Первый раз за ход когда ты или твой напарник уничтожает существо на земле с жетоном мороза ты и твой напарник получает 1 действие в следующий ход.",
+  "flavor": "Поздравляем команду «Удачливый Омлет» Bondurido и Pingwrn с победой в Турнире «Случайный Союз» 2026г.",
+  "set_code": "ТУРНИР",
+  "sha256": "35339430fee4c24140626aca9d1fe9a570595f7263ab76652783240d83918765",
+  "landType": "icy",
+  "id": "friendly-shot-3533943",
+  "kind": "card",
+  "image": "/content/cards/icy/friendly-shot-3533943.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "ice_lady_discard_per_ice_land",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Выбранный игрок сбрасывает 1 карту с руки за каждую землю с ледяным жетоном под его контролем."
+    }
+  ]
+}

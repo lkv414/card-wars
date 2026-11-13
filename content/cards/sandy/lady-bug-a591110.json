@@ -1,0 +1,32 @@
+{
+  "name": "Леди Жук",
+  "name_en": "LADY BUG",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "В начале твоего хода, ты можешь вернуть существо под твоим контролем с 2 или меньше защиты на руку владельца.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "a59111011d2aa6826cd1bb35285f9a38a43e549c8987ecfc0a26040cb7ef65d8",
+  "landType": "sandy",
+  "id": "lady-bug-a591110",
+  "kind": "card",
+  "image": "/content/cards/sandy/lady-bug-a591110.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "mechanic": "bounce_own_creature_with_low_def",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Если в начале твоего хода у Существа под твоим контролем осталось 2 DEF или менее, то можешь вернуть его в руку владельцу."
+    }
+  ]
+}

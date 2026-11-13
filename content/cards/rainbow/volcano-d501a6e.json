@@ -1,0 +1,31 @@
+{
+  "name": "Вулкан",
+  "name_en": "VOLCANO",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь выбранное строение. Можешь\nнанести 3 урона существу в этой зоне.\nПереверни твою землю в этой зоне лицевой\nстороной вниз.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "d501a6e7c246510b32bd026099a3a6cb3c67bd9f39ee4a1bc11d2f07d5f9443b",
+  "landType": "rainbow",
+  "id": "volcano-d501a6e",
+  "kind": "card",
+  "image": "/content/cards/rainbow/volcano-d501a6e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "volcano_destroy_and_erupt",
+      "targets": [
+        {
+          "kind": "any_building"
+        }
+      ],
+      "text": "Уничтожь выбранное строение. Можешь нанести 3 урона существу на этой линии. Переверни лицом вниз свою землю на этой линии."
+    }
+  ]
+}

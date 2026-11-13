@@ -1,0 +1,14 @@
+{
+  "name": "Принцесса Пламя",
+  "name_en": "Flame Princess",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Подожги всех существ\nпод контролем соперника.\n(Лимит: Один раз за игру.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "66c3a6e9504f6dd830145673a8cca072fd8a8f45c35df23f3d9ab7aad67a7a32",
+  "id": "flame-princess-66c3a6e",
+  "kind": "hero",
+  "image": "/content/heroes/flame-princess-66c3a6e.webp",
+  "ability": null
+}

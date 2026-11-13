@@ -1,0 +1,48 @@
+{
+  "name": "Подмога",
+  "name_en": "ASSISTANCE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "В начале фазы атаки твоего или напарника, если ты или\nтвой напарник разыграли существо за 2 действия или\nбольше в этот ход, твой напарник может взять 1 карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "2a966ff9be179c737d6e5ccf0d6d3e1ae0ef36f4206c4893fb19e18fc7c68d90",
+  "landType": "sandy",
+  "id": "assistance-2a966ff",
+  "kind": "card",
+  "image": "/content/cards/sandy/assistance-2a966ff.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "optional": true,
+      "pendingFor": "payload_partner",
+      "conditions": [
+        {
+          "kind": "if_payload_ally"
+        },
+        {
+          "kind": "if_payload_other"
+        },
+        {
+          "kind": "while_counter_at_least",
+          "counter": "creature_cost_2_plus_played",
+          "scope": "team",
+          "min": 1
+        }
+      ],
+      "effect": {
+        "op": "draw_cards",
+        "target": {
+          "kind": "payload_partner"
+        },
+        "count": 1
+      },
+      "text": "В начале фазы сражения твоей или твоего партнера, если ты или партнер сыграл существо стоимостью 2 и более в этот ход, другой партнер может тянуть карту."
+    }
+  ]
+}

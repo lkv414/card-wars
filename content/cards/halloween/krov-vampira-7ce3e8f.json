@@ -1,0 +1,43 @@
+{
+  "name": "Кровь вампира",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Каждое существо под твоим контролем,\nкоторое получило урон в этом ходу,\nполучает +2 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7ce3e8f98a27c5fa321eef754379511897809ff0f576bbb4960c92237475aed9",
+  "id": "krov-vampira-7ce3e8f",
+  "kind": "card",
+  "image": "/content/cards/halloween/krov-vampira-7ce3e8f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Выбери существо Голубых равнин под твоим контролем, оно получит +2 АТК в этом ходу.",
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "landType": "blue"
+          }
+        }
+      ]
+    }
+  ]
+}

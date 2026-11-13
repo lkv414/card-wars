@@ -1,0 +1,19 @@
+{
+  "name": "Кузня общего режима",
+  "name_en": "GENERAL MODE FORGE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Все существа в этой зоне получают +2 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d44a6168508d25d182126d107219903a9b8ac8978ed5e223a0dd79fd80ce8f9c",
+  "landType": "lava",
+  "id": "general-mode-forge-d44a616",
+  "kind": "card",
+  "image": "/content/cards/lava/general-mode-forge-d44a616.webp",
+  "abilities": []
+}

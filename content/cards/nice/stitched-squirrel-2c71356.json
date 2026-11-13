@@ -1,0 +1,44 @@
+{
+  "name": "Сшитая Белка",
+  "name_en": "STITCHED SQUIRREL",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "В начале твоего хода, если количество\nурона, нанесённого сшитой белке, равно 4\nили больше, уничтожь выбранное строение\nпод контролем соперника в этой зоне.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "2c71356815c4b97e8487ae1cf5023bf6206160ad6439dbbe50395f6e2ec98a4f",
+  "landType": "nice",
+  "id": "stitched-squirrel-2c71356",
+  "kind": "card",
+  "image": "/content/cards/nice/stitched-squirrel-2c71356.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 4,
+          "scope": "self"
+        }
+      ],
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "lane_building"
+        }
+      ],
+      "text": "Если в начале твоего хода у Сшитой белки 4 урона и более, уничтожь выбранное строение противника на этой линии."
+    }
+  ]
+}

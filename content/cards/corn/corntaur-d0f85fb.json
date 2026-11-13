@@ -1,0 +1,37 @@
+{
+  "name": "Зернотавр",
+  "name_en": "CORNTAUR",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Когда зернотавр входит в игру, нанеси сопернику 1 урон за каждое кукурузное поле под твоим контролем.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "d0f85fba4272caef3f3eba8f88da171fc8dc549a7a6888d8b0eb125a70e14231",
+  "landType": "corn",
+  "id": "corntaur-d0f85fb",
+  "kind": "card",
+  "image": "/content/cards/corn/corntaur-d0f85fb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "amount": 1,
+          "landType": "corn"
+        }
+      },
+      "text": "Когда Зернотавр вступает в игру, он наносит 1 урон противнику за каждое Кукурузное поле под твоим контролем."
+    }
+  ]
+}

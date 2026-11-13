@@ -1,0 +1,25 @@
+{
+  "name": "Зелёный русал",
+  "name_en": "SWAMP MERMAN",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 6,
+  "description": "ФЛЮП >>> Сбрось верхнюю карту твоей колоды. Нанеси столько урона каждому существу под контролем соперника, сколько стоила сброшенная карта.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "167c43a7bfc361ede3c96c5c6ea5ded50bb47cca6ca065267c300ac5cd594c95",
+  "landType": "swamp",
+  "id": "swamp-merman-167c43a",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-merman-167c43a.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "text": "ПРИЕМ >>> Положи верхнюю карту из своей колоды в стопку сброса. Нанеси урон каждому существу равный стоимости действий карты.",
+      "mechanic": "discard_top_damage"
+    }
+  ]
+}

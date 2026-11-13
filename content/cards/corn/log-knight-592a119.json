@@ -1,0 +1,41 @@
+{
+  "name": "Бревнорыцарь",
+  "name_en": "LOG KNIGHT",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 2,
+  "description": "ФЛЮП >>> Положи строение со своей руки в эту зону.\n(Если там пусто.)",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "592a1197639b1477c7f21fe2055251f2ee8cb34a1915d300d4999d5f289910d6",
+  "landType": "corn",
+  "id": "log-knight-592a119",
+  "kind": "card",
+  "image": "/content/cards/corn/log-knight-592a119.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "play_from_hand",
+        "match": {
+          "type": "building"
+        },
+        "destination": {
+          "kind": "this_lane_land"
+        }
+      },
+      "text": "ПРИЕМ >>> Положи строение со своей руки на эту линию (если на ней нет строения).",
+      "targets": [
+        {
+          "kind": "own_hand_card",
+          "filter": {
+            "cardType": "building"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Добрая земля",
+  "name_en": "Nice Lands",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "nice",
+  "description": "",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f0b58db90e7d5b75a22bfa031b845e298fe86fbd9ac1801cdbcd4614b76159a3",
+  "id": "nice-lands-f0b58db",
+  "kind": "land",
+  "image": "/content/lands/nice-lands-f0b58db.webp"
+}

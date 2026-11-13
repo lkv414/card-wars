@@ -1,0 +1,36 @@
+{
+  "name": "Императорский пингвин",
+  "name_en": "EMPEROR PENGUIN",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Существа на землях с жетоном мороза получают -1 к атаке.",
+  "flavor": "",
+  "set_code": "ice_king",
+  "sha256": "3bfef1fa7721b1bbd0925aceaf21c803acfc26c30f16cde880c7ed4371547d50",
+  "landType": "icy",
+  "id": "emperor-penguin-3bfef1f",
+  "kind": "card",
+  "image": "/content/cards/icy/emperor-penguin-3bfef1f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature"
+        },
+        "stat": "attack",
+        "amount": -1,
+        "duration": "aura",
+        "filter": {
+          "zoneToken": true
+        }
+      },
+      "text": "Существа на землях с ледяным жетоном получают -1 АТК."
+    }
+  ]
+}

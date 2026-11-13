@@ -1,0 +1,44 @@
+{
+  "name": "Лапа дракона",
+  "name_en": "DRAGON PAW",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "ФЛЮП >>> Перемести\nсущество под твоим контролем\nв пустую зону.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c02811b1f53862d3b980f275efbe994276077455f0d3b5fd5cff03e4c3a36483",
+  "landType": "blue",
+  "id": "dragon-paw-c02811b",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/dragon-paw-c02811b.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        },
+        "side": "own"
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ПРИЕМ >>> Отправь существо под твоим контролем на пустую линию."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Когтистый лавинопард",
+  "name_en": "CLAWED AVALANCHE LEOPARD",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 10,
+  "description": "Когда когтистый лавинопард входит в игру, заморозь выбранную землю под контролем соперника. Когда с любой земли сбрасывают жетон мороза, сними весь урон с когтистого лавинопарда.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ebe90c9c2b721a82651494ec61cb011924b49c040300b9fdf3ed74734a399a55",
+  "landType": "icy",
+  "id": "clawed-avalanche-leopard-ebe90c9",
+  "kind": "card",
+  "image": "/content/cards/icy/clawed-avalanche-leopard-ebe90c9.webp",
+  "abilities": []
+}

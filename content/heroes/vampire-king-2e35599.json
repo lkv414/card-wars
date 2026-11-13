@@ -1,0 +1,14 @@
+{
+  "name": "Король Вампиров",
+  "name_en": "Vampire King",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Когда ты должен был восстановить здоровье существа, ты можешь вместо этого нанести такое же количество урона любому другому существу.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "2e35599d730be45061f6aa005415d1f21360b2716bcc4894bac0899c723e624e",
+  "id": "vampire-king-2e35599",
+  "kind": "hero",
+  "image": "/content/heroes/vampire-king-2e35599.webp",
+  "ability": null
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Тыквенный ангел",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "landType": "rainbow",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 7,
+  "description": "Пока количество урона нанесённого\nТыквенному ангелу, равно 3 или больше,\nон получает +3 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "3067e88747c88ca1423b464f237c134082eaf12d96b83e712427edecc295cd02",
+  "id": "tykvennyy-angel-3067e88",
+  "kind": "card",
+  "image": "/content/cards/halloween/tykvennyy-angel-3067e88.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_damage_exactly",
+            "amount": 3,
+            "scope": "self"
+          }
+        ]
+      },
+      "text": "Пока на Ангельском сердце ровно 3 урона, оно получает +3 ATK."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Базальтовый колосс",
+  "name_en": "BASALT COLOSSUS",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 12,
+  "description": "ФЛЮП >>> Подожги выбранное существо под контролем соперника,\nзатем нанеси 1 урон этому существу\nза каждый жетон ожога на существах\nв игре.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "b7b80f2407026d198cbd1d31fd8553c8c43a32a3e0cdc21151b3cf2f3c59f148",
+  "landType": "lava",
+  "id": "basalt-colossus-b7b80f2",
+  "kind": "card",
+  "image": "/content/cards/lava/basalt-colossus-b7b80f2.webp",
+  "abilities": []
+}

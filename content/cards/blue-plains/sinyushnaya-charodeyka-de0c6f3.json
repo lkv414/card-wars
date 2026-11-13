@@ -1,0 +1,42 @@
+{
+  "name": "Синюшная чародейка",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Существа в этой зоне\nне могут быть флюпнуты.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "de0c6f348fe22881602dbc3ca49b9f16c67e4e28ff754f969f0e356232baede7",
+  "landType": "blue",
+  "id": "sinyushnaya-charodeyka-de0c6f3",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/sinyushnaya-charodeyka-de0c6f3.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "actives": true
+      },
+      "text": "Существа на этой линии не могут использовать Приемы."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "actives": true
+      },
+      "text": "Существа на этой линии не могут использовать Приемы."
+    }
+  ]
+}

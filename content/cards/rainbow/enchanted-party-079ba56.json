@@ -1,0 +1,34 @@
+{
+  "name": "Зачарованный праздник",
+  "name_en": "ENCHANTED PARTY",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести выбранное существо на соседнюю пустую землю, под контролем его владельца. После розыгрыша ты можешь положить это заклинание на руку напарника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "079ba5657832154aa4ae9ed72ae134f7c63fdb0bfa2ff5883eae3ec488c40b92",
+  "landType": "rainbow",
+  "id": "enchanted-party-079ba56",
+  "kind": "card",
+  "image": "/content/cards/rainbow/enchanted-party-079ba56.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "move_creature_and_pass_card",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Выбери существо и перемести на соседнюю землю под контролем его владельца. Как сделал это можешь отдать карту партнеру в руку."
+    }
+  ]
+}

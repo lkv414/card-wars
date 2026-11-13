@@ -1,0 +1,30 @@
+{
+  "name": "Яблоневый хулиган",
+  "name_en": "APPLE HOOLIGAN",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Земля на которой стоит яблоневый хулиган не может быть перевёрнута лицевой стороной вниз.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "66db4dd25135d7fba98ebbfd685f8451a3e5cd72c0b2f6b68719b2dd0a6c5ed1",
+  "landType": "corn",
+  "id": "apple-hooligan-66db4dd",
+  "kind": "card",
+  "image": "/content/cards/corn/apple-hooligan-66db4dd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "land_flip_protection",
+        "target": {
+          "kind": "this_creature"
+        }
+      },
+      "text": "Земля Яблочного стража не может быть перевернута лицом вниз эффектами противника."
+    }
+  ]
+}

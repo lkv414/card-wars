@@ -1,0 +1,25 @@
+{
+  "name": "Хорёк скрипач",
+  "name_en": "FIDDLE FERRET",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Возьми 1 карту, затем\nсбрось 1 карту. Если ты сбросил\nрадужную карту, получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "619415785d10c6783bbfc5d798f90382d478ee83aec70d88adff0578b8ce3abd",
+  "landType": "blue",
+  "id": "fiddle-ferret-6194157",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/fiddle-ferret-6194157.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "draw_discard_rainbow_action",
+      "text": "ПРИЕМ >>> Тяни карту, затем сбрось карту. Если ты сбросил радужную карту, получи 1 Действие."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "Переливание крови",
+  "name_en": "BLOOD TRANSFUSION",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Удали из игры 1 карту из сброса любого игрока. Сними Х урона с выбранного существа, где Х - стоимость удалённой карты.",
+  "flavor": "",
+  "set_code": "marceline",
+  "sha256": "02020174f0af79a576bf667bb808d8bbccd2d8c60f32ac0eb7b512eeba1fb9d2",
+  "landType": "rainbow",
+  "id": "blood-transfusion-0202017",
+  "kind": "card",
+  "image": "/content/cards/rainbow/blood-transfusion-0202017.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "banish_card",
+          "card": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "heal",
+          "target": {
+            "kind": "choice",
+            "index": 1
+          },
+          "amount": {
+            "kind": "chosen_card_cost",
+            "index": 0
+          }
+        }
+      ],
+      "targets": [
+        {
+          "kind": "any_discard_card"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Удали из игры карту из любой стопки сброса игроков. Восстанови X урона с выбранного существа, где X — стоимость карты, изъятой этим способом."
+    }
+  ]
+}

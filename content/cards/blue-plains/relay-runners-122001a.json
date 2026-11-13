@@ -1,0 +1,19 @@
+{
+  "name": "Знатоки эстафеты",
+  "name_en": "RELAY RUNNERS",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "В конце хода, если ты разыграл 2 или более не равнинных существ в этот ход, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "122001a1e1d022a399c7202c1db933aabca26110fae33de5be7587fd01fdf995",
+  "landType": "blue",
+  "id": "relay-runners-122001a",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/relay-runners-122001a.webp",
+  "abilities": []
+}

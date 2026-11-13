@@ -1,0 +1,19 @@
+{
+  "name": "Мусорный Костёр",
+  "name_en": "TRASH BONFIRE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось 1 карту >>> Подожги выбранное существо один раз за каждые 5 карт в сбросе выбранного игрока.\n(Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "6db6c371b8635b28a0533137b1948f224bd554dd517b2f8c46083b8112edd17f",
+  "landType": "lava",
+  "id": "trash-bonfire-6db6c37",
+  "kind": "card",
+  "image": "/content/cards/lava/trash-bonfire-6db6c37.webp",
+  "abilities": []
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Болотный шееглаз",
+  "name_en": "SWAMP SHEEGLAZ",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "Когда болотный шееглаз входит в игру, нанеси 1 урон выбранному сопернику и ты восстанавливаешь 1 жизнь за каждое существо в игре со словом «шееглаз» в названии.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "d251d277ecd5f024e561900283e493f04c4779a31682b94a62a90a5d550cd370",
+  "landType": "swamp",
+  "id": "swamp-sheeglaz-d251d27",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-sheeglaz-d251d27.webp",
+  "abilities": []
+}

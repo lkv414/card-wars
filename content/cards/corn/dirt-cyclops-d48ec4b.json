@@ -1,0 +1,38 @@
+{
+  "name": "Циклоп-землекоп",
+  "name_en": "DIRT CYCLOPS",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "+2 к атаке за каждую перевёрнутую лицевой стороной вниз землю в игре.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d48ec4b4fe0e937d207b581b1b9ccae798fddccd9d490b4c3805955641029c4e",
+  "landType": "corn",
+  "id": "dirt-cyclops-d48ec4b",
+  "kind": "card",
+  "image": "/content/cards/corn/dirt-cyclops-d48ec4b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "flipped": true,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 АТК за каждую землю в игре перевернутую лицом вниз."
+    }
+  ]
+}

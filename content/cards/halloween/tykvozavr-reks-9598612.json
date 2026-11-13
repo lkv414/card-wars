@@ -1,0 +1,36 @@
+{
+  "name": "Тыквозавр Рекс",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "landType": "nice",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "В начале твоего хода, если на тыквозавре Рексе есть жетоны урона, то возьми 1 карту и положи (1) на существо с тыквой.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9598612e4c735127b007776479f7e1c3cbf0c3aedadd8b33b1f20eb28a388f88",
+  "id": "tykvozavr-reks-9598612",
+  "kind": "card",
+  "image": "/content/cards/halloween/tykvozavr-reks-9598612.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 1,
+          "scope": "self"
+        }
+      ],
+      "text": "Если в начале твоего хода на Хлопкозавре Рексе есть урон, тяни карту."
+    }
+  ]
+}

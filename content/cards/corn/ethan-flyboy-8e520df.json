@@ -1,0 +1,19 @@
+{
+  "name": "Итан\nпервоклассный лётчик",
+  "name_en": "ETHAN\nFLYBOY",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 4,
+  "description": "Если в этом ходу ты разыграл 2 или\nболее существ стоимостью 1,\nты можешь сыграть его бесплатно.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "8e520dfe26af5f6920c4f10a1b6b6ea29506b9d3f9e95973019f618fba2f24bd",
+  "landType": "corn",
+  "id": "ethan-flyboy-8e520df",
+  "kind": "card",
+  "image": "/content/cards/corn/ethan-flyboy-8e520df.webp",
+  "abilities": []
+}

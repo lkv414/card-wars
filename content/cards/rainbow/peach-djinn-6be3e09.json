@@ -1,0 +1,46 @@
+{
+  "name": "Персиковый джинн",
+  "name_en": "PEACH DJINN",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 6,
+  "description": "Когда песчаное существо входит в игру\nпод твоим контролем, персиковый джинн\nполучает +1 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6be3e09fdf83938c387d06930d459d14b2cd3e67ac09dbace37876ec0af74241",
+  "landType": "rainbow",
+  "id": "peach-djinn-6be3e09",
+  "kind": "card",
+  "image": "/content/cards/rainbow/peach-djinn-6be3e09.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "this_turn"
+      },
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_land_type",
+          "landType": "sand"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "text": "Когда песчаное существо вступает в игру под твоим контролем, Персиковая Джинни получает +1 ATK в этом ходу."
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "Общий вклад",
+  "name_en": "SHARED CONTRIBUTION",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинная командная работа",
+  "typeCategory": "teamwork",
+  "attack": null,
+  "defense": null,
+  "description": "В начале фазы атаки твоего или напарника, если ты или твой напарник взял 3 или больше карт в этот ход, твой напарник может взять 1 карту.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "495d3200c16a6cd80abb7eac7b6dc0c5e3501a048454d48587a0a563aef06e9d",
+  "landType": "blue",
+  "id": "shared-contribution-495d320",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/shared-contribution-495d320.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "optional": true,
+      "pendingFor": "payload_partner",
+      "conditions": [
+        {
+          "kind": "if_payload_ally"
+        },
+        {
+          "kind": "if_payload_other"
+        },
+        {
+          "kind": "while_counter_at_least",
+          "counter": "cards_drawn",
+          "scope": "teammate",
+          "min": 3
+        }
+      ],
+      "effect": {
+        "op": "draw_cards",
+        "target": {
+          "kind": "payload_partner"
+        },
+        "count": 1
+      },
+      "text": "В начале фазы сражения твоей или твоего партнера, если твой партнер вытянул 3 или более карт в этот ход, другой партнер может тянуть карту."
+    }
+  ]
+}

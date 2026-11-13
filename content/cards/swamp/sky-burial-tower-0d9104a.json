@@ -1,0 +1,19 @@
+{
+  "name": "Башня небесного погребения",
+  "name_en": "SKY BURIAL TOWER",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Если у любого соперника\nне больше 1 карты на руке,\nполучи 1 действие.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "0d9104a3ce03c63306ff06ea6a1d40fe22ff69ffb887195ebf51c2b0f2f3ae52",
+  "landType": "swamp",
+  "id": "sky-burial-tower-0d9104a",
+  "kind": "card",
+  "image": "/content/cards/swamp/sky-burial-tower-0d9104a.webp",
+  "abilities": []
+}

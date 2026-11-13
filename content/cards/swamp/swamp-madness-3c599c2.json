@@ -1,0 +1,19 @@
+{
+  "name": "Болотное безумие",
+  "name_en": "SWAMP MADNESS",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 4 урона существу под контролем соперника или игроку. Сними 4 урона с выбранного дружественного существа или выбранный игрок восстанавливает 4 жизни.\nВыбранный соперник сбрасывает 1 карту.\nВозьми 1 карту.",
+  "flavor": "",
+  "set_code": "s25",
+  "sha256": "3c599c2adbe1aefcb7ddc9043c8720703c82fba7defa6e6b4b9c0d945ea97eda",
+  "landType": "swamp",
+  "id": "swamp-madness-3c599c2",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-madness-3c599c2.webp",
+  "abilities": []
+}

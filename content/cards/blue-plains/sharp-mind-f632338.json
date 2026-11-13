@@ -1,0 +1,19 @@
+{
+  "name": "Острый ум",
+  "name_en": "SHARP MIND",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Положи [СВД] на выбранное существо.\nПоложи еще [СВД] за каждую другую карту на твоей руке.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "f63233805e7b9c50f4ec68718e37b3b4c99df47eb76ffe8a0e81c1bbe7013c2f",
+  "landType": "blue",
+  "id": "sharp-mind-f632338",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/sharp-mind-f632338.webp",
+  "abilities": []
+}

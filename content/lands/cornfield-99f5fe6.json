@@ -1,0 +1,14 @@
+{
+  "name": "Кукурузные поля",
+  "name_en": "Cornfield",
+  "type": "Земля",
+  "typeCategory": "land",
+  "landType": "corn",
+  "description": "",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "99f5fe6156e4908abcd7c929117bee1a4e7baee377ba15626320dc64775e2522",
+  "id": "cornfield-99f5fe6",
+  "kind": "land",
+  "image": "/content/lands/cornfield-99f5fe6.webp"
+}

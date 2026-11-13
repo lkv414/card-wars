@@ -1,0 +1,40 @@
+{
+  "name": "Снежный зайчик",
+  "name_en": "SNOW BUNNY",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Уничтожь снежного зайчика >>> Заморозь выбранную землю.",
+  "flavor": "",
+  "set_code": "ice_king",
+  "sha256": "1a802b096af4c86679ece9a5de230435941f033955bcd66cb251917feb10a8a9",
+  "landType": "icy",
+  "id": "snow-bunny-1a802b0",
+  "kind": "card",
+  "image": "/content/cards/icy/snow-bunny-1a802b0.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "text": "Уничтожь Снежного Кролика >>> Заморозь выбранную землю.",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "additionalCost": {
+        "destroySelf": true
+      }
+    }
+  ]
+}

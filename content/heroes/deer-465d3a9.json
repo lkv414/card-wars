@@ -1,0 +1,14 @@
+{
+  "name": "Олень",
+  "name_en": "Deer",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Сбрось 3 карты >>> Удали выбранное существо под контролем соперника из игры, если ты контролируешь существо в этой зоне с большей защитой. (Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "465d3a9fba604aa25a5ecf294fe3973595f250902ee9d53b8ce11dd7e8b7fc2e",
+  "id": "deer-465d3a9",
+  "kind": "hero",
+  "image": "/content/heroes/deer-465d3a9.webp",
+  "ability": null
+}

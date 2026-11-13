@@ -1,0 +1,52 @@
+{
+  "name": "Стог свободы",
+  "name_en": "FREEDOM STACK",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось карту >>> Твоя земля в этой зоне теряет свой тип и получает любой тип на твой выбор (но не может стать перевёрнутой) до начала твоего следующего хода.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0e2c3463c80d16be4808c7a4a6331a37fb71ce1927db2fedef74f3dc4899916c",
+  "landType": "corn",
+  "id": "freedom-stack-0e2c346",
+  "kind": "card",
+  "image": "/content/cards/corn/freedom-stack-0e2c346.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "effect": {
+        "op": "set_land_type",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "landType": "chosen",
+        "until": "next_own_turn"
+      },
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": [
+            "corn",
+            "blue",
+            "good",
+            "ice",
+            "sand",
+            "swamp",
+            "rainbow",
+            "ghost"
+          ],
+          "label": "Новый тип земли до начала твоего следующего хода"
+        }
+      ],
+      "text": "ПРИЁМ >>> Сбрось карту >>> Твоя земля на этой линии теряет свой тип земли и берет тип по твоему выбору (кроме перевернутых) до начала твоего следующего хода."
+    }
+  ]
+}

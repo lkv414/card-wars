@@ -1,0 +1,36 @@
+{
+  "name": "Яростная курочка",
+  "name_en": "RAGE CHICKEN",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 10,
+  "description": "Яростная курочка получает +Х к атаке, где Х - количество нанесённого ей урона.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "72684a06ecdde9caffb66d57722466a8d57e91f94d370f2116be9bab5ce28e21",
+  "landType": "nice",
+  "id": "rage-chicken-72684a0",
+  "kind": "card",
+  "image": "/content/cards/nice/rage-chicken-72684a0.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Яростная цыпа получает +1 ATK за каждую единицу урона на ней."
+    }
+  ]
+}

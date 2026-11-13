@@ -1,0 +1,37 @@
+{
+  "name": "Падающая звезда",
+  "name_en": "FALLING STAR",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Существа соперника в этом ходу\nне наносят урона существам\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "066d473b9060f87a4054e16c15a6c384dad38ee075746bff1ad0c1d6a9e2a4e4",
+  "landType": "nice",
+  "id": "falling-star-066d473",
+  "kind": "card",
+  "image": "/content/cards/nice/falling-star-066d473.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "grant_modifier",
+        "modifier": {
+          "op": "damage_immunity",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 999,
+          "from": "attacks"
+        },
+        "duration": "this_turn"
+      },
+      "text": "Существа под твоим контролем не получают урон от существ противника в этом ходу."
+    }
+  ]
+}

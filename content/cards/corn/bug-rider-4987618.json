@@ -1,0 +1,56 @@
+{
+  "name": "Жучий всадник",
+  "name_en": "BUG RIDER",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Когда жучий всадник выходит из игры,\nположи 1 на существ под твоим\nконтролем за 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4987618220eeeaaf805cad7fd9097b2506b7a2a853fe51d674750b938ded0466",
+  "landType": "corn",
+  "id": "bug-rider-4987618",
+  "kind": "card",
+  "image": "/content/cards/corn/bug-rider-4987618.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Кукурузные рыцари получают +1 ATK за каждое Кукурузное поле под твоим контролем."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "Кукурузные рыцари получают +2 DEF за каждое Кукурузное поле под твоим контролем."
+    }
+  ]
+}

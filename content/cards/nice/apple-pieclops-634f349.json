@@ -1,0 +1,30 @@
+{
+  "name": "Яблочный пироклоп",
+  "name_en": "APPLE PIECLOPS",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "В начале твоего хода для каждого существа под твоим контролем можешь выбрать: нанеси ему 1 урон, снять с него 1 урон или ничего не делать.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "634f349d091f1e3cbfb12820e91c5fe476444e39172a33b1e9f0df2fafac6825",
+  "landType": "nice",
+  "id": "apple-pieclops-634f349",
+  "kind": "card",
+  "image": "/content/cards/nice/apple-pieclops-634f349.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "mechanic": "per_creature_heal_or_damage",
+      "params": {
+        "amount": 1
+      },
+      "text": "В начале твоего хода можешь восстановить или нанести 1 урон с каждого существа под твоим контролем. (Выбери для каждого существа.)"
+    }
+  ]
+}

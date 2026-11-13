@@ -1,0 +1,45 @@
+{
+  "name": "Снежный банк",
+  "name_en": "SNOW BANK",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось жетон мороза в этой зоне\nи ФЛЮП >>> Нанеси 3 урона\nвыбранному сопернику.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "9033e8653c50e9e7c42501a7c15f356db8704d2d5447e1e24d9b9ed900052eec",
+  "landType": "icy",
+  "id": "snow-bank-9033e86",
+  "kind": "card",
+  "image": "/content/cards/icy/snow-bank-9033e86.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "remove_token",
+          "target": {
+            "kind": "this_lane_land"
+          }
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 3
+        }
+      ],
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "ПРИЕМ, Сними Ледяной жетон с земли на этой линии >>> Нанеси 3 урона выбранному противнику."
+    }
+  ]
+}

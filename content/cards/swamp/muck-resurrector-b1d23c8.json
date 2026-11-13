@@ -1,0 +1,19 @@
+{
+  "name": "Тиновоскреситель",
+  "name_en": "Muck Resurrector",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "ФЛЮП >>> Разыграй существо за 1 действие из твоего сброса.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "b1d23c8a242f59f426e2ec065b141956f4d70bfad027e8acf3f208751b540e3b",
+  "landType": "swamp",
+  "id": "muck-resurrector-b1d23c8",
+  "kind": "card",
+  "image": "/content/cards/swamp/muck-resurrector-b1d23c8.webp",
+  "abilities": []
+}

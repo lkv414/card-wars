@@ -1,0 +1,38 @@
+{
+  "name": "Небесный замок",
+  "name_en": "SKY CASTLE",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне\nполучают +3 к защите.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "05c8090a6cb69ac4785e7adb4cafa803d256661bae76d31cd41f1089021a3b4a",
+  "landType": "rainbow",
+  "id": "sky-castle-05c8090",
+  "kind": "card",
+  "image": "/content/cards/rainbow/sky-castle-05c8090.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_lives_even"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "target": {
+          "kind": "this_lane_own_creature"
+        }
+      },
+      "text": "Пока у тебя четное количество HP, твои существа на этой земле получают +2 ATK."
+    }
+  ]
+}

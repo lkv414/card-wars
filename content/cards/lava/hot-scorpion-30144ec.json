@@ -1,0 +1,19 @@
+{
+  "name": "Жа роскорп",
+  "name_en": "HOT SCORPION",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "ФЛЮП >>> Подожги жа роскорпа.\nТы можешь разыграть бесплатно\nс руки заклинание за 1 действие.",
+  "flavor": "",
+  "set_code": "3Л",
+  "sha256": "30144ec6dff1b92d348c44f87220432214d8a98dde618227191453131701bd7b",
+  "landType": "lava",
+  "id": "hot-scorpion-30144ec",
+  "kind": "card",
+  "image": "/content/cards/lava/hot-scorpion-30144ec.webp",
+  "abilities": []
+}

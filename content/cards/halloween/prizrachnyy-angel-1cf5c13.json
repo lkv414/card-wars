@@ -1,0 +1,38 @@
+{
+  "name": "Призрачный ангел",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "landType": "icy",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "ФЛЮП >>> Сними 1 урон с каждого твоего существа за каждую землю с жетоном мороза под контролем игроков. Если призрачный ангел находится на земле призраков, то ты восстанавливаешь 3 урона.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1cf5c1305bfa75acde14c74a41ffff4f7e2e30bbc76aecb22f570102e388afe4",
+  "id": "prizrachnyy-angel-1cf5c13",
+  "kind": "card",
+  "image": "/content/cards/halloween/prizrachnyy-angel-1cf5c13.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "cost": 1,
+      "text": "Потрать 1 действие, ПРИЕМ >>> Заморозь выбранную землю.",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

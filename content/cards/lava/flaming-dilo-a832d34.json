@@ -1,0 +1,19 @@
+{
+  "name": "Огнедышащий Дило",
+  "name_en": "FLAMING DILO",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "ФЛЮП и сбрось карту >>> Подожги выбранное существо количество раз, равное атаке Огнедышащего Дило. Положи 1 на Огнедышащего Дило.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "a832d34a73aefb05b4794bc9ef27bdc00d6a569a1e3b1dbfd55b035288043c8a",
+  "landType": "lava",
+  "id": "flaming-dilo-a832d34",
+  "kind": "card",
+  "image": "/content/cards/lava/flaming-dilo-a832d34.webp",
+  "abilities": []
+}

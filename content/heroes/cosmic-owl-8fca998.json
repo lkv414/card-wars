@@ -1,0 +1,74 @@
+{
+  "name": "Космическая сова",
+  "name_en": "Cosmic Owl",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Потрать 1 действие >>> Посмотри\n4 верхние карты твоей колоды и\nпоменяй их местами.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8fca998a6e1641dd40f42a2998ae0d752bab7ece2eac3ba22c9cfc391f3d9692",
+  "id": "cosmic-owl-8fca998",
+  "kind": "hero",
+  "image": "/content/heroes/cosmic-owl-8fca998.webp",
+  "ability": {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+      {
+        "op": "reveal_deck_top",
+        "count": 4
+      },
+      {
+        "op": "resolve_revealed",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "to": "deck_top",
+        "rest": "deck"
+      },
+      {
+        "op": "resolve_revealed",
+        "target": {
+          "kind": "choice",
+          "index": 1
+        },
+        "to": "deck_top",
+        "rest": "deck"
+      },
+      {
+        "op": "resolve_revealed",
+        "target": {
+          "kind": "choice",
+          "index": 2
+        },
+        "to": "deck_top",
+        "rest": "deck"
+      },
+      {
+        "op": "resolve_revealed",
+        "target": {
+          "kind": "choice",
+          "index": 3
+        },
+        "to": "deck_top",
+        "rest": "deck"
+      }
+    ],
+    "targets": [
+      {
+        "kind": "revealed_card"
+      },
+      {
+        "kind": "revealed_card"
+      },
+      {
+        "kind": "revealed_card"
+      },
+      {
+        "kind": "revealed_card"
+      }
+    ],
+    "text": "Потрать 1 действие >>> Посмотри и измени порядок 4х верхних карт своей колоды."
+  }
+}

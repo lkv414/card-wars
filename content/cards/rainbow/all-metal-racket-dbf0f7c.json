@@ -1,0 +1,38 @@
+{
+  "name": "Цельнометаллическая ракетка",
+  "name_en": "ALL-METAL RACKET",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона выбранному существу.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "dbf0f7c59d2e2cefdb3fe3e589363f3c27d2b758065fcf5d2d1891d461c6d13a",
+  "landType": "rainbow",
+  "id": "all-metal-racket-dbf0f7c",
+  "kind": "card",
+  "image": "/content/cards/rainbow/all-metal-racket-dbf0f7c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "text": "Нанеси 2 урона выбранному существу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
+}

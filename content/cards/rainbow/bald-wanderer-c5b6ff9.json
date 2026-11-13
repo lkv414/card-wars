@@ -1,0 +1,29 @@
+{
+  "name": "Лысый бродяга",
+  "name_en": "BALD WANDERER",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 10,
+  "description": "В начале твоего хода сбрось верхнюю карту твоей колоды.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "c5b6ff9fbe199b717936c625971cdf8c042b0c13cd286de32369745ba3ed95c8",
+  "landType": "rainbow",
+  "id": "bald-wanderer-c5b6ff9",
+  "kind": "card",
+  "image": "/content/cards/rainbow/bald-wanderer-c5b6ff9.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "discard_top_deck",
+        "count": 1
+      },
+      "text": "В начале твоего хода положи верхнюю карту из своей колоды в стопку сброса."
+    }
+  ]
+}

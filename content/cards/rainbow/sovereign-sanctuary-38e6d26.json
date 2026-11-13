@@ -1,0 +1,19 @@
+{
+  "name": "Святилище суверена",
+  "name_en": "SOVEREIGN SANCTUARY",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Сними 3 урона\nкаждому существу в этой зоне.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "38e6d2690c2e7eba493b0631dda00d4df8b97b23ca404f03aca0ed6b590d06cc",
+  "landType": "rainbow",
+  "id": "sovereign-sanctuary-38e6d26",
+  "kind": "card",
+  "image": "/content/cards/rainbow/sovereign-sanctuary-38e6d26.webp",
+  "abilities": []
+}

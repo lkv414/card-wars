@@ -1,0 +1,19 @@
+{
+  "name": "Пепельный конструкт",
+  "name_en": "ASH CONSTRUCT",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 5,
+  "description": "Если у тебя на руке не больше 1 карты, пепельный конструкт получает в 2 раза меньше урона. (С округлением вверх).",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "ac283f62d4fb85f3839253e23685050b7ca8c9f25fc86310baf222ddddc6b2f0",
+  "landType": "lava",
+  "id": "ash-construct-ac283f6",
+  "kind": "card",
+  "image": "/content/cards/lava/ash-construct-ac283f6.webp",
+  "abilities": []
+}

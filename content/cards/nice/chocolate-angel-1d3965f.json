@@ -1,0 +1,35 @@
+{
+  "name": "Шоколадный ангел",
+  "name_en": "CHOCOLATE ANGEL",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 7,
+  "description": "Потрать 1 действие >>> Сними\nвесь урон с шоколадного ангела.",
+  "flavor": "",
+  "set_code": "bubblegum",
+  "sha256": "1d3965f5e573b4332f8b591a0048b931a256d95a07396c7830878e3b47a1a63b",
+  "landType": "nice",
+  "id": "chocolate-angel-1d3965f",
+  "kind": "card",
+  "image": "/content/cards/nice/chocolate-angel-1d3965f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": {
+          "kind": "per_damage",
+          "amount": 1
+        }
+      },
+      "text": "Потрать 1 Действие >>> Восстанови весь урон с Ангела шоколада.",
+      "cost": 1
+    }
+  ]
+}

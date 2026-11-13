@@ -1,0 +1,34 @@
+{
+  "name": "Гном в смешных штанах",
+  "name_en": "FUNNY PANTS GNOME",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Нанеси 1 урон каждому существу под контролем соперника,\nна кукурузном поле.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "e9d26511b03efb49281cd72002c2d61c488425cc8a315a24a613f6c44c7794e6",
+  "landType": "swamp",
+  "id": "funny-pants-gnome-e9d2651",
+  "kind": "card",
+  "image": "/content/cards/swamp/funny-pants-gnome-e9d2651.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1,
+        "filter": {
+          "zoneLandType": "corn"
+        }
+      },
+      "text": "ПРИЕМ >>> Нанеси 1 Урон каждому существу противника на Кукурузной земле."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Ледяное касание",
+  "name_en": "ICE TOUCH",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Заморозь все земли соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f35548727f78b54024d3064ff54f7cded5f854e1bc3ef60fd81f94961143053e",
+  "landType": "icy",
+  "id": "ice-touch-f355487",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-touch-f355487.webp",
+  "abilities": []
+}

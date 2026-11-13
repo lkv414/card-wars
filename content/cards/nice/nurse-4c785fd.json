@@ -1,0 +1,19 @@
+{
+  "name": "Медсестра",
+  "name_en": "NURSE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Когда медсестра входит в игру, ты можешь раскрыть любое заклинание из твоей руки. За каждое заклинание, раскрытое таким образом, выбранный игрок восстанавливает 2 жизни.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4c785fded9749382edc29e6398265ed7e187aced4010bc0ef1ab8b5d392c35b5",
+  "landType": "nice",
+  "id": "nurse-4c785fd",
+  "kind": "card",
+  "image": "/content/cards/nice/nurse-4c785fd.webp",
+  "abilities": []
+}

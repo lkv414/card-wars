@@ -1,0 +1,19 @@
+{
+  "name": "Слепой шееглаз",
+  "name_en": "BLIND SEE-EYE",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 4,
+  "description": "Когда слепой шееглаз входит в игру, заморозь одну землю за каждое существо под твоим контролем с «шееглаз» в названии.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "6692a640f328878eb2a1b4381c0e1a1c44585f1cb10613fa8657966ea8885f7f",
+  "landType": "icy",
+  "id": "blind-see-eye-6692a64",
+  "kind": "card",
+  "image": "/content/cards/icy/blind-see-eye-6692a64.webp",
+  "abilities": []
+}

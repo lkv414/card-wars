@@ -1,0 +1,19 @@
+{
+  "name": "Крепость огненного жерла",
+  "name_en": "FIERY CRATER FORTRESS",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Сбрось жетон ожога с существа и\nФЛЮП >>> Нанеси 3 урона\nтому существу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "db3c606070e4915aa5d45fce99f50c54ff83b3ddb434bf85c39a34d518ab7e9a",
+  "landType": "lava",
+  "id": "fiery-crater-fortress-db3c606",
+  "kind": "card",
+  "image": "/content/cards/lava/fiery-crater-fortress-db3c606.webp",
+  "abilities": []
+}

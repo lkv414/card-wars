@@ -1,0 +1,56 @@
+{
+  "name": "Чемпионский початок",
+  "name_en": "CHAMPION COB",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "+2 к атаке и +2 к защите, если ты контролируешь строение в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "a130b79d3f751c59039263fe8b928e9318d162884ba320175fb5b7361d1c1ef7",
+  "landType": "corn",
+  "id": "champion-cob-a130b79",
+  "kind": "card",
+  "image": "/content/cards/corn/champion-cob-a130b79.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_zone_has_building"
+          }
+        ]
+      },
+      "text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_zone_has_building"
+          }
+        ]
+      },
+      "text": "Кукурузный чемпион получает +2 ATK и +2 DEF, если на этой земле строение под твоим контролем."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Доктор Мягкенштейн",
+  "name_en": "DOCTOR SOFTENSTEIN",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "ФЛЮП >>> Сними 2 урона с любого существа на соседней земле (либо сними 2 урона с каждого твоего существа, если количество урона, нанесённого доктору Мягкенштейну, равно 5 или больше).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c923fde19d9fb33691c804d4da422c7b821533b28b3328bba286e74c5fa96c80",
+  "landType": "nice",
+  "id": "doctor-softenstein-c923fde",
+  "kind": "card",
+  "image": "/content/cards/nice/doctor-softenstein-c923fde.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "mechanic": "dr_kukolstein_heal",
+      "params": {
+        "amount": 2,
+        "threshold": 5
+      },
+      "text": "ПРИЕМ >>> Восстанови 2 урона с существа на соседней линии. Если на Доке Кукольштейне 5 или более урона, то вместо этого восстанови 2 урона с каждого существа."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Каменный русал",
+  "name_en": "ROCK MERMAID",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "В конце твоего хода сбрось 2 верхние карты с колоды выбранного игрока.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "318829dba37302989072189aa97ec9d191ab9e4c43d54a978eacb8dc3b2e4b9e",
+  "landType": "swamp",
+  "id": "rock-mermaid-318829d",
+  "kind": "card",
+  "image": "/content/cards/swamp/rock-mermaid-318829d.webp",
+  "abilities": []
+}

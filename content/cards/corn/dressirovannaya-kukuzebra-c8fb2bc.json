@@ -1,0 +1,53 @@
+{
+  "name": "Дрессированная\nкукузебра",
+  "name_en": "",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 7,
+  "description": "+1 к атаке за каждую карту командной\nработы под контролем твоей команды.\nЕсли дрессированная кукузебра выходит\nиз игры во время фазы атаки, ты\nможешь вернуть его на руку.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "c8fb2bc769eb2396cdc9f3289fa0a45a8ae584b5e0a08a455520f0760cd59d3b",
+  "landType": "corn",
+  "id": "dressirovannaya-kukuzebra-c8fb2bc",
+  "kind": "card",
+  "image": "/content/cards/corn/dressirovannaya-kukuzebra-c8fb2bc.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "stat": "attack",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": {
+          "kind": "team_companion_cost"
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждую Тимворк под контролем твоей команды."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_phase",
+          "phase": "battle"
+        }
+      ],
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "triggering_instance"
+        }
+      },
+      "text": "Если Тренированный крылатый зебрарог покидает игру во время твоей фазы сражения, можешь положить в свою руку."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Легион початочков",
+  "name_en": "CORN LEGION",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Когда легион початочков входит в игру,\nможешь вернуть на руку владельца\nвыбранное существо в этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "264767b5c0199c49bc96972aa6a53c874078c86b4c95218c25221be46848c1a8",
+  "landType": "corn",
+  "id": "corn-legion-264767b",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-legion-264767b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Когда Легион уховерток вступает в игру, можешь вернуть выбранное существо на этой линии его владельцу.",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

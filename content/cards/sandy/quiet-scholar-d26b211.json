@@ -1,0 +1,19 @@
+{
+  "name": "Тихий преображенский",
+  "name_en": "QUIET SCHOLAR",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 5,
+  "description": "Второе заклинание, которое ты\nразыгрываешь в каждом ходу,\nстоит на 1 действие меньше.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "d26b211aa6b36b91ecbc61ecbaa6ac67797dc4a5f15eeaa1667a90bbe64db629",
+  "landType": "sandy",
+  "id": "quiet-scholar-d26b211",
+  "kind": "card",
+  "image": "/content/cards/sandy/quiet-scholar-d26b211.webp",
+  "abilities": []
+}

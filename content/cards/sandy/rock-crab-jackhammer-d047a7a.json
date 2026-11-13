@@ -1,0 +1,43 @@
+{
+  "name": "Камнекраб отбойник",
+  "name_en": "ROCK CRAB JACKHAMMER",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда камнекраб отбойник получает урон от существа, он наносит этому существу столько же урона.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "d047a7a137069eabedc28663bd4d35eb4a1fab41305b553b6276d46bc767bd77",
+  "landType": "sandy",
+  "id": "rock-crab-jackhammer-d047a7a",
+  "kind": "card",
+  "image": "/content/cards/sandy/rock-crab-jackhammer-d047a7a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "triggering_instance"
+        },
+        "amount": {
+          "kind": "payload_damage",
+          "amount": 1
+        }
+      },
+      "text": "Каждый раз когда Камнекраб получает урон от существа, он наносит столько же урона этому же существу.",
+      "conditions": [
+        {
+          "kind": "if_payload_targeted_self"
+        },
+        {
+          "kind": "if_payload_creature"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Жираф Весельчак",
+  "name_en": "JOLLY GIRAFFE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Пока количество урона, нанесённого жирафу весельчаку, равно 4 или более, он наносит урон выбранному сопернику вместо существа под контролем соперника.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "1c118072740caeed6e9f53436020cf973a4de366648633d798364bc52035f7c2",
+  "landType": "nice",
+  "id": "jolly-giraffe-1c11807",
+  "kind": "card",
+  "image": "/content/cards/nice/jolly-giraffe-1c11807.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "face": true
+      },
+      "conditions": [
+        {
+          "kind": "while_damage_at_least",
+          "amount": 4,
+          "scope": "self"
+        }
+      ],
+      "text": "Пока у Легкого жирафа 4 урона и более, он наносит урон непосредственно противнику вместо существа противника."
+    }
+  ]
+}

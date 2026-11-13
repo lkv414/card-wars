@@ -1,0 +1,19 @@
+{
+  "name": "Рыцарский броненосец",
+  "name_en": "KNIGHTLY ARMADILLO",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 9,
+  "description": "Когда рыцарский броненосец заменяет существо, разыграй верхнюю карту твоей колоды бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1b0c2b33f3019a96286b68e69d1766006c4a615670c94f4af6287c35f2c649c5",
+  "landType": "nice",
+  "id": "knightly-armadillo-1b0c2b3",
+  "kind": "card",
+  "image": "/content/cards/nice/knightly-armadillo-1b0c2b3.webp",
+  "abilities": []
+}

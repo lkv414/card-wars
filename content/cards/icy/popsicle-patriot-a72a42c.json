@@ -1,0 +1,33 @@
+{
+  "name": "Фруктовый патриот",
+  "name_en": "POPSICLE PATRIOT",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда фруктовый патриот входит в игру, ты можешь заморозить землю в этой зоне.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "a72a42c47d9e5208b98eab33dafa510d4bd84b3c56c8b9c981f210cbb662e0d2",
+  "landType": "icy",
+  "id": "popsicle-patriot-a72a42c",
+  "kind": "card",
+  "image": "/content/cards/icy/popsicle-patriot-a72a42c.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Когда Замороженный патрилед вступает в игру, можешь Заморозить Землю на этой линии."
+    }
+  ]
+}

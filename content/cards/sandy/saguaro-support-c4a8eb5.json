@@ -1,0 +1,19 @@
+{
+  "name": "Опорник Сагуаро",
+  "name_en": "SAGUARO SUPPORT",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Все не песчаные существа под твоим контролем получают +1 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c4a8eb51fe4fa552ae3c0c4204a52730e785b18c96205918e3080016a25d2d78",
+  "landType": "sandy",
+  "id": "saguaro-support-c4a8eb5",
+  "kind": "card",
+  "image": "/content/cards/sandy/saguaro-support-c4a8eb5.webp",
+  "abilities": []
+}

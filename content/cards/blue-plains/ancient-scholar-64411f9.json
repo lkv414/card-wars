@@ -1,0 +1,44 @@
+{
+  "name": "Древний грамотей",
+  "name_en": "ANCIENT SCHOLAR",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "ФЛЮП >>> Верни случайную радужную\nкарту из твоего сброса себе на руку. Если\nты контролируешь строение в этой зоне,\nполучи 1 действие.",
+  "flavor": "",
+  "set_code": "finn",
+  "sha256": "64411f9524238ed8e95467d8f1fe704bb11ac13efbcbd40e27c188549e58bbbe",
+  "landType": "blue",
+  "id": "ancient-scholar-64411f9",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/ancient-scholar-64411f9.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "return_from_discard",
+          "count": 1,
+          "random": true,
+          "filter": {
+            "landType": "rainbow"
+          },
+          "to": "hand"
+        },
+        {
+          "op": "gain_actions",
+          "amount": 1,
+          "conditions": [
+            {
+              "kind": "while_zone_has_building"
+            }
+          ]
+        }
+      ],
+      "text": "ПРИЕМ >>> Верни случайную Радужную карту из своей стопки сброса себе в руку. Если на этой линии контролируешь строение, получи 1 действие."
+    }
+  ]
+}

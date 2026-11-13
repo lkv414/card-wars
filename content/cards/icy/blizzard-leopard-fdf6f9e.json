@@ -1,0 +1,34 @@
+{
+  "name": "Лавинопард метели",
+  "name_en": "BLIZZARD LEOPARD",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 2,
+  "description": "Когда лавинопард метели входит\nв игру, возьми 2 карты, если другой\nигрок не заморозит одну землю\nпод своим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fdf6f9e9309c9bdfd6c6f4e6258ffc07aa694a8bc987ec941ae2460cbd7217d0",
+  "landType": "icy",
+  "id": "blizzard-leopard-fdf6f9e",
+  "kind": "card",
+  "image": "/content/cards/icy/blizzard-leopard-fdf6f9e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "Когда Мяжкий рекрум вступает игру и у противника на этой линии нет существа под его контролем, получи 1 Действие.",
+      "conditions": [
+        {
+          "kind": "while_lane_empty_opponent"
+        }
+      ]
+    }
+  ]
+}

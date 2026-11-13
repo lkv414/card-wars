@@ -1,0 +1,32 @@
+{
+  "name": "Морозный дракон",
+  "name_en": "FROST DRAGON",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 10,
+  "description": "Потрать 1 действие >>> Заморозь\nземлю в этой зоне.",
+  "flavor": "",
+  "set_code": "ice_king",
+  "sha256": "5342dc1fb148ba4604df5029b728e222165975cf3fd56f11fca2caf78ee32818",
+  "landType": "icy",
+  "id": "frost-dragon-5342dc1",
+  "kind": "card",
+  "image": "/content/cards/icy/frost-dragon-5342dc1.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Потрать 1 Действие >>> Заморозь землю на этой линии."
+    }
+  ]
+}

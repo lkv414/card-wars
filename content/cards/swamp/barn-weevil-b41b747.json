@@ -1,0 +1,33 @@
+{
+  "name": "Амбарный долгоносик",
+  "name_en": "BARN WEEVIL",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Уничтожь амбарного долгоносика >>>\nУничтожь выбранное существо под\nконтролем соперника в этой зоне\nи любое существо с таким же\nименем в игре.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "b41b74799e4210918f33ab52ef8bf1b6091a3a92e5c13ae7e7cb72846c6e8c5a",
+  "landType": "swamp",
+  "id": "barn-weevil-b41b747",
+  "kind": "card",
+  "image": "/content/cards/swamp/barn-weevil-b41b747.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "additionalCost": {
+        "destroySelf": true
+      },
+      "targets": [
+        {
+          "kind": "lane_opponent_creature"
+        }
+      ],
+      "mechanic": "destroy_lane_and_same_name",
+      "text": "ПРИЕМ >>> Уничтожь Тошнотного клопа >>> Уничтожь выбранное существо противника на этой линии и любое существо с таким же именем в игре."
+    }
+  ]
+}

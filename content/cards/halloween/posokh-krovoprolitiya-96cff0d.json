@@ -1,0 +1,34 @@
+{
+  "name": "Посох кровопролития",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Призрачные земли",
+  "landType": "swamp",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Добавь урона выбранному существу под твоим контролем, пока у него не останется 1 защита.\nНанеси 1 урон сопернику за каждый добавленный урон.\n(Но не больше 8)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "96cff0d9ba9f474f4682babbc30f8a0e3db6ee57f1c41db1c38f88906b1460b0",
+  "id": "posokh-krovoprolitiya-96cff0d",
+  "kind": "card",
+  "image": "/content/cards/halloween/posokh-krovoprolitiya-96cff0d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Наноси урон выбранному существу пока у него не остается 1 DEF.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "mechanic": "damage_until_def",
+      "params": {
+        "floor": 1
+      }
+    }
+  ]
+}

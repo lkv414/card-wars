@@ -1,0 +1,37 @@
+{
+  "name": "Геркуглаз",
+  "name_en": "Swole Eye",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Сбрось карту >>> Геркуглаз получает\n+4 к атаке в этом ходу.\n(Используй только 1 раз за твой ход.)",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "4a5fa629b899dfd085f76f45eb9ea988dff062073467cda3b4ec5a0ee9093768",
+  "landType": "swamp",
+  "id": "swole-eye-4a5fa62",
+  "kind": "card",
+  "image": "/content/cards/swamp/swole-eye-4a5fa62.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 4,
+        "duration": "this_turn"
+      },
+      "text": "Сбрось карту >>> Геркулаз получает +4 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
+}

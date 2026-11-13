@@ -1,0 +1,33 @@
+{
+  "name": "Пирожок",
+  "name_en": "Cake",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Каждый раз, когда строение под твоим контролем входит в игру, сними 2 урона со всех своих существ на землях со строениями.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1148c135e22dd3768c5280d1193e0ab1380e9b8da975e80de09fba4e70d5e68a",
+  "id": "cake-1148c13",
+  "kind": "hero",
+  "image": "/content/heroes/cake-1148c13.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "on_enters_play",
+    "effect": {
+      "op": "heal",
+      "target": {
+        "kind": "payload_zone_own_creatures"
+      },
+      "amount": 2
+    },
+    "conditions": [
+      {
+        "kind": "if_payload_building"
+      },
+      {
+        "kind": "if_payload_player_self"
+      }
+    ],
+    "text": "Каждый раз, когда вступает в игру строение под твоим контролем, восстанови 2 HP каждому существу под твоим контролем со строением на этой земле."
+  }
+}

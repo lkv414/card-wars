@@ -1,0 +1,45 @@
+{
+  "name": "Ксилофонозавр",
+  "name_en": "XYLOPHONOSAURUS",
+  "cost": 4,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 11,
+  "description": "Ксилофонозавр стоит на 1 действие\nменьше за каждое существо другого\nтипа земли под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6a47799f6114b0eea768a3f799b0fd98d73118360fb9759cbc87cfbb34eb25de",
+  "landType": "rainbow",
+  "id": "xylophonosaurus-6a47799",
+  "kind": "card",
+  "image": "/content/cards/rainbow/xylophonosaurus-6a47799.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": -1,
+          "excludeSelf": true
+        }
+      },
+      "text": "Стоит на 1 действие меньше за каждое другое существо в игре под твоим контролем."
+    },
+    {
+      "kind": "active",
+      "mechanic": "min_max_def_damage",
+      "params": {
+        "min": 2,
+        "max": 1
+      },
+      "text": "Прием >>> Пирошмяк: нанеси 2 урона существу, у которого осталось меньше всего DEF и ещё 1 - тому, у которого больше всего."
+    }
+  ]
+}

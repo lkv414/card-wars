@@ -1,0 +1,39 @@
+{
+  "name": "Абракаданиэль",
+  "name_en": "Abracadaniel",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Потрать 1 действие >>> Раскрой карту твоей колоды. Если это радужная карта, разыграй её бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "87601456be0afdff99dc2012f891f43d34e202f2a3013903550617cbf2c30d08",
+  "id": "abracadaniel-8760145",
+  "kind": "hero",
+  "image": "/content/heroes/abracadaniel-8760145.webp",
+  "ability": {
+    "kind": "active",
+    "cost": 1,
+    "effect": [
+      {
+        "op": "reveal_until",
+        "max": 1,
+        "match": {
+          "landType": "rainbow"
+        }
+      },
+      {
+        "op": "play_revealed",
+        "destination": {
+          "kind": "choice",
+          "index": 0
+        }
+      }
+    ],
+    "targets": [
+      {
+        "kind": "landscape"
+      }
+    ],
+    "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её."
+  }
+}

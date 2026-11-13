@@ -1,0 +1,36 @@
+{
+  "name": "Кукузебра-попрыгунья",
+  "name_en": "CORN TRAMPOLINER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 9,
+  "description": "+1 к атаке за каждый уникальный тип земель под твоим контролем.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0619d33a46aa0f2c3b0f6c12e833032d132805816a32c7715f0d7f1c81b51328",
+  "landType": "corn",
+  "id": "corn-trampoliner-0619d33",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-trampoliner-0619d33.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждый различный тип земли под твоим контролем."
+    }
+  ]
+}

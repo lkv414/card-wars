@@ -1,0 +1,19 @@
+{
+  "name": "Прохладный младенец",
+  "name_en": "COOL BABY",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 2,
+  "description": "+3 к атаке, если соперник\nне контролирует существо\nв этой зоне.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4b8e6d3ba079ff3b367e69064fc053e3abf3496a9e24b2d997e0e8dd625be7fe",
+  "landType": "rainbow",
+  "id": "cool-baby-4b8e6d3",
+  "kind": "card",
+  "image": "/content/cards/rainbow/cool-baby-4b8e6d3.webp",
+  "abilities": []
+}

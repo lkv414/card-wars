@@ -1,0 +1,14 @@
+{
+  "name": "Принцесса Мускул",
+  "name_en": "Muscle Princess",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Потрать 1 действие >>> Положи ⚔ на дружественное существо и/или перемести существо под контролем соперника на пустую землю под контролем соперника.\n(Лимит: один раз за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "d459ca6b0df231c4cb06cd41a9d707601c5bbbbc064cf97966ebe350090dbd78",
+  "id": "muscle-princess-d459ca6",
+  "kind": "hero",
+  "image": "/content/heroes/muscle-princess-d459ca6.webp",
+  "ability": null
+}

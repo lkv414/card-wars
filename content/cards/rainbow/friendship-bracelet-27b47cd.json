@@ -1,0 +1,34 @@
+{
+  "name": "Браслет дружбы",
+  "name_en": "FRIENDSHIP BRACELET",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Поменяй любое количество урона\nмежду двумя существами\nпод твоим контролем.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "27b47cd22885386c7af96f007dcc522fc7a648c70708ef20ff2f69a1a77ed6ae",
+  "landType": "rainbow",
+  "id": "friendship-bracelet-27b47cd",
+  "kind": "card",
+  "image": "/content/cards/rainbow/friendship-bracelet-27b47cd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "swap_damage",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Поменяй любое количество урона между двумя существами под твоим контролем."
+    }
+  ]
+}

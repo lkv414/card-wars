@@ -1,0 +1,38 @@
+{
+  "name": "Отмороженная рыбка",
+  "name_en": "FROZEN FISH",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда отмороженная рыбка наносит урон\nсуществу, можешь заморозить\n1 землю в этой зоне.",
+  "flavor": "",
+  "set_code": "ice_king",
+  "sha256": "8f4a6436fa24a9cbb4c02a8df06db750a625344ac6e2cb1a1c01de25135446ec",
+  "landType": "icy",
+  "id": "frozen-fish-8f4a643",
+  "kind": "card",
+  "image": "/content/cards/icy/frozen-fish-8f4a643.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_instance_self"
+        }
+      ],
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_land"
+        },
+        "frozen": true
+      },
+      "text": "Когда Мороженная рыба наносит урон существу, можешь заморозить землю на этой линии."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "Лобстер спасатель",
+  "name_en": "LIFESAVER LOBSTER",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "Каждый раз, когда другое существо входит в игру во время твоего хода, ты должен снять 1 урон с другого существа.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "93506fa97f1df434b38d16edc3126aec12c60d21801cb2f4782377ba2d16c520",
+  "landType": "sandy",
+  "id": "lifesaver-lobster-93506fa",
+  "kind": "card",
+  "image": "/content/cards/sandy/lifesaver-lobster-93506fa.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "while_own_turn"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Каждый раз когда существо вступает в игру во время твоего хода, ты должен восстановить 1 урон с другого существа."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Вулканическое оживление",
+  "name_en": "VOLCANIC AWAKENING",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Подожги каждое существо под контролем соперника один раз за каждый жетон ожога на нём.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1f97443c39f1f2ad8dcbfc61ede03c2122020445476c8fdf650afe5927330e99",
+  "landType": "lava",
+  "id": "volcanic-awakening-1f97443",
+  "kind": "card",
+  "image": "/content/cards/lava/volcanic-awakening-1f97443.webp",
+  "abilities": []
+}

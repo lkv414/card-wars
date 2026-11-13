@@ -1,0 +1,19 @@
+{
+  "name": "Остров Черепа Вампира",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "landType": "sandy",
+  "type": "Песчаное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие, ФЛЮП >>> Если эта земля не пустая, то существо на этой земле получает поглощение. Вскрывай карты с верха колоды, пока не откроешь существо, затем разыграй его на эту землю бесплатно и перетасуй остальные вскрытые карты в колоду.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6fb18a6e73cf2b3b2a3dd489e8cdfc49c41bb21fc3f61f93b8ac1423e2745fe8",
+  "id": "ostrov-cherepa-vampira-6fb18a6",
+  "kind": "card",
+  "image": "/content/cards/halloween/ostrov-cherepa-vampira-6fb18a6.webp",
+  "abilities": []
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Лысый приседун",
+  "name_en": "BALD SQUATTER",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Сбрось карту >>> Сними 1 урон\nс лысого приседуна.\n(Используй сколько угодно\nраз за твой ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4cf751166af0934518bd29faa4ae24871b212a7f6eb3d1e309587b5230ac4acc",
+  "landType": "swamp",
+  "id": "bald-squatter-4cf7511",
+  "kind": "card",
+  "image": "/content/cards/swamp/bald-squatter-4cf7511.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": 1
+      },
+      "text": "Сбрось карту >>> Восстанови 1 Урон с Лысого заседателя. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
+}

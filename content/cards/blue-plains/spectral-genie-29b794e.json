@@ -1,0 +1,19 @@
+{
+  "name": "Призрачный джинн",
+  "name_en": "SPECTRAL GENIE",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "ФЛЮП >>> Стоимость следующего заклинания, которое ты сыграешь в этом ходу, уменьшается на 2 действия.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "29b794eabc7a2bdcb88656cd94fd2bf535c061ba5dc919469ee8f79b85fa7f77",
+  "landType": "blue",
+  "id": "spectral-genie-29b794e",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/spectral-genie-29b794e.webp",
+  "abilities": []
+}

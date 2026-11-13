@@ -1,0 +1,14 @@
+{
+  "name": "Банановый Стражник",
+  "name_en": "Banana Guard",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Каждое существо под твоим контролем получает +2 к атаке, если в игре есть другое существо с таким же названием.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ee62bbd716bf34869708f4f3d16bc5af90e8066a88fc180a0aacd0e1e54b9f01",
+  "id": "banana-guard-ee62bbd",
+  "kind": "hero",
+  "image": "/content/heroes/banana-guard-ee62bbd.webp",
+  "ability": null
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Пёсик",
+  "name_en": "",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 5,
+  "description": "Сбрось карту >>> Пёсик получает\n+2 к атаке в этот ход.\n(Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "eae1c714114070a6f4b840f8a13d71ffcc8320ecb77ba45335619fe74071172c",
+  "landType": "rainbow",
+  "id": "pyosik-eae1c71",
+  "kind": "card",
+  "image": "/content/cards/rainbow/pyosik-eae1c71.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Сбрось карту >>> Хороший песик получает +2 ATK в этом ход. (Используй только один раз в каждый свой ход.)",
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "oncePerTurn": true
+    }
+  ]
+}

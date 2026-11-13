@@ -1,0 +1,45 @@
+{
+  "name": "Щенячий парад",
+  "name_en": "PUPPY PARADE",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 2 урона с каждого существа под твоим контролем. Твои существа теряют свой тип земель и становятся радужными в этом ходу.",
+  "flavor": "",
+  "set_code": "fiona",
+  "sha256": "98de7617981aa9230e81d08b46138bc7a61e9563715ea9d1096617535b16694b",
+  "landType": "blue",
+  "id": "puppy-parade-98de761",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/puppy-parade-98de761.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "heal",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 2
+        },
+        {
+          "op": "grant_modifier",
+          "modifier": {
+            "op": "counts_as",
+            "target": {
+              "kind": "each_creature_yours"
+            },
+            "landType": "rainbow"
+          },
+          "duration": "this_turn"
+        }
+      ],
+      "text": "Восстанови 2 урона с каждого существа под твоим контролем. Существа под твоим контролем теряют свой тип земли и становятся Радужными на этом ходу."
+    }
+  ]
+}

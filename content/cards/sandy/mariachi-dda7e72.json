@@ -1,0 +1,42 @@
+{
+  "name": "Мариачи",
+  "name_en": "MARIACHI",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 9,
+  "description": "ФЛЮП >>> Нанеси выбранному существу\n1 урон за каждое существо, которое\nвошло в игру в этом ходу.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "dda7e7240ed9b587cf5e5d535493c3ba65683702fe7c6ba10c9a8e10e13ae024",
+  "landType": "sandy",
+  "id": "mariachi-dda7e72",
+  "kind": "card",
+  "image": "/content/cards/sandy/mariachi-dda7e72.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_entered",
+          "scope": "all",
+          "amount": 1
+        }
+      },
+      "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу за каждое существо вступившее в игру в этом ходу.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
+}

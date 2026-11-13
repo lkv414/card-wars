@@ -1,0 +1,38 @@
+{
+  "name": "Песчаный вампир",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "landType": "sandy",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "В начале своего хода можешь вернуть песчаного вампира на руку владельца. Тогда нанеси 2 урона всем существам под контролем соперника, и ты восстанавливаешь столько же здоровья, сколько нанес урона.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "db7bfcd15f53a96c39502db0e37c126f25ccde39feb8721c015cf6de54d02e2b",
+  "id": "peschanyy-vampir-db7bfcd",
+  "kind": "card",
+  "image": "/content/cards/halloween/peschanyy-vampir-db7bfcd.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        {
+          "op": "draw_cards",
+          "count": 2
+        }
+      ],
+      "text": "В начале своего хода можешь вернуть Муми Ба в руку его владельца. Если сделаешь это, тяни две карты."
+    }
+  ]
+}

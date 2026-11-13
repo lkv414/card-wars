@@ -1,0 +1,43 @@
+{
+  "name": "Песчаный краб резак",
+  "name_en": "SAND CRAB CUTTER",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Песчаный краб резак наносит 2 урона существу в этой зоне, за каждое существо, которое вошло в игру в соседнюю зону в этом ходу.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "6fc480195f8210bc57aa44e0246babcabec5d4f42b2e7e8389c70f98b8e17619",
+  "landType": "sandy",
+  "id": "sand-crab-cutter-6fc4801",
+  "kind": "card",
+  "image": "/content/cards/sandy/sand-crab-cutter-6fc4801.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_other"
+        },
+        {
+          "kind": "while_own_turn"
+        },
+        {
+          "kind": "if_payload_zone_adjacent"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "triggering_instance"
+        },
+        "amount": 2
+      },
+      "text": "Каждый раз когда во время твоего хода существо вступает в игру на соседнюю землю, Песочный краб рубака наносит 2 урона существу на этой линии."
+    }
+  ]
+}

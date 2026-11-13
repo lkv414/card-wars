@@ -1,0 +1,19 @@
+{
+  "name": "Храм Факела",
+  "name_en": "TORCH TEMPLE",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Подожги существо в\nэтой зоне. Подожги его снова, если\nу тебя на руке не больше 1 карты.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "fcc5786278c0206e5d36622c8a7ed9f86898695cc67703e0039bc3d34bd0500f",
+  "landType": "lava",
+  "id": "torch-temple-fcc5786",
+  "kind": "card",
+  "image": "/content/cards/lava/torch-temple-fcc5786.webp",
+  "abilities": []
+}

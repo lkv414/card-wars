@@ -1,0 +1,19 @@
+{
+  "name": "Ползущий куст",
+  "name_en": "CREEPING VINE",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "В начале твоего хода, ползущий куст получает +3 к атаке в этот ход, если другой игрок не решит сбросить карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dccf1b9c50a0083f11b64503d574ebac33f133df2a9202c655526f9f56730ddc",
+  "landType": "swamp",
+  "id": "creeping-vine-dccf1b9",
+  "kind": "card",
+  "image": "/content/cards/swamp/creeping-vine-dccf1b9.webp",
+  "abilities": []
+}

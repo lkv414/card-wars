@@ -1,0 +1,51 @@
+{
+  "name": "Деревянная избушка",
+  "name_en": "WOODEN HUT",
+  "cost": 5,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Стоимость деревянной избушки уменьшается на 1 за каждое флюпнутое существо под твоим контролем.\nСущество под твоим контролем в этой зоне получает +5 к защите.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e7294b163efbfd953046e081dbb1f8876e9ee15a49520fc1f6d300a4821b4c2a",
+  "landType": "corn",
+  "id": "wooden-hut-e7294b1",
+  "kind": "card",
+  "image": "/content/cards/corn/wooden-hut-e7294b1.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": -1,
+          "filter": {
+            "flipped": true
+          }
+        }
+      },
+      "text": "Домик из разного дерева стоит на 1 меньше за каждое примененное существо под твоим контролем."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "defense",
+        "amount": 5,
+        "duration": "aura"
+      },
+      "text": "Твое существо на этой линии получает +5 DEF."
+    }
+  ]
+}

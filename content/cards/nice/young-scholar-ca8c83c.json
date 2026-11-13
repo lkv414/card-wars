@@ -1,0 +1,19 @@
+{
+  "name": "Юный Учёный",
+  "name_en": "Young Scholar",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 2,
+  "description": "ФЛЮП >>> Возьми 1 карту\nза каждые 3 жетона урона\nна Юном Учёном.",
+  "flavor": "",
+  "set_code": "ЛИМИТНЫЙ ПРОМО",
+  "sha256": "ca8c83c931ae0c55ce06f2dab7d55932e9ea98681f23eec1b0b85a23f802807e",
+  "landType": "nice",
+  "id": "young-scholar-ca8c83c",
+  "kind": "card",
+  "image": "/content/cards/nice/young-scholar-ca8c83c.webp",
+  "abilities": []
+}

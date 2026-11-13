@@ -1,0 +1,19 @@
+{
+  "name": "Призмажук воин",
+  "name_en": "SANDWORM WARRIOR",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "За каждую разыгранную не песчаную карту, призмажук воин получает +1 к атаке в этот ход.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "0d6a6d3e22c20c3d8f543451b8eb0617386512e1098b0cd96c70e679f8272a10",
+  "landType": "sandy",
+  "id": "sandworm-warrior-0d6a6d3",
+  "kind": "card",
+  "image": "/content/cards/sandy/sandworm-warrior-0d6a6d3.webp",
+  "abilities": []
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Волшебный Чел",
+  "name_en": "Magic Man",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Сбрось заклинание >>> Возьми 1 карту.\n(Лимит: Один раз за ход.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "162058f8e2a804307dd2e306218d4ea9eb3d4fd728ee9007eb4a0c203719f3cb",
+  "id": "magic-man-162058f",
+  "kind": "hero",
+  "image": "/content/heroes/magic-man-162058f.webp",
+  "ability": null
+}

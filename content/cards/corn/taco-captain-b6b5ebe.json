@@ -1,0 +1,36 @@
+{
+  "name": "Капитан Тако",
+  "name_en": "TACO CAPTAIN",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 1,
+  "description": "Когда капитан тако входит в игру,\nнанеси 1 урон каждому существу\nне на кукурузных полях.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "b6b5ebe8f5a31838fe2b5154e8c64428cc4174689ef6451bfd3def26cb4bf387",
+  "landType": "corn",
+  "id": "taco-captain-b6b5ebe",
+  "kind": "card",
+  "image": "/content/cards/corn/taco-captain-b6b5ebe.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature"
+        },
+        "amount": 1,
+        "filter": {
+          "zoneLandType": "corn",
+          "negate": true
+        }
+      },
+      "text": "Когда Капитан Тако вступает в игру, нанеси 1 урон каждому существу не на кукурузной земле."
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Рикардио",
+  "name_en": "Ricardio",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, ты можешь потратить 1\nжизнь. Если ты делаешь это, раскрой карту\nсвоей колоды. Ты можешь её сбросить.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "1782ab30aff3cb4f5dc0025806e4bfbe9764d1b1235d977e3879abe507cc6d93",
+  "id": "ricardio-1782ab3",
+  "kind": "hero",
+  "image": "/content/heroes/ricardio-1782ab3.webp",
+  "ability": {
+    "kind": "active",
+    "cost": 0,
+    "oncePerTurn": true,
+    "effect": [
+      {
+        "op": "pay_life",
+        "amount": 1
+      },
+      {
+        "op": "peek_deck_top",
+        "count": 1
+      },
+      {
+        "op": "resolve_peek"
+      }
+    ],
+    "targets": [
+      {
+        "kind": "choose_option",
+        "options": [
+          "keep",
+          "discard"
+        ],
+        "label": "Верхняя карта колоды: оставить или сбросить?"
+      }
+    ],
+    "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Мавзолей",
+  "name_en": "MAUSOLEUM",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Твоё существо в этой зоне получает\n+1 к защите за каждые 5 карт\nв твоём сбросе.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "ef6f976fb44cfb2d09b7b2ee4b5ca4a9914988f9d7a2ede00cc60ef0471f5843",
+  "landType": "swamp",
+  "id": "mausoleum-ef6f976",
+  "kind": "card",
+  "image": "/content/cards/swamp/mausoleum-ef6f976.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "Твое Существо на этой линии получает +1 DEF за каждые 5 карт в твоей стопке сброса."
+    }
+  ]
+}

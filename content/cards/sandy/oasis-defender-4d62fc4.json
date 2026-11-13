@@ -1,0 +1,19 @@
+{
+  "name": "Защитник оазиса",
+  "name_en": "OASIS DEFENDER",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда ты разыграл не песчаную карту,\nнанеси 1 урон каждому существу\nпод контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4d62fc4138dec6c0a39df21c02ea3b1f00560f56a9f99af83c9fcefe6cf15a11",
+  "landType": "sandy",
+  "id": "oasis-defender-4d62fc4",
+  "kind": "card",
+  "image": "/content/cards/sandy/oasis-defender-4d62fc4.webp",
+  "abilities": []
+}

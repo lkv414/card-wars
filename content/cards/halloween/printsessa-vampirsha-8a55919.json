@@ -1,0 +1,19 @@
+{
+  "name": "Принцесса вампирша",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Призрачные земли",
+  "landType": "swamp",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "Поглощение\nКогда принцесса вампирша входит\nв игру, сними все жетоны урона\nс соседнего существа.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "8a55919f33d49907ccccfcd6738a39d9a054575c4580739afbf8f5c9baf12eef",
+  "id": "printsessa-vampirsha-8a55919",
+  "kind": "card",
+  "image": "/content/cards/halloween/printsessa-vampirsha-8a55919.webp",
+  "abilities": []
+}

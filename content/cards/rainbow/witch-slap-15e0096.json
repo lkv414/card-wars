@@ -1,0 +1,34 @@
+{
+  "name": "Ведьмина оплеуха",
+  "name_en": "WITCH SLAP",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранный соперник сбрасывает 5 карт, а затем получает 1 урон за каждую сброшенную карту.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "15e00962ed37d0cfa0b65d60bd9c971e3a0c63b3d6d6609cf20cd597cc6ca384",
+  "landType": "rainbow",
+  "id": "witch-slap-15e0096",
+  "kind": "card",
+  "image": "/content/cards/rainbow/witch-slap-15e0096.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "text": "Выбранный противник сбрасывает до 5 карт, затем получает 1 урон за каждую карту сброшенную таким образом.",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "mechanic": "discard_then_damage",
+      "params": {
+        "count": 5
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "Бабумия",
+  "name_en": "MUMMY",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "В начале своего хода можешь вернуть\nбабумию на руку владельца.\nТогда возьми 2 карты.",
+  "flavor": "",
+  "set_code": "lady_rainicorn",
+  "sha256": "2fc6467e85a97cc3a47d9291314353c13005574aa31f8867695e52a385ab71ff",
+  "landType": "sandy",
+  "id": "mummy-2fc6467",
+  "kind": "card",
+  "image": "/content/cards/sandy/mummy-2fc6467.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "ПРИЕМ >>> Получи 1 Действие в этом ходу."
+    }
+  ]
+}

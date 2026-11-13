@@ -1,0 +1,37 @@
+{
+  "name": "Болотный босяк",
+  "name_en": "SWAMP HOBO",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если болотный босяк выходит из игры в подготовленном положении, каждый соперник сбрасывает 1 случайную карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "f7a83a7af6828d573c58a2f8ee42b4308f50c378790d6b449e32c172b8259e82",
+  "landType": "swamp",
+  "id": "swamp-hobo-f7a83a7",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-hobo-f7a83a7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "conditions": [
+        {
+          "kind": "while_self_flipped"
+        }
+      ],
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "each_opponent_player"
+        },
+        "count": 1
+      },
+      "text": "Если Бездомный болот покидает игру, пока подготовлен, каждый противник сбрасывает карту."
+    }
+  ]
+}

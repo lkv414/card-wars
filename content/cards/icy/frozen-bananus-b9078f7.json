@@ -1,0 +1,44 @@
+{
+  "name": "Замороженная банануся",
+  "name_en": "FROZEN BANANUS",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "В начале фазы атаки, если в этой зоне есть земля с жетоном мороза, нанеси 2 урона выбранному сопернику.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "b9078f7ec873b0bb2a60d922932445ba85cf900969599de306b0c4a840995484",
+  "landType": "icy",
+  "id": "frozen-bananus-b9078f7",
+  "kind": "card",
+  "image": "/content/cards/icy/frozen-bananus-b9078f7.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_battle_phase",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "while_lane_ice_token",
+          "min": 1
+        }
+      ],
+      "text": "Если в начале твоей фазы сражения, на этой линии есть хотябы один Ледяной жетон, нанеси 2 урона выбранному противнику."
+    }
+  ]
+}

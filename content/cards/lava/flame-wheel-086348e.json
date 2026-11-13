@@ -1,0 +1,19 @@
+{
+  "name": "Пламенное колесо",
+  "name_en": "FLAME WHEEL",
+  "cost": 2,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 12,
+  "description": "Потрать 1 действие >>> Возьми 1 карту и раскрой её. Затем подожги существо в зоне пламенного колеса столько раз, сколько стоит раскрытая карта.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "086348e35089582b0366995c863e5f4d12a365aff6b123b070e749e511987141",
+  "landType": "lava",
+  "id": "flame-wheel-086348e",
+  "kind": "card",
+  "image": "/content/cards/lava/flame-wheel-086348e.webp",
+  "abilities": []
+}

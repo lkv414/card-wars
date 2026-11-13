@@ -1,0 +1,35 @@
+{
+  "name": "Щенок",
+  "name_en": "PUPPY",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "ФЛЮП >>> Строения под контролем соперника в этой зоне теряют все свои способности, пока щенок флюпнут.",
+  "flavor": "«Гав.»",
+  "set_code": null,
+  "sha256": "fb77a5fb236af322294e2ae3bcaba2b92ff879373cf428244ce8876b98e80ecb",
+  "landType": "rainbow",
+  "id": "puppy-fb77a5f",
+  "kind": "card",
+  "image": "/content/cards/rainbow/puppy-fb77a5f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "grant_modifier",
+        "modifier": {
+          "op": "suppress",
+          "all": true,
+          "target": {
+            "kind": "this_lane_opponent_building"
+          }
+        },
+        "duration": "while_flipped"
+      },
+      "text": "ПРИЕМ >>> Строения противника в этой линии без текста пока Пес применен."
+    }
+  ]
+}

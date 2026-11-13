@@ -1,0 +1,32 @@
+{
+  "name": "Ледогидра",
+  "name_en": "ICE HYDRA",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 8,
+  "description": "Соперник не может разыгрывать карты стоимостью 0.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "174a941fb0ef1a494f9690bd61a552710e6220f2dddbc9476a2706674e392899",
+  "landType": "blue",
+  "id": "ice-hydra-174a941",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/ice-hydra-174a941.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "restrict_play",
+        "target": {
+          "kind": "this_creature"
+        },
+        "who": "opponents",
+        "maxCost": 0
+      },
+      "text": "Противники не могут играть карты стоимостью 0."
+    }
+  ]
+}

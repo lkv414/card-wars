@@ -1,0 +1,50 @@
+{
+  "name": "В команде замена",
+  "name_en": "TAG TEAM",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо под твоим контролем\nполучает +2 к атаке за каждое повёрнутое\nсущество под твоим контролем\n(на момент розыгрыша этой карты).",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4c845839b813c2f4425beed1a83e7f1c98b66fe80e55e0ae6e9e9ca9f8512f38",
+  "landType": "blue",
+  "id": "tag-team-4c84583",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/tag-team-4c84583.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "amount": 2,
+          "excludeSelf": true,
+          "filter": {
+            "flipped": true
+          }
+        },
+        "duration": "this_turn"
+      },
+      "text": "Выбранное существо под твоим контролем получает +2 ATK за каждое неактивное существо под твоим контролем (на момент вступления в игру).",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
+}

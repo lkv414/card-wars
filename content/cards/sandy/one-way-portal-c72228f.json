@@ -1,0 +1,37 @@
+{
+  "name": "Портал в один конец",
+  "name_en": "ONE WAY PORTAL",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Верни выбранное существо на руку владельца.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "c72228f3a213d92db65ec458e9fa260cac11b6338d770d7283e6414dc0ad2a73",
+  "landType": "sandy",
+  "id": "one-way-portal-c72228f",
+  "kind": "card",
+  "image": "/content/cards/sandy/one-way-portal-c72228f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "text": "Верни выбранное существо его владельцу в руку.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ]
+    }
+  ]
+}

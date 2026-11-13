@@ -1,0 +1,32 @@
+{
+  "name": "Лаборант",
+  "name_en": "LAB ASSISTANT",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда ты разыгрываешь заклинание не с руки, ты можешь применить его эффекты второй раз. (Ты можешь выбрать другую цель.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "5962f163b66cc5d55601d23a971e9c271cd0ae2a835861c9c15aea0f9e702a81",
+  "landType": "rainbow",
+  "id": "lab-assistant-5962f16",
+  "kind": "card",
+  "image": "/content/cards/rainbow/lab-assistant-5962f16.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "atkBonus": 1,
+        "defenderType": "corn"
+      },
+      "text": "Получаем +1 АТК, когда атакуем существ с жёлтым цветом на них (он просто его не любит)."
+    }
+  ]
+}

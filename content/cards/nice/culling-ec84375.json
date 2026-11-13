@@ -1,0 +1,30 @@
+{
+  "name": "От-бра-а-а-ковка",
+  "name_en": "CULLING",
+  "cost": 2,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Уничтожь всех существ\nс атакой 4 или больше.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "ec843758550cd1b324ac47c406e527fdcd7efc8491aad47f36f1978759a0e68e",
+  "landType": "nice",
+  "id": "culling-ec84375",
+  "kind": "card",
+  "image": "/content/cards/nice/culling-ec84375.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "reset_and_refill",
+      "params": {
+        "draw": 5,
+        "actions": 3
+      },
+      "text": "Ты сбрасываешь всех существ из игры и все карты с руки. Затем тяни 5 карт. У тебя есть 3 действия, чтобы сыграть существ."
+    }
+  ]
+}

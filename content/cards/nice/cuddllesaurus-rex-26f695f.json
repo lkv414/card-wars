@@ -1,0 +1,41 @@
+{
+  "name": "Доброзавр Рекс",
+  "name_en": "CUDDLLESAURUS REX",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 7,
+  "description": "В начале твоего хода, если на доброзавре Рексе есть жетоны урона, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "26f695f4f67a4c1f9d6dd094d9fcbbc277eddce70a8e4185e8b106072affc62f",
+  "landType": "nice",
+  "id": "cuddllesaurus-rex-26f695f",
+  "kind": "card",
+  "image": "/content/cards/nice/cuddllesaurus-rex-26f695f.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "draw_cards",
+          "count": 1
+        },
+        {
+          "op": "draw_cards",
+          "count": 1,
+          "conditions": [
+            {
+              "kind": "while_effective_def_at_most",
+              "max": 2,
+              "scope": "self"
+            }
+          ]
+        }
+      ],
+      "text": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две."
+    }
+  ]
+}

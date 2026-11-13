@@ -1,0 +1,19 @@
+{
+  "name": "Огненный пёс",
+  "name_en": "FIRE DOG",
+  "cost": 0,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Когда огненный пёс входит в игру, ты можешь нанести урон выбранному существу, равный количеству жетонов ожога на всех существах.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "386e256885b965af4f383873364ca31bcbd35e308336d8d8d044a1a21028d875",
+  "landType": "lava",
+  "id": "fire-dog-386e256",
+  "kind": "card",
+  "image": "/content/cards/lava/fire-dog-386e256.webp",
+  "abilities": []
+}

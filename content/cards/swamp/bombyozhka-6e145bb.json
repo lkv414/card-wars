@@ -1,0 +1,36 @@
+{
+  "name": "Бомбёжка",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранный соперник может сбросить 1 карту. Если не сбросил, нанеси 2 урона каждому его существу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6e145bb3b890937ec06cd059ecf9bb34b746ffdcc23c956c5c3d5de1c460097b",
+  "landType": "swamp",
+  "id": "bombyozhka-6e145bb",
+  "kind": "card",
+  "image": "/content/cards/swamp/bombyozhka-6e145bb.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "discard_min_cost_or_damage",
+      "params": {
+        "minCost": 0,
+        "amount": 2,
+        "to": "creatures"
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Выбранный враг может сбросить карту. Если нет, то нанеси 2 Урона каждому его существу."
+    }
+  ]
+}

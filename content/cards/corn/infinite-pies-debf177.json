@@ -1,0 +1,19 @@
+{
+  "name": "Бесконечные пироги",
+  "name_en": "INFINITE PIES",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 2 урона сопернику.\nЕсли в твоём сбросе есть бесконечные пироги, ты можешь разыграть эту карту бесплатно.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "debf177792640b5488ce10d6a28bbd94af9b76d1a0fcd21aae0abd496bebeebf",
+  "landType": "corn",
+  "id": "infinite-pies-debf177",
+  "kind": "card",
+  "image": "/content/cards/corn/infinite-pies-debf177.webp",
+  "abilities": []
+}

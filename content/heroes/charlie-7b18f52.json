@@ -1,0 +1,38 @@
+{
+  "name": "Чарли",
+  "name_en": "Charlie",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, ты можешь переместить существо под своим контролем на соседнюю пустую землю.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "7b18f5261fe64d3f6b91368d57ead667a08975195c97b4b888da3e25e269c050",
+  "id": "charlie-7b18f52",
+  "kind": "hero",
+  "image": "/content/heroes/charlie-7b18f52.webp",
+  "ability": {
+    "kind": "active",
+    "oncePerTurn": true,
+    "effect": {
+      "op": "move_creature",
+      "target": {
+        "kind": "choice",
+        "index": 0
+      },
+      "destination": {
+        "kind": "choice",
+        "index": 1
+      },
+      "side": "own"
+    },
+    "targets": [
+      {
+        "kind": "own_creature"
+      },
+      {
+        "kind": "landscape"
+      }
+    ],
+    "text": "Один раз за свой ход можешь переместить существо под своим контролем на соседнюю пустую линию."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Трясинаки ренегат",
+  "name_en": "SWAMP NINJA RENEGADE",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 10,
+  "description": "Когда трясинаки ренегат входит в игру,\nсбрось всю руку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "6de96d8bf4a7d0fbbc4ec6340657201742ee3a9dcc3abac277e1d1e7e7866592",
+  "landType": "swamp",
+  "id": "swamp-ninja-renegade-6de96d8",
+  "kind": "card",
+  "image": "/content/cards/swamp/swamp-ninja-renegade-6de96d8.webp",
+  "abilities": []
+}

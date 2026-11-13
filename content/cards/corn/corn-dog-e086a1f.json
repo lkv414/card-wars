@@ -1,0 +1,63 @@
+{
+  "name": "Кукурузный пёс",
+  "name_en": "CORN DOG",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 12,
+  "description": "Кукурузный пёс получает +1 к защите за каждое кукурузное поле под твоим контролем. Если ты контролируешь 3 кукурузных поля или меньше, Кукурузный пёс получает +1 к атаке.",
+  "flavor": "",
+  "set_code": "jake",
+  "sha256": "e086a1fb60f1c2de75e325628affe0a384f0a13ade4418b169a6c6b330a9dae1",
+  "landType": "corn",
+  "id": "corn-dog-e086a1f",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-dog-e086a1f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "amount": 1,
+          "landType": "corn"
+        },
+        "duration": "aura"
+      },
+      "text": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "amount": 1,
+          "landType": "corn"
+        },
+        "duration": "aura",
+        "conditions": [
+          {
+            "kind": "while_land_count",
+            "landType": "corn",
+            "max": 3
+          }
+        ]
+      },
+      "text": "Кукурузный пес получает +1 DEF за каждое Кукурузное поле под твоим контролем. Если их 3 или меньше, то также +1 ATK."
+    }
+  ]
+}

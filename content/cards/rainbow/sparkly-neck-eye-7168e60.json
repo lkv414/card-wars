@@ -1,0 +1,19 @@
+{
+  "name": "Блестящий шееглаз",
+  "name_en": "SPARKLY NECK-EYE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "",
+  "flavor": "Посмотри, как я ссссверкаю!",
+  "set_code": "ЗЛ",
+  "sha256": "7168e601f48e4c2a02b25aafdae56744ae1c07f46e642b2635c8af156f174367",
+  "landType": "rainbow",
+  "id": "sparkly-neck-eye-7168e60",
+  "kind": "card",
+  "image": "/content/cards/rainbow/sparkly-neck-eye-7168e60.webp",
+  "abilities": []
+}

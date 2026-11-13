@@ -1,0 +1,19 @@
+{
+  "name": "Гигантская красная саламандра",
+  "name_en": "GIANT RED SALAMANDER",
+  "cost": 1,
+  "land_type": "Лавовые земли",
+  "type": "Лавовое существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 3,
+  "description": "",
+  "flavor": "Ходячая печь с характером.",
+  "set_code": null,
+  "sha256": "cb355ffe3ba361cc0bb6bf0b5233ac78d33d085f00d11c6c4f2e5b87aca37e92",
+  "landType": "lava",
+  "id": "giant-red-salamander-cb355ff",
+  "kind": "card",
+  "image": "/content/cards/lava/giant-red-salamander-cb355ff.webp",
+  "abilities": []
+}

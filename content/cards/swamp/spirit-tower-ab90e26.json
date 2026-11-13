@@ -1,0 +1,40 @@
+{
+  "name": "Башня духа",
+  "name_en": "SPIRIT TOWER",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие и ФЛЮП >>> Если в этой зоне нет существ под твоим контролем, перемести выбранное существо в этой зоне на твою сторону и переведи его в подготовленное положение. В конце хода верни его на сторону владельца.",
+  "flavor": "",
+  "set_code": "bmo",
+  "sha256": "ab90e26fd7d188d69181f7ca398098b0a527105f2d07686b767df7385111f77d",
+  "landType": "swamp",
+  "id": "spirit-tower-ab90e26",
+  "kind": "card",
+  "image": "/content/cards/swamp/spirit-tower-ab90e26.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "mechanic": "borrow_creature",
+      "text": "ПРИЕМ >>> Если ты не контролируешь существ на этой линии, перемести выбранное существо на свою сторону и подготовь его. В конце хода верни его владельцу.",
+      "conditions": [
+        {
+          "kind": "while_zone_has_no_creature"
+        }
+      ],
+      "params": {
+        "returnAtEndOfTurn": true,
+        "readyTarget": true
+      }
+    }
+  ]
+}

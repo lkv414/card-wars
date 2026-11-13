@@ -1,0 +1,29 @@
+{
+  "name": "Хрономант",
+  "name_en": "CHRONOMANCER",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Когда хрономант перемещается в другую зону, получи 1 действие.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "aa39098e0299b50264f8c60ce584f17e4153359fb8d3eb82af049654b4f73ed1",
+  "landType": "blue",
+  "id": "chronomancer-aa39098",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/chronomancer-aa39098.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_line_change",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "Каждый раз когда Хрономансер меняет линию, получи 1 действие."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Ударное зелье",
+  "name_en": "PUNCH POTION",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Нанеси 3 урона выбранному существу или игроку.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2ca55e00c3bd7c50308f0100d9e1a2931af1b1e30a566a78603ba850f3c11a80",
+  "landType": "sandy",
+  "id": "punch-potion-2ca55e0",
+  "kind": "card",
+  "image": "/content/cards/sandy/punch-potion-2ca55e0.webp",
+  "abilities": []
+}

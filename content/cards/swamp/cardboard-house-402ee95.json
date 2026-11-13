@@ -1,0 +1,41 @@
+{
+  "name": "Картонный домик",
+  "name_en": "CARDBOARD HOUSE",
+  "cost": 5,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Стоимость картонного домика уменьшается\nна 1 за каждые 5 карт в твоём сбросе.\nФЛЮП >>> Получи 1 действие.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "402ee95a16ee342db60e98a18f9e8e65d5daefee1768194c516a619ff850adc2",
+  "landType": "swamp",
+  "id": "cardboard-house-402ee95",
+  "kind": "card",
+  "image": "/content/cards/swamp/cardboard-house-402ee95.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": -1
+        }
+      },
+      "text": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие."
+    },
+    {
+      "kind": "active",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "Картонный особняк стоит на 1 меньше за каждые 5 карт в твоей стопке сброса. ПРИЕМ >>> Получи 1 Действие."
+    }
+  ]
+}

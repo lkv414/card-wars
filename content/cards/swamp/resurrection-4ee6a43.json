@@ -1,0 +1,50 @@
+{
+  "name": "Воскрешение",
+  "name_en": "RESURRECTION",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Положи существо за 2 действия\nили меньше из твоего сброса.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "4ee6a4317f223b7e3dbc50a6ee0f330955110cf7faa684d363b1357a47160c92",
+  "landType": "swamp",
+  "id": "resurrection-4ee6a43",
+  "kind": "card",
+  "image": "/content/cards/swamp/resurrection-4ee6a43.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "play_from_discard",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "destination": {
+            "kind": "choice",
+            "index": 1
+          }
+        }
+      ],
+      "text": "Верни существо стоимостью 2 или менее из стопки сброса в игру.",
+      "targets": [
+        {
+          "kind": "own_discard_card",
+          "filter": {
+            "cardType": "creature",
+            "maxCost": 2
+          }
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

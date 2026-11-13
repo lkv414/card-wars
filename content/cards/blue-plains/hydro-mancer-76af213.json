@@ -1,0 +1,19 @@
+{
+  "name": "Гидромант",
+  "name_en": "HYDRO-MANCER",
+  "cost": 2,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Когда гидромант входит в игру, ты можешь раскрыть карты твоей колоды, пока не раскроешь карту командной работы, разыграй её бесплатно. Перемешай раскрытые карты в колоду.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "76af213e7dea11f10738ea5853955faca361e1693fa56ca207803289f436f208",
+  "landType": "blue",
+  "id": "hydro-mancer-76af213",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/hydro-mancer-76af213.webp",
+  "abilities": []
+}

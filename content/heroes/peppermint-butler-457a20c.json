@@ -1,0 +1,14 @@
+{
+  "name": "Мятный Батлер",
+  "name_en": "Peppermint Butler",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, если одно из твоих существ выходит из игры, нанеси 2 урона существу под контролем соперника.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "457a20cca0af7dc2e515b3e71d78be80716be235227ac39118702bd385a2122b",
+  "id": "peppermint-butler-457a20c",
+  "kind": "hero",
+  "image": "/content/heroes/peppermint-butler-457a20c.webp",
+  "ability": null
+}

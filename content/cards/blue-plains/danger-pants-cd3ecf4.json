@@ -1,0 +1,59 @@
+{
+  "name": "Портки опасности",
+  "name_en": "DANGER PANTS",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Перемести выбранное существо под твоим контролем на пустую синюю равнину под твоим контролем, затем возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cd3ecf4e522f81a6feecaecba1f15d7e72ec6e014fd6bddad149149c81bd2130",
+  "landType": "blue",
+  "id": "danger-pants-cd3ecf4",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/danger-pants-cd3ecf4.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_no_other_creatures",
+          "scope": "own"
+        },
+        {
+          "kind": "while_lives_at_most",
+          "max": 15
+        }
+      ],
+      "text": "Сыграй только, если под твоим контролем не более 1 существа и у тебя не более 15 HP."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        },
+        "side": "own"
+      },
+      "text": "Перемести выбранное существо на выбранную линию под твоим контролем.",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ]
+    }
+  ]
+}

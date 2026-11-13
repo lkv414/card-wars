@@ -1,0 +1,53 @@
+{
+  "name": "Нелётный арашютист",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 5,
+  "description": "Когда нелётный арашютист входит в игру,\nперемести его на любую пустую землю.\nЕго нельзя заменить.\n\nВ начале своего хода сбрось 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "27da3f1408e942925ab3690f8cafbb1f0ff0dcafc26fb33190472d4854ab84ba",
+  "landType": "rainbow",
+  "id": "nelyotnyy-arashyutist-27da3f1",
+  "kind": "card",
+  "image": "/content/cards/rainbow/nelyotnyy-arashyutist-27da3f1.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "enter_move_to_empty",
+      "params": {},
+      "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "set_instance_flag",
+        "target": {
+          "kind": "this_creature"
+        },
+        "flag": "cannotReplace"
+      },
+      "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту."
+    },
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "discard_from_hand",
+        "count": 1
+      },
+      "text": "Когда Невезучий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. В начале своего хода сбрось карту.",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ]
+    }
+  ]
+}

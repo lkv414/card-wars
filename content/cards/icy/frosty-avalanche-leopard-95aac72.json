@@ -1,0 +1,19 @@
+{
+  "name": "Хладный лавинопард",
+  "name_en": "FROSTY AVALANCHE LEOPARD",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 10,
+  "description": "Когда другой игрок сбрасывает карту из руки, ты можешь нанести 2 урона выбранному существу.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "95aac72ebe0db23d6b0344bb22075c48ec2c4a04b9703a143caf4bd722a9b161",
+  "landType": "icy",
+  "id": "frosty-avalanche-leopard-95aac72",
+  "kind": "card",
+  "image": "/content/cards/icy/frosty-avalanche-leopard-95aac72.webp",
+  "abilities": []
+}

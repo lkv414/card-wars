@@ -1,0 +1,33 @@
+{
+  "name": "Ледяночная камера",
+  "name_en": "ICE CHAMBER",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "В этой зоне существа на землях с жетоном мороза не могут атаковать и использовать способности.",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "05256602c837fa2074ab8a9808560ea178f7f044b7795937c2141ea001ce02dd",
+  "landType": "icy",
+  "id": "ice-chamber-0525660",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-chamber-0525660.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "actives": true,
+        "attacks": true,
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "duration": "aura"
+      },
+      "text": "Существа на землях с ледяными жетонами на этой линии, не могут атаковать или использовать способности."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Бессмертный маисовый ходок",
+  "name_en": "IMMORTAL CORN WALKER",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 8,
+  "description": "Находясь на кукурузном поле,\nбессмертный маисовый ходок\nнаносит тройной урон.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "41a53c658de3fe247ef0b4d29d5e9eeef37918001af51c06067aef21bda9de68",
+  "landType": "swamp",
+  "id": "immortal-corn-walker-41a53c6",
+  "kind": "card",
+  "image": "/content/cards/swamp/immortal-corn-walker-41a53c6.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "attack_mod",
+        "target": {
+          "kind": "this_creature"
+        },
+        "vs": "ownZone",
+        "landType": "corn",
+        "multiplier": 3
+      },
+      "text": "Пока Бессмертный ходок маиса на Кукурузной земле, он наносит тройной урон."
+    }
+  ]
+}

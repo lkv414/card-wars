@@ -1,0 +1,14 @@
+{
+  "name": "Старчи",
+  "name_en": "Starchy",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Один раз за ход, ты можешь удалить из игры\nвыбранное существо из стопки сброса\nи возьми 1 карту.",
+  "flavor": "",
+  "set_code": "ЛИМИТНЫЙ ПРОМО",
+  "sha256": "5cd95335d4879effdf1abbe67dd2d7f9ccd465617fe16f64bceeaed532f05963",
+  "id": "starchy-5cd9533",
+  "kind": "hero",
+  "image": "/content/heroes/starchy-5cd9533.webp",
+  "ability": null
+}

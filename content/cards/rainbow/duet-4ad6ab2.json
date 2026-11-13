@@ -1,0 +1,34 @@
+{
+  "name": "Дуэт",
+  "name_en": "DUET",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 1 урон с существа под твоим\nконтролем и 1 урон с существа,\nкоторое ты не контролируешь.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "4ad6ab2694046c0c589316f9c6cfb77f3156e2e9468954472a5026e922ea673a",
+  "landType": "rainbow",
+  "id": "duet-4ad6ab2",
+  "kind": "card",
+  "image": "/content/cards/rainbow/duet-4ad6ab2.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "duet_heal_own_and_other",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Восстанови 1 урон у Существа под твоим контролем и 1 урон у существа не под твоим контролем."
+    }
+  ]
+}

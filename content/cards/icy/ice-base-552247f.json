@@ -1,0 +1,43 @@
+{
+  "name": "Ледяная база",
+  "name_en": "ICE BASE",
+  "cost": 2,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда ледяная база входит в игру,\nзаморозь обе земли в этой зоне.\nТы можешь разыгрывать существ в этой\nзоне, даже если земля заморожена.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "552247fd96b218ba57ede1e676e01ad2a8ea4e2845f9a3db646cf65e5ac86bd5",
+  "landType": "icy",
+  "id": "ice-base-552247f",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-base-552247f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "this_lane_lands"
+        },
+        "frozen": true
+      },
+      "text": "Когда Ледяная база вступает в игру, заморозь обе земли на этой линии."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "allow_frozen_play",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "scope": "own_lane"
+      },
+      "text": "Можешь играть существо на эту землю, даже если она заморожена."
+    }
+  ]
+}

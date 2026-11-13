@@ -1,0 +1,19 @@
+{
+  "name": "Покоренный Морозом",
+  "name_en": "FROSTBITTEN",
+  "cost": 0,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Убери любое количество жетонов\nмороза со своих земель и героя,\nзатем восстанови 2 жизни за каждый\nубранный жетон мороза\nтаким способом.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "98c46826961ae19a7a77e0181e315caa981020286c89ea5301059ba7ce50af52",
+  "landType": "icy",
+  "id": "frostbitten-98c4682",
+  "kind": "card",
+  "image": "/content/cards/icy/frostbitten-98c4682.webp",
+  "abilities": []
+}

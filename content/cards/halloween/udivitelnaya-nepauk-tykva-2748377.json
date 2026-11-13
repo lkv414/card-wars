@@ -1,0 +1,19 @@
+{
+  "name": "Удивительная непаук-тыква",
+  "name_en": "",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "landType": "swamp",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "В начале твоего хода нанеси 1 урон\nвыбранному сопернику за каждые\n2 карты с тыквой в сбросе.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2748377261406c915ded386d5840b59de7da74f95510d93ef5483b776a17128f",
+  "id": "udivitelnaya-nepauk-tykva-2748377",
+  "kind": "card",
+  "image": "/content/cards/halloween/udivitelnaya-nepauk-tykva-2748377.webp",
+  "abilities": []
+}

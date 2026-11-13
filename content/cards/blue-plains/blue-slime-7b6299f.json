@@ -1,0 +1,43 @@
+{
+  "name": "Голубой Слайм",
+  "name_en": "BLUE SLIME",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Если ты контролируешь 3 или более\nуникальных типов земель, когда\nГолубой Слайм входит в игру, верни\nна руку владельца существо\nв этой зоне.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "7b6299f4f9dd2feababbd3bf81b017d5e5af10379c6f2246daef1c71b546738a",
+  "landType": "blue",
+  "id": "blue-slime-7b6299f",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/blue-slime-7b6299f.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "while_distinct_lands",
+          "count": 3
+        }
+      ],
+      "effect": {
+        "op": "return_to_owner",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Когда Черничное желе вступает в игру и под твоим контролем 3 и более различных типов земель, верни существо на этой линии в руку владельцу."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "Милая мельница",
+  "name_en": "CUTE MILL",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Потрать 1 действие >>> Сними или нанеси 2 урона существу под твоим контролем в этой зоне.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "c7dbc07fa51babfe05c1ee0f10e1d799bdc5633934949ab981966d1c7e8cf864",
+  "landType": "nice",
+  "id": "cute-mill-c7dbc07",
+  "kind": "card",
+  "image": "/content/cards/nice/cute-mill-c7dbc07.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "heal_or_damage",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "mode": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "text": "Потрать 1 Действие >>> Восстанови или нанеси 2 урона своему существу на этой линии.",
+      "targets": [
+        {
+          "kind": "heal_or_damage"
+        }
+      ]
+    }
+  ]
+}

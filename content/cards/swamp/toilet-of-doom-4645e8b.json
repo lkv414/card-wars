@@ -1,0 +1,44 @@
+{
+  "name": "Роковой сортир",
+  "name_en": "TOILET OF DOOM",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное существо под твоим контролем\nполучает +1 к атаке в этом ходу за каждые\n5 карт в твоём сбросе.",
+  "flavor": "",
+  "set_code": "lsp",
+  "sha256": "4645e8bc27f51f21147da642734dbfe930cd1d7406f91c532e8b4df7d75ed1d9",
+  "landType": "swamp",
+  "id": "toilet-of-doom-4645e8b",
+  "kind": "card",
+  "image": "/content/cards/swamp/toilet-of-doom-4645e8b.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 1
+        },
+        "duration": "this_turn"
+      },
+      "text": "Выбранное существо под твоим контролем получает +1 ATK в этом ход за каждые 5 карт в твоей стопке сброса.",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ]
+    }
+  ]
+}

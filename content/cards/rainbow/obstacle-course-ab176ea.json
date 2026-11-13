@@ -1,0 +1,40 @@
+{
+  "name": "Снегополоса препятствий",
+  "name_en": "OBSTACLE COURSE",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "ФЛЮП >>> Заморозь обе земли в этой зоне.\nМожно использовать, только если в игре\nнет жетонов мороза.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "ab176eaa8974dd5a00c521eda65f621d4f7bfa1a4ec00270761c15e9ee9733ce",
+  "landType": "rainbow",
+  "id": "obstacle-course-ab176ea",
+  "kind": "card",
+  "image": "/content/cards/rainbow/obstacle-course-ab176ea.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": 2
+      },
+      "text": "Восстанови себе 2 жизни за каждое уничтоженное существо под твоим контролем на этой линии.",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        },
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ]
+    }
+  ]
+}

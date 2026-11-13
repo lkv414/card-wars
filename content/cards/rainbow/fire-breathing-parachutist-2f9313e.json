@@ -1,0 +1,52 @@
+{
+  "name": "Огнедышащий арашютист",
+  "name_en": "FIRE BREATHING PARACHUTIST",
+  "cost": 2,
+  "land_type": "Радужные земли",
+  "type": "Радужное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Когда огнедышащий арашютист входит в игру, перемести его на любую пустую землю. Его нельзя заменить.\nСоседние существа получают -1 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "2f9313e0885b68f01b439f3746eed16d01be2b63b5ff720d156f319c5a5591d9",
+  "landType": "rainbow",
+  "id": "fire-breathing-parachutist-2f9313e",
+  "kind": "card",
+  "image": "/content/cards/rainbow/fire-breathing-parachutist-2f9313e.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "enter_move_to_empty",
+      "params": {},
+      "text": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "set_instance_flag",
+        "target": {
+          "kind": "this_creature"
+        },
+        "flag": "cannotReplace"
+      },
+      "text": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "adjacent_creatures"
+        },
+        "stat": "attack",
+        "amount": -1,
+        "duration": "aura"
+      },
+      "text": "Когда Драконий поп-десант вступает в игру, перемести его на пустую землю. Его нельзя заменить. Соседние существа получают -1 АТК."
+    }
+  ]
+}

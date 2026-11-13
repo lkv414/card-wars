@@ -1,0 +1,32 @@
+{
+  "name": "Капитан Мороженко",
+  "name_en": "ICE CREAM CAPTAIN",
+  "cost": 4,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 8,
+  "description": "Капитан мороженко стоит на\n1 действие меньше за каждого игрока,\nконтролирующего землю\nс жетоном мороза.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "e6bc7cee6a7b623cdcf77eee85c9d4b06969c543b395ad9ab7315a11c66f2eb9",
+  "landType": "icy",
+  "id": "ice-cream-captain-e6bc7ce",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-cream-captain-e6bc7ce.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_token_players",
+          "amount": -1
+        }
+      },
+      "text": "Капитан мороженка стоит на 1 меньше за каждого игрока чьи земли с Ледяным жетоном."
+    }
+  ]
+}

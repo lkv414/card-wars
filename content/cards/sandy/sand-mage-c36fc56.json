@@ -1,0 +1,43 @@
+{
+  "name": "Песчаный маг",
+  "name_en": "SAND MAGE",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "В начале своего хода можешь вернуть песчаного мага на руку владельца. Тогда каждое другое существо под твоим контролем получает +1 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c36fc56d3c6441400cd315aa4c7c51b884911c2dc43295c6f5e6786b28d7feea",
+  "landType": "sandy",
+  "id": "sand-mage-c36fc56",
+  "kind": "card",
+  "image": "/content/cards/sandy/sand-mage-c36fc56.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "each_creature_yours"
+          },
+          "stat": "attack",
+          "amount": 1,
+          "duration": "this_turn"
+        }
+      ],
+      "text": "В начале своего хода можешь вернуть Пескомага в руку его владельца. Если сделаешь это, каждое существо под твоим контролем получаем +1 в этом ход."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "Дубликолдун",
+  "name_en": "DUPLICROW",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 4,
+  "description": "ФЛЮП >>> Если ты разыграл 2 или более не равнинных карт в этот ход, нанеси 2 урона каждому существу под контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "10c4038de198fc5c095d090f9f1c5b91fdc27017a4b6ec8b5c0d3096a7200333",
+  "landType": "blue",
+  "id": "duplicrow-10c4038",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/duplicrow-10c4038.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "each_creature"
+          },
+          "amount": 1,
+          "excludeSelf": true,
+          "filter": {
+            "sameCard": true
+          }
+        },
+        "duration": "aura"
+      },
+      "text": "«Добрый вечер!» +1 DEF, если на поле есть ещё один Прячный скелет."
+    }
+  ]
+}

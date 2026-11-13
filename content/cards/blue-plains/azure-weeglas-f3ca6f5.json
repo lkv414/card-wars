@@ -1,0 +1,37 @@
+{
+  "name": "Лазурный шееглаз",
+  "name_en": "AZURE WEEGLAS",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 3,
+  "description": "Когда лазурный шееглаз входит в игру, каждый игрок берёт карту за каждое существо под своим контролем с «шееглаз» в названии.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "f3ca6f5d76e084ad0d94b07be6b89c8d29e2c9487aa3fd070490e85bfba9e257",
+  "landType": "blue",
+  "id": "azure-weeglas-f3ca6f5",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/azure-weeglas-f3ca6f5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "conditions": [
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "payload_killer"
+        },
+        "amount": 1
+      },
+      "text": "Перед смертью больно бросает косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа)."
+    }
+  ]
+}

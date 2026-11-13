@@ -1,0 +1,34 @@
+{
+  "name": "Лучница Даника",
+  "name_en": "CORN ARCHER",
+  "cost": 2,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 6,
+  "description": "Уничтожь строение под твоим контролем и\nФЛЮП >>> Нанеси 3 урона каждому\nсуществу под контролем соперника.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "919346df3266a388ed16afd768c052bf58544db51a68a052c18a6c0962d23156",
+  "landType": "corn",
+  "id": "corn-archer-919346d",
+  "kind": "card",
+  "image": "/content/cards/corn/corn-archer-919346d.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 3
+      },
+      "additionalCost": {
+        "destroyOwnBuilding": 1
+      },
+      "text": "Уничтожь Строение под твоим контролем, ПРИЕМ >>> Нанеси 3 урона каждому существу противника."
+    }
+  ]
+}

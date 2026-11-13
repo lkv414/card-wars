@@ -1,0 +1,35 @@
+{
+  "name": "Радужный крылоглаз",
+  "name_en": "RAINBOW WING-EYE",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "В начале твоего хода ты восстанавливаешь\n1 жизнь за каждый уникальный тип\nземель под твоим контролем.\n(Не может быть больше 25 жизней.)",
+  "flavor": "",
+  "set_code": "s24",
+  "sha256": "1de53768b731826bfd04ac2dcfb5bd7040b2e0dc5a0331a9b0a286d243cd09d5",
+  "landType": "nice",
+  "id": "rainbow-wing-eye-1de5376",
+  "kind": "card",
+  "image": "/content/cards/nice/rainbow-wing-eye-1de5376.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "self_player"
+        },
+        "amount": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        }
+      },
+      "text": "В начале своего хода, восстанови 1 HP за каждый различный тип земли под твоим контролем (но не более 25)."
+    }
+  ]
+}

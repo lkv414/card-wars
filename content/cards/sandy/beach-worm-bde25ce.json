@@ -1,0 +1,19 @@
+{
+  "name": "Пляжный червь",
+  "name_en": "BEACH WORM",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 4,
+  "description": "Когда пляжный червь входит в игру, если под твоим контролем существа 4 уникальных типов земель, ты можешь уничтожить выбранное существо под контролем соперника.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "bde25ce823277dc2ff09f980e0f4cffcfaa27eb2ae3229dafffd112b74a67e5b",
+  "landType": "sandy",
+  "id": "beach-worm-bde25ce",
+  "kind": "card",
+  "image": "/content/cards/sandy/beach-worm-bde25ce.webp",
+  "abilities": []
+}

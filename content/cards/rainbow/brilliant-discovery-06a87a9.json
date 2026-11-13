@@ -1,0 +1,19 @@
+{
+  "name": "Блестящее открытие",
+  "name_en": "BRILLIANT DISCOVERY",
+  "cost": 1,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми 2 карты.\nТы можешь замешать до 2 заклинаний\nиз твоего сброса в исследовательские\nзаметки.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "06a87a9da56f4a225be651895e0745fb3f26c7dea2ae95742d23144b2aa297a7",
+  "landType": "rainbow",
+  "id": "brilliant-discovery-06a87a9",
+  "kind": "card",
+  "image": "/content/cards/rainbow/brilliant-discovery-06a87a9.webp",
+  "abilities": []
+}

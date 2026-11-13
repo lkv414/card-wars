@@ -1,0 +1,19 @@
+{
+  "name": "Снеговик-передовик",
+  "name_en": "SNOWMAN ADVANCER",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "Потрать 1 действие, ФЛЮП >>> Заморозь выбранную землю.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "dac643d8d6775331a0c5250fb7e9cfeff649840946ea90944127cc2bbd8d48a4",
+  "landType": "icy",
+  "id": "snowman-advancer-dac643d",
+  "kind": "card",
+  "image": "/content/cards/icy/snowman-advancer-dac643d.webp",
+  "abilities": []
+}

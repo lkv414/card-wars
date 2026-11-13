@@ -1,0 +1,66 @@
+{
+  "name": "Хлопкомёт",
+  "name_en": "FLUFFAPULT",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 8,
+  "description": "ФЛЮП >>> Нанеси 1 урон выбранному\nсуществу. Если количество урона,\nнанесённого хлопкомёту, равно 5 или\nбольше, сними с хлопкомёта 1 урон\nи верни его в подготовленное положение.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "5db706e44a9ec93206b065b3daccddf5dc0dfcc9595a0a0a435850a956489404",
+  "landType": "nice",
+  "id": "fluffapult-5db706e",
+  "kind": "card",
+  "image": "/content/cards/nice/fluffapult-5db706e.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 1
+        },
+        {
+          "op": "heal",
+          "target": {
+            "kind": "this_creature"
+          },
+          "amount": 1,
+          "conditions": [
+            {
+              "kind": "while_damage_at_least",
+              "amount": 5,
+              "scope": "self"
+            }
+          ]
+        },
+        {
+          "op": "unflip",
+          "target": {
+            "kind": "this_creature"
+          },
+          "conditions": [
+            {
+              "kind": "while_damage_at_least",
+              "amount": 5,
+              "scope": "self"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу. Если на Хлопкопульте 5 урона или более, она восстанавливает 1 урон и подготавливается."
+    }
+  ]
+}

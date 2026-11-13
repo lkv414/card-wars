@@ -1,0 +1,43 @@
+{
+  "name": "Синюшный талисман",
+  "name_en": "BLUE TALISMAN",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное равнинное существо\nпод твоим контролем получает\n+2 к атаке в этом ходу.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "4b4882a2c00b1cfb39138c1303a3a703b5df161039c6ff1cd717c7133fbad5ab",
+  "landType": "rainbow",
+  "id": "blue-talisman-4b4882a",
+  "kind": "card",
+  "image": "/content/cards/rainbow/blue-talisman-4b4882a.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "duration": "this_turn",
+        "amount": {
+          "kind": "per_opponent_distinct_lands",
+          "amount": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбранное существо получает X ATK в этом ходу, где X это число различных типов земель под контролем твоего противника."
+    }
+  ]
+}

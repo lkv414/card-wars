@@ -1,0 +1,19 @@
+{
+  "name": "Завещание",
+  "name_en": "WILL",
+  "cost": 1,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Положи завещание под существо соперника. Если оно будет уничтожено,\nнанеси сопернику 4 урона.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "83e4409e5db380550aef33c14e9f3c4d1bb0f4ae2d49f6eaac682ed87539a80b",
+  "landType": "blue",
+  "id": "will-83e4409",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/will-83e4409.webp",
+  "abilities": []
+}

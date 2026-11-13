@@ -1,0 +1,13 @@
+{
+  "name": "Рубашка карт",
+  "name_en": "Card Back",
+  "type": "Рубашка карт",
+  "typeCategory": "back",
+  "description": "Стандартная рубашка карт русской версии игры Карточные Войны.",
+  "flavor": "Время приключений!",
+  "set_code": null,
+  "sha256": "6cefc0e9360d177d07fa258c178c3abcd915f34c4d79b211eddcf03a55b262c6",
+  "id": "card-back-6cefc0e",
+  "kind": "other",
+  "image": "/content/other/card-back-6cefc0e.webp"
+}

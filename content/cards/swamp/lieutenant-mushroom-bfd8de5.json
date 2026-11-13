@@ -1,0 +1,37 @@
+{
+  "name": "Лейтенант Мухомор",
+  "name_en": "LIEUTENANT MUSHROOM",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 3,
+  "description": "Когда лейтенант мухомор выходит\nиз игры в ход соперника, он\nсбрасывает 3 карты.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "bfd8de54a3cfff229b4f640b4d99a206ded74667c3000e9f6edff10842641516",
+  "landType": "swamp",
+  "id": "lieutenant-mushroom-bfd8de5",
+  "kind": "card",
+  "image": "/content/cards/swamp/lieutenant-mushroom-bfd8de5.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "active_opponent_players"
+        },
+        "count": 3
+      },
+      "conditions": [
+        {
+          "kind": "while_opponents_turn"
+        }
+      ],
+      "text": "Когда Лейтенант Гриб покидает игру во время хода противника, этот противник сбрасывает 3 карты."
+    }
+  ]
+}

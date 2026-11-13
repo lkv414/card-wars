@@ -1,0 +1,14 @@
+{
+  "name": "Гроб Гоб Глоб Грод",
+  "name_en": "Grob Gob Glob Grod",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Пока ты контролируешь 4 существа с общей стоимостью 8 или больше, твои существа получают +3 к атаке в твой ход.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "eb91a319fca422e55e5c16784e092d2c17beebe252c0678e8c3a8767b99715ab",
+  "id": "grob-gob-glob-grod-eb91a31",
+  "kind": "hero",
+  "image": "/content/heroes/grob-gob-glob-grod-eb91a31.webp",
+  "ability": null
+}

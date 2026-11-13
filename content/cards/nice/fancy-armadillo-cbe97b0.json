@@ -1,0 +1,19 @@
+{
+  "name": "Утончённый броненосец",
+  "name_en": "FANCY ARMADILLO",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное существо",
+  "typeCategory": "creature",
+  "attack": 3,
+  "defense": 6,
+  "description": "Если ты разыграл существо стоимостью 2 или больше в этот ход,\nты можешь разыграть утончённого\nброненосца бесплатно.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "cbe97b057a6dbffb61468fb64f48d7ce8faf1e9474d9b2051948642def77b491",
+  "landType": "nice",
+  "id": "fancy-armadillo-cbe97b0",
+  "kind": "card",
+  "image": "/content/cards/nice/fancy-armadillo-cbe97b0.webp",
+  "abilities": []
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Рентгеновское зрение",
+  "name_en": "X-Ray Vision",
+  "cost": 0,
+  "land_type": "Синие равнины",
+  "type": "Равнинное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "До конца хода раскрой верхнюю карту твоей колоды. Ты можешь разыгрывать раскрытые карты. Карты, разыгранные таким способом, стоят на 1 действие больше в этом ходу.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "53a683b5049da89a6315c3a97277732afd32144c743a7ca961264075ee0766ab",
+  "landType": "blue",
+  "id": "x-ray-vision-53a683b",
+  "kind": "card",
+  "image": "/content/cards/blue-plains/x-ray-vision-53a683b.webp",
+  "abilities": []
+}

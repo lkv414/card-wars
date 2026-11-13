@@ -1,0 +1,19 @@
+{
+  "name": "Пляжный мячик",
+  "name_en": "BEACH BALL",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Ты восстанавливаешь 4 жизни. Возьми 1 карту. Ты можешь положить эту карту на руку соперника. Если ты это сделаешь возьми дополнительную карту.\n(Ты можешь разыграть только 1 пляжный мячик за ход.)",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "a1d5468d80bdce482551cf98edf47850d291ae0999ae051e5e55f8ac38c92309",
+  "landType": "rainbow",
+  "id": "beach-ball-a1d5468",
+  "kind": "card",
+  "image": "/content/cards/rainbow/beach-ball-a1d5468.webp",
+  "abilities": []
+}

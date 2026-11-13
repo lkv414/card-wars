@@ -1,0 +1,19 @@
+{
+  "name": "Ледяное очищение",
+  "name_en": "ICE PURGE",
+  "cost": 1,
+  "land_type": "Ледяные земли",
+  "type": "Ледяное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Возьми 2 карты. Ты можешь сбросить один жетон (кроме урона) с существа или земли. Если ты это сделаешь, соперник сбрасывает 1 карту.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "c0abb7615d81b72648f5a1b692de41792387783b638a3700dfdaa4ab3d4b619f",
+  "landType": "icy",
+  "id": "ice-purge-c0abb76",
+  "kind": "card",
+  "image": "/content/cards/icy/ice-purge-c0abb76.webp",
+  "abilities": []
+}

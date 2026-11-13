@@ -1,0 +1,32 @@
+{
+  "name": "Некромантус",
+  "name_en": "NECROMANTUS",
+  "cost": 1,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "Когда некромантус входит в игру, каждый игрок берёт на руку одно существо из своего сброса.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "c1631c67f1c7696d54cf4ed2da7ca2d0ee77b513d86e78a5de85f39d2304f20e",
+  "landType": "swamp",
+  "id": "necromantus-c1631c6",
+  "kind": "card",
+  "image": "/content/cards/swamp/necromantus-c1631c6.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "type": "creature"
+        },
+        "random": true
+      },
+      "text": "ПРИЕМ >>> Верни случайное существо из своей стопки сброса себе в руку."
+    }
+  ]
+}

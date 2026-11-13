@@ -1,0 +1,38 @@
+{
+  "name": "Лобстер сёрфер",
+  "name_en": "SURFING LOBSTER",
+  "cost": 2,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 7,
+  "description": "+1 к атаке за каждое\nбесполезное болото в игре.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "a2da343119c44cf2b41c2ddeda5a2cb1e094dc06c7a3b859a41a7e9d5d70e7d8",
+  "landType": "sandy",
+  "id": "surfing-lobster-a2da343",
+  "kind": "card",
+  "image": "/content/cards/sandy/surfing-lobster-a2da343.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "all",
+          "landType": "swamp",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 АТК за каждую землю Бесполезных болотом в игре."
+    }
+  ]
+}

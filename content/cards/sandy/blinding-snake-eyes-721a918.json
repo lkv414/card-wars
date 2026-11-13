@@ -1,0 +1,19 @@
+{
+  "name": "Слепящий шееглаз",
+  "name_en": "BLINDING SNAKE EYES",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 4,
+  "defense": 2,
+  "description": "Когда слепящий шееглаз входит в игру,\nнанеси 1 урон выбранному существу\nза каждое существо с «шееглаз»\nв названии.",
+  "flavor": "",
+  "set_code": "ЗЛ",
+  "sha256": "721a918ab2afd6a230330ba899b41bf1ad46b22a77d04c0b3df59afd7f720f87",
+  "landType": "sandy",
+  "id": "blinding-snake-eyes-721a918",
+  "kind": "card",
+  "image": "/content/cards/sandy/blinding-snake-eyes-721a918.webp",
+  "abilities": []
+}

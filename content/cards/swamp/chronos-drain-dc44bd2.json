@@ -1,0 +1,19 @@
+{
+  "name": "Временной Дрейк",
+  "name_en": "CHRONOS DRAIN",
+  "cost": 2,
+  "land_type": "Бесполезные болота",
+  "type": "Болотное существо",
+  "typeCategory": "creature",
+  "attack": 0,
+  "defense": 8,
+  "description": "Когда Временной Дрейк входит в игру, раскрой 5 карт с верха колоды выбранного игрока. Сбрось всех раскрытых существ, затем остальные карты положи обратно в любом порядке. Положи Временному Дрейку ⚔ за каждое существо, сброшенное таким образом.",
+  "flavor": "",
+  "set_code": "ПРОМО",
+  "sha256": "dc44bd25dc5eec0edb6e2129930b1f0b3fa675b9786487a236708d935f5a2829",
+  "landType": "swamp",
+  "id": "chronos-drain-dc44bd2",
+  "kind": "card",
+  "image": "/content/cards/swamp/chronos-drain-dc44bd2.webp",
+  "abilities": []
+}

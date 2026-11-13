@@ -1,0 +1,37 @@
+{
+  "name": "Сотовое убежище",
+  "name_en": "HONEYCOMB HIDEAWAY",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное строение",
+  "typeCategory": "building",
+  "attack": null,
+  "defense": null,
+  "description": "Когда существо под твоим контролем в этой зоне, наносит урон жизням соперника, ты восстанавливаешь столько жизней, сколько оно нанесло урона.",
+  "flavor": "",
+  "set_code": "3Л",
+  "sha256": "15444025fe2bdebabec80c3dc7b6d00c1b256b06e0267a9a492962f0e283f545",
+  "landType": "nice",
+  "id": "honeycomb-hideaway-1544402",
+  "kind": "card",
+  "image": "/content/cards/nice/honeycomb-hideaway-1544402.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "amount": 1
+      },
+      "text": "За каждое погибшее на этой линии существо (твоё или противника) восстанавливаем 1 урон всем твоим существам.",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Принцесса Хот-Дог",
+  "name_en": "Hot Dog Princess",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "В начале твоего хода положи ⚔ на каждое дружественное существо с 5 и более урона.",
+  "flavor": "",
+  "set_code": "КИКСТАРТЕР",
+  "sha256": "0cb20163b9db7849cdfaf593cb3b1785aad8e47ffda62badf4b6bd71ca84b3e5",
+  "id": "hot-dog-princess-0cb2016",
+  "kind": "hero",
+  "image": "/content/heroes/hot-dog-princess-0cb2016.webp",
+  "ability": null
+}

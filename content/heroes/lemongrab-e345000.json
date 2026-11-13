@@ -1,0 +1,31 @@
+{
+  "name": "Лимонохват",
+  "name_en": "Lemongrab",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Перед тем как ты начнёшь нападать, если у тебя есть хотя бы 1 пустая земля, восстанови 1 жизнь.\n(Не может быть больше 25.)",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "e34500060f01935199dd1a7787b3e176345234102bb016b96f94156dd9ac177d",
+  "id": "lemongrab-e345000",
+  "kind": "hero",
+  "image": "/content/heroes/lemongrab-e345000.webp",
+  "ability": {
+    "kind": "passive",
+    "trigger": "start_of_battle_phase",
+    "effect": {
+      "op": "heal",
+      "target": {
+        "kind": "self_player"
+      },
+      "amount": 1
+    },
+    "conditions": [
+      {
+        "kind": "while_empty_lands",
+        "min": 1
+      }
+    ],
+    "text": "В начале своей фазы Сражения, если у тебя 1 или более пустых земель, получи 1 HP. (Не превышая 25.)"
+  }
+}

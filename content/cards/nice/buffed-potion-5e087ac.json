@@ -1,0 +1,19 @@
+{
+  "name": "Накаченное зелье",
+  "name_en": "BUFFED POTION",
+  "cost": 1,
+  "land_type": "Милые земли",
+  "type": "Доброземельное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Сними 2 урона с выбранного существа\nи положи на него 2(+).\nЕсли атака этого существа 5 или\nбольше, возьми 1 карту.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "5e087ac0652107d2b20ddd096f768c90bd4c4367e893a93b210f4e72902e634f",
+  "landType": "nice",
+  "id": "buffed-potion-5e087ac",
+  "kind": "card",
+  "image": "/content/cards/nice/buffed-potion-5e087ac.webp",
+  "abilities": []
+}

@@ -1,0 +1,41 @@
+{
+  "name": "Песчаный краб моряк",
+  "name_en": "SAND CRAB SAILOR",
+  "cost": 1,
+  "land_type": "Песчаные земли",
+  "type": "Песчаное существо",
+  "typeCategory": "creature",
+  "attack": 2,
+  "defense": 6,
+  "description": "Когда песчаный краб моряк входит в игру, ты можешь бесплатно разыграть существо за 1 действие.",
+  "flavor": "",
+  "set_code": "2v2",
+  "sha256": "0b01a21961890023b6dd9d7583c5a2302afe553b49b13c367957161aed67c600",
+  "landType": "sandy",
+  "id": "sand-crab-sailor-0b01a21",
+  "kind": "card",
+  "image": "/content/cards/sandy/sand-crab-sailor-0b01a21.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "play_from_hand",
+        "maxCost": 1,
+        "match": {
+          "type": "creature"
+        }
+      },
+      "text": "Когда песочный краб пират вступает в игру, можешь бесплатно сыграть существо стоимостью 1.",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "optional": true
+    }
+  ]
+}

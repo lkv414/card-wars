@@ -1,0 +1,35 @@
+{
+  "name": "Золотой шакал",
+  "name_en": "GOLDEN JACKAL",
+  "cost": 1,
+  "land_type": "Кукурузные поля",
+  "type": "Кукурузное существо",
+  "typeCategory": "creature",
+  "attack": 1,
+  "defense": 4,
+  "description": "Сбрось песчаную карту, ФЛЮП >>>\nНанеси 1 урон каждому существу\nпод контролем соперника.",
+  "flavor": "",
+  "set_code": "PC",
+  "sha256": "7fc306247bb2c949f2ebf8ce3a46810fa92a1bfe90597b1d1bf185cdc5b3831b",
+  "landType": "corn",
+  "id": "golden-jackal-7fc3062",
+  "kind": "card",
+  "image": "/content/cards/corn/golden-jackal-7fc3062.webp",
+  "abilities": [
+    {
+      "kind": "active",
+      "additionalCost": {
+        "discardFromHand": 1,
+        "landType": "sand"
+      },
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 1
+      },
+      "text": "ПРИЕМ, сбрось песчаную карту >>> Нанеси 1 урон каждому существу противника."
+    }
+  ]
+}

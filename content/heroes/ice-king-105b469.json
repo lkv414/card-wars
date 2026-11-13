@@ -1,0 +1,25 @@
+{
+  "name": "Снежный король",
+  "name_en": "Ice King",
+  "type": "Герой",
+  "typeCategory": "hero",
+  "description": "Во время каждого твоего хода, если в первый раз за этот ход существо под твоим контролем атакует в пустой зоне, оно получает +1 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "105b46916a9e10b8552eed93dac235a1325592f8956a5c15ee1b9ffa42510081",
+  "id": "ice-king-105b469",
+  "kind": "hero",
+  "image": "/content/heroes/ice-king-105b469.webp",
+  "ability": {
+    "kind": "passive",
+    "effect": {
+      "op": "attack_mod",
+      "target": {
+        "kind": "each_creature_yours"
+      },
+      "atkBonus": 1,
+      "emptyLane": true
+    },
+    "text": "Во время каждого твоего хода, когда существо под твоим контролем в первый раз атакует пустую линию, у него +1 АТК."
+  }
+}

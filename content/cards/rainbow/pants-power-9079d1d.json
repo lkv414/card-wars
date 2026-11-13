@@ -1,0 +1,43 @@
+{
+  "name": "Сила труселей",
+  "name_en": "PANTS POWER",
+  "cost": 0,
+  "land_type": "Радужные земли",
+  "type": "Радужное заклинание",
+  "typeCategory": "spell",
+  "attack": null,
+  "defense": null,
+  "description": "Выбранное болотное существо\nпод твоим контролем получает\nв этом ходу +2 к атаке.",
+  "flavor": "",
+  "set_code": null,
+  "sha256": "9079d1d50b52c8411c0f353352e2dd54bd2c5a056dd312be3cd5bc135b570576",
+  "landType": "rainbow",
+  "id": "pants-power-9079d1d",
+  "kind": "card",
+  "image": "/content/cards/rainbow/pants-power-9079d1d.webp",
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "targets": [
+        {
+          "kind": "own_creature",
+          "filter": {
+            "landType": "swamp"
+          }
+        }
+      ],
+      "text": "Выбранное Болотное существо под твоим контролем получает +2 ATK в этом ход."
+    }
+  ]
+}

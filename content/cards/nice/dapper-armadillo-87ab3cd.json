@@ -18,22 +18,22 @@
   "abilities": [
     {
       "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
       "effect": {
-        "op": "stat_buff",
+        "op": "heal",
         "target": {
-          "kind": "this_creature"
+          "kind": "choice",
+          "index": 0
         },
-        "stat": "attack",
-        "amount": 1,
-        "duration": "aura"
+        "amount": 3
       },
-      "text": "Если у противника под контролем находится 2 существа или меньше, получаем +1 АТК.",
-      "conditions": [
+      "targets": [
         {
-          "kind": "while_opponent_creatures_at_most",
-          "max": 2
+          "kind": "any_creature"
         }
-      ]
+      ],
+      "text": "Когда галантный броненосец входит в игру, ты можешь снять 3 урона с другого существа. Если на том существе всё ещё есть урон, возьми 1 карту."
     }
   ]
 }

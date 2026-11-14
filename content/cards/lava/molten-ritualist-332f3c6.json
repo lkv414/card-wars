@@ -15,5 +15,12 @@
   "id": "molten-ritualist-332f3c6",
   "kind": "card",
   "image": "/content/cards/lava/molten-ritualist-332f3c6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "molten_ritualist_draw",
+      "text": "ФЛЮП >>> Каждый игрок, у кого не больше 1 карты на руке, берёт 1 карту."
+    }
+  ]
 }

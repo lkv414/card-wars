@@ -15,5 +15,11 @@
   "id": "refreshing-apartments-84c8f09",
   "kind": "card",
   "image": "/content/cards/sandy/refreshing-apartments-84c8f09.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "refreshing_apartments_buff",
+      "text": "Твои существа в этой зоне получают +1 к атаке за каждую разыгранную в этот ход не песчаную карту."
+    }
+  ]
 }

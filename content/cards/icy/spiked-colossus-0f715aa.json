@@ -15,5 +15,11 @@
   "id": "spiked-colossus-0f715aa",
   "kind": "card",
   "image": "/content/cards/icy/spiked-colossus-0f715aa.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "spiked_colossus_sacrifice",
+      "text": "Стоимость Шипастого Колосса уменьшается на 1 действие за каждую землю с жетоном мороза под контролем выбранного игрока. В конце твоего хода уничтожь одно существо под твоим контролем."
+    }
+  ]
 }

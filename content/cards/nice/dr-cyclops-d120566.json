@@ -15,5 +15,22 @@
   "id": "dr-cyclops-d120566",
   "kind": "card",
   "image": "/content/cards/nice/dr-cyclops-d120566.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "mechanic": "dr_cyclops_spell_heal",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Каждый раз, когда ты разыгрываешь заклинание, ты восстанавливаешь 2 жизни. Если у тебя полное здоровье, нанеси 2 урона выбранному сопернику."
+    }
+  ]
 }

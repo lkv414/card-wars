@@ -15,5 +15,25 @@
   "id": "koshmarnyy-soldat-dukh-64a413b",
   "kind": "card",
   "image": "/content/cards/halloween/koshmarnyy-soldat-dukh-64a413b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_target",
+          "target": {
+            "kind": "adjacent_creatures"
+          },
+          "amount": 3
+        },
+        "duration": "aura"
+      },
+      "text": "+3 к атаке за каждое соседнее существо."
+    }
+  ]
 }

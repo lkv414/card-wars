@@ -15,5 +15,11 @@
   "id": "nat-guard-e6fefb0",
   "kind": "card",
   "image": "/content/cards/sandy/nat-guard-e6fefb0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "nat_guard_halve_combat_damage",
+      "text": "Первый раз за каждую фазу атаки, когда ты должен потерять жизни, уменьши количество теряемых жизней вдвое (округляя вниз)."
+    }
+  ]
 }

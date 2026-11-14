@@ -18,12 +18,18 @@
   "abilities": [
     {
       "kind": "active",
-      "effect": {
-        "op": "grant_discount",
-        "cardType": "spell",
-        "amount": -2
-      },
-      "text": "ПРИЕМ >>> Твое следующее заклинание в этом ход стоит на 2 меньше."
+      "cost": 0,
+      "oncePerTurn": true,
+      "mechanic": "swap_creatures",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Один раз за ход ты можешь поменяться зонами с другим своим существом. Оба существа получают +1 к атаке в этот ход."
     }
   ]
 }

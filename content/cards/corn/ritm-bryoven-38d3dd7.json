@@ -15,5 +15,23 @@
   "id": "ritm-bryoven-38d3dd7",
   "kind": "card",
   "image": "/content/cards/corn/ritm-bryoven-38d3dd7.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn",
+        "filter": {
+          "zoneBuilding": true
+        }
+      },
+      "text": "Каждое существо под твоим контролем в зоне со строением получает +2 к атаке в этом ходу."
+    }
+  ]
 }

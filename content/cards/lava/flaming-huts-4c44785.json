@@ -15,5 +15,11 @@
   "id": "flaming-huts-4c44785",
   "kind": "card",
   "image": "/content/cards/lava/flaming-huts-4c44785.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "flaming_huts_burn_damage",
+      "text": "Когда ты поджигаешь существо под контролем соперника, нанеси ему 1 дополнительный урон."
+    }
+  ]
 }

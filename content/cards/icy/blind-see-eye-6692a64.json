@@ -15,5 +15,12 @@
   "id": "blind-see-eye-6692a64",
   "kind": "card",
   "image": "/content/cards/icy/blind-see-eye-6692a64.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "blind_sheeglaz_freeze",
+      "text": "Когда слепой шееглаз входит в игру, заморозь одну землю за каждое существо под твоим контролем с «шееглаз» в названии."
+    }
+  ]
 }

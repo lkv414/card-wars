@@ -15,5 +15,12 @@
   "id": "cyclone-70848e9",
   "kind": "card",
   "image": "/content/cards/sandy/cyclone-70848e9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "cyclone_damage_not_cost_1",
+      "text": "Нанеси 4 урона всем существам не за 1 действие."
+    }
+  ]
 }

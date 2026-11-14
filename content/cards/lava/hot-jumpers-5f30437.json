@@ -15,5 +15,11 @@
   "id": "hot-jumpers-5f30437",
   "kind": "card",
   "image": "/content/cards/lava/hot-jumpers-5f30437.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "hot_jumpers_shield_on_burn",
+      "text": "Когда ты поджигаешь существо, положи ♆ на горячих прыгунов."
+    }
+  ]
 }

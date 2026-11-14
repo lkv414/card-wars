@@ -15,5 +15,12 @@
   "id": "young-scholar-ca8c83c",
   "kind": "card",
   "image": "/content/cards/nice/young-scholar-ca8c83c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "young_scholar_draw_per_damage",
+      "text": "ФЛЮП >>> Возьми 1 карту за каждые 3 жетона урона на Юном Учёном."
+    }
+  ]
 }

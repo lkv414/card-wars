@@ -15,5 +15,20 @@
   "id": "polya-khaosa-b7f11ae",
   "kind": "card",
   "image": "/content/cards/halloween/polya-khaosa-b7f11ae.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "chaos_fields_ghost_strike",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Выбери 2 существ с призрак под твоим контролем. Нанесите урон, равный сумме их атак. (Но не больше 8.)"
+    }
+  ]
 }

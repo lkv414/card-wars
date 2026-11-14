@@ -15,5 +15,11 @@
   "id": "croc-o-stretch-e217f9f",
   "kind": "card",
   "image": "/content/cards/swamp/croc-o-stretch-e217f9f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "croc_o_stretch_discard_bonus",
+      "text": "Когда ты сбрасываешь эту карту в этот ход, получи 1 действие. Если ты сбрасываешь эту карту в ход соперника, возьми 1 карту."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "flaming-flamingo-ea57ccd",
   "kind": "card",
   "image": "/content/cards/lava/flaming-flamingo-ea57ccd.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_targets_creature"
+        }
+      ],
+      "mechanic": "flaming_flamingo_burn_on_hit",
+      "text": "Когда Огнеминго пылающий наносит урон существу, подожги то существо, если оно не горело."
+    }
+  ]
 }

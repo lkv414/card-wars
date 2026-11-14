@@ -15,5 +15,27 @@
   "id": "pig-68131a4",
   "kind": "card",
   "image": "/content/cards/rainbow/pig-68131a4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "flip_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "down": true
+      },
+      "targets": [
+        {
+          "kind": "own_landscape",
+          "filter": {
+            "landType": "corn"
+          }
+        }
+      ],
+      "text": "ФЛЮП >>> Переверни лицевой стороной вниз выбранное кукурузное поле в этой зоне."
+    }
+  ]
 }

@@ -15,5 +15,23 @@
   "id": "swamp-madness-3c599c2",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-madness-3c599c2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "swamp_madness_all_in_one",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        },
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Нанеси 4 урона существу под контролем соперника или игроку. Сними 4 урона с выбранного дружественного существа или выбранный игрок восстанавливает 4 жизни. Выбранный соперник сбрасывает 1 карту. Возьми 1 карту."
+    }
+  ]
 }

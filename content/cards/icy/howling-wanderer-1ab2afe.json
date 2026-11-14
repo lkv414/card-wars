@@ -15,5 +15,11 @@
   "id": "howling-wanderer-1ab2afe",
   "kind": "card",
   "image": "/content/cards/icy/howling-wanderer-1ab2afe.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "howling_wanderer_hero_tokens",
+      "text": "Воющий Бродяга получает +1 к атаке за каждый жетон (кроме урона) на твоём Герое."
+    }
+  ]
 }

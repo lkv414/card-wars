@@ -15,5 +15,11 @@
   "id": "night-owl-58d07d9",
   "kind": "card",
   "image": "/content/cards/swamp/night-owl-58d07d9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "night_owl_hand_penalty",
+      "text": "Ночная сова получает -1 к атаке за каждую карту в руке других игроков."
+    }
+  ]
 }

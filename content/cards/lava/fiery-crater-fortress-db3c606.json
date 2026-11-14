@@ -15,5 +15,17 @@
   "id": "fiery-crater-fortress-db3c606",
   "kind": "card",
   "image": "/content/cards/lava/fiery-crater-fortress-db3c606.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "fiery_crater_remove_burn_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Сбрось жетон ожога с существа и ФЛЮП >>> Нанеси 3 урона тому существу."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "gazy-tykvy-3030da3",
   "kind": "card",
   "image": "/content/cards/halloween/gazy-tykvy-3030da3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "pumpkin_gas_reveal",
+      "text": "Раскрой 3 карты твоей колоды. Если среди них есть карты с тыквой, то возьми 1, а остальные сбрось."
+    }
+  ]
 }

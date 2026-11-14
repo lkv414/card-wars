@@ -15,5 +15,12 @@
   "id": "hampyre-night-pig-be42487",
   "kind": "card",
   "image": "/content/cards/rainbow/hampyre-night-pig-be42487.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "hampyre_lifesteal_on_attack",
+      "text": "Когда Хампир атакует, ты восстанавливаешь жизни, равные его атаке."
+    }
+  ]
 }

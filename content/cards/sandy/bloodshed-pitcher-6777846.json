@@ -15,5 +15,17 @@
   "id": "bloodshed-pitcher-6777846",
   "kind": "card",
   "image": "/content/cards/sandy/bloodshed-pitcher-6777846.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "bloodshed_pitcher_mill_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда кувшин кровопролития входит в игру, сбрось 3 верхние карты твоей колоды. За каждое заклинание, сброшенное таким образом, нанеси 2 урона выбранному существу."
+    }
+  ]
 }

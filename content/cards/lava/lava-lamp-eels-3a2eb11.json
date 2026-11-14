@@ -15,5 +15,23 @@
   "id": "lava-lamp-eels-3a2eb11",
   "kind": "card",
   "image": "/content/cards/lava/lava-lamp-eels-3a2eb11.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "mechanic": "lava_eels_burn",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Сбрось карту >>> Подожги выбранное существо."
+    }
+  ]
 }

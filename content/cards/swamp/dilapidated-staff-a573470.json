@@ -15,5 +15,17 @@
   "id": "dilapidated-staff-a573470",
   "kind": "card",
   "image": "/content/cards/swamp/dilapidated-staff-a573470.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "damage_until_def",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Добавь урон выбранному существу, пока у него не останется 1 защита."
+    }
+  ]
 }

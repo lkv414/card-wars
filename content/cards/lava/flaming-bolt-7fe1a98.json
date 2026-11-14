@@ -15,5 +15,17 @@
   "id": "flaming-bolt-7fe1a98",
   "kind": "card",
   "image": "/content/cards/lava/flaming-bolt-7fe1a98.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "flaming_bolt_burn_and_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Подожжи выбранное существо, а затем нанеси ему 1 дополнительный урон."
+    }
+  ]
 }

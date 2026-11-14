@@ -15,5 +15,27 @@
   "id": "chameleon-237b6d3",
   "kind": "card",
   "image": "/content/cards/rainbow/chameleon-237b6d3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "chameleon_choose_land",
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": [
+            "corn",
+            "blue",
+            "good",
+            "ice",
+            "sand",
+            "swamp",
+            "rainbow",
+            "ghost"
+          ]
+        }
+      ],
+      "text": "Когда хамелеон входит в игру, выбери ему тип земли."
+    }
+  ]
 }

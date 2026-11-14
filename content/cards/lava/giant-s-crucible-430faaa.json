@@ -15,5 +15,18 @@
   "id": "giant-s-crucible-430faaa",
   "kind": "card",
   "image": "/content/cards/lava/giant-s-crucible-430faaa.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "oncePerTurn": true,
+      "mechanic": "giants_crucible_burn_and_damage",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "ФЛЮП >>> Подожги выбранное существо под твоим контролем и положи [1] на него. (Лимит: Один раз за ход.)"
+    }
+  ]
 }

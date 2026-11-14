@@ -15,5 +15,11 @@
   "id": "ash-construct-ac283f6",
   "kind": "card",
   "image": "/content/cards/lava/ash-construct-ac283f6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "ash_construct_damage_reduction",
+      "text": "Если у тебя на руке не больше 1 карты, пепельный конструкт получает в 2 раза меньше урона. (С округлением вверх)."
+    }
+  ]
 }

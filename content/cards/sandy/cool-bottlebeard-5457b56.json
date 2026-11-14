@@ -15,5 +15,13 @@
   "id": "cool-bottlebeard-5457b56",
   "kind": "card",
   "image": "/content/cards/sandy/cool-bottlebeard-5457b56.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "cool_bottlebeard_return_potions",
+      "text": "Когда крутой бутылкобород входит в игру, ты можешь взять на руку из твоего сброса до 2 карт со словом «зелье» в названии."
+    }
+  ]
 }

@@ -15,5 +15,32 @@
   "id": "corn-fortress-8345ef9",
   "kind": "card",
   "image": "/content/cards/corn/corn-fortress-8345ef9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Твоё существо в этой зоне получает +2 к атаке."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Твоё существо в этой зоне получает +2 к защите."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "wandering-workshop-0d71757",
   "kind": "card",
   "image": "/content/cards/rainbow/wandering-workshop-0d71757.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "wandering_workshop_buff_move",
+      "text": "ФЛЮП >>> Положи 1 на существо в этой зоне. Затем перемести бродячую мастерскую в соседнюю пустую зону."
+    }
+  ]
 }

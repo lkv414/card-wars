@@ -18,21 +18,14 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "grant_modifier",
-        "duration": "this_turn",
-        "modifier": {
-          "op": "attack_mod",
-          "target": {
-            "kind": "each_creature_yours"
-          },
-          "vs": "defenderZone",
-          "landType": "good",
-          "atkBonus": 2
+      "trigger": "on_cast",
+      "mechanic": "bale_out_retreat",
+      "targets": [
+        {
+          "kind": "own_creature"
         }
-      },
-      "text": "Каждое твое существо получает +2 ATK в этом ход, пока атакует существ на милых землях.",
-      "trigger": "on_cast"
+      ],
+      "text": "Когда выбранное существо атакует в этот ход, если оно выходит из игры во время фазы атаки, вместо этого сними с него весь урон."
     }
   ]
 }

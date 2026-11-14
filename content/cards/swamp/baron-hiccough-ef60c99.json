@@ -15,5 +15,19 @@
   "id": "baron-hiccough-ef60c99",
   "kind": "card",
   "image": "/content/cards/swamp/baron-hiccough-ef60c99.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": -1
+        }
+      },
+      "text": "Барон кургана стоит на 1 действие меньше за каждые 5 карт в сбросе соперника."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "izvayanie-byka-e984cf0",
   "kind": "card",
   "image": "/content/cards/rainbow/izvayanie-byka-e984cf0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "bull_statue_buff_draw",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Положи ☩ на выбранное существо. Если на существе 2 или более ☩, ты можешь взять 1 карту."
+    }
+  ]
 }

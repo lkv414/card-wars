@@ -15,5 +15,17 @@
   "id": "flamingo-fire-weaver-890662f",
   "kind": "card",
   "image": "/content/cards/lava/flamingo-fire-weaver-890662f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "flamingo_fire_weaver_burn_zone",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ФЛЮП >>> Подожги каждое существо в выбранной зоне."
+    }
+  ]
 }

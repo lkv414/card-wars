@@ -15,5 +15,12 @@
   "id": "phoenix-talisman-2c04f31",
   "kind": "card",
   "image": "/content/cards/nice/phoenix-talisman-2c04f31.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "phoenix_talisman_recycle",
+      "text": "Когда дружественное существо уничтожается в этот ход, верни его на руку владельца."
+    }
+  ]
 }

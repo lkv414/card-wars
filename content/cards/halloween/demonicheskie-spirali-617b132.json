@@ -15,5 +15,17 @@
   "id": "demonicheskie-spirali-617b132",
   "kind": "card",
   "image": "/content/cards/halloween/demonicheskie-spirali-617b132.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "demonic_spirals_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси 6 урона выбранному существу. Если оно уничтожается этим способом, получи 1 действие."
+    }
+  ]
 }

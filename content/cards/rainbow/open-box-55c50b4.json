@@ -15,5 +15,20 @@
   "id": "open-box-55c50b4",
   "kind": "card",
   "image": "/content/cards/rainbow/open-box-55c50b4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "permanent"
+      },
+      "text": "Положи +1 на каждое существо под твоим контролем."
+    }
+  ]
 }

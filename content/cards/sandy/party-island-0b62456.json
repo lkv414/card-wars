@@ -15,5 +15,12 @@
   "id": "party-island-0b62456",
   "kind": "card",
   "image": "/content/cards/sandy/party-island-0b62456.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "party_island_shift",
+      "text": "ФЛЮП >>> Перемести существо с этой зоны в пустую. Ты можешь переместить другое существо под твоим контролем в эту зону."
+    }
+  ]
 }

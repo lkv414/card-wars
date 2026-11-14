@@ -15,5 +15,45 @@
   "id": "extortion-e8ce2da",
   "kind": "card",
   "image": "/content/cards/blue-plains/extortion-e8ce2da.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_own_creatures_at_most",
+          "max": 1
+        },
+        {
+          "kind": "while_lives_at_most",
+          "max": 15
+        }
+      ],
+      "text": "Можешь сыграть эту карту, только если под твоим контролем не больше одного существа и у тебя не больше 15 жизней."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "move_creature",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        },
+        "side": "own"
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Перемести выбранное существо на выбранную пустую землю под твоим контролем."
+    }
+  ]
 }

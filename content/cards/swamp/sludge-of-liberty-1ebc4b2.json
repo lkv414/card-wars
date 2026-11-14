@@ -15,5 +15,16 @@
   "id": "sludge-of-liberty-1ebc4b2",
   "kind": "card",
   "image": "/content/cards/swamp/sludge-of-liberty-1ebc4b2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_opponents_hand_empty"
+        }
+      ],
+      "mechanic": "sludge_of_liberty_discount",
+      "text": "Грязекагинава свободы стоит на 2 действия меньше, если у тебя нет других карт на руке."
+    }
+  ]
 }

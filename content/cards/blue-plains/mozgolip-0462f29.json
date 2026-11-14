@@ -18,13 +18,22 @@
   "abilities": [
     {
       "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_replacing"
+        }
+      ],
       "effect": {
-        "op": "no_retaliation",
+        "op": "stat_buff",
         "target": {
           "kind": "this_creature"
-        }
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
       },
-      "text": "Настолько крутые ребята, что существа противника просто не могут дать им сдачи (не получают урон при нападении на существо противника)."
+      "text": "Если при входе в игру мозголип заменяет другое существо, в этом ходу он получает +2 к атаке."
     }
   ]
 }

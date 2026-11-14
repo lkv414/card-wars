@@ -15,5 +15,25 @@
   "id": "neuromancer-e9f83fb",
   "kind": "card",
   "image": "/content/cards/blue-plains/neuromancer-e9f83fb.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "play_from_discard",
+        "match": {
+          "maxCost": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "own_discard_card",
+          "filter": {
+            "maxCost": 0
+          }
+        }
+      ],
+      "text": "ФЛЮП >>> Разыграй карту стоимостью 0 из твоего сброса. В конце хода, удали её из игры."
+    }
+  ]
 }

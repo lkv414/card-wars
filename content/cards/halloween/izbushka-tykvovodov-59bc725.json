@@ -15,5 +15,32 @@
   "id": "izbushka-tykvovodov-59bc725",
   "kind": "card",
   "image": "/content/cards/halloween/izbushka-tykvovodov-59bc725.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Твоё существо в этой зоне получает +2 к атаке."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "defense",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Твоё существо в этой зоне получает +2 к защите."
+    }
+  ]
 }

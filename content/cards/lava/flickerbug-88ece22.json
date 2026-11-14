@@ -15,5 +15,11 @@
   "id": "flickerbug-88ece22",
   "kind": "card",
   "image": "/content/cards/lava/flickerbug-88ece22.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "flickerbug_deck_play",
+      "text": "Пока у тебя на руке не больше 1 карты, раскрой верхнюю карту твоей колоды. Ты можешь разыгрывать раскрытые карты. Карты, разыгранные таким способом, стоят на 1 действие больше в этом ходу."
+    }
+  ]
 }

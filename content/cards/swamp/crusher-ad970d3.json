@@ -15,5 +15,30 @@
   "id": "crusher-ad970d3",
   "kind": "card",
   "image": "/content/cards/swamp/crusher-ad970d3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "remove_from_game",
+        "from": {
+          "kind": "choice",
+          "index": 0
+        },
+        "name": {
+          "kind": "choice",
+          "index": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "any_player"
+        },
+        {
+          "kind": "visible_card"
+        }
+      ],
+      "text": "ФЛЮП >>> Выбери название карты. Удали из игры все карты с этим названием из сброса выбранного игрока."
+    }
+  ]
 }

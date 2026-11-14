@@ -15,5 +15,33 @@
   "id": "muck-palace-dcf2304",
   "kind": "card",
   "image": "/content/cards/swamp/muck-palace-dcf2304.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "Твоё существо в этой зоне получает +3 к атаке."
+    },
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "discard_from_hand",
+        "count": 1
+      },
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "В начале своего хода сбрось 1 карту."
+    }
+  ]
 }

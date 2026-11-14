@@ -15,5 +15,17 @@
   "id": "kolyushche-rezhushchee-tornado-176b385",
   "kind": "card",
   "image": "/content/cards/rainbow/kolyushche-rezhushchee-tornado-176b385.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "cutting_tornado_token_wipe",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Убери все жетоны (кроме урона) с существ, земель и игроков. Затем нанеси 2 урона выбранному существу за каждый убранный жетон."
+    }
+  ]
 }

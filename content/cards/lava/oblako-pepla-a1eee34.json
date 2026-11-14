@@ -15,5 +15,17 @@
   "id": "oblako-pepla-a1eee34",
   "kind": "card",
   "image": "/content/cards/lava/oblako-pepla-a1eee34.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "ash_cloud_splash_damage",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Нанеси 2 урона выбранному существу под контролем соперника и каждому соседнему существу."
+    }
+  ]
 }

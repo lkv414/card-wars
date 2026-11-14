@@ -15,5 +15,11 @@
   "id": "raging-phoenix-dac392a",
   "kind": "card",
   "image": "/content/cards/lava/raging-phoenix-dac392a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "raging_phoenix_burn_attack",
+      "text": "Яростный феникс получает +1 к атаке за каждый жетон ожога на существах."
+    }
+  ]
 }

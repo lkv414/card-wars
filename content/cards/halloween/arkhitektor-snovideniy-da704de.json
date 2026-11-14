@@ -15,5 +15,17 @@
   "id": "arkhitektor-snovideniy-da704de",
   "kind": "card",
   "image": "/content/cards/halloween/arkhitektor-snovideniy-da704de.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "dream_architect_enters",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда архитектор сновидений входит в игру, выбранное существо не наносит урон, до начала твоего следующего хода. Если архитектор сновидений находится на земле призраков, то верни в подготовленное положение существо под твоим контролем."
+    }
+  ]
 }

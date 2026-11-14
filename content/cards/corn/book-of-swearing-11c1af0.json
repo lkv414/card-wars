@@ -15,5 +15,12 @@
   "id": "book-of-swearing-11c1af0",
   "kind": "card",
   "image": "/content/cards/corn/book-of-swearing-11c1af0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "book_of_swearing_damage",
+      "text": "Выбери букву. Нанеси 4 урона существам, имена которых не начинаются с выбранной буквы."
+    }
+  ]
 }

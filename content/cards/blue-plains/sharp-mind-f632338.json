@@ -15,5 +15,17 @@
   "id": "sharp-mind-f632338",
   "kind": "card",
   "image": "/content/cards/blue-plains/sharp-mind-f632338.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "sharp_mind_buff",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Положи [СВД] на выбранное существо. Положи еще [СВД] за каждую другую карту на твоей руке."
+    }
+  ]
 }

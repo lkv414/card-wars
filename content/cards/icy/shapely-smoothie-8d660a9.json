@@ -15,5 +15,30 @@
   "id": "shapely-smoothie-8d660a9",
   "kind": "card",
   "image": "/content/cards/icy/shapely-smoothie-8d660a9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "transfer_token",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "destination": {
+          "kind": "choice",
+          "index": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "landscape"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ФЛЮП >>> Перемести выбранный жетон мороза с одной земли на другую землю."
+    }
+  ]
 }

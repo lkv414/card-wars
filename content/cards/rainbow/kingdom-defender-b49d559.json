@@ -15,5 +15,15 @@
   "id": "kingdom-defender-b49d559",
   "kind": "card",
   "image": "/content/cards/rainbow/kingdom-defender-b49d559.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "destroySelf": true
+      },
+      "mechanic": "kingdom_defender_cancel_curse",
+      "text": "Уничтожь защитника королевства >>> Отмени действие проклятия."
+    }
+  ]
 }

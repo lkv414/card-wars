@@ -15,5 +15,31 @@
   "id": "skull-hut-d04c60c",
   "kind": "card",
   "image": "/content/cards/sandy/skull-hut-d04c60c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_to_player"
+        },
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "triggering_instance"
+        },
+        "amount": {
+          "kind": "payload_damage"
+        }
+      },
+      "text": "Когда существо под контролем соперника в этой зоне наносит тебе урон, нанеси этому существу такой же урон."
+    }
+  ]
 }

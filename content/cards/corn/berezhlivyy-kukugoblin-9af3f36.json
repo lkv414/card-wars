@@ -15,5 +15,15 @@
   "id": "berezhlivyy-kukugoblin-9af3f36",
   "kind": "card",
   "image": "/content/cards/corn/berezhlivyy-kukugoblin-9af3f36.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Поглощение ФЛЮП >>> Возьми 1 карту."
+    }
+  ]
 }

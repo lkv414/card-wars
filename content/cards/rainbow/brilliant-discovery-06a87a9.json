@@ -15,5 +15,12 @@
   "id": "brilliant-discovery-06a87a9",
   "kind": "card",
   "image": "/content/cards/rainbow/brilliant-discovery-06a87a9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "brilliant_discovery_draw_recycle",
+      "text": "Возьми 2 карты. Ты можешь замешать до 2 заклинаний из твоего сброса в исследовательские заметки."
+    }
+  ]
 }

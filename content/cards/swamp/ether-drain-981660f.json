@@ -15,5 +15,17 @@
   "id": "ether-drain-981660f",
   "kind": "card",
   "image": "/content/cards/swamp/ether-drain-981660f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "ether_drain_damage_heal",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси 3 урона существу и ты восстанавливаешь 3 жизни. Повтори этот эффект за каждого игрока с не больше 1 картой на руке."
+    }
+  ]
 }

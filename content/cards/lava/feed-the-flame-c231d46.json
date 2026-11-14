@@ -15,5 +15,17 @@
   "id": "feed-the-flame-c231d46",
   "kind": "card",
   "image": "/content/cards/lava/feed-the-flame-c231d46.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "feed_the_flame_buff",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Если под контролем соперника находится 2 горящих существа, положи 3 [+] на выбранное дружественное существо."
+    }
+  ]
 }

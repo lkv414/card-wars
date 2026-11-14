@@ -15,5 +15,12 @@
   "id": "blago-prizrachnoe-92c8450",
   "kind": "card",
   "image": "/content/cards/halloween/blago-prizrachnoe-92c8450.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "ghostly_blessing_active",
+      "text": "ФЛЮП >>> Положи любую карту с призраком из твоего сброса на верх колоды. Если благо призрачное находится на земле призраков, то возьми карту."
+    }
+  ]
 }

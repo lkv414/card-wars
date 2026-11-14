@@ -18,50 +18,8 @@
   "abilities": [
     {
       "kind": "passive",
-      "trigger": "on_death",
-      "conditions": [
-        {
-          "kind": "if_payload_player_self"
-        },
-        {
-          "kind": "if_payload_other"
-        },
-        {
-          "kind": "if_payload_land_type",
-          "landType": "ghost"
-        }
-      ],
-      "effect": [
-        {
-          "op": "attach_card",
-          "card": {
-            "kind": "triggering_instance"
-          },
-          "to": {
-            "kind": "this_creature"
-          },
-          "from": "death"
-        },
-        {
-          "op": "stat_buff",
-          "target": {
-            "kind": "this_creature"
-          },
-          "stat": "attack",
-          "amount": 1,
-          "duration": "permanent"
-        },
-        {
-          "op": "stat_buff",
-          "target": {
-            "kind": "this_creature"
-          },
-          "stat": "defense",
-          "amount": 2,
-          "duration": "permanent"
-        }
-      ],
-      "text": "Обжор поглощает другие души (и всё остальное). Если призрачное существо под твоим контролем умирает, положи его карту под обжора — он получит +1 АТК и +2 DEF навсегда."
+      "trigger": "on_enters_play",
+      "text": "Когда огнешторм фениксов входит в игру, если у тебя на руке не больше 1 карты, подожги каждое существо под контролем соперника."
     }
   ]
 }

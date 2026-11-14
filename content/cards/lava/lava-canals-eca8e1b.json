@@ -15,5 +15,12 @@
   "id": "lava-canals-eca8e1b",
   "kind": "card",
   "image": "/content/cards/lava/lava-canals-eca8e1b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "lava_canals_damage_burn",
+      "text": "ФЛЮП >>> Нанеси 1 урон существу под контролем соперника в этой зоне за каждый жетон ожога на существах в других зонах."
+    }
+  ]
 }

@@ -15,5 +15,23 @@
   "id": "unicorn-chaos-a50e7fe",
   "kind": "card",
   "image": "/content/cards/swamp/unicorn-chaos-a50e7fe.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "unicorn_chaos_bottom_mill",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Раскрой 4 нижние карты колоды выбранного игрока. Сбрось всех существ, остальные положи наверх колоды."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "mechanic": "unicorn_chaos_death_recycle",
+      "text": "Когда это существо побеждено, положи его под низ твоей колоды."
+    }
+  ]
 }

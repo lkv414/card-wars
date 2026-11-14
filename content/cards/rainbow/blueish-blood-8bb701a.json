@@ -15,5 +15,20 @@
   "id": "blueish-blood-8bb701a",
   "kind": "card",
   "image": "/content/cards/rainbow/blueish-blood-8bb701a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_moved_this_turn"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn"
+      },
+      "text": "Каждое существо, которое переместилось в другую зону в этом ходу, получает +2 к атаке в этот ход."
+    }
+  ]
 }

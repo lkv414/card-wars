@@ -15,5 +15,12 @@
   "id": "graf-drakula-dd2208d",
   "kind": "card",
   "image": "/content/cards/halloween/graf-drakula-dd2208d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "mechanic": "count_dracula_lifesteal",
+      "text": "Когда граф Дракула наносит урон, нанеси его всем существам под контролем соперника, а также сними с него столько урона, сколько он нанес."
+    }
+  ]
 }

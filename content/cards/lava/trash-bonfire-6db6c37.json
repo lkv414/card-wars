@@ -15,5 +15,27 @@
   "id": "trash-bonfire-6db6c37",
   "kind": "card",
   "image": "/content/cards/lava/trash-bonfire-6db6c37.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "oncePerTurn": true,
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "mechanic": "trash_bonfire_burn_discard",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Сбрось 1 карту >>> Подожги выбранное существо один раз за каждые 5 карт в сбросе выбранного игрока. (Лимит: Один раз за ход.)"
+    }
+  ]
 }

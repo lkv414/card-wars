@@ -15,5 +15,27 @@
   "id": "cute-pig-d95997b",
   "kind": "card",
   "image": "/content/cards/rainbow/cute-pig-d95997b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "flip_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "down": true
+      },
+      "targets": [
+        {
+          "kind": "own_landscape",
+          "filter": {
+            "landType": "good"
+          }
+        }
+      ],
+      "text": "ФЛЮП >>> Переверни лицевой стороной вниз выбранную доброземельную землю в этой зоне."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "corn-fury-totem-7fed8d9",
   "kind": "card",
   "image": "/content/cards/corn/corn-fury-totem-7fed8d9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "corn_fury_totem_buff",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Выбранное дружественное существо получает +2 к атаке в этот ход. Если это существо побеждает другое существо в этот ход, возьми 1 карту."
+    }
+  ]
 }

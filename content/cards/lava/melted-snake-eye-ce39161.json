@@ -15,5 +15,12 @@
   "id": "melted-snake-eye-ce39161",
   "kind": "card",
   "image": "/content/cards/lava/melted-snake-eye-ce39161.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "melted_sheeglaz_damage_buff",
+      "text": "Когда плавленный шееглаз входит в игру, положи 1 на каждое существо с «шееглаз» в названии."
+    }
+  ]
 }

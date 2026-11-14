@@ -15,5 +15,17 @@
   "id": "cangurocat-b503c57",
   "kind": "card",
   "image": "/content/cards/rainbow/cangurocat-b503c57.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "mechanic": "kangaroocat_frost_token",
+      "text": "Первый раз, когда кенгукошка наносит урон сопернику, положи на неё жетон мороза."
+    }
+  ]
 }

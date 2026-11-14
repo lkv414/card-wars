@@ -15,5 +15,24 @@
   "id": "snowman-advancer-dac643d",
   "kind": "card",
   "image": "/content/cards/icy/snowman-advancer-dac643d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "effect": {
+        "op": "freeze_land",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "frozen": true
+      },
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Потрать 1 действие, ФЛЮП >>> Заморозь выбранную землю."
+    }
+  ]
 }

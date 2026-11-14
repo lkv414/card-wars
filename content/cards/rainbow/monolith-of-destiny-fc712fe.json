@@ -15,5 +15,33 @@
   "id": "monolith-of-destiny-fc712fe",
   "kind": "card",
   "image": "/content/cards/rainbow/monolith-of-destiny-fc712fe.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "effect": [
+        {
+          "op": "destroy",
+          "target": {
+            "kind": "this_creature"
+          }
+        },
+        {
+          "op": "destroy",
+          "target": {
+            "kind": "each_creature"
+          }
+        }
+      ],
+      "text": "Если существо под твоим контролем в этой зоне уничтожено, уничтожь монолит судьбы и всех существ в игре."
+    }
+  ]
 }

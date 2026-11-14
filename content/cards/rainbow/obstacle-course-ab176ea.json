@@ -17,24 +17,21 @@
   "image": "/content/cards/rainbow/obstacle-course-ab176ea.webp",
   "abilities": [
     {
-      "kind": "passive",
-      "trigger": "on_death",
+      "kind": "active",
+      "cost": 0,
       "effect": {
-        "op": "heal",
+        "op": "freeze_land",
         "target": {
-          "kind": "self_player"
+          "kind": "this_lane_lands"
         },
-        "amount": 2
+        "frozen": true
       },
-      "text": "Восстанови себе 2 жизни за каждое уничтоженное существо под твоим контролем на этой линии.",
       "conditions": [
         {
-          "kind": "if_payload_player_self"
-        },
-        {
-          "kind": "if_payload_zone_matches_self"
+          "kind": "while_no_tokens_in_play"
         }
-      ]
+      ],
+      "text": "ФЛЮП >>> Заморозь обе земли в этой зоне. Можно использовать, только если в игре нет жетонов мороза."
     }
   ]
 }

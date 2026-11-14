@@ -15,5 +15,32 @@
   "id": "chronotron-c39154b",
   "kind": "card",
   "image": "/content/cards/rainbow/chronotron-c39154b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "discard_from_hand",
+        "count": 2
+      },
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "Когда времятрон входит в игру, сбрось 2 карты."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "draw_cards",
+        "count": 2
+      },
+      "text": "Когда времятрон выходит из игры, возьми 2 карты."
+    }
+  ]
 }

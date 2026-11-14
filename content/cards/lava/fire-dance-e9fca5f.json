@@ -15,5 +15,23 @@
   "id": "fire-dance-e9fca5f",
   "kind": "card",
   "image": "/content/cards/lava/fire-dance-e9fca5f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "fire_dance_resurrect",
+      "targets": [
+        {
+          "kind": "own_discard_card",
+          "filter": {
+            "cardType": "creature"
+          }
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Положи существо с твоего сброса. Добавь ему урона, пока у него не останется 1 защита."
+    }
+  ]
 }

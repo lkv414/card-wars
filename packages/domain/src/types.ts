@@ -86,6 +86,7 @@ export interface CardInstance {
   shield: number;
   bonusAttack: number;
   bonusDefense: number;
+  burnTokens?: number;
   playedTurn: number | null;
   /** Cards placed under this instance (docs §H2). */
   attached?: string[];

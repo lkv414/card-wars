@@ -59,6 +59,7 @@ import {
   partnerFreePlayCreature,
   partnerFreePlaySpell,
 } from './handlers-audit';
+import { EXPANSION_MECHANICS } from './handlers-expansion';
 import type { EffectSource } from './source';
 export type { EffectSource };
 import type { PlayerId, TargetChoice, TriggerPayload } from './types';
@@ -190,6 +191,7 @@ export const MECHANICS: Record<string, MechanicHandler> = {
   shift_attacker_to_adjacent_empty: shiftAttackerToAdjacentEmpty,
   partner_free_play_creature: partnerFreePlayCreature,
   partner_free_play_spell: partnerFreePlaySpell,
+  ...EXPANSION_MECHANICS,
 };
 
 export function runMechanic(

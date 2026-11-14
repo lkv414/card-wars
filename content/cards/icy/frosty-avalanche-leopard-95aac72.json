@@ -15,5 +15,18 @@
   "id": "frosty-avalanche-leopard-95aac72",
   "kind": "card",
   "image": "/content/cards/icy/frosty-avalanche-leopard-95aac72.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_card_discarded",
+      "optional": true,
+      "mechanic": "frosty_leopard_discard_react",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда другой игрок сбрасывает карту из руки, ты можешь нанести 2 урона выбранному существу."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "shear-weirdo-fa2216b",
   "kind": "card",
   "image": "/content/cards/rainbow/shear-weirdo-fa2216b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "shear_weirdo_damage_draw",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "ФЛЮП >>> Нанеси 2 урона другому существу. Владелец того существа берёт карту."
+    }
+  ]
 }

@@ -15,5 +15,19 @@
   "id": "kanopik-ritualnyy-7c40fa5",
   "kind": "card",
   "image": "/content/cards/nice/kanopik-ritualnyy-7c40fa5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "type": "spell"
+        },
+        "to": "deck_top"
+      },
+      "text": "Когда канопик ритуальный входит в игру, положи заклинание из твоего сброса наверх твоей колоды."
+    }
+  ]
 }

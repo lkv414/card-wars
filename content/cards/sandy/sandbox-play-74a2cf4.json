@@ -15,5 +15,18 @@
   "id": "sandbox-play-74a2cf4",
   "kind": "card",
   "image": "/content/cards/sandy/sandbox-play-74a2cf4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_distinct_lands",
+          "amount": 1
+        }
+      },
+      "text": "Возьми 1 карту за каждое существо в игре с уникальным типом земли."
+    }
+  ]
 }

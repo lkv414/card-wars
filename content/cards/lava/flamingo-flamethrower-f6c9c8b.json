@@ -15,5 +15,18 @@
   "id": "flamingo-flamethrower-f6c9c8b",
   "kind": "card",
   "image": "/content/cards/lava/flamingo-flamethrower-f6c9c8b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "optional": true,
+      "mechanic": "flamingo_flamethrower_splash",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда огнеминго жарострел атакует горящее существо, ты можешь нанести 2 урона другому существу. Если то другое существо не горит, подожги его."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "blinding-snake-eyes-721a918",
   "kind": "card",
   "image": "/content/cards/sandy/blinding-snake-eyes-721a918.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "blinding_sheeglaz_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда слепящий шееглаз входит в игру, нанеси 1 урон выбранному существу за каждое существо с «шееглаз» в названии."
+    }
+  ]
 }

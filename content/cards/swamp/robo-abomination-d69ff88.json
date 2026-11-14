@@ -15,5 +15,24 @@
   "id": "robo-abomination-d69ff88",
   "kind": "card",
   "image": "/content/cards/swamp/robo-abomination-d69ff88.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "count": 1
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Когда робомерзость выходит из игры, выбранный игрок сбрасывает карту."
+    }
+  ]
 }

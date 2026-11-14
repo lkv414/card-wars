@@ -15,5 +15,42 @@
   "id": "corn-knight-272b8b9",
   "kind": "card",
   "image": "/content/cards/corn/corn-knight-272b8b9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 1
+        },
+        "duration": "aura"
+      },
+      "text": "+1 к атаке за каждое кукурузное поле под твоим контролем."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "defense",
+        "amount": {
+          "kind": "per_lands",
+          "where": "own",
+          "landType": "corn",
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "+2 к защите за каждое кукурузное поле под твоим контролем."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "swamp-ninja-renegade-6de96d8",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-ninja-renegade-6de96d8.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "renegade_discard_hand",
+      "text": "Когда трясинаки ренегат входит в игру, сбрось всю руку."
+    }
+  ]
 }

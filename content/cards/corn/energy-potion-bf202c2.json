@@ -15,5 +15,15 @@
   "id": "energy-potion-bf202c2",
   "kind": "card",
   "image": "/content/cards/corn/energy-potion-bf202c2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "gain_actions",
+        "amount": 2
+      },
+      "text": "Получи 2 действия в твой следующий ход."
+    }
+  ]
 }

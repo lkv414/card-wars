@@ -15,5 +15,13 @@
   "id": "big-pig-32705bb",
   "kind": "card",
   "image": "/content/cards/rainbow/big-pig-32705bb.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "optional": true,
+      "mechanic": "big_pig_play_or_bounce",
+      "text": "В начале своего хода можешь положить карту в игру со словом «свинья» в названии из своей руки, или вернуть карту на руку."
+    }
+  ]
 }

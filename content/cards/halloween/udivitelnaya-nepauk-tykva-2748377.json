@@ -15,5 +15,17 @@
   "id": "udivitelnaya-nepauk-tykva-2748377",
   "kind": "card",
   "image": "/content/cards/halloween/udivitelnaya-nepauk-tykva-2748377.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "amazing_notspider_pumpkin",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "В начале твоего хода нанеси 1 урон выбранному сопернику за каждые 2 карты с тыквой в сбросе."
+    }
+  ]
 }

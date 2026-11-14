@@ -15,5 +15,20 @@
   "id": "retribution-vial-8717ba3",
   "kind": "card",
   "image": "/content/cards/sandy/retribution-vial-8717ba3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "retribution_vial_transfer",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Перемести весь урон с одного существа под твоим контролем на выбранное существо под контролем соперника. Верни существо под твоим контролем на руку."
+    }
+  ]
 }

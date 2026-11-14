@@ -15,5 +15,17 @@
   "id": "frosty-avalanche-leopard-d2feeef",
   "kind": "card",
   "image": "/content/cards/icy/frosty-avalanche-leopard-d2feeef.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "mechanic": "ice_leopard_damage_spell_discard",
+      "text": "Если леденящий лавинопард наносит урон сопернику, он сбрасывает заклинание или показывает руку, если у него таких нет."
+    }
+  ]
 }

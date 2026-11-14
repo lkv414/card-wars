@@ -15,5 +15,19 @@
   "id": "sky-fortress-b05a010",
   "kind": "card",
   "image": "/content/cards/rainbow/sky-fortress-b05a010.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        },
+        "stat": "defense",
+        "amount": -2,
+        "duration": "aura"
+      },
+      "text": "Существо под контролем соперника в этой зоне получает -2 к защите."
+    }
+  ]
 }

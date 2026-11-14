@@ -15,5 +15,12 @@
   "id": "grass-rockets-989c786",
   "kind": "card",
   "image": "/content/cards/nice/grass-rockets-989c786.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "grass_rockets_lifesteal",
+      "text": "Когда дружественные существа наносят урон в этом ходу, сними с них урон, равный нанесённому урону."
+    }
+  ]
 }

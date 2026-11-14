@@ -15,5 +15,11 @@
   "id": "geyser-cannon-c5841fb",
   "kind": "card",
   "image": "/content/cards/lava/geyser-cannon-c5841fb.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "geyser_cannon_double_attack",
+      "text": "Если у тебя на руке не больше 1 карты, удвой атаку у дружественных существ в этой зоне."
+    }
+  ]
 }

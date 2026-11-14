@@ -15,5 +15,13 @@
   "id": "legion-fantomov-89f5327",
   "kind": "card",
   "image": "/content/cards/halloween/legion-fantomov-89f5327.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "phantom_legion_bounce",
+      "text": "Когда легион фантомов входит в игру, можешь вернуть на руку владельца выбранное сущесвто в этой зоне. Если легион фантомов находится на земле призраков, то владелец должен также сбросить это существо."
+    }
+  ]
 }

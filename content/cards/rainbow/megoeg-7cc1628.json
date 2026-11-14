@@ -15,5 +15,12 @@
   "id": "megoeg-7cc1628",
   "kind": "card",
   "image": "/content/cards/rainbow/megoeg-7cc1628.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "honey_badger_buff",
+      "text": "Когда медоед входит в игру, если ты контролируешь 3 других радужных существа, положи 4 [А] на медоеда. +1 к защите за каждый [А] на медоеде."
+    }
+  ]
 }

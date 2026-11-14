@@ -15,5 +15,35 @@
   "id": "tandem-bicycle-ab9aa08",
   "kind": "card",
   "image": "/content/cards/rainbow/tandem-bicycle-ab9aa08.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          }
+        },
+        {
+          "op": "return_to_owner",
+          "target": {
+            "kind": "choice",
+            "index": 1
+          }
+        }
+      ],
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Верни на руку выбранное существо под твоим контролем на руку владельца. Выбранный соперник возвращает на руку выбранное существо под своим контролем на руку владельца."
+    }
+  ]
 }

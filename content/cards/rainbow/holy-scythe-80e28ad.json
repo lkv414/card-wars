@@ -15,5 +15,17 @@
   "id": "holy-scythe-80e28ad",
   "kind": "card",
   "image": "/content/cards/rainbow/holy-scythe-80e28ad.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "holy_scythe_destroy_heal",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Уничтожь выбранное существо. Его владелец восстанавливает 5 жизней."
+    }
+  ]
 }

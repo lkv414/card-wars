@@ -15,5 +15,12 @@
   "id": "corn-chancellor-22d011b",
   "kind": "card",
   "image": "/content/cards/corn/corn-chancellor-22d011b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "corn_chancellor_buff",
+      "text": "Когда кукуканцлер входит в игру, выбери букву. Другие существа под твоим контролем, названия которых начинаются на эту букву, получают +3 к атаке."
+    }
+  ]
 }

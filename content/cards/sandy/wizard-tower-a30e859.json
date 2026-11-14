@@ -15,5 +15,17 @@
   "id": "wizard-tower-a30e859",
   "kind": "card",
   "image": "/content/cards/sandy/wizard-tower-a30e859.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "mechanic": "wizard_tower_spell_damage",
+      "text": "Когда ты разыгрываешь заклинание, нанеси 1 урон каждому существу под контролем соперника в этой зоне. Если в этой зоне нет существ под контролем соперника, нанеси 1 урон выбранному игроку вместо этого."
+    }
+  ]
 }

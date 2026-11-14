@@ -15,5 +15,12 @@
   "id": "corn-goblin-king-e62ad68",
   "kind": "card",
   "image": "/content/cards/corn/corn-goblin-king-e62ad68.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "mechanic": "corn_goblin_king_replace",
+      "text": "Когда король кукугоблин заменяется, перемести его на пустую дружественную зону."
+    }
+  ]
 }

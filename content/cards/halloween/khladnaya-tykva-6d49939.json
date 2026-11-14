@@ -15,5 +15,17 @@
   "id": "khladnaya-tykva-6d49939",
   "kind": "card",
   "image": "/content/cards/halloween/khladnaya-tykva-6d49939.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "frost_pumpkin_buff",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Выбранное существо получает +1 к атаке (либо +2, если оно находится на земле с жетоном мороза, если оно еще и с тыквой, то дополнительно получает +2 к атаке)."
+    }
+  ]
 }

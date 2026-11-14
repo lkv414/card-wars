@@ -15,5 +15,11 @@
   "id": "tectonic-tardigrade-9bc4de4",
   "kind": "card",
   "image": "/content/cards/lava/tectonic-tardigrade-9bc4de4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "tectonic_tardigrade_immunity",
+      "text": "Если ты разыграл 2 или более не лавовых карт, Тектоническая тихоходка не получает урона от существ под контролем соперника в этот ход."
+    }
+  ]
 }

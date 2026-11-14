@@ -15,5 +15,18 @@
   "id": "ancient-magical-pharaoh-dragon-e2f2e5f",
   "kind": "card",
   "image": "/content/cards/sandy/ancient-magical-pharaoh-dragon-e2f2e5f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "pharaoh_dragon_swap_deck_discard",
+      "text": "Когда входит в игру, перемешай сброс и поменяй его местами с колодой."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "mechanic": "pharaoh_dragon_swap_deck_discard",
+      "text": "Когда выходит из игры, перемешай сброс и поменяй его местами с колодой."
+    }
+  ]
 }

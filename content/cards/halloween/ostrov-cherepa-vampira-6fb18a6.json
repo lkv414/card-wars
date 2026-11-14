@@ -15,5 +15,12 @@
   "id": "ostrov-cherepa-vampira-6fb18a6",
   "kind": "card",
   "image": "/content/cards/halloween/ostrov-cherepa-vampira-6fb18a6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "vampire_skull_island_summon",
+      "text": "Потрать 1 действие, ФЛЮП >>> Если эта земля не пустая, то существо на этой земле получает поглощение. Вскрывай карты с верха колоды, пока не откроешь существо, затем разыграй его на эту землю бесплатно и перетасуй остальные вскрытые карты в колоду."
+    }
+  ]
 }

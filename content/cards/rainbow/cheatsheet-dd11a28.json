@@ -15,5 +15,12 @@
   "id": "cheatsheet-dd11a28",
   "kind": "card",
   "image": "/content/cards/rainbow/cheatsheet-dd11a28.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "cheatsheet_potion_discount",
+      "text": "Возьми 1 карту. Следующие 2 карты со словом «зелье» в названии, которые ты разыграешь в этой ход, стоят на 1 действие меньше."
+    }
+  ]
 }

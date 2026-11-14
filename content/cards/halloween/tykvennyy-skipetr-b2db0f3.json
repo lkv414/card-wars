@@ -15,5 +15,12 @@
   "id": "tykvennyy-skipetr-b2db0f3",
   "kind": "card",
   "image": "/content/cards/halloween/tykvennyy-skipetr-b2db0f3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "pumpkin_scepter_discount",
+      "text": "Твои 2 следующие карты с тыквой стоят на 1 действие меньше."
+    }
+  ]
 }

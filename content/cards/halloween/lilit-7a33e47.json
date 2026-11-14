@@ -15,5 +15,20 @@
   "id": "lilit-7a33e47",
   "kind": "card",
   "image": "/content/cards/halloween/lilit-7a33e47.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "destroySelf": true
+      },
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        }
+      },
+      "text": "Уничтожь лилит >>> уничтожь другое существо в этой зоне."
+    }
+  ]
 }

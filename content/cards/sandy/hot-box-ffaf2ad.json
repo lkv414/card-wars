@@ -15,5 +15,32 @@
   "id": "hot-box-ffaf2ad",
   "kind": "card",
   "image": "/content/cards/sandy/hot-box-ffaf2ad.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": [
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "payload_player"
+          },
+          "amount": 2
+        },
+        {
+          "op": "draw_cards",
+          "count": 1
+        }
+      ],
+      "text": "Когда существо под контролем соперника выходит из игры в этой зоне, нанеси 2 урона владельцу этого существа и возьми 1 карту."
+    }
+  ]
 }

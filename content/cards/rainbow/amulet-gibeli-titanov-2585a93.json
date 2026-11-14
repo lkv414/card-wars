@@ -15,5 +15,17 @@
   "id": "amulet-gibeli-titanov-2585a93",
   "kind": "card",
   "image": "/content/cards/rainbow/amulet-gibeli-titanov-2585a93.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "titan_amulet_destroy",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Уничтожь выбранное существо и потеряй жизни, равные его атаке."
+    }
+  ]
 }

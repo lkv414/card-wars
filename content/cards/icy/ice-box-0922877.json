@@ -15,5 +15,11 @@
   "id": "ice-box-0922877",
   "kind": "card",
   "image": "/content/cards/icy/ice-box-0922877.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "ice_box_tax",
+      "text": "Каждый раз, когда соперник сбрасывает карту чтобы сбросить жетон мороза, наноси ему 1 урон и ты восстанавливаешь 1 жизнь."
+    }
+  ]
 }

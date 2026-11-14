@@ -15,5 +15,17 @@
   "id": "rock-mermaid-318829d",
   "kind": "card",
   "image": "/content/cards/swamp/rock-mermaid-318829d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_next_turn",
+      "mechanic": "rock_mermaid_mill_player",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "В конце твоего хода сбрось 2 верхние карты с колоды выбранного игрока."
+    }
+  ]
 }

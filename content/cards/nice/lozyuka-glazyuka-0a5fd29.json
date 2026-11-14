@@ -15,5 +15,26 @@
   "id": "lozyuka-glazyuka-0a5fd29",
   "kind": "card",
   "image": "/content/cards/nice/lozyuka-glazyuka-0a5fd29.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_discard_count",
+          "min": 3
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "permanent"
+      },
+      "text": "Когда Лозюка Глазюка входит в игру, если у тебя в сбросе 3 или больше заклинаний, положи на неё +3 к атаке."
+    }
+  ]
 }

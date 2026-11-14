@@ -15,5 +15,11 @@
   "id": "spicy-palace-07561d0",
   "kind": "card",
   "image": "/content/cards/lava/spicy-palace-07561d0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "spicy_palace_lane_buff",
+      "text": "Если ты разыграл 2 или более не лавовые карты, дружественное существо в этой зоне получает +2 к атаке в этот ход."
+    }
+  ]
 }

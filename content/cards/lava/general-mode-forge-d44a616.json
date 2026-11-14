@@ -15,5 +15,19 @@
   "id": "general-mode-forge-d44a616",
   "kind": "card",
   "image": "/content/cards/lava/general-mode-forge-d44a616.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_creature"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "aura"
+      },
+      "text": "Все существа в этой зоне получают +2 к атаке."
+    }
+  ]
 }

@@ -15,5 +15,22 @@
   "id": "bookworm-toddler-788bac1",
   "kind": "card",
   "image": "/content/cards/nice/bookworm-toddler-788bac1.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "payload_damage"
+        }
+      },
+      "text": "Когда грамотей-карапуз наносит урон жизням соперника, возьми столько карт, сколько нанёс урона."
+    }
+  ]
 }

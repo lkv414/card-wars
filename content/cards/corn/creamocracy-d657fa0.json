@@ -15,5 +15,27 @@
   "id": "creamocracy-d657fa0",
   "kind": "card",
   "image": "/content/cards/corn/creamocracy-d657fa0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "creamocracy_damage",
+      "targets": [
+        {
+          "kind": "choose_option",
+          "options": [
+            "corn",
+            "blue",
+            "good",
+            "ice",
+            "sand",
+            "swamp",
+            "rainbow",
+            "ghost"
+          ]
+        }
+      ],
+      "text": "Выбери тип земель. Нанеси 2 урона каждому существу не на выбранном типе земли."
+    }
+  ]
 }

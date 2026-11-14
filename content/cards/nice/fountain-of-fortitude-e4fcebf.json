@@ -15,5 +15,11 @@
   "id": "fountain-of-fortitude-e4fcebf",
   "kind": "card",
   "image": "/content/cards/nice/fountain-of-fortitude-e4fcebf.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "fountain_of_fortitude_max_hp",
+      "text": "Пока эта карта находится в игре, твоё максимальное здоровье увеличивается на 5."
+    }
+  ]
 }

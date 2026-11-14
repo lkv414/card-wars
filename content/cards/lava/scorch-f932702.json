@@ -15,5 +15,17 @@
   "id": "scorch-f932702",
   "kind": "card",
   "image": "/content/cards/lava/scorch-f932702.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "scorch_conditional_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси 2 урона выбранному существу. Если у тебя на руке не больше 1 карты, нанеси 5 урона вместо этого."
+    }
+  ]
 }

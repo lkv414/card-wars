@@ -15,5 +15,12 @@
   "id": "cool-cone-0d39240",
   "kind": "card",
   "image": "/content/cards/icy/cool-cone-0d39240.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "cool_cone_cafe",
+      "text": "Когда кафе «холодный рожок» входит в игру, заморозь землю под контролем соперника в этой зоне. Чтобы убрать жетон мороза с этой земли, соперник сбрасывает дополнительно 1 карту."
+    }
+  ]
 }

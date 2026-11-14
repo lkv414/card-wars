@@ -15,5 +15,11 @@
   "id": "tykvorot-9d152be",
   "kind": "card",
   "image": "/content/cards/halloween/tykvorot-9d152be.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "pumpkin_mouth_def_aura",
+      "text": "+2 к защите за каждые 2 карты с тыквой в сбросе."
+    }
+  ]
 }

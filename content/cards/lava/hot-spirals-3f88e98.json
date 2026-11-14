@@ -15,5 +15,17 @@
   "id": "hot-spirals-3f88e98",
   "kind": "card",
   "image": "/content/cards/lava/hot-spirals-3f88e98.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "hot_spirals_damage_action",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси 3 урона выбранному существу. Если существо уничтожается этим способом, получи 1 действие."
+    }
+  ]
 }

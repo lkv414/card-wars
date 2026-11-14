@@ -15,5 +15,11 @@
   "id": "erupting-colossus-1e53408",
   "kind": "card",
   "image": "/content/cards/lava/erupting-colossus-1e53408.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "erupting_colossus_double_damage",
+      "text": "Если у тебя не больше 1 карты на руке, удвой весь урон наносимый всем существам от любого источника."
+    }
+  ]
 }

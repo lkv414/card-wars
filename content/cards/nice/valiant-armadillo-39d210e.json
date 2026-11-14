@@ -15,5 +15,17 @@
   "id": "valiant-armadillo-39d210e",
   "kind": "card",
   "image": "/content/cards/nice/valiant-armadillo-39d210e.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "this_lane_opponent_creature"
+        }
+      },
+      "text": "Грохот Когда доблестный броненосец разыгрывается из руки, уничтожь существо под контролем соперника в его зоне."
+    }
+  ]
 }

@@ -15,5 +15,21 @@
   "id": "flamingo-ash-keeper-fee8d6d",
   "kind": "card",
   "image": "/content/cards/lava/flamingo-ash-keeper-fee8d6d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "flamingo_ash_keeper_burn",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Когда огнеминго хранитель пепла входит в игру, ты можешь сбросить карту, чтобы поджечь существо под контролем соперника."
+    }
+  ]
 }

@@ -15,5 +15,22 @@
   "id": "cute-fire-c19c9d2",
   "kind": "card",
   "image": "/content/cards/lava/cute-fire-c19c9d2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "landType": "lava"
+        }
+      },
+      "text": "Твои другие лавовые существа получают +1 к атаке."
+    }
+  ]
 }

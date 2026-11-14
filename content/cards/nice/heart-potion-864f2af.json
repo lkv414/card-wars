@@ -15,5 +15,12 @@
   "id": "heart-potion-864f2af",
   "kind": "card",
   "image": "/content/cards/nice/heart-potion-864f2af.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "heart_potion_choice",
+      "text": "Сними 5 урона с выбранного существа или выбранный игрок восстанавливает 5 жизней. Если на том существе нет урона или у того игрока полное здоровье, возьми 1 карту."
+    }
+  ]
 }

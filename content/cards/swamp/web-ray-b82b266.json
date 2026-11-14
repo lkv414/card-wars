@@ -15,5 +15,33 @@
   "id": "web-ray-b82b266",
   "kind": "card",
   "image": "/content/cards/swamp/web-ray-b82b266.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "opponent_discards",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "count": 1
+        },
+        {
+          "op": "return_from_discard",
+          "count": 1,
+          "filter": {
+            "type": "creature"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Выбраный соперник сбрасывает 1 карту. Ты можешь вернуть существо из твоего сброса себе на руку."
+    }
+  ]
 }

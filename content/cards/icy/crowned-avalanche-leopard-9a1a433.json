@@ -15,5 +15,12 @@
   "id": "crowned-avalanche-leopard-9a1a433",
   "kind": "card",
   "image": "/content/cards/icy/crowned-avalanche-leopard-9a1a433.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "crowned_avalanche_leopard",
+      "text": "Когда коронованный лавинопард входит в игру, заморозь обе земли в этой зоне. Когда коронованный лавинопард выходит из игры, ты можешь сбросить жетон мороза с выбранной земли под твоим контролем."
+    }
+  ]
 }

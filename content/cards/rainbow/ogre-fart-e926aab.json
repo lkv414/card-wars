@@ -15,5 +15,31 @@
   "id": "ogre-fart-e926aab",
   "kind": "card",
   "image": "/content/cards/rainbow/ogre-fart-e926aab.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "reveal_deck_top",
+          "count": 3
+        },
+        {
+          "op": "resolve_revealed",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "to": "deck_bottom",
+          "rest": "discard"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "revealed_card"
+        }
+      ],
+      "text": "Раскрой 3 карты твоей колоды. Положи одну из них под низ твоей колоды и сбрось остальные."
+    }
+  ]
 }

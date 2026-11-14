@@ -15,5 +15,12 @@
   "id": "gracious-armadillo-621b4ea",
   "kind": "card",
   "image": "/content/cards/nice/gracious-armadillo-621b4ea.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "armadillo_taunt_attacker",
+      "text": "Грохот Когда существо под контролем соперника атакует, ты можешь выбрать его целью атаки милостивого броненосца."
+    }
+  ]
 }

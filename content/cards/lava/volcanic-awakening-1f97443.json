@@ -15,5 +15,12 @@
   "id": "volcanic-awakening-1f97443",
   "kind": "card",
   "image": "/content/cards/lava/volcanic-awakening-1f97443.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "volcanic_awakening_double_burn",
+      "text": "Подожги каждое существо под контролем соперника один раз за каждый жетон ожога на нём."
+    }
+  ]
 }

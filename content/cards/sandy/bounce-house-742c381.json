@@ -15,5 +15,11 @@
   "id": "bounce-house-742c381",
   "kind": "card",
   "image": "/content/cards/sandy/bounce-house-742c381.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "bounce_house_intercept_player_damage",
+      "text": "Когда тебе наносят урон, вместо себя нанеси урон батутному домику."
+    }
+  ]
 }

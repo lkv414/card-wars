@@ -15,5 +15,17 @@
   "id": "oasis-defender-4d62fc4",
   "kind": "card",
   "image": "/content/cards/sandy/oasis-defender-4d62fc4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_card_played",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "mechanic": "oasis_defender_non_sand_damage",
+      "text": "Когда ты разыграл не песчаную карту, нанеси 1 урон каждому существу под контролем соперника."
+    }
+  ]
 }

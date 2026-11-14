@@ -15,5 +15,12 @@
   "id": "frenzied-bakery-f9234df",
   "kind": "card",
   "image": "/content/cards/corn/frenzied-bakery-f9234df.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "frenzied_bakery_bake",
+      "text": "Один раз за ход, ты можешь сбросить карту с руки чтобы положить жетон урона на неистовую пекарню. ФЛЮП >>> Нанеси 1 урон существу под контролем соперника в этой зоне за каждый жетон урона на этой карте."
+    }
+  ]
 }

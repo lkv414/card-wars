@@ -15,5 +15,23 @@
   "id": "deep-python-6e99551",
   "kind": "card",
   "image": "/content/cards/swamp/deep-python-6e99551.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": {
+          "kind": "per_discard",
+          "every": 5,
+          "amount": 2
+        },
+        "duration": "aura"
+      },
+      "text": "Глубинный питон получает +2 к атаке за каждые 5 карт в сбросе соперника."
+    }
+  ]
 }

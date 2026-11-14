@@ -15,5 +15,37 @@
   "id": "swamp-boa-5baecb5",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-boa-5baecb5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "destroyOwnCreature": 1
+      },
+      "effect": [
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "this_creature"
+          },
+          "stat": "attack",
+          "amount": 2,
+          "duration": "permanent"
+        },
+        {
+          "op": "heal",
+          "target": {
+            "kind": "this_creature"
+          },
+          "amount": 2
+        }
+      ],
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Уничтожь существо под твоим контролем >>> Положи 2 на болотного удава и сними с него 2 урона."
+    }
+  ]
 }

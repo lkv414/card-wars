@@ -15,5 +15,23 @@
   "id": "psychedelic-gecko-27217d7",
   "kind": "card",
   "image": "/content/cards/sandy/psychedelic-gecko-27217d7.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_creature"
+        },
+        {
+          "kind": "if_payload_other"
+        }
+      ],
+      "effect": {
+        "op": "discard_top_deck",
+        "count": 1
+      },
+      "text": "Когда другое существо входит в игру, сбрось верхнюю карту твоей колоды."
+    }
+  ]
 }

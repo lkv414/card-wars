@@ -15,5 +15,12 @@
   "id": "blue-flame-runner-b277f1c",
   "kind": "card",
   "image": "/content/cards/blue-plains/blue-flame-runner-b277f1c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "flame_runner_step",
+      "text": "Разыграй синюшного пламенного бегуна только в правой крайней зоне. ФЛЮП >>> Если зона с лева от него пустая, перемести его туда. Если ты это сделал, положи ⚔ на него."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "lava-rock-gate-adcd79e",
   "kind": "card",
   "image": "/content/cards/lava/lava-rock-gate-adcd79e.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "lava_gate_burn_lane",
+      "targets": [
+        {
+          "kind": "lane_creature"
+        }
+      ],
+      "text": "Потрать 1 действие и ФЛЮП >>> Подожги выбранное существо в этой зоне."
+    }
+  ]
 }

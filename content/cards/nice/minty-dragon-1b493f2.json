@@ -15,5 +15,24 @@
   "id": "minty-dragon-1b493f2",
   "kind": "card",
   "image": "/content/cards/nice/minty-dragon-1b493f2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "effect": {
+        "op": "opponent_discards",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "count": 2
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Когда мятный дракон уничтожается, выбранный соперник сбрасывает 2 карты."
+    }
+  ]
 }

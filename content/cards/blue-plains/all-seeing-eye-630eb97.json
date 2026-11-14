@@ -15,5 +15,15 @@
   "id": "all-seeing-eye-630eb97",
   "kind": "card",
   "image": "/content/cards/blue-plains/all-seeing-eye-630eb97.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "all_seeing_eye_reveal",
+      "params": {
+        "count": 5
+      },
+      "text": "Раскрой 5 карт твоей колоды. Положи в руку по одной карте каждого типа земли и сбрось остальные."
+    }
+  ]
 }

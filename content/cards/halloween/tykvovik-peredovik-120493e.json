@@ -18,26 +18,24 @@
   "abilities": [
     {
       "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "discardFromHandName": "тыква"
+      },
       "effect": {
-        "op": "transfer_token",
+        "op": "freeze_land",
         "target": {
           "kind": "choice",
           "index": 0
         },
-        "destination": {
-          "kind": "choice",
-          "index": 1
-        }
+        "frozen": true
       },
       "targets": [
         {
           "kind": "landscape"
-        },
-        {
-          "kind": "landscape"
         }
       ],
-      "text": "ПРИЕМ >>> Перенеси Ледяной жетон с одной земли на другую землю."
+      "text": "Сбрось карту с тыквой, ФЛЮП >>> Заморозь выбранную землю."
     }
   ]
 }

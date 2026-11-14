@@ -15,5 +15,11 @@
   "id": "tykvolist-khranitel-4f96c3a",
   "kind": "card",
   "image": "/content/cards/halloween/tykvolist-khranitel-4f96c3a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "pumpkin_leaf_guardian",
+      "text": "Если у тебя в сбросе 10 или больше карт, то тыкволист хранитель стоит на 2 действия меньше. Твои существа с тыквами получают +2 к атаке."
+    }
+  ]
 }

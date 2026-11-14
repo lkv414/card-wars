@@ -15,5 +15,32 @@
   "id": "kernels-camp-d4f89a8",
   "kind": "card",
   "image": "/content/cards/corn/kernels-camp-d4f89a8.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "Существа под твоим контролем за 1 действие в этой зоне получают +1 к атаке."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "stat": "defense",
+        "amount": 1,
+        "duration": "aura"
+      },
+      "text": "Существа под твоим контролем за 1 действие в этой зоне получают +1 к защите."
+    }
+  ]
 }

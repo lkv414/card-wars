@@ -15,5 +15,21 @@
   "id": "hot-scorpion-30144ec",
   "kind": "card",
   "image": "/content/cards/lava/hot-scorpion-30144ec.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "hot_scorpion_free_spell",
+      "targets": [
+        {
+          "kind": "own_hand_card",
+          "filter": {
+            "cardType": "spell",
+            "maxCost": 1
+          }
+        }
+      ],
+      "text": "ФЛЮП >>> Подожги жа роскорпа. Ты можешь разыграть бесплатно с руки заклинание за 1 действие."
+    }
+  ]
 }

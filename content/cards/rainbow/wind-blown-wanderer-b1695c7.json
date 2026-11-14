@@ -15,5 +15,20 @@
   "id": "wind-blown-wanderer-b1695c7",
   "kind": "card",
   "image": "/content/cards/rainbow/wind-blown-wanderer-b1695c7.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "wind_blown_wanderer_move_token",
+      "targets": [
+        {
+          "kind": "landscape"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ФЛЮП >>> Перемести один любой жетон (кроме урона) с любого существа или земли на другое существо или землю."
+    }
+  ]
 }

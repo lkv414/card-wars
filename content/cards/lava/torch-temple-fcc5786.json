@@ -15,5 +15,12 @@
   "id": "torch-temple-fcc5786",
   "kind": "card",
   "image": "/content/cards/lava/torch-temple-fcc5786.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "torch_temple_burn",
+      "text": "ФЛЮП >>> Подожги существо в этой зоне. Подожги его снова, если у тебя на руке не больше 1 карты."
+    }
+  ]
 }

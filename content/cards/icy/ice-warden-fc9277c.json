@@ -15,5 +15,11 @@
   "id": "ice-warden-fc9277c",
   "kind": "card",
   "image": "/content/cards/icy/ice-warden-fc9277c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "ice_warden_double_damage",
+      "text": "Существа под контролем соперника на любой земле с жетоном мороза получают двойной урон."
+    }
+  ]
 }

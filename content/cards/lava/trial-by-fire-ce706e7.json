@@ -15,5 +15,12 @@
   "id": "trial-by-fire-ce706e7",
   "kind": "card",
   "image": "/content/cards/lava/trial-by-fire-ce706e7.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "trial_by_fire_reveal_play",
+      "text": "Раскрой 2 верхние карты твоей колоды. Разыграй 1 карту бесплатно и остальные сбрось. Если у тебя на руке не больше 1 карты, ты можешь взять на руку сброшенную карту."
+    }
+  ]
 }

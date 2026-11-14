@@ -15,5 +15,12 @@
   "id": "mudcake-zombies-f458783",
   "kind": "card",
   "image": "/content/cards/swamp/mudcake-zombies-f458783.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "mudcake_zombies_cycle",
+      "text": "Когда грязепирожные зомби входят в игру, каждый игрок сбрасывает 1 карту, затем берёт 1 карту."
+    }
+  ]
 }

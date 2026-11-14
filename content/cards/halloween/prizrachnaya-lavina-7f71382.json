@@ -15,5 +15,12 @@
   "id": "prizrachnaya-lavina-7f71382",
   "kind": "card",
   "image": "/content/cards/halloween/prizrachnaya-lavina-7f71382.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "ghostly_avalanche_effect",
+      "text": "Нанеси 2 урона каждому существу под контролем соперника на земле с жетоном мороза, существа с призраками под вашем контролем на землях без жетонов мороза, получают +2 к атаке."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "punch-potion-2ca55e0",
   "kind": "card",
   "image": "/content/cards/sandy/punch-potion-2ca55e0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "punch_potion_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси 3 урона выбранному существу или игроку."
+    }
+  ]
 }

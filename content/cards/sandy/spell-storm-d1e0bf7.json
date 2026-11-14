@@ -15,5 +15,12 @@
   "id": "spell-storm-d1e0bf7",
   "kind": "card",
   "image": "/content/cards/sandy/spell-storm-d1e0bf7.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "spell_storm_damage_and_actions",
+      "text": "Нанеси 2 урона всем существам под контролем соперника. Сбрось 3 верхние карты твоей колоды. За каждое заклинание, сброшенное таким образом, получи 1 действие."
+    }
+  ]
 }

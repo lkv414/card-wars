@@ -15,5 +15,23 @@
   "id": "flaming-dilo-a832d34",
   "kind": "card",
   "image": "/content/cards/lava/flaming-dilo-a832d34.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "discardFromHand": 1
+      },
+      "mechanic": "flaming_dilo_burn_by_atk",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        },
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "ФЛЮП и сбрось карту >>> Подожги выбранное существо количество раз, равное атаке Огнедышащего Дило. Положи 1 на Огнедышащего Дило."
+    }
+  ]
 }

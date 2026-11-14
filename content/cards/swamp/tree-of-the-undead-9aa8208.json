@@ -18,26 +18,16 @@
   "abilities": [
     {
       "kind": "active",
+      "cost": 0,
       "effect": {
-        "op": "remove_from_game",
-        "from": {
-          "kind": "choice",
-          "index": 1
+        "op": "return_from_discard",
+        "count": 1,
+        "filter": {
+          "type": "creature"
         },
-        "name": {
-          "kind": "choice",
-          "index": 0
-        }
+        "random": true
       },
-      "text": "ПРИЕМ >>> Выбери название карты. Выбери игрока. Удали из игры каждую карту с таким названием из стопки сброса выбранного игрока.",
-      "targets": [
-        {
-          "kind": "visible_card"
-        },
-        {
-          "kind": "any_player"
-        }
-      ]
+      "text": "ФЛЮП >>> Верни случайное существо из твоего сброса на руку."
     }
   ]
 }

@@ -15,5 +15,24 @@
   "id": "cool-baby-4b8e6d3",
   "kind": "card",
   "image": "/content/cards/rainbow/cool-baby-4b8e6d3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_lane_empty_opponent"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "+3 к атаке, если соперник не контролирует существо в этой зоне."
+    }
+  ]
 }

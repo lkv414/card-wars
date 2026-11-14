@@ -15,5 +15,25 @@
   "id": "flying-roo-mouse-b61e3a6",
   "kind": "card",
   "image": "/content/cards/rainbow/flying-roo-mouse-b61e3a6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "permanent"
+      },
+      "text": "Когда летучая кенгумышь наносит урон сопернику, положи на неё ⚔️."
+    }
+  ]
 }

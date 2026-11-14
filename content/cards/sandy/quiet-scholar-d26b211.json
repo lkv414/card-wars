@@ -15,5 +15,11 @@
   "id": "quiet-scholar-d26b211",
   "kind": "card",
   "image": "/content/cards/sandy/quiet-scholar-d26b211.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "quiet_scholar_second_spell_discount",
+      "text": "Второе заклинание, которое ты разыгрываешь в каждом ходу, стоит на 1 действие меньше."
+    }
+  ]
 }

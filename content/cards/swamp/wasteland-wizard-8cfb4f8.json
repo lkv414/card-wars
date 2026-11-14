@@ -15,5 +15,20 @@
   "id": "wasteland-wizard-8cfb4f8",
   "kind": "card",
   "image": "/content/cards/swamp/wasteland-wizard-8cfb4f8.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "discard_from_hand",
+        "count": 1
+      },
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "Когда пустошный чародей входит в игру, сбрось 1 карту."
+    }
+  ]
 }

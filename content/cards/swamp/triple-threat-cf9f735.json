@@ -15,5 +15,35 @@
   "id": "triple-threat-cf9f735",
   "kind": "card",
   "image": "/content/cards/swamp/triple-threat-cf9f735.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "stat_buff",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "stat": "attack",
+          "amount": 3,
+          "duration": "permanent"
+        },
+        {
+          "op": "discard_from_hand",
+          "count": 1
+        }
+      ],
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "Положи 3 на выбранное существо. Сбрось 1 карту."
+    }
+  ]
 }

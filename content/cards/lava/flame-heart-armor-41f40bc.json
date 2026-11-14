@@ -15,5 +15,17 @@
   "id": "flame-heart-armor-41f40bc",
   "kind": "card",
   "image": "/content/cards/lava/flame-heart-armor-41f40bc.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "flame_heart_armor_heal",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Подожги выбранное дружественное существо и сними с него весь урон. Возьми 1 карту."
+    }
+  ]
 }

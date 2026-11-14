@@ -15,5 +15,12 @@
   "id": "crisis-monarch-c52ed43",
   "kind": "card",
   "image": "/content/cards/rainbow/crisis-monarch-c52ed43.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "crisis_monarch_barrier",
+      "text": "Когда кризисный монарх входит в игру, уничтожь один из своих барьеров и получи его эффект."
+    }
+  ]
 }

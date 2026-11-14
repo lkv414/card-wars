@@ -15,5 +15,24 @@
   "id": "infinite-pies-debf177",
   "kind": "card",
   "image": "/content/cards/corn/infinite-pies-debf177.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Нанеси 2 урона сопернику. Если в твоём сбросе есть бесконечные пироги, ты можешь разыграть эту карту бесплатно."
+    }
+  ]
 }

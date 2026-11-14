@@ -15,5 +15,12 @@
   "id": "ice-purge-c0abb76",
   "kind": "card",
   "image": "/content/cards/icy/ice-purge-c0abb76.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "ice_purge_remove_token",
+      "text": "Возьми 2 карты. Ты можешь сбросить один жетон (кроме урона) с существа или земли. Если ты это сделаешь, соперник сбрасывает 1 карту."
+    }
+  ]
 }

@@ -15,5 +15,18 @@
   "id": "stealthy-avalanche-leopard-d46a0fa",
   "kind": "card",
   "image": "/content/cards/icy/stealthy-avalanche-leopard-d46a0fa.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_next_turn",
+      "optional": true,
+      "mechanic": "stealthy_leopard_freeze",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "В конце твоего хода, если ты разыграл 2 не ледяные карты, ты можешь заморозить землю."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "razveyatsya-dd59c95",
   "kind": "card",
   "image": "/content/cards/halloween/razveyatsya-dd59c95.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "disperse_freeze_per_ghost",
+      "text": "Заморозь 1 землю за каждое существо с призрак под вашим контролем."
+    }
+  ]
 }

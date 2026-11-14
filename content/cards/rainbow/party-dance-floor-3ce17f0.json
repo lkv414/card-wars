@@ -17,20 +17,15 @@
   "image": "/content/cards/rainbow/party-dance-floor-3ce17f0.webp",
   "abilities": [
     {
-      "kind": "active",
+      "kind": "passive",
       "effect": {
-        "op": "freeze_land",
+        "op": "counts_as",
         "target": {
-          "kind": "this_lane_lands"
+          "kind": "this_lane_land"
         },
-        "frozen": true
+        "landType": "rainbow"
       },
-      "conditions": [
-        {
-          "kind": "while_no_tokens_in_play"
-        }
-      ],
-      "text": "ПРИЕМ >>> Заморозь обе земли на этой линии. Используй только если нет Ледяных жетонов в игре."
+      "text": "Выездной танцпол считается копией земли под твоим контролем в этой зоне."
     }
   ]
 }

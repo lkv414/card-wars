@@ -15,5 +15,12 @@
   "id": "sword-fall-aa91aee",
   "kind": "card",
   "image": "/content/cards/rainbow/sword-fall-aa91aee.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "sword_fall_damage_by_atk",
+      "text": "Нанеси каждому существу под контролем соперника урон, равный его атаке."
+    }
+  ]
 }

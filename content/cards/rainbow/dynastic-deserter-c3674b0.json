@@ -15,5 +15,13 @@
   "id": "dynastic-deserter-c3674b0",
   "kind": "card",
   "image": "/content/cards/rainbow/dynastic-deserter-c3674b0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "mechanic": "dynastic_deserter_defect",
+      "text": "Когда династический дезертир выходит из игры, если ты владеешь им, ты можешь разыграть его на пустую землю другого игрока."
+    }
+  ]
 }

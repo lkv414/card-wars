@@ -15,5 +15,24 @@
   "id": "vent-guard-b4e806a",
   "kind": "card",
   "image": "/content/cards/lava/vent-guard-b4e806a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Когда страж жерлоба выходит из игры, нанеси 3 урона существу под контролем соперника."
+    }
+  ]
 }

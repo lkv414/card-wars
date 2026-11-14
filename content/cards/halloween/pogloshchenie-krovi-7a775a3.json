@@ -15,5 +15,17 @@
   "id": "pogloshchenie-krovi-7a775a3",
   "kind": "card",
   "image": "/content/cards/halloween/pogloshchenie-krovi-7a775a3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "blood_drain_cost_heal",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Сними Х урона с выбранного существа и возьми Х карт, где Х стоимость выбранного существа. Удали эту карту из игры."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "gniloy-korchevatel-63484de",
   "kind": "card",
   "image": "/content/cards/swamp/gniloy-korchevatel-63484de.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "mechanic": "rotten_grubber_damage_discard_creature",
+      "text": "Когда гнилой корчеватель наносит урон сопернику, этот соперник сбрасывает существо или показывает руку, если у него таких нет."
+    }
+  ]
 }

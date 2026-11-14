@@ -15,5 +15,11 @@
   "id": "polished-armadillo-d7d9c57",
   "kind": "card",
   "image": "/content/cards/nice/polished-armadillo-d7d9c57.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "polished_armadillo_grokhot_discount",
+      "text": "Грохот Если ты разыгрываешь другое существо с эффектом «Грохот», оно стоит на 1 действие меньше."
+    }
+  ]
 }

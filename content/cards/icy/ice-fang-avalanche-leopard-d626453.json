@@ -15,5 +15,21 @@
   "id": "ice-fang-avalanche-leopard-d626453",
   "kind": "card",
   "image": "/content/cards/icy/ice-fang-avalanche-leopard-d626453.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_card_discarded",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_player_opponent"
+        }
+      ],
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Каждый раз, когда другой игрок сбрасывает карту, ты можешь взять 1 карту."
+    }
+  ]
 }

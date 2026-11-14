@@ -15,5 +15,11 @@
   "id": "hot-head-5e9eed4",
   "kind": "card",
   "image": "/content/cards/lava/hot-head-5e9eed4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "hot_head_cost_reduction",
+      "text": "Жаркоголовый стоит на 1 действие меньше за каждое существо под твоим контролем за 1 действие."
+    }
+  ]
 }

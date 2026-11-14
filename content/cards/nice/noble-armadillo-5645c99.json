@@ -15,5 +15,12 @@
   "id": "noble-armadillo-5645c99",
   "kind": "card",
   "image": "/content/cards/nice/noble-armadillo-5645c99.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "noble_armadillo_taunt",
+      "text": "Грохот Когда существо под контролем соперника атакует, ты можешь выбрать его целью атаки благородного броненосца."
+    }
+  ]
 }

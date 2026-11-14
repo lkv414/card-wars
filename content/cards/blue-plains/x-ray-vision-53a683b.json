@@ -15,5 +15,12 @@
   "id": "x-ray-vision-53a683b",
   "kind": "card",
   "image": "/content/cards/blue-plains/x-ray-vision-53a683b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "x_ray_vision_play",
+      "text": "До конца хода раскрой верхнюю карту твоей колоды. Ты можешь разыгрывать раскрытые карты. Карты, разыгранные таким способом, стоят на 1 действие больше в этом ходу."
+    }
+  ]
 }

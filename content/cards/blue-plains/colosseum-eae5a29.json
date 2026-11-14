@@ -15,5 +15,26 @@
   "id": "colosseum-eae5a29",
   "kind": "card",
   "image": "/content/cards/blue-plains/colosseum-eae5a29.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": [
+        {
+          "op": "ready_creature",
+          "target": {
+            "kind": "this_lane_own_creature"
+          }
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "this_lane_own_creature"
+          },
+          "amount": 1
+        }
+      ],
+      "text": "ФЛЮП >>> Верни существо в подготовленное положение в этой зоне, затем нанеси ему 1 урон."
+    }
+  ]
 }

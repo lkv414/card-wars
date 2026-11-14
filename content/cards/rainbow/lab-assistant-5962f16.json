@@ -18,15 +18,10 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "attack_mod",
-        "target": {
-          "kind": "this_creature"
-        },
-        "atkBonus": 1,
-        "defenderType": "corn"
-      },
-      "text": "Получаем +1 АТК, когда атакуем существ с жёлтым цветом на них (он просто его не любит)."
+      "trigger": "on_spell_cast",
+      "optional": true,
+      "mechanic": "copy_spell",
+      "text": "Когда ты разыгрываешь заклинание не с руки, ты можешь применить его эффекты второй раз. (Ты можешь выбрать другую цель.)"
     }
   ]
 }

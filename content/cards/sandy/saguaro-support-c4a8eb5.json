@@ -15,5 +15,23 @@
   "id": "saguaro-support-c4a8eb5",
   "kind": "card",
   "image": "/content/cards/sandy/saguaro-support-c4a8eb5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 1,
+        "duration": "aura",
+        "filter": {
+          "landType": "sand",
+          "negate": true
+        }
+      },
+      "text": "Все не песчаные существа под твоим контролем получают +1 к атаке."
+    }
+  ]
 }

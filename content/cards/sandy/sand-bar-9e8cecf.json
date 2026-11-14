@@ -15,5 +15,11 @@
   "id": "sand-bar-9e8cecf",
   "kind": "card",
   "image": "/content/cards/sandy/sand-bar-9e8cecf.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "sand_bar_vote_win_draw",
+      "text": "Уловка Каждый раз когда ты выигрываешь голосование, каждый игрок берёт 1 карту."
+    }
+  ]
 }

@@ -15,5 +15,23 @@
   "id": "muck-summon-0d23946",
   "kind": "card",
   "image": "/content/cards/swamp/muck-summon-0d23946.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature_opponent"
+        },
+        "amount": 2
+      },
+      "text": "Нанеси 2 урона каждому существу под контролем соперника."
+    },
+    {
+      "kind": "passive",
+      "mechanic": "muck_summon_on_discard_play",
+      "text": "Когда ты сбрасываешь призыв грязи, ты можешь разыграть его бесплатно."
+    }
+  ]
 }

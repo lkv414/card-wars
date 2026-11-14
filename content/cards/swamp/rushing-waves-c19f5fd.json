@@ -15,5 +15,17 @@
   "id": "rushing-waves-c19f5fd",
   "kind": "card",
   "image": "/content/cards/swamp/rushing-waves-c19f5fd.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "rushing_waves_wipe_and_drop",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Уничтожь всех существ в зоне. Начиная с тебя, каждый игрок может положить существо с руки на свою землю в этой зоне."
+    }
+  ]
 }

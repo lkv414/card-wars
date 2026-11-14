@@ -15,5 +15,11 @@
   "id": "swamp-stalker-3fd7335",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-stalker-3fd7335.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "swamp_stalker_on_discard_play",
+      "text": "Когда ты сбрасываешь тинато крадущегося, ты можешь разыграть его бесплатно."
+    }
+  ]
 }

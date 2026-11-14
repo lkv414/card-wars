@@ -15,5 +15,20 @@
   "id": "grimuar-dush-dd024c0",
   "kind": "card",
   "image": "/content/cards/halloween/grimuar-dush-dd024c0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": {
+          "kind": "per_counter",
+          "counter": "creature_died",
+          "scope": "own",
+          "amount": 1
+        }
+      },
+      "text": "Возьми 1 карту за каждое уничтоженное существо под вашим контролем в этом ходу."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "hilly-snakee-eye-903992d",
   "kind": "card",
   "image": "/content/cards/nice/hilly-snakee-eye-903992d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "hilly_sheeglaz_heal",
+      "text": "Когда холмистый шееглаз входит в игру, сними 1 урон с каждого дружественного существа за каждое существо в игре с «шееглаз» в названии."
+    }
+  ]
 }

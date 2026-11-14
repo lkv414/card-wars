@@ -15,5 +15,12 @@
   "id": "raznotsvetnye-vydry-26359d8",
   "kind": "card",
   "image": "/content/cards/rainbow/raznotsvetnye-vydry-26359d8.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "colorful_otters_buff",
+      "text": "Когда разноцветные выдры входят в игру, положи на них 1 за каждое существо под твоим контролем с уникальным типом земли."
+    }
+  ]
 }

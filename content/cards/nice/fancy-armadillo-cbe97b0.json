@@ -15,5 +15,11 @@
   "id": "fancy-armadillo-cbe97b0",
   "kind": "card",
   "image": "/content/cards/nice/fancy-armadillo-cbe97b0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "fancy_armadillo_cost",
+      "text": "Если ты разыграл существо стоимостью 2 или больше в этот ход, ты можешь разыграть утончённого броненосца бесплатно."
+    }
+  ]
 }

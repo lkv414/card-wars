@@ -17,15 +17,18 @@
   "image": "/content/cards/lava/blacksmith-7fbf96a.webp",
   "abilities": [
     {
-      "kind": "passive",
-      "effect": {
-        "op": "defense_mod",
-        "target": {
-          "kind": "this_creature"
+      "kind": "active",
+      "cost": 0,
+      "oncePerTurn": true,
+      "targets": [
+        {
+          "kind": "own_hand_card"
         },
-        "atkBonus": 1
-      },
-      "text": "+1 АТК против милых и кукурузных существ. Если Карга убивает существо, твой противник получает урон, равный его стоимости."
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Сбрось карту >>> Положи на выбранное дружественное существо столько ⚔, сколько стоила сброшенная карта. (Лимит: Один раз за ход.)"
     }
   ]
 }

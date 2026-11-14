@@ -15,5 +15,17 @@
   "id": "crystal-ball-326d837",
   "kind": "card",
   "image": "/content/cards/rainbow/crystal-ball-326d837.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "crystal_ball_guess_play",
+      "targets": [
+        {
+          "kind": "visible_card"
+        }
+      ],
+      "text": "Назови карту и раскрой карту твоей колоды. Если это названная карта, разыграй её бесплатно."
+    }
+  ]
 }

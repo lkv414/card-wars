@@ -15,5 +15,17 @@
   "id": "tykvubiytsa-87b40da",
   "kind": "card",
   "image": "/content/cards/halloween/tykvubiytsa-87b40da.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "pumpkin_killer_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "ФЛЮП >>> нанеси 1 урона выбранному существу. Сделай это по разу за каждую карту с Тыквой в игре."
+    }
+  ]
 }

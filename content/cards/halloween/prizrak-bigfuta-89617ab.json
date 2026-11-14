@@ -15,5 +15,17 @@
   "id": "prizrak-bigfuta-89617ab",
   "kind": "card",
   "image": "/content/cards/halloween/prizrak-bigfuta-89617ab.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "bigfoot_ghost_unflip_land",
+      "targets": [
+        {
+          "kind": "own_landscape"
+        }
+      ],
+      "text": "ФЛЮП >>> Переверни лицевой стороной вверх выбранную перевёрнутую землю под твоим контролем, если ты перевернул землю призраков, возьми 1 карту."
+    }
+  ]
 }

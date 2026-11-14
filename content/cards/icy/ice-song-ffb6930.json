@@ -20,7 +20,7 @@
       "kind": "passive",
       "trigger": "on_cast",
       "mechanic": "freeze_one_land_each_player_and_draw",
-      "text": "Выбери и заморозь 1 землю у каждого игрока, затем тяни карту."
+      "text": "Заморозь 1 землю под контролем каждого игрока, возьми 1 карту."
     }
   ]
 }

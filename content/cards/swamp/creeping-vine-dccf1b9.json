@@ -15,5 +15,12 @@
   "id": "creeping-vine-dccf1b9",
   "kind": "card",
   "image": "/content/cards/swamp/creeping-vine-dccf1b9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "mechanic": "creeping_vine_threat",
+      "text": "В начале твоего хода, ползущий куст получает +3 к атаке в этот ход, если другой игрок не решит сбросить карту."
+    }
+  ]
 }

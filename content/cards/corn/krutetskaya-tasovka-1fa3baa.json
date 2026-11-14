@@ -15,5 +15,12 @@
   "id": "krutetskaya-tasovka-1fa3baa",
   "kind": "card",
   "image": "/content/cards/corn/krutetskaya-tasovka-1fa3baa.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "krutetskaya_tasovka_pick",
+      "text": "Выбери букву. Раскрой 3 карты твоей колоды. Возьми все карты на руку, имена которых начинаются с выбранной буквы, и сбрось остальные."
+    }
+  ]
 }

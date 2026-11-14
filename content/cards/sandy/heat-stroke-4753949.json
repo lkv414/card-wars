@@ -15,5 +15,12 @@
   "id": "heat-stroke-4753949",
   "kind": "card",
   "image": "/content/cards/sandy/heat-stroke-4753949.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "heat_stroke_each_player_picks",
+      "text": "Начиная с тебя, каждый игрок выбирает существо, которое ещё не выбирали в этот раз, и наносит ему 4 урона."
+    }
+  ]
 }

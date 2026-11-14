@@ -15,5 +15,17 @@
   "id": "butter-ram-4a50eb5",
   "kind": "card",
   "image": "/content/cards/corn/butter-ram-4a50eb5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "butter_ram_floop_damage",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Поверни сколько угодно существ под твоим контролем. Нанеси 2 урона выбранному сопернику за каждое существо, повёрнутое таким образом."
+    }
+  ]
 }

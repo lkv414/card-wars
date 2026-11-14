@@ -15,5 +15,28 @@
   "id": "avalanche-born-fca9424",
   "kind": "card",
   "image": "/content/cards/icy/avalanche-born-fca9424.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "avalanche_born_freeze",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Когда лавиннорождённый входит в игру, заморозь все твои земли и земли выбранного соперника."
+    },
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "allow_frozen_play",
+        "target": {
+          "kind": "this_creature"
+        },
+        "scope": "all"
+      },
+      "text": "Ты можешь разыгрывать существ, где лежит жетон мороза."
+    }
+  ]
 }

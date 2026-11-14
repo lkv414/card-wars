@@ -15,5 +15,12 @@
   "id": "svyashchennyy-rytsar-230f30f",
   "kind": "card",
   "image": "/content/cards/corn/svyashchennyy-rytsar-230f30f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "mechanic": "holy_knight_month_buff",
+      "text": "Если в текущем месяце 31 день, каждый раз, когда существо уничтожается, положи 1 жетон атаки на Священного Рыцаря."
+    }
+  ]
 }

@@ -15,5 +15,24 @@
   "id": "corn-goblin-0afa570",
   "kind": "card",
   "image": "/content/cards/corn/corn-goblin-0afa570.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "gain_shield",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Поглощение ФЛЮП >>> Положи ♆ на выбранное дружественное существо."
+    }
+  ]
 }

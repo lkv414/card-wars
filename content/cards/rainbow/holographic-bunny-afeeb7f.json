@@ -15,5 +15,11 @@
   "id": "holographic-bunny-afeeb7f",
   "kind": "card",
   "image": "/content/cards/rainbow/holographic-bunny-afeeb7f.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "holographic_bunny_damage_intercept",
+      "text": "Голографический кролик может находиться на одной земле с другим существом. Когда другое существо на этой земле получает урон, вместо этого нанеси урон голографическому кролику."
+    }
+  ]
 }

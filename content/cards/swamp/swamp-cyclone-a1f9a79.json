@@ -15,5 +15,12 @@
   "id": "swamp-cyclone-a1f9a79",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-cyclone-a1f9a79.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "swamp_cyclone_recycle",
+      "text": "Перемешай твой сброс. Верни 2 случайные карты из твоего сброса на руку, остальные карты положи под низ твоей колоды и удали эту карту из игры."
+    }
+  ]
 }

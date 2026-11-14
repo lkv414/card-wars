@@ -15,5 +15,17 @@
   "id": "pure-love-bonds-e4c8c79",
   "kind": "card",
   "image": "/content/cards/nice/pure-love-bonds-e4c8c79.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "mechanic": "pure_love_bonds_spell_react",
+      "text": "Когда ты разыгрываешь заклинание, сними 1 урон с дружественных существ в этой зоне. Если у тебя нет существ в этой зоне, выбранный игрок восстанавливает 1 жизнь."
+    }
+  ]
 }

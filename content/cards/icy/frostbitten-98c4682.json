@@ -15,5 +15,12 @@
   "id": "frostbitten-98c4682",
   "kind": "card",
   "image": "/content/cards/icy/frostbitten-98c4682.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "frostbitten_token_heal",
+      "text": "Убери любое количество жетонов мороза со своих земель и героя, затем восстанови 2 жизни за каждый убранный жетон мороза таким способом."
+    }
+  ]
 }

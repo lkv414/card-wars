@@ -15,5 +15,17 @@
   "id": "buffed-potion-5e087ac",
   "kind": "card",
   "image": "/content/cards/nice/buffed-potion-5e087ac.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "buffed_potion_heal_and_draw",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Сними 2 урона с выбранного существа и положи на него 2(+). Если атака этого существа 5 или больше, возьми 1 карту."
+    }
+  ]
 }

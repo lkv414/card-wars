@@ -15,5 +15,12 @@
   "id": "shock-box-9441956",
   "kind": "card",
   "image": "/content/cards/rainbow/shock-box-9441956.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "shock_box_recycle_heal",
+      "text": "Каждый игрок может выбрать до 3 карт из своего сброса и перемешать их в колоду. Восстанови 1 жизнь за каждую выбранную карту."
+    }
+  ]
 }

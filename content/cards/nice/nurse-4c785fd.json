@@ -15,5 +15,18 @@
   "id": "nurse-4c785fd",
   "kind": "card",
   "image": "/content/cards/nice/nurse-4c785fd.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "nurse_reveal_heal",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Когда медсестра входит в игру, ты можешь раскрыть любое заклинание из твоей руки. За каждое заклинание, раскрытое таким образом, выбранный игрок восстанавливает 2 жизни."
+    }
+  ]
 }

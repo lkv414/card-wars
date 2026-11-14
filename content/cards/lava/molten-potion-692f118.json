@@ -15,5 +15,17 @@
   "id": "molten-potion-692f118",
   "kind": "card",
   "image": "/content/cards/lava/molten-potion-692f118.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "molten_potion_burn_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Подожги выбранное существо. Нанеси 2 урона каждому горящему существу под контролем соперника."
+    }
+  ]
 }

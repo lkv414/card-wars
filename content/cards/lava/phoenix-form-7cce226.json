@@ -19,45 +19,7 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "effect": [
-        {
-          "op": "destroy",
-          "target": {
-            "kind": "choice",
-            "index": 0
-          }
-        },
-        {
-          "op": "play_from_discard",
-          "target": {
-            "kind": "choice",
-            "index": 1
-          },
-          "destination": {
-            "kind": "choice",
-            "index": 2
-          },
-          "from": "any"
-        }
-      ],
-      "text": "Уничтожь своё существо без урона на нём, затем возьми и бесплатно сыграй любое существо из твоего сброса или сброса противника.",
-      "targets": [
-        {
-          "kind": "own_creature",
-          "filter": {
-            "undamaged": true
-          }
-        },
-        {
-          "kind": "any_discard_card",
-          "filter": {
-            "cardType": "creature"
-          }
-        },
-        {
-          "kind": "landscape"
-        }
-      ]
+      "text": "Положи 2 существ из твоего сброса. В конце твоего хода уничтожь этих существ."
     }
   ]
 }

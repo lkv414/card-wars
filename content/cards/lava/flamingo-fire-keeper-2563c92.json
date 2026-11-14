@@ -15,5 +15,20 @@
   "id": "flamingo-fire-keeper-2563c92",
   "kind": "card",
   "image": "/content/cards/lava/flamingo-fire-keeper-2563c92.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "flamingo_fire_keeper_burn_drain",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        },
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Убери жетон ожога с существа под контролем соперника >>> Нанеси 1 урон выбранному сопернику."
+    }
+  ]
 }

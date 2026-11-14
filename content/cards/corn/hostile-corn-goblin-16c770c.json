@@ -15,5 +15,12 @@
   "id": "hostile-corn-goblin-16c770c",
   "kind": "card",
   "image": "/content/cards/corn/hostile-corn-goblin-16c770c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "mechanic": "hostile_corn_goblin_strike",
+      "text": "Поглощение Когда ты заменяешь враждебного кукугоблина, существо, которое его заменяет, сначала наносит урон, равный своей атаке, существу под контролем соперника в этой зоне."
+    }
+  ]
 }

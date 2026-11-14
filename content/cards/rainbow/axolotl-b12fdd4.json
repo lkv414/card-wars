@@ -15,5 +15,24 @@
   "id": "axolotl-b12fdd4",
   "kind": "card",
   "image": "/content/cards/rainbow/axolotl-b12fdd4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "ФЛЮП >>> Выбранный игрок восстанавливает 3 жизни."
+    }
+  ]
 }

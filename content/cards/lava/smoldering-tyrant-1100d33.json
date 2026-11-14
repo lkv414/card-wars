@@ -15,5 +15,11 @@
   "id": "smoldering-tyrant-1100d33",
   "kind": "card",
   "image": "/content/cards/lava/smoldering-tyrant-1100d33.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "smoldering_tyrant_double_attack",
+      "text": "Если у тебя на руке не больше 1 карты, удвой атаку тлеющего тирана."
+    }
+  ]
 }

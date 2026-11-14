@@ -15,5 +15,34 @@
   "id": "fishing-hole-3b01d07",
   "kind": "card",
   "image": "/content/cards/icy/fishing-hole-3b01d07.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": [
+        {
+          "op": "reveal_until",
+          "max": 99,
+          "match": {
+            "type": "creature"
+          }
+        },
+        {
+          "op": "resolve_revealed",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "to": "deck_top",
+          "rest": "deck"
+        }
+      ],
+      "targets": [
+        {
+          "kind": "revealed_card"
+        }
+      ],
+      "text": "ФЛЮП >>> Раскрой карты с верха своей колоды, пока не раскроешь существо. Перемешай все остальные открытые карты обратно в колоду и положи это существо наверх колоды."
+    }
+  ]
 }

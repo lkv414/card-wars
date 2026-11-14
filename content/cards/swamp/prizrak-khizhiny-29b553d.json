@@ -15,5 +15,17 @@
   "id": "prizrak-khizhiny-29b553d",
   "kind": "card",
   "image": "/content/cards/swamp/prizrak-khizhiny-29b553d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ],
+      "mechanic": "hut_ghost_enter_cycle",
+      "text": "Когда существо входит в эту зону, тот, кто его контролирует, сбрасывает 1 карту. Если он это делает, то берёт 1 карту."
+    }
+  ]
 }

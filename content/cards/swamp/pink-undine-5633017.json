@@ -17,37 +17,20 @@
   "image": "/content/cards/swamp/pink-undine-5633017.webp",
   "abilities": [
     {
-      "kind": "passive",
-      "trigger": "start_of_turn",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "this_creature"
-        },
-        "stat": "defense",
-        "amount": 1,
-        "duration": "permanent"
+      "kind": "active",
+      "cost": 0,
+      "oncePerTurn": true,
+      "additionalCost": {
+        "discardFromHand": 1
       },
-      "text": "Начиная со следующего твоего хода каждый ход получает +1 DEF навсегда."
-    },
-    {
-      "kind": "passive",
       "effect": {
-        "op": "stat_buff",
+        "op": "deal_damage",
         "target": {
-          "kind": "this_lane_opponent_creature"
+          "kind": "each_creature_opponent"
         },
-        "stat": "attack",
-        "amount": -1,
-        "duration": "aura",
-        "conditions": [
-          {
-            "kind": "while_undamaged",
-            "scope": "target"
-          }
-        ]
+        "amount": 1
       },
-      "text": "Существа противника на этой линии без урона на них, видя дух, паникуют и теряют 1 АТК."
+      "text": "Сбрось карту >>> Нанеси 1 урон каждому существу под контролем соперника. (Используй только 1 раз за твой ход.)"
     }
   ]
 }

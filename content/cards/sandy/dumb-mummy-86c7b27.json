@@ -15,5 +15,15 @@
   "id": "dumb-mummy-86c7b27",
   "kind": "card",
   "image": "/content/cards/sandy/dumb-mummy-86c7b27.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "gain_actions",
+        "amount": 1
+      },
+      "text": "ФЛЮП >>> Получи 1 действие в этот ход."
+    }
+  ]
 }

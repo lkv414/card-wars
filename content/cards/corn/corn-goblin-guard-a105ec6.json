@@ -15,5 +15,17 @@
   "id": "corn-goblin-guard-a105ec6",
   "kind": "card",
   "image": "/content/cards/corn/corn-goblin-guard-a105ec6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "suppress",
+        "target": {
+          "kind": "this_creature"
+        },
+        "attacks": true
+      },
+      "text": "Поглощение Кукугоблин страж не может атаковать (но может защищаться)."
+    }
+  ]
 }

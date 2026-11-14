@@ -15,5 +15,11 @@
   "id": "vulkanogolovyy-f1a1947",
   "kind": "card",
   "image": "/content/cards/halloween/vulkanogolovyy-f1a1947.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "volcano_head_burn",
+      "text": "Вулканоголовый стоит на 1 действие меньше за каждый жетон ожога на сопернике. Когда вулканоголовый наносит урон сопернику, подожги его. (В начале хода каждого игрока он получает 1 урон за каждый жетон ожога.)"
+    }
+  ]
 }

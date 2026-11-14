@@ -15,5 +15,18 @@
   "id": "flame-crawler-e693c20",
   "kind": "card",
   "image": "/content/cards/lava/flame-crawler-e693c20.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "mechanic": "flame_crawler_spread_burn",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда горящее существо под контролем соперника покидает игру, ты можешь поджечь выбранное существо один раз за каждый жетон ожога на покинувшем игру существе."
+    }
+  ]
 }

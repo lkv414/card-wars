@@ -15,5 +15,17 @@
   "id": "will-83e4409",
   "kind": "card",
   "image": "/content/cards/blue-plains/will-83e4409.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "will_death_curse",
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Положи завещание под существо соперника. Если оно будет уничтожено, нанеси сопернику 4 урона."
+    }
+  ]
 }

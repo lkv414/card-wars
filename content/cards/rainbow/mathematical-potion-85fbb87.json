@@ -15,5 +15,17 @@
   "id": "mathematical-potion-85fbb87",
   "kind": "card",
   "image": "/content/cards/rainbow/mathematical-potion-85fbb87.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "mathematical_potion_draw_top",
+      "targets": [
+        {
+          "kind": "own_hand_card"
+        }
+      ],
+      "text": "Возьми 3 карты, затем положи 1 карту с руки наверх твоей колоды."
+    }
+  ]
 }

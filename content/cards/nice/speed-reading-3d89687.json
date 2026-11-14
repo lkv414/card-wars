@@ -15,5 +15,12 @@
   "id": "speed-reading-3d89687",
   "kind": "card",
   "image": "/content/cards/nice/speed-reading-3d89687.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "speed_reading_repeat",
+      "text": "Возьми 2 карты, затем сбрось 2 карты. Если ты сбросил равнинное заклинание, ты можешь повторить этого эффект 1 раз."
+    }
+  ]
 }

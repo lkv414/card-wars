@@ -15,5 +15,12 @@
   "id": "knightly-armadillo-1b0c2b3",
   "kind": "card",
   "image": "/content/cards/nice/knightly-armadillo-1b0c2b3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "knightly_armadillo_replace_play",
+      "text": "Когда рыцарский броненосец заменяет существо, разыграй верхнюю карту твоей колоды бесплатно."
+    }
+  ]
 }

@@ -15,5 +15,18 @@
   "id": "living-tower-6b8a397",
   "kind": "card",
   "image": "/content/cards/nice/living-tower-6b8a397.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_lane_own_creature"
+        },
+        "amount": 1
+      },
+      "text": "В начале твоего хода, сними 1 урон с дружественных существ в этой зоне."
+    }
+  ]
 }

@@ -15,5 +15,17 @@
   "id": "chronos-drain-dc44bd2",
   "kind": "card",
   "image": "/content/cards/swamp/chronos-drain-dc44bd2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "chronos_drake_mill_creatures",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Когда Временной Дрейк входит в игру, раскрой 5 карт с верха колоды выбранного игрока. Сбрось всех раскрытых существ, затем остальные карты положи обратно в любом порядке. Положи Временному Дрейку ⚔ за каждое существо, сброшенное таким образом."
+    }
+  ]
 }

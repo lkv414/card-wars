@@ -15,5 +15,24 @@
   "id": "annoying-clam-57378d5",
   "kind": "card",
   "image": "/content/cards/rainbow/annoying-clam-57378d5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Когда назойливый краволюск атакует, сними 1 урон с дружественного существа."
+    }
+  ]
 }

@@ -15,5 +15,24 @@
   "id": "blue-cotton-candy-ca7fea0",
   "kind": "card",
   "image": "/content/cards/nice/blue-cotton-candy-ca7fea0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Сними с выбранного существа под твоим контролем 3 урона или меньше."
+    }
+  ]
 }

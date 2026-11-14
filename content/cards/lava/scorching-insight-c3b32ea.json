@@ -15,5 +15,17 @@
   "id": "scorching-insight-c3b32ea",
   "kind": "card",
   "image": "/content/cards/lava/scorching-insight-c3b32ea.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "scorching_insight_burn_draw",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Подожги выбранное существо. Если у тебя на руке не больше 1 карты, возьми 3 карты."
+    }
+  ]
 }

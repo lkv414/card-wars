@@ -15,5 +15,17 @@
   "id": "swamp-gas-b51fb6e",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-gas-b51fb6e.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "swamp_gas_damage_discard",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси 3 урона выбранному существу. Если оно уничтожается этим способом, владелец существа сбрасывает 1 карту."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "kontrolyor-kachestva-6d58e86",
   "kind": "card",
   "image": "/content/cards/rainbow/kontrolyor-kachestva-6d58e86.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "mechanic": "quality_controller_shuffle",
+      "text": "Когда контролёр качества выходит из игры, замешай его в исследовательские заметки."
+    }
+  ]
 }

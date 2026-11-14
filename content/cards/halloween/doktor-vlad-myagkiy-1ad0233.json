@@ -18,47 +18,15 @@
   "abilities": [
     {
       "kind": "active",
-      "targets": [
-        {
-          "kind": "choose_option",
-          "options": [
-            "all",
-            "one"
-          ],
-          "label": "Оглушительный «Кудах!»"
-        }
-      ],
-      "effect": [
-        {
-          "op": "deal_damage",
-          "target": {
-            "kind": "each_creature_opponent"
-          },
-          "amount": 1,
-          "conditions": [
-            {
-              "kind": "if_option",
-              "index": 0,
-              "option": "all"
-            }
-          ]
+      "cost": 0,
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "each_creature_yours"
         },
-        {
-          "op": "deal_damage",
-          "target": {
-            "kind": "this_lane_opponent_creature"
-          },
-          "amount": 3,
-          "conditions": [
-            {
-              "kind": "if_option",
-              "index": 0,
-              "option": "one"
-            }
-          ]
-        }
-      ],
-      "text": "Приём: Оглушительный «Кудах!». Наносит 1 урон всем существам противника ИЛИ 3 урона существу перед Духом воплекура."
+        "amount": 2
+      },
+      "text": "ФЛЮП >>> Сними 2 урона со всех своих существ, если количество урона, нанесенного доктору владу мягкому, равно 5 или больше, твои существа получают +2 к атаке в этом ходу."
     }
   ]
 }

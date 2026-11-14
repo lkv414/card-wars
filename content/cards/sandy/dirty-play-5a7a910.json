@@ -15,5 +15,17 @@
   "id": "dirty-play-5a7a910",
   "kind": "card",
   "image": "/content/cards/sandy/dirty-play-5a7a910.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "dirty_play_coinflip",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Подбрось монету. Орёл, выбранный соперник получает на 1 действие меньше в свой ход. Решка, получи 1 действие. Удали карту из игры."
+    }
+  ]
 }

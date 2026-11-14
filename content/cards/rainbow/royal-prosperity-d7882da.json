@@ -15,5 +15,18 @@
   "id": "royal-prosperity-d7882da",
   "kind": "card",
   "image": "/content/cards/rainbow/royal-prosperity-d7882da.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "draw_cards",
+        "count": 2,
+        "target": {
+          "kind": "each_player"
+        }
+      },
+      "text": "Каждый игрок берёт 2 карты."
+    }
+  ]
 }

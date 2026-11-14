@@ -15,5 +15,11 @@
   "id": "platypus-3921ee9",
   "kind": "card",
   "image": "/content/cards/blue-plains/platypus-3921ee9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "platypus_attack_aura",
+      "text": "+1 к атаке за каждую карту стоимостью 0 в твоём сбросе."
+    }
+  ]
 }

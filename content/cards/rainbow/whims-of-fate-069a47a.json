@@ -15,5 +15,12 @@
   "id": "whims-of-fate-069a47a",
   "kind": "card",
   "image": "/content/cards/rainbow/whims-of-fate-069a47a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "whims_of_fate_coinflip",
+      "text": "Подкинь монету. Если тебе выпал орёл, уничтожь выбранное существо под твоим контролем. Если тебе выпала решка, разыграй существо из твоего сброса на пустую землю под твоим контролем."
+    }
+  ]
 }

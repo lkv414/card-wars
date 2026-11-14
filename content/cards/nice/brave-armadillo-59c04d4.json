@@ -15,5 +15,38 @@
   "id": "brave-armadillo-59c04d4",
   "kind": "card",
   "image": "/content/cards/nice/brave-armadillo-59c04d4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "conditions": [
+        {
+          "kind": "if_payload_killer_self"
+        }
+      ],
+      "effect": [
+        {
+          "op": "heal",
+          "target": {
+            "kind": "self_player"
+          },
+          "amount": 2
+        },
+        {
+          "op": "deal_damage",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 2
+        }
+      ],
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Грохот Когда отважный броненосец побеждает существо под контролем соперника, ты восстанавливаешь 2 жизни и наносишь 2 урона выбранному сопернику."
+    }
+  ]
 }

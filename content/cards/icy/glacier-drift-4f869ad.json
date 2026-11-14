@@ -15,5 +15,20 @@
   "id": "glacier-drift-4f869ad",
   "kind": "card",
   "image": "/content/cards/icy/glacier-drift-4f869ad.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "glacier_drift_move",
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Перемести выбранное дружественное существо в пустую зону. Заморозь землю под конролем соперника в той зоне."
+    }
+  ]
 }

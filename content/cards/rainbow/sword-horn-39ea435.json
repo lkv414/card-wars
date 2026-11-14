@@ -15,5 +15,17 @@
   "id": "sword-horn-39ea435",
   "kind": "card",
   "image": "/content/cards/rainbow/sword-horn-39ea435.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "sword_horn_repeat_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Положи 1 урон на выбранное существо. Повтори это за каждые 2 заклинания в твоём сбросе."
+    }
+  ]
 }

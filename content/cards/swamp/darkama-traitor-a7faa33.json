@@ -15,5 +15,12 @@
   "id": "darkama-traitor-a7faa33",
   "kind": "card",
   "image": "/content/cards/swamp/darkama-traitor-a7faa33.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "darkama_traitor_discard_wound",
+      "text": "Когда мракама предатель входит в игру, каждый игрок может сбросить 1 карту, чтобы положить 1 рану на одно из своих существ."
+    }
+  ]
 }

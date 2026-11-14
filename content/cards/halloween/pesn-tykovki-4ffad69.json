@@ -15,5 +15,12 @@
   "id": "pesn-tykovki-4ffad69",
   "kind": "card",
   "image": "/content/cards/halloween/pesn-tykovki-4ffad69.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "pumpkin_song_freeze",
+      "text": "Заморозь по 1 выбранной земле каждого игрока, если ты заморозил землю с существом с тыквой, то возьми 2 карты."
+    }
+  ]
 }

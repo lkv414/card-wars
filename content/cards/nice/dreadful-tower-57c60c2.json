@@ -15,5 +15,12 @@
   "id": "dreadful-tower-57c60c2",
   "kind": "card",
   "image": "/content/cards/nice/dreadful-tower-57c60c2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "dreadful_tower_play_top2",
+      "text": "Уничтожь существо под твоим контролем в этой зоне и ФЛЮП >>> Разыграй бесплатно 2 карты с верха твоей колоды."
+    }
+  ]
 }

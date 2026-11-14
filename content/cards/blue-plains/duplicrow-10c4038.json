@@ -17,27 +17,16 @@
   "image": "/content/cards/blue-plains/duplicrow-10c4038.webp",
   "abilities": [
     {
-      "kind": "passive",
+      "kind": "active",
+      "cost": 0,
       "effect": {
-        "op": "stat_buff",
+        "op": "deal_damage",
         "target": {
-          "kind": "this_creature"
+          "kind": "each_creature_opponent"
         },
-        "stat": "defense",
-        "amount": {
-          "kind": "per_target",
-          "target": {
-            "kind": "each_creature"
-          },
-          "amount": 1,
-          "excludeSelf": true,
-          "filter": {
-            "sameCard": true
-          }
-        },
-        "duration": "aura"
+        "amount": 2
       },
-      "text": "«Добрый вечер!» +1 DEF, если на поле есть ещё один Прячный скелет."
+      "text": "ФЛЮП >>> Если ты разыграл 2 или более не равнинных карт в этот ход, нанеси 2 урона каждому существу под контролем соперника."
     }
   ]
 }

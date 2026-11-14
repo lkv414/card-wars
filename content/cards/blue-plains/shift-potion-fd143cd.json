@@ -15,5 +15,17 @@
   "id": "shift-potion-fd143cd",
   "kind": "card",
   "image": "/content/cards/blue-plains/shift-potion-fd143cd.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "shift_potion_building",
+      "targets": [
+        {
+          "kind": "own_building"
+        }
+      ],
+      "text": "Верни в подготовленное положение строение под твоим контролем. Ты можешь переместить его на пустую дружественную землю."
+    }
+  ]
 }

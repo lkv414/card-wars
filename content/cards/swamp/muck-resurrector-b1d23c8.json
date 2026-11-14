@@ -15,5 +15,27 @@
   "id": "muck-resurrector-b1d23c8",
   "kind": "card",
   "image": "/content/cards/swamp/muck-resurrector-b1d23c8.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "play_from_discard",
+        "match": {
+          "type": "creature",
+          "maxCost": 1
+        }
+      },
+      "targets": [
+        {
+          "kind": "own_discard_card",
+          "filter": {
+            "cardType": "creature",
+            "maxCost": 1
+          }
+        }
+      ],
+      "text": "ФЛЮП >>> Разыграй существо за 1 действие из твоего сброса."
+    }
+  ]
 }

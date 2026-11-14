@@ -15,5 +15,11 @@
   "id": "cyclops-90eb04a",
   "kind": "card",
   "image": "/content/cards/rainbow/cyclops-90eb04a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "cyclops_eye_count_def",
+      "text": "+1 к защите за каждый открытый глаз на других существах под твоим контролем."
+    }
+  ]
 }

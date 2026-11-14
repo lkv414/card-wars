@@ -15,5 +15,17 @@
   "id": "clawed-avalanche-leopard-ebe90c9",
   "kind": "card",
   "image": "/content/cards/icy/clawed-avalanche-leopard-ebe90c9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "clawed_avalanche_leopard",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Когда когтистый лавинопард входит в игру, заморозь выбранную землю под контролем соперника. Когда с любой земли сбрасывают жетон мороза, сними весь урон с когтистого лавинопарда."
+    }
+  ]
 }

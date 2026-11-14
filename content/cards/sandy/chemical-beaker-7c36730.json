@@ -15,5 +15,24 @@
   "id": "chemical-beaker-7c36730",
   "kind": "card",
   "image": "/content/cards/sandy/chemical-beaker-7c36730.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_counter_at_most",
+          "counter": "spell_cast",
+          "max": 1,
+          "scope": "own"
+        },
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "mechanic": "chemical_beaker_duplicate_spell",
+      "text": "Когда ты разыгрываешь своё первое заклинание в каждом ходу, ты можешь применить его эффекты второй раз. (Ты можешь выбрать разные цели.)"
+    }
+  ]
 }

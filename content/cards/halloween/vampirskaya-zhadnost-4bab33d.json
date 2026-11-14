@@ -15,5 +15,17 @@
   "id": "vampirskaya-zhadnost-4bab33d",
   "kind": "card",
   "image": "/content/cards/halloween/vampirskaya-zhadnost-4bab33d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "vampiric_greed_buff",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Выбери существо под своим контролем и нанеси ему Х урона, ваши существа получают +Х к атаке в этом ходу, где Х равен атаке выбранного существа."
+    }
+  ]
 }

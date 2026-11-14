@@ -15,5 +15,12 @@
   "id": "flame-wheel-086348e",
   "kind": "card",
   "image": "/content/cards/lava/flame-wheel-086348e.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 1,
+      "mechanic": "flame_wheel_reveal_burn",
+      "text": "Потрать 1 действие >>> Возьми 1 карту и раскрой её. Затем подожги существо в зоне пламенного колеса столько раз, сколько стоит раскрытая карта."
+    }
+  ]
 }

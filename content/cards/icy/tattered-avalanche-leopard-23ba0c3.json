@@ -15,5 +15,17 @@
   "id": "tattered-avalanche-leopard-23ba0c3",
   "kind": "card",
   "image": "/content/cards/icy/tattered-avalanche-leopard-23ba0c3.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "tattered_leopard_cycle",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "ФЛЮП >>> Каждый игрок берёт и сбрасывает карту за каждую землю с жетоном мороза. Заморозь землю под контролем соперника."
+    }
+  ]
 }

@@ -15,5 +15,11 @@
   "id": "beetroot-73a5c39",
   "kind": "card",
   "image": "/content/cards/blue-plains/beetroot-73a5c39.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "beetroot_attack_and_draw",
+      "text": "Битрот получает +1 к атаке за каждую карту на твоей руке. Когда битрот побеждает существо, возьми 1 карту."
+    }
+  ]
 }

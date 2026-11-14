@@ -15,5 +15,11 @@
   "id": "fire-flamingo-5eb6a0d",
   "kind": "card",
   "image": "/content/cards/lava/fire-flamingo-5eb6a0d.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "fire_flamingo_burn_immunity",
+      "text": "Огнеминго пожарный игнорирует первые 2 урона, которые ему наносят горящие существа, на каждом ходу."
+    }
+  ]
 }

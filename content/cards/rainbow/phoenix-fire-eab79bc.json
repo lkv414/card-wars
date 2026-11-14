@@ -15,5 +15,18 @@
   "id": "phoenix-fire-eab79bc",
   "kind": "card",
   "image": "/content/cards/rainbow/phoenix-fire-eab79bc.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_death",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        }
+      ],
+      "mechanic": "phoenix_fire_resurrect_lane",
+      "text": "Когда существо в этой зоне уничтожено, ты можешь уничтожить костёр феникса, чтобы вернуть это существо обратно в эту же зону."
+    }
+  ]
 }

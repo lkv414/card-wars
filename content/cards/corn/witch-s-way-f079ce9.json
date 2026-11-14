@@ -15,5 +15,23 @@
   "id": "witch-s-way-f079ce9",
   "kind": "card",
   "image": "/content/cards/corn/witch-s-way-f079ce9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "each_creature_yours"
+        },
+        "stat": "attack",
+        "amount": 2,
+        "duration": "this_turn",
+        "filter": {
+          "zoneLandType": "swamp"
+        }
+      },
+      "text": "Каждое твоё существо на бесполезном болоте получает +2 к атаке в этом ходу."
+    }
+  ]
 }

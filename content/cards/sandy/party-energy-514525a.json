@@ -15,5 +15,12 @@
   "id": "party-energy-514525a",
   "kind": "card",
   "image": "/content/cards/sandy/party-energy-514525a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "party_energy_move_buff",
+      "text": "Перемести всех существ под твоим контролем в другую зону. Каждое существо, которое переместилось в другую зону получает +2 к атаке в этот ход."
+    }
+  ]
 }

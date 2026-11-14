@@ -15,5 +15,17 @@
   "id": "sweet-meat-overload-c9fd445",
   "kind": "card",
   "image": "/content/cards/swamp/sweet-meat-overload-c9fd445.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "sweet_meat_heal_removed",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Выбранный игрок восстанавливает 1 жизнь за каждую карту, которую удалили из игры."
+    }
+  ]
 }

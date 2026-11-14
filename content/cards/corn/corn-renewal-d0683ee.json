@@ -15,5 +15,20 @@
   "id": "corn-renewal-d0683ee",
   "kind": "card",
   "image": "/content/cards/corn/corn-renewal-d0683ee.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "corn_renewal_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        },
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Нанеси урон выбранному существу, равный количеству урона на одном из твоих существ."
+    }
+  ]
 }

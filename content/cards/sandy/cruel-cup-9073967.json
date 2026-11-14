@@ -15,5 +15,29 @@
   "id": "cruel-cup-9073967",
   "kind": "card",
   "image": "/content/cards/sandy/cruel-cup-9073967.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_spell_cast",
+      "conditions": [
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 2
+      },
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "После того как ты разыграл заклинание, нанеси 2 урона существу под контролем соперника."
+    }
+  ]
 }

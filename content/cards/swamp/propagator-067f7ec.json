@@ -15,5 +15,17 @@
   "id": "propagator-067f7ec",
   "kind": "card",
   "image": "/content/cards/swamp/propagator-067f7ec.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "propagator_guess_actions",
+      "targets": [
+        {
+          "kind": "visible_card"
+        }
+      ],
+      "text": "Когда ПропаКрок входит в игру, назови карту. Раскрой верхнюю карту твоей колоды. Если это названная карта, сбрось её и получи 2 действия."
+    }
+  ]
 }

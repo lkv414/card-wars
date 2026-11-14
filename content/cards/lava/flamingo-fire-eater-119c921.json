@@ -17,29 +17,12 @@
   "image": "/content/cards/lava/flamingo-fire-eater-119c921.webp",
   "abilities": [
     {
-      "kind": "active",
-      "effect": [
-        {
-          "op": "attach_card",
-          "card": {
-            "kind": "opponent_discard_top"
-          },
-          "to": {
-            "kind": "this_creature"
-          },
-          "from": "discard"
-        },
-        {
-          "op": "stat_buff",
-          "target": {
-            "kind": "this_creature"
-          },
-          "stat": "attack",
-          "amount": 1,
-          "duration": "permanent"
-        }
-      ],
-      "text": "Питается павшими. Приём >>> Уничтожь верхнюю карту сброса противника и получи постоянно +1 АТК. Положи эту карту под него; при смерти сбрось все карты под ним."
+      "kind": "passive",
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Первый раз, когда ты поджигаешь существо в каждом ходу, возьми 1 карту."
     }
   ]
 }

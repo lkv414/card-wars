@@ -15,5 +15,30 @@
   "id": "beach-worm-bde25ce",
   "kind": "card",
   "image": "/content/cards/sandy/beach-worm-bde25ce.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "while_distinct_lands",
+          "min": 4
+        }
+      ],
+      "effect": {
+        "op": "destroy",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        }
+      },
+      "targets": [
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Когда пляжный червь входит в игру, если под твоим контролем существа 4 уникальных типов земель, ты можешь уничтожить выбранное существо под контролем соперника."
+    }
+  ]
 }

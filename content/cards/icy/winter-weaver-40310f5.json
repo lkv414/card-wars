@@ -15,5 +15,12 @@
   "id": "winter-weaver-40310f5",
   "kind": "card",
   "image": "/content/cards/icy/winter-weaver-40310f5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "winter_weaver_cycle",
+      "text": "ФЛЮП >>> Возьми 1 карту. Каждый игрок у кого на земле жетон мороза сбрасывает 1 карту."
+    }
+  ]
 }

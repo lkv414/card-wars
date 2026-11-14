@@ -185,4 +185,126 @@ describe('Audited Mechanics Unit Tests', () => {
     expect(next.players[P1]!.lands[1]!.flipped).toBe(true);
     expect(next.players[P1]!.discard).toContain(bId);
   });
+
+  it('grand_prix_replay: returns played creature to hand, replays for free, deals 3 damage', () => {
+    let s = createMatch(deps, makeSetup()).state;
+    const cId = 'played-this-turn';
+    s = produce(s, (d) => {
+      d.instances[cId] = makeInstance(cId, 'card-c1', P1, 0);
+      d.instances[cId]!.enteredThisTurn = true;
+      d.players[P1]!.zones[0]!.creature = cId;
+    });
+
+    const { ctx } = createTestCtx();
+    const source: EffectSource = { player: P1, instanceId: null };
+    const next = produce(s, (draft) => {
+      runMechanic(draft, ctx, 'grand_prix_replay', source, undefined, [
+        { kind: 'creature', instanceId: cId },
+      ], undefined, P1);
+    });
+
+    // The creature should be back in the zone with 3 damage
+    expect(next.players[P1]!.zones[0]!.creature).toBe(cId);
+    expect(next.instances[cId]!.location).toBe('field');
+    expect(next.instances[cId]!.damage).toBe(3);
+  });
+
+  it('basalt_colossus_burn: puts burn token on target creature and deals damage equal to all burn tokens', () => {
+    let s = createMatch(deps, makeSetup()).state;
+    const oppC = 'opp-burn-target';
+    s = produce(s, (d) => {
+      d.instances[oppC] = makeInstance(oppC, 'card-opp-burn', P2, 0);
+      d.players[P2]!.zones[0]!.creature = oppC;
+    });
+
+    const { ctx } = createTestCtx();
+    const source: EffectSource = { player: P1, instanceId: null };
+    const next = produce(s, (draft) => {
+      runMechanic(draft, ctx, 'basalt_colossus_burn', source, undefined, [
+        { kind: 'creature', instanceId: oppC },
+      ], undefined, P1);
+    });
+
+    expect(next.instances[oppC]!.burnTokens).toBe(1);
+    expect(next.instances[oppC]!.damage).toBe(1);
+  });
+
+  it('fiery_crater_remove_burn_damage: removes burn token from creature and deals 3 damage', () => {
+    let s = createMatch(deps, makeSetup()).state;
+    const targetC = 'target-burn-c';
+    s = produce(s, (d) => {
+      const inst = makeInstance(targetC, 'card-tc', P2, 0);
+      inst.burnTokens = 2;
+      d.instances[targetC] = inst;
+      d.players[P2]!.zones[0]!.creature = targetC;
+    });
+
+    const { ctx } = createTestCtx();
+    const source: EffectSource = { player: P1, instanceId: null };
+    const next = produce(s, (draft) => {
+      runMechanic(draft, ctx, 'fiery_crater_remove_burn_damage', source, undefined, [
+        { kind: 'creature', instanceId: targetC },
+      ], undefined, P1);
+    });
+
+    expect(next.instances[targetC]!.burnTokens).toBe(1);
+    expect(next.instances[targetC]!.damage).toBe(3);
+  });
+
+  it('volcanic_awakening_double_burn: doubles burn tokens on all creatures in game', () => {
+    let s = createMatch(deps, makeSetup()).state;
+    const c1 = 'burn-c1';
+    const c2 = 'burn-c2';
+    s = produce(s, (d) => {
+      const inst1 = makeInstance(c1, 'c1', P1, 0);
+      inst1.burnTokens = 2;
+      d.instances[c1] = inst1;
+      d.players[P1]!.zones[0]!.creature = c1;
+
+      const inst2 = makeInstance(c2, 'c2', P2, 1);
+      inst2.burnTokens = 3;
+      d.instances[c2] = inst2;
+      d.players[P2]!.zones[1]!.creature = c2;
+    });
+
+    const { ctx } = createTestCtx();
+    const source: EffectSource = { player: P1, instanceId: null };
+    const next = produce(s, (draft) => {
+      runMechanic(draft, ctx, 'volcanic_awakening_double_burn', source, undefined, undefined, undefined, P1);
+    });
+
+    // c1 is controlled by P1 (friendly), so its burn tokens are not doubled (remains 2)
+    expect(next.instances[c1]!.burnTokens).toBe(2);
+    // c2 is controlled by P2 (opponent), so its burn tokens are doubled: 3 * 2 = 6
+    expect(next.instances[c2]!.burnTokens).toBe(6);
+  });
+
+  it('count_dracula_lifesteal: heals source player for damage amount on trigger', () => {
+    let s = createMatch(deps, makeSetup()).state;
+    s = produce(s, (d) => {
+      d.players[P1]!.lives = 15;
+      d.players[P1]!.maxLives = 25;
+    });
+
+    const { ctx } = createTestCtx();
+    const source: EffectSource = { player: P1, instanceId: null };
+    const next = produce(s, (draft) => {
+      runMechanic(draft, ctx, 'count_dracula_lifesteal', source, undefined, undefined, { amount: 4 }, P1);
+    });
+
+    expect(next.players[P1]!.lives).toBe(19);
+  });
+
+  it('avalanche_born_freeze: freezes target landscape', () => {
+    let s = createMatch(deps, makeSetup()).state;
+    const { ctx } = createTestCtx();
+    const source: EffectSource = { player: P1, instanceId: null };
+    const next = produce(s, (draft) => {
+      runMechanic(draft, ctx, 'avalanche_born_freeze', source, undefined, [
+        { kind: 'landscape', player: P2, zone: 2 },
+      ], undefined, P1);
+    });
+
+    expect(next.players[P2]!.lands[2]!.frozen).toBe(true);
+  });
 });

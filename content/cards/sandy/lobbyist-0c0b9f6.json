@@ -15,5 +15,11 @@
   "id": "lobbyist-0c0b9f6",
   "kind": "card",
   "image": "/content/cards/sandy/lobbyist-0c0b9f6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "lobbyist_vote_boost",
+      "text": "Уловка Каждый раз когда ты должен участвовать в голосовании, ты можешь потерять 2 жизни, что бы добавить +1 к своему голосу. (Лимит: Один раз за голосование. Необходимо объявить при выкладывании карт.)"
+    }
+  ]
 }

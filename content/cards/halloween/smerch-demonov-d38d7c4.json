@@ -15,5 +15,12 @@
   "id": "smerch-demonov-d38d7c4",
   "kind": "card",
   "image": "/content/cards/halloween/smerch-demonov-d38d7c4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "demon_tornado_return_dead",
+      "text": "Верни всех существ уничтоженных в этом ходу, которыми ты владеешь на руку. Удали эту карты из игры."
+    }
+  ]
 }

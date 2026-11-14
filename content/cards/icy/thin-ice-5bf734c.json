@@ -15,5 +15,16 @@
   "id": "thin-ice-5bf734c",
   "kind": "card",
   "image": "/content/cards/icy/thin-ice-5bf734c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "thin_ice_reaction",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Первый раз когда ты теряешь жизни в свой ход, ты можешь заморозить 1 незамороженную землю."
+    }
+  ]
 }

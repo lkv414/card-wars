@@ -15,5 +15,18 @@
   "id": "fluffy-fang-lamb-b93eacc",
   "kind": "card",
   "image": "/content/cards/rainbow/fluffy-fang-lamb-b93eacc.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "this_creature"
+        },
+        "amount": 1
+      },
+      "text": "После атаки сними 1 урон с Лампира."
+    }
+  ]
 }

@@ -15,5 +15,18 @@
   "id": "polite-armadillo-a5840aa",
   "kind": "card",
   "image": "/content/cards/nice/polite-armadillo-a5840aa.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "each_creature"
+        },
+        "amount": 8
+      },
+      "text": "Грохот Когда учтивый броненосец входит в игру, нанеси 8 урона каждому другому существу (включая твоих)."
+    }
+  ]
 }

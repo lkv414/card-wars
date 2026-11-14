@@ -15,5 +15,12 @@
   "id": "hot-cold-08ac76c",
   "kind": "card",
   "image": "/content/cards/icy/hot-cold-08ac76c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "hot_cold_synergy",
+      "text": "Подожги всех существ на замороженных землях, затем заморозь каждую землю с горящим существом."
+    }
+  ]
 }

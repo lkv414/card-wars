@@ -15,5 +15,12 @@
   "id": "ispytanie-dukha-f8582ec",
   "kind": "card",
   "image": "/content/cards/halloween/ispytanie-dukha-f8582ec.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "spirit_trial_reveal",
+      "text": "Открой 2 верхние карты своей колоды. Сбрось 1 и разыграй другую бесплатно. Если у тебя на руке только карты с призраками, ты можешь разыграть сброшенную карту."
+    }
+  ]
 }

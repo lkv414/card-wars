@@ -15,5 +15,12 @@
   "id": "rasslablyayushchiy-lavopad-c4a1191",
   "kind": "card",
   "image": "/content/cards/lava/rasslablyayushchiy-lavopad-c4a1191.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "relaxing_lavawaterfall_burn",
+      "text": "Когда расслабляющий лавопад входит в игру, подожги существо в этой зоне. Подожги любое существо, которое входит в игру в этой зоне."
+    }
+  ]
 }

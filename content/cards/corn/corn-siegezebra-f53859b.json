@@ -15,5 +15,11 @@
   "id": "corn-siegezebra-f53859b",
   "kind": "card",
   "image": "/content/cards/corn/corn-siegezebra-f53859b.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "corn_siegezebra_double_damage",
+      "text": "Если ты разыграл 2 не кукурузные карты, урон осадной кукузебры удваивается в этот ход."
+    }
+  ]
 }

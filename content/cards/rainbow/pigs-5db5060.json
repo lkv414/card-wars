@@ -15,5 +15,44 @@
   "id": "pigs-5db5060",
   "kind": "card",
   "image": "/content/cards/rainbow/pigs-5db5060.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда свиньи входят в игру, можешь нанести 1 урон выбранному существу."
+    },
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "optional": true,
+      "effect": {
+        "op": "deal_damage",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 1
+      },
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Когда свиньи выходят из игры, можешь нанести 1 урон выбранному существу."
+    }
+  ]
 }

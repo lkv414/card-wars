@@ -18,41 +18,30 @@
   "abilities": [
     {
       "kind": "passive",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "this_creature"
-        },
-        "stat": "defense",
-        "amount": 2,
-        "duration": "aura"
-      },
-      "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
-      "conditions": [
+      "trigger": "start_of_turn",
+      "optional": true,
+      "effect": [
         {
-          "kind": "while_own_card_in_play",
-          "cardId": "tree_trunks_card_16"
-        }
-      ]
-    },
-    {
-      "kind": "passive",
-      "effect": {
-        "op": "stat_buff",
-        "target": {
-          "kind": "this_creature"
+          "op": "return_to_owner",
+          "target": {
+            "kind": "this_creature"
+          }
         },
-        "stat": "attack",
-        "amount": 1,
-        "duration": "aura"
-      },
-      "text": "+2 DEF и +1 ATK, если на поле присутствует Берсеркорова под твоим контролем.",
-      "conditions": [
         {
-          "kind": "while_own_card_in_play",
-          "cardId": "tree_trunks_card_16"
+          "op": "heal",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 3
         }
-      ]
+      ],
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "В начале твоего хода можешь вернуть мисс вампию на руку владельца. Тогда сними с выбранного существа под твоим контролем до 3 урона."
     }
   ]
 }

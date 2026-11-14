@@ -15,5 +15,11 @@
   "id": "flamingo-chief-of-the-flume-ac754e0",
   "kind": "card",
   "image": "/content/cards/lava/flamingo-chief-of-the-flume-ac754e0.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "flamingo_chief_burn",
+      "text": "Огнеминго начальник шлейфа стоит на 1 действие меньше за каждый жетон ожога на существах. Когда Огнеминго начальник шлейфа наносит урон существу, подожги его."
+    }
+  ]
 }

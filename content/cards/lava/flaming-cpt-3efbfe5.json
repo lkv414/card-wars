@@ -15,5 +15,17 @@
   "id": "flaming-cpt-3efbfe5",
   "kind": "card",
   "image": "/content/cards/lava/flaming-cpt-3efbfe5.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_damage_dealt",
+      "conditions": [
+        {
+          "kind": "if_payload_to_player"
+        }
+      ],
+      "mechanic": "flaming_captain_burn_player",
+      "text": "Когда огнеминго капитан наносит урон сопернику, подожги его. (В начале своего хода он получает 1 урон за каждый жетон ожога.)"
+    }
+  ]
 }

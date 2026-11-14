@@ -15,5 +15,20 @@
   "id": "prizrachnyy-zaychik-d6ae113",
   "kind": "card",
   "image": "/content/cards/halloween/prizrachnyy-zaychik-d6ae113.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "additionalCost": {
+        "destroySelf": true
+      },
+      "mechanic": "ghost_bunny_freeze",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Уничтожь призрачного зайчика >>> Заморозь выбранную землю. Если призрачный зайчик был на земле призраков, то заморозь 3 выбранные земли."
+    }
+  ]
 }

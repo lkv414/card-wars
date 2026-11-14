@@ -19,13 +19,20 @@
     {
       "kind": "passive",
       "trigger": "on_cast",
-      "text": "Выбранному существу противника наносится урон, равный половине его максимальной DEF. Если показатель DEF нечётный, округляй вверх.",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "choice",
+          "index": 0
+        },
+        "amount": 3
+      },
       "targets": [
         {
-          "kind": "opponent_creature"
+          "kind": "any_creature"
         }
       ],
-      "mechanic": "half_def_damage"
+      "text": "Сними 3 урона с выбранного существа. Если на том существе всё ещё есть урон, получи 1 действие."
     }
   ]
 }

@@ -15,5 +15,12 @@
   "id": "sky-burial-tower-0d9104a",
   "kind": "card",
   "image": "/content/cards/swamp/sky-burial-tower-0d9104a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "sky_burial_tower_gain_action",
+      "text": "ФЛЮП >>> Если у любого соперника не больше 1 карты на руке, получи 1 действие."
+    }
+  ]
 }

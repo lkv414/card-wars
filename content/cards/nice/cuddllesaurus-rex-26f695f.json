@@ -17,25 +17,20 @@
   "image": "/content/cards/nice/cuddllesaurus-rex-26f695f.webp",
   "abilities": [
     {
-      "kind": "active",
-      "effect": [
+      "kind": "passive",
+      "trigger": "start_of_turn",
+      "conditions": [
         {
-          "op": "draw_cards",
-          "count": 1
-        },
-        {
-          "op": "draw_cards",
-          "count": 1,
-          "conditions": [
-            {
-              "kind": "while_effective_def_at_most",
-              "max": 2,
-              "scope": "self"
-            }
-          ]
+          "kind": "while_damage_at_least",
+          "amount": 1,
+          "scope": "self"
         }
       ],
-      "text": "Приём >>> тяни карту. Если у Хлопковой ламы осталось 2 DEF или меньше, тяни две."
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "В начале твоего хода, если на доброзавре Рексе есть жетоны урона, возьми 1 карту."
     }
   ]
 }

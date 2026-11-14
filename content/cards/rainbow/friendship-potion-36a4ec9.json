@@ -15,5 +15,37 @@
   "id": "friendship-potion-36a4ec9",
   "kind": "card",
   "image": "/content/cards/rainbow/friendship-potion-36a4ec9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": [
+        {
+          "op": "heal",
+          "target": {
+            "kind": "choice",
+            "index": 0
+          },
+          "amount": 3
+        },
+        {
+          "op": "heal",
+          "target": {
+            "kind": "choice",
+            "index": 1
+          },
+          "amount": 3
+        }
+      ],
+      "targets": [
+        {
+          "kind": "own_creature"
+        },
+        {
+          "kind": "opponent_creature"
+        }
+      ],
+      "text": "Сними 3 урона с выбранного существа под твоим контролем и сними 3 урона выбранному существу не под твоим контролем."
+    }
+  ]
 }

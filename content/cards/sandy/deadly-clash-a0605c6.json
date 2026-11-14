@@ -15,5 +15,17 @@
   "id": "deadly-clash-a0605c6",
   "kind": "card",
   "image": "/content/cards/sandy/deadly-clash-a0605c6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "deadly_clash_fight_to_death",
+      "targets": [
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Выбери зону. Существа в этой зоне атакуют друг друга, пока одно из них не будет побеждено."
+    }
+  ]
 }

@@ -15,5 +15,12 @@
   "id": "relay-runners-122001a",
   "kind": "card",
   "image": "/content/cards/blue-plains/relay-runners-122001a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "start_of_next_turn",
+      "mechanic": "relay_runners_end_turn",
+      "text": "В конце хода, если ты разыграл 2 или более не равнинных существ в этот ход, возьми 1 карту."
+    }
+  ]
 }

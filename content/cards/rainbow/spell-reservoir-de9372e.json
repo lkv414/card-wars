@@ -15,5 +15,21 @@
   "id": "spell-reservoir-de9372e",
   "kind": "card",
   "image": "/content/cards/rainbow/spell-reservoir-de9372e.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "mechanic": "spell_reservoir_return",
+      "text": "Когда ты разыгрываешь существо в этой зоне, ты можешь вернуть на руку заклинание меньшей стоимости из твоего сброса."
+    }
+  ]
 }

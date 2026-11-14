@@ -15,5 +15,24 @@
   "id": "hydro-mancer-76af213",
   "kind": "card",
   "image": "/content/cards/blue-plains/hydro-mancer-76af213.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "effect": [
+        {
+          "op": "reveal_until",
+          "max": 99,
+          "match": {
+            "type": "companion"
+          }
+        },
+        {
+          "op": "play_revealed"
+        }
+      ],
+      "text": "Когда гидромант входит в игру, ты можешь раскрыть карты твоей колоды, пока не раскроешь карту командной работы, разыграй её бесплатно. Перемешай раскрытые карты в колоду."
+    }
+  ]
 }

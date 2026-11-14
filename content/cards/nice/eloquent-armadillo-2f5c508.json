@@ -15,5 +15,12 @@
   "id": "eloquent-armadillo-2f5c508",
   "kind": "card",
   "image": "/content/cards/nice/eloquent-armadillo-2f5c508.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "eloquent_armadillo_replace_buff",
+      "text": "Когда красноречивый броненосец заменяет существо, положи на него 4."
+    }
+  ]
 }

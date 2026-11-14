@@ -15,5 +15,17 @@
   "id": "magic-wand-1057a3a",
   "kind": "card",
   "image": "/content/cards/swamp/magic-wand-1057a3a.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "magic_wand_discard_play_spell",
+      "targets": [
+        {
+          "kind": "any_player"
+        }
+      ],
+      "text": "Выбранный игрок сбрасывает 1 карту. Если он сбросил заклинание, ты можешь разыграть его бесплатно."
+    }
+  ]
 }

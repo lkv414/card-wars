@@ -15,5 +15,12 @@
   "id": "pozharishche-094e6d4",
   "kind": "card",
   "image": "/content/cards/lava/pozharishche-094e6d4.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "conflagration_burn_damage_draw",
+      "text": "Нанеси 1 урон всем существам под контролем соперника за каждый жетон ожого на этом существе. Возьми 1 карту."
+    }
+  ]
 }

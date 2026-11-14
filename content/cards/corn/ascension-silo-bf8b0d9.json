@@ -15,5 +15,24 @@
   "id": "ascension-silo-bf8b0d9",
   "kind": "card",
   "image": "/content/cards/corn/ascension-silo-bf8b0d9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_leave_play",
+      "oncePerTurn": true,
+      "conditions": [
+        {
+          "kind": "if_payload_zone_matches_self"
+        },
+        {
+          "kind": "if_payload_player_self"
+        }
+      ],
+      "effect": {
+        "op": "draw_cards",
+        "count": 1
+      },
+      "text": "Один раз за ход, когда существо под твоим контролем в этой зоне выходит из игры, возьми 1 карту."
+    }
+  ]
 }

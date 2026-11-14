@@ -15,5 +15,20 @@
   "id": "ice-generator-7c2b098",
   "kind": "card",
   "image": "/content/cards/icy/ice-generator-7c2b098.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "ice_generator_active",
+      "targets": [
+        {
+          "kind": "landscape"
+        },
+        {
+          "kind": "landscape"
+        }
+      ],
+      "text": "Сбрось любой жетон с выбранной земли и ФЛЮП >>> Заморозь другую землю и возьми 1 карту."
+    }
+  ]
 }

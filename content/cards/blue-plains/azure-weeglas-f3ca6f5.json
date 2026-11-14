@@ -18,20 +18,21 @@
   "abilities": [
     {
       "kind": "passive",
-      "trigger": "on_death",
-      "conditions": [
-        {
-          "kind": "if_payload_other"
-        }
-      ],
+      "trigger": "on_enters_play",
       "effect": {
-        "op": "deal_damage",
+        "op": "draw_cards",
         "target": {
-          "kind": "payload_killer"
+          "kind": "each_player"
         },
-        "amount": 1
+        "count": {
+          "kind": "per_played_name",
+          "matchers": [
+            "шееглаз"
+          ],
+          "amount": 1
+        }
       },
-      "text": "Перед смертью больно бросает косу в существо противника, нанося дополнительно 1 урон (касается только убившего муху существа)."
+      "text": "Когда лазурный шееглаз входит в игру, каждый игрок берёт карту за каждое существо под своим контролем с «шееглаз» в названии."
     }
   ]
 }

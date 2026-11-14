@@ -15,5 +15,17 @@
   "id": "delta-dominance-e70a8f9",
   "kind": "card",
   "image": "/content/cards/swamp/delta-dominance-e70a8f9.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "delta_dominance_damage",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Нанеси урон выбранному существу, равный суммарной стоимости всех карт под твоим контролем."
+    }
+  ]
 }

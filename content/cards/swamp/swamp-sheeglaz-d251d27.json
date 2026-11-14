@@ -15,5 +15,17 @@
   "id": "swamp-sheeglaz-d251d27",
   "kind": "card",
   "image": "/content/cards/swamp/swamp-sheeglaz-d251d27.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "swamp_sheeglaz_damage_heal",
+      "targets": [
+        {
+          "kind": "opponent_player"
+        }
+      ],
+      "text": "Когда болотный шееглаз входит в игру, нанеси 1 урон выбранному сопернику и ты восстанавливаешь 1 жизнь за каждое существо в игре со словом «шееглаз» в названии."
+    }
+  ]
 }

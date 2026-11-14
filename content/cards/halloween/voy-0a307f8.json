@@ -15,5 +15,18 @@
   "id": "voy-0a307f8",
   "kind": "card",
   "image": "/content/cards/halloween/voy-0a307f8.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "maxUsesPerTurn": 2,
+      "mechanic": "howl_self_buff",
+      "targets": [
+        {
+          "kind": "own_creature"
+        }
+      ],
+      "text": "Нанеси выбранному существу под твоим контролем до 2 урона >>> Вой получает +1 к атаке за каждый нанесенный урон в этом ходу. (Используй до двух раз за твой ход)"
+    }
+  ]
 }

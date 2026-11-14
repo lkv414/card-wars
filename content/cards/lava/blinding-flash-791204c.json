@@ -15,5 +15,12 @@
   "id": "blinding-flash-791204c",
   "kind": "card",
   "image": "/content/cards/lava/blinding-flash-791204c.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "mechanic": "blinding_flash_draw",
+      "text": "Возьми 5 карт. В конце хода сбрось все карты, кроме 1."
+    }
+  ]
 }

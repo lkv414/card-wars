@@ -15,5 +15,20 @@
   "id": "adovyy-golem-b0d5783",
   "kind": "card",
   "image": "/content/cards/halloween/adovyy-golem-b0d5783.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "effect": {
+        "op": "cost_mod",
+        "self": true,
+        "amount": {
+          "kind": "per_counter",
+          "counter": "creature_died",
+          "scope": "all",
+          "amount": -1
+        }
+      },
+      "text": "Адовый голем стоит на 1 действие меньше, за каждое существо уничтоженное в этом ходу."
+    }
+  ]
 }

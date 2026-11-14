@@ -15,5 +15,18 @@
   "id": "divine-right-f0a031e",
   "kind": "card",
   "image": "/content/cards/rainbow/divine-right-f0a031e.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_cast",
+      "effect": {
+        "op": "heal",
+        "target": {
+          "kind": "each_player"
+        },
+        "amount": 15
+      },
+      "text": "Каждый игрок восстанавливает 15 жизней."
+    }
+  ]
 }

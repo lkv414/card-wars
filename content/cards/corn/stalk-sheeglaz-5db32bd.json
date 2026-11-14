@@ -15,5 +15,12 @@
   "id": "stalk-sheeglaz-5db32bd",
   "kind": "card",
   "image": "/content/cards/corn/stalk-sheeglaz-5db32bd.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "mechanic": "stalk_sheeglaz_buff",
+      "text": "Когда стебельковый шееглаз входит в игру, каждое существо в игре с «шееглаз» в названии получает +1 к атаке в этот ход за каждое существо с «шееглаз» в названии."
+    }
+  ]
 }

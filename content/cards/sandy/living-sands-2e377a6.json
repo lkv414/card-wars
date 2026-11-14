@@ -15,5 +15,11 @@
   "id": "living-sands-2e377a6",
   "kind": "card",
   "image": "/content/cards/sandy/living-sands-2e377a6.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "mechanic": "living_sands_taunt_and_restrict",
+      "text": "Ты не можешь играть существ. Когда существо противника атакует твоё существо, ты можешь выбрать живую пустыню."
+    }
+  ]
 }

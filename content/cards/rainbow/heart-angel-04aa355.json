@@ -15,5 +15,26 @@
   "id": "heart-angel-04aa355",
   "kind": "card",
   "image": "/content/cards/rainbow/heart-angel-04aa355.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "conditions": [
+        {
+          "kind": "while_damage_exactly",
+          "amount": 3,
+          "scope": "self"
+        }
+      ],
+      "effect": {
+        "op": "stat_buff",
+        "target": {
+          "kind": "this_creature"
+        },
+        "stat": "attack",
+        "amount": 3,
+        "duration": "aura"
+      },
+      "text": "Пока количество урона нанесённого сердечному ангелу равно 3 он получает +3 к атаке."
+    }
+  ]
 }

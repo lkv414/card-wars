@@ -15,5 +15,16 @@
   "id": "adored-corn-goblin-1524fcd",
   "kind": "card",
   "image": "/content/cards/corn/adored-corn-goblin-1524fcd.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "effect": {
+        "op": "grant_discount",
+        "cardType": "creature",
+        "amount": 1
+      },
+      "text": "Поглощение ФЛЮП >>> Следующее существо, которое ты разыграешь в этом ходу, стоит на 1 действие меньше."
+    }
+  ]
 }

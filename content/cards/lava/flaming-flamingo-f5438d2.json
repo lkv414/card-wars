@@ -15,5 +15,12 @@
   "id": "flaming-flamingo-f5438d2",
   "kind": "card",
   "image": "/content/cards/lava/flaming-flamingo-f5438d2.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_creature_attacks",
+      "mechanic": "flaming_beak_face_strike",
+      "text": "Когда огнеминго огнеклюв атакует, если существо под контролем соперника в этой зоне горит, он наносит урон выбранному сопернику вместо существа под контролем соперника."
+    }
+  ]
 }

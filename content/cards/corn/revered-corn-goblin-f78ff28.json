@@ -15,5 +15,17 @@
   "id": "revered-corn-goblin-f78ff28",
   "kind": "card",
   "image": "/content/cards/corn/revered-corn-goblin-f78ff28.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "active",
+      "cost": 0,
+      "mechanic": "revered_corn_goblin_convert",
+      "targets": [
+        {
+          "kind": "any_creature"
+        }
+      ],
+      "text": "Поглощение ФЛЮП >>> Убери 1 или 2 жетона (кроме урона) с выбранного существа. Затем положи столько же урона на выбранное существо."
+    }
+  ]
 }

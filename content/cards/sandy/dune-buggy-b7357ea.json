@@ -15,5 +15,13 @@
   "id": "dune-buggy-b7357ea",
   "kind": "card",
   "image": "/content/cards/sandy/dune-buggy-b7357ea.webp",
-  "abilities": []
+  "abilities": [
+    {
+      "kind": "passive",
+      "trigger": "on_enters_play",
+      "optional": true,
+      "mechanic": "dune_buggy_reveal_play",
+      "text": "Когда дюнный жук в коляске входит в игру, ты можешь раскрыть карту твоей колоды. Если ты раскрыл не песчаную карту, разыграй её бесплатно."
+    }
+  ]
 }

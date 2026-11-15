@@ -1,6 +1,6 @@
-// Builds the @card-wars/content catalog from content/: per-card JSON -> cards.json/heroes.json.
+// Builds the @card-wars/content catalog from content/: per-card JSON / index.json -> cards.json / heroes.json.
 // Run: node tools/build-catalog.mjs (or pnpm --filter @card-wars/content generate).
-import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -11,6 +11,29 @@ const outDir = join(root, 'packages/content/src/generated');
 const LAND_TYPES = new Set(['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'ghost']);
 const CARD_TYPES = new Set(['creature', 'building', 'spell', 'companion']);
 
+const LAND_MAP = {
+  swamp: 'swamp',
+  corn: 'corn',
+  blue: 'blue',
+  nice: 'good',
+  good: 'good',
+  rainbow: 'rainbow',
+  sand: 'sand',
+  sandy: 'sand',
+  ice: 'ice',
+  icy: 'ice',
+  lava: 'ghost',
+  ghost: 'ghost',
+};
+
+const TYPE_MAP = {
+  creature: 'creature',
+  spell: 'spell',
+  building: 'building',
+  teamwork: 'companion',
+  companion: 'companion',
+};
+
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
@@ -20,448 +43,71 @@ function fail(message) {
   process.exit(1);
 }
 
-function cardOrder(id) {
-  const match = /^(.+)_card_(\d+)$/.exec(id);
-  return match ? [match[1], Number(match[2])] : [id, 0];
-}
+const indexData = readJson(join(contentDir, 'index.json'));
 
-// Printed "X" stats (e.g. ftg_card_46) mean a variable base; the engine needs a number.
-function statValue(value, id, key) {
-  if (value == null) return undefined;
-  if (typeof value === 'number') return value;
-  const numeric = Number(value);
-  if (Number.isFinite(numeric)) return numeric;
-  console.warn(`build-catalog: ${id} ${key}="${value}" -> 0`);
-  return 0;
-}
+const rawCards = indexData.filter((x) => x.kind === 'card');
+const rawHeroes = indexData.filter((x) => x.kind === 'hero');
 
-const cards = readdirSync(join(contentDir, 'cards', 'json'))
-  .filter((file) => file.endsWith('.json'))
-  .map((file) => readJson(join(contentDir, 'cards', 'json', file)))
+const cards = rawCards
   .map((card) => {
-    if (!CARD_TYPES.has(card.typeCategory)) fail(`unknown typeCategory ${card.typeCategory} (${card.id})`);
-    if (!LAND_TYPES.has(card.landType)) fail(`unknown landType ${card.landType} (${card.id})`);
+    const type = TYPE_MAP[card.typeCategory];
+    if (!type || !CARD_TYPES.has(type)) fail(`unknown typeCategory ${card.typeCategory} (${card.id})`);
+
+    const landType = LAND_MAP[card.landType];
+    if (!landType || !LAND_TYPES.has(landType)) fail(`unknown landType ${card.landType} (${card.id})`);
+
     if (!Number.isInteger(card.cost) || card.cost < 0) fail(`bad cost (${card.id})`);
+
     const record = {
       id: card.id,
       name: card.name,
-      type: card.typeCategory,
+      type,
       cost: card.cost,
-      landType: card.landType,
+      landType,
       image: card.image,
     };
-    if (card.attack != null) record.attack = statValue(card.attack, card.id, 'attack');
-    if (card.defense != null) record.defense = statValue(card.defense, card.id, 'defense');
+
+    if (type === 'creature') {
+      record.attack = typeof card.attack === 'number' ? card.attack : 0;
+      record.defense = typeof card.defense === 'number' ? card.defense : 0;
+    }
+
     if (card.description) record.description = card.description;
-    if (card.deckSet) record.deckSet = card.deckSet;
+    if (card.abilities && card.abilities.length) record.abilities = card.abilities;
+    if (card.set_code || card.deckSet) record.deckSet = card.set_code || card.deckSet;
+
     return record;
   })
-  .sort((a, b) => {
-    const [deckA, numA] = cardOrder(a.id);
-    const [deckB, numB] = cardOrder(b.id);
-    return deckA.localeCompare(deckB) || numA - numB;
-  });
-
-// --- Mechanics v2 binding (docs/MECHANICS-V2.md §4) ---
-
-const EFFECT_OPS = new Set(['deal_damage', 'heal', 'draw_cards', 'discard_top_deck', 'opponent_discards', 'stat_buff', 'gain_shield', 'gain_actions', 'flip_land', 'destroy', 'move_creature', 'freeze_land', 'win_if_opponents_deck_empty', 'cost_mod', 'land_count_mod', 'suppress', 'no_retaliation', 'damage_immunity', 'damage_redirect', 'grant_modifier', 'return_from_discard', 'discard_from_hand', 'grant_ability', 'return_to_owner', 'reveal_deck_top', 'resolve_revealed', 'counts_as', 'attack_mod', 'defense_mod', 'remove_token', 'transfer_token', 'grant_discount', 'ban_spells_next_turn', 'unflip', 'reveal_until', 'play_revealed', 'play_from_hand', 'play_from_discard', 'grant_protection', 'remove_from_game', 'heal_or_damage', 'give_card', 'half_def_damage', 'min_max_def_damage', 'sacrifice_cost_damage',
-  'redistribute_damage', 'set_land_type', 'swap_field_cards', 'attach_card', 'repeat_effect', 'discard_chosen', 'pay_life', 'ready_creature', 'set_instance_flag', 'destroy_own_n', 'peek_deck_top', 'resolve_peek', 'move_building', 'distribute_damage', 'banish_card', 'freeze_creature', 'dodge', 'land_flip_protection', 'restrict_play', 'allow_frozen_play', 'guard_player', 'damage_cap', 'damage_bonus', 'lane_strike_all', 'inherit_adjacent_buildings']);
-const TRIGGERS = new Set([
-  'on_cast', 'on_enters_play', 'on_leave_play', 'on_death', 'start_of_turn', 'start_of_next_turn',
-  'on_creature_attacks', 'on_damage_dealt', 'on_line_change', 'on_flip', 'on_draw',
-  'on_spell_cast', 'on_card_played', 'start_of_battle_phase', 'on_companion_event', 'on_freeze', 'on_return_to_hand', 'on_card_discarded',
-]);
-const TARGET_ASKS = new Set(['own_creature', 'opponent_creature', 'any_creature', 'lane_creature', 'lane_opponent_creature', 'opponent_player', 'landscape', 'own_hand_card', 'own_building', 'lane_building', 'own_landscape', 'opponent_building', 'adjacent_creature', 'adjacent_any_creature', 'revealed_card', 'any_player', 'own_discard_card', 'any_discard_card', 'visible_card', 'heal_or_damage', 'amount', 'choose_option', 'damage_distribution', 'any_building', 'peek_card']);
-const TARGET_REFS = new Set([
-  'choice', 'this_creature', 'each_creature_of_choice_player', 'adjacent_own_land', 'this_lane_creature', 'this_lane_own_creature', 'this_lane_opponent_creature', 'this_lane_opponent_building', 'this_lane_opponent_land', 'this_lane_land', 'this_lane_lands', 'active_opponent_players',
-  'adjacent_creatures', 'each_creature_yours', 'each_creature_opponent', 'each_creature',
-  'each_building_yours', 'each_player', 'each_opponent_player', 'self_player', 'teammate_player', 'opponent_team', 'triggering_instance', 'payload_partner', 'payload_zone_land', 'payload_zone_own_creatures', 'payload_killer', 'payload_player', 'min_attack_own', 'each_opponent_land',
-  'each_own_creature_damaged', 'each_creature_moved_this_turn', 'each_own_creature_moved_this_turn', 'each_building', 'each_land', 'attached_cards', 'opponent_discard_top', 'choice_zone_creature', 'choice_zone_land', 'choice_zone_opponent_creature', 'peeked_cards',
-]);
-const AMOUNT_KINDS = new Set(['per_discard', 'per_damage', 'per_distinct_lands', 'per_lands', 'per_target', 'per_counter', 'payload_damage', 'per_token_players', 'target_hand_size', 'per_played_name', 'payload_cost', 'chosen_amount', 'target_damage', 'target_attack', 'attached_count', 'per_opponent_distinct_lands', 'chosen_card_cost', 'team_companion_cost', 'lives_ladder']);
-const CONDITION_KINDS = new Set([
-  'if_discard_count', 'while_discard_count', 'while_undamaged', 'while_damage_exactly',
-  'while_damage_at_least', 'while_lane_empty_opponent', 'while_on_land_type',
-  'while_distinct_lands', 'while_land_count', 'while_zone_has_building', 'while_zone_has_no_creature', 'while_zone_has_creature', 'while_zone_has_flipped_creature', 'while_lives_at_most', 'while_opponent_creatures_at_most', 'while_played_land_type', 'if_payload_zone_land_type',
-  'while_self_flipped', 'while_opponents_hand_empty', 'while_no_other_creatures',
-  'while_empty_lands', 'while_on_flipped_land',
-  'if_payload_replacing', 'if_payload_land_type', 'if_payload_cost', 'if_payload_player_self', 'if_payload_other',
-  'if_payload_to_player', 'if_payload_targeted_self', 'if_payload_player_opponent', 'while_opponents_turn',
-  'if_payload_ally', 'if_payload_killer_self', 'if_payload_zone_matches_self', 'if_payload_creature', 'if_payload_building', 'if_payload_enemy_creature', 'if_payload_targets_creature',
-  'if_payload_team_target', 'if_payload_opponent_target', 'while_own_creatures_at_most',
-  'while_phase', 'while_counter_at_least', 'while_counter_at_most', 'while_lane_ice_token', 'while_own_turn', 'while_no_tokens_in_play', 'while_zone_ice_token', 'while_own_card_in_play', 'while_own_creature_on_land_type', 'if_payload_teammate',
-  'while_effective_def_at_most', 'while_lives_at_least', 'while_attached_at_least', 'while_card_name_contains', 'while_played_card_type', 'while_no_spells_played', 'while_damage_at_most', 'while_no_land_type_played', 'while_lives_even', 'while_target_moved_this_turn', 'if_payload_instance_self', 'if_payload_name_contains', 'while_opponents_hand_at_least', 'if_option', 'if_payload_zone_adjacent', 'while_team_creature_on_token_land', 'while_adjacent_lanes_empty', 'while_opponent_controls_own_creature',
-]);
-
-function checkAmount(amount, where) {
-  if (typeof amount === 'number') return;
-  if (!amount || !AMOUNT_KINDS.has(amount.kind)) fail(`${where}: bad amount ${JSON.stringify(amount)}`);
-}
-
-function checkTargetRef(ref, where) {
-  if (!ref || !TARGET_REFS.has(ref.kind)) fail(`${where}: bad target ${JSON.stringify(ref)}`);
-}
-
-function validateAbility(ability, owner) {
-  const where = `${owner} ability`;
-  if (!ability || (ability.kind !== 'passive' && ability.kind !== 'active')) fail(`${where}: kind must be passive|active`);
-  if (typeof ability.text !== 'string' || ability.text.length === 0) fail(`${where}: text required`);
-  if (ability.kind === 'passive' && ability.trigger !== undefined && !TRIGGERS.has(ability.trigger)) {
-    fail(`${where}: unknown trigger ${ability.trigger}`);
-  }
-  if (ability.kind === 'active' && ability.trigger !== undefined) fail(`${where}: active ability must not have a trigger`);
-  if (ability.maxUsesPerTurn !== undefined && (!Number.isInteger(ability.maxUsesPerTurn) || ability.maxUsesPerTurn < 1)) fail();
-  if (ability.cost !== undefined && (ability.kind !== 'active' || !Number.isInteger(ability.cost) || ability.cost < 0)) {
-    fail(`${where}: cost is an active-only non-negative integer`);
-  }
-  const effects = Array.isArray(ability.effect) ? ability.effect : ability.effect ? [ability.effect] : [];
-  const hasEffect = effects.length > 0;
-  const hasMechanic = ability.mechanic !== undefined;
-  // Passive: exactly one of effect|mechanic. Active: at most one — a bare
-  // «ПРИЕМ» without effect is a tap-only floop (Огненное торнадо).
-  if (ability.kind === 'passive' && hasEffect === hasMechanic && !(ability.conditions?.length > 0)) fail(`${where}: exactly one of effect|mechanic (or a conditions-only play gate)`);
-  if (ability.kind === 'active' && hasEffect && hasMechanic) fail(`${where}: active must not have both effect and mechanic`);
-  for (const effect of effects) validateEffect(effect, where, ability);
-  for (const cond of ability.conditions ?? []) {
-    if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown condition ${cond.kind}`);
-  }
-  for (const ask of ability.targets ?? []) {
-    if (!TARGET_ASKS.has(ask.kind)) fail(`${where}: unknown target ask ${ask.kind}`);
-    if (ask.mode !== undefined && (ask.kind !== 'damage_distribution' || !['reassign', 'add'].includes(ask.mode))) {
-      fail(`${where}: ask mode is only for damage_distribution (reassign|add)`);
-    }
-    if (ask.filter) {
-      for (const key of Object.keys(ask.filter)) {
-        if (!['ready', 'landType', 'zoneToken', 'flipped', 'undamaged', 'cardType', 'maxCost', 'cardIds'].includes(key)) {
-          fail(`${where}: unknown ask filter ${key}`);
-        }
-      }
-      if (ask.filter.cardType && !CARD_TYPES.has(ask.filter.cardType)) fail(`${where}: ask filter cardType invalid`);
-      if (ask.filter.maxCost !== undefined && !Number.isInteger(ask.filter.maxCost)) {
-        fail(`${where}: ask filter maxCost must be an integer`);
-      }
-    }
-  }
-  // Условия на уровне эффекта (Древний школяр: «если на этой линии строение…»).
-  for (const effect of effects) {
-    for (const cond of effect.conditions ?? []) {
-      if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown effect condition ${cond.kind}`);
-    }
-  }
-}
-
-function validateEffect(effect, where, ability) {
-  const op = effect.op;
-  if (!EFFECT_OPS.has(op)) fail(`${where}: unknown effect op ${op}`);
-  if (op === 'cost_mod') {
-    if (effect.self !== true) fail(`${where}: cost_mod must be self`);
-    checkAmount(effect.amount, where);
-  } else if (op === 'land_count_mod') {
-    if (!Number.isInteger(effect.amount)) fail(`${where}: land_count_mod needs integer amount`);
-  } else if (op === 'win_if_opponents_deck_empty') {
-    // no parameters
-  } else if (op === 'flip_land') {
-    checkTargetRef(effect.target, where);
-    if (typeof effect.down !== 'boolean') fail(`${where}: flip_land needs boolean down`);
-    if (effect.until !== undefined && effect.until !== 'next_own_turn') fail(`${where}: flip_land until must be next_own_turn`);
-  } else if (op === 'unflip') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'grant_discount') {
-    if (!['spell', 'creature', 'building'].includes(effect.cardType)) fail(`${where}: grant_discount cardType invalid`);
-    if (!Number.isInteger(effect.amount)) fail(`${where}: grant_discount needs integer amount`);
-  } else if (op === 'ban_spells_next_turn') {
-    // no parameters
-  } else if (op === 'defense_mod') {
-    checkTargetRef(effect.target, where);
-    if (!Number.isInteger(effect.atkBonus)) fail(`${where}: defense_mod needs integer atkBonus`);
-    if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: defense_mod landType invalid`);
-  } else if (op === 'grant_protection') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'remove_token') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'transfer_token') {
-    checkTargetRef(effect.target, where);
-    checkTargetRef(effect.destination, where);
-  } else if (op === 'remove_from_game') {
-    checkTargetRef(effect.from, where);
-    checkTargetRef(effect.name, where);
-  } else if (op === 'heal_or_damage') {
-    checkTargetRef(effect.target, where);
-    checkTargetRef(effect.mode, where);
-    if (!Number.isInteger(effect.amount) || effect.amount < 0) fail(`${where}: heal_or_damage needs a non-negative integer amount`);
-  } else if (op === 'give_card') {
-    checkTargetRef(effect.card, where);
-    checkTargetRef(effect.to, where);
-  } else if (op === 'destroy' || op === 'freeze_land') {
-    checkTargetRef(effect.target, where);
-    if (op === 'freeze_land' && typeof effect.frozen !== 'boolean') fail(`${where}: freeze_land needs boolean frozen`);
-  } else if (op === 'redistribute_damage') {
-    checkTargetRef(effect.among, where);
-  } else if (op === 'distribute_damage') {
-    checkTargetRef(effect.among, where);
-    checkAmount(effect.amount, where);
-  } else if (op === 'move_building') {
-    checkTargetRef(effect.target, where);
-    checkTargetRef(effect.destination, where);
-  } else if (op === 'banish_card') {
-    checkTargetRef(effect.card, where);
-  } else if (op === 'freeze_creature') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'land_flip_protection') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'restrict_play') {
-    checkTargetRef(effect.target, where);
-    if (effect.who !== 'opponents') fail();
-    if (!Number.isInteger(effect.maxCost) || effect.maxCost < 0) fail();
-  } else if (op === 'lane_strike_all') {
-    // no targets
-  } else if (op === 'inherit_adjacent_buildings') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'inherit_adjacent_buildings') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'allow_frozen_play') {
-    checkTargetRef(effect.target, where);
-    if (!['own_lane', 'all'].includes(effect.scope)) fail(`${where}: allow_frozen_play scope must be own_lane|all`);
-  } else if (op === 'guard_player') {
-    checkTargetRef(effect.target, where);
-    if (!Number.isInteger(effect.threshold)) fail(`${where}: guard_player needs integer threshold`);
-  } else if (op === 'damage_cap') {
-    checkTargetRef(effect.target, where);
-    if (!Number.isInteger(effect.max) || effect.max < 0) fail(`${where}: damage_cap needs integer max >= 0`);
-  } else if (op === 'damage_bonus') {
-    checkTargetRef(effect.target, where);
-    if (!Number.isInteger(effect.amount)) fail(`${where}: damage_bonus needs integer amount`);
-  } else if (op === 'dodge') {
-    checkTargetRef(effect.target, where);
-    if (!Number.isInteger(effect.min) || effect.min < 1 || effect.min > 6) fail(`${where}: dodge needs integer min 1..6`);
-  } else if (op === 'set_land_type') {
-    checkTargetRef(effect.target, where);
-    if (effect.landType !== 'chosen' && !LAND_TYPES.has(effect.landType)) fail(`${where}: set_land_type landType invalid`);
-  } else if (op === 'swap_field_cards') {
-    checkTargetRef(effect.a, where);
-    checkTargetRef(effect.b, where);
-  } else if (op === 'attach_card') {
-    checkTargetRef(effect.card, where);
-    checkTargetRef(effect.to, where);
-    if (!['discard', 'field', 'death'].includes(effect.from)) fail(`${where}: attach_card from invalid`);
-  } else if (op === 'repeat_effect') {
-    checkAmount(effect.times, where);
-    if (!effect.effect || !EFFECT_OPS.has(effect.effect.op)) fail(`${where}: repeat_effect needs an effect`);
-  } else if (op === 'discard_chosen') {
-    checkTargetRef(effect.card, where);
-  } else if (op === 'pay_life') {
-    if (!Number.isInteger(effect.amount)) fail(`${where}: pay_life needs integer amount`);
-  } else if (op === 'peek_deck_top') {
-    if (!Number.isInteger(effect.count) || effect.count < 1) fail(`${where}: peek_deck_top needs integer count >= 1`);
-  } else if (op === 'resolve_peek') {
-    // no params; the option answer comes from the ability's choose_option ask
-  } else if (op === 'set_instance_flag') {
-    checkTargetRef(effect.target, where);
-    if (!['noReady', 'entersTapped', 'cannotReplace', 'cannotReturnFromDiscard'].includes(effect.flag)) fail(`${where}: set_instance_flag flag invalid`);
-  } else if (op === 'destroy_own_n') {
-    checkAmount(effect.count, where);
-  } else if (op === 'ready_creature') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'suppress' || op === 'no_retaliation' || op === 'damage_immunity' || op === 'damage_redirect') {
-    const target = effect.target ?? effect.from;
-    checkTargetRef(target, where);
-    if (op === 'damage_immunity' && !Number.isInteger(effect.amount)) fail(`${where}: damage_immunity needs integer amount`);
-    if (op === 'suppress' && !effect.actives && !effect.triggers && !effect.all && !effect.attacks && !effect.spells && !effect.creatureAbilities) fail(`${where}: suppress needs a coverage flag`);
-  } else if (op === 'grant_modifier') {
-    if (!effect.modifier || !EFFECT_OPS.has(effect.modifier.op)) fail(`${where}: grant_modifier needs a modifier effect`);
-  } else if (op === 'grant_ability') {
-    checkTargetRef(effect.target, where);
-    if (!effect.ability || typeof effect.ability !== 'object') fail(`${where}: grant_ability needs an ability`);
-    if (effect.ability && effect.ability.kind !== 'active') fail(`${where}: grant_ability grants an active ability`);
-  } else if (op === 'return_from_discard') {
-    checkAmount(effect.count, where);
-  } else if (op === 'return_to_owner') {
-    checkTargetRef(effect.target, where);
-  } else if (op === 'attack_mod') {
-    checkTargetRef(effect.target, where);
-    if (effect.vs && !['ownZone', 'defenderZone'].includes(effect.vs)) fail(`${where}: attack_mod vs must be ownZone|defenderZone`);
-    if (effect.landType && !LAND_TYPES.has(effect.landType)) fail(`${where}: attack_mod landType invalid`);
-    if (effect.defenderType && !LAND_TYPES.has(effect.defenderType)) fail(`${where}: attack_mod defenderType invalid`);
-    if (effect.defenderCost !== undefined && !Number.isInteger(effect.defenderCost)) fail(`${where}: attack_mod defenderCost must be integer`);
-    if (effect.emptyLane !== undefined && typeof effect.emptyLane !== 'boolean') fail(`${where}: attack_mod emptyLane must be boolean`);
-    if (!effect.multiplier && !effect.atkBonus && !effect.face && !effect.atkBonusPerAdjacentEnemy) fail(`${where}: attack_mod needs multiplier|atkBonus|face|atkBonusPerAdjacentEnemy`);
-  } else if (op === 'counts_as') {
-    checkTargetRef(effect.target, where);
-    if (!LAND_TYPES.has(effect.landType)) fail(`${where}: counts_as needs a land type`);
-  } else if (op === 'reveal_deck_top') {
-    if (!Number.isInteger(effect.count)) fail(`${where}: reveal_deck_top needs integer count`);
-  } else if (op === 'reveal_until') {
-    if (!Number.isInteger(effect.max)) fail(`${where}: reveal_until needs integer max`);
-  } else if (op === 'play_revealed') {
-    if (effect.destination) checkTargetRef(effect.destination, where);
-  } else if (op === 'play_from_hand') {
-    if (effect.destination) checkTargetRef(effect.destination, where);
-    if (effect.maxCost !== undefined && !Number.isInteger(effect.maxCost)) fail(`${where}: play_from_hand maxCost must be an integer`);
-  } else if (op === 'play_from_discard') {
-    if (effect.destination) checkTargetRef(effect.destination, where);
-    if (effect.from !== undefined && !['own', 'any'].includes(effect.from)) fail(`${where}: play_from_discard from must be own|any`);
-    if (effect.match?.type && !CARD_TYPES.has(effect.match.type)) fail(`${where}: play_from_discard match type invalid`);
-    if (effect.match?.maxCost !== undefined && !Number.isInteger(effect.match.maxCost)) {
-      fail(`${where}: play_from_discard match maxCost must be an integer`);
-    }
-  } else if (op === 'resolve_revealed') {
-    checkTargetRef(effect.target, where);
-    if (!['deck_bottom', 'hand', 'deck_top'].includes(effect.to)) fail(`${where}: resolve_revealed to must be deck_bottom|hand|deck_top`);
-    if (effect.rest !== undefined && !['discard', 'deck'].includes(effect.rest)) fail(`${where}: resolve_revealed rest must be discard|deck`);
-  } else if (op === 'discard_from_hand') {
-    if (!Number.isInteger(effect.count)) fail(`${where}: discard_from_hand needs integer count`);
-  } else if (op === 'move_creature') {
-    checkTargetRef(effect.target, where);
-    checkTargetRef(effect.destination, where);
-    if (!['own', 'any'].includes(effect.side)) fail(`${where}: move_creature side must be own|any`);
-  } else if (op === 'gain_actions') {
-    if (!Number.isInteger(effect.amount)) fail(`${where}: gain_actions needs integer amount`);
-  } else if (op === 'gain_shield') {
-    checkTargetRef(effect.target, where);
-    if (!Number.isInteger(effect.amount)) fail(`${where}: gain_shield needs integer amount`);
-  } else if (op === 'opponent_discards') {
-    checkTargetRef(effect.target, where);
-    checkAmount(effect.count, where);
-  } else if (op === 'draw_cards' || op === 'discard_top_deck') {
-    checkAmount(effect.count, where);
-  } else if (op === 'stat_buff') {
-    if (!['attack', 'defense'].includes(effect.stat)) fail(`${where}: stat_buff stat must be attack|defense`);
-    if (!['permanent', 'aura', 'this_turn', 'next_turn'].includes(effect.duration)) fail(`${where}: stat_buff duration must be permanent|aura|this_turn|next_turn`);
-    checkAmount(effect.amount, where);
-    if (effect.floorAttack !== undefined && !Number.isInteger(effect.floorAttack)) fail(`${where}: stat_buff floorAttack must be an integer`);
-    if (effect.floorDefense !== undefined && !Number.isInteger(effect.floorDefense)) fail(`${where}: stat_buff floorDefense must be an integer`);
-    for (const cond of effect.conditions ?? []) {
-      if (!CONDITION_KINDS.has(cond.kind)) fail(`${where}: unknown condition ${cond.kind}`);
-    }
-  } else {
-    checkTargetRef(effect.target, where);
-    checkAmount(effect.amount, where);
-  }
-  // A choice-based effect needs declared asks on ITS ability: max index + 1.
-  // Inside grant_ability the asks live on the granted ability.
-  const holder = op === 'grant_ability' ? effect.ability : ability;
-  const effectJson = JSON.stringify(effect);
-  const choiceMatches = [...effectJson.matchAll(/"choice(_zone_creature)?","index":(\d+)/g)];
-  if (choiceMatches.length > 0) {
-    const need = Math.max(...choiceMatches.map((m) => Number(m[2]) + 1));
-    if ((holder.targets?.length ?? 0) < need) {
-      fail(`${where}: effect uses choice(0..${need - 1}) but only ${holder.targets?.length ?? 0} targets declared`);
-    }
-  }
-  const optionMatches = [...effectJson.matchAll(/"if_option","index":(\d+)/g)];
-  if (optionMatches.length > 0) {
-    const need = Math.max(...optionMatches.map((m) => Number(m[1]) + 1));
-    if ((holder.targets?.length ?? 0) < need) {
-      fail(`${where}: if_option uses index(0..${need - 1}) but only ${holder.targets?.length ?? 0} targets declared`);
-    }
-  }
-}
-
-/** Read a mechanics dir (optional): one file per card/hero, validated and keyed by id. */
-const flavorOnlyIds = new Set();
-
-function readMechanics(dir, ids, nameOf, keyField, single) {
-  let entries;
-  try {
-    entries = readdirSync(dir).filter((file) => file.endsWith('.json'));
-  } catch {
-    return new Map();
-  }
-  const map = new Map();
-  for (const file of entries) {
-    const record = readJson(join(dir, file));
-    const id = record[keyField];
-    if (!ids.has(id)) fail(`${file}: unknown ${keyField} ${id}`);
-    if (map.has(id)) fail(`${file}: duplicate mechanics for ${id}`);
-    const name = nameOf(id);
-    if (record.name && record.name !== name) {
-      console.warn(`build-catalog: ${file} name "${record.name}" != catalog "${name}"`);
-    }
-    if (single) {
-      validateAbility(record.ability, id);
-      if (record.ability.kind === 'passive' && record.ability.trigger === undefined && !record.ability.effect) {
-        // text-only placeholder is allowed until the ability is structured
-      }
-      if (record.wordSetup !== undefined) {
-        const s = record.wordSetup;
-        if (!s || !Number.isInteger(s.min) || !Number.isInteger(s.max) || s.min < 1 || s.max < s.min) {
-          fail(`${file}: wordSetup needs integers min >= 1 and max >= min`);
-        }
-        if (s.label !== undefined && typeof s.label !== 'string') fail(`${file}: wordSetup label must be a string`);
-      }
-    } else {
-      if (!Array.isArray(record.abilities)) fail(`${file}: abilities[] required`);
-      if (record.abilities.length === 0 && !record.flavorOnly) fail(`${file}: abilities[] required (or flavorOnly)`);
-      const actives = record.abilities.filter((a) => a.kind === 'active');
-      if (actives.length > 1) fail(`${file}: at most one active (ПРИЕМ) ability per card`);
-      record.abilities.forEach((ability, i) => validateAbility(ability, `${id}[${i}]`));
-    }
-    if (record.flavorOnly) flavorOnlyIds.add(id);
-    map.set(id, single ? record : record.abilities);
-  }
-  return map;
-}
-
-// Hero data is display-only for now: the ability field returns with mechanics v2
-// (docs/TECH.md № 2), when structured hero mechanics are bound per hero id.
-const heroes = readdirSync(join(contentDir, 'heroes', 'json'))
-  .filter((file) => file.endsWith('.json'))
-  .map((file) => readJson(join(contentDir, 'heroes', 'json', file)))
-  .filter((hero) => hero.typeCategory === 'hero')
-  .map((hero) => ({
-    id: hero.id,
-    name: hero.name,
-    image: hero.image,
-    text: hero.description ?? '',
-  }))
   .sort((a, b) => a.id.localeCompare(b.id));
 
-const cardIds = new Set(cards.map((card) => card.id));
-if (cardIds.size !== cards.length) fail('duplicate card ids');
-const heroIds = new Set(heroes.map((hero) => hero.id));
-if (heroIds.size !== heroes.length) fail('duplicate hero ids');
+const heroes = rawHeroes
+  .map((hero) => {
+    const record = {
+      id: hero.id,
+      name: hero.name,
+      image: hero.image,
+      text: hero.description || '',
+    };
+    if (hero.ability) record.ability = hero.ability;
+    if (hero.wordSetup) record.wordSetup = hero.wordSetup;
+    return record;
+  })
+  .sort((a, b) => a.id.localeCompare(b.id));
 
-// Merge mechanics bindings into the generated catalog (docs/MECHANICS-V2.md §4).
-const cardMechanics = readMechanics(
-  join(contentDir, 'cards', 'mechanics'),
-  cardIds,
-  (id) => cards.find((c) => c.id === id).name,
-  'cardId',
-  false,
-);
-const heroMechanics = readMechanics(
-  join(contentDir, 'heroes', 'mechanics'),
-  heroIds,
-  (id) => heroes.find((h) => h.id === id).name,
-  'heroId',
-  true,
-);
-for (const card of cards) {
-  const abilities = cardMechanics.get(card.id);
-  if (abilities) card.abilities = abilities;
-}
-for (const hero of heroes) {
-  const record = heroMechanics.get(hero.id);
-  if (!record) continue;
-  hero.ability = record.ability;
-  if (record.wordSetup) hero.wordSetup = record.wordSetup;
-}
+const cardIds = new Set(cards.map((c) => c.id));
+if (cardIds.size !== cards.length) fail(`duplicate card ids: ${cards.length - cardIds.size}`);
+
+const heroIds = new Set(heroes.map((h) => h.id));
+if (heroIds.size !== heroes.length) fail(`duplicate hero ids: ${heroes.length - heroIds.size}`);
 
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, 'cards.json'), `${JSON.stringify(cards, null, 1)}\n`);
-writeFileSync(join(outDir, 'heroes.json'), `${JSON.stringify(heroes, null, 1)}\n`);
+writeFileSync(join(outDir, 'cards.json'), `${JSON.stringify(cards, null, 2)}\n`);
+writeFileSync(join(outDir, 'heroes.json'), `${JSON.stringify(heroes, null, 2)}\n`);
 
 const stats = {};
 for (const card of cards) stats[card.type] = (stats[card.type] ?? 0) + 1;
-console.log(`cards: ${cards.length}`, stats);
-console.log(`heroes: ${heroes.length}`);
+console.log(`Generated cards: ${cards.length}`, stats);
+console.log(`Generated heroes: ${heroes.length}`);
 
-// Mechanics coverage (docs/MECHANICS-V2.md §4): what is structured vs pending.
 const withMechanics = cards.filter((c) => c.abilities?.length).length;
-const structurable = cards.filter((c) => !c.abilities?.length && c.description && !flavorOnlyIds.has(c.id)).length;
-const vanilla = cards.filter((c) => !c.abilities?.length && !c.description && !flavorOnlyIds.has(c.id)).length;
-const flavorOnly = cards.filter((c) => flavorOnlyIds.has(c.id)).length;
-console.log(
-  `mechanics: cards ${withMechanics}/${cards.length} structured, ${structurable} with text pending, ` +
-    `${flavorOnly} flavorOnly, ${vanilla} intentionally vanilla, heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`,
-);
+console.log(`Mechanics: cards ${withMechanics}/${cards.length} structured, heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`);

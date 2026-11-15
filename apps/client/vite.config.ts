@@ -39,9 +39,10 @@ function contentAssets(): Plugin {
     },
     closeBundle() {
       // Card scans, hero portraits, and land tiles are served as static assets (docs/UI-3D.md, docs/UI.md).
-      for (const part of [['cards', 'images'], ['heroes', 'images'], ['lands', 'images']]) {
-        const source = join(contentDir, ...part);
-        const target = resolve(here, 'dist/content', ...part);
+      const targets = ['cards', 'heroes', 'lands', 'other', 'index.json', 'index.min.json'];
+      for (const t of targets) {
+        const source = join(contentDir, t);
+        const target = resolve(here, 'dist/content', t);
         if (existsSync(source)) cpSync(source, target, { recursive: true });
       }
     },

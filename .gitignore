@@ -29,8 +29,11 @@ USER.md
 .workbuddy-ai/
 
 # Временные рабочие каталоги (тесты OCR, ревью, повторное распознавание)
-.tmp-*/
+.tmp*
 .ocr-test/
+*.log
+trace*.txt
+parse-out.txt
 
 # Бэкапы дизайна
 design-backup/

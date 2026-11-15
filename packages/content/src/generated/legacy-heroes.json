@@ -1,0 +1,720 @@
+[
+ {
+  "id": "hero_abracadaniel",
+  "name": "Абракаданиэль",
+  "image": "/content/heroes/images/hero_abracadaniel.png",
+  "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её.",
+  "ability": {
+   "kind": "active",
+   "cost": 1,
+   "effect": [
+    {
+     "op": "reveal_until",
+     "max": 1,
+     "match": {
+      "landType": "rainbow"
+     }
+    },
+    {
+     "op": "play_revealed",
+     "destination": {
+      "kind": "choice",
+      "index": 0
+     }
+    }
+   ],
+   "targets": [
+    {
+     "kind": "landscape"
+    }
+   ],
+   "text": "Потрать 1 действие >>> Посмотри верхнюю карту своей колоды. Если это Радужная карта, сыграй её."
+  }
+ },
+ {
+  "id": "hero_billy",
+  "name": "Билли",
+  "image": "/content/heroes/images/hero_billy.png",
+  "text": "Если колода твоего противника закончилась, ты победил.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "start_of_turn",
+   "effect": {
+    "op": "win_if_opponents_deck_empty"
+   },
+   "text": "Если к началу твоего хода колода каждого противника опустела — победа."
+  }
+ },
+ {
+  "id": "hero_bmo",
+  "name": "БиМО",
+  "image": "/content/heroes/images/hero_bmo.png",
+  "text": "Сбрось карту с руки >>> Нанеси 1 урон выбранному существу.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "additionalCost": {
+    "discardFromHand": 1
+   },
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 1
+   },
+   "targets": [
+    {
+     "kind": "any_creature"
+    }
+   ],
+   "text": "Сбрось карту с руки >>> Нанеси 1 урон выбранному существу."
+  }
+ },
+ {
+  "id": "hero_bubblegum",
+  "name": "Принцесса Жвачка",
+  "image": "/content/heroes/images/hero_bubblegum.png",
+  "text": "Один раз за ход можешь нанести 1 урон своему существу. Это существо получает +1 АТК в этом ходу.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "effect": [
+    {
+     "op": "deal_damage",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "amount": 1
+    },
+    {
+     "op": "stat_buff",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "stat": "attack",
+     "amount": 1,
+     "duration": "this_turn"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "own_creature"
+    }
+   ],
+   "text": "Один раз за ход можешь нанести 1 урон своему существу. Это существо получает +1 АТК в этом ходу."
+  }
+ },
+ {
+  "id": "hero_cake",
+  "name": "Кейк",
+  "image": "/content/heroes/images/hero_cake.png",
+  "text": "Каждый раз, когда вступает в игру строение под твоим контролем, восстанови 2 HP каждому существу под твоим контролем со строением на этой земле.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_enters_play",
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "payload_zone_own_creatures"
+    },
+    "amount": 2
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_building"
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "Каждый раз, когда вступает в игру строение под твоим контролем, восстанови 2 HP каждому существу под твоим контролем со строением на этой земле."
+  }
+ },
+ {
+  "id": "hero_charlie",
+  "name": "Чари",
+  "image": "/content/heroes/images/hero_charlie.png",
+  "text": "Один раз за свой ход можешь переместить существо под твоим контролем на соседнюю пустую линию.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "move_creature",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "destination": {
+     "kind": "choice",
+     "index": 1
+    },
+    "side": "own"
+   },
+   "targets": [
+    {
+     "kind": "own_creature"
+    },
+    {
+     "kind": "landscape"
+    }
+   ],
+   "text": "Один раз за свой ход можешь переместить существо под своим контролем на соседнюю пустую линию."
+  }
+ },
+ {
+  "id": "hero_cosmic_owl",
+  "name": "Космическая сова",
+  "image": "/content/heroes/images/hero_cosmic_owl.png",
+  "text": "Потрать 1 действие >>> Посмотри и измени порядок 4х верхних карт своей колоды.",
+  "ability": {
+   "kind": "active",
+   "cost": 1,
+   "effect": [
+    {
+     "op": "reveal_deck_top",
+     "count": 4
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 0
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 1
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 2
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    },
+    {
+     "op": "resolve_revealed",
+     "target": {
+      "kind": "choice",
+      "index": 3
+     },
+     "to": "deck_top",
+     "rest": "deck"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "revealed_card"
+    },
+    {
+     "kind": "revealed_card"
+    },
+    {
+     "kind": "revealed_card"
+    },
+    {
+     "kind": "revealed_card"
+    }
+   ],
+   "text": "Потрать 1 действие >>> Посмотри и измени порядок 4х верхних карт своей колоды."
+  }
+ },
+ {
+  "id": "hero_finn",
+  "name": "Фини",
+  "image": "/content/heroes/images/hero_finn.png",
+  "text": "Существа под твоим контролем, не получившие урон, получают «ПРИЕМ >>> Нанеси 1 урон выбранному существу».",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "grant_ability",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "ability": {
+     "kind": "active",
+     "effect": {
+      "op": "deal_damage",
+      "target": {
+       "kind": "choice",
+       "index": 0
+      },
+      "amount": 1
+     },
+     "targets": [
+      {
+       "kind": "any_creature"
+      }
+     ],
+     "conditions": [
+      {
+       "kind": "while_undamaged",
+       "scope": "self"
+      }
+     ],
+     "text": "ПРИЕМ >>> Нанеси 1 урон выбранному существу"
+    }
+   },
+   "text": "Существа под твоим контролем, не получившие урон, получают «ПРИЕМ >>> Нанеси 1 урон выбранному существу»."
+  }
+ },
+ {
+  "id": "hero_fiona",
+  "name": "Фионна",
+  "image": "/content/heroes/images/hero_fiona.png",
+  "text": "Когда под твоим контролем только один тип земли, у твоих Радужных существ +1 АТК.",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "stat": "attack",
+    "amount": 1,
+    "duration": "aura",
+    "filter": {
+     "landType": "rainbow"
+    }
+   },
+   "conditions": [
+    {
+     "kind": "while_distinct_lands",
+     "max": 1
+    }
+   ],
+   "text": "Если под твоим контролем только один тип земли, у твоих Радужных существ +1 АТК."
+  }
+ },
+ {
+  "id": "hero_grand_prix",
+  "name": "Гран При",
+  "image": "/content/heroes/images/hero_grand_prix.png",
+  "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_replacing"
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
+ },
+ {
+  "id": "hero_gunter",
+  "name": "Гантер",
+  "image": "/content/heroes/images/hero_gunter.png",
+  "text": "Существа под твоим контролем на землях с Ледяными фишками получают +1 АТК.",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "stat": "attack",
+    "amount": 1,
+    "duration": "aura",
+    "filter": {
+     "zoneToken": true
+    }
+   },
+   "text": "Существа под твоим контролем на землях с Ледяными фишками получают +1 АТК."
+  }
+ },
+ {
+  "id": "hero_huntress_wizard",
+  "name": "Колдунья-охотница",
+  "image": "/content/heroes/images/hero_huntress_wizard.png",
+  "text": "В начале игры выбери слово из 3х и более букв. Когда играешь карту с этим словом в названии, нанеси 1 урон выбранному существу под контролем противника.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "conditions": [
+    {
+     "kind": "if_payload_player_self"
+    },
+    {
+     "kind": "if_payload_name_contains"
+    }
+   ],
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 1
+   },
+   "targets": [
+    {
+     "kind": "opponent_creature"
+    }
+   ],
+   "text": "В начале игры выбери слово из 3х и более букв. Когда играешь карту с этим словом в названии, нанеси 1 урон выбранному существу под контролем противника."
+  },
+  "wordSetup": {
+   "min": 3,
+   "max": 40,
+   "label": "Слово (3+ букв)"
+  }
+ },
+ {
+  "id": "hero_ice_king",
+  "name": "Ледяной Король",
+  "image": "/content/heroes/images/hero_ice_king.png",
+  "text": "Во время каждого твоего хода, когда существо под твоим контролем в первый раз атакует пустую линию, у него +1 АТК.",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "attack_mod",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "atkBonus": 1,
+    "emptyLane": true
+   },
+   "text": "Во время каждого твоего хода, когда существо под твоим контролем в первый раз атакует пустую линию, у него +1 АТК."
+  }
+ },
+ {
+  "id": "hero_jake",
+  "name": "Джейк",
+  "image": "/content/heroes/images/hero_jake.png",
+  "text": "Существа под твоим контролем, лежащие на повернутых лицом вниз землях, получают +2 АТК.",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "stat": "attack",
+    "amount": 2,
+    "duration": "aura",
+    "filter": {
+     "zoneFlipped": true
+    }
+   },
+   "text": "Существа под твоим контролем, лежащие на повернутых лицом вниз землях, получают +2 АТК."
+  }
+ },
+ {
+  "id": "hero_jake_2v2",
+  "name": "Джейк 2х2",
+  "image": "/content/heroes/images/hero_jake_2v2.png",
+  "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_damage_dealt",
+   "oncePerTurn": true,
+   "optional": true,
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 1
+   },
+   "targets": [
+    {
+     "kind": "any_creature"
+    }
+   ],
+   "conditions": [
+    {
+     "kind": "if_payload_other"
+    }
+   ],
+   "text": "Раз за свой ход, когда существо под твоим контролем ранит противника, можешь нанести 1 урон выбранному существу на своих линиях."
+  }
+ },
+ {
+  "id": "hero_lady_rainicorn",
+  "name": "Леди Ливнерог",
+  "image": "/content/heroes/images/hero_lady_rainicorn.png",
+  "text": "Если во время своего хода ты возвращаешь себе на руку 2 или более существ из игры или из своего сброса, ты восстанавливаешь 2 HP.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_return_to_hand",
+   "conditions": [
+    {
+     "kind": "if_payload_player_self"
+    },
+    {
+     "kind": "while_counter_at_least",
+     "counter": "returned_to_hand",
+     "min": 2,
+     "scope": "own"
+    },
+    {
+     "kind": "while_counter_at_most",
+     "counter": "returned_to_hand",
+     "max": 2,
+     "scope": "own"
+    }
+   ],
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "self_player"
+    },
+    "amount": 2
+   },
+   "text": "Если во время своего хода ты возвращаешь себе на руку 2 или более существ из игры или из своего сброса, ты восстанавливаешь 2 HP."
+  }
+ },
+ {
+  "id": "hero_lemongrab",
+  "name": "ЛимошВат",
+  "image": "/content/heroes/images/hero_lemongrab.png",
+  "text": "В начале своей фазы Сражения, если у тебя 1 или более пустых земель, получи 1 HP. (Не превышая 25.)",
+  "ability": {
+   "kind": "passive",
+   "trigger": "start_of_battle_phase",
+   "effect": {
+    "op": "heal",
+    "target": {
+     "kind": "self_player"
+    },
+    "amount": 1
+   },
+   "conditions": [
+    {
+     "kind": "while_empty_lands",
+     "min": 1
+    }
+   ],
+   "text": "В начале своей фазы Сражения, если у тебя 1 или более пустых земель, получи 1 HP. (Не превышая 25.)"
+  }
+ },
+ {
+  "id": "hero_lsp",
+  "name": "Принцесса Пупырка",
+  "image": "/content/heroes/images/hero_lsp.png",
+  "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "draw_cards",
+    "count": 1
+   },
+   "conditions": [
+    {
+     "kind": "if_payload_replacing"
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "В свой ход, когда заменяешь существо в первый раз, тяни карту."
+  }
+ },
+ {
+  "id": "hero_magic_man",
+  "name": "Волшебный чел",
+  "image": "/content/heroes/images/hero_magic_man.png",
+  "text": "Когда играешь карту стоимостью ровно 2, нанеси 2 урона существу под контролем противника.",
+  "ability": {
+   "kind": "passive",
+   "trigger": "on_card_played",
+   "effect": {
+    "op": "deal_damage",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    },
+    "amount": 2
+   },
+   "targets": [
+    {
+     "kind": "opponent_creature"
+    }
+   ],
+   "conditions": [
+    {
+     "kind": "if_payload_cost",
+     "min": 2,
+     "max": 2
+    },
+    {
+     "kind": "if_payload_player_self"
+    }
+   ],
+   "text": "Когда играешь карту стоимостью ровно 2, нанеси 2 урона существу под контролем противника."
+  }
+ },
+ {
+  "id": "hero_marceline",
+  "name": "Марселин",
+  "image": "/content/heroes/images/hero_marceline.png",
+  "text": "У твоих существ с уроном 5 и более, +1 АТК.",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "stat": "attack",
+    "amount": 1,
+    "duration": "aura"
+   },
+   "conditions": [
+    {
+     "kind": "while_damage_at_least",
+     "amount": 5,
+     "scope": "target"
+    }
+   ],
+   "text": "У твоих существ с уроном 5 и более, +1 АТК."
+  }
+ },
+ {
+  "id": "hero_monika",
+  "name": "Монука",
+  "image": "/content/heroes/images/hero_monika.png",
+  "text": "Раз за свой ход можешь повернуть применённое существо.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "effect": {
+    "op": "unflip",
+    "target": {
+     "kind": "choice",
+     "index": 0
+    }
+   },
+   "targets": [
+    {
+     "kind": "own_creature",
+     "filter": {
+      "flipped": true
+     }
+    }
+   ],
+   "text": "Раз за свой ход можешь повернуть применённое существо."
+  }
+ },
+ {
+  "id": "hero_prismo",
+  "name": "Призмо",
+  "image": "/content/heroes/images/hero_prismo.png",
+  "text": "Если у тебя нет одинаковых земель, у твоих существ +1 DEF.",
+  "ability": {
+   "kind": "passive",
+   "effect": {
+    "op": "stat_buff",
+    "target": {
+     "kind": "each_creature_yours"
+    },
+    "stat": "defense",
+    "amount": 1,
+    "duration": "aura"
+   },
+   "conditions": [
+    {
+     "kind": "while_distinct_lands",
+     "min": 4
+    }
+   ],
+   "text": "Если у тебя нет одинаковых земель, у твоих существ +1 DEF."
+  }
+ },
+ {
+  "id": "hero_ricardio",
+  "name": "Рикардио",
+  "image": "/content/heroes/images/hero_ricardio.png",
+  "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её.",
+  "ability": {
+   "kind": "active",
+   "cost": 0,
+   "oncePerTurn": true,
+   "effect": [
+    {
+     "op": "pay_life",
+     "amount": 1
+    },
+    {
+     "op": "peek_deck_top",
+     "count": 1
+    },
+    {
+     "op": "resolve_peek"
+    }
+   ],
+   "targets": [
+    {
+     "kind": "choose_option",
+     "options": [
+      "keep",
+      "discard"
+     ],
+     "label": "Верхняя карта колоды: оставить или сбросить?"
+    }
+   ],
+   "text": "В каждый свой ход, один раз можешь потратить 1 HP. Если сделал это, открой верхнюю карту своей колоды. Можешь сбросить её."
+  }
+ },
+ {
+  "id": "hero_strong_susan",
+  "name": "Сильная Сьюзан",
+  "image": "/content/heroes/images/hero_strong_susan.png",
+  "text": "Потрать 1 действие и уничтожь существо под твоим контролем >>> Нанеси урон, равный его стоимости, каждому существу противника.",
+  "ability": {
+   "kind": "active",
+   "text": "Потрать 1 действие и уничтожь существо под своим контролем >>> Нанеси урон, равный его стоимости, каждому существу противника.",
+   "cost": 1,
+   "targets": [
+    {
+     "kind": "own_creature"
+    }
+   ],
+   "mechanic": "sacrifice_cost_damage"
+  }
+ },
+ {
+  "id": "hero_tree_trunks",
+  "name": "Деревяшка",
+  "image": "/content/heroes/images/hero_tree_trunks.png",
+  "text": "В каждый свой ход, один раз можешь сбросить карту со словом «Пирог» в названии и получить 1 действие.",
+  "ability": {
+   "kind": "active",
+   "oncePerTurn": true,
+   "additionalCost": {
+    "discardFromHandName": "Пирог"
+   },
+   "effect": {
+    "op": "gain_actions",
+    "amount": 1
+   },
+   "text": "В каждый свой ход, один раз можешь сбросить карту со словом «Пирог» в названии и получить 1 действие."
+  }
+ }
+]

@@ -2,23 +2,7 @@ import { useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent
 import { cards, heroes, type CardData, type LandType } from '@card-wars/content';
 import { computeZoomOrigin } from './cardZoom';
 
-const LAND_META: Record<string, { label: string; shortLabel: string; prefix: string | null }> = {
-  corn: { label: 'Кукурузные поля', shortLabel: 'Кукуруза', prefix: 'land_corn' },
-  blue: { label: 'Синие равнины', shortLabel: 'Синие', prefix: 'land_blue' },
-  good: { label: 'Милые земли', shortLabel: 'Милые', prefix: 'land_nice' },
-  ice: { label: 'Ледяные земли', shortLabel: 'Лёд', prefix: 'land_icy' },
-  sand: { label: 'Песчаные земли', shortLabel: 'Песок', prefix: 'land_sandy' },
-  swamp: { label: 'Болото', shortLabel: 'Болото', prefix: 'land_swamp' },
-  rainbow: { label: 'Радужная земля', shortLabel: 'Радуга', prefix: null },
-  ghost: { label: 'Призрачные земли', shortLabel: 'Призраки', prefix: 'land_ghost' },
-};
-
-function landImageUrl(type: string, variant = 1): string | null {
-  const meta = LAND_META[type];
-  if (!meta?.prefix) return null;
-  const v = ((variant - 1) % 4) + 1;
-  return `/content/lands/images/${meta.prefix}_${v}.png`;
-}
+import { LAND_META, landImageUrl } from './landImages';
 
 const cardById = new Map(cards.map((c) => [c.id, c]));
 const TARGET_ZOOM_WIDTH_PX = 224;
@@ -116,7 +100,7 @@ export function DeckPreview({
               shortLabel: landType,
               prefix: null,
             };
-            const imgUrl = landImageUrl(landType, idx + 1);
+            const imgUrl = landImageUrl(landType as LandType, idx + 1);
             return (
               <div
                 key={idx}

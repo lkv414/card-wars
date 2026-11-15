@@ -44,6 +44,9 @@ export const frostLocalZ = -LAND_H / 2 + 22;
 /** Радиус попадания в стопку сброса при перетаскивании (docs/UI-3D.md «Взаимодействие»). */
 export const DISCARD_HIT_RADIUS = 95;
 
+/** Raycasting bypass helper for decorative Three.js / R3F meshes (r3f-best-practices §2). */
+export const NO_RAYCAST = null as never;
+
 export interface BoardTransform {
   x: number;
   z: number;

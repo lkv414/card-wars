@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { CARD_H, CARD_W, LAND_H, LAND_W, TOKEN_D, TOKEN_T } from './layout';
+import { CARD_H, CARD_W, LAND_H, LAND_W, NO_RAYCAST, TOKEN_D, TOKEN_T } from './layout';
 import { tokenTexture } from './textures';
 
 // Кучка жетонов урона с клиентской физсимуляцией (docs/UI-3D.md «Жетоны урона
@@ -254,7 +254,7 @@ export function DamagePile({
             else meshesRef.current.delete(t.key);
           }}
           position={[t.x, t.y, t.z]}
-          raycast={() => null}
+          raycast={NO_RAYCAST}
         >
           <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 20]} />
           <meshLambertMaterial map={tokenTexture(t.face)} />
@@ -268,7 +268,7 @@ export function DamagePile({
             else leavingMeshesRef.current.delete(l.key);
           }}
           position={[l.x, l.y, l.z]}
-          raycast={() => null}
+          raycast={NO_RAYCAST}
         >
           <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 20]} />
           <meshLambertMaterial map={tokenTexture(l.face)} transparent />

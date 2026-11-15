@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { GameEvent, PlayerView } from '@card-wars/protocol';
 import {
   CARD_H,
   CARD_W,
+  NO_RAYCAST,
   SPRITE_SCALE,
   boardTransform,
   handWorldPos,
@@ -37,11 +38,20 @@ interface Anim {
 let animId = 0;
 const anims: Anim[] = [];
 const listeners = new Set<() => void>();
+let sceneInvalidator: (() => void) | null = null;
+
+export function registerAnimInvalidator(cb: () => void): () => void {
+  sceneInvalidator = cb;
+  return () => {
+    if (sceneInvalidator === cb) sceneInvalidator = null;
+  };
+}
 
 function pushAnim(anim: Omit<Anim, 'id' | 'start'>): void {
   anims.push({ ...anim, id: animId++, start: performance.now() });
   if (anims.length > 40) anims.splice(0, anims.length - 40);
   for (const listener of listeners) listener();
+  sceneInvalidator?.();
 }
 
 function positionOfInstance(view: PlayerView | null, instanceId: string | null): [number, number, number] | null {
@@ -200,6 +210,12 @@ export function AnimDriver() {
   const seq = useGame((s) => s.lastEventsSeq);
   const view = useGame((s) => s.view);
   const processed = useRef(0);
+  const invalidate = useThree((s) => s.invalidate);
+
+  useEffect(() => {
+    return registerAnimInvalidator(() => invalidate());
+  }, [invalidate]);
+
   useEffect(() => {
     const state = useGame.getState();
     const total = state.eventsLog.length;
@@ -215,29 +231,37 @@ export function AnimDriver() {
 }
 
 export function AnimLayer() {
-  const group = useRef<THREE.Group>(null);
-  const version = useRef(0);
+  const [alive, setAlive] = useState<Anim[]>([]);
+
   useEffect(() => {
-    const listener = () => {
-      version.current++;
+    const onUpdate = () => {
+      setAlive([...anims]);
     };
-    listeners.add(listener);
+    listeners.add(onUpdate);
+    setAlive([...anims]);
     return () => {
-      listeners.delete(listener);
+      listeners.delete(onUpdate);
     };
   }, []);
+
   useFrame(() => {
     const now = performance.now();
+    let pruned = false;
     for (let i = anims.length - 1; i >= 0; i--) {
-      if (now - anims[i]!.start > anims[i]!.duration + 60) anims.splice(i, 1);
+      if (now - anims[i]!.start > anims[i]!.duration + 60) {
+        anims.splice(i, 1);
+        pruned = true;
+      }
+    }
+    if (pruned) {
+      queueMicrotask(() => setAlive([...anims]));
     }
   });
-  const now = performance.now();
-  const alive = anims.filter((a) => now - a.start <= a.duration + 60);
+
   return (
-    <group ref={group}>
+    <group>
       {alive.map((anim) => (
-        <Ghost key={anim.id} anim={anim} now={now} />
+        <Ghost key={anim.id} anim={anim} />
       ))}
     </group>
   );
@@ -247,38 +271,86 @@ function ease(t: number): number {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
 
-function Ghost({ anim, now }: { anim: Anim; now: number }) {
-  const t = Math.min(1, (now - anim.start) / anim.duration);
-  const e = ease(t);
-  const pos: [number, number, number] = [
-    anim.from[0] + (anim.to[0] - anim.from[0]) * e,
-    anim.from[1] + (anim.to[1] - anim.from[1]) * e + (anim.kind === 'fly' ? Math.sin(Math.PI * t) * 90 : 0),
-    anim.from[2] + (anim.to[2] - anim.from[2]) * e,
-  ];
-  const opacity = anim.kind === 'number' ? 1 - t * t : 1 - Math.max(0, t - 0.8) * 5;
+function Ghost({ anim }: { anim: Anim }) {
+  if (anim.kind === 'fly') return <FlyGhost anim={anim} />;
+  if (anim.kind === 'number') return <NumberGhost anim={anim} />;
+  return <FlashGhost anim={anim} />;
+}
 
-  if (anim.kind === 'fly') {
-    const texture = anim.cardId ? cardTexture(anim.cardId) : null;
-    if (!texture) return null;
-    return (
-      <mesh position={pos} rotation={[-Math.PI / 2 + Math.sin(t * Math.PI) * 0.7, 0, 0]} raycast={() => null}>
-        <planeGeometry args={[CARD_W, CARD_H]} />
-        <meshBasicMaterial map={texture} transparent opacity={opacity} />
-      </mesh>
+function FlyGhost({ anim }: { anim: Anim }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const matRef = useRef<THREE.MeshBasicMaterial>(null);
+  const texture = useMemo(() => (anim.cardId ? cardTexture(anim.cardId) : null), [anim.cardId]);
+
+  useFrame(() => {
+    if (!meshRef.current || !matRef.current) return;
+    const now = performance.now();
+    const t = Math.min(1, Math.max(0, (now - anim.start) / anim.duration));
+    const e = ease(t);
+    meshRef.current.position.set(
+      anim.from[0] + (anim.to[0] - anim.from[0]) * e,
+      anim.from[1] + (anim.to[1] - anim.from[1]) * e + Math.sin(Math.PI * t) * 90,
+      anim.from[2] + (anim.to[2] - anim.from[2]) * e,
     );
-  }
-  if (anim.kind === 'number') {
-    return (
-      <sprite position={pos} scale={[256 * SPRITE_SCALE * 2, 128 * SPRITE_SCALE * 2, 1]} raycast={() => null}>
-        <spriteMaterial map={textSprite(anim.text ?? '', anim.color ?? '#ffffff')} transparent opacity={opacity} />
-      </sprite>
-    );
-  }
-  // flash
+    meshRef.current.rotation.set(-Math.PI / 2 + Math.sin(t * Math.PI) * 0.7, 0, 0);
+    matRef.current.opacity = 1 - Math.max(0, t - 0.8) * 5;
+  });
+
+  if (!texture) return null;
+
   return (
-    <mesh position={[pos[0], 2, pos[2]]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+    <mesh ref={meshRef} position={anim.from} raycast={NO_RAYCAST}>
+      <planeGeometry args={[CARD_W, CARD_H]} />
+      <meshBasicMaterial ref={matRef} map={texture} transparent opacity={1} />
+    </mesh>
+  );
+}
+
+function NumberGhost({ anim }: { anim: Anim }) {
+  const spriteRef = useRef<THREE.Sprite>(null);
+  const matRef = useRef<THREE.SpriteMaterial>(null);
+  const texture = useMemo(() => textSprite(anim.text ?? '', anim.color ?? '#ffffff'), [anim.text, anim.color]);
+
+  useFrame(() => {
+    if (!spriteRef.current || !matRef.current) return;
+    const now = performance.now();
+    const t = Math.min(1, Math.max(0, (now - anim.start) / anim.duration));
+    const e = ease(t);
+    spriteRef.current.position.set(
+      anim.from[0] + (anim.to[0] - anim.from[0]) * e,
+      anim.from[1] + (anim.to[1] - anim.from[1]) * e,
+      anim.from[2] + (anim.to[2] - anim.from[2]) * e,
+    );
+    matRef.current.opacity = Math.max(0, 1 - t * t);
+  });
+
+  return (
+    <sprite
+      ref={spriteRef}
+      position={anim.from}
+      scale={[256 * SPRITE_SCALE * 2, 128 * SPRITE_SCALE * 2, 1]}
+      raycast={NO_RAYCAST}
+    >
+      <spriteMaterial ref={matRef} map={texture} transparent opacity={1} />
+    </sprite>
+  );
+}
+
+function FlashGhost({ anim }: { anim: Anim }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const matRef = useRef<THREE.MeshBasicMaterial>(null);
+
+  useFrame(() => {
+    if (!meshRef.current || !matRef.current) return;
+    const now = performance.now();
+    const t = Math.min(1, Math.max(0, (now - anim.start) / anim.duration));
+    matRef.current.opacity = 0.5 * (1 - t);
+  });
+
+  return (
+    <mesh ref={meshRef} position={[anim.from[0], 2, anim.from[2]]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
       <planeGeometry args={[130, 170]} />
-      <meshBasicMaterial color={anim.color ?? '#ffffff'} transparent opacity={0.5 * (1 - t)} />
+      <meshBasicMaterial ref={matRef} color={anim.color ?? '#ffffff'} transparent opacity={0.5} />
     </mesh>
   );
 }

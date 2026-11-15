@@ -12,6 +12,14 @@ import type { TargetingState } from './game/targeting';
 export type Quality = 'low' | 'high';
 export type CameraMode = 'follow' | 'self';
 
+export interface ZoomedCardInfo {
+  cardId: string;
+  instanceId?: string;
+  damage?: number;
+  shield?: number;
+  flipped?: boolean;
+}
+
 export interface UiState {
   quality: Quality;
   cameraMode: CameraMode;
@@ -26,6 +34,7 @@ export interface UiState {
   holdingFloop: { instanceId: string; startedAt: number; startX: number; startY: number } | null;
   targeting: TargetingState | null;
   journalOpen: boolean;
+  zoomedCard: ZoomedCardInfo | null;
 }
 
 interface GameStore {
@@ -68,6 +77,7 @@ export const useGame = create<GameStore>(() => ({
     holdingFloop: null,
     targeting: null,
     journalOpen: false,
+    zoomedCard: null,
   },
   sendCommand: () => {},
   lobbyCommand: () => {},

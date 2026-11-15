@@ -3,7 +3,7 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { CardView, PlayerView } from '@card-wars/protocol';
 import { cards as catalog } from '@card-wars/content';
-import { CARD_H, CARD_T, CARD_W, FROST_D, TOKEN_D, TOKEN_T, slotLocalZ } from './layout';
+import { CARD_H, CARD_T, CARD_W, FROST_D, NO_RAYCAST, TOKEN_D, TOKEN_T, slotLocalZ } from './layout';
 import { cardBackTexture, cardTexture, frostTexture, tokenTexture } from './textures';
 import { sendCommand, setUi, showHint, useGame } from '../../store';
 import { activeAbilityOf, pick, startForActive, validTargets } from '../targeting';
@@ -183,8 +183,9 @@ export function CardMesh({
         if (holder.current.position.distanceTo(baseTarget) > 0.1) {
           holder.current.position.lerp(baseTarget, 1 - Math.exp(-21 * delta));
           invalidate();
-        } else {
+        } else if (holder.current.position.distanceTo(baseTarget) > 0.001) {
           holder.current.position.copy(baseTarget);
+          invalidate();
         }
       }
     }
@@ -286,7 +287,25 @@ export function CardMesh({
 
   return (
     <group ref={holder} position={basePosition}>
-      <group ref={group} onClick={handleClick} onPointerDown={startHold} onPointerUp={cancelHold}>
+      <group
+        ref={group}
+        onClick={handleClick}
+        onPointerDown={startHold}
+        onPointerUp={cancelHold}
+        onContextMenu={(e) => {
+          e.stopPropagation();
+          e.nativeEvent.preventDefault();
+          setUi({
+            zoomedCard: {
+              cardId: card.cardId,
+              instanceId: card.instanceId,
+              damage: card.damage,
+              shield: card.shield,
+              flipped: card.flipped,
+            },
+          });
+        }}
+      >
         <mesh material={materials}>
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
         </mesh>
@@ -297,15 +316,29 @@ export function CardMesh({
         </mesh>
       </group>
       {canDrag && (
-        <mesh ref={ring} position={[0, 18, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false} raycast={() => null}>
+        <mesh ref={ring} position={[0, 18, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false} raycast={NO_RAYCAST}>
           <ringGeometry args={[42, 52, 36]} />
           <meshBasicMaterial color="#48d9a0" transparent opacity={0.5} side={THREE.DoubleSide} />
         </mesh>
       )}
+      {/* Аффорданс доступного флюпа (мягкое золотисто-зеленое свечение) */}
+      {canHold && !card.flipped && (
+        <mesh position={[0, 1.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
+          <planeGeometry args={[CARD_W + 6, CARD_H + 6]} />
+          <meshBasicMaterial color="#48d9a0" transparent opacity={0.22} />
+        </mesh>
+      )}
+      {/* Боевая готовность: индикатор атаки у линии боя */}
+      {slot === 'creature' && !card.flipped && (view.phase === 'combat' || (isMe && myMain)) && (
+        <mesh position={[0, 1.3, -CARD_H / 2 - 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
+          <planeGeometry args={[CARD_W - 8, 4]} />
+          <meshBasicMaterial color="#f6ad55" transparent opacity={0.75} />
+        </mesh>
+      )}
       {isTarget && (
-        <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 2, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[CARD_W + 12, CARD_H + 12]} />
-          <meshBasicMaterial color="#7fd1ff" transparent opacity={0.3} />
+          <meshBasicMaterial color="#38bdf8" transparent opacity={0.45} />
         </mesh>
       )}
       {card.damage > 0 && <DamagePile instanceId={card.instanceId} damage={card.damage} slotZ={slotZ} />}
@@ -317,7 +350,7 @@ export function CardMesh({
 /** "1"/"3" token mesh (also used for hero lives). */
 function TokenMesh({ face, y }: { face: 1 | 3; y: number }) {
   return (
-    <mesh position={[0, y, 0]} raycast={() => null}>
+    <mesh position={[0, y, 0]} raycast={NO_RAYCAST}>
       <cylinderGeometry args={[TOKEN_D / 2, TOKEN_D / 2, TOKEN_T, 20]} />
       <meshLambertMaterial map={tokenTexture(face)} />
     </mesh>
@@ -328,7 +361,7 @@ export { TokenMesh };
 /** Frost token on a land. */
 export function FrostToken() {
   return (
-    <mesh position={[0, 6, 0]} raycast={() => null}>
+    <mesh position={[0, 6, 0]} raycast={NO_RAYCAST}>
       <cylinderGeometry args={[FROST_D / 2, FROST_D / 2, TOKEN_T, 20]} />
       <meshLambertMaterial map={frostTexture()} />
     </mesh>
@@ -338,7 +371,7 @@ export function FrostToken() {
 function ShieldBadge({ shield }: { shield: number }) {
   void shield;
   return (
-    <mesh position={[-CARD_W / 2 + 8, 6, -CARD_H / 2 + 12]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+    <mesh position={[-CARD_W / 2 + 8, 6, -CARD_H / 2 + 12]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
       <circleGeometry args={[11, 20]} />
       <meshBasicMaterial color="#7fd1ff" transparent opacity={0.9} />
     </mesh>

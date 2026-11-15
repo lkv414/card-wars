@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { cards as catalog } from '@card-wars/content';
 import type { LandType } from '@card-wars/content';
 import type { LandView } from '@card-wars/protocol';
-import { CARD_H, CARD_W, HALF_H, HALF_W, LAND_H, LAND_W, slotLocalZ } from './layout';
+import { CARD_H, CARD_W, HALF_H, HALF_W, LAND_H, LAND_W, NO_RAYCAST, slotLocalZ } from './layout';
 import { landTexture } from './textures';
 import { useGame, setUi, sendCommand } from '../../store';
 import { pick, validTargets } from '../targeting';
@@ -74,26 +74,26 @@ export function Land({
       <mesh
         position={[0, 0.6, 0]}
         onClick={handleClick}
-        raycast={isLandTarget ? undefined : () => null}
+        raycast={isLandTarget ? undefined : NO_RAYCAST}
       >
         <boxGeometry args={[LAND_W, 1.2, LAND_H]} />
         <meshLambertMaterial map={texture} />
       </mesh>
       {isLandTarget && (
-        <mesh position={[0, 1.5, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.5, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[LAND_W + 8, LAND_H + 8]} />
           <meshBasicMaterial color="#7fd1ff" transparent opacity={0.35} />
         </mesh>
       )}
       {/* Подсветка половин при драге: только слот под тип карты (или обе, если тип не зональный) */}
       {highlightSlot('creature') && (
-        <mesh position={[0, 1.5, -HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.5, -HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[HALF_W + 6, HALF_H + 4]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>
       )}
       {highlightSlot('building') && (
-        <mesh position={[0, 1.5, HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.5, HALF_H / 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[HALF_W + 6, HALF_H + 4]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>
@@ -107,7 +107,7 @@ export function Land({
 
 function SlotGuide({ z }: { z: number }) {
   return (
-    <mesh position={[0, 0.7, z]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+    <mesh position={[0, 0.7, z]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
       <planeGeometry args={[CARD_W + 6, CARD_H + 6]} />
       <meshBasicMaterial color="#ffe9a8" transparent opacity={0.1} side={THREE.DoubleSide} />
     </mesh>

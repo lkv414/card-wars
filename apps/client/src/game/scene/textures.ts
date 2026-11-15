@@ -24,6 +24,19 @@ export function subscribeImageLoads(cb: () => void): () => void {
   };
 }
 
+/** Выгрузка всех закэшированных текстур из VRAM (docs/UI-3D.md, threejs-textures). */
+export function disposeAllTextures(): void {
+  for (const tex of cardCache.values()) tex.dispose();
+  cardCache.clear();
+  for (const tex of tokenCache.values()) tex.dispose();
+  tokenCache.clear();
+  for (const tex of spriteCache.values()) tex.dispose();
+  spriteCache.clear();
+  for (const tex of heroCache.values()) tex.dispose();
+  heroCache.clear();
+  scanStatus.clear();
+}
+
 function notifyScanLoaded(): void {
   for (const listener of scanListeners) listener();
 }
@@ -207,6 +220,7 @@ export function heroTexture(heroId: string): THREE.CanvasTexture {
   ctx.fillRect(0, 0, W, H);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
   heroCache.set(heroId, texture);
   const url = hero?.image;
   if (url) {
@@ -263,6 +277,7 @@ export function cardBackTexture(): THREE.CanvasTexture {
   ctx.restore();
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
   cardCache.set(key, texture);
   return texture;
 }
@@ -292,6 +307,7 @@ export function tokenTexture(face: 1 | 3): THREE.CanvasTexture {
   ctx.fillText(String(face), S / 2, S / 2 + 4);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
   tokenCache.set(key, texture);
   return texture;
 }
@@ -324,6 +340,7 @@ export function frostTexture(): THREE.CanvasTexture {
   }
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
   tokenCache.set(key, texture);
   return texture;
 }
@@ -416,6 +433,7 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
   ctx.restore();
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
   tokenCache.set(key, texture);
   return texture;
 }

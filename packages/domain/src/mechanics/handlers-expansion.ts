@@ -10,6 +10,7 @@ import type { EffectSource, MechanicHandler } from './registry';
 import type { TargetChoice, TriggerPayload } from './types';
 import { enqueueTrigger, enqueueLeavePlay } from './dispatch';
 import { bumpCounter } from './effects';
+import { rngNext } from '../rng';
 
 function sourceZone(draft: Draft<MatchState>, source: EffectSource): number | null {
   return source.instanceId ? (draft.instances[source.instanceId]?.zone ?? null) : null;
@@ -1037,7 +1038,7 @@ export const dirtyPlayCoinflip: MechanicHandler = (
   ctx: Ctx,
   source: EffectSource,
 ): void => {
-  const win = draft.rng.next() < 0.5;
+  const win = rngNext(draft.rng) < 0.5;
   if (win) {
     drawCards(draft, ctx, source.player, 1);
   }
@@ -4064,7 +4065,7 @@ export const whimsOfFateCoinflip: MechanicHandler = (
   ctx: Ctx,
   source: EffectSource,
 ): void => {
-  const win = draft.rng.next() < 0.5;
+  const win = rngNext(draft.rng) < 0.5;
   if (win) {
     drawCards(draft, ctx, source.player, 1);
   }

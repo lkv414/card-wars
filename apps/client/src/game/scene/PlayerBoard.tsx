@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
 import { heroNameOf } from '../hud/names';
@@ -6,6 +6,7 @@ import {
   CARD_T,
   CARD_W,
   CARD_H,
+  NO_RAYCAST,
   boardTransform,
   deckLocal,
   discardLocal,
@@ -17,7 +18,7 @@ import {
 import { cardBackTexture, cardTexture, heroTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
-import { useGame } from '../../store';
+import { setUi, useGame } from '../../store';
 
 /** Половина стола одного игрока: ряд земель, колода/сброс, герой, жизни, парная. */
 export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string; isMe: boolean }) {
@@ -71,7 +72,7 @@ function DeckPile({ count }: { count: number }) {
   return (
     <group position={[x, y, z]}>
       {Array.from({ length: layers }, (_, i) => (
-        <mesh key={i} position={[0, i * 1.4, 0]} raycast={() => null}>
+        <mesh key={i} position={[0, i * 1.4, 0]} raycast={NO_RAYCAST}>
           <boxGeometry args={[CARD_W, 1, CARD_H]} />
           <meshLambertMaterial map={back} />
         </mesh>
@@ -93,13 +94,24 @@ function DiscardPile({ view, pid }: { view: PlayerView; pid: string }) {
   return (
     <group position={[x, y, z]}>
       {top && (
-        <mesh position={[0, 1, 0]} raycast={() => null}>
+        <mesh
+          position={[0, 1, 0]}
+          onClick={(e) => {
+            e.stopPropagation();
+            setUi({ zoomedCard: { cardId: top.cardId, instanceId: top.instanceId } });
+          }}
+          onContextMenu={(e) => {
+            e.stopPropagation();
+            e.nativeEvent.preventDefault();
+            setUi({ zoomedCard: { cardId: top.cardId, instanceId: top.instanceId } });
+          }}
+        >
           <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
           <meshLambertMaterial map={texture} />
         </mesh>
       )}
       {active && (
-        <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[CARD_W + 30, CARD_H + 30]} />
           <meshBasicMaterial
             color={overDiscard ? '#48d9a0' : '#48bb78'}
@@ -132,12 +144,12 @@ function HeroStand({
   const portrait = useMemo(() => heroTexture(heroId), [heroId]);
   return (
     <group position={[x, 0, z]}>
-      <mesh position={[0, 14, 0]} raycast={() => null}>
+      <mesh position={[0, 14, 0]} raycast={NO_RAYCAST}>
         <boxGeometry args={[110, 28, 10]} />
         <meshLambertMaterial color={color} />
       </mesh>
       {/* портрет героя — скан из content/heroes/images (docs/UI-3D.md «Состав сцена») */}
-      <mesh position={[0, 56, 6]} raycast={() => null}>
+      <mesh position={[0, 56, 6]} raycast={NO_RAYCAST}>
         <planeGeometry args={[64, 80]} />
         <meshLambertMaterial map={portrait} />
       </mesh>
@@ -171,42 +183,68 @@ function SpellGhost({ cardId, index }: { cardId: string; index: number }) {
   const x = (column - 2) * 76;
   const z = row * 22;
   return (
-    <mesh position={[x, 80 + row * 8, z]} rotation={[-Math.PI / 2.6, 0, 0]} raycast={() => null}>
+    <mesh
+      position={[x, 80 + row * 8, z]}
+      rotation={[-Math.PI / 2.6, 0, 0]}
+      onClick={(e) => {
+        e.stopPropagation();
+        setUi({ zoomedCard: { cardId } });
+      }}
+      onContextMenu={(e) => {
+        e.stopPropagation();
+        e.nativeEvent.preventDefault();
+        setUi({ zoomedCard: { cardId } });
+      }}
+    >
       <planeGeometry args={[CARD_W, CARD_H]} />
-      <meshBasicMaterial map={texture} transparent opacity={0.55} />
+      <meshBasicMaterial map={texture} transparent opacity={0.65} />
     </mesh>
   );
 }
 
-/** Плоская текстовая плашка (canvas-спрайт) — без внешних шрифтов. */
+/** Плоская текстовая плашка (canvas-спрайт) с персональным холстом и освобождением VRAM при размонтировании. */
 export function FloatingLabel({ text, position }: { text: string; position: [number, number, number] }) {
-  const texture = useMemo(() => labelTexture(text), [text]);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const textureRef = useRef<THREE.CanvasTexture | null>(null);
+
+  const texture = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 72;
+    canvasRef.current = canvas;
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    textureRef.current = tex;
+    return tex;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      textureRef.current?.dispose();
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, 256, 72);
+    ctx.fillStyle = 'rgba(16,20,28,0.75)';
+    ctx.beginPath();
+    ctx.roundRect(2, 2, 252, 68, 14);
+    ctx.fill();
+    ctx.fillStyle = '#e8edf4';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text.length > 22 ? `${text.slice(0, 21)}…` : text, 128, 38, 240);
+    texture.needsUpdate = true;
+  }, [text, texture]);
+
   return (
-    <sprite position={position} scale={[120, 34, 1]} raycast={() => null}>
+    <sprite position={position} scale={[120, 34, 1]} raycast={NO_RAYCAST}>
       <spriteMaterial map={texture} transparent />
     </sprite>
   );
-}
-
-const labelCache = new Map<string, THREE.CanvasTexture>();
-function labelTexture(text: string): THREE.CanvasTexture {
-  const cached = labelCache.get(text);
-  if (cached) return cached;
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 72;
-  const ctx = canvas.getContext('2d')!;
-  ctx.fillStyle = 'rgba(16,20,28,0.75)';
-  ctx.beginPath();
-  ctx.roundRect(2, 2, 252, 68, 14);
-  ctx.fill();
-  ctx.fillStyle = '#e8edf4';
-  ctx.font = 'bold 30px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text.length > 22 ? `${text.slice(0, 21)}…` : text, 128, 38, 240);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  labelCache.set(text, texture);
-  return texture;
 }

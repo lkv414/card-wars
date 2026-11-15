@@ -51,7 +51,7 @@ function buildView(): PlayerView {
     maxLives: 25,
     actions: 2,
     connected: true,
-    lands: landTypes.map((type, i) => ({ type, frozen: i === 2 && id === 'p1', flipped: false })),
+    lands: landTypes.map((type, i) => ({ type, frozen: i === 2 && id === 'p1', flipped: false, iceTokens: 0 })),
     zones: [
       {
         creature: cardView(`${id}-c0`, firstOf('creature', 0), d0),

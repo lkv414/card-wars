@@ -5,7 +5,7 @@ import { createMatch, applyCommand } from '../index';
 import { defaultConfig, catalog, makeSetup, P1, P2 } from './helpers';
 import type { EffectSource } from '../mechanics/source';
 import type { Ctx } from '../util';
-import type { CardInstance } from '../types';
+import type { CardInstance, MatchState } from '../types';
 import type { GameEvent } from '../events';
 
 const deps = { config: defaultConfig, catalog };
@@ -503,11 +503,12 @@ describe('Audited Mechanics Unit Tests', () => {
 
   it('combat direct damage applies attackPowerMod with multiplier', () => {
     const { state } = createMatch(deps, makeSetup());
-    let s = applyCommand(state, { type: 'keep_hand', player: P1 }, deps).state!;
-    s = applyCommand(s, { type: 'keep_hand', player: P2 }, deps).state!;
+    const r1 = applyCommand(state, { type: 'keep_hand', player: P1 }, deps);
+    const r2 = r1.ok ? applyCommand(r1.state, { type: 'keep_hand', player: P2 }, deps) : r1;
+    let s = r2.ok ? r2.state : state;
 
     const attackerId = 'atk-mod-inst';
-    s = produce(s, (d) => {
+    s = produce(s, (d: MatchState) => {
       // atk-mod-creature has base ATK 2, multiplier 3
       const inst = makeInstance(attackerId, 'atk-mod-creature', P2, 0);
       d.instances[attackerId] = inst;
@@ -518,7 +519,8 @@ describe('Audited Mechanics Unit Tests', () => {
     });
 
     // Round 1: P1 goes battle (does not attack)
-    s = applyCommand(s, { type: 'go_battle', player: P1 }, deps).state!;
+    const r3 = applyCommand(s, { type: 'go_battle', player: P1 }, deps);
+    s = r3.ok ? r3.state : s;
     // Round 1: P2 (last player) attacks: zone 0 strikes mirror zone 3 (empty) for 2 * 3 = 6 direct damage
     const res = applyCommand(s, { type: 'go_battle', player: P2 }, deps);
     expect(res.ok).toBe(true);

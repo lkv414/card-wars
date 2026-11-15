@@ -3,7 +3,7 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
 import { cards as catalog } from '@card-wars/content';
-import { CARD_H, CARD_T, CARD_W, HAND, overMyDiscardRay, zoneFromWorld } from './layout';
+import { CARD_H, CARD_T, CARD_W, HAND, NO_RAYCAST, overMyDiscardRay, zoneFromWorld } from './layout';
 import { cardBackTexture, cardTexture } from './textures';
 import { sendCommand, setUi, useGame } from '../../store';
 import { pick } from '../targeting';
@@ -251,7 +251,7 @@ function DragGhost({ view, instanceId }: { view: PlayerView; instanceId: string 
 
   return (
     <group ref={ref} visible={false} position={[0, 42, 0]} rotation={[-Math.PI / 2 + 0.35, 0, 0]}>
-      <mesh raycast={() => null}>
+      <mesh raycast={NO_RAYCAST}>
         <planeGeometry args={[CARD_W * 1.08, CARD_H * 1.08]} />
         <meshBasicMaterial map={texture} transparent opacity={0.92} />
       </mesh>
@@ -440,6 +440,11 @@ function HandCard({
       onPointerOver={handleOver}
       onPointerOut={handleOut}
       onClick={handleClick}
+      onContextMenu={(e) => {
+        e.stopPropagation();
+        e.nativeEvent.preventDefault();
+        setUi({ zoomedCard: { cardId, instanceId } });
+      }}
     >
       <mesh material={materials}>
         <boxGeometry args={[CARD_W, CARD_T, CARD_H]} />
@@ -450,7 +455,7 @@ function HandCard({
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
       {selected && (
-        <mesh position={[0, 1.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <mesh position={[0, 1.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[CARD_W + 8, CARD_H + 8]} />
           <meshBasicMaterial color="#48bb78" transparent opacity={0.35} />
         </mesh>

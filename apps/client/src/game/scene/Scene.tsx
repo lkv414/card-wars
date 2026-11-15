@@ -2,11 +2,11 @@ import { useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useGame } from '../../store';
-import { cameraOrbitFor, cameraTargetPlayer, cameraTurnEase } from './layout';
+import { NO_RAYCAST, cameraOrbitFor, cameraTargetPlayer, cameraTurnEase } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
-import { subscribeImageLoads } from './textures';
+import { disposeAllTextures, subscribeImageLoads } from './textures';
 
 const CAMERA_TURN_DURATION_MS = 920;
 const MIN_PITCH = 0.24; // ~14° above table plane
@@ -67,6 +67,13 @@ function SceneContent() {
     }
   }, [scene, camera, gl]);
 
+  // Очистка всех текстур WebGL при выходе из матча (docs/UI-3D.md, threejs-textures)
+  useEffect(() => {
+    return () => {
+      disposeAllTextures();
+    };
+  }, []);
+
   if (!view) return null;
   // Мой ряд рисуется последним, чтобы быть поверх соседних досок.
   const order = [...view.order].sort((a, b) => (a === view.me ? 1 : b === view.me ? -1 : 0));
@@ -82,11 +89,11 @@ function SceneContent() {
         shadow-bias={-0.0005}
       />
       {/* стол: разнесённые по высоте уровни без наложения плоскостей (никакого Z-fighting при вращении камеры) */}
-      <mesh position={[0, -9, 0]} raycast={() => null}>
+      <mesh position={[0, -9, 0]} raycast={NO_RAYCAST}>
         <boxGeometry args={[2800, 10, 2800]} />
         <meshLambertMaterial color="#274232" />
       </mesh>
-      <mesh position={[0, -2, 0]} receiveShadow={quality === 'high'} raycast={() => null}>
+      <mesh position={[0, -2, 0]} receiveShadow={quality === 'high'} raycast={NO_RAYCAST}>
         <boxGeometry args={[2700, 2, 2700]} />
         <meshLambertMaterial color="#2e5240" />
       </mesh>
@@ -120,6 +127,9 @@ function CameraRig() {
   const zoomScaleRef = useRef(1);
   const lastTargetKeyRef = useRef<string | null>(null);
   const rmbDragRef = useRef<{ lastX: number; lastY: number } | null>(null);
+  const rmbPointerIdRef = useRef<number | null>(null);
+  const touchPointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const touchPinchRef = useRef<{ lastMidX: number; lastMidY: number; lastDist: number } | null>(null);
   const animRef = useRef<{
     fromAngle: number;
     deltaAngle: number;
@@ -156,43 +166,117 @@ function CameraRig() {
     }
   };
 
-  // Right Mouse Button (RMB) free orbit & Mouse Wheel zoom.
+  // Right Mouse Button (RMB) desktop orbit + wheel zoom, and 2-finger mobile orbit & pinch zoom.
   useEffect(() => {
     const dom = gl.domElement;
     const onContextMenu = (e: MouseEvent) => {
       e.preventDefault();
     };
     const onPointerDown = (e: PointerEvent) => {
-      if (e.button !== 2) return;
-      e.preventDefault();
-      animRef.current = null;
-      rmbDragRef.current = { lastX: e.clientX, lastY: e.clientY };
+      if (e.pointerType === 'mouse' && e.button === 2) {
+        e.preventDefault();
+        animRef.current = null;
+        rmbDragRef.current = { lastX: e.clientX, lastY: e.clientY };
+        rmbPointerIdRef.current = e.pointerId;
+        try {
+          dom.setPointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
+      } else if (e.pointerType === 'touch') {
+        touchPointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (touchPointersRef.current.size === 2) {
+          animRef.current = null;
+          const [p1, p2] = Array.from(touchPointersRef.current.values());
+          if (p1 && p2) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            const dist = Math.max(1, Math.hypot(p2.x - p1.x, p2.y - p1.y));
+            touchPinchRef.current = { lastMidX: midX, lastMidY: midY, lastDist: dist };
+          }
+        }
+      }
     };
     const onPointerMove = (e: PointerEvent) => {
-      const drag = rmbDragRef.current;
-      if (!drag) return;
       const v = useGame.getState().view;
       const mode = useGame.getState().ui.cameraMode;
       if (!v) return;
-      const dx = e.clientX - drag.lastX;
-      const dy = e.clientY - drag.lastY;
-      drag.lastX = e.clientX;
-      drag.lastY = e.clientY;
 
-      const orbit = cameraOrbitFor(v, mode);
-      const basePitch = Math.atan2(orbit.height, orbit.radius);
-      const nextAngle = (currentAngleRef.current ?? orbit.angle) - dx * 0.0065;
-      currentAngleRef.current = nextAngle;
-      pitchOffsetRef.current = Math.max(
-        MIN_PITCH - basePitch,
-        Math.min(MAX_PITCH - basePitch, pitchOffsetRef.current + dy * 0.0055),
-      );
-      applyCameraAtAngle(nextAngle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
-      invalidate();
+      // Desktop RMB orbit
+      if (rmbDragRef.current && (e.pointerType === 'mouse' || e.pointerId === rmbPointerIdRef.current)) {
+        const drag = rmbDragRef.current;
+        const dx = e.clientX - drag.lastX;
+        const dy = e.clientY - drag.lastY;
+        drag.lastX = e.clientX;
+        drag.lastY = e.clientY;
+
+        const orbit = cameraOrbitFor(v, mode);
+        const basePitch = Math.atan2(orbit.height, orbit.radius);
+        const nextAngle = (currentAngleRef.current ?? orbit.angle) - dx * 0.0065;
+        currentAngleRef.current = nextAngle;
+        pitchOffsetRef.current = Math.max(
+          MIN_PITCH - basePitch,
+          Math.min(MAX_PITCH - basePitch, pitchOffsetRef.current + dy * 0.0055),
+        );
+        applyCameraAtAngle(nextAngle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
+        invalidate();
+        return;
+      }
+
+      // Mobile 2-finger orbit + pinch zoom (1 finger remains untouched for card drag & floop)
+      if (e.pointerType === 'touch' && touchPointersRef.current.has(e.pointerId)) {
+        touchPointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (touchPointersRef.current.size === 2 && touchPinchRef.current) {
+          const [p1, p2] = Array.from(touchPointersRef.current.values());
+          if (p1 && p2) {
+            const midX = (p1.x + p2.x) / 2;
+            const midY = (p1.y + p2.y) / 2;
+            const dist = Math.max(1, Math.hypot(p2.x - p1.x, p2.y - p1.y));
+
+            const pinch = touchPinchRef.current;
+            const dx = midX - pinch.lastMidX;
+            const dy = midY - pinch.lastMidY;
+            const distRatio = pinch.lastDist / dist;
+
+            pinch.lastMidX = midX;
+            pinch.lastMidY = midY;
+            pinch.lastDist = dist;
+
+            const orbit = cameraOrbitFor(v, mode);
+            const basePitch = Math.atan2(orbit.height, orbit.radius);
+            const nextAngle = (currentAngleRef.current ?? orbit.angle) - dx * 0.0065;
+            currentAngleRef.current = nextAngle;
+            pitchOffsetRef.current = Math.max(
+              MIN_PITCH - basePitch,
+              Math.min(MAX_PITCH - basePitch, pitchOffsetRef.current + dy * 0.0055),
+            );
+            zoomScaleRef.current = Math.max(
+              MIN_ZOOM_SCALE,
+              Math.min(MAX_ZOOM_SCALE, zoomScaleRef.current * distRatio),
+            );
+            applyCameraAtAngle(nextAngle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
+            invalidate();
+          }
+        }
+      }
     };
     const onPointerUp = (e: PointerEvent) => {
-      if (e.button === 2 || rmbDragRef.current) {
+      if (e.pointerType === 'mouse' || e.button === 2) {
+        if (rmbPointerIdRef.current !== null) {
+          try {
+            dom.releasePointerCapture(rmbPointerIdRef.current);
+          } catch {
+            // ignore
+          }
+          rmbPointerIdRef.current = null;
+        }
         rmbDragRef.current = null;
+      }
+      if (e.pointerType === 'touch') {
+        touchPointersRef.current.delete(e.pointerId);
+        if (touchPointersRef.current.size < 2) {
+          touchPinchRef.current = null;
+        }
       }
     };
     const onWheel = (e: WheelEvent) => {

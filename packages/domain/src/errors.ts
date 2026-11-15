@@ -22,6 +22,7 @@ export type RejectCode =
   | 'deck_empty'
   | 'mulligan_unavailable'
   | 'invalid_card_type'
+  | 'invalid_target'
   | 'target_required'
   | 'invalid_choice'
   | 'invalid_setup'

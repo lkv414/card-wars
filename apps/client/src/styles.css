@@ -3232,3 +3232,326 @@ button.danger {
   }
 }
 
+/* Card Zoom & Inspection Modal (UX Improvement #77 & #78) */
+.card-zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 14, 22, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.18s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.card-zoom-dialog {
+  background: #181f2a;
+  border: 1px solid #2d3b4e;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  color: #f1f5f9;
+  animation: modalSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(16px) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.card-zoom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #263344;
+  gap: 12px;
+}
+
+.card-zoom-title {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.card-zoom-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-zoom-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-zoom-tag.land-corn { background: #8a5f1e; color: #fef08a; }
+.card-zoom-tag.land-blue { background: #1e3a8a; color: #93c5fd; }
+.card-zoom-tag.land-good { background: #831843; color: #fbcfe8; }
+.card-zoom-tag.land-ice { background: #164e63; color: #a5f3fc; }
+.card-zoom-tag.land-sand { background: #713f12; color: #fde047; }
+.card-zoom-tag.land-swamp { background: #14532d; color: #86efac; }
+.card-zoom-tag.land-rainbow { background: #581c87; color: #d8b4fe; }
+.card-zoom-tag.type { background: #232d3d; color: #cbd5e1; }
+.card-zoom-tag.cost { background: #0f766e; color: #5eead4; }
+
+.card-zoom-close {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #232d3d;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.card-zoom-close:hover {
+  background: #334155;
+  color: #ffffff;
+  border-color: #475569;
+}
+
+.card-zoom-close:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.card-zoom-body {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+.card-zoom-image-col {
+  flex-shrink: 0;
+  width: 220px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-zoom-img {
+  width: 100%;
+  aspect-ratio: 63 / 89;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.card-zoom-fallback {
+  width: 100%;
+  aspect-ratio: 63 / 89;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #1e293b;
+  border: 2px solid #475569;
+}
+
+.card-zoom-fallback.land-corn { background: linear-gradient(135deg, #d9a441, #8a5f1e); color: #fff; }
+.card-zoom-fallback.land-blue { background: linear-gradient(135deg, #4f86d4, #2a4f86); color: #fff; }
+.card-zoom-fallback.land-good { background: linear-gradient(135deg, #e58fb1, #a3536f); color: #fff; }
+.card-zoom-fallback.land-ice { background: linear-gradient(135deg, #9fd8e8, #4f97ad); color: #fff; }
+.card-zoom-fallback.land-sand { background: linear-gradient(135deg, #d8c08a, #96803f); color: #fff; }
+.card-zoom-fallback.land-swamp { background: linear-gradient(135deg, #6f8f5a, #3f5a32); color: #fff; }
+.card-zoom-fallback.land-rainbow { background: linear-gradient(135deg, #b48ae0, #6f4fa0); color: #fff; }
+
+.fallback-cost {
+  width: 32px;
+  height: 32px;
+  background: rgba(0,0,0,0.65);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.fallback-name {
+  font-weight: 700;
+  font-size: 18px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}
+
+.fallback-type {
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.card-zoom-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-zoom-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat-box {
+  background: #232d3d;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+}
+
+.stat-box.attack .stat-value { color: #f87171; }
+.stat-box.defense .stat-value { color: #60a5fa; }
+.stat-box.current-hp .stat-value { color: #34d399; }
+.stat-box.shield .stat-value { color: #38bdf8; }
+
+.stat-label {
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: #f87171;
+  font-weight: 600;
+}
+
+.card-zoom-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  background: #1a222e;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #283547;
+}
+
+.status-label {
+  color: #94a3b8;
+}
+
+.status-badge {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status-badge.ready {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.status-badge.flooped {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.card-zoom-description {
+  background: #1a222e;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #283547;
+}
+
+.card-zoom-description h3,
+.card-zoom-abilities h3 {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+}
+
+.card-zoom-description p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+.card-zoom-abilities {
+  background: #1a222e;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #283547;
+}
+
+.card-zoom-abilities ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ability-item {
+  margin-bottom: 4px;
+}
+
+.ability-item.active .ability-kind { color: #f59e0b; font-weight: 600; }
+.ability-item.passive .ability-kind { color: #38bdf8; font-weight: 600; }
+.ability-item.trigger .ability-kind { color: #ec4899; font-weight: 600; }
+
+@media (max-width: 640px) {
+  .card-zoom-body {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-zoom-image-col {
+    width: 170px;
+  }
+}
+
+

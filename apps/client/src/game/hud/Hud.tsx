@@ -4,6 +4,7 @@ import { sendCommand, setCameraMode, setQuality, setUi, useGame } from '../../st
 import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
+import { CardZoomModal } from './CardZoomModal';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
 export function Hud({ code }: { code: string }) {
@@ -574,6 +575,8 @@ export function Hud({ code }: { code: string }) {
           </div>
         </div>
       )}
+
+      <CardZoomModal />
     </div>
   );
 }

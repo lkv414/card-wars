@@ -296,7 +296,7 @@ describe('Audited Mechanics Unit Tests', () => {
   });
 
   it('avalanche_born_freeze: freezes target landscape', () => {
-    let s = createMatch(deps, makeSetup()).state;
+    const s = createMatch(deps, makeSetup()).state;
     const { ctx } = createTestCtx();
     const source: EffectSource = { player: P1, instanceId: null };
     const next = produce(s, (draft) => {

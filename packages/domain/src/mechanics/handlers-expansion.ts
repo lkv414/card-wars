@@ -1,11 +1,10 @@
 import type { Draft } from 'immer';
 import { dealToCreature, dealToPlayer, killInstance } from '../damage';
-import { DomainError } from '../errors';
 import { drawCards, discardTopDeck } from '../draw';
 import { clearZoneSlot, emit, instance, player } from '../util';
-import { opponentsOf, opponentZoneFor, teammatesOf } from '../zones';
+import { opponentsOf, opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
-import type { MatchState, PlayerId, CardInstance } from '../types';
+import type { MatchState, PlayerId } from '../types';
 import type { EffectSource, MechanicHandler } from './registry';
 import type { TargetChoice, TriggerPayload } from './types';
 import { enqueueTrigger, enqueueLeavePlay } from './dispatch';
@@ -35,15 +34,6 @@ function bounceToHand(draft: Draft<MatchState>, ctx: Ctx, instId: string): void 
   enqueueLeavePlay(draft, ctx, instId, inst.cardId, inst.controller, prevZone);
 }
 
-function healUnit(draft: Draft<MatchState>, ctx: Ctx, instId: string, amount: number): void {
-  const inst = instance(draft, instId);
-  const healed = Math.min(amount, inst.damage);
-  if (healed > 0) {
-    inst.damage -= healed;
-    emit(ctx, { type: 'creature_healed', instanceId: instId, amount: healed });
-  }
-}
-
 function healPlayer(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId, amount: number): void {
   const p = player(draft, playerId);
   const healed = Math.min(amount, p.maxLives - p.lives);
@@ -59,14 +49,6 @@ function freezeLand(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId, zone
   land.frozen = true;
   emit(ctx, { type: 'land_changed', player: playerId, zone, change: 'frozen' });
   enqueueTrigger(draft, ctx, 'on_freeze', { player: playerId, zone });
-}
-
-function flipLand(draft: Draft<MatchState>, ctx: Ctx, playerId: PlayerId, zone: number): void {
-  const land = draft.players[playerId]?.lands[zone];
-  if (!land) return;
-  land.flipped = !land.flipped;
-  emit(ctx, { type: 'land_changed', player: playerId, zone, change: land.flipped ? 'flipped' : 'unflipped' });
-  enqueueTrigger(draft, ctx, 'on_flip', { player: playerId, zone });
 }
 
 function addBonus(draft: Draft<MatchState>, ctx: Ctx, instId: string, atk: number, def: number): void {
@@ -116,10 +98,6 @@ export const allSeeingEyeReveal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 5);
 };
@@ -129,10 +107,8 @@ export const amazingNotspiderPumpkin: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -148,10 +124,8 @@ export const armadilloTauntAttacker: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -166,10 +140,8 @@ export const ashCloudSplashDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -199,10 +171,8 @@ export const avalancheBornFreeze: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -222,10 +192,8 @@ export const basaltColossusBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -240,10 +208,6 @@ export const beachBallPass: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 4);
 };
@@ -267,10 +231,8 @@ export const bigPigPlayOrBounce: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -285,10 +247,6 @@ export const bigfootGhostUnflipLand: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };
@@ -298,10 +256,8 @@ export const blindSheeglazFreeze: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -321,10 +277,8 @@ export const blindingFlashDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 5);
   const cardPick = choices?.find(c => c.kind === 'card');
@@ -340,10 +294,8 @@ export const blindingSheeglazDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -366,10 +318,8 @@ export const blizzardDiscardCost1: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -384,10 +334,6 @@ export const bloodDrainCostHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };
@@ -397,10 +343,6 @@ export const bloodshedPitcherMillDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 3);
 };
@@ -410,10 +352,8 @@ export const bookOfSwearingDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -450,10 +390,6 @@ export const brilliantDiscoveryDrawRecycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 2);
 };
@@ -463,10 +399,6 @@ export const buffedPotionHealAndDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 2);
 };
@@ -476,10 +408,8 @@ export const bullStatueBuffDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -494,10 +424,8 @@ export const butterRamFloopDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -513,10 +441,8 @@ export const chameleonChooseLand: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -531,10 +457,8 @@ export const chaosFieldsGhostStrike: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -557,10 +481,6 @@ export const cheatsheetPotionDiscount: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };
@@ -570,10 +490,8 @@ export const chemicalBeakerDuplicateSpell: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -588,10 +506,6 @@ export const chronosDrakeMillCreatures: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 5);
 };
@@ -601,10 +515,8 @@ export const clawedAvalancheLeopard: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -624,10 +536,8 @@ export const colorfulOttersBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -642,10 +552,6 @@ export const conflagrationBurnDamageDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };
@@ -655,10 +561,8 @@ export const coolBottlebeardReturnPotions: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -673,10 +577,8 @@ export const coolConeCafe: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -696,10 +598,8 @@ export const cornChancellorBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -714,10 +614,6 @@ export const cornFuryTotemBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 2);
 };
@@ -727,10 +623,8 @@ export const cornGoblinKingReplace: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   const instId = (pick && pick.kind === 'creature') ? pick.instanceId : source.instanceId;
@@ -757,10 +651,8 @@ export const cornRenewalDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -797,10 +689,9 @@ export const countDraculaLifesteal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
   payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const dmg = (payload?.amount as number | undefined) ?? 2;
   healPlayer(draft, ctx, source.player, dmg);
@@ -811,10 +702,8 @@ export const creamocracyDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -837,10 +726,8 @@ export const creepingVineThreat: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -854,11 +741,9 @@ export const creepingVineThreat: MechanicHandler = (
 export const crisisMonarchBarrier: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
-  source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _source: EffectSource,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -886,10 +771,8 @@ export const crowBarBuffPunish: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -912,10 +795,8 @@ export const crownedAvalancheLeopard: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -935,10 +816,6 @@ export const crystalBallGuessPlay: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const p = player(draft, source.player);
   const revealed = p.deck.slice(0, 3);
@@ -952,10 +829,8 @@ export const cuttingTornadoTokenWipe: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -978,10 +853,8 @@ export const cycloneDamageNotCost1: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1018,10 +891,8 @@ export const darkamaTraitorDiscardWound: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1036,10 +907,8 @@ export const deadlyClashFightToDeath: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1054,10 +923,8 @@ export const deltaDominanceDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1080,10 +947,8 @@ export const demonTornadoReturnDead: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1098,10 +963,8 @@ export const demonicSpiralsDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1124,10 +987,6 @@ export const dirtyPlayCoinflip: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const win = draft.rng.next() < 0.5;
   if (win) {
@@ -1140,10 +999,8 @@ export const disperseFreezePerGhost: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -1163,10 +1020,8 @@ export const drCyclopsSpellHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -1181,11 +1036,9 @@ export const drCyclopsSpellHeal: MechanicHandler = (
 export const dreadfulTowerPlayTop2: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
-  source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _source: EffectSource,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1199,10 +1052,8 @@ export const dreamArchitectEnters: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1225,10 +1076,8 @@ export const duneBuggyRevealPlay: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1243,10 +1092,8 @@ export const dynasticDeserterDefect: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1261,10 +1108,8 @@ export const earthwormDeathFreeCreature: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1279,10 +1124,8 @@ export const eloquentArmadilloReplaceBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1326,10 +1169,8 @@ export const etherDrainDamageHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1366,10 +1207,8 @@ export const feedTheFlameBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1384,10 +1223,8 @@ export const fieryCraterRemoveBurnDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1402,10 +1239,8 @@ export const fireDanceResurrect: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1428,10 +1263,8 @@ export const fireDogBurnDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1468,10 +1301,8 @@ export const flameCrawlerSpreadBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1486,10 +1317,8 @@ export const flameHeartArmorHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1511,10 +1340,8 @@ export const flameRunnerStep: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   const instId = (pick && pick.kind === 'creature') ? pick.instanceId : source.instanceId;
@@ -1541,10 +1368,8 @@ export const flameWheelRevealBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1566,10 +1391,8 @@ export const flamingBeakFaceStrike: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -1585,10 +1408,8 @@ export const flamingBoltBurnAndDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1611,10 +1432,8 @@ export const flamingCaptainBurnPlayer: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1629,10 +1448,8 @@ export const flamingDiloBurnByAtk: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1654,10 +1471,8 @@ export const flamingFlamingoBurnOnHit: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1693,10 +1508,8 @@ export const flamingoAshKeeperBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1726,10 +1539,8 @@ export const flamingoFireKeeperBurnDrain: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -1745,10 +1556,8 @@ export const flamingoFireWeaverBurnZone: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1770,10 +1579,8 @@ export const flamingoFlamethrowerSplash: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1823,10 +1630,8 @@ export const frenziedBakeryBake: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -1842,10 +1647,8 @@ export const frostPumpkinBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1860,10 +1663,8 @@ export const frostbittenTokenHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1878,10 +1679,8 @@ export const frostyLeopardDiscardReact: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1918,10 +1717,8 @@ export const ghostBunnyFreeze: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -1941,10 +1738,8 @@ export const ghostlyAvalancheEffect: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -1960,10 +1755,6 @@ export const ghostlyBlessingActive: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };
@@ -1973,10 +1764,8 @@ export const giantsCrucibleBurnAndDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -1998,10 +1787,8 @@ export const glacierDriftMove: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -2021,10 +1808,8 @@ export const grandPrixReplay: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (!pick || pick.kind !== 'creature') return;
@@ -2050,10 +1835,9 @@ export const grassRocketsLifesteal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
   payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const dmg = (payload?.amount as number | undefined) ?? 2;
   healPlayer(draft, ctx, source.player, dmg);
@@ -2064,10 +1848,9 @@ export const hampyreLifestealOnAttack: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
+  _params: Record<string, unknown> | undefined,
+  _choices: TargetChoice[] | undefined,
   payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const dmg = (payload?.amount as number | undefined) ?? 2;
   healPlayer(draft, ctx, source.player, dmg);
@@ -2078,10 +1861,6 @@ export const heartPotionChoice: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 5);
 };
@@ -2091,10 +1870,8 @@ export const heatStrokeEachPlayerPicks: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2117,10 +1894,8 @@ export const hellShovelSpellsDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2143,10 +1918,8 @@ export const hillySheeglazHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2183,10 +1956,8 @@ export const holyKnightMonthBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2200,11 +1971,9 @@ export const holyKnightMonthBuff: MechanicHandler = (
 export const holyScytheDestroyHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
-  source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _source: EffectSource,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2232,10 +2001,8 @@ export const honeyBadgerBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2250,10 +2017,8 @@ export const hostileCornGoblinStrike: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -2269,10 +2034,8 @@ export const hotColdSynergy: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2322,10 +2085,8 @@ export const hotScorpionFreeSpell: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2347,10 +2108,8 @@ export const hotSpiralsDamageAction: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2373,10 +2132,8 @@ export const howlSelfBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2413,10 +2170,8 @@ export const hutGhostEnterCycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2445,10 +2200,8 @@ export const iceGeneratorActive: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -2468,10 +2221,8 @@ export const iceLeopardDamageSpellDiscard: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -2487,10 +2238,6 @@ export const icePurgeRemoveToken: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 2);
 };
@@ -2514,10 +2261,8 @@ export const jointDecisionVoteTie: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2532,10 +2277,8 @@ export const juicyLightningHealBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2558,10 +2301,8 @@ export const kangaroocatFrostToken: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -2577,10 +2318,8 @@ export const kingdomDefenderCancelCurse: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2595,10 +2334,8 @@ export const knightlyArmadilloReplacePlay: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2613,10 +2350,8 @@ export const krutetskayaTasovkaPick: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 3);
   const cardPick = choices?.find(c => c.kind === 'card');
@@ -2632,10 +2367,8 @@ export const lavaCanalsDamageBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const burns = countAllBurnTokens(draft);
   const pick = choices?.[0];
@@ -2654,10 +2387,8 @@ export const lavaEelsBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2679,10 +2410,8 @@ export const lavaGateBurnLane: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2746,10 +2475,8 @@ export const luckyGhostRevealRainbow: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2764,10 +2491,8 @@ export const magicWandDiscardPlaySpell: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2782,10 +2507,6 @@ export const mathematicalPotionDrawTop: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 3);
 };
@@ -2795,10 +2516,8 @@ export const meltedSheeglazDamageBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2813,10 +2532,8 @@ export const moltenPotionBurnDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2838,10 +2555,8 @@ export const moltenRitualistDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2870,10 +2585,8 @@ export const mudcakeZombiesCycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2888,10 +2601,8 @@ export const mysticalSpellcasterHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2942,10 +2653,8 @@ export const nobleArmadilloTaunt: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2960,10 +2669,8 @@ export const nurseRevealHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -2978,10 +2685,8 @@ export const oasisDefenderNonSandDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -2997,10 +2702,8 @@ export const partyEnergyMoveBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   const instId = (pick && pick.kind === 'creature') ? pick.instanceId : source.instanceId;
@@ -3027,10 +2730,8 @@ export const partyIslandShift: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   const instId = (pick && pick.kind === 'creature') ? pick.instanceId : source.instanceId;
@@ -3057,10 +2758,8 @@ export const phantomLegionBounce: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3075,10 +2774,8 @@ export const pharaohDragonSwapDeckDiscard: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3093,10 +2790,8 @@ export const phoenixFireResurrectLane: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3111,10 +2806,8 @@ export const phoenixTalismanRecycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3157,10 +2850,6 @@ export const propagatorGuessActions: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 2);
 };
@@ -3170,10 +2859,8 @@ export const pumpkinGasReveal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 3);
   const cardPick = choices?.find(c => c.kind === 'card');
@@ -3189,10 +2876,8 @@ export const pumpkinKillerDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3243,10 +2928,8 @@ export const pumpkinScepterDiscount: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3261,10 +2944,8 @@ export const pumpkinSongFreeze: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -3284,10 +2965,8 @@ export const punchPotionDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3310,10 +2989,8 @@ export const pureLoveBondsSpellReact: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3336,10 +3013,8 @@ export const qualityControllerShuffle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3396,10 +3071,8 @@ export const refreshingWaveDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -3415,10 +3088,8 @@ export const relaxingLavawaterfallBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3440,10 +3111,6 @@ export const relayRunnersEndTurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 2);
 };
@@ -3453,10 +3120,8 @@ export const renegadeDiscardHand: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3471,10 +3136,8 @@ export const retributionVialTransfer: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -3490,10 +3153,8 @@ export const reveredCornGoblinConvert: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3516,10 +3177,6 @@ export const rockMermaidMillPlayer: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 2);
 };
@@ -3529,10 +3186,8 @@ export const rottenGrubberDamageDiscardCreature: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -3547,11 +3202,9 @@ export const rottenGrubberDamageDiscardCreature: MechanicHandler = (
 export const rushingWavesWipeAndDrop: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
-  source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _source: EffectSource,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3593,10 +3246,8 @@ export const schastevarSearchPotion: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3611,10 +3262,8 @@ export const scorchConditionalDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3637,10 +3286,8 @@ export const scorchingInsightBurnDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3662,10 +3309,8 @@ export const sharpMindBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3680,10 +3325,8 @@ export const shearWeirdoDamageDraw: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3706,10 +3349,8 @@ export const shiftPotionBuilding: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   const instId = (pick && pick.kind === 'creature') ? pick.instanceId : source.instanceId;
@@ -3736,10 +3377,8 @@ export const shockBoxRecycleHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3754,10 +3393,8 @@ export const skyBurialTowerGainAction: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3786,10 +3423,8 @@ export const slyRickDeckContest: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -3819,10 +3454,8 @@ export const speedReadingRepeat: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 2);
   const cardPick = choices?.find(c => c.kind === 'card');
@@ -3838,10 +3471,8 @@ export const spellReservoirReturn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3856,10 +3487,6 @@ export const spellStormDamageAndActions: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 2);
 };
@@ -3897,10 +3524,6 @@ export const spiritTrialReveal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 2);
 };
@@ -3910,10 +3533,8 @@ export const stalkSheeglazBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3928,10 +3549,8 @@ export const stealthyLeopardFreeze: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3946,10 +3565,8 @@ export const swampCycloneRecycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3964,10 +3581,8 @@ export const swampGasDamageDiscard: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -3990,10 +3605,6 @@ export const swampMadnessAllInOne: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 4);
 };
@@ -4003,10 +3614,8 @@ export const swampSheeglazDamageHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -4036,10 +3645,8 @@ export const sweetMeatHealRemoved: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4054,10 +3661,8 @@ export const swordFallDamageByAtk: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -4073,10 +3678,8 @@ export const swordHornRepeatDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4099,10 +3702,8 @@ export const tatteredLeopardCycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'landscape') {
@@ -4150,10 +3751,8 @@ export const titanAmuletDestroy: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4168,10 +3767,8 @@ export const toolsOfTheTradeEffect: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4186,10 +3783,8 @@ export const torchTempleBurn: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4211,10 +3806,8 @@ export const trashBonfireBurnDiscard: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4236,10 +3829,6 @@ export const trialByFireRevealPlay: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 2);
 };
@@ -4249,10 +3838,8 @@ export const trickyDealsHandComparison: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -4268,10 +3855,6 @@ export const unicornChaosBottomMill: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   discardTopDeck(draft, ctx, source.player, 4);
 };
@@ -4281,10 +3864,8 @@ export const unicornChaosDeathRecycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4299,10 +3880,8 @@ export const vampirePrincessFullHeal: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4325,10 +3904,8 @@ export const vampireSkullIslandSummon: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4343,10 +3920,8 @@ export const vampiricGreedBuff: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4402,10 +3977,8 @@ export const wanderingWorkshopBuffMove: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   const instId = (pick && pick.kind === 'creature') ? pick.instanceId : source.instanceId;
@@ -4432,10 +4005,6 @@ export const whimsOfFateCoinflip: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const win = draft.rng.next() < 0.5;
   if (win) {
@@ -4448,10 +4017,8 @@ export const willDeathCurse: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -4467,10 +4034,8 @@ export const windBlownWandererMoveToken: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'creature') {
@@ -4493,10 +4058,6 @@ export const winterWeaverCycle: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };
@@ -4506,10 +4067,8 @@ export const wizardTowerSpellDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
+  _params: Record<string, unknown> | undefined,
   choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const pick = choices?.[0];
   if (pick && pick.kind === 'player') {
@@ -4525,10 +4084,6 @@ export const xRayVisionPlay: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   const p = player(draft, source.player);
   const revealed = p.deck.slice(0, 1);
@@ -4542,10 +4097,6 @@ export const youngScholarDrawPerDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
-  params: Record<string, unknown> | undefined,
-  choices: TargetChoice[] | undefined,
-  payload: TriggerPayload | undefined,
-  beneficiary: PlayerId,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
 };

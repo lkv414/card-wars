@@ -10,16 +10,17 @@
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "build": "pnpm -r build",
+    "build": "pnpm version:auto && pnpm -r build",
     "dev:server": "pnpm --filter @card-wars/server dev",
-    "version:bump": "node tools/bump-version.mjs",
+    "version:auto": "node tools/bump-version.mjs auto",
+    "version:bump": "node tools/bump-version.mjs patch",
     "version:sync": "node tools/bump-version.mjs sync",
-    "deploy": "pnpm version:bump && pnpm -r build && pnpm --filter @card-wars/server deploy"
+    "deploy": "pnpm version:auto && pnpm -r build && pnpm --filter @card-wars/server deploy"
   },
   "devDependencies": {
     "eslint": "^9.30.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.35.0"
   },
-  "version": "3.1.1"
+  "version": "3.1.138"
 }

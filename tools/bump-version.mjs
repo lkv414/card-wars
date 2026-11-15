@@ -1,6 +1,6 @@
 // Dynamic version bumper and synchronizer for Card Wars v3.
 // Usage:
-//   node tools/bump-version.mjs [patch|minor|major|sync|set <version>]
+//   node tools/bump-version.mjs [auto|patch|minor|major|sync|set <version>]
 //
 // Updates:
 //   - root package.json ("version": "x.y.z")
@@ -32,6 +32,21 @@ function getGitCommit() {
   }
 }
 
+function getGitCommitCount() {
+  try {
+    // Check if shallow clone (often in CI/Cloudflare)
+    try {
+      const isShallow = execSync('git rev-parse --is-shallow-repository', { cwd: root, encoding: 'utf8' }).trim() === 'true';
+      if (isShallow) {
+        try { execSync('git fetch --unshallow', { cwd: root, stdio: 'ignore' }); } catch {}
+      }
+    } catch {}
+    const count = Number(execSync('git rev-list --count HEAD', { cwd: root, encoding: 'utf8' }).trim());
+    if (Number.isFinite(count) && count > 0) return count;
+  } catch {}
+  return null;
+}
+
 const rootPkgPath = join(root, 'package.json');
 const clientPkgPath = join(root, 'apps/client/package.json');
 const versionTsPath = join(root, 'apps/client/src/version.ts');
@@ -42,7 +57,7 @@ const rootPkg = readJson(rootPkgPath);
 let currentVersion = rootPkg.version || '3.1.0';
 
 const args = process.argv.slice(2);
-const command = args[0] || 'patch';
+const command = args[0] || 'auto';
 
 let newVersion = currentVersion;
 
@@ -58,7 +73,14 @@ const major = match ? Number(match[1]) : 3;
 const minor = match ? Number(match[2]) : 1;
 const patch = match ? Number(match[3]) : 0;
 
-if (command === 'patch') {
+if (command === 'auto') {
+  const commitCount = getGitCommitCount();
+  if (commitCount != null && commitCount > 0) {
+    newVersion = `${major}.${minor}.${commitCount}`;
+  } else {
+    newVersion = currentVersion;
+  }
+} else if (command === 'patch') {
   newVersion = `${major}.${minor}.${patch + 1}`;
 } else if (command === 'minor') {
   newVersion = `${major}.${minor + 1}.0`;
@@ -74,7 +96,7 @@ if (command === 'patch') {
 } else if (command === 'sync') {
   newVersion = currentVersion;
 } else {
-  console.error(`Unknown command: ${command}. Use patch, minor, major, sync, or set <version>`);
+  console.error(`Unknown command: ${command}. Use auto, patch, minor, major, sync, or set <version>`);
   process.exit(1);
 }
 

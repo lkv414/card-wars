@@ -16,6 +16,7 @@ export const LandViewSchema = z.object({
   type: z.string(),
   frozen: z.boolean(),
   flipped: z.boolean(),
+  iceTokens: z.number().default(0),
 });
 
 export const CardViewSchema = z.object({

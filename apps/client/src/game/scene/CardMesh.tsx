@@ -126,7 +126,7 @@ export function CardMesh({
     };
   }, [canDrag, card.instanceId]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const now = performance.now();
     const ui = useGame.getState();
     const holding = ui.ui.holdingFloop;
@@ -160,7 +160,7 @@ export function CardMesh({
       group.current.rotation.z = tiltZ;
 
       if (Math.abs(diffRot) > 0.004) {
-        group.current.rotation.y += diffRot * 0.22;
+        group.current.rotation.y += diffRot * (1 - Math.exp(-15 * delta));
         invalidate();
       } else {
         group.current.rotation.y = targetRot;
@@ -175,13 +175,13 @@ export function CardMesh({
         const target = new THREE.Vector3(ui.ui.dragPoint!.x, DRAG_LIFT_Y, ui.ui.dragPoint!.z);
         holder.current.parent!.worldToLocal(target);
         if (holder.current.position.distanceTo(target) > 0.1) {
-          holder.current.position.lerp(target, 0.35);
+          holder.current.position.lerp(target, 1 - Math.exp(-25 * delta));
           invalidate();
         }
       } else {
         baseTarget.set(basePosition[0], basePosition[1], basePosition[2]);
         if (holder.current.position.distanceTo(baseTarget) > 0.1) {
-          holder.current.position.lerp(baseTarget, 0.3);
+          holder.current.position.lerp(baseTarget, 1 - Math.exp(-21 * delta));
           invalidate();
         } else {
           holder.current.position.copy(baseTarget);

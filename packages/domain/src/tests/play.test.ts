@@ -123,6 +123,23 @@ describe('розыгрыш карт', () => {
     expect(res.events.some((e) => e.type === 'creature_destroyed')).toBe(false);
   });
 
+  it('запрещено заменять зафлюпанное существо новым существом', () => {
+    let s = startedMatch();
+    s = forceToHand(s, P1, 'vanilla-swamp');
+    const first = handCardId(s, P1, 'vanilla-swamp');
+    s = ok(s, { type: 'play_card', player: P1, instanceId: first, zone: 0 });
+    s = produce(s, (d) => {
+      d.instances[first]!.flipped = true;
+    });
+    s = forceToHand(s, P1, 'vanilla-swamp');
+    const second = handCardId(s, P1, 'vanilla-swamp');
+    fail(
+      s,
+      { type: 'play_card', player: P1, instanceId: second, zone: 0 },
+      'invalid_target',
+    );
+  });
+
   it('замороженная земля: розыгрыш только после сброса карты с руки', () => {
     let s = startedMatch();
     // мороз ставится тест-манипуляцией (заморозка даётся способностями — docs/TECH.md № 2)

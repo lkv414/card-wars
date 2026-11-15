@@ -49,6 +49,25 @@ export const cards: CardData[] = [
   card({ id: 'vanilla-sand', type: 'creature', cost: 1, landType: 'sand', attack: 4, defense: 4 }),
   card({ id: 'plain-fortress', type: 'building', cost: 1, landType: 'swamp', description: 'Строение без способностей' }),
   card({ id: 'spell-plain', type: 'spell', cost: 1, landType: 'swamp', description: 'Заклинание без способностей' }),
+  card({
+    id: 'atk-mod-creature',
+    type: 'creature',
+    cost: 1,
+    landType: 'corn',
+    attack: 2,
+    defense: 6,
+    abilities: [
+      {
+        kind: 'passive',
+        effect: {
+          op: 'attack_mod',
+          target: { kind: 'this_creature' },
+          multiplier: 3,
+        },
+        text: 'Утроенный урон',
+      },
+    ],
+  }),
   // Mechanics v2 pipeline fixtures (docs/MECHANICS-V2.md §1).
   card({
     id: 'aura-fortress',

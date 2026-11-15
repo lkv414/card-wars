@@ -1,6 +1,7 @@
 import type { Draft } from 'immer';
 import { dealToCreature, dealToPlayer, killInstance } from '../damage';
 import { drawCards, discardTopDeck } from '../draw';
+import { computeEff } from '../stats';
 import { clearZoneSlot, emit, instance, player } from '../util';
 import { opponentsOf, opponentZoneFor } from '../zones';
 import type { Ctx } from '../util';
@@ -247,8 +248,25 @@ export const bigfootGhostUnflipLand: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
+  _params?: Record<string, unknown>,
+  choices?: TargetChoice[],
 ): void => {
-  drawCards(draft, ctx, source.player, 1);
+  const p = player(draft, source.player);
+  const pick = choices?.[0];
+  const targetZone = (pick && pick.kind === 'landscape' && pick.player === source.player)
+    ? pick.zone
+    : p.lands.findIndex((l) => l.flipped);
+  if (targetZone >= 0 && targetZone < p.lands.length) {
+    const land = p.lands[targetZone]!;
+    if (land.flipped) {
+      land.flipped = false;
+      emit(ctx, { type: 'land_changed', player: source.player, zone: targetZone, change: 'unflipped' });
+      enqueueTrigger(draft, ctx, 'on_flip', { player: source.player, zone: targetZone });
+      if (land.type === 'ghost') {
+        drawCards(draft, ctx, source.player, 1);
+      }
+    }
+  }
 };
 
 /** Слепой шееглаз (blind-see-eye-6692a64): Когда слепой шееглаз входит в игру, заморозь одну землю за каждое существо под твоим контролем с «шееглаз» в названии. */
@@ -343,8 +361,27 @@ export const bloodshedPitcherMillDamage: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
+  _params?: Record<string, unknown>,
+  choices?: TargetChoice[],
 ): void => {
-  discardTopDeck(draft, ctx, source.player, 3);
+  const p = player(draft, source.player);
+  const toMill = Math.min(3, p.deck.length);
+  let spellCount = 0;
+  for (let i = 0; i < toMill; i++) {
+    const instId = p.deck.shift()!;
+    p.discard.push(instId);
+    const inst = instance(draft, instId);
+    inst.location = 'discard';
+    const card = ctx.catalog.getCard(inst.cardId);
+    if (card?.type === 'spell') spellCount++;
+    emit(ctx, { type: 'card_discarded', player: source.player, instanceId: instId, cardId: inst.cardId, from: 'deck' });
+  }
+  if (spellCount > 0) {
+    const pick = choices?.[0];
+    if (pick && pick.kind === 'creature') {
+      dealToCreature(draft, ctx, pick.instanceId, spellCount * 2, source.instanceId);
+    }
+  }
 };
 
 /** Книга брани (book-of-swearing-11c1af0): Выбери букву. Нанеси 4 урона существам, имена которых не начинаются с выбранной буквы. */
@@ -553,6 +590,18 @@ export const conflagrationBurnDamageDraw: MechanicHandler = (
   ctx: Ctx,
   source: EffectSource,
 ): void => {
+  const opponents = opponentsOf(draft, source.player);
+  for (const opp of opponents) {
+    const oppState = draft.players[opp]!;
+    for (const zone of oppState.zones) {
+      if (!zone.creature) continue;
+      const inst = draft.instances[zone.creature];
+      const burns = inst?.burnTokens ?? 0;
+      if (burns > 0) {
+        dealToCreature(draft, ctx, zone.creature, burns, source.instanceId);
+      }
+    }
+  }
   drawCards(draft, ctx, source.player, 1);
 };
 
@@ -1852,8 +1901,11 @@ export const hampyreLifestealOnAttack: MechanicHandler = (
   _choices: TargetChoice[] | undefined,
   payload: TriggerPayload | undefined,
 ): void => {
-  const dmg = (payload?.amount as number | undefined) ?? 2;
-  healPlayer(draft, ctx, source.player, dmg);
+  let dmg = payload?.amount as number | undefined;
+  if (dmg === undefined && source.instanceId) {
+    dmg = computeEff(draft, ctx, source.instanceId).attack;
+  }
+  healPlayer(draft, ctx, source.player, dmg ?? 2);
 };
 
 /** Сердечное зелье (heart-potion-864f2af): Сними 5 урона с выбранного существа или выбранный игрок восстанавливает 5 жизней. Если на том существе нет урона или у того игрока полное здоровье, возьми 1 карту. */
@@ -3177,8 +3229,14 @@ export const rockMermaidMillPlayer: MechanicHandler = (
   draft: Draft<MatchState>,
   ctx: Ctx,
   source: EffectSource,
+  _params?: Record<string, unknown>,
+  choices?: TargetChoice[],
 ): void => {
-  discardTopDeck(draft, ctx, source.player, 2);
+  const pick = choices?.[0];
+  const targetPlayer = pick && pick.kind === 'player' ? pick.playerId : opponentsOf(draft, source.player)[0];
+  if (targetPlayer) {
+    discardTopDeck(draft, ctx, targetPlayer, 2);
+  }
 };
 
 /** Гнилой корчеватель (gniloy-korchevatel-63484de): Когда гнилой корчеватель наносит урон сопернику, этот соперник сбрасывает существо или показывает руку, если у него таких нет. */
@@ -4060,6 +4118,15 @@ export const winterWeaverCycle: MechanicHandler = (
   source: EffectSource,
 ): void => {
   drawCards(draft, ctx, source.player, 1);
+  const targets = draft.order.filter((pid) =>
+    draft.players[pid]!.lands.some((l) => l.iceTokens > 0 || l.frozen),
+  );
+  for (const pid of targets) {
+    const p = draft.players[pid]!;
+    if (p.hand.length > 0) {
+      discardCardFromHand(draft, ctx, pid, p.hand[0]!);
+    }
+  }
 };
 
 /** Вышка чароплёта (wizard-tower-a30e859): Когда ты разыгрываешь заклинание, нанеси 1 урон каждому существу под контролем соперника в этой зоне. Если в этой зоне нет существ под контролем соперника, нанеси 1 урон выбранному игроку вместо этого. */
@@ -4098,7 +4165,13 @@ export const youngScholarDrawPerDamage: MechanicHandler = (
   ctx: Ctx,
   source: EffectSource,
 ): void => {
-  drawCards(draft, ctx, source.player, 1);
+  if (source.instanceId) {
+    const inst = instance(draft, source.instanceId);
+    const count = Math.floor(inst.damage / 3);
+    if (count > 0) {
+      drawCards(draft, ctx, source.player, count);
+    }
+  }
 };
 
 

@@ -266,6 +266,9 @@ export function handlePlayCard(
   let replacedCardId: string | null = null;
   if (replaced) {
     const oldInst = instance(draft, replaced);
+    if (slot === 'creature' && oldInst.flipped) {
+      throw new DomainError('invalid_target', 'cannot replace flooped creature');
+    }
     replacedCardId = oldInst.cardId;
     oldInst.location = 'discard';
     oldInst.zone = null;

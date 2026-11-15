@@ -202,7 +202,13 @@ export function DamagePile({
       }
     }
     setTokens([...simRef.current.values()]);
-    if (gone.length > 0) setLeaving((l) => [...l, ...gone].slice(-8));
+    if (gone.length > 0) {
+      setLeaving((l) => [...l, ...gone].slice(-8));
+      const timeoutId = setTimeout(() => {
+        setLeaving((l) => l.filter((t) => t.t <= LEAVING_S));
+      }, (LEAVING_S + 0.1) * 1000);
+      return () => clearTimeout(timeoutId);
+    }
   }, [damage, instanceId]);
 
   useFrame((_, delta) => {
@@ -221,20 +227,21 @@ export function DamagePile({
       const tiltZ = t.settled ? 0 : Math.max(-0.28, Math.min(0.28, t.vx * 0.004));
       mesh.rotation.set(tiltX, t.angle, tiltZ);
     }
-    let leavingDone = false;
     for (const l of leaving) {
+      if (l.t > LEAVING_S) continue;
       l.t += delta;
       l.y += 170 * delta;
       const mesh = leavingMeshesRef.current.get(l.key);
       if (mesh) {
         mesh.position.set(l.x, l.y, l.z);
         const material = mesh.material as THREE.MeshLambertMaterial;
-        material.opacity = Math.max(0, 1 - l.t / LEAVING_S);
+        const opacity = Math.max(0, 1 - l.t / LEAVING_S);
+        material.opacity = opacity;
+        mesh.visible = opacity > 0;
       }
-      if (l.t > LEAVING_S) leavingDone = true;
     }
-    if (leavingDone) setLeaving((l) => l.filter((t) => t.t <= LEAVING_S));
-    if (moving || leaving.length > 0) invalidate();
+    const hasActiveLeaving = leaving.some((l) => l.t <= LEAVING_S);
+    if (moving || hasActiveLeaving) invalidate();
   });
 
   return (

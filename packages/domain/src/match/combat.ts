@@ -106,12 +106,12 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             zone: z,
             amount: attackPowerMod,
           });
-          dealToPlayer(draft, ctx, target.player, attackPower, attackerInstanceId);
+          dealToPlayer(draft, ctx, target.player, attackPowerMod, attackerInstanceId);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
             player: attackerInstance.controller,
             targetPlayer: target.player,
-            amount: attackPower,
+            amount: attackPowerMod,
           });
           continue;
         }
@@ -192,12 +192,12 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             zone: z,
             amount: attackPowerMod,
           });
-          dealToPlayer(draft, ctx, target.player, attackPower, attackerInstanceId);
+          dealToPlayer(draft, ctx, target.player, attackPowerMod, attackerInstanceId);
           enqueueTrigger(draft, ctx, 'on_damage_dealt', {
             instanceId: attackerInstanceId,
             player: attackerInstance.controller,
             targetPlayer: target.player,
-            amount: attackPower,
+            amount: attackPowerMod,
           });
         }
       }

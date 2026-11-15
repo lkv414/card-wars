@@ -27,7 +27,7 @@ function moveToEmptyZone(
   const from = inst.zone;
   const candidates = ownOnly
     ? [source.player]
-    : [source.player, ...opponentsOf(draft, source.player)];
+    : [...opponentsOf(draft, source.player), source.player];
   for (const pid of candidates) {
     const p = draft.players[pid]!;
     const zone = p.zones.findIndex((z) => !z.creature);
@@ -35,6 +35,7 @@ function moveToEmptyZone(
     draft.players[inst.controller]!.zones[from]!.creature = null;
     p.zones[zone]!.creature = id;
     inst.zone = zone;
+    inst.controller = pid;
     inst.movedThisTurn = true;
     emit(ctx, { type: 'card_moved', player: pid, instanceId: id, fromZone: from, toZone: zone });
     return true;
@@ -52,13 +53,13 @@ export const startTurnMoveOrDiscard: MechanicHandler = (draft, ctx, source, para
 
 /** «Когда … вступает в игру, перемести его на пустую землю» (поп-десанты). */
 export const enterMoveToEmpty: MechanicHandler = (draft, ctx, source, params) => {
-  if (!moveToEmptyZone(draft, ctx, source, true)) return;
+  if (!moveToEmptyZone(draft, ctx, source, false)) return;
   if (params?.flipLand === true && source.instanceId) {
     const inst = instance(draft, source.instanceId);
     if (inst.zone !== null) {
-      const land = player(draft, source.player).lands[inst.zone]!;
+      const land = player(draft, inst.controller).lands[inst.zone]!;
       land.flipped = true;
-      emit(ctx, { type: 'land_changed', player: source.player, zone: inst.zone, change: 'flipped' });
+      emit(ctx, { type: 'land_changed', player: inst.controller, zone: inst.zone, change: 'flipped' });
     }
   }
 };

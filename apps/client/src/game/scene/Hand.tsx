@@ -229,7 +229,7 @@ function DragGhost({ view, instanceId }: { view: PlayerView; instanceId: string 
   const cardId = view.myHand.find((c) => c.instanceId === instanceId)?.cardId ?? '';
   const texture = useMemo(() => cardTexture(cardId), [cardId]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const g = ref.current;
     if (!g) return;
     const dragPoint = useGame.getState().ui.dragPoint;
@@ -244,8 +244,9 @@ function DragGhost({ view, instanceId }: { view: PlayerView; instanceId: string 
       initialized.current = true;
       return;
     }
-    g.position.x += (dragPoint.x - g.position.x) * 0.4;
-    g.position.z += (dragPoint.z - g.position.z) * 0.4;
+    const t = 1 - Math.exp(-30 * delta);
+    g.position.x += (dragPoint.x - g.position.x) * t;
+    g.position.z += (dragPoint.z - g.position.z) * t;
   });
 
   return (
@@ -337,7 +338,7 @@ function HandCard({
     };
   }, [offset, step, fanStepRad, index, elevated, baseY, baseScale, halfH, halfW]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const g = mesh.current;
     if (!g) return;
     const dx = target.x - g.position.x;
@@ -357,13 +358,14 @@ function HandCard({
       Math.abs(ds) > 0.004;
 
     if (moving) {
-      g.position.x += dx * 0.24;
-      g.position.y += dy * 0.24;
-      g.position.z += dz * 0.24;
-      g.rotation.x += drx * 0.24;
-      g.rotation.y += dry * 0.24;
-      g.rotation.z += drz * 0.24;
-      const s = g.scale.x + ds * 0.24;
+      const t = 1 - Math.exp(-16 * delta);
+      g.position.x += dx * t;
+      g.position.y += dy * t;
+      g.position.z += dz * t;
+      g.rotation.x += drx * t;
+      g.rotation.y += dry * t;
+      g.rotation.z += drz * t;
+      const s = g.scale.x + ds * t;
       g.scale.set(s, s, s);
       invalidate();
     } else {

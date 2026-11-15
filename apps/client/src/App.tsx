@@ -7,7 +7,7 @@ import { setQuality, useGame } from './store';
 import { PwaInstallButton, PwaInstallPrompt } from './pwa';
 import './styles.css';
 
-const APP_VERSION = 'v3.1.0';
+import { APP_VERSION } from './version';
 
 const DecksScreen = lazy(() => import('./decks/DecksScreen').then((m) => ({ default: m.DecksScreen })));
 const MockScene = lazy(() => import('./game/debug/MockScene').then((m) => ({ default: m.MockScene })));

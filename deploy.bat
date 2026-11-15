@@ -25,6 +25,10 @@ if errorlevel 1 (
   if errorlevel 1 goto :fail
 )
 
+echo [version] Incrementing app version...
+call pnpm run version:bump
+if errorlevel 1 goto :fail
+
 echo [build] Building packages and client...
 call pnpm -r build
 if errorlevel 1 goto :fail

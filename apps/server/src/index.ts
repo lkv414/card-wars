@@ -18,6 +18,12 @@ export default {
       return new Response('ok', { headers: { 'content-type': 'text/plain; charset=utf-8' } });
     }
 
+    if (url.pathname === '/version') {
+      return new Response(JSON.stringify({ status: 'ok', service: 'card-wars' }), {
+        headers: { 'content-type': 'application/json; charset=utf-8' },
+      });
+    }
+
     if (url.pathname === '/ws') {
       if (request.headers.get('Upgrade') !== 'websocket') {
         return new Response('Expected WebSocket', { status: 426 });

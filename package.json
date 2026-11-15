@@ -12,11 +12,14 @@
     "test": "pnpm -r test",
     "build": "pnpm -r build",
     "dev:server": "pnpm --filter @card-wars/server dev",
-    "deploy": "pnpm -r build && pnpm --filter @card-wars/server deploy"
+    "version:bump": "node tools/bump-version.mjs",
+    "version:sync": "node tools/bump-version.mjs sync",
+    "deploy": "pnpm version:bump && pnpm -r build && pnpm --filter @card-wars/server deploy"
   },
   "devDependencies": {
     "eslint": "^9.30.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.35.0"
-  }
+  },
+  "version": "3.1.1"
 }

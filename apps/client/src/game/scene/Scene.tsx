@@ -6,6 +6,7 @@ import { NO_RAYCAST, cameraOrbitFor, cameraTargetPlayer, cameraTurnEase } from '
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
+import { CombatForecastLayer } from './CombatForecast';
 import { disposeAllTextures, subscribeImageLoads } from './textures';
 
 const CAMERA_TURN_DURATION_MS = 920;
@@ -103,6 +104,7 @@ function SceneContent() {
       ))}
 
       <Hand view={view} />
+      <CombatForecastLayer view={view} />
       <AnimDriver />
       <AnimLayer />
     </>

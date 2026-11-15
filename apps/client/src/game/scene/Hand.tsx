@@ -5,7 +5,7 @@ import type { PlayerView } from '@card-wars/protocol';
 import { cards as catalog } from '@card-wars/content';
 import { CARD_H, CARD_T, CARD_W, HAND, NO_RAYCAST, overMyDiscardRay, zoneFromWorld } from './layout';
 import { cardBackTexture, cardTexture } from './textures';
-import { sendCommand, setUi, useGame } from '../../store';
+import { sendCommand, setUi, showHint, useGame } from '../../store';
 import { pick } from '../targeting';
 
 const DRAG_THRESHOLD_PX = 10;
@@ -145,6 +145,26 @@ export function Hand({ view }: { view: PlayerView }) {
           setUi({ selectedHand: null });
         }
       } else if (zone !== null && source === 'hand') {
+        const playerState = view.players[view.me];
+        const targetLand = playerState?.lands[zone];
+        const playedCard = view.myHand.find((c) => c.instanceId === instanceId);
+        const cardMeta = playedCard ? catalog.find((c) => c.id === playedCard.cardId) : undefined;
+        const isSlotCard = cardMeta?.type === 'creature' || cardMeta?.type === 'building';
+        const otherHandCards = view.myHand.filter((c) => c.instanceId !== instanceId);
+
+        if (targetLand?.frozen && isSlotCard) {
+          if (otherHandCards.length > 0) {
+            setUi({ unfreezePrompt: { instanceId, zone }, selectedHand: null });
+            invalidate();
+            return;
+          } else {
+            showHint('Земля заморожена: нужна другая карта в руке для сброса');
+            setUi({ selectedHand: null });
+            invalidate();
+            return;
+          }
+        }
+
         sendCommand({ type: 'play_card', player: view.me, instanceId, zone });
         setUi({ selectedHand: null });
       }

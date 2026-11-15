@@ -47,11 +47,35 @@ export function registerAnimInvalidator(cb: () => void): () => void {
   };
 }
 
-function pushAnim(anim: Omit<Anim, 'id' | 'start'>): void {
-  anims.push({ ...anim, id: animId++, start: performance.now() });
-  if (anims.length > 40) anims.splice(0, anims.length - 40);
-  for (const listener of listeners) listener();
-  sceneInvalidator?.();
+function pushAnim(anim: Omit<Anim, 'id' | 'start'>, delayMs = 0): void {
+  if (delayMs <= 0) {
+    anims.push({ ...anim, id: animId++, start: performance.now() });
+    if (anims.length > 40) anims.splice(0, anims.length - 40);
+    for (const listener of listeners) listener();
+    sceneInvalidator?.();
+  } else {
+    setTimeout(() => {
+      anims.push({ ...anim, id: animId++, start: performance.now() });
+      if (anims.length > 40) anims.splice(0, anims.length - 40);
+      for (const listener of listeners) listener();
+      sceneInvalidator?.();
+    }, delayMs);
+  }
+}
+
+function zoneOfInstance(view: PlayerView | null, instanceId: string | null | undefined): number | null {
+  if (!view || !instanceId) return null;
+  for (const pid of view.order) {
+    const p = view.players[pid];
+    if (!p) continue;
+    for (let z = 0; z < p.zones.length; z++) {
+      const zone = p.zones[z];
+      if (zone?.creature?.instanceId === instanceId || zone?.building?.instanceId === instanceId) {
+        return z;
+      }
+    }
+  }
+  return null;
 }
 
 function positionOfInstance(view: PlayerView | null, instanceId: string | null): [number, number, number] | null {
@@ -117,18 +141,30 @@ interface AnimEvent {
   zone?: number;
   slot?: 'creature' | 'building';
   change?: string;
+  phase?: string;
 }
 
 /** Map incoming server events to visual ghosts. */
-export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): void {
+export function eventsToAnims(
+  view: PlayerView | null,
+  events: GameEvent[],
+  prevView?: PlayerView | null,
+): void {
   if (!view) return;
   const handPos = handWorldPos(view, useGame.getState().ui.cameraMode);
+  const isCombat =
+    events.some((e) => (e.type === 'phase_changed' && (e as unknown as AnimEvent).phase === 'combat')) ||
+    view.phase === 'combat';
+
+  let combatStep = 0;
+
   for (const raw of events) {
     const event = raw as unknown as AnimEvent;
     const zone = event.zone ?? 0;
     const amount = event.amount ?? 0;
     const instanceId = event.instanceId ?? null;
     const fromHand = event.player === view?.me ? handPos : heroAt(view, event.player);
+
     switch (event.type) {
       case 'card_played': {
         const to = worldOfSlot(view!, event.player!, zone, event.slot ?? 'creature') ?? [0, 4, 0];
@@ -143,7 +179,14 @@ export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): voi
       case 'creature_destroyed': {
         const from = positionOfInstance(view, instanceId) ?? heroAt(view, ownerOf(view, instanceId ?? ''));
         const to = discardAt(view, ownerOf(view, instanceId ?? ''));
-        pushAnim({ kind: 'fly', cardId: event.cardId, from, to, duration: 520 });
+        let delayMs = 0;
+        if (isCombat) {
+          const z =
+            zoneOfInstance(prevView ?? null, instanceId) ??
+            zoneOfInstance(view, instanceId);
+          delayMs = (z !== null ? Math.min(3, Math.max(0, z)) : Math.min(3, combatStep)) * 300;
+        }
+        pushAnim({ kind: 'fly', cardId: event.cardId, from, to, duration: 520 }, delayMs);
         break;
       }
       case 'damage_dealt': {
@@ -152,14 +195,30 @@ export function eventsToAnims(view: PlayerView | null, events: GameEvent[]): voi
         const target: [number, number, number] = event.targetInstanceId
           ? (positionOfInstance(view, event.targetInstanceId) ?? [0, 20, 0])
           : heroAt(view, event.targetPlayer);
-        pushAnim({
-          kind: 'number',
-          text: `-${amount}`,
-          color: '#ff8a7a',
-          from: [target[0], target[1] + 60, target[2]],
-          to: [target[0], target[1] + 130, target[2]],
-          duration: 900,
-        });
+
+        let delayMs = 0;
+        if (isCombat) {
+          const z =
+            zoneOfInstance(prevView ?? null, event.instanceId) ??
+            zoneOfInstance(view, event.instanceId) ??
+            zoneOfInstance(prevView ?? null, event.targetInstanceId) ??
+            zoneOfInstance(view, event.targetInstanceId);
+          const zoneIndex = z !== null ? Math.min(3, Math.max(0, z)) : Math.min(3, combatStep);
+          delayMs = zoneIndex * 300;
+          combatStep++;
+        }
+
+        pushAnim(
+          {
+            kind: 'number',
+            text: `-${amount}`,
+            color: '#ff8a7a',
+            from: [target[0], target[1] + 60, target[2]],
+            to: [target[0], target[1] + 130, target[2]],
+            duration: 900,
+          },
+          delayMs,
+        );
         break;
       }
       case 'creature_healed': {
@@ -210,6 +269,7 @@ export function AnimDriver() {
   const seq = useGame((s) => s.lastEventsSeq);
   const view = useGame((s) => s.view);
   const processed = useRef(0);
+  const prevViewRef = useRef<PlayerView | null>(null);
   const invalidate = useThree((s) => s.invalidate);
 
   useEffect(() => {
@@ -222,10 +282,11 @@ export function AnimDriver() {
     if (total > processed.current) {
       const fresh = state.eventsLog.slice(processed.current);
       processed.current = total;
-      eventsToAnims(view, fresh as GameEvent[]);
+      eventsToAnims(view, fresh as GameEvent[], prevViewRef.current);
     } else if (total < processed.current) {
       processed.current = total; // log trimmed
     }
+    prevViewRef.current = view;
   }, [seq, view]);
   return null;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CONFIG } from '@card-wars/protocol';
+import { CONFIG, type PlayerView } from '@card-wars/protocol';
 import { sendCommand, setCameraMode, setQuality, setUi, useGame } from '../../store';
 import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
@@ -14,6 +14,7 @@ export function Hud({ code }: { code: string }) {
   const quality = useGame((s) => s.ui.quality);
   const cameraMode = useGame((s) => s.ui.cameraMode);
   const journalOpen = useGame((s) => s.ui.journalOpen);
+  const unfreezePrompt = useGame((s) => s.ui.unfreezePrompt);
   const me = view.players[view.me]!;
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
@@ -21,6 +22,24 @@ export function Hud({ code }: { code: string }) {
   // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
   const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
   const targeting = useGame((st) => st.ui.targeting);
+
+  const [lastReadJournalLen, setLastReadJournalLen] = useState(() => view.journal.length);
+  const unreadCount = journalOpen ? 0 : Math.max(0, view.journal.length - lastReadJournalLen);
+
+  useEffect(() => {
+    if (journalOpen) {
+      setLastReadJournalLen(view.journal.length);
+    }
+  }, [journalOpen, view.journal.length]);
+
+  const toggleJournal = () => {
+    if (!journalOpen) {
+      setLastReadJournalLen(view.journal.length);
+      setUi({ journalOpen: true });
+    } else {
+      setUi({ journalOpen: false });
+    }
+  };
 
   useEffect(() => {
     const ui = useGame.getState().ui;
@@ -347,6 +366,8 @@ export function Hud({ code }: { code: string }) {
               <button
                 disabled={view.mode === 'teams' && me.battleReady}
                 onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
+                onMouseEnter={() => setUi({ combatForecastHover: true })}
+                onMouseLeave={() => setUi({ combatForecastHover: false })}
               >
                 {view.mode === 'teams' ? (me.battleReady ? 'Готов' : 'В бой (готовность)') : 'В бой'}
               </button>
@@ -517,10 +538,31 @@ export function Hud({ code }: { code: string }) {
         </div>
       )}
 
+      {/* Floating round button for mobile HUD (viewport < 768px) with unread count badge */}
+      {!journalOpen && (
+        <button
+          className="hud-journal-fab"
+          onClick={toggleJournal}
+          aria-label={`Журнал боя${unreadCount > 0 ? ` (${unreadCount} непрочитанных)` : ''}`}
+          title="Журнал боя"
+        >
+          <span className="hud-journal-icon" aria-hidden="true">📜</span>
+          {unreadCount > 0 && (
+            <span className="hud-journal-badge">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </button>
+      )}
+
+      {journalOpen && (
+        <div className="hud-journal-backdrop" onClick={() => setUi({ journalOpen: false })} />
+      )}
+
       <div className={`hud-journal ${journalOpen ? '' : 'collapsed'}`}>
         <div className="journal-head">
           <b>Журнал</b>
-          <button className="mini" onClick={() => setUi({ journalOpen: !journalOpen })}>
+          <button className="mini" onClick={toggleJournal}>
             {journalOpen ? 'свернуть' : 'развернуть'}
           </button>
         </div>
@@ -576,7 +618,80 @@ export function Hud({ code }: { code: string }) {
         </div>
       )}
 
+      {unfreezePrompt && (
+        <UnfreezeDialog
+          prompt={unfreezePrompt}
+          view={view}
+          onClose={() => setUi({ unfreezePrompt: null })}
+        />
+      )}
+
       <CardZoomModal />
+    </div>
+  );
+}
+
+function UnfreezeDialog({
+  prompt,
+  view,
+  onClose,
+}: {
+  prompt: { instanceId: string; zone: number };
+  view: PlayerView;
+  onClose: () => void;
+}) {
+  const playedCard = view.myHand.find((c) => c.instanceId === prompt.instanceId);
+  const playedMeta = playedCard ? catalog.find((c) => c.id === playedCard.cardId) : undefined;
+  const otherCards = view.myHand.filter((c) => c.instanceId !== prompt.instanceId);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div className="overlay unfreeze-overlay" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="panel unfreeze-dialog" onClick={(e) => e.stopPropagation()}>
+        <h2>❄ Разморозка земли</h2>
+        <p className="hint">
+          Земля в <b>зоне {prompt.zone + 1}</b> заморожена. Чтобы разыграть{' '}
+          <b>«{playedMeta?.name ?? 'карту'}»</b>, выберите карту из руки для сброса:
+        </p>
+        <div className="unfreeze-card-list">
+          {otherCards.map((card) => {
+            const meta = catalog.find((c) => c.id === card.cardId);
+            return (
+              <button
+                key={card.instanceId}
+                className="unfreeze-card-btn"
+                onClick={() => {
+                  sendCommand({
+                    type: 'play_card',
+                    player: view.me,
+                    instanceId: prompt.instanceId,
+                    zone: prompt.zone,
+                    unfreezeWith: card.instanceId,
+                  });
+                  onClose();
+                }}
+              >
+                <div className="unfreeze-card-title">{meta?.name ?? card.cardId}</div>
+                <div className="unfreeze-card-meta">
+                  {meta?.type === 'creature' ? 'Существо' : meta?.type === 'building' ? 'Строение' : 'Карта'} · Стоимость: {meta?.cost ?? 0}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <div className="row" style={{ marginTop: 14 }}>
+          <button className="secondary" onClick={onClose}>
+            Отмена
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

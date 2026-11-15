@@ -5,7 +5,7 @@ import type { LandType } from '@card-wars/content';
 import type { LandView } from '@card-wars/protocol';
 import { CARD_H, CARD_W, HALF_H, HALF_W, LAND_H, LAND_W, NO_RAYCAST, slotLocalZ } from './layout';
 import { landTexture } from './textures';
-import { useGame, setUi, sendCommand } from '../../store';
+import { useGame, setUi, sendCommand, showHint } from '../../store';
 import { pick, validTargets } from '../targeting';
 import type { ThreeEvent } from '@react-three/fiber';
 import type { PlayerView } from '@card-wars/protocol';
@@ -46,6 +46,7 @@ export function Land({
   // Выбор земли как цели (docs/MECHANICS-V2.md §5) + подсветка размещения.
   const targeting = useGame((st) => st.ui.targeting);
   const currentAsk = targeting ? targeting.asks[targeting.askIndex] : undefined;
+  const selectedHand = useGame((s) => s.ui.selectedHand);
   const isLandTarget = targeting && currentAsk && currentAsk.kind.includes('landscape')
     ? validTargets(view, currentAsk, targeting.sourceInstanceId, targeting.collected)
       .some((c) => c.kind === 'landscape' && c.player === pid && c.zone === zone)
@@ -56,16 +57,43 @@ export function Land({
     zoneHovered && (draggedSlot === null || draggedSlot === slot);
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
-    if (!targeting || !currentAsk || !isLandTarget) return;
-    event.stopPropagation();
-    const ui = useGame.getState().ui;
-    const result = pick(view, ui.targeting!, { kind: 'landscape', player: pid, zone });
-    if (!result.accepted) return;
-    if (result.command) {
-      sendCommand(result.command);
-      setUi({ targeting: result.nextState ?? null });
-    } else if (result.nextState) {
-      setUi({ targeting: result.nextState });
+    if (targeting && currentAsk && isLandTarget) {
+      event.stopPropagation();
+      const ui = useGame.getState().ui;
+      const result = pick(view, ui.targeting!, { kind: 'landscape', player: pid, zone });
+      if (!result.accepted) return;
+      if (result.command) {
+        sendCommand(result.command);
+        setUi({ targeting: result.nextState ?? null });
+      } else if (result.nextState) {
+        setUi({ targeting: result.nextState });
+      }
+      return;
+    }
+
+    if (isMe && useGame.getState().ui.selectedHand) {
+      const selectedId = useGame.getState().ui.selectedHand!;
+      event.stopPropagation();
+      const me = view.players[view.me];
+      const targetLand = me?.lands[zone];
+      const playedCard = view.myHand.find((c) => c.instanceId === selectedId);
+      const cardMeta = playedCard ? catalog.find((c) => c.id === playedCard.cardId) : undefined;
+      const isSlotCard = cardMeta?.type === 'creature' || cardMeta?.type === 'building';
+      const otherHandCards = view.myHand.filter((c) => c.instanceId !== selectedId);
+
+      if (targetLand?.frozen && isSlotCard) {
+        if (otherHandCards.length > 0) {
+          setUi({ unfreezePrompt: { instanceId: selectedId, zone }, selectedHand: null });
+          return;
+        } else {
+          showHint('Земля заморожена: нужна другая карта в руке для сброса');
+          setUi({ selectedHand: null });
+          return;
+        }
+      }
+
+      sendCommand({ type: 'play_card', player: view.me, instanceId: selectedId, zone });
+      setUi({ selectedHand: null });
     }
   };
 
@@ -74,7 +102,7 @@ export function Land({
       <mesh
         position={[0, 0.6, 0]}
         onClick={handleClick}
-        raycast={isLandTarget ? undefined : NO_RAYCAST}
+        raycast={isLandTarget || (isMe && Boolean(selectedHand)) ? undefined : NO_RAYCAST}
       >
         <boxGeometry args={[LAND_W, 1.2, LAND_H]} />
         <meshLambertMaterial map={texture} />

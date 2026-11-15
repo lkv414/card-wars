@@ -35,6 +35,9 @@ export interface UiState {
   targeting: TargetingState | null;
   journalOpen: boolean;
   zoomedCard: ZoomedCardInfo | null;
+  combatForecastHover: boolean;
+  hoveredCreatureInstanceId: string | null;
+  unfreezePrompt: { instanceId: string; zone: number } | null;
 }
 
 interface GameStore {
@@ -78,6 +81,9 @@ export const useGame = create<GameStore>(() => ({
     targeting: null,
     journalOpen: false,
     zoomedCard: null,
+    combatForecastHover: false,
+    hoveredCreatureInstanceId: null,
+    unfreezePrompt: null,
   },
   sendCommand: () => {},
   lobbyCommand: () => {},

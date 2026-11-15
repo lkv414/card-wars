@@ -285,6 +285,16 @@ export function CardMesh({
     if (holding?.instanceId === card.instanceId) setUi({ holdingFloop: null });
   };
 
+  const isReadyCreature = slot === 'creature' && !card.flipped && (view.phase === 'combat' || (isMe && myMain));
+
+  useEffect(() => {
+    return () => {
+      if (useGame.getState().ui.hoveredCreatureInstanceId === card.instanceId) {
+        setUi({ hoveredCreatureInstanceId: null });
+      }
+    };
+  }, [card.instanceId]);
+
   return (
     <group ref={holder} position={basePosition}>
       <group
@@ -292,6 +302,18 @@ export function CardMesh({
         onClick={handleClick}
         onPointerDown={startHold}
         onPointerUp={cancelHold}
+        onPointerOver={() => {
+          if (isReadyCreature) {
+            setUi({ hoveredCreatureInstanceId: card.instanceId });
+            invalidate();
+          }
+        }}
+        onPointerOut={() => {
+          if (useGame.getState().ui.hoveredCreatureInstanceId === card.instanceId) {
+            setUi({ hoveredCreatureInstanceId: null });
+            invalidate();
+          }
+        }}
         onContextMenu={(e) => {
           e.stopPropagation();
           e.nativeEvent.preventDefault();

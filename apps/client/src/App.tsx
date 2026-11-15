@@ -4,6 +4,7 @@ import { GameShell } from './game/GameShell';
 import { getSelectedDeckId, heroName, loadDecks } from './decks';
 import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
+import { PwaInstallButton, PwaInstallPrompt } from './pwa';
 import './styles.css';
 
 const APP_VERSION = 'v3.1.0';
@@ -79,17 +80,20 @@ export function App() {
   };
 
   return (
-    <MainMenu
-      nickname={nickname}
-      onNickname={setNickname}
-      codeInput={codeInput}
-      onCodeInput={setCodeInput}
-      onEnter={enter}
-      onDecks={() => {
-        history.pushState(null, '', '/decks');
-        setScreen('decks');
-      }}
-    />
+    <>
+      <MainMenu
+        nickname={nickname}
+        onNickname={setNickname}
+        codeInput={codeInput}
+        onCodeInput={setCodeInput}
+        onEnter={enter}
+        onDecks={() => {
+          history.pushState(null, '', '/decks');
+          setScreen('decks');
+        }}
+      />
+      <PwaInstallPrompt />
+    </>
   );
 }
 
@@ -180,6 +184,7 @@ function MainMenu({
               {quality === 'high' ? 'высокая' : 'низкая'}
             </button>
           </span>
+          <PwaInstallButton />
           <span className="main-menu-version">Версия {APP_VERSION}</span>
         </div>
       </div>

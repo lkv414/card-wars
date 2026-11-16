@@ -191,13 +191,20 @@ function CameraRig() {
     const isTop = isTopSnap(snap, useGame.getState().ui.cameraMode);
     const targetPid = resolveTargetPlayer(v, useGame.getState().ui.cameraMode, snap);
 
-    if (direction === 'down') {
-      if (!isTop) snapCameraTop(targetPid);
-    } else if (direction === 'up') {
-      if (isTop) snapCameraPlayer(targetPid);
-    } else if (direction === 'left') {
-      cycleCameraPlayer('next');
+    if (direction === 'down' || direction === 'up') {
+      // Toggle altitude:
+      // - In top-down view: lowers camera to that player's perspective ("опустить камеру")
+      // - In perspective view: raises camera to top-down view
+      if (isTop) {
+        snapCameraPlayer(targetPid);
+      } else {
+        snapCameraTop(targetPid);
+      }
     } else if (direction === 'right') {
+      // Swipe left-to-right (dx > 0): user pulls in the player on the left
+      cycleCameraPlayer('next');
+    } else if (direction === 'left') {
+      // Swipe right-to-left (dx < 0): user pulls in the player on the right
       cycleCameraPlayer('prev');
     }
   };
@@ -242,7 +249,7 @@ function CameraRig() {
 
       const dx = e.clientX - gesture.startX;
       const dy = e.clientY - gesture.startY;
-      const swipe = classifySwipe(dx, dy, 46);
+      const swipe = classifySwipe(dx, dy, 32);
       if (swipe) {
         gesture.triggered = true;
         handleSwipeGesture(swipe);
@@ -261,7 +268,7 @@ function CameraRig() {
           const dx = e.clientX - gesture.startX;
           const dy = e.clientY - gesture.startY;
           const dt = performance.now() - gesture.startTime;
-          const minDistance = dt < 360 ? 32 : 46;
+          const minDistance = dt < 450 ? 24 : 32;
           const swipe = classifySwipe(dx, dy, minDistance);
           if (swipe) {
             handleSwipeGesture(swipe);
@@ -292,9 +299,9 @@ function CameraRig() {
       } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
         handleSwipeGesture('up');
       } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        handleSwipeGesture('left');
+        cycleCameraPlayer('next');
       } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        handleSwipeGesture('right');
+        cycleCameraPlayer('prev');
       } else if (e.key === 'f' || e.key === 'F') {
         const cur = useGame.getState().ui.cameraMode;
         setCameraMode(cur === 'follow' ? 'manual' : 'follow');

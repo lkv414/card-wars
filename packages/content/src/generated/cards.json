@@ -524,7 +524,7 @@
     "name": "Пепельный конструкт",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/ash-construct-ac283f6.webp",
     "attack": 3,
     "defense": 5,
@@ -1074,7 +1074,7 @@
     "name": "Базальтовый колосс",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/basalt-colossus-b7b80f2.webp",
     "attack": 1,
     "defense": 12,
@@ -1485,7 +1485,7 @@
     "name": "Мастер-Кузнец",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/blacksmith-7fbf96a.webp",
     "attack": 2,
     "defense": 9,
@@ -1552,7 +1552,7 @@
     "name": "Ослепительная вспышка",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/blinding-flash-791204c.webp",
     "description": "Возьми 5 карт. В конце хода\nсбрось все карты, кроме 1.",
     "abilities": [
@@ -3184,7 +3184,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ]
           }
         ],
@@ -5306,7 +5306,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ]
           }
         ],
@@ -5809,7 +5809,7 @@
     "name": "Мило-топка",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/cute-fire-c19c9d2.webp",
     "attack": 1,
     "defense": 7,
@@ -6421,7 +6421,7 @@
     "name": "Демонические спирали",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/halloween/demonicheskie-spirali-617b132.webp",
     "description": "Нанеси 6 урона выбранному существу.\nЕсли оно уничтожается этим\nспособом, получи 1 действие.",
     "abilities": [
@@ -6443,7 +6443,7 @@
     "name": "Демонолопендара",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/halloween/demonolopendara-272c40a.webp",
     "attack": 1,
     "defense": 4,
@@ -7285,7 +7285,7 @@
     "name": "Извергающийся колосс",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/erupting-colossus-1e53408.webp",
     "attack": 3,
     "defense": 10,
@@ -7623,7 +7623,7 @@
           "conditions": [
             {
               "kind": "while_on_land_type",
-              "landType": "ghost"
+              "landType": "lava"
             }
           ]
         },
@@ -7636,7 +7636,7 @@
     "name": "Подпитай Пламя",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/feed-the-flame-c231d46.webp",
     "description": "Если под контролем соперника\nнаходится 2 горящих существа,\nположи 3 [+] на выбранное\nдружественное существо.",
     "abilities": [
@@ -7683,7 +7683,7 @@
     "name": "Огонёк Чувств",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/feeling-flame-d3953c3.webp",
     "description": "Подожги выбранное существо и положи эту карту под него. В начале твоего хода ты можешь положить эту карту под соседнее существо и поджечь его. Если существо, находящееся над картой, выходит из игры, сбрось эту карту.",
     "abilities": [
@@ -7851,7 +7851,7 @@
     "name": "Крепость огненного жерла",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/fiery-crater-fortress-db3c606.webp",
     "description": "Сбрось жетон ожога с существа и\nФЛЮП >>> Нанеси 3 урона\nтому существу.",
     "abilities": [
@@ -7955,7 +7955,7 @@
     "name": "Танец огня",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/fire-dance-e9fca5f.webp",
     "description": "Положи существо с твоего сброса.\nДобавь ему урона, пока у него\nне останется 1 защита.",
     "abilities": [
@@ -7984,7 +7984,7 @@
     "name": "Огненный пёс",
     "type": "creature",
     "cost": 0,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/fire-dog-386e256.webp",
     "attack": 1,
     "defense": 6,
@@ -8009,7 +8009,7 @@
     "name": "Огнеминго пожарный",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/fire-flamingo-5eb6a0d.webp",
     "attack": 3,
     "defense": 6,
@@ -8139,7 +8139,7 @@
     "name": "Огнеполз",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flame-crawler-e693c20.webp",
     "attack": 1,
     "defense": 4,
@@ -8164,7 +8164,7 @@
     "name": "Латы пламенного сердца",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flame-heart-armor-41f40bc.webp",
     "description": "Подожги выбранное дружественное существо и сними с него весь урон.\nВозьми 1 карту.",
     "abilities": [
@@ -8187,7 +8187,7 @@
     "name": "Пламенное колесо",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flame-wheel-086348e.webp",
     "attack": 1,
     "defense": 12,
@@ -8206,7 +8206,7 @@
     "name": "Пламенный прострел",
     "type": "spell",
     "cost": 0,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flaming-bolt-7fe1a98.webp",
     "description": "Подожжи выбранное существо, а затем нанеси ему 1 дополнительный урон.",
     "abilities": [
@@ -8228,7 +8228,7 @@
     "name": "Огнеминго капитан",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flaming-cpt-3efbfe5.webp",
     "attack": 3,
     "defense": 2,
@@ -8252,7 +8252,7 @@
     "name": "Огнедышащий Дило",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flaming-dilo-a832d34.webp",
     "attack": 2,
     "defense": 9,
@@ -8283,7 +8283,7 @@
     "name": "Огнеминго пылающий",
     "type": "creature",
     "cost": 0,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flaming-flamingo-ea57ccd.webp",
     "attack": 1,
     "defense": 6,
@@ -8307,7 +8307,7 @@
     "name": "Огнеминго огнеклюв",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flaming-flamingo-f5438d2.webp",
     "attack": 3,
     "defense": 10,
@@ -8326,7 +8326,7 @@
     "name": "Пылающие хижины",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flaming-huts-4c44785.webp",
     "description": "Когда ты поджигаешь существо под контролем соперника, нанеси ему 1 дополнительный урон.",
     "abilities": [
@@ -8342,7 +8342,7 @@
     "name": "Огнеминго Хранитель Пепла",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flamingo-ash-keeper-fee8d6d.webp",
     "attack": 1,
     "defense": 8,
@@ -8370,7 +8370,7 @@
     "name": "Огнеминго начальник шлейфа",
     "type": "creature",
     "cost": 4,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flamingo-chief-of-the-flume-ac754e0.webp",
     "attack": 4,
     "defense": 10,
@@ -8388,7 +8388,7 @@
     "name": "Огнеминго пожиратель огня",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flamingo-fire-eater-119c921.webp",
     "attack": 1,
     "defense": 9,
@@ -8410,7 +8410,7 @@
     "name": "Огнеминго\nхранитель огня",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flamingo-fire-keeper-2563c92.webp",
     "attack": 2,
     "defense": 9,
@@ -8437,7 +8437,7 @@
     "name": "Огнеминго ткач огня",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flamingo-fire-weaver-890662f.webp",
     "attack": 2,
     "defense": 8,
@@ -8461,7 +8461,7 @@
     "name": "Огнеминго жарострел",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flamingo-flamethrower-f6c9c8b.webp",
     "attack": 2,
     "defense": 8,
@@ -8487,7 +8487,7 @@
     "name": "Светлячок-Фонарщик",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/flickerbug-88ece22.webp",
     "attack": 3,
     "defense": 9,
@@ -8869,7 +8869,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ],
             "label": "Новый тип земли до начала твоего следующего хода"
           }
@@ -9402,7 +9402,7 @@
     "name": "Кузня общего режима",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/general-mode-forge-d44a616.webp",
     "description": "Все существа в этой зоне получают +2 к атаке.",
     "abilities": [
@@ -9500,7 +9500,7 @@
     "name": "Гейзерная пушка",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/geyser-cannon-c5841fb.webp",
     "description": "Если у тебя на руке не больше 1 карты, удвой атаку у дружественных существ в этой зоне.",
     "abilities": [
@@ -9656,7 +9656,7 @@
     "name": "Гигантская красная саламандра",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/giant-red-salamander-cb355ff.webp",
     "attack": 4,
     "defense": 3
@@ -9666,7 +9666,7 @@
     "name": "Горнило Великана",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/giant-s-crucible-430faaa.webp",
     "description": "ФЛЮП >>> Подожги выбранное существо под твоим контролем и положи [1] на него.\n(Лимит: Один раз за ход.)",
     "abilities": [
@@ -10984,7 +10984,7 @@
     "name": "Жаркоголовый",
     "type": "creature",
     "cost": 3,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/hot-head-5e9eed4.webp",
     "attack": 4,
     "defense": 7,
@@ -11002,7 +11002,7 @@
     "name": "Горячие прыгуны",
     "type": "creature",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/hot-jumpers-5f30437.webp",
     "attack": 2,
     "defense": 10,
@@ -11020,7 +11020,7 @@
     "name": "Жа роскорп",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/hot-scorpion-30144ec.webp",
     "attack": 1,
     "defense": 7,
@@ -11049,7 +11049,7 @@
     "name": "Жаркие спирали",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/hot-spirals-3f88e98.webp",
     "description": "Нанеси 3 урона выбранному существу.\nЕсли существо уничтожается этим\nспособом, получи 1 действие.",
     "abilities": [
@@ -11863,7 +11863,7 @@
     "name": "Испытание духа",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/halloween/ispytanie-dukha-f8582ec.webp",
     "description": "Открой 2 верхние карты своей колоды. Сбрось 1 и разыграй другую бесплатно. Если у тебя на руке только карты с призраками, ты можешь разыграть сброшенную карту.",
     "abilities": [
@@ -12541,7 +12541,7 @@
     "name": "Лавовые муравьи",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/lava-ants-8026c61.webp",
     "attack": 1,
     "defense": 7,
@@ -12558,7 +12558,7 @@
     "name": "Лавоканалы",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/lava-canals-eca8e1b.webp",
     "description": "ФЛЮП >>> Нанеси 1 урон существу под контролем соперника в этой зоне за каждый жетон ожога на существах в других зонах.",
     "abilities": [
@@ -12576,7 +12576,7 @@
     "name": "Лаволамповые угри",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/lava-lamp-eels-3a2eb11.webp",
     "attack": 1,
     "defense": 7,
@@ -12641,7 +12641,7 @@
     "name": "Врата лавокамня",
     "type": "building",
     "cost": 0,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/lava-rock-gate-adcd79e.webp",
     "description": "Потрать 1 действие и ФЛЮП >>>\nПодожги выбранное существо\nв этой зоне.",
     "abilities": [
@@ -13451,7 +13451,7 @@
     "name": "Плавленый шееглаз",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/melted-snake-eye-ce39161.webp",
     "attack": 1,
     "defense": 6,
@@ -13750,7 +13750,7 @@
     "name": "Расплавленное зелье",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/molten-potion-692f118.webp",
     "description": "Подожги выбранное существо.\nНанеси 2 урона каждому горящему\nсуществу под контролем соперника.",
     "abilities": [
@@ -13772,7 +13772,7 @@
     "name": "Расплавленный ритуалист",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/molten-ritualist-332f3c6.webp",
     "attack": 2,
     "defense": 4,
@@ -14174,7 +14174,7 @@
             },
             "amount": 1,
             "filter": {
-              "landType": "ghost"
+              "landType": "lava"
             }
           },
           "duration": "aura"
@@ -14282,7 +14282,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ],
             "label": "Новый тип земли (не представленный в игре)"
           },
@@ -14299,7 +14299,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ],
             "label": "Новый тип второй земли"
           }
@@ -14682,7 +14682,7 @@
     "name": "Облако пепла",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/oblako-pepla-a1eee34.webp",
     "description": "Нанеси 2 урона выбранному существу\nпод контролем соперника и\nкаждому соседнему существу.",
     "abilities": [
@@ -14760,7 +14760,7 @@
     "name": "Огнеминго, призрачный ткач",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/halloween/ognemingo-prizrachnyy-tkach-132bee3.webp",
     "attack": 2,
     "defense": 8,
@@ -15619,7 +15619,7 @@
     "name": "Огнешторм фениксов",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/phoenix-fire-storm-c7d1fda.webp",
     "attack": 3,
     "defense": 5,
@@ -15638,7 +15638,7 @@
     "name": "Форма феникса",
     "type": "spell",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/phoenix-form-7cce226.webp",
     "description": "Положи 2 существ из твоего сброса.\nВ конце твоего хода уничтожь\nэтих существ.",
     "abilities": [
@@ -16559,7 +16559,7 @@
     "name": "Пожарище",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/pozharishche-094e6d4.webp",
     "description": "Нанеси 1 урон всем существам под контролем соперника за каждый жетон ожого на этом существе.\nВозьми 1 карту.",
     "abilities": [
@@ -17469,7 +17469,7 @@
     "name": "Яростный феникс",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/raging-phoenix-dac392a.webp",
     "attack": 1,
     "defense": 8,
@@ -17517,7 +17517,7 @@
     "name": "Расслабляющий лавопад",
     "type": "building",
     "cost": 0,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/rasslablyayushchiy-lavopad-c4a1191.webp",
     "description": "Когда расслабляющий лавопад входит в игру, подожги существо в этой зоне.\nПодожги любое существо, которое входит в игру в этой зоне.",
     "abilities": [
@@ -18830,7 +18830,7 @@
     "name": "Сожжение",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/scorch-f932702.webp",
     "description": "Нанеси 2 урона выбранному существу.\nЕсли у тебя на руке не больше 1 карты,\nнанеси 5 урона вместо этого.",
     "abilities": [
@@ -18852,7 +18852,7 @@
     "name": "Жгучее прозрение",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/scorching-insight-c3b32ea.webp",
     "description": "Подожги выбранное существо.\nЕсли у тебя на руке не больше 1 карты,\nвозьми 3 карты.",
     "abilities": [
@@ -19688,7 +19688,7 @@
     "name": "Тлеющий тиран",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/smoldering-tyrant-1100d33.webp",
     "attack": 2,
     "defense": 6,
@@ -20299,7 +20299,7 @@
     "name": "Жгучий дворец",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/spicy-palace-07561d0.webp",
     "description": "Если ты разыграл 2 или более не лавовые карты, дружественное существо в этой зоне получает +2 к атаке в этот ход.",
     "abilities": [
@@ -21550,7 +21550,7 @@
     "name": "Тектоническая тихоходка",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/tectonic-tardigrade-9bc4de4.webp",
     "attack": 3,
     "defense": 3,
@@ -21995,7 +21995,7 @@
     "name": "Храм Факела",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/torch-temple-fcc5786.webp",
     "description": "ФЛЮП >>> Подожги существо в\nэтой зоне. Подожги его снова, если\nу тебя на руке не больше 1 карты.",
     "abilities": [
@@ -22012,7 +22012,7 @@
     "name": "Мусорный Костёр",
     "type": "building",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/trash-bonfire-6db6c37.webp",
     "description": "Сбрось 1 карту >>> Подожги выбранное существо один раз за каждые 5 карт в сбросе выбранного игрока.\n(Лимит: Один раз за ход.)",
     "abilities": [
@@ -22102,7 +22102,7 @@
     "name": "Испытание огнём",
     "type": "spell",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/trial-by-fire-ce706e7.webp",
     "description": "Раскрой 2 верхние карты твоей колоды. Разыграй 1 карту бесплатно и остальные сбрось. Если у тебя на руке не больше 1 карты, ты можешь взять на руку сброшенную карту.",
     "abilities": [
@@ -22822,7 +22822,7 @@
     "name": "Страж жерлоба",
     "type": "creature",
     "cost": 1,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/vent-guard-b4e806a.webp",
     "attack": 3,
     "defense": 1,
@@ -22886,7 +22886,7 @@
     "name": "Вулканическое оживление",
     "type": "spell",
     "cost": 2,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/lava/volcanic-awakening-1f97443.webp",
     "description": "Подожги каждое существо под контролем соперника один раз за каждый жетон ожога на нём.",
     "abilities": [
@@ -23011,7 +23011,7 @@
     "name": "Вулканоголовый",
     "type": "creature",
     "cost": 3,
-    "landType": "ghost",
+    "landType": "lava",
     "image": "/content/cards/halloween/vulkanogolovyy-f1a1947.webp",
     "attack": 4,
     "defense": 7,

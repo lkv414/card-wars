@@ -462,9 +462,23 @@ export function HudSidebar({
                     ? 'active'
                     : ''
                 }`}
-                onClick={() => snapCameraTop()}
-                title="Вид строго сверху"
-                aria-label="Вид строго сверху"
+                onClick={() => {
+                  if (cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top') {
+                    snapCameraPlayer();
+                  } else {
+                    snapCameraTop();
+                  }
+                }}
+                title={
+                  cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top'
+                    ? 'Опустить камеру к игроку'
+                    : 'Вид строго сверху'
+                }
+                aria-label={
+                  cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top'
+                    ? 'Опустить камеру к игроку'
+                    : 'Вид строго сверху'
+                }
               >
                 <span className="cam-icon">📐</span>
                 <span className="cam-text">Сверху</span>

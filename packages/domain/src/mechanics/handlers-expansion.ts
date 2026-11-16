@@ -263,7 +263,7 @@ export const bigfootGhostUnflipLand: MechanicHandler = (
       land.flipped = false;
       emit(ctx, { type: 'land_changed', player: source.player, zone: targetZone, change: 'unflipped' });
       enqueueTrigger(draft, ctx, 'on_flip', { player: source.player, zone: targetZone });
-      if (land.type === 'ghost') {
+      if (land.type === 'lava') {
         drawCards(draft, ctx, source.player, 1);
       }
     }

@@ -167,6 +167,8 @@ export function snapCameraTop(pid?: string): void {
       targetPid = currentSnap.slice(7);
     } else if (currentSnap.startsWith('top_')) {
       targetPid = currentSnap.slice(4);
+    } else if (currentSnap === 'follow') {
+      targetPid = v.activePlayers.includes(v.me) ? v.me : (v.activePlayers[0] ?? v.me);
     }
   }
   const p = targetPid ? v.players[targetPid] : null;
@@ -187,6 +189,8 @@ export function snapCameraPlayer(pid?: string): void {
       target = currentSnap.slice(4);
     } else if (currentSnap.startsWith('player_')) {
       target = currentSnap.slice(7);
+    } else if (currentSnap === 'follow') {
+      target = v.activePlayers.includes(v.me) ? v.me : (v.activePlayers[0] ?? v.me);
     }
   }
   target = target ?? v.me ?? 'me';
@@ -214,6 +218,8 @@ export function cycleCameraPlayer(direction: 'next' | 'prev' = 'next'): void {
   } else if (currentSnap === 'opponents') {
     const enemies = ordered.filter((id) => id !== v.me);
     currentPid = enemies[0] ?? v.me;
+  } else if (currentSnap === 'follow') {
+    currentPid = v.activePlayers.includes(v.me) ? v.me : (v.activePlayers[0] ?? v.me);
   }
 
   const idx = ordered.indexOf(currentPid);

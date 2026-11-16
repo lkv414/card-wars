@@ -5750,7 +5750,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ]
           }
         ],
@@ -6162,7 +6162,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ],
             "label": "Новый тип земли до начала твоего следующего хода"
           }
@@ -8186,7 +8186,7 @@
           "conditions": [
             {
               "kind": "while_on_land_type",
-              "landType": "ghost"
+              "landType": "lava"
             }
           ]
         },
@@ -18359,7 +18359,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ]
           }
         ],
@@ -20677,7 +20677,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ],
             "label": "Новый тип земли (не представленный в игре)"
           },
@@ -20694,7 +20694,7 @@
               "sand",
               "swamp",
               "rainbow",
-              "ghost"
+              "lava"
             ],
             "label": "Новый тип второй земли"
           }
@@ -28023,7 +28023,7 @@
             },
             "amount": 1,
             "filter": {
-              "landType": "ghost"
+              "landType": "lava"
             }
           },
           "duration": "aura"

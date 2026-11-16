@@ -41,7 +41,7 @@ const LAND_FILTER_BUTTONS: Array<{ type: LandType; label: string; icon: string }
   { type: 'sand', label: 'Песчаные', icon: '🏜️' },
   { type: 'swamp', label: 'Болота', icon: '🍄' },
   { type: 'rainbow', label: 'Радуга', icon: '🌈' },
-  { type: 'ghost', label: 'Лава/Призрак', icon: '👻' },
+  { type: 'lava', label: 'Лавовые', icon: '🌋' },
 ];
 
 const LAND_ORDER: Record<LandType, number> = Object.fromEntries(

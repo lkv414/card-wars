@@ -138,7 +138,7 @@ export function zoneWorldTransform(
   // R_strip: distance from center (0, 0) to strip midpoint where lands touch head-to-head
   // Sized so that inner edges meet forming a neat equilateral triangle (N=3) or square (N=4) without overlapping corners
   const halfAngle = Math.PI / N;
-  const R_strip = N === 3 ? 265 : N === 4 ? 345 : (LAND_H + 120) / Math.tan(halfAngle);
+  const R_strip = N === 3 ? 280 : N === 4 ? 350 : (LAND_H + 120) / Math.tan(halfAngle);
 
   // Left wing (zones 0, 1): faces Left neighbor ((playerIdx + 1) % N) along strip S = playerIdx
   // Right wing (zones 2, 3): faces Right neighbor ((playerIdx - 1 + N) % N) along strip S = (playerIdx - 1 + N) % N
@@ -208,9 +208,9 @@ export function playerAccessoriesTransform(view: PlayerView, pid: string): Board
 
   const N = ordered.length;
   const halfAngle = Math.PI / N;
-  const R_strip = N === 3 ? 265 : N === 4 ? 345 : (LAND_H + 120) / Math.tan(halfAngle);
+  const R_strip = N === 3 ? 280 : N === 4 ? 350 : (LAND_H + 120) / Math.tan(halfAngle);
   const R_vertex = R_strip / Math.cos(halfAngle);
-  const R_acc = R_vertex + 55;
+  const R_acc = R_vertex + 60;
 
   const theta = -playerIdx * (2 * Math.PI / N);
   return {
@@ -421,7 +421,7 @@ export function cameraOrbitFor(
   const angle = transform?.rotation ?? 0;
 
   if ((mode as string) === 'top') {
-    return { angle, height: 1050, radius: 10, lookOffset: 0, fov: 44 };
+    return { angle, height: 1100, radius: 10, lookOffset: 0, fov: 44 };
   }
 
   if (view.mode === 'teams' && view.teamVariant === 'wall') {
@@ -429,7 +429,7 @@ export function cameraOrbitFor(
   }
   const alive = view.order.filter((pid) => !view.players[pid]!.eliminated).length;
   if (alive >= 3) {
-    return { angle, height: 720, radius: 840, lookOffset: 0, fov: 44 };
+    return { angle, height: 740, radius: 860, lookOffset: 0, fov: 44 };
   }
   return { angle, height: 540, radius: 620, lookOffset: 24, fov: 43 };
 }

@@ -58,6 +58,24 @@ export function handlePlayCard(
 
   // Cost modifiers are scanned live (Остролист, Домик из разного дерева — docs/MECHANICS-V2.md §3).
   let effectiveCost = Math.max(0, card.cost + playedCardCostModifier(draft, ctx, playerId, card, instanceId));
+
+  // Rumble / Slam discount: if creature has 'rumble' property, discount replacement cost by the replaced creature's cost.
+  const hasRumble = Boolean(
+    card.rumble ||
+    card.description?.startsWith('Грохот') ||
+    card.description?.toLowerCase().includes('грохот')
+  );
+  if (card.type === 'creature' && zone !== undefined && hasRumble) {
+    const existingCreatureId = p.zones[zone]?.creature;
+    if (existingCreatureId) {
+      const replacedInst = draft.instances[existingCreatureId];
+      if (replacedInst) {
+        const replacedCard = ctx.catalog.getCard(replacedInst.cardId);
+        const replacedCost = replacedCard?.cost ?? 0;
+        effectiveCost = Math.max(0, effectiveCost - replacedCost);
+      }
+    }
+  }
   // Вооружённый бесплатный розыгрыш (docs §H16): jake_2v2_card_34 / grand_prix_card_6.
   const armIdx = draft.armedFreePlays.findIndex((a) => {
     if (a.player !== playerId || a.expiresTurn < draft.turn) return false;
@@ -108,7 +126,7 @@ export function handlePlayCard(
       oldInst.location = 'discard';
       oldInst.zone = null;
       oldInst.slot = null;
-      p.discard.push(replaced);
+      draft.players[oldInst.owner ?? oldInst.controller]!.discard.push(replaced);
       p.companion = null;
       emit(ctx, {
         type: 'card_discarded',
@@ -273,7 +291,15 @@ export function handlePlayCard(
     oldInst.location = 'discard';
     oldInst.zone = null;
     oldInst.slot = null;
-    p.discard.push(replaced);
+    draft.players[oldInst.owner ?? oldInst.controller]!.discard.push(replaced);
+    for (const attachedId of oldInst.attached ?? []) {
+      const attached = draft.instances[attachedId];
+      if (attached) {
+        attached.location = 'discard';
+        draft.players[attached.owner ?? attached.controller]!.discard.push(attachedId);
+      }
+    }
+    delete oldInst.attached;
     zoneState[slot] = null;
     emit(ctx, { type: 'card_discarded', player: playerId, instanceId: replaced, cardId: oldInst.cardId, from: 'field' });
   }

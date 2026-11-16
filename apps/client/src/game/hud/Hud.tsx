@@ -606,7 +606,7 @@ const OPTION_LABELS: Record<string, string> = {
   sand: 'Песок',
   swamp: 'Болото',
   rainbow: 'Радуга',
-  ghost: 'Призрачная',
+  lava: 'Лавовая',
   all: 'Все существа',
   one: 'Одно существо',
   heal: 'Восстановить',

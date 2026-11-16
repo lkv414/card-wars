@@ -33,7 +33,9 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
   const firstActive = draft.activePlayers[0]!;
   const canAttack =
     draft.mode === 'teams'
-      ? draft.round !== 1
+      ? draft.teamVariant === 'wall'
+        ? draft.round !== 1
+        : !(draft.round === 1 && draft.order.indexOf(firstActive) < 3)
       : !(draft.round === 1 && firstActive !== lastAliveInOrder(draft));
 
   if (canAttack) {
@@ -156,7 +158,7 @@ export function resolveCombat(draft: Draft<MatchState>, ctx: Ctx): void {
             instanceId: attackerInstanceId,
             player: attackerInstance.controller,
             targetInstanceId: defenderInstanceId,
-            amount: attackPower,
+            amount: attackPowerMod,
           });
           // Damage echo (jake_2v2_card_36, docs §H16): when the armed creature hits,
           // deal 2 damage to the defending player and give a card to the teammate.

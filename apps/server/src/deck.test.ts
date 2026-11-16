@@ -50,7 +50,7 @@ describe('validateDeck', () => {
     expect(validateDeck(shortLands, deps).ok).toBe(false);
 
     const badLand = asLobbyDeck(valid);
-    badLand.lands = ['lava', ...badLand.lands.slice(1)] as string[];
+    badLand.lands = ['unknown_land', ...badLand.lands.slice(1)] as string[];
     expect(validateDeck(badLand, deps).ok).toBe(false);
   });
 });

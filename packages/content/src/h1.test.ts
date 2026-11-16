@@ -11,7 +11,7 @@ import { catalog, deckPresets } from './index.ts';
 
 // Golden tests for the H1 primitives (docs/MECHANICS-V2.md §H1–H3).
 const config: GameConfig = {
-  startingLives: 25, teamStartingLives: 50, teamSize: 2, minPlayers: 2, maxPlayers: 4,
+  startingLives: 25, teamStartingLives: 40, teamSize: 2, minPlayers: 2, maxPlayers: 4,
   deckSize: 40, startingHandSize: 5, mulliganCount: 1, actionsPerTurn: 2,
   landsPerPlayer: 4, landRequirementPerCard: 1, freeDrawsPerTurn: 1, extraDrawCost: 1,
   companionMaxInPlay: 1, copyLimit: 4,

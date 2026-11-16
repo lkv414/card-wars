@@ -108,7 +108,7 @@ describe('команды 2 на 2', () => {
     expect(teamOf(neighbors, P2)!.playerIds).toEqual([P2, P4]);
   });
 
-  it('общие жизни на старте 50 у обоих союзников', () => {
+  it('общие жизни на старте 40 у обоих союзников', () => {
     const s = newMatch(4, 'teams', 'wall');
     for (const pid of ALL) {
       expect(s.players[pid]!.lives).toBe(defaultConfig.teamStartingLives);
@@ -153,9 +153,9 @@ describe('команды 2 на 2', () => {
     s = turn(s, { type: 'play_card', player: P1, instanceId: handCardId(s, P1, 'vanilla-swamp'), zone: 0 });
     s = battle(battle(s, P1), P2);
 
-    expect(teamOf(s, P3)!.lives).toBe(48);
-    expect(s.players[P3]!.lives).toBe(48);
-    expect(s.players[P4]!.lives).toBe(48);
+    expect(teamOf(s, P3)!.lives).toBe(38);
+    expect(s.players[P3]!.lives).toBe(38);
+    expect(s.players[P4]!.lives).toBe(38);
     expect(s.activePlayers).toEqual([P3, P4]);
   });
 
@@ -168,7 +168,7 @@ describe('команды 2 на 2', () => {
     if (!floop.ok) expect(floop.rejected.code).toBe('floop_forbidden_first_turn');
 
     s = battle(battle(s, P1), P2);
-    expect(teamOf(s, P3)!.lives).toBe(50);
+    expect(teamOf(s, P3)!.lives).toBe(40);
   });
 
   it('сдача в 2 на 2: команда выбывает после второй сдачи', () => {

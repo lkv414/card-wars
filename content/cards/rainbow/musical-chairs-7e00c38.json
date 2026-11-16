@@ -33,7 +33,7 @@
             "sand",
             "swamp",
             "rainbow",
-            "ghost"
+            "lava"
           ],
           "label": "Новый тип земли (не представленный в игре)"
         },
@@ -50,7 +50,7 @@
             "sand",
             "swamp",
             "rainbow",
-            "ghost"
+            "lava"
           ],
           "label": "Новый тип второй земли"
         }

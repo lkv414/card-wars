@@ -36,21 +36,39 @@ export function handleFloop(
   if (draft.phase !== 'main') throw new DomainError('wrong_phase', `phase is ${draft.phase}`);
 
   const inst = instance(draft, instanceId);
-  if (inst.controller !== playerId) throw new DomainError('card_not_in_play', 'not your card');
+  const card = ctx.catalog.getCard(inst.cardId);
+  const isCompanion = card?.type === 'companion' || inst.location === 'companion';
+  const isTeammateCompanion =
+    isCompanion &&
+    draft.mode === 'teams' &&
+    draft.players[inst.controller]?.teamId !== null &&
+    draft.players[inst.controller]?.teamId === draft.players[playerId]?.teamId;
+
+  if (inst.controller !== playerId && !isTeammateCompanion) {
+    throw new DomainError('card_not_in_play', 'not your card');
+  }
   if (inst.location !== 'field' && inst.location !== 'companion') {
     throw new DomainError('card_not_in_play', 'card is not in play');
   }
   if (inst.flipped) throw new DomainError('already_flipped', 'card is already flipped');
 
-  // FFA: the first player cannot floop in their first turn; 2v2: no floops in round 1.
-  // (docs/RULES.md «Подготовка партии», «Ход команды»).
-  const firstRoundForbidden =
-    draft.round === 1 && (draft.mode === 'teams' || draft.activePlayer === draft.order[0]);
+  // FFA: the first player cannot floop in their first turn;
+  // 2v2 wall: no floops in round 1; 2v2 neighbors: first 3 players cannot floop in round 1.
+  let firstRoundForbidden = false;
+  if (draft.round === 1) {
+    if (draft.mode === 'teams') {
+      if (draft.teamVariant === 'wall') {
+        firstRoundForbidden = true;
+      } else {
+        firstRoundForbidden = draft.order.indexOf(draft.activePlayer) < 3;
+      }
+    } else {
+      firstRoundForbidden = draft.activePlayer === draft.order[0];
+    }
+  }
   if (firstRoundForbidden) {
     throw new DomainError('floop_forbidden_first_turn', 'floop is forbidden in the first round');
   }
-
-  const card = ctx.catalog.getCard(inst.cardId);
   const actives = (card?.abilities ?? []).filter((a) => a.kind === 'active');
   // Granted actives (Финн: «получают ПРИЕМ >>> …») come from live grant_ability auras.
   const granted = collectGrantedActives(draft, ctx, instanceId);

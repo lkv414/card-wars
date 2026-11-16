@@ -765,7 +765,7 @@ export function runEffect(
         .filter((t) => t.kind === 'land');
       const chosen = choices?.find((c): c is Extract<TargetChoice, { kind: 'option' }> => c.kind === 'option')?.option;
       const next = effect.landType === 'chosen' ? chosen : effect.landType;
-      if (!next || !['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'ghost'].includes(next)) {
+      if (!next || !['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'lava'].includes(next)) {
         throw new DomainError('invalid_choice', 'set_land_type needs a valid land type');
       }
       for (const land of lands) {

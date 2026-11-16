@@ -80,7 +80,7 @@ export const LAND_COLORS: Record<LandType, { bg: string; deep: string; label: st
   sand: { bg: '#d8c08a', deep: '#96803f', label: 'Пески' },
   swamp: { bg: '#6f8f5a', deep: '#3f5a32', label: 'Болото' },
   rainbow: { bg: '#b48ae0', deep: '#6f4fa0', label: 'Радуга' },
-  ghost: { bg: '#8fa9b8', deep: '#4f6b7a', label: 'Призрачные' },
+  lava: { bg: '#e05a36', deep: '#8a2410', label: 'Лава' },
 };
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
@@ -378,7 +378,7 @@ export const LAND_ART_URLS: Record<LandType, string | null> = {
   ice: '/content/lands/icy-lands-35b4c74.webp',
   sand: '/content/lands/sandy-lands-1a7e5ef.webp',
   swamp: '/content/lands/useless-swamps-2918fd8.webp',
-  ghost: '/content/lands/lava-lands-1b34cd3.webp',
+  lava: '/content/lands/lava-lands-1b34cd3.webp',
   rainbow: null,
 };
 
@@ -473,11 +473,24 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
     ctx.textAlign = 'center';
     ctx.fillText('?', W / 2, H / 2);
   } else {
-    const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, theme.bg);
-    grad.addColorStop(1, theme.deep);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
+    if (type === 'rainbow') {
+      const grad = ctx.createLinearGradient(0, 0, W, H);
+      grad.addColorStop(0.0, '#e879f9');
+      grad.addColorStop(0.18, '#818cf8');
+      grad.addColorStop(0.36, '#38bdf8');
+      grad.addColorStop(0.54, '#4ade80');
+      grad.addColorStop(0.72, '#facc15');
+      grad.addColorStop(0.88, '#fb923c');
+      grad.addColorStop(1.0, '#f43f5e');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, theme.bg);
+      grad.addColorStop(1, theme.deep);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+    }
     // Деление пополам: верх (по канвасу) — половина существа у линии боя,
     // низ — половина строения ближе к владельцу; лёгкая разница оттенков.
     ctx.fillStyle = 'rgba(255,255,255,0.07)';

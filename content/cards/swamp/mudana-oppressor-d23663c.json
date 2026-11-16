@@ -31,7 +31,7 @@
           },
           "amount": 1,
           "filter": {
-            "landType": "ghost"
+            "landType": "lava"
           }
         },
         "duration": "aura"

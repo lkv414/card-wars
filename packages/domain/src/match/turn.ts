@@ -1,5 +1,7 @@
 import type { Draft } from 'immer';
 import { drawCards } from '../draw';
+import { dealToCreature, dealToPlayer } from '../damage';
+import { afterEffects } from '../deaths';
 import type { Ctx } from '../util';
 import { emit, player } from '../util';
 import type { MatchState, PlayerId } from '../types';
@@ -36,6 +38,23 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
     ready(zone.building);
   }
   ready(p.companion);
+
+  // Burn tokens ticking: each creature of the active player takes 1 damage per burnToken on it,
+  // and if player has burnTokens, player takes 1 damage per burnToken.
+  for (const zone of p.zones) {
+    if (zone.creature) {
+      const cInst = draft.instances[zone.creature];
+      const burns = cInst?.burnTokens ?? 0;
+      if (burns > 0) {
+        dealToCreature(draft, ctx, zone.creature, burns, null);
+      }
+    }
+  }
+  if ((p.burnTokens ?? 0) > 0) {
+    dealToPlayer(draft, ctx, pid, p.burnTokens!, null);
+  }
+  afterEffects(draft, ctx);
+  if (draft.status === 'finished') return;
 
   // Temporary land type changes (Башня свободы) expire at the owner's turn start.
   p.lands.forEach((land, zone) => {
@@ -142,12 +161,14 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   let nextPid: PlayerId | null = null;
   let wrapped = false;
 
+  const isWall = draft.mode === 'teams' && draft.teamVariant === 'wall';
+
   for (let step = 1; step <= draft.order.length; step++) {
     const index = (lastSeat + step) % draft.order.length;
     const pid = draft.order[index]!;
     const p = draft.players[pid]!;
     if (p.eliminated) continue;
-    if (currentTeamId !== null && p.teamId === currentTeamId) continue;
+    if (isWall && currentTeamId !== null && p.teamId === currentTeamId) continue;
     nextPid = pid;
     wrapped = index <= lastSeat;
     break;
@@ -155,7 +176,7 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
   if (!nextPid) return; // no opponents left; the match is finished elsewhere
 
   if (wrapped) draft.round += 1;
-  const nextTeam = teamOf(draft, nextPid);
+  const nextTeam = isWall ? teamOf(draft, nextPid) : null;
   draft.activePlayers = nextTeam
     ? nextTeam.playerIds.filter((pid) => !draft.players[pid]!.eliminated)
     : [nextPid];

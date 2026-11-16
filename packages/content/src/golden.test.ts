@@ -16,7 +16,7 @@ import { catalog, deckPresets } from './index.ts';
 
 const config: GameConfig = {
   startingLives: 25,
-  teamStartingLives: 50,
+  teamStartingLives: 40,
   teamSize: 2,
   minPlayers: 2,
   maxPlayers: 4,

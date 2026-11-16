@@ -8,7 +8,7 @@ export const LAND_META: Record<LandType, { label: string; shortLabel: string }> 
   sand: { label: 'Песчаные земли', shortLabel: 'Песок' },
   swamp: { label: 'Болото', shortLabel: 'Болото' },
   rainbow: { label: 'Радужная земля', shortLabel: 'Радуга' },
-  ghost: { label: 'Призрачные земли', shortLabel: 'Призраки' },
+  lava: { label: 'Лавовые земли', shortLabel: 'Лава' },
 };
 
 const LAND_IMAGES: Record<LandType, string[]> = {
@@ -30,7 +30,7 @@ const LAND_IMAGES: Record<LandType, string[]> = {
     '/content/lands/icy-lands-9bfc69c.webp',
     '/content/lands/icy-lands-afb5844.webp',
   ],
-  ghost: [
+  lava: [
     '/content/lands/lava-lands-1b34cd3.webp',
     '/content/lands/lava-lands-374062d.webp',
     '/content/lands/lava-lands-96d0405.webp',

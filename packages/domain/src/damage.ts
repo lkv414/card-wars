@@ -129,13 +129,13 @@ export function killInstance(draft: Draft<MatchState>, _ctx: Ctx, targetId: stri
   inst.location = 'discard';
   inst.zone = null;
   inst.slot = null;
-  draft.players[inst.controller]!.discard.push(targetId);
+  draft.players[inst.owner ?? inst.controller]!.discard.push(targetId);
   // Attached cards follow their host into the discard pile (docs §H2 attach_card).
   for (const attachedId of inst.attached ?? []) {
     const attached = draft.instances[attachedId];
     if (attached) {
       attached.location = 'discard';
-      draft.players[attached.controller]!.discard.push(attachedId);
+      draft.players[attached.owner ?? attached.controller]!.discard.push(attachedId);
     }
   }
   delete inst.attached;

@@ -308,10 +308,10 @@ describe('Audited Mechanics Unit Tests', () => {
     expect(next.players[P2]!.lands[2]!.frozen).toBe(true);
   });
 
-  it('bigfoot_ghost_unflip_land: unflips chosen land and draws 1 card if ghost land', () => {
+  it('bigfoot_ghost_unflip_land: unflips chosen land and draws 1 card if lava land', () => {
     let s = createMatch(deps, makeSetup()).state;
     s = produce(s, (d) => {
-      d.players[P1]!.lands[0]!.type = 'ghost';
+      d.players[P1]!.lands[0]!.type = 'lava';
       d.players[P1]!.lands[0]!.flipped = true;
       d.players[P1]!.deck = ['deck-1', 'deck-2'];
       d.instances['deck-1'] = makeInstance('deck-1', 'c1', P1, null, null);

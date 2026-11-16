@@ -35,7 +35,7 @@ for (const hero of legacyHeroes as unknown as HeroData[]) {
 }
 
 /** Canonical land types (docs/RULES.md «Земли»). */
-export const LAND_TYPES: LandType[] = ['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'ghost'];
+export const LAND_TYPES: LandType[] = ['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'lava'];
 
 export const catalog: CardCatalog = {
   getCard: (id) => cardsById.get(id),

@@ -8,7 +8,7 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const contentDir = join(root, 'content');
 const outDir = join(root, 'packages/content/src/generated');
 
-const LAND_TYPES = new Set(['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'ghost']);
+const LAND_TYPES = new Set(['corn', 'blue', 'good', 'ice', 'sand', 'swamp', 'rainbow', 'lava']);
 const CARD_TYPES = new Set(['creature', 'building', 'spell', 'companion']);
 
 const LAND_MAP = {
@@ -22,8 +22,8 @@ const LAND_MAP = {
   sandy: 'sand',
   ice: 'ice',
   icy: 'ice',
-  lava: 'ghost',
-  ghost: 'ghost',
+  lava: 'lava',
+  ghost: 'lava',
 };
 
 const TYPE_MAP = {

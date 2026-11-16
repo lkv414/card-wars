@@ -47,7 +47,7 @@
         "conditions": [
           {
             "kind": "while_on_land_type",
-            "landType": "ghost"
+            "landType": "lava"
           }
         ]
       },

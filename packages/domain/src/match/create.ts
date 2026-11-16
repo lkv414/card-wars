@@ -148,6 +148,7 @@ export function createMatch(
       zones: Array.from({ length: config.landsPerPlayer }, () => ({ creature: null, building: null })),
       companion: null,
       actions: 0,
+      burnTokens: 0,
       mulligansUsed: 0,
       surrendered: false,
       eliminated: false,
@@ -156,7 +157,8 @@ export function createMatch(
     };
   }
 
-  const activePlayers = mode === 'teams' ? [...teams!['team-a']!.playerIds] : [order[0]!];
+  const isWall = mode === 'teams' && teamVariant === 'wall';
+  const activePlayers = isWall ? [...teams!['team-a']!.playerIds] : [order[0]!];
   const state: MatchState = {
     status: 'mulligan',
     phase: 'main',

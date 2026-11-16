@@ -18,7 +18,7 @@ export const P2 = 'p2';
 
 export const defaultConfig: GameConfig = {
   startingLives: 25,
-  teamStartingLives: 50,
+  teamStartingLives: 40,
   teamSize: 2,
   minPlayers: 2,
   maxPlayers: 4,
@@ -532,6 +532,30 @@ export const cards: CardData[] = [
         text: 'Фикстура Связи',
       },
     ],
+  }),
+  card({
+    id: 'companion-floop',
+    type: 'companion',
+    cost: 1,
+    landType: 'rainbow',
+    abilities: [
+      {
+        kind: 'active',
+        cost: 1,
+        effect: { op: 'draw_cards', count: 1 },
+        text: 'ФЛЮП: возьми карту',
+      },
+    ],
+  }),
+  card({
+    id: 'rumble-creature',
+    type: 'creature',
+    cost: 3,
+    landType: 'corn',
+    attack: 4,
+    defense: 4,
+    rumble: true,
+    description: 'Грохот. Замена стоит дешевле на стоимость заменяемого существа.',
   }),
   card({
     id: 'spell-bolt-0',

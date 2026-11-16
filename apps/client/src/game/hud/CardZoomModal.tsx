@@ -10,7 +10,7 @@ const LAND_NAMES: Record<string, string> = {
   sand: 'Песчаные земли',
   swamp: 'Болотные земли',
   rainbow: 'Радужные земли',
-  ghost: 'Призрачные земли',
+  lava: 'Лавовые земли',
 };
 
 const TYPE_NAMES: Record<string, string> = {

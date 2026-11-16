@@ -3445,8 +3445,8 @@ button.danger {
   background: #4d7c0f;
 }
 
-.ui-v2 .cw-land-dot--ghost {
-  background: #9333ea;
+.ui-v2 .cw-land-dot--lava {
+  background: #ea580c;
 }
 
 .ui-v2 .cw-land-dot--rainbow {

@@ -6,7 +6,7 @@ import { viewFor } from './view';
 
 const deps = { config: {
   startingLives: 25,
-  teamStartingLives: 50,
+  teamStartingLives: 40,
   teamSize: 2,
   minPlayers: 2,
   maxPlayers: 4,
@@ -105,7 +105,7 @@ describe('viewFor — 2 на 2', () => {
     expect(view.teams!['team-a']!.playerIds).toEqual(['p1', 'p2']);
     expect(view.activePlayers).toEqual(['p1', 'p2']);
     expect(view.players.p1!.teamId).toBe('team-a');
-    expect(view.players.p1!.lives).toBe(50);
+    expect(view.players.p1!.lives).toBe(40);
     expect(view.players.p1!.battleReady).toBe(false);
 
     const json = JSON.stringify(view);

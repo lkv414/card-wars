@@ -4,7 +4,7 @@ import type { AbilitySpec, PendingChoice } from './mechanics/types';
 
 export type PlayerId = string;
 
-export type LandType = 'corn' | 'blue' | 'good' | 'ice' | 'sand' | 'swamp' | 'rainbow' | 'ghost';
+export type LandType = 'corn' | 'blue' | 'good' | 'ice' | 'sand' | 'swamp' | 'rainbow' | 'lava';
 
 export type CardType = 'creature' | 'building' | 'spell' | 'companion';
 
@@ -23,6 +23,7 @@ export interface CardData {
   description?: string;
   abilities?: AbilitySpec[];
   deckSet?: string;
+  rumble?: boolean;
 }
 
 export interface HeroData {
@@ -121,6 +122,7 @@ export interface PlayerState {
   zones: ZoneState[];
   companion: string | null;
   actions: number;
+  burnTokens?: number;
   mulligansUsed: number;
   surrendered: boolean;
   eliminated: boolean;

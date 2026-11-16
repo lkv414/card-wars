@@ -10,7 +10,7 @@ import { pick, validTargets } from '../targeting';
 import type { ThreeEvent } from '@react-three/fiber';
 import type { PlayerView } from '@card-wars/protocol';
 
-/** Земля: тайл 96×188, разделён ровно пополам — половина существа (фронт) и строения (docs/UI-3D.md «Размеры»). */
+/** Земля: тайл 133×192, разделён ровно пополам — 133×96 под существо (фронт) и строение (docs/UI-3D.md «Размеры»). */
 export function Land({
   land,
   zone,

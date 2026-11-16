@@ -5,6 +5,7 @@ import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
 import { CardZoomModal } from './CardZoomModal';
+import { HudSidebar } from './HudSidebar';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
 export function Hud({ code }: { code: string }) {
@@ -16,12 +17,17 @@ export function Hud({ code }: { code: string }) {
   const journalOpen = useGame((s) => s.ui.journalOpen);
   const unfreezePrompt = useGame((s) => s.ui.unfreezePrompt);
   const me = view.players[view.me]!;
-  const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
-  const myMain = myTurn && view.phase === 'main';
   const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
   // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
   const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
   const targeting = useGame((st) => st.ui.targeting);
+  const activeEmote = useGame((st) => st.ui.activeEmote);
+
+  const [isHurryPulsing, setIsHurryPulsing] = useState(false);
+  const triggerHurryPulse = () => {
+    setIsHurryPulsing(true);
+    setTimeout(() => setIsHurryPulsing(false), 1600);
+  };
 
   const [lastReadJournalLen, setLastReadJournalLen] = useState(() => view.journal.length);
   const unreadCount = journalOpen ? 0 : Math.max(0, view.journal.length - lastReadJournalLen);
@@ -288,106 +294,92 @@ export function Hud({ code }: { code: string }) {
     .join(', ');
 
   return (
-    <div className="hud">
-      <div className="hud-top">
-        <b>Комната {code}</b>
-        {view.status === 'running' && (
-          <span>
-            круг {view.round} · ход {view.turn} · {phaseRu(view.phase)}
-            {view.mode === 'teams' && view.teamVariant
-              ? ` · 2 на 2 (${view.teamVariant === 'wall' ? 'стенка' : 'соседи'})`
-              : ''} · сейчас: {activeNames}
-          </span>
-        )}
-        {timer?.paused && <span className="timer paused">Пауза: ожидание игрока</span>}
-        {!timer?.paused &&
-          timer?.timers
-            .filter((t) => t.running)
-            .map((t) => (
-              <span key={t.player} className="timer-line">
-                {view.players[t.player]?.nickname}:{' '}
-                <TimerBadge key={timer.serverNowMs} remainingMs={t.remainingMs} />
-              </span>
-            ))}
-        <span className="hud-spacer" />
-        <span className="hint">
-          камера:{' '}
-          <button className="mini" onClick={() => setCameraMode(cameraMode === 'follow' ? 'self' : 'follow')}>
-            {cameraMode === 'follow' ? 'за ходом' : 'своя сторона'}
-          </button>
-        </span>
-        <span className="hint">
-          кач-во:{' '}
-          <button className="mini" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
-            {quality === 'high' ? 'высокое' : 'низкое'}
-          </button>
-        </span>
-      </div>
-
-      <div className="hud-stats">
-        <span>❤ {me.lives}{me.maxLives !== CONFIG.startingLives ? ` / ${me.maxLives}` : ''}</span>
-        {myTeam && <span className="hint">команда: ❤ {myTeam.lives} / {myTeam.maxLives}</span>}
-        <span>действия: {me.actions}</span>
-        <span>рука: {me.handCount}</span>
-        {view.mode === 'teams' && view.activePlayers.includes(view.me) && (
-          <span className={me.battleReady ? 'ready-ok' : 'hint'}>
-            {me.battleReady ? 'готов к бою' : 'не готов к бою'}
-          </span>
-        )}
-      </div>
-
-      <div className="hud-players">
-        {view.order.map((pid) => {
-          const p = view.players[pid]!;
-          const team = p.teamId ? view.teams?.[p.teamId] : null;
-          return (
-            <div key={pid} className={`hud-player ${p.eliminated ? 'dead' : ''}`}>
-              <b>{p.nickname}</b>
-              {team && <span className="hint"> · {team.id === 'team-a' ? 'A' : 'B'}</span>}
-              <span className="lives"> ❤ {p.lives}</span>
-              <span className="hint">
-                {p.eliminated
-                  ? ' выбыл'
-                  : view.activePlayers.includes(pid)
-                    ? p.battleReady
-                      ? ' готов'
-                      : ' ходит'
-                    : ''}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {view.status === 'running' && (
-        <div className="hud-actions">
-          {myMain && (
-            <>
-              <button
-                disabled={view.mode === 'teams' && me.battleReady}
-                onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
-                onMouseEnter={() => setUi({ combatForecastHover: true })}
-                onMouseLeave={() => setUi({ combatForecastHover: false })}
-              >
-                {view.mode === 'teams' ? (me.battleReady ? 'Готов' : 'В бой (готовность)') : 'В бой'}
-              </button>
-              <button
-                disabled={me.actions < CONFIG.extraDrawCost}
-                onClick={() => sendCommand({ type: 'draw_extra', player: view.me })}
-              >
-                Добор (−{CONFIG.extraDrawCost} действие)
-              </button>
-            </>
+    <>
+      <div className="hud hud-viewport-overlay">
+        <div className="hud-top">
+          <b>Комната {code}</b>
+          {view.status === 'running' && (
+            <span>
+              круг {view.round} · ход {view.turn} · {phaseRu(view.phase)}
+              {view.mode === 'teams' && view.teamVariant
+                ? ` · 2 на 2 (${view.teamVariant === 'wall' ? 'стенка' : 'соседи'})`
+                : ''} · сейчас: {activeNames}
+            </span>
           )}
-          {!myTurn &&
-            view.activePlayers.map((pid) => (
-              <button key={pid} onClick={() => useGame.getState().hurry(pid)}>
-                Поторопить {view.players[pid]?.nickname ?? ''}
-              </button>
-            ))}
-          <button onClick={() => confirm('Сдаться?') && sendCommand({ type: 'surrender', player: view.me })}>Сдаться</button>
+          {timer?.paused && <span className="timer paused">Пауза: ожидание игрока</span>}
+          {!timer?.paused &&
+            timer?.timers
+              .filter((t) => t.running)
+              .map((t) => (
+                <span key={t.player} className="timer-line">
+                  {view.players[t.player]?.nickname}:{' '}
+                  <TimerBadge
+                    key={timer.serverNowMs}
+                    remainingMs={t.remainingMs}
+                    isPulsing={isHurryPulsing}
+                  />
+                </span>
+              ))}
+          <span className="hud-spacer" />
+          <span className="hint">
+            камера:{' '}
+            <button className="mini" onClick={() => setCameraMode(cameraMode === 'follow' ? 'self' : 'follow')}>
+              {cameraMode === 'follow' ? 'за ходом' : 'своя сторона'}
+            </button>
+          </span>
+          <span className="hint">
+            кач-во:{' '}
+            <button className="mini" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
+              {quality === 'high' ? 'высокое' : 'низкое'}
+            </button>
+          </span>
         </div>
-      )}
+
+        <div className="hud-stats">
+          <span>❤ {me.lives}{me.maxLives !== CONFIG.startingLives ? ` / ${me.maxLives}` : ''}</span>
+          {myTeam && <span className="hint">команда: ❤ {myTeam.lives} / {myTeam.maxLives}</span>}
+          <span>действия: {me.actions}</span>
+          <span>рука: {me.handCount}</span>
+          {view.mode === 'teams' && view.activePlayers.includes(view.me) && (
+            <span className={me.battleReady ? 'ready-ok' : 'hint'}>
+              {me.battleReady ? 'готов к бою' : 'не готов к бою'}
+            </span>
+          )}
+        </div>
+
+        <div className="hud-players">
+          {view.order.map((pid) => {
+            const p = view.players[pid]!;
+            const team = p.teamId ? view.teams?.[p.teamId] : null;
+            return (
+              <div key={pid} className={`hud-player ${p.eliminated ? 'dead' : ''}`}>
+                <b>{p.nickname}</b>
+                {team && <span className="hint"> · {team.id === 'team-a' ? 'A' : 'B'}</span>}
+                <span className="lives"> ❤ {p.lives}</span>
+                <span className="hint">
+                  {p.eliminated
+                    ? ' выбыл'
+                    : view.activePlayers.includes(pid)
+                      ? p.battleReady
+                        ? ' готов'
+                        : ' ходит'
+                      : ''}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Comic speech bubble for taunts / emotes */}
+        {activeEmote && (
+          <div className="hud-emote-bubble" role="status" aria-live="polite">
+            <span className="hud-emote-emoji">{activeEmote.emoji || '💬'}</span>
+            <div className="hud-emote-text-group">
+              <span className="hud-emote-sender">{activeEmote.sender}</span>
+              <span className="hud-emote-message">«{activeEmote.text}»</span>
+            </div>
+          </div>
+        )}
 
       {error && <div className="error-line hud-error">{error.message}</div>}
 
@@ -628,6 +620,17 @@ export function Hud({ code }: { code: string }) {
 
       <CardZoomModal />
     </div>
+
+    <HudSidebar
+      code={code}
+      view={view}
+      unreadCount={unreadCount}
+      journalOpen={journalOpen}
+      onToggleJournal={toggleJournal}
+      isHurryPulsing={isHurryPulsing}
+      onHurryPulse={triggerHurryPulse}
+    />
+  </>
   );
 }
 
@@ -728,7 +731,7 @@ function phaseRu(phase: string): string {
   return phase === 'main' ? 'основная фаза' : phase === 'draw' ? 'добор' : 'бой';
 }
 
-function TimerBadge({ remainingMs }: { remainingMs: number }) {
+function TimerBadge({ remainingMs, isPulsing }: { remainingMs: number; isPulsing?: boolean }) {
   const [now, setNow] = useState(Date.now());
   const anchor = useRef({ remainingMs, at: Date.now() });
   useEffect(() => {
@@ -742,7 +745,7 @@ function TimerBadge({ remainingMs }: { remainingMs: number }) {
   const left = Math.max(0, anchor.current.remainingMs - (now - anchor.current.at));
   const seconds = Math.ceil(left / 1000);
   return (
-    <span className={`timer ${left < 15_000 ? 'low' : ''}`}>
+    <span className={`timer ${left < 15_000 ? 'low' : ''} ${isPulsing ? 'timer-hurry-pulse' : ''}`}>
       {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}
     </span>
   );

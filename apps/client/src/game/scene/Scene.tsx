@@ -1,19 +1,31 @@
 import { useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useGame } from '../../store';
-import { NO_RAYCAST, cameraOrbitFor, cameraTargetPlayer, cameraTurnEase } from './layout';
+import {
+  cycleCameraPlayer,
+  setCameraMode,
+  snapCameraPlayer,
+  snapCameraTop,
+  useGame,
+} from '../../store';
+import { NO_RAYCAST, cameraTurnEase } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
 import { CombatForecastLayer } from './CombatForecast';
 import { disposeAllTextures, subscribeImageLoads } from './textures';
+import {
+  calculateCameraAnchor,
+  classifySwipe,
+  easeInOutCubic,
+  interpolateCameraPose,
+  isTopSnap,
+  resolveTargetPlayer,
+} from './cameraSnap';
 
-const CAMERA_TURN_DURATION_MS = 920;
-const MIN_PITCH = 0.24; // ~14° above table plane
-const MAX_PITCH = 1.42; // ~81° almost top-down
-const MIN_ZOOM_SCALE = 0.42; // zoom in up to ~2.4x closer
-const MAX_ZOOM_SCALE = 1.85; // zoom out up to 1.85x further
+const CAMERA_TRANSITION_MS = 680;
+const MIN_ZOOM_SCALE = 0.55; // zoom in up to ~1.8x closer
+const MAX_ZOOM_SCALE = 1.65; // zoom out up to 1.65x further
 
 /**
  * 3D-сцена — декларативная функция снапшота (docs/UI-3D.md): сцена строится из
@@ -112,188 +124,185 @@ function SceneContent() {
 }
 
 /**
- * Camera anchored at the table center (docs/UI-3D.md):
- * - in `follow` mode, orbits around the center to the active player's side on turn change
- *   with acceleration, sharp braking, and rollback (`cameraTurnEase`);
- * - in `self` mode, defaults to the player's own side;
- * - holding Right Mouse Button (RMB) freely rotates the camera (azimuth + pitch) around the table,
- *   and scrolling the mouse wheel zooms in and out.
+ * Smart Camera Snap Point & Swipe Navigation System:
+ * - Snap Points:
+ *   * `top`: center of table looking straight down, orientation aligned with active/selected player.
+ *   * `player_<pid>`: perspective view from that player's side facing the table center.
+ * - Modes:
+ *   * `follow`: transitions to active player on turn change (or re-orients top-down).
+ *   * `manual`: stays locked to the chosen snap point ('top', specific player, etc.).
+ * - Gesture & Swipe Navigation:
+ *   * Swipe DOWN: transition to top-down view.
+ *   * Swipe UP: transition back to perspective view.
+ *   * Swipe LEFT / RIGHT: cycle to next / previous player around table.
+ * - Keyboard: Arrow keys, WASD, Space (me), F (toggle follow).
+ * - Wheel: zoom in / out with demand invalidation.
  */
 function CameraRig() {
   const view = useGame((s) => s.view);
   const cameraMode = useGame((s) => s.ui.cameraMode);
+  const cameraSnap = useGame((s) => s.ui.cameraSnap);
   const { camera, gl, size, invalidate } = useThree();
 
   const currentAngleRef = useRef<number | null>(null);
-  const pitchOffsetRef = useRef(0);
-  const zoomScaleRef = useRef(1);
+  const currentURef = useRef<number>(0); // 0 = perspective, 1 = top
+  const zoomScaleRef = useRef<number>(1);
   const lastTargetKeyRef = useRef<string | null>(null);
-  const rmbDragRef = useRef<{ lastX: number; lastY: number } | null>(null);
-  const rmbPointerIdRef = useRef<number | null>(null);
-  const touchPointersRef = useRef(new Map<number, { x: number; y: number }>());
-  const touchPinchRef = useRef<{ lastMidX: number; lastMidY: number; lastDist: number } | null>(null);
+  const gestureRef = useRef<{
+    startX: number;
+    startY: number;
+    startTime: number;
+    pointerId: number;
+    triggered: boolean;
+  } | null>(null);
+
   const animRef = useRef<{
     fromAngle: number;
     deltaAngle: number;
+    fromU: number;
+    deltaU: number;
     startAt: number;
     durationMs: number;
   } | null>(null);
-  const lookAtVec = useRef(new THREE.Vector3());
 
-  const applyCameraAtAngle = (angle: number, radius: number, height: number, lookOffset: number, fov: number) => {
+  const applyCameraPose = (angle: number, u: number) => {
+    if (!view) return;
     const aspect = size.width / Math.max(1, size.height);
-    // Smoothly pull the camera back when the window is narrow (e.g. side-by-side split screen
-    // or portrait) without changing FOV, so both browsers keep the exact same lens perspective
-    // and the full board (Deck — 4 Lands — Discard) always fits horizontally.
-    const fitScale = aspect < 1.35 ? Math.min(1.75, 1.35 / Math.max(0.55, aspect)) : 1;
-    const baseDist = Math.hypot(radius, height) * fitScale;
-    const basePitch = Math.atan2(height, radius);
-    const pitch = Math.max(MIN_PITCH, Math.min(MAX_PITCH, basePitch + pitchOffsetRef.current));
-    const dist = baseDist * zoomScaleRef.current;
+    const pose = interpolateCameraPose(view, angle, u, aspect, zoomScaleRef.current);
 
-    const horizR = dist * Math.cos(pitch);
-    const h = dist * Math.sin(pitch);
-    const sin = Math.sin(angle);
-    const cos = Math.cos(angle);
-    camera.position.set(horizR * sin, h, horizR * cos);
-    lookAtVec.current.set(lookOffset * sin, 0, lookOffset * cos);
-    camera.lookAt(lookAtVec.current);
+    camera.position.copy(pose.position);
+    camera.up.copy(pose.up);
+    camera.lookAt(pose.lookAt);
     camera.updateMatrixWorld();
+
     if (camera instanceof THREE.PerspectiveCamera) {
-      if (camera.fov !== fov || Math.abs(camera.aspect - aspect) > 1e-4) {
-        camera.fov = fov;
+      if (camera.fov !== pose.fov || Math.abs(camera.aspect - aspect) > 1e-4) {
+        camera.fov = pose.fov;
         camera.aspect = aspect;
         camera.updateProjectionMatrix();
       }
     }
   };
 
-  // Right Mouse Button (RMB) desktop orbit + wheel zoom, and 2-finger mobile orbit & pinch zoom.
+  const handleSwipeGesture = (direction: 'down' | 'up' | 'left' | 'right') => {
+    const v = useGame.getState().view;
+    if (!v) return;
+    const snap = useGame.getState().ui.cameraSnap;
+    const isTop = isTopSnap(snap, useGame.getState().ui.cameraMode);
+    const targetPid = resolveTargetPlayer(v, useGame.getState().ui.cameraMode, snap);
+
+    if (direction === 'down') {
+      if (!isTop) snapCameraTop();
+    } else if (direction === 'up') {
+      if (isTop) snapCameraPlayer(targetPid);
+    } else if (direction === 'left') {
+      cycleCameraPlayer('next');
+    } else if (direction === 'right') {
+      cycleCameraPlayer('prev');
+    }
+  };
+
+  // Pointer swipe / drag gestures and mouse wheel zoom
   useEffect(() => {
     const dom = gl.domElement;
+
     const onContextMenu = (e: MouseEvent) => {
       e.preventDefault();
     };
+
     const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType === 'mouse' && e.button === 2) {
-        e.preventDefault();
-        animRef.current = null;
-        rmbDragRef.current = { lastX: e.clientX, lastY: e.clientY };
-        rmbPointerIdRef.current = e.pointerId;
-        try {
-          dom.setPointerCapture(e.pointerId);
-        } catch {
-          // ignore
-        }
-      } else if (e.pointerType === 'touch') {
-        touchPointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-        if (touchPointersRef.current.size === 2) {
-          animRef.current = null;
-          const [p1, p2] = Array.from(touchPointersRef.current.values());
-          if (p1 && p2) {
-            const midX = (p1.x + p2.x) / 2;
-            const midY = (p1.y + p2.y) / 2;
-            const dist = Math.max(1, Math.hypot(p2.x - p1.x, p2.y - p1.y));
-            touchPinchRef.current = { lastMidX: midX, lastMidY: midY, lastDist: dist };
-          }
-        }
+      const ui = useGame.getState().ui;
+      if (ui.dragging !== null || ui.targeting !== null || ui.holdingFloop !== null) return;
+      if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 2) return;
+
+      gestureRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        startTime: performance.now(),
+        pointerId: e.pointerId,
+        triggered: false,
+      };
+      try {
+        dom.setPointerCapture(e.pointerId);
+      } catch {
+        // ignore
       }
     };
+
     const onPointerMove = (e: PointerEvent) => {
-      const v = useGame.getState().view;
-      const mode = useGame.getState().ui.cameraMode;
-      if (!v) return;
+      const gesture = gestureRef.current;
+      if (!gesture || gesture.triggered) return;
+      if (e.pointerId !== gesture.pointerId) return;
 
-      // Desktop RMB orbit
-      if (rmbDragRef.current && (e.pointerType === 'mouse' || e.pointerId === rmbPointerIdRef.current)) {
-        const drag = rmbDragRef.current;
-        const dx = e.clientX - drag.lastX;
-        const dy = e.clientY - drag.lastY;
-        drag.lastX = e.clientX;
-        drag.lastY = e.clientY;
-
-        const orbit = cameraOrbitFor(v, mode);
-        const basePitch = Math.atan2(orbit.height, orbit.radius);
-        const nextAngle = (currentAngleRef.current ?? orbit.angle) - dx * 0.0065;
-        currentAngleRef.current = nextAngle;
-        pitchOffsetRef.current = Math.max(
-          MIN_PITCH - basePitch,
-          Math.min(MAX_PITCH - basePitch, pitchOffsetRef.current + dy * 0.0055),
-        );
-        applyCameraAtAngle(nextAngle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
-        invalidate();
+      const ui = useGame.getState().ui;
+      if (ui.dragging !== null || ui.targeting !== null || ui.holdingFloop !== null) {
+        gestureRef.current = null;
         return;
       }
 
-      // Mobile 2-finger orbit + pinch zoom (1 finger remains untouched for card drag & floop)
-      if (e.pointerType === 'touch' && touchPointersRef.current.has(e.pointerId)) {
-        touchPointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-        if (touchPointersRef.current.size === 2 && touchPinchRef.current) {
-          const [p1, p2] = Array.from(touchPointersRef.current.values());
-          if (p1 && p2) {
-            const midX = (p1.x + p2.x) / 2;
-            const midY = (p1.y + p2.y) / 2;
-            const dist = Math.max(1, Math.hypot(p2.x - p1.x, p2.y - p1.y));
-
-            const pinch = touchPinchRef.current;
-            const dx = midX - pinch.lastMidX;
-            const dy = midY - pinch.lastMidY;
-            const distRatio = pinch.lastDist / dist;
-
-            pinch.lastMidX = midX;
-            pinch.lastMidY = midY;
-            pinch.lastDist = dist;
-
-            const orbit = cameraOrbitFor(v, mode);
-            const basePitch = Math.atan2(orbit.height, orbit.radius);
-            const nextAngle = (currentAngleRef.current ?? orbit.angle) - dx * 0.0065;
-            currentAngleRef.current = nextAngle;
-            pitchOffsetRef.current = Math.max(
-              MIN_PITCH - basePitch,
-              Math.min(MAX_PITCH - basePitch, pitchOffsetRef.current + dy * 0.0055),
-            );
-            zoomScaleRef.current = Math.max(
-              MIN_ZOOM_SCALE,
-              Math.min(MAX_ZOOM_SCALE, zoomScaleRef.current * distRatio),
-            );
-            applyCameraAtAngle(nextAngle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
-            invalidate();
-          }
-        }
+      const dx = e.clientX - gesture.startX;
+      const dy = e.clientY - gesture.startY;
+      const swipe = classifySwipe(dx, dy, 46);
+      if (swipe) {
+        gesture.triggered = true;
+        handleSwipeGesture(swipe);
       }
     };
+
     const onPointerUp = (e: PointerEvent) => {
-      if (e.pointerType === 'mouse' || e.button === 2) {
-        if (rmbPointerIdRef.current !== null) {
-          try {
-            dom.releasePointerCapture(rmbPointerIdRef.current);
-          } catch {
-            // ignore
+      const gesture = gestureRef.current;
+      if (gesture && e.pointerId === gesture.pointerId) {
+        try {
+          dom.releasePointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
+        if (!gesture.triggered) {
+          const dx = e.clientX - gesture.startX;
+          const dy = e.clientY - gesture.startY;
+          const dt = performance.now() - gesture.startTime;
+          const minDistance = dt < 360 ? 32 : 46;
+          const swipe = classifySwipe(dx, dy, minDistance);
+          if (swipe) {
+            handleSwipeGesture(swipe);
           }
-          rmbPointerIdRef.current = null;
-        }
-        rmbDragRef.current = null;
-      }
-      if (e.pointerType === 'touch') {
-        touchPointersRef.current.delete(e.pointerId);
-        if (touchPointersRef.current.size < 2) {
-          touchPinchRef.current = null;
         }
       }
+      gestureRef.current = null;
     };
+
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const v = useGame.getState().view;
-      const mode = useGame.getState().ui.cameraMode;
-      if (!v) return;
-      const orbit = cameraOrbitFor(v, mode);
       zoomScaleRef.current = Math.max(
         MIN_ZOOM_SCALE,
         Math.min(MAX_ZOOM_SCALE, zoomScaleRef.current * Math.exp(e.deltaY * 0.0011)),
       );
-      const angle = currentAngleRef.current ?? orbit.angle;
-      applyCameraAtAngle(angle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
+      if (currentAngleRef.current !== null) {
+        applyCameraPose(currentAngleRef.current, currentURef.current);
+      }
       invalidate();
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      const targetTag = (document.activeElement?.tagName || '').toUpperCase();
+      if (targetTag === 'INPUT' || targetTag === 'TEXTAREA') return;
+
+      if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        handleSwipeGesture('down');
+      } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        handleSwipeGesture('up');
+      } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        handleSwipeGesture('left');
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        handleSwipeGesture('right');
+      } else if (e.key === 'f' || e.key === 'F') {
+        const cur = useGame.getState().ui.cameraMode;
+        setCameraMode(cur === 'follow' ? 'manual' : 'follow');
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        const v = useGame.getState().view;
+        if (v) snapCameraPlayer(v.me);
+      }
     };
 
     dom.addEventListener('contextmenu', onContextMenu);
@@ -302,6 +311,8 @@ function CameraRig() {
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('keydown', onKeyDown);
+
     return () => {
       dom.removeEventListener('contextmenu', onContextMenu);
       dom.removeEventListener('pointerdown', onPointerDown);
@@ -309,67 +320,93 @@ function CameraRig() {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerUp);
+      window.removeEventListener('keydown', onKeyDown);
     };
   }, [gl, size.width, size.height, invalidate]);
 
+  // Synchronize target camera anchor with store state
   useEffect(() => {
     if (!view) return;
-    const orbit = cameraOrbitFor(view, cameraMode);
-    const targetPid = cameraTargetPlayer(view, cameraMode);
-    const targetKey = `${targetPid}|${cameraMode}`;
+    const aspect = size.width / Math.max(1, size.height);
+    const targetPid = resolveTargetPlayer(view, cameraMode, cameraSnap);
+    const isTop = isTopSnap(cameraSnap, cameraMode);
+    const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
+    const targetKey = `${targetPid}|${isTop ? 'top' : 'persp'}|${cameraMode}`;
 
     if (currentAngleRef.current === null) {
-      currentAngleRef.current = orbit.angle;
+      currentAngleRef.current = anchor.angle;
+      currentURef.current = anchor.u;
       lastTargetKeyRef.current = targetKey;
-      applyCameraAtAngle(orbit.angle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
+      applyCameraPose(anchor.angle, anchor.u);
       invalidate();
       return;
     }
 
-    // Only start an automatic turn/mode orbit transition when the target player or camera mode changed.
     if (lastTargetKeyRef.current !== targetKey) {
       lastTargetKeyRef.current = targetKey;
-      const from = currentAngleRef.current;
-      let delta = Math.atan2(Math.sin(orbit.angle - from), Math.cos(orbit.angle - from));
-      // For an exact 180-degree turn, always orbit in a consistent circular direction.
-      if (Math.abs(Math.abs(delta) - Math.PI) < 0.02) {
-        delta = Math.PI;
-      }
+      const fromAngle = currentAngleRef.current;
+      const fromU = currentURef.current;
 
-      if (Math.abs(delta) > 0.015) {
+      let deltaAngle = Math.atan2(
+        Math.sin(anchor.angle - fromAngle),
+        Math.cos(anchor.angle - fromAngle),
+      );
+      if (Math.abs(Math.abs(deltaAngle) - Math.PI) < 0.02) {
+        deltaAngle = Math.PI;
+      }
+      const deltaU = anchor.u - fromU;
+
+      if (Math.abs(deltaAngle) > 0.015 || Math.abs(deltaU) > 0.015) {
         animRef.current = {
-          fromAngle: from,
-          deltaAngle: delta,
+          fromAngle,
+          deltaAngle,
+          fromU,
+          deltaU,
           startAt: performance.now(),
-          durationMs: CAMERA_TURN_DURATION_MS,
+          durationMs: CAMERA_TRANSITION_MS,
         };
         invalidate();
         return;
       }
-      currentAngleRef.current = orbit.angle;
+
+      currentAngleRef.current = anchor.angle;
+      currentURef.current = anchor.u;
       animRef.current = null;
     }
 
     if (!animRef.current) {
-      applyCameraAtAngle(currentAngleRef.current, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
+      applyCameraPose(currentAngleRef.current, currentURef.current);
       invalidate();
     }
-  }, [view, cameraMode, size.width, size.height, invalidate]);
+  }, [view, cameraMode, cameraSnap, size.width, size.height, invalidate]);
 
+  // Interpolate camera pose frame by frame during transition
   useFrame(() => {
     if (!view) return;
     const anim = animRef.current;
     if (!anim) return;
-    const orbit = cameraOrbitFor(view, cameraMode);
+
     const elapsed = performance.now() - anim.startAt;
     const t = Math.min(1, elapsed / anim.durationMs);
-    const eased = cameraTurnEase(t);
-    const angle = anim.fromAngle + anim.deltaAngle * eased;
+    const isAngleOnly = Math.abs(anim.deltaU) < 0.02;
+    const tAngle = isAngleOnly ? cameraTurnEase(t) : easeInOutCubic(t);
+    const tU = easeInOutCubic(t);
+
+    const angle = anim.fromAngle + anim.deltaAngle * tAngle;
+    const u = anim.fromU + anim.deltaU * tU;
     currentAngleRef.current = angle;
-    applyCameraAtAngle(angle, orbit.radius, orbit.height, orbit.lookOffset, orbit.fov);
+    currentURef.current = u;
+    applyCameraPose(angle, u);
+
     if (t >= 1) {
-      currentAngleRef.current = orbit.angle;
+      const aspect = size.width / Math.max(1, size.height);
+      const targetPid = resolveTargetPlayer(view, cameraMode, cameraSnap);
+      const isTop = isTopSnap(cameraSnap, cameraMode);
+      const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
+      currentAngleRef.current = anchor.angle;
+      currentURef.current = anchor.u;
       animRef.current = null;
+      applyCameraPose(anchor.angle, anchor.u);
     }
     invalidate();
   });

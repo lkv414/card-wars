@@ -8,19 +8,19 @@ import {
   CARD_H,
   NO_RAYCAST,
   boardTransform,
-  deckLocal,
-  discardLocal,
+  deckLocalFor,
+  discardLocalFor,
   frostLocalZ,
-  heroLocal,
-  livesLocal,
-  zoneX,
+  heroLocalFor,
+  livesLocalFor,
+  zoneWorldTransform,
 } from './layout';
 import { cardBackTexture, cardTexture, heroTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
 import { setUi, useGame } from '../../store';
 
-/** Половина стола одного игрока: ряд земель, колода/сброс, герой, жизни, парная. */
+/** Игровое поле одного игрока: 4 земли (с их точными углами/позициями боя), колода, сброс, герой, жизни. */
 export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string; isMe: boolean }) {
   const p = view.players[pid]!;
   const transform = boardTransform(view, pid);
@@ -31,43 +31,51 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
   const team = p.teamId ? view.teams?.[p.teamId] ?? null : null;
 
   return (
-    <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
-      {p.zones.map((zone, i) => (
-        <group key={i} position={[zoneX(i), 0, 0]}>
-          <Land land={p.lands[i]!} zone={i} isMe={isMe} pid={pid} view={view} />
-          {p.lands[i]!.frozen && (
-            <group position={[0, 0, frostLocalZ]}>
-              <FrostToken />
-            </group>
-          )}
-          {zone.creature && <CardMesh card={zone.creature} view={view} isMe={isMe} slot="creature" />}
-          {zone.building && <CardMesh card={zone.building} view={view} isMe={isMe} slot="building" />}
-        </group>
-      ))}
-      <DeckPile count={p.deckCount} />
-      <DiscardPile view={view} pid={pid} />
-      <HeroStand
-        nickname={p.nickname}
-        heroId={p.heroId}
-        active={active}
-        ready={p.battleReady}
-        teamLabel={team ? `команда ${team.id === 'team-a' ? 'A' : 'B'}` : null}
-      />
-      {(!team || team.playerIds[0] === pid) && <LivesTokens lives={p.lives} />}
-      {p.companion && <CardMesh card={p.companion} view={view} isMe={isMe} slot="companion" />}
-      {/* заклинания текущего хода — парят над землями этого игрока (docs/UI-3D.md) */}
-      {view.castSpells
-        .filter((spell) => spell.player === pid)
-        .map((spell, i) => (
-          <SpellGhost key={spell.instanceId} cardId={spell.cardId} index={i} />
-        ))}
-    </group>
+    <>
+      {p.zones.map((zone, i) => {
+        const lt = zoneWorldTransform(view, pid, i);
+        if (!lt) return null;
+        return (
+          <group key={i} position={[lt.x, 0, lt.z]} rotation={[0, lt.rotation, 0]}>
+            <Land land={p.lands[i]!} zone={i} isMe={isMe} pid={pid} view={view} />
+            {p.lands[i]!.frozen && (
+              <group position={[0, 0, frostLocalZ]}>
+                <FrostToken />
+              </group>
+            )}
+            {zone.creature && <CardMesh card={zone.creature} view={view} isMe={isMe} slot="creature" />}
+            {zone.building && <CardMesh card={zone.building} view={view} isMe={isMe} slot="building" />}
+          </group>
+        );
+      })}
+
+      <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
+        <DeckPile count={p.deckCount} view={view} />
+        <DiscardPile view={view} pid={pid} />
+        <HeroStand
+          nickname={p.nickname}
+          heroId={p.heroId}
+          active={active}
+          ready={p.battleReady}
+          teamLabel={team ? `команда ${team.id === 'team-a' ? 'A' : 'B'}` : null}
+          view={view}
+        />
+        {(!team || team.playerIds[0] === pid) && <LivesTokens lives={p.lives} view={view} />}
+        {p.companion && <CardMesh card={p.companion} view={view} isMe={isMe} slot="companion" />}
+        {/* заклинания текущего хода — парят над землями этого игрока (docs/UI-3D.md) */}
+        {view.castSpells
+          .filter((spell) => spell.player === pid)
+          .map((spell, i) => (
+            <SpellGhost key={spell.instanceId} cardId={spell.cardId} index={i} />
+          ))}
+      </group>
+    </>
   );
 }
 
-function DeckPile({ count }: { count: number }) {
+function DeckPile({ count, view }: { count: number; view: PlayerView }) {
   const back = useMemo(() => cardBackTexture(), []);
-  const [x, y, z] = deckLocal;
+  const [x, y, z] = deckLocalFor(view);
   const layers = Math.min(8, Math.ceil(count / 5));
   return (
     <group position={[x, y, z]}>
@@ -85,7 +93,7 @@ function DeckPile({ count }: { count: number }) {
 /** Стопка сброса — цель перетаскивания (рука и поле); подсвечивается при драге (docs/UI-3D.md «Взаимодействие»). */
 function DiscardPile({ view, pid }: { view: PlayerView; pid: string }) {
   const p = view.players[pid]!;
-  const [x, y, z] = discardLocal;
+  const [x, y, z] = discardLocalFor(view);
   const top = p.discard[p.discard.length - 1];
   const texture = useMemo(() => (top ? cardTexture(top.cardId) : cardBackTexture()), [top?.cardId]);
   const isMe = pid === view.me;
@@ -131,14 +139,16 @@ function HeroStand({
   active,
   ready,
   teamLabel,
+  view,
 }: {
   nickname: string;
   heroId: string;
   active: boolean;
   ready: boolean;
   teamLabel: string | null;
+  view: PlayerView;
 }) {
-  const [x, , z] = heroLocal;
+  const [x, , z] = heroLocalFor(view);
   const color = ready ? '#4c8ee8' : active ? '#48bb78' : '#3a4250';
   const suffix = `${ready ? ' · готов' : active ? ' · ход' : ''}${teamLabel ? ` · ${teamLabel}` : ''}`;
   const portrait = useMemo(() => heroTexture(heroId), [heroId]);
@@ -159,10 +169,10 @@ function HeroStand({
 }
 
 /** Жизни — жетонами «3»/«1» у героя (числовой дубликат — в HUD). */
-function LivesTokens({ lives }: { lives: number }) {
+function LivesTokens({ lives, view }: { lives: number; view: PlayerView }) {
   const threes = Math.floor(Math.max(0, lives) / 3);
   const ones = Math.max(0, lives) % 3;
-  const [x, y, z] = livesLocal;
+  const [x, y, z] = livesLocalFor(view);
   const tokens: Array<1 | 3> = [
     ...Array.from({ length: threes }, () => 3 as const),
     ...Array.from({ length: ones }, () => 1 as const),

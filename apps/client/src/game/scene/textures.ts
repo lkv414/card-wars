@@ -375,8 +375,8 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
   const key = `land-${type}-${frozen ? 1 : 0}-${flipped ? 1 : 0}`;
   const cached = tokenCache.get(key);
   if (cached) return cached;
-  const W = 256;
-  const H = 500; // пропорция тайла 96×188 (docs/UI-3D.md «Размеры»)
+  const W = 266;
+  const H = 384; // пропорция тайла 133×192 (docs/UI-3D.md «Размеры»)
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;

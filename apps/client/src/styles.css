@@ -321,15 +321,35 @@ header {
   z-index: 20;
 }
 
-/* --- 3D-экран (этап 4) --- */
+/* --- 3D-экран и сплит-лейаут с боковой панелью действий --- */
+
+:root {
+  --hud-sidebar-w: 200px;
+}
 
 .game-3d {
   position: fixed;
   inset: 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  background: #10141b;
+}
+
+.game-3d-main,
+.game-3d-viewport {
+  flex: 1 1 0%;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .game-3d canvas {
   display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
 }
 
 .hud {
@@ -338,6 +358,18 @@ header {
   pointer-events: none;
   display: flex;
   flex-direction: column;
+}
+
+.hud.hud-viewport-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: var(--hud-sidebar-w, 200px);
+  bottom: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
 }
 
 .hud > * {
@@ -349,9 +381,10 @@ header {
   align-items: center;
   gap: 14px;
   padding: 8px 14px;
-  background: rgba(16, 20, 27, 0.82);
+  background: rgba(16, 20, 27, 0.85);
   border-bottom: 1px solid #2c323d;
   font-size: 14px;
+  backdrop-filter: blur(8px);
 }
 
 .hud-spacer {
@@ -365,19 +398,21 @@ header {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: rgba(16, 20, 27, 0.7);
+  background: rgba(16, 20, 27, 0.8);
   border: 1px solid #2c323d;
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 14px;
+  backdrop-filter: blur(6px);
+  z-index: 12;
 }
 
 .hud-players {
   position: absolute;
   right: 14px;
   top: 56px;
-  min-width: 190px;
-  background: rgba(16, 20, 27, 0.7);
+  min-width: 180px;
+  background: rgba(16, 20, 27, 0.8);
   border: 1px solid #2c323d;
   border-radius: 10px;
   padding: 8px 12px;
@@ -385,6 +420,8 @@ header {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  backdrop-filter: blur(6px);
+  z-index: 12;
 }
 
 .hud-player.dead {
@@ -392,18 +429,766 @@ header {
   text-decoration: line-through;
 }
 
-.hud-actions {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
+/* --- Боковая панель действий (.game-sidebar / .hud-sidebar) --- */
+
+.game-sidebar.hud-sidebar {
+  width: var(--hud-sidebar-w, 200px);
+  min-width: 180px;
+  max-width: 220px;
+  height: 100%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  background: rgba(16, 20, 27, 0.94);
+  border-left: 1px solid #2c323d;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: width 0.22s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
 }
 
-.hud-actions button {
-  min-width: 170px;
+.game-sidebar.hud-sidebar.collapsed {
+  width: 52px;
+  min-width: 52px;
+}
+
+.game-sidebar.hud-sidebar.collapsed .hud-sidebar-title,
+.game-sidebar.hud-sidebar.collapsed .hud-sidebar-phase-badge,
+.game-sidebar.hud-sidebar.collapsed .battle-label,
+.game-sidebar.hud-sidebar.collapsed .btn-label,
+.game-sidebar.hud-sidebar.collapsed .btn-badge,
+.game-sidebar.hud-sidebar.collapsed .btn-sub,
+.game-sidebar.hud-sidebar.collapsed .btn-dropdown-arrow,
+.game-sidebar.hud-sidebar.collapsed .cam-text,
+.game-sidebar.hud-sidebar.collapsed .section-label,
+.game-sidebar.hud-sidebar.collapsed .hud-team-readiness {
+  display: none !important;
+}
+
+.game-sidebar.hud-sidebar.collapsed .hud-camera-grid {
+  grid-template-columns: 1fr;
+}
+
+.game-sidebar.hud-sidebar.collapsed .hud-sidebar-scroll {
+  padding: 8px 6px;
+}
+
+.game-sidebar.hud-sidebar.collapsed .hud-sidebar-action-btn,
+.game-sidebar.hud-sidebar.collapsed .hud-sidebar-battle-btn,
+.game-sidebar.hud-sidebar.collapsed .hud-sidebar-danger-btn {
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+/* Шапка сайдбара */
+.hud-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid #2c323d;
+  background: rgba(22, 27, 36, 0.8);
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.hud-sidebar-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hud-sidebar-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: #f1f5f9;
+}
+
+.hud-sidebar-phase-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hud-sidebar-phase-badge.phase-main {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.14);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.hud-sidebar-phase-badge.phase-combat {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.hud-sidebar-phase-badge.phase-draw {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.14);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.hud-sidebar-toggle-btn {
+  background: rgba(30, 36, 48, 0.8);
+  border: 1px solid #3b4252;
+  color: #94a3b8;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.hud-sidebar-toggle-btn:hover {
+  background: #2e3848;
+  color: #fff;
+}
+
+.hud-sidebar-mobile-close {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+/* Прокручиваемое тело сайдбара */
+.hud-sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hud-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #94a3b8;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Главная боевая кнопка: «В бой» */
+.hud-sidebar-battle-btn {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2b394e 0%, #1a2332 100%);
+  border: 1px solid #3d4d65;
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.hud-sidebar-battle-btn.active-cta {
+  background: linear-gradient(135deg, #e65100 0%, #f57c00 100%);
+  border: 1px solid #ff9800;
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(245, 124, 0, 0.42), 0 0 1px #ffb74d inset;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hud-sidebar-battle-btn.active-cta:hover {
+  background: linear-gradient(135deg, #ef6c00 0%, #fb8c00 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(245, 124, 0, 0.56);
+}
+
+.hud-sidebar-battle-btn:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.battle-icon {
+  font-size: 18px;
+}
+
+.battle-label {
+  line-height: 1.2;
+}
+
+/* Готовность команды в 2v2 */
+.hud-team-readiness {
+  background: rgba(22, 27, 36, 0.7);
+  border: 1px solid #2c323d;
+  border-radius: 8px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.team-readiness-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.team-readiness-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.team-chip {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.team-chip.ready {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.team-chip.waiting {
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.08);
+}
+
+/* Кнопки действий сайдбара */
+.hud-sidebar-action-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(26, 32, 44, 0.82);
+  border: 1px solid #2c323d;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+}
+
+.hud-sidebar-action-btn:hover:not(:disabled) {
+  background: rgba(38, 47, 64, 0.9);
+  border-color: #4a5568;
+  transform: translateY(-1px);
+}
+
+.hud-sidebar-action-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.hud-sidebar-action-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.hud-sidebar-action-btn .btn-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.hud-sidebar-action-btn .btn-label {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-sidebar-action-btn .btn-badge {
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(96, 165, 250, 0.18);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  flex-shrink: 0;
+}
+
+.hud-sidebar-action-btn .btn-counter-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.hud-sidebar-action-btn .btn-dropdown-arrow {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-left: auto;
+}
+
+.hurry-btn {
+  background: rgba(234, 88, 12, 0.15) !important;
+  border-color: rgba(234, 88, 12, 0.35) !important;
+  color: #fdba74 !important;
+}
+
+.hurry-btn:hover:not(:disabled) {
+  background: rgba(234, 88, 12, 0.28) !important;
+  border-color: #f97316 !important;
+}
+
+.hurry-btn .btn-sub {
+  font-size: 11px;
+  color: #cbd5e1;
+  opacity: 0.85;
+}
+
+/* Виджет камеры (4 компактных кнопки в сетке 2x2) */
+.hud-camera-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.cam-grid-btn {
+  min-height: 44px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: rgba(22, 27, 36, 0.85);
+  border: 1px solid #2c323d;
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-sizing: border-box;
+}
+
+.cam-grid-btn:hover {
+  background: rgba(38, 47, 64, 0.9);
+  border-color: #4a5568;
+}
+
+.cam-grid-btn.active {
+  background: rgba(59, 130, 246, 0.22);
+  border-color: #3b82f6;
+  color: #93c5fd;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+}
+
+.cam-icon {
+  font-size: 15px;
+}
+
+.cam-text {
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Меню эмоций (поповер) */
+.emotes-container {
+  position: relative;
+}
+
+.hud-emotes-popover {
+  position: absolute;
+  right: calc(100% + 8px);
+  bottom: 0;
+  width: 220px;
+  background: rgba(16, 20, 27, 0.96);
+  border: 1px solid #3b4252;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+  padding: 10px;
+  z-index: 100;
+  backdrop-filter: blur(14px);
+  animation: popoverFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popoverFade {
+  from {
+    opacity: 0;
+    transform: translateX(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.emotes-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #2c323d;
+  font-size: 12px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.emotes-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.emotes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emote-item-btn {
+  min-height: 44px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.emote-item-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #3b4252;
+}
+
+.emote-emoji {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.emote-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Кнопка «Сдаться» */
+.hud-sidebar-danger-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.32);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+}
+
+.hud-sidebar-danger-btn:hover {
+  background: rgba(220, 38, 38, 0.28);
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+/* Модалка подтверждения сдачи */
+.surrender-overlay {
+  z-index: 1200;
+}
+
+.surrender-dialog {
+  max-width: 420px;
+  text-align: center;
+  background: #141820 !important;
+  border: 1px solid #3b4252 !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.surrender-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  justify-content: center;
+}
+
+.surrender-modal-actions button {
+  min-height: 44px;
+  min-width: 120px;
+  font-weight: 600;
+}
+
+.btn-danger {
+  background: #dc2626 !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.btn-danger:hover {
+  background: #b91c1c !important;
+}
+
+/* Анимация пульса таймера при потороплении */
+@keyframes hurryTimerPulse {
+  0%, 100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.28);
+    color: #ef4444 !important;
+    text-shadow: 0 0 14px rgba(239, 68, 68, 0.85);
+  }
+}
+
+.timer.timer-hurry-pulse {
+  animation: hurryTimerPulse 0.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Речевое облачко реплики / эмоции героя */
+@keyframes emoteBubblePop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 16px) scale(0.85);
+  }
+  70% {
+    transform: translate(-50%, -4px) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.hud-emote-bubble {
+  position: absolute;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(16, 20, 27, 0.94);
+  border: 2px solid #fbbf24;
+  border-radius: 999px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 15px rgba(251, 191, 36, 0.35);
+  pointer-events: none;
+  z-index: 100;
+  animation: emoteBubblePop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+}
+
+.hud-emote-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.hud-emote-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hud-emote-sender {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.hud-emote-message {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+/* Мобильная нижняя панель действий */
+.hud-mobile-bottom-bar {
+  display: none;
+}
+
+/* --- Мобильная адаптивность (< 768px) --- */
+
+@media (max-width: 768px) {
+  :root {
+    --hud-sidebar-w: 0px;
+  }
+
+  .hud.hud-viewport-overlay {
+    right: 0;
+  }
+
+  .hud-players {
+    display: none; /* скрываем оверлей игроков в 3D чтобы не мешать мобильному обзору */
+  }
+
+  .game-sidebar.hud-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 200;
+    transform: translateX(100%);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.7);
+  }
+
+  .game-sidebar.hud-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .hud-sidebar-toggle-btn {
+    display: none;
+  }
+
+  .hud-sidebar-mobile-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hud-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 190;
+  }
+
+  .hud-emotes-popover {
+    right: 0;
+    bottom: calc(100% + 8px);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Показываем нижнюю панель на мобильных */
+  .hud-mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    height: 48px;
+    gap: 8px;
+    z-index: 40;
+    pointer-events: auto;
+  }
+
+  .hud-mobile-btn-battle {
+    flex: 1;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #e65100 0%, #f57c00 100%);
+    border: 1px solid #ff9800;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 4px 18px rgba(245, 124, 0, 0.45);
+    cursor: pointer;
+  }
+
+  .hud-mobile-btn-battle:disabled {
+    opacity: 0.5;
+    background: #232c3b;
+    border-color: #3b4556;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .hud-mobile-btn-menu {
+    min-width: 80px;
+    min-height: 48px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    background: rgba(22, 27, 36, 0.94);
+    border: 1px solid #3b4252;
+    border-radius: 10px;
+    color: #e2e8f0;
+    font-size: 11px;
+    position: relative;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .hud-mobile-btn-menu .btn-icon {
+    font-size: 16px;
+  }
+
+  .hud-mobile-btn-menu .mobile-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 999px;
+  }
 }
 
 .hud-journal {

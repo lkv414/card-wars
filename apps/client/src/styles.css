@@ -42,6 +42,7 @@ input {
   color: inherit;
   border-radius: 6px;
   padding: 8px;
+  font-size: 16px;
 }
 
 button {
@@ -608,7 +609,7 @@ textarea {
   border: 1px solid #334155;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   width: 100%;
 }
 
@@ -1284,7 +1285,7 @@ button.danger {
   background: var(--ui-bg-elevated);
   color: var(--ui-text);
   font: inherit;
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -1496,6 +1497,56 @@ button.danger {
   gap: 16px;
 }
 
+.ui-v2 .decks-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ui-v2 .cw-random-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 900;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.ui-v2 .cw-random-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.45);
+}
+
+.ui-v2 .cw-random-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ui-v2 .restore-presets-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--ui-bg-muted);
+  color: var(--ui-text);
+  border: 1px solid var(--ui-border-strong);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ui-v2 .restore-presets-btn:hover:not(:disabled) {
+  background: var(--ui-border);
+  color: var(--ui-heading);
+}
+
 .ui-v2 .create-btn {
   padding: 10px 18px;
   border-radius: 999px;
@@ -1507,6 +1558,113 @@ button.danger {
 
 .ui-v2 .create-btn:hover:not(:disabled) {
   background: var(--ui-accent-hover);
+}
+
+.ui-v2 .incomplete-badge {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ui-danger);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: var(--ui-shadow-sm);
+}
+
+/* Accessible Deck Deletion Modal */
+
+.cw-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: cwFadeIn 0.15s ease-out;
+}
+
+.cw-modal-box {
+  width: 100%;
+  max-width: 440px;
+  background: var(--ui-bg-elevated);
+  border: 2px solid var(--ui-border-strong);
+  border-radius: var(--ui-radius-lg, 14px);
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: cwSlideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cw-modal-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--ui-heading);
+  margin: 0;
+}
+
+.cw-modal-body {
+  font-size: 14px;
+  color: var(--ui-text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cw-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.cw-btn-danger {
+  background: #dc2626;
+  color: #ffffff;
+  border: 1px solid #ef4444;
+  padding: 10px 18px;
+  border-radius: var(--ui-radius, 8px);
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.cw-btn-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.cw-btn-secondary {
+  background: var(--ui-bg-muted);
+  color: var(--ui-text);
+  border: 1px solid var(--ui-border-strong);
+  padding: 10px 18px;
+  border-radius: var(--ui-radius, 8px);
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cw-btn-secondary:hover {
+  background: var(--ui-border);
+}
+
+@keyframes cwFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cwSlideUp {
+  from { transform: translateY(12px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .ui-v2 .deck-card {
@@ -1859,6 +2017,123 @@ button.danger {
   }
 }
 
+/* Deck Preview Meta: Mana curve & Card type pills */
+
+.ui-v2 .deck-preview__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ui-v2 .cw-type-breakdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ui-v2 .cw-type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1ede4;
+  user-select: none;
+}
+
+.ui-v2 .cw-type-pill--creature {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.ui-v2 .cw-type-pill--spell {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: #d8b4fe;
+}
+
+.ui-v2 .cw-type-pill--building {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #93c5fd;
+}
+
+.ui-v2 .cw-type-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+
+.ui-v2 .cw-mana-curve {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 34px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ui-v2 .deck-preview--compact .cw-mana-curve {
+  height: 28px;
+  gap: 4px;
+}
+
+.ui-v2 .cw-curve-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 16px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.ui-v2 .cw-curve-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  min-height: 0;
+}
+
+.ui-v2 .cw-curve-count {
+  font-size: 8px;
+  font-weight: 800;
+  color: #facc15;
+  line-height: 1;
+  margin-bottom: 1px;
+}
+
+.ui-v2 .cw-curve-bar {
+  width: 100%;
+  min-height: 2px;
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 2px 2px 0 0;
+  transition: height 0.2s ease;
+}
+
+.ui-v2 .cw-curve-label {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--ui-muted);
+  line-height: 1;
+  margin-top: 2px;
+}
+
 /* --- deck editor (3-column full-viewport layout) --- */
 
 .ui-v2.cw-editor {
@@ -2024,6 +2299,106 @@ button.danger {
   color: var(--ui-accent-text);
 }
 
+/* Land filter chips (.cw-land-filter, .cw-filter-chip) */
+
+.ui-v2 .cw-land-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-v2 .cw-filter-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.ui-v2 .cw-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--ui-border-strong);
+  background: var(--ui-bg-muted);
+  color: var(--ui-text);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ui-v2 .cw-filter-chip:hover:not(:disabled) {
+  background: var(--ui-border);
+}
+
+.ui-v2 .cw-filter-chip.is-active,
+.ui-v2 .cw-filter-chip.is-on {
+  background: var(--ui-accent-soft);
+  border-color: var(--ui-accent);
+  color: var(--ui-accent-text);
+  font-weight: 900;
+}
+
+/* Stat filter chips (Atk / Def) */
+
+.ui-v2 .cw-stat-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-v2 .cw-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ui-v2 .cw-stat-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ui-muted);
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.ui-v2 .cw-stat-chip-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.ui-v2 .cw-stat-chip {
+  flex: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--ui-border-strong);
+  background: var(--ui-bg-muted);
+  color: var(--ui-text);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ui-v2 .cw-stat-chip:hover:not(:disabled) {
+  background: var(--ui-border);
+}
+
+.ui-v2 .cw-stat-chip.is-active,
+.ui-v2 .cw-stat-chip.is-on {
+  background: var(--ui-accent-soft);
+  border-color: var(--ui-accent);
+  color: var(--ui-accent-text);
+  font-weight: 900;
+}
+
 .ui-v2 .cw-filter-footer {
   margin-top: auto;
   padding-top: 4px;
@@ -2041,6 +2416,7 @@ button.danger {
 }
 
 .ui-v2 .cw-reset-btn {
+  position: relative;
   padding: 2px 6px;
   background: none;
   border: none;
@@ -2048,6 +2424,16 @@ button.danger {
   font-size: 12px;
   font-weight: 800;
   text-decoration: underline;
+}
+
+.ui-v2 .cw-reset-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .ui-v2 .cw-reset-btn:hover:not(:disabled) {
@@ -2072,6 +2458,7 @@ button.danger {
 }
 
 .ui-v2 .cw-drawer-close {
+  position: relative;
   width: 28px;
   height: 28px;
   padding: 0;
@@ -2080,6 +2467,16 @@ button.danger {
   border: 1px solid var(--ui-border-strong);
   font-size: 13px;
   font-weight: 900;
+}
+
+.ui-v2 .cw-drawer-close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .ui-v2 .cw-editor-center {
@@ -2524,6 +2921,16 @@ button.danger {
   transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
+.ui-v2 .cw-card-fav::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+}
+
 .ui-v2 .cw-card-tile:hover .cw-card-fav,
 .ui-v2 .cw-card-tile.is-hold-zoomed .cw-card-fav,
 .ui-v2 .cw-card-fav.is-fav {
@@ -2612,7 +3019,7 @@ button.danger {
 
 .ui-v2 .cw-deck-name-input {
   min-height: 34px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 800;
 }
 
@@ -2626,6 +3033,104 @@ button.danger {
   grid-template-rows: repeat(8, minmax(0, 1fr));
   gap: 5px;
   place-items: center;
+}
+
+/* Grouped deck list view (.cw-grouped-list, .cw-grouped-item, .cw-grouped-controls) */
+
+.ui-v2 .cw-grouped-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 4px;
+}
+
+.ui-v2 .cw-grouped-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: var(--ui-bg-elevated);
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.ui-v2 .cw-grouped-item:hover {
+  border-color: var(--ui-border-strong);
+  background: var(--ui-bg-muted);
+}
+
+.ui-v2 .cw-grouped-cost {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #facc15;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ui-v2 .cw-grouped-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ui-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ui-v2 .cw-grouped-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ui-v2 .cw-grouped-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--ui-border-strong);
+  background: var(--ui-bg-muted);
+  color: var(--ui-text);
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ui-v2 .cw-grouped-btn:hover:not(:disabled) {
+  background: var(--ui-accent);
+  color: #24170c;
+  border-color: var(--ui-accent-hover);
+}
+
+.ui-v2 .cw-grouped-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ui-v2 .cw-grouped-count {
+  min-width: 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-accent-text);
 }
 
 .ui-v2 .cw-deck-slot {
@@ -3466,7 +3971,7 @@ button.danger {
   border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   flex-shrink: 0;
 }
 

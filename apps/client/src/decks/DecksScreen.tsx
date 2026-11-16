@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
+import { LAND_TYPES, heroes, type LandType } from '@card-wars/content';
 import {
   decodeDeckCode,
   encodeDeckCode,
+  generateRandomDeck,
   getSelectedDeckId,
   heroName,
   loadDecks,
   newDeck,
+  restorePresets,
   saveDecks,
   setSelectedDeckId,
   validateSavedDeck,
@@ -23,6 +26,16 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
   const [importCode, setImportCode] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deletingDeck, setDeletingDeck] = useState<SavedDeck | null>(null);
+
+  useEffect(() => {
+    if (!deletingDeck) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDeletingDeck(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [deletingDeck]);
 
   const persist = (next: SavedDeck[]) => {
     setDecks(next);
@@ -46,6 +59,40 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     setError(null);
   };
 
+  const createRandomDeck = () => {
+    const randomHero = heroes[Math.floor(Math.random() * heroes.length)] ?? heroes[0]!;
+    const playableLands = LAND_TYPES.filter((l) => l !== 'rainbow');
+    const l1 = playableLands[Math.floor(Math.random() * playableLands.length)] ?? 'blue';
+    const l2 = playableLands[Math.floor(Math.random() * playableLands.length)] ?? 'corn';
+    const randomLands: LandType[] = [l1, l1, l2, l2];
+    const randomCards = generateRandomDeck(randomHero.id, randomLands, []);
+
+    const deck: SavedDeck = {
+      id: `deck-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`,
+      name: `Случайная (${randomHero.name})`,
+      heroId: randomHero.id,
+      lands: randomLands,
+      cards: randomCards,
+    };
+    persist([...decks, deck]);
+    setSelectedId(deck.id);
+    setSelectedDeckId(deck.id);
+    setMessage(`Создана случайная колода «${deck.name}» (40 карт)`);
+    setError(null);
+  };
+
+  const onRestorePresets = () => {
+    const updated = restorePresets();
+    setDecks(updated);
+    if (!updated.some((d) => d.id === selectedId)) {
+      const nextId = updated[0]?.id ?? null;
+      setSelectedId(nextId);
+      if (nextId) setSelectedDeckId(nextId);
+    }
+    setMessage('Стандартные пресеты (Бимо и Билли) восстановлены');
+    setError(null);
+  };
+
   const duplicate = (deck: SavedDeck) => {
     const copy: SavedDeck = {
       ...deck,
@@ -58,23 +105,30 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     setMessage(`Создана копия «${deck.name}»`);
   };
 
-  const remove = (deck: SavedDeck) => {
-    if (!confirm(`Удалить колоду «${deck.name}»?`)) return;
+  const confirmDelete = () => {
+    if (!deletingDeck) return;
     if (decks.length <= 1) {
       setError('Нужна хотя бы одна колода');
+      setDeletingDeck(null);
       return;
     }
-    const next = decks.filter((d) => d.id !== deck.id);
+    const next = decks.filter((d) => d.id !== deletingDeck.id);
     persist(next);
-    if (selectedId === deck.id) {
-      setSelectedId(next[0]!.id);
-      setSelectedDeckId(next[0]!.id);
+    if (selectedId === deletingDeck.id) {
+      const nextId = next[0]?.id ?? null;
+      setSelectedId(nextId);
+      if (nextId) setSelectedDeckId(nextId);
     }
-    if (codePanel?.deck.id === deck.id) setCodePanel(null);
-    setMessage(`Колода «${deck.name}» удалена`);
+    if (codePanel?.deck.id === deletingDeck.id) setCodePanel(null);
+    setMessage(`Колода «${deletingDeck.name}» удалена`);
+    setDeletingDeck(null);
   };
 
   const makeActive = (deck: SavedDeck) => {
+    if (deck.cards.length < CONFIG.deckSize) {
+      setError(`Нельзя выбрать неполную колоду: ${deck.cards.length}/${CONFIG.deckSize} карт`);
+      return;
+    }
     setSelectedId(deck.id);
     setSelectedDeckId(deck.id);
     setMessage(`Активная колода: «${deck.name}»`);
@@ -127,9 +181,25 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
           <span className="eyebrow">Card Wars</span>
           <h1>Мои колоды</h1>
         </div>
-        <button className="create-btn" onClick={createDeck}>
-          + Создать колоду
-        </button>
+        <div className="decks-header-actions">
+          <button
+            className="cw-random-btn"
+            onClick={createRandomDeck}
+            title="Создать готовую сбалансированную колоду со случайным героем и землями"
+          >
+            🎲 + Случайная колода
+          </button>
+          <button
+            className="restore-presets-btn"
+            onClick={onRestorePresets}
+            title="Восстановить стартовые колоды Бимо и Билли без удаления созданных вами"
+          >
+            🔄 Восстановить пресеты
+          </button>
+          <button className="create-btn" onClick={createDeck}>
+            + Создать колоду
+          </button>
+        </div>
       </header>
       <p className="decks-subtitle">Выберите активную колоду или соберите новую</p>
 
@@ -140,15 +210,21 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
         {decks.map((deck) => {
           const problems = validateSavedDeck(deck);
           const active = selectedId === deck.id;
+          const isComplete = deck.cards.length === CONFIG.deckSize;
           return (
             <article key={deck.id} className={`deck-card ${active ? 'active' : ''}`}>
               {active && <span className="active-badge">активная</span>}
+              {!isComplete && (
+                <span className="incomplete-badge">
+                  Не готова ({deck.cards.length}/{CONFIG.deckSize})
+                </span>
+              )}
               <div className="deck-card-top">
                 <h3 className="deck-name">{deck.name}</h3>
               </div>
               <div className="deck-stats">
                 <span className="deck-stat deck-stat--hero">{heroName(deck.heroId)}</span>
-                <span className={`deck-stat ${deck.cards.length === CONFIG.deckSize ? 'deck-stat--ok' : 'deck-stat--warn'}`}>
+                <span className={`deck-stat ${isComplete ? 'deck-stat--ok' : 'deck-stat--warn'}`}>
                   {deck.cards.length} / {CONFIG.deckSize} карт
                 </span>
                 <span className="deck-stat">{deck.lands.length} земли</span>
@@ -158,8 +234,13 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
                 {problems[0] ?? 'Колода готова к игре'}
               </div>
               <div className="deck-actions">
-                <button className="select-btn" onClick={() => makeActive(deck)} disabled={active}>
-                  {active ? 'Выбрана' : 'Выбрать'}
+                <button
+                  className="select-btn"
+                  onClick={() => makeActive(deck)}
+                  disabled={active || !isComplete}
+                  title={!isComplete ? `Колода не готова (${deck.cards.length}/${CONFIG.deckSize} карт)` : active ? 'Колода уже выбрана' : 'Выбрать колоду'}
+                >
+                  {active ? 'Выбрана' : !isComplete ? `Не готова (${deck.cards.length}/${CONFIG.deckSize})` : 'Выбрать'}
                 </button>
                 <button className="edit-btn" onClick={() => setEditing(deck)}>
                   Изменить
@@ -170,7 +251,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
                 <button className="edit-btn" onClick={() => duplicate(deck)}>
                   Копия
                 </button>
-                <button className="delete-btn" onClick={() => remove(deck)}>
+                <button className="delete-btn" onClick={() => setDeletingDeck(deck)}>
                   Удалить
                 </button>
               </div>
@@ -182,6 +263,43 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
           + Создать новую колоду
         </button>
       </div>
+
+      {deletingDeck && (
+        <div
+          className="cw-modal-backdrop"
+          onClick={() => setDeletingDeck(null)}
+          role="presentation"
+        >
+          <div
+            className="cw-modal-box"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-deck-dialog-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="delete-deck-dialog-title" className="cw-modal-title">
+              Удалить колоду?
+            </h2>
+            <p className="cw-modal-body">
+              Вы уверены, что хотите удалить колоду «<strong>{deletingDeck.name}</strong>»? Это действие нельзя отменить.
+            </p>
+            <div className="cw-modal-actions">
+              <button
+                className="cw-btn-secondary"
+                onClick={() => setDeletingDeck(null)}
+              >
+                Отмена
+              </button>
+              <button
+                className="cw-btn-danger"
+                onClick={confirmDelete}
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {codePanel && (
         <section className="code-panel ui-card">

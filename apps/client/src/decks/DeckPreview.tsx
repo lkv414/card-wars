@@ -1,7 +1,6 @@
-import { useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
-import { cards, heroes, type CardData, type LandType } from '@card-wars/content';
+import { useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
+import { catalog, cards, heroes, type CardData, type LandType } from '@card-wars/content';
 import { computeZoomOrigin } from './cardZoom';
-
 import { LAND_META, landImageUrl } from './landImages';
 
 const cardById = new Map(cards.map((c) => [c.id, c]));
@@ -34,6 +33,26 @@ export function DeckPreview({
   const [holdKey, setHoldKey] = useState<string | null>(null);
   const timerRef = useRef<number | null>(null);
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
+
+  const { manaCurve, typeCounts } = useMemo(() => {
+    const curve: Record<'0' | '1' | '2' | '3+', number> = { '0': 0, '1': 0, '2': 0, '3+': 0 };
+    const types = { creature: 0, spell: 0, building: 0 };
+    for (const cardId of deck.cards) {
+      const card = catalog.getCard(cardId) ?? cardById.get(cardId);
+      if (!card) continue;
+      if (card.cost <= 0) curve['0']++;
+      else if (card.cost === 1) curve['1']++;
+      else if (card.cost === 2) curve['2']++;
+      else curve['3+']++;
+
+      if (card.type === 'creature') types.creature++;
+      else if (card.type === 'spell') types.spell++;
+      else if (card.type === 'building') types.building++;
+    }
+    return { manaCurve: curve, typeCounts: types };
+  }, [deck.cards]);
+
+  const maxCurve = Math.max(1, manaCurve['0'], manaCurve['1'], manaCurve['2'], manaCurve['3+']);
 
   const clearHold = () => {
     if (timerRef.current !== null) {
@@ -115,9 +134,49 @@ export function DeckPreview({
         </div>
       </div>
 
+      <div className="deck-preview__meta">
+        <div className="cw-type-breakdown" aria-label="Состав колоды по типам">
+          <span className="cw-type-pill cw-type-pill--creature" title={`Существа: ${typeCounts.creature}`}>
+            <span className="cw-type-icon" aria-hidden="true">⚔️</span>
+            <span className="cw-type-count">{typeCounts.creature}</span>
+          </span>
+          <span className="cw-type-pill cw-type-pill--spell" title={`Заклинания: ${typeCounts.spell}`}>
+            <span className="cw-type-icon" aria-hidden="true">✨</span>
+            <span className="cw-type-count">{typeCounts.spell}</span>
+          </span>
+          <span className="cw-type-pill cw-type-pill--building" title={`Строения: ${typeCounts.building}`}>
+            <span className="cw-type-icon" aria-hidden="true">🏛️</span>
+            <span className="cw-type-count">{typeCounts.building}</span>
+          </span>
+        </div>
+
+        <div
+          className="cw-mana-curve"
+          aria-label="Распределение по стоимости (кривая маны)"
+          title={`Кривая маны: 0 AP (${manaCurve['0']}), 1 AP (${manaCurve['1']}), 2 AP (${manaCurve['2']}), 3+ AP (${manaCurve['3+']})`}
+        >
+          {(['0', '1', '2', '3+'] as const).map((costKey) => {
+            const count = manaCurve[costKey];
+            const pct = count > 0 ? Math.max(16, Math.round((count / maxCurve) * 100)) : 0;
+            return (
+              <div key={costKey} className="cw-curve-col" title={`${costKey} AP: ${count} карт`}>
+                <div className="cw-curve-bar-wrap">
+                  {count > 0 && <span className="cw-curve-count">{count}</span>}
+                  <div
+                    className="cw-curve-bar"
+                    style={{ height: `${pct}%` }}
+                  />
+                </div>
+                <span className="cw-curve-label">{costKey}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="deck-preview__cards">
         {deck.cards.map((cardId, idx) => {
-          const card: CardData | undefined = cardById.get(cardId);
+          const card: CardData | undefined = catalog.getCard(cardId) ?? cardById.get(cardId);
           const key = `card-${idx}`;
           return (
             <div

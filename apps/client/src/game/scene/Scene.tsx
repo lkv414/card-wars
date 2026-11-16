@@ -192,7 +192,7 @@ function CameraRig() {
     const targetPid = resolveTargetPlayer(v, useGame.getState().ui.cameraMode, snap);
 
     if (direction === 'down') {
-      if (!isTop) snapCameraTop();
+      if (!isTop) snapCameraTop(targetPid);
     } else if (direction === 'up') {
       if (isTop) snapCameraPlayer(targetPid);
     } else if (direction === 'left') {

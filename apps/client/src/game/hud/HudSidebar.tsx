@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CONFIG, type PlayerView } from '@card-wars/protocol';
 import {
   cycleCameraPlayer,
   emitEmote,
   sendCommand,
   setCameraSnap,
+  setQuality,
   setUi,
   showHint,
   snapCameraPlayer,
   snapCameraTop,
   useGame,
 } from '../../store';
+import { heroNameOf } from './names';
 
 const EMOTE_LINES = [
   { id: 'floop', label: '«Флюпни это!»', text: 'Флюпни это!', emoji: '🌀' },
@@ -33,21 +35,61 @@ export interface HudSidebarProps {
   onHurryPulse: () => void;
 }
 
+function phaseRu(phase: string): string {
+  return phase === 'main' ? 'Основная' : phase === 'combat' ? 'Бой' : 'Добор';
+}
+
+function TimerBadge({ remainingMs, isPulsing }: { remainingMs: number; isPulsing?: boolean }) {
+  const [now, setNow] = useState(Date.now());
+  const anchor = useRef({ remainingMs, at: Date.now() });
+  useEffect(() => {
+    anchor.current = { remainingMs, at: Date.now() };
+    setNow(Date.now());
+  }, [remainingMs]);
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(id);
+  }, []);
+  const left = Math.max(0, anchor.current.remainingMs - (now - anchor.current.at));
+  const seconds = Math.ceil(left / 1000);
+  return (
+    <span className={`hud-timer-badge ${left < 15_000 ? 'low' : ''} ${isPulsing ? 'timer-hurry-pulse' : ''}`}>
+      {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}
+    </span>
+  );
+}
+
+export function downloadJournal(journal: string[], code: string): () => void {
+  return () => {
+    const blob = new Blob([journal.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `card-wars-${code}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+}
+
 /**
  * Dedicated right-hand action sidebar (Split-Screen layout):
- * Keeps all game controls cleanly organized instead of floating over the 3D table.
+ * Consolidates all game HUD elements (room info, player status, roster, turn actions, camera snaps, history, emotes)
+ * so that the 3D game arena remains 100% clean and unobstructed.
  */
 export function HudSidebar({
-  code: _code,
+  code,
   view,
   unreadCount,
   journalOpen,
   onToggleJournal,
-  isHurryPulsing: _isHurryPulsing,
+  isHurryPulsing,
   onHurryPulse,
 }: HudSidebarProps) {
+  const quality = useGame((s) => s.ui.quality);
   const cameraMode = useGame((s) => s.ui.cameraMode);
   const cameraSnap = useGame((s) => s.ui.cameraSnap);
+  const timer = useGame((s) => s.timer);
+
   const me = view.players[view.me]!;
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main';
@@ -145,7 +187,7 @@ export function HudSidebar({
     return 'В бой';
   })();
 
-  const phaseLabel = view.phase === 'main' ? 'Основная' : view.phase === 'combat' ? 'Бой' : 'Добор';
+  const phaseLabel = phaseRu(view.phase);
 
   return (
     <>
@@ -169,7 +211,7 @@ export function HudSidebar({
           aria-label="Открыть панель действий"
         >
           <span className="btn-icon">⚡</span>
-          <span className="btn-label">Действия</span>
+          <span className="btn-label">Панель</span>
           {unreadCount > 0 && <span className="mobile-badge">{unreadCount}</span>}
         </button>
       </div>
@@ -190,33 +232,141 @@ export function HudSidebar({
         }`}
         aria-label="Панель действий матча"
       >
-        {/* Header / Collapse Bar */}
+        {/* Header: Room Code, Round/Turn, Quality HD/SD, Collapse Button */}
         <div className="hud-sidebar-header">
+          <div className="hud-sidebar-header-top">
+            <span className="hud-room-code" title={`Комната ${code}`}>
+              🏠 {code}
+            </span>
+            <div className="hud-header-actions">
+              <button
+                className="hud-quality-toggle mini"
+                onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}
+                title={`Качество графики: ${quality === 'high' ? 'высокое (HD)' : 'низкое (SD)'}`}
+                aria-label={`Качество: ${quality === 'high' ? 'HD' : 'SD'}`}
+              >
+                {quality === 'high' ? 'HD' : 'SD'}
+              </button>
+              <button
+                className="hud-sidebar-toggle-btn"
+                onClick={toggleDesktopCollapse}
+                title={desktopCollapsed ? 'Развернуть панель' : 'Свернуть панель'}
+                aria-label={desktopCollapsed ? 'Развернуть панель' : 'Свернуть панель'}
+              >
+                {desktopCollapsed ? '◀' : '▶'}
+              </button>
+              <button
+                className="hud-sidebar-mobile-close"
+                onClick={() => setMobileDrawerOpen(false)}
+                aria-label="Закрыть панель"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
           <div className="hud-sidebar-meta">
-            <span className="hud-sidebar-title">Ход {view.turn}</span>
+            <span className="hud-sidebar-title">
+              {view.status === 'running' ? `Круг ${view.round} · Ход ${view.turn}` : 'Матч'}
+            </span>
             <span className={`hud-sidebar-phase-badge phase-${view.phase}`}>
               {phaseLabel}
             </span>
           </div>
-          <button
-            className="hud-sidebar-toggle-btn"
-            onClick={toggleDesktopCollapse}
-            title={desktopCollapsed ? 'Развернуть панель' : 'Свернуть панель'}
-            aria-label={desktopCollapsed ? 'Развернуть панель' : 'Свернуть панель'}
-          >
-            {desktopCollapsed ? '◀' : '▶'}
-          </button>
-          <button
-            className="hud-sidebar-mobile-close"
-            onClick={() => setMobileDrawerOpen(false)}
-            aria-label="Закрыть панель"
-          >
-            ✕
-          </button>
         </div>
 
         <div className="hud-sidebar-scroll">
-          {/* Section 1: Primary Action (Combat / Turn) */}
+          {/* Section 0: My Status (Lives, Actions, Hand) */}
+          <div className="hud-sidebar-section status-section">
+            <div className="hud-status-card">
+              <div className="hud-status-header">
+                <span className="status-hero">{heroNameOf(me.heroId)}</span>
+                <span className="status-nick">{me.nickname} (вы)</span>
+              </div>
+              <div className="hud-status-metrics">
+                <div className="metric-pill metric-lives" title="Жизни">
+                  <span className="metric-icon">❤</span>
+                  <span className="metric-val">{me.lives}</span>
+                  {me.maxLives !== CONFIG.startingLives && (
+                    <span className="metric-sub">/{me.maxLives}</span>
+                  )}
+                </div>
+                <div className="metric-pill metric-actions" title="Оставшиеся действия">
+                  <span className="metric-icon">⚡</span>
+                  <span className="metric-val">{me.actions}</span>
+                </div>
+                <div className="metric-pill metric-hand" title="Карт в руке">
+                  <span className="metric-icon">🎴</span>
+                  <span className="metric-val">{me.handCount}</span>
+                </div>
+              </div>
+              {myTeam && (
+                <div className="hud-team-status">
+                  <span className="hint">Команда {myTeam.id === 'team-a' ? 'A' : 'B'}:</span>
+                  <span className="team-lives">❤ {myTeam.lives}/{myTeam.maxLives}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 1: Players Roster with Camera Click */}
+          <div className="hud-sidebar-section players-section">
+            <div className="section-label">
+              <span>👥 Игроки ({view.order.length})</span>
+            </div>
+            <div className="hud-players-list" role="list">
+              {view.order.map((pid) => {
+                const p = view.players[pid]!;
+                const isCurrentMe = pid === view.me;
+                const isActive = view.activePlayers.includes(pid);
+                const isFocused =
+                  cameraSnap === `player_${pid}` ||
+                  cameraSnap === `top_${pid}` ||
+                  (isCurrentMe && (cameraSnap === 'self' || cameraSnap === 'top' || !cameraSnap));
+                const playerTimer = timer?.timers.find((t) => t.player === pid && t.running);
+
+                return (
+                  <button
+                    key={pid}
+                    type="button"
+                    className={`hud-player-row ${p.eliminated ? 'eliminated' : ''} ${
+                      isActive ? 'active-turn' : ''
+                    } ${isFocused ? 'focused' : ''}`}
+                    onClick={() => snapCameraPlayer(pid)}
+                    title={`Вид от лица игрока ${p.nickname} (клик для фокуса камеры)`}
+                  >
+                    <div className="player-row-left">
+                      <span className="player-cam-pin" aria-hidden="true">
+                        {isFocused ? '🎯' : '👁️'}
+                      </span>
+                      <div className="player-name-block">
+                        <span className="player-nickname">
+                          {p.nickname} {isCurrentMe ? '(вы)' : ''}
+                        </span>
+                        <span className="player-hero">{heroNameOf(p.heroId)}</span>
+                      </div>
+                    </div>
+                    <div className="player-row-right">
+                      <span className="player-hp">❤ {p.lives}</span>
+                      {p.eliminated ? (
+                        <span className="badge badge-dead">💀</span>
+                      ) : isActive ? (
+                        playerTimer ? (
+                          <TimerBadge remainingMs={playerTimer.remainingMs} isPulsing={isHurryPulsing} />
+                        ) : (
+                          <span className="badge badge-turn">ходит</span>
+                        )
+                      ) : p.battleReady ? (
+                        <span className="badge badge-ready">✓</span>
+                      ) : null}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section 2: Primary Action (Combat / Turn) */}
           <div className="hud-sidebar-section primary-section">
             <button
               className={`hud-sidebar-battle-btn ${
@@ -257,7 +407,7 @@ export function HudSidebar({
             )}
           </div>
 
-          {/* Section 2: Turn Actions */}
+          {/* Section 3: Turn Actions */}
           <div className="hud-sidebar-section actions-section">
             <button
               className="hud-sidebar-action-btn draw-btn"
@@ -300,7 +450,7 @@ export function HudSidebar({
               })}
           </div>
 
-          {/* Section 3: Camera Snap Controls */}
+          {/* Section 4: Camera Snap Controls */}
           <div className="hud-sidebar-section camera-section">
             <div className="section-label">
               <span>🎥 Камера</span>
@@ -308,7 +458,9 @@ export function HudSidebar({
             <div className="hud-camera-grid" role="group" aria-label="Переключение камеры">
               <button
                 className={`cam-grid-btn ${
-                  cameraSnap === 'top' || cameraMode === 'top' ? 'active' : ''
+                  cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top'
+                    ? 'active'
+                    : ''
                 }`}
                 onClick={() => snapCameraTop()}
                 title="Вид строго сверху"
@@ -361,7 +513,7 @@ export function HudSidebar({
             </div>
           </div>
 
-          {/* Section 4: History & Emotes */}
+          {/* Section 5: History & Emotes */}
           <div className="hud-sidebar-section utils-section">
             <button
               className={`hud-sidebar-action-btn journal-btn ${journalOpen ? 'active' : ''}`}
@@ -372,7 +524,36 @@ export function HudSidebar({
               <span className="btn-icon">📜</span>
               <span className="btn-label">История</span>
               {unreadCount > 0 && <span className="btn-counter-badge">{unreadCount}</span>}
+              <span className="btn-dropdown-arrow">{journalOpen ? '▲' : '▼'}</span>
             </button>
+
+            {/* Inline expandable journal container */}
+            {journalOpen && (
+              <div className="hud-sidebar-journal-panel" role="region" aria-label="История боя">
+                <div className="journal-panel-head">
+                  <span>Журнал ({view.journal.length})</span>
+                  <button
+                    type="button"
+                    className="journal-dl-btn mini"
+                    onClick={downloadJournal(view.journal, code)}
+                    title="Скачать историю в текстовом файле (.txt)"
+                  >
+                    ⬇ .txt
+                  </button>
+                </div>
+                <div className="journal-panel-scroll">
+                  {view.journal.length === 0 ? (
+                    <div className="journal-empty hint">История пока пуста</div>
+                  ) : (
+                    view.journal.slice(-60).map((line, idx) => (
+                      <div key={idx} className="journal-log-entry">
+                        {line}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="emotes-container">
               <button
@@ -420,7 +601,7 @@ export function HudSidebar({
             </div>
           </div>
 
-          {/* Section 5: Surrender (Danger) */}
+          {/* Section 6: Surrender (Danger) */}
           {view.status === 'running' && (
             <div className="hud-sidebar-section danger-section">
               <button

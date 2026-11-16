@@ -69,6 +69,7 @@ function makeMockView(overrides?: Partial<PlayerView>): PlayerView {
 describe('cameraSnap', () => {
   it('identifies top snap correctly', () => {
     expect(isTopSnap('top')).toBe(true);
+    expect(isTopSnap('top_p1')).toBe(true);
     expect(isTopSnap('player_p0')).toBe(false);
     expect(isTopSnap('self')).toBe(false);
   });
@@ -76,17 +77,20 @@ describe('cameraSnap', () => {
   it('resolves target player based on camera mode and snap', () => {
     const view = makeMockView();
 
-    // follow mode targets active player
-    expect(resolveTargetPlayer(view, 'follow', 'top')).toBe('p0');
-    expect(resolveTargetPlayer(makeMockView({ activePlayers: ['p1'] }), 'follow', 'top')).toBe('p1');
-
-    // self mode always targets me
-    expect(resolveTargetPlayer(view, 'self', 'player_p1')).toBe('p0');
-
-    // manual mode targets requested snap
+    // explicit player snap targets that player
+    expect(resolveTargetPlayer(view, 'self', 'player_p1')).toBe('p1');
     expect(resolveTargetPlayer(view, 'manual', 'player_p1')).toBe('p1');
+    expect(resolveTargetPlayer(view, 'manual', 'top_p1')).toBe('p1');
     expect(resolveTargetPlayer(view, 'manual', 'player_me')).toBe('p0');
     expect(resolveTargetPlayer(view, 'manual', 'player_unknown')).toBe('p0');
+
+    // self mode / self snap targets me
+    expect(resolveTargetPlayer(view, 'self', 'self')).toBe('p0');
+    expect(resolveTargetPlayer(view, 'self', undefined)).toBe('p0');
+
+    // follow mode targets active player when no explicit player snap
+    expect(resolveTargetPlayer(view, 'follow', 'top')).toBe('p0');
+    expect(resolveTargetPlayer(makeMockView({ activePlayers: ['p1'] }), 'follow', 'top')).toBe('p1');
   });
 
   it('cycles players in circular order', () => {

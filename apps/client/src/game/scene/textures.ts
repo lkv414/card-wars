@@ -371,6 +371,83 @@ export function textSprite(text: string, color: string): THREE.CanvasTexture {
   return texture;
 }
 
+export const LAND_ART_URLS: Record<LandType, string | null> = {
+  blue: '/content/lands/blue-plains-0b69d6a.webp',
+  corn: '/content/lands/cornfield-64b3840.webp',
+  good: '/content/lands/nice-lands-1ea01c4.webp',
+  ice: '/content/lands/icy-lands-35b4c74.webp',
+  sand: '/content/lands/sandy-lands-1a7e5ef.webp',
+  swamp: '/content/lands/useless-swamps-2918fd8.webp',
+  ghost: '/content/lands/lava-lands-1b34cd3.webp',
+  rainbow: null,
+};
+
+function requestLandScan(
+  type: LandType,
+  frozen: boolean,
+  canvas: HTMLCanvasElement,
+  texture: THREE.CanvasTexture,
+): void {
+  const url = LAND_ART_URLS[type];
+  if (!url) return;
+  const key = `land-scan-${type}-${frozen ? 1 : 0}`;
+  if (scanStatus.has(key)) return;
+  scanStatus.set(key, 'loading');
+
+  const img = new Image();
+  img.onload = () => {
+    scanStatus.set(key, 'done');
+    const W = canvas.width;
+    const H = canvas.height;
+    const ctx = canvas.getContext('2d')!;
+
+    ctx.save();
+    ctx.clearRect(0, 0, W, H);
+    roundRect(ctx, 4, 4, W - 8, H - 8, 18);
+    ctx.clip();
+
+    // Cover 133x192 canvas with high-res land scan
+    const scale = Math.max(W / img.width, H / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    ctx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+
+    // Subtle center divider dividing creature half (top) and building half (bottom)
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+
+    // Front combat line indicator
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.fillRect(0, 0, W, 6);
+
+    if (frozen) {
+      ctx.fillStyle = 'rgba(160, 220, 245, 0.48)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.lineWidth = 4;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo((i * W) / 5, 0);
+        ctx.lineTo((i * W) / 5 + 30, H);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+
+    texture.needsUpdate = true;
+    notifyScanLoaded();
+  };
+  img.onerror = () => {
+    scanStatus.delete(key);
+    notifyScanLoaded();
+  };
+  img.src = url;
+}
+
 export function landTexture(type: LandType, frozen: boolean, flipped: boolean): THREE.CanvasTexture {
   const key = `land-${type}-${frozen ? 1 : 0}-${flipped ? 1 : 0}`;
   const cached = tokenCache.get(key);
@@ -435,5 +512,10 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
   tokenCache.set(key, texture);
+
+  if (!flipped && LAND_ART_URLS[type]) {
+    requestLandScan(type, frozen, canvas, texture);
+  }
+
   return texture;
 }

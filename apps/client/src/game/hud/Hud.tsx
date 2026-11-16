@@ -1,23 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import { CONFIG, type PlayerView } from '@card-wars/protocol';
-import { sendCommand, setCameraMode, setQuality, setUi, useGame } from '../../store';
+import { useEffect, useState } from 'react';
+import type { PlayerView } from '@card-wars/protocol';
+import { sendCommand, setUi, useGame } from '../../store';
 import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
 import { CardZoomModal } from './CardZoomModal';
-import { HudSidebar } from './HudSidebar';
+import { downloadJournal, HudSidebar } from './HudSidebar';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
 export function Hud({ code }: { code: string }) {
   const view = useGame((s) => s.view)!;
-  const timer = useGame((s) => s.timer);
   const error = useGame((s) => s.error);
-  const quality = useGame((s) => s.ui.quality);
-  const cameraMode = useGame((s) => s.ui.cameraMode);
   const journalOpen = useGame((s) => s.ui.journalOpen);
   const unfreezePrompt = useGame((s) => s.ui.unfreezePrompt);
   const me = view.players[view.me]!;
-  const myTeam = me.teamId ? view.teams?.[me.teamId] ?? null : null;
   // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
   const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
   const targeting = useGame((st) => st.ui.targeting);
@@ -289,86 +285,14 @@ export function Hud({ code }: { code: string }) {
     return null;
   })();
 
-  const activeNames = view.activePlayers
-    .map((pid) => `${view.players[pid]?.nickname ?? pid}${view.players[pid]?.battleReady ? ' ✓' : ''}`)
-    .join(', ');
-
   return (
     <>
       <div className="hud hud-viewport-overlay">
-        <div className="hud-top">
-          <b>Комната {code}</b>
-          {view.status === 'running' && (
-            <span>
-              круг {view.round} · ход {view.turn} · {phaseRu(view.phase)}
-              {view.mode === 'teams' && view.teamVariant
-                ? ` · 2 на 2 (${view.teamVariant === 'wall' ? 'стенка' : 'соседи'})`
-                : ''} · сейчас: {activeNames}
-            </span>
-          )}
-          {timer?.paused && <span className="timer paused">Пауза: ожидание игрока</span>}
-          {!timer?.paused &&
-            timer?.timers
-              .filter((t) => t.running)
-              .map((t) => (
-                <span key={t.player} className="timer-line">
-                  {view.players[t.player]?.nickname}:{' '}
-                  <TimerBadge
-                    key={timer.serverNowMs}
-                    remainingMs={t.remainingMs}
-                    isPulsing={isHurryPulsing}
-                  />
-                </span>
-              ))}
-          <span className="hud-spacer" />
-          <span className="hint">
-            камера:{' '}
-            <button className="mini" onClick={() => setCameraMode(cameraMode === 'follow' ? 'self' : 'follow')}>
-              {cameraMode === 'follow' ? 'за ходом' : 'своя сторона'}
-            </button>
-          </span>
-          <span className="hint">
-            кач-во:{' '}
-            <button className="mini" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
-              {quality === 'high' ? 'высокое' : 'низкое'}
-            </button>
-          </span>
-        </div>
 
-        <div className="hud-stats">
-          <span>❤ {me.lives}{me.maxLives !== CONFIG.startingLives ? ` / ${me.maxLives}` : ''}</span>
-          {myTeam && <span className="hint">команда: ❤ {myTeam.lives} / {myTeam.maxLives}</span>}
-          <span>действия: {me.actions}</span>
-          <span>рука: {me.handCount}</span>
-          {view.mode === 'teams' && view.activePlayers.includes(view.me) && (
-            <span className={me.battleReady ? 'ready-ok' : 'hint'}>
-              {me.battleReady ? 'готов к бою' : 'не готов к бою'}
-            </span>
-          )}
-        </div>
 
-        <div className="hud-players">
-          {view.order.map((pid) => {
-            const p = view.players[pid]!;
-            const team = p.teamId ? view.teams?.[p.teamId] : null;
-            return (
-              <div key={pid} className={`hud-player ${p.eliminated ? 'dead' : ''}`}>
-                <b>{p.nickname}</b>
-                {team && <span className="hint"> · {team.id === 'team-a' ? 'A' : 'B'}</span>}
-                <span className="lives"> ❤ {p.lives}</span>
-                <span className="hint">
-                  {p.eliminated
-                    ? ' выбыл'
-                    : view.activePlayers.includes(pid)
-                      ? p.battleReady
-                        ? ' готов'
-                        : ' ходит'
-                      : ''}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+
+
+
 
         {/* Comic speech bubble for taunts / emotes */}
         {activeEmote && (
@@ -530,41 +454,7 @@ export function Hud({ code }: { code: string }) {
         </div>
       )}
 
-      {/* Floating round button for mobile HUD (viewport < 768px) with unread count badge */}
-      {!journalOpen && (
-        <button
-          className="hud-journal-fab"
-          onClick={toggleJournal}
-          aria-label={`Журнал боя${unreadCount > 0 ? ` (${unreadCount} непрочитанных)` : ''}`}
-          title="Журнал боя"
-        >
-          <span className="hud-journal-icon" aria-hidden="true">📜</span>
-          {unreadCount > 0 && (
-            <span className="hud-journal-badge">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-        </button>
-      )}
 
-      {journalOpen && (
-        <div className="hud-journal-backdrop" onClick={() => setUi({ journalOpen: false })} />
-      )}
-
-      <div className={`hud-journal ${journalOpen ? '' : 'collapsed'}`}>
-        <div className="journal-head">
-          <b>Журнал</b>
-          <button className="mini" onClick={toggleJournal}>
-            {journalOpen ? 'свернуть' : 'развернуть'}
-          </button>
-        </div>
-        {journalOpen &&
-          view.journal.slice(-30).map((line, i) => (
-            <div key={i} className="log-line">
-              {line}
-            </div>
-          ))}
-      </div>
 
       {view.status === 'mulligan' && (
         <div className="overlay">
@@ -727,38 +617,4 @@ const OPTION_LABELS: Record<string, string> = {
   discard: 'Сбросить',
 };
 
-function phaseRu(phase: string): string {
-  return phase === 'main' ? 'основная фаза' : phase === 'draw' ? 'добор' : 'бой';
-}
 
-function TimerBadge({ remainingMs, isPulsing }: { remainingMs: number; isPulsing?: boolean }) {
-  const [now, setNow] = useState(Date.now());
-  const anchor = useRef({ remainingMs, at: Date.now() });
-  useEffect(() => {
-    anchor.current = { remainingMs, at: Date.now() };
-    setNow(Date.now());
-  }, [remainingMs]);
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 250);
-    return () => clearInterval(id);
-  }, []);
-  const left = Math.max(0, anchor.current.remainingMs - (now - anchor.current.at));
-  const seconds = Math.ceil(left / 1000);
-  return (
-    <span className={`timer ${left < 15_000 ? 'low' : ''} ${isPulsing ? 'timer-hurry-pulse' : ''}`}>
-      {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}
-    </span>
-  );
-}
-
-function downloadJournal(journal: string[], code: string): () => void {
-  return () => {
-    const blob = new Blob([journal.join('\r\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `card-wars-${code}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-}

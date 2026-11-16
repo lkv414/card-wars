@@ -18,7 +18,9 @@ export interface CameraAnchorState {
 
 /** Check if a snap or mode identifier represents the top-down anchor. */
 export function isTopSnap(snap?: string, mode?: string): boolean {
-  return snap === 'top' || mode === 'top';
+  if (snap === 'top' || snap?.startsWith('top_')) return true;
+  if (!snap && mode === 'top') return true;
+  return false;
 }
 
 /** Resolves the target player ID based on view, mode, and snap identifier. */
@@ -27,22 +29,29 @@ export function resolveTargetPlayer(
   cameraMode: CameraMode,
   cameraSnap?: string,
 ): string {
-  if (cameraMode === 'follow' || cameraSnap === 'follow') {
-    if (view.activePlayers.includes(view.me)) return view.me;
-    return view.activePlayers[0] ?? view.me;
-  }
-  if (cameraMode === 'self' || cameraSnap === 'self') {
-    return view.me;
-  }
-  if (cameraMode === 'opponents' || cameraSnap === 'opponents') {
-    const aliveEnemies = view.order.filter((id) => id !== view.me && !view.players[id]?.eliminated);
-    return aliveEnemies[0] ?? view.me;
-  }
+  // Explicit snap identifiers always take precedence
   if (cameraSnap && cameraSnap.startsWith('player_')) {
     const rawPid = cameraSnap.slice(7);
     if (rawPid === 'me' || rawPid === view.me) return view.me;
     if (view.players[rawPid] && !view.players[rawPid].eliminated) return rawPid;
-  } else if (cameraSnap && view.players[cameraSnap] && !view.players[cameraSnap].eliminated) {
+  }
+  if (cameraSnap && cameraSnap.startsWith('top_')) {
+    const rawPid = cameraSnap.slice(4);
+    if (rawPid === 'me' || rawPid === view.me) return view.me;
+    if (view.players[rawPid] && !view.players[rawPid].eliminated) return rawPid;
+  }
+  if (cameraSnap === 'self' || cameraMode === 'self') {
+    return view.me;
+  }
+  if (cameraSnap === 'follow' || cameraMode === 'follow') {
+    if (view.activePlayers.includes(view.me)) return view.me;
+    return view.activePlayers[0] ?? view.me;
+  }
+  if (cameraSnap === 'opponents' || cameraMode === 'opponents') {
+    const aliveEnemies = view.order.filter((id) => id !== view.me && !view.players[id]?.eliminated);
+    return aliveEnemies[0] ?? view.me;
+  }
+  if (cameraSnap && view.players[cameraSnap] && !view.players[cameraSnap].eliminated) {
     return cameraSnap;
   }
   // Fallback to active player or local player

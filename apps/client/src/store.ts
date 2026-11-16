@@ -147,20 +147,50 @@ export function setCameraMode(cameraMode: CameraMode): void {
 
 export function setCameraSnap(snap: CameraSnap): void {
   safeSetItem('cw-camera-snap', snap);
-  setUi({ cameraSnap: snap });
   if (snap === 'follow' || snap === 'self' || snap === 'top' || snap === 'opponents') {
-    setCameraMode(snap);
+    setUi({ cameraSnap: snap, cameraMode: snap });
+  } else {
+    setUi({ cameraSnap: snap, cameraMode: 'manual' });
   }
 }
 
-export function snapCameraTop(): void {
-  setCameraSnap('top');
+export function snapCameraTop(pid?: string): void {
+  const v = useGame.getState().view;
+  if (!v) {
+    setCameraSnap('top');
+    return;
+  }
+  const currentSnap = useGame.getState().ui.cameraSnap;
+  let targetPid = pid;
+  if (!targetPid && currentSnap) {
+    if (currentSnap.startsWith('player_')) {
+      targetPid = currentSnap.slice(7);
+    } else if (currentSnap.startsWith('top_')) {
+      targetPid = currentSnap.slice(4);
+    }
+  }
+  const p = targetPid ? v.players[targetPid] : null;
+  if (targetPid && p && !p.eliminated) {
+    setCameraSnap(targetPid === v.me ? 'top' : `top_${targetPid}`);
+  } else {
+    setCameraSnap('top');
+  }
 }
 
 export function snapCameraPlayer(pid?: string): void {
   const v = useGame.getState().view;
-  const target = pid ?? v?.me ?? 'me';
-  setCameraSnap(target === v?.me ? 'self' : `player_${target}`);
+  if (!v) return;
+  const currentSnap = useGame.getState().ui.cameraSnap;
+  let target = pid;
+  if (!target && currentSnap) {
+    if (currentSnap.startsWith('top_')) {
+      target = currentSnap.slice(4);
+    } else if (currentSnap.startsWith('player_')) {
+      target = currentSnap.slice(7);
+    }
+  }
+  target = target ?? v.me ?? 'me';
+  setCameraSnap(target === v.me ? 'self' : `player_${target}`);
 }
 
 export function cycleCameraPlayer(direction: 'next' | 'prev' = 'next'): void {
@@ -168,22 +198,38 @@ export function cycleCameraPlayer(direction: 'next' | 'prev' = 'next'): void {
   if (!v) return;
   const alive = v.order.filter((id) => !v.players[id]?.eliminated);
   if (alive.length === 0) return;
+  const meIndex = alive.indexOf(v.me);
+  const ordered = meIndex >= 0 ? [...alive.slice(meIndex), ...alive.slice(0, meIndex)] : alive;
+
   const currentSnap = useGame.getState().ui.cameraSnap ?? 'self';
+  const isTop = currentSnap === 'top' || currentSnap.startsWith('top_');
+
   let currentPid = v.me;
   if (currentSnap.startsWith('player_')) {
     const raw = currentSnap.slice(7);
     if (v.players[raw]) currentPid = raw;
+  } else if (currentSnap.startsWith('top_')) {
+    const raw = currentSnap.slice(4);
+    if (v.players[raw]) currentPid = raw;
   } else if (currentSnap === 'opponents') {
-    const enemies = alive.filter((id) => id !== v.me);
+    const enemies = ordered.filter((id) => id !== v.me);
     currentPid = enemies[0] ?? v.me;
   }
-  const idx = alive.indexOf(currentPid);
+
+  const idx = ordered.indexOf(currentPid);
   const nextIdx =
-    direction === 'next'
-      ? (idx + 1) % alive.length
-      : (idx - 1 + alive.length) % alive.length;
-  const nextPid = alive[nextIdx]!;
-  setCameraSnap(nextPid === v.me ? 'self' : `player_${nextPid}`);
+    idx < 0
+      ? 0
+      : direction === 'next'
+        ? (idx + 1) % ordered.length
+        : (idx - 1 + ordered.length) % ordered.length;
+  const nextPid = ordered[nextIdx]!;
+
+  if (isTop) {
+    setCameraSnap(nextPid === v.me ? 'top' : `top_${nextPid}`);
+  } else {
+    setCameraSnap(nextPid === v.me ? 'self' : `player_${nextPid}`);
+  }
 }
 
 let emoteTimeout: ReturnType<typeof setTimeout> | null = null;

@@ -324,7 +324,7 @@ header {
 /* --- 3D-экран и сплит-лейаут с боковой панелью действий --- */
 
 :root {
-  --hud-sidebar-w: 200px;
+  --hud-sidebar-w: 240px;
 }
 
 .game-3d {
@@ -486,13 +486,49 @@ header {
 /* Шапка сайдбара */
 .hud-sidebar-header {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #2c323d;
+  background: rgba(22, 27, 36, 0.9);
+  box-sizing: border-box;
+}
+
+.hud-sidebar-header-top {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid #2c323d;
-  background: rgba(22, 27, 36, 0.8);
-  min-height: 48px;
-  box-sizing: border-box;
+}
+
+.hud-room-code {
+  font-size: 12px;
+  font-weight: 700;
+  color: #cbd5e1;
+  letter-spacing: 0.3px;
+}
+
+.hud-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-quality-toggle {
+  background: rgba(30, 36, 48, 0.85);
+  border: 1px solid #3b4252;
+  color: #94a3b8;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.hud-quality-toggle:hover {
+  background: #2e3848;
+  color: #38bdf8;
+  border-color: #38bdf8;
 }
 
 .hud-sidebar-meta {
@@ -5298,3 +5334,299 @@ button.danger {
 
 
 
+
+/* --- Новые компоненты правой панели (Мой статус, Игроки, Таймер, Журнал) --- */
+
+.hud-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.hud-timer-badge.low {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.hud-timer-badge.timer-hurry-pulse {
+  animation: timer-hurry-glow 1.2s ease-in-out infinite;
+}
+
+/* Статус-карточка текущего игрока */
+.hud-status-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid #283040;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-status-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.hud-status-header .status-hero {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.hud-status-header .status-nick {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.hud-status-metrics {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.metric-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric-pill .metric-icon {
+  font-size: 11px;
+}
+
+.metric-pill .metric-val {
+  font-size: 12px;
+  font-weight: 800;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.metric-pill .metric-sub {
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+.metric-pill.metric-lives .metric-val {
+  color: #f43f5e;
+}
+
+.metric-pill.metric-actions .metric-val {
+  color: #f59e0b;
+}
+
+.metric-pill.metric-hand .metric-val {
+  color: #38bdf8;
+}
+
+.hud-team-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.hud-team-status .team-lives {
+  font-weight: 700;
+  color: #f43f5e;
+}
+
+/* Список игроков */
+.hud-players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hud-player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(18, 24, 34, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hud-player-row:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: #38bdf8;
+  transform: translateX(-1px);
+}
+
+.hud-player-row.focused {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+}
+
+.hud-player-row.active-turn {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.hud-player-row.eliminated {
+  opacity: 0.45;
+  filter: grayscale(0.8);
+}
+
+.player-row-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.player-cam-pin {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.player-name-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.player-nickname {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-hero {
+  font-size: 9px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-row-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.player-hp {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f43f5e;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.player-row-right .badge {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.player-row-right .badge-turn {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.player-row-right .badge-ready {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+.player-row-right .badge-dead {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* Встроенная панель журнала */
+.hud-sidebar-journal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 4px;
+}
+
+.journal-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.journal-dl-btn {
+  padding: 2px 6px;
+  font-size: 10px;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.journal-dl-btn:hover {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.journal-panel-scroll {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  color: #cbd5e1;
+  padding-right: 2px;
+}
+
+.journal-log-entry {
+  line-height: 1.35;
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.journal-empty {
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+  padding: 12px 0;
+}

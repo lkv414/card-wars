@@ -115,6 +115,30 @@ describe('HudSidebar & Store Integration', () => {
     expect(useGame.getState().ui.cameraSnap).toBe('self');
   });
 
+  it('cycles players in top-down mode maintaining top snap', () => {
+    useGame.setState({
+      view: makeMockView({ order: ['p0', 'p1', 'p2'], players: {
+        ...makeMockView().players,
+        p2: { ...makeMockView().players.p1!, id: 'p2', nickname: 'Player 2' },
+      } }),
+    });
+
+    setCameraSnap('top');
+    cycleCameraPlayer('next');
+    expect(useGame.getState().ui.cameraSnap).toBe('top_p1');
+
+    cycleCameraPlayer('next');
+    expect(useGame.getState().ui.cameraSnap).toBe('top_p2');
+
+    // Lowering from top_p2 lowers camera to player_p2
+    snapCameraPlayer();
+    expect(useGame.getState().ui.cameraSnap).toBe('player_p2');
+
+    // Raising back from player_p2 raises to top_p2
+    snapCameraTop();
+    expect(useGame.getState().ui.cameraSnap).toBe('top_p2');
+  });
+
   it('emits active emote toast via emitEmote', () => {
     emitEmote('Finn', 'Флюпни это!', '🌀');
     const toast = useGame.getState().ui.activeEmote;

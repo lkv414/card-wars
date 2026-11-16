@@ -1,6 +1,17 @@
 :root {
   color-scheme: dark;
+  accent-color: #3b82f6;
+  scrollbar-color: #475569 #1e293b;
   font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 body {
@@ -1586,6 +1597,8 @@ button.danger {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  overflow: hidden;
+  overscroll-behavior: contain;
   animation: cwFadeIn 0.15s ease-out;
 }
 
@@ -1600,6 +1613,7 @@ button.danger {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overscroll-behavior: contain;
   animation: cwSlideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -2815,15 +2829,20 @@ button.danger {
   aspect-ratio: 797 / 1104;
   border-radius: 12px;
   overflow: visible;
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 240px;
 }
 
-.ui-v2 .cw-card-tile.is-hold-zoomed {
+.ui-v2 .cw-card-tile.is-hold-zoomed,
+.ui-v2 .cw-card-tile:focus-within {
   z-index: 60;
+  content-visibility: visible;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .ui-v2 .cw-card-tile:hover {
     z-index: 40;
+    content-visibility: visible;
   }
 }
 
@@ -3189,6 +3208,8 @@ button.danger {
   display: grid;
   place-items: center;
   padding: 16px;
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .ui-v2 .cw-modal {
@@ -3198,6 +3219,7 @@ button.danger {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overscroll-behavior: contain;
 }
 
 .ui-v2 .cw-modal-actions {
@@ -4330,6 +4352,8 @@ button.danger {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  overflow: hidden;
+  overscroll-behavior: contain;
   animation: modalFadeIn 0.18s ease-out;
 }
 
@@ -4345,6 +4369,7 @@ button.danger {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overscroll-behavior: contain;
   animation: modalSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

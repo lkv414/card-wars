@@ -104,7 +104,7 @@ export function DeckPreview({
           >
             <div className="deck-preview__visual">
               {hero.image ? (
-                <img src={hero.image} alt={hero.name} draggable={false} />
+                <img src={hero.image} alt={hero.name} draggable={false} fetchPriority="high" />
               ) : (
                 <span className="deck-preview__hero-fallback">{hero.name}</span>
               )}
@@ -126,7 +126,7 @@ export function DeckPreview({
                 className={`deck-preview__land land-bg--${landType}`}
                 title={`${idx + 1}. ${meta.label}`}
               >
-                {imgUrl && <img src={imgUrl} alt={meta.label} draggable={false} />}
+                {imgUrl && <img src={imgUrl} alt={meta.label} draggable={false} fetchPriority="high" />}
                 <span className="deck-preview__land-label">{meta.shortLabel}</span>
               </div>
             );

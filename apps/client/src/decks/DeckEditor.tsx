@@ -570,7 +570,7 @@ export function DeckEditor({
         <div className="cw-hero-box">
           <div className="cw-hero-preview">
             {hero?.image ? (
-              <img className="cw-hero-img" src={hero.image} alt={hero.name} draggable={false} />
+              <img className="cw-hero-img" src={hero.image} alt={hero.name} draggable={false} fetchPriority="high" />
             ) : (
               <div className="cw-hero-fallback">
                 <b>{hero?.name ?? 'Герой'}</b>
@@ -854,7 +854,7 @@ export function DeckEditor({
                       title={`Зона ${i + 1}: ${LAND_META[landType].label} (кликните слот A затем B чтобы поменять местами)`}
                     >
                       {imgUrl ? (
-                        <img src={imgUrl} alt={LAND_META[landType].label} draggable={false} />
+                        <img src={imgUrl} alt={LAND_META[landType].label} draggable={false} fetchPriority="high" />
                       ) : (
                         <div className="cw-land-rainbow">
                           <span>🌈</span>

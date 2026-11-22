@@ -488,7 +488,7 @@ export class Room extends DurableObject {
     state.reconnectDeadlineMs = null;
     state.botActionAt = null;
     state.lobbyCleanupAt = null;
-    state.journal.push(...this.stamp(journalLines(domainDeps, match, events)));
+    this.appendJournal(state, this.stamp(journalLines(domainDeps, match, events)));
   }
 
   private addBot(state: RoomState): void {
@@ -679,9 +679,19 @@ export class Room extends DurableObject {
     }
   }
 
+  private static readonly MAX_JOURNAL_LINES = 500;
+
+  private appendJournal(state: RoomState, lines: string[]): void {
+    if (lines.length === 0) return;
+    state.journal.push(...lines);
+    if (state.journal.length > Room.MAX_JOURNAL_LINES) {
+      state.journal = state.journal.slice(-Room.MAX_JOURNAL_LINES);
+    }
+  }
+
   private applyResult(state: RoomState, match: MatchState, events: GameEvent[]): void {
     state.match = match;
-    state.journal.push(...this.stamp(journalLines(domainDeps, match, events)));
+    this.appendJournal(state, this.stamp(journalLines(domainDeps, match, events)));
     if (match.status === 'finished') {
       state.phase = 'finished';
       state.timers = {};

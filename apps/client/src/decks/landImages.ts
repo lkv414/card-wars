@@ -65,3 +65,7 @@ export function landImageUrl(type: LandType, variant = 1): string | null {
   const idx = Math.max(0, variant - 1) % images.length;
   return images[idx] ?? null;
 }
+
+export const PRIMARY_LAND_IMAGES: string[] = Object.values(LAND_IMAGES)
+  .map((arr) => arr[0])
+  .filter((url): url is string => Boolean(url));

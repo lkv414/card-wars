@@ -45,8 +45,8 @@ export function slotLocalZ(slot: 'creature' | 'building' | 'companion'): number 
   return -LAND_H / 2 - 52;
 }
 
-export const deckLocal: [number, number, number] = [-ROW_LEN / 2 - 78, 4, 0];
-export const discardLocal: [number, number, number] = [ROW_LEN / 2 + 78, 4, 0];
+export const deckLocal: [number, number, number] = [-ROW_LEN / 2 - 78, 4, -10];
+export const discardLocal: [number, number, number] = [ROW_LEN / 2 + 78, 4, -10];
 export const heroLocal: [number, number, number] = [0, 0, LAND_H / 2 + 78];
 export const livesLocal: [number, number, number] = [120, 2, LAND_H / 2 + 78];
 /** Жетон мороза лежит на переднем крае тайла. */

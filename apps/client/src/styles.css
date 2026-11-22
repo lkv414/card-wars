@@ -483,6 +483,141 @@ header {
   padding: 8px 4px;
 }
 
+/* Свёрнутая шапка и выносная кнопка разворачивания */
+.hud-sidebar-collapsed-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.hud-sidebar-toggle-btn.is-expand-btn {
+  width: 38px;
+  height: 38px;
+  background: #2563eb;
+  border: 1px solid #60a5fa;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(37, 99, 235, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.hud-sidebar-toggle-btn.is-expand-btn:hover {
+  background: #1d4ed8;
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.8);
+}
+
+.hud-sidebar-floating-tab {
+  position: absolute;
+  top: 14px;
+  left: -22px;
+  width: 22px;
+  height: 42px;
+  background: #2563eb;
+  border: 1px solid #60a5fa;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.45);
+  z-index: 50;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.hud-sidebar-floating-tab:hover {
+  background: #1d4ed8;
+  transform: translateX(-3px);
+}
+
+/* Секция Муллигана в сайдбаре */
+.hud-mulligan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid #3b82f6;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.hud-mulligan-hint {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.hud-mulligan-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-mulligan-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.hud-mulligan-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hud-mulligan-keep {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-color: #34d399;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+}
+
+.hud-mulligan-keep:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.hud-mulligan-redraw {
+  background: rgba(234, 179, 8, 0.2);
+  color: #fef08a;
+  border-color: #eab308;
+}
+
+.hud-mulligan-redraw:hover:not(:disabled) {
+  background: rgba(234, 179, 8, 0.35);
+  transform: translateY(-1px);
+}
+
+.hud-mulligan-chosen-badge {
+  font-size: 11px;
+  color: #93c5fd;
+  text-align: center;
+  padding: 4px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 6px;
+}
+
 /* Шапка сайдбара */
 .hud-sidebar-header {
   display: flex;
@@ -656,6 +791,24 @@ header {
   color: #ffffff;
   box-shadow: 0 4px 18px rgba(245, 124, 0, 0.42), 0 0 1px #ffb74d inset;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hud-sidebar-battle-btn.actions-spent,
+.hud-mobile-btn-battle.actions-spent {
+  border-color: #22c55e !important;
+  animation: pulse-actions-spent 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-actions-spent {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6), 0 4px 18px rgba(245, 124, 0, 0.42);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0), 0 4px 18px rgba(245, 124, 0, 0.42);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0), 0 4px 18px rgba(245, 124, 0, 0.42);
+  }
 }
 
 .hud-sidebar-battle-btn.active-cta:hover {
@@ -2329,6 +2482,41 @@ button.danger {
   gap: 16px;
 }
 
+.ui-v2 .decks-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--ui-card-bg, #221c17);
+  border: 2px dashed var(--ui-border, #45372d);
+  border-radius: var(--ui-radius-lg, 16px);
+  margin: 32px auto;
+  max-width: 540px;
+}
+
+.ui-v2 .decks-empty-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ui-text, #f7fafc);
+  margin: 0 0 8px;
+}
+
+.ui-v2 .decks-empty-hint {
+  font-size: 14px;
+  color: var(--ui-muted, #a0aec0);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.ui-v2 .decks-empty-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .ui-v2 .decks-header-actions {
   display: flex;
   align-items: center;
@@ -2805,7 +2993,6 @@ button.danger {
   border: 1px solid rgba(43, 30, 18, 0.25);
   pointer-events: none;
   transition: transform 0.16s cubic-bezier(0.2, 0.85, 0.25, 1), box-shadow 0.16s ease;
-  will-change: transform;
 }
 
 .ui-v2 .deck-preview__visual img {
@@ -2837,6 +3024,7 @@ button.danger {
 .ui-v2 .deck-preview__hero.is-zoomed .deck-preview__visual {
   transform: scale(var(--preview-zoom-scale, 4.2));
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  will-change: transform;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -2849,6 +3037,7 @@ button.danger {
   .ui-v2 .deck-preview__hero:hover .deck-preview__visual {
     transform: scale(var(--preview-zoom-scale, 4.2));
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+    will-change: transform;
   }
 }
 
@@ -3650,20 +3839,16 @@ button.danger {
   aspect-ratio: 797 / 1104;
   border-radius: 12px;
   overflow: visible;
-  content-visibility: auto;
-  contain-intrinsic-size: auto none auto 240px;
 }
 
 .ui-v2 .cw-card-tile.is-hold-zoomed,
 .ui-v2 .cw-card-tile:focus-within {
   z-index: 60;
-  content-visibility: visible;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .ui-v2 .cw-card-tile:hover {
     z-index: 40;
-    content-visibility: visible;
   }
 }
 
@@ -3676,10 +3861,8 @@ button.danger {
   background: #261f19;
   box-shadow: var(--ui-shadow-sm);
   pointer-events: none;
-  transform: scale(1);
   transform-origin: var(--cw-zoom-origin, 50% 50%);
   transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
-  will-change: transform;
 }
 
 .ui-v2 .cw-card-tile.is-in-deck .cw-card-visual {
@@ -3691,6 +3874,7 @@ button.danger {
 .ui-v2 .cw-deck-slot--filled.is-hold-zoomed .cw-card-visual {
   transform: scale(var(--cw-zoom-scale, 2.65));
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.48);
+  will-change: transform;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -3698,6 +3882,7 @@ button.danger {
   .ui-v2 .cw-deck-slot--filled:hover .cw-card-visual {
     transform: scale(var(--cw-zoom-scale, 2.65));
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.48);
+    will-change: transform;
   }
 }
 
@@ -3950,6 +4135,8 @@ button.danger {
   font-size: 14px;
   font-weight: 900;
   cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
@@ -4227,6 +4414,42 @@ button.danger {
 
 .ui-v2 .lobby-player--preview-open {
   z-index: 50;
+}
+
+.ui-v2 .lobby-player.is-selected-seat {
+  outline: 2px solid var(--ui-accent);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+  background: var(--ui-bg-elevated);
+}
+
+.ui-v2 .selected-mark {
+  color: var(--ui-accent-hover);
+  font-size: 11px;
+  font-weight: 700;
+  animation: pulse-mark 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse-mark {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+.ui-v2 .lobby-player__deck.clickable {
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ui-v2 .lobby-player__deck.clickable:hover {
+  opacity: 0.85;
+}
+
+.ui-v2 .lobby-popover-close {
+  padding: 2px 7px;
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .ui-v2 .lobby-player-popover {
@@ -4653,6 +4876,27 @@ button.danger {
 
   .ui-v2 .cw-land-picker-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ui-v2 .cw-grouped-item {
+    padding: 8px 10px;
+    min-height: 44px;
+    gap: 10px;
+  }
+
+  .ui-v2 .cw-grouped-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .ui-v2 .cw-grouped-name {
+    font-size: 13px;
+  }
+
+  .ui-v2 .cw-grouped-count {
+    min-width: 24px;
+    font-size: 13px;
   }
 
   .ui-v2.lobby-room {
@@ -5431,6 +5675,28 @@ button.danger {
   color: #f59e0b;
 }
 
+.metric-pips {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 2px;
+}
+
+.metric-pips .pip-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.22);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  transition: all 0.2s ease;
+}
+
+.metric-pips .pip-dot.pip-active {
+  background: #f59e0b;
+  border-color: #fbbf24;
+  box-shadow: 0 0 5px rgba(245, 158, 11, 0.7);
+}
+
 .metric-pill.metric-hand .metric-val {
   color: #38bdf8;
 }
@@ -5629,4 +5895,108 @@ button.danger {
   color: #64748b;
   text-align: center;
   padding: 12px 0;
+}
+
+/* --- Плавающее управление камерой и рукой поверх 3D арены --- */
+.hud-hand-control-overlay {
+  position: absolute;
+  bottom: 145px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  pointer-events: auto;
+  transition: bottom 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hud-hand-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(18, 24, 38, 0.88);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.hud-hand-toggle-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+}
+
+.hud-hand-toggle-btn.collapsed {
+  background: rgba(30, 64, 100, 0.92);
+  border-color: #63b3ed;
+  color: #edf2f7;
+}
+
+.hud-floating-camera-bar {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 15;
+  pointer-events: auto;
+}
+
+.hud-quick-cam-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(18, 24, 38, 0.88);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.hud-quick-cam-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.hud-quick-cam-btn.active {
+  background: rgba(49, 130, 206, 0.9);
+  border-color: #90cdf4;
+  color: #fff;
+  box-shadow: 0 0 14px rgba(66, 153, 225, 0.6);
+}
+
+@media (max-width: 768px) {
+  .hud-hand-control-overlay {
+    bottom: 110px;
+  }
+  .hud-floating-camera-bar {
+    bottom: 60px;
+    left: 12px;
+    gap: 6px;
+  }
+  .hud-quick-cam-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
 }

@@ -14,6 +14,11 @@ export function registerServiceWorker(): void {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/' })
       .then((registration) => {
+        // If a new worker is waiting, activate it immediately
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+
         registration.onupdatefound = () => {
           const installingWorker = registration.installing;
           if (!installingWorker) return;
@@ -21,15 +26,18 @@ export function registerServiceWorker(): void {
           installingWorker.onstatechange = () => {
             if (installingWorker.state === 'installed') {
               if (navigator.serviceWorker.controller) {
-                // New update available
-                console.info('[PWA] New version of Card Wars available.');
+                // Activate the new service worker immediately without waiting
+                installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                console.info('[PWA] Card Wars updated to latest version.');
               } else {
-                // Pre-cached for offline use
                 console.info('[PWA] Card Wars cached for offline play.');
               }
             }
           };
         };
+
+        // Check for updates periodically or on reload
+        registration.update().catch(() => {});
       })
       .catch((error) => {
         console.warn('[PWA] Service worker registration failed:', error);

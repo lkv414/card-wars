@@ -27,7 +27,10 @@ export function Lobby({ code }: { code: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(() => getSelectedDeckId());
   const [editing, setEditing] = useState<SavedDeck | null>(() => loadEditorDraft(LOBBY_EDITOR_DRAFT_KEY));
   const [hoveredSeat, setHoveredSeat] = useState<number | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  const [previewSeat, setPreviewSeat] = useState<number | null>(null);
   const [myDeckHovered, setMyDeckHovered] = useState(false);
+  const [myDeckPreviewOpen, setMyDeckPreviewOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const sent = useRef<string | null>(null);
 
@@ -174,7 +177,7 @@ export function Lobby({ code }: { code: string }) {
         </section>
 
         <section
-          className={`lobby-deck-picker ${myDeckHovered && selected ? 'lobby-deck-picker--open' : ''}`}
+          className={`lobby-deck-picker ${(myDeckHovered || myDeckPreviewOpen) && selected ? 'lobby-deck-picker--open' : ''}`}
           onMouseEnter={() => setMyDeckHovered(true)}
           onMouseLeave={() => setMyDeckHovered(false)}
         >
@@ -189,6 +192,14 @@ export function Lobby({ code }: { code: string }) {
                     </option>
                   ))}
                 </select>
+                <button
+                  type="button"
+                  className={`btn-soft ${myDeckPreviewOpen ? 'is-active' : ''}`}
+                  onClick={() => setMyDeckPreviewOpen((v) => !v)}
+                  title="Предпросмотр колоды"
+                >
+                  {myDeckPreviewOpen ? '✕ Закрыть' : '👁 Обзор'}
+                </button>
                 <button
                   className="btn-soft"
                   onClick={() => {
@@ -205,13 +216,21 @@ export function Lobby({ code }: { code: string }) {
                   {selected.lands.join(', ')}
                 </p>
               )}
-              {myDeckHovered && selected && (
+              {(myDeckHovered || myDeckPreviewOpen) && selected && (
                 <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
                   <div className="lobby-player-popover__head">
                     <strong>{selected.name}</strong>
                     <span>
                       {heroName(selected.heroId)} · {selected.cards.length}/{CONFIG.deckSize} карт
                     </span>
+                    <button
+                      type="button"
+                      className="lobby-popover-close mini"
+                      onClick={() => setMyDeckPreviewOpen(false)}
+                      aria-label="Закрыть предпросмотр"
+                    >
+                      ✕
+                    </button>
                   </div>
                   <DeckPreview deck={selected} compact />
                 </div>
@@ -233,108 +252,175 @@ export function Lobby({ code }: { code: string }) {
             <span className="hint">слоты = порядок хода</span>
           </div>
           <ul className="lobby-players__list">
-            {lobby.slots.map((slot, seat) => (
-              <li
-                key={seat}
-                className={`lobby-player ${slot ? '' : 'lobby-player--empty'} ${hoveredSeat === seat && slot?.deck ? 'lobby-player--preview-open' : ''}`}
-                draggable={isHost && Boolean(slot)}
-                onMouseEnter={() => {
-                  if (slot?.deck) setHoveredSeat(seat);
-                }}
-                onMouseLeave={() => {
-                  setHoveredSeat((cur) => (cur === seat ? null : cur));
-                }}
-                onDragStart={(e) => {
-                  setHoveredSeat(null);
-                  if (slot) e.dataTransfer.setData('text/plain', slot.id);
-                }}
-                onDragOver={(e) => {
-                  if (isHost) e.preventDefault();
-                }}
-                onDrop={(e) => {
-                  if (!isHost) return;
-                  e.preventDefault();
-                  const playerId = e.dataTransfer.getData('text/plain');
-                  if (playerId) move(playerId, seat);
-                }}
-              >
-                <div className="lobby-player__info">
-                  <div className="lobby-player__name">
-                    <span className={`status-dot ${slot?.connected ? 'on' : ''}`} />
-                    {slot?.id === lobby.host && (
-                      <span className="host-mark" title="Хост">
-                        ♛
-                      </span>
-                    )}
-                    <span>{slot?.nickname ?? 'Свободное место'}</span>
-                    {slot?.id === you.playerId && <span className="you-mark">(вы)</span>}
-                    {slot?.isBot && <span className="bot-mark">бот</span>}
-                  </div>
-                  <div className={`lobby-player__deck ${slot?.deck ? 'ok' : ''}`}>
-                    {slot
-                      ? slot.deck
-                        ? `${heroName(slot.deck.heroId)} · ${slot.deck.cards.length} карт`
-                        : 'колода скрыта'
-                      : '—'}
-                  </div>
-                </div>
+            {lobby.slots.map((slot, seat) => {
+              const isPreviewOpen = (hoveredSeat === seat || previewSeat === seat) && Boolean(slot?.deck);
+              const isSeatSelected = selectedSeat === seat;
 
-                <span className={`lobby-player__status ${slot?.ready ? 'ready' : 'waiting'}`}>
-                  {slot ? (slot.ready ? '✓ Готов' : 'Ожидание') : '—'}
-                </span>
-
-                {hoveredSeat === seat && slot?.deck && (
-                  <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
-                    <div className="lobby-player-popover__head">
-                      <strong>{slot.nickname}</strong>
-                      <span>
-                        {heroName(slot.deck.heroId)} · {slot.deck.cards.length}/{CONFIG.deckSize} карт
-                      </span>
+              return (
+                <li
+                  key={seat}
+                  className={`lobby-player ${slot ? '' : 'lobby-player--empty'} ${
+                    isPreviewOpen ? 'lobby-player--preview-open' : ''
+                  } ${isSeatSelected ? 'is-selected-seat' : ''}`}
+                  draggable={isHost && Boolean(slot)}
+                  onMouseEnter={() => {
+                    if (slot?.deck) setHoveredSeat(seat);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredSeat((cur) => (cur === seat ? null : cur));
+                  }}
+                  onDragStart={(e) => {
+                    setHoveredSeat(null);
+                    setPreviewSeat(null);
+                    if (slot) e.dataTransfer.setData('text/plain', slot.id);
+                  }}
+                  onDragOver={(e) => {
+                    if (isHost) e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    if (!isHost) return;
+                    e.preventDefault();
+                    const playerId = e.dataTransfer.getData('text/plain');
+                    if (playerId) move(playerId, seat);
+                  }}
+                >
+                  <div className="lobby-player__info">
+                    <div className="lobby-player__name">
+                      <span className={`status-dot ${slot?.connected ? 'on' : ''}`} />
+                      {slot?.id === lobby.host && (
+                        <span className="host-mark" title="Хост">
+                          ♛
+                        </span>
+                      )}
+                      <span>{slot?.nickname ?? 'Свободное место'}</span>
+                      {slot?.id === you.playerId && <span className="you-mark">(вы)</span>}
+                      {slot?.isBot && <span className="bot-mark">бот</span>}
+                      {isSeatSelected && <span className="selected-mark">← выбрано для пересадки</span>}
                     </div>
-                    <DeckPreview deck={slot.deck} compact />
+                    <div
+                      className={`lobby-player__deck ${slot?.deck ? 'ok clickable' : ''}`}
+                      onClick={(e) => {
+                        if (slot?.deck) {
+                          e.stopPropagation();
+                          setPreviewSeat((cur) => (cur === seat ? null : seat));
+                        }
+                      }}
+                      role={slot?.deck ? 'button' : undefined}
+                      tabIndex={slot?.deck ? 0 : undefined}
+                      title={slot?.deck ? 'Нажмите для просмотра колоды' : undefined}
+                    >
+                      {slot
+                        ? slot.deck
+                          ? `${heroName(slot.deck.heroId)} · ${slot.deck.cards.length} карт 👁️`
+                          : 'колода скрыта'
+                        : '—'}
+                    </div>
                   </div>
-                )}
 
-                {isHost && slot && (
-                  <div className="lobby-row-actions">
-                    {slot.id !== you.playerId &&
-                      (slot.isBot ? (
-                        <button className="mini" onClick={() => sendLobbyCommand({ type: 'remove_bot', player: slot.id })}>
-                          Убрать
+                  <span className={`lobby-player__status ${slot?.ready ? 'ready' : 'waiting'}`}>
+                    {slot ? (slot.ready ? '✓ Готов' : 'Ожидание') : '—'}
+                  </span>
+
+                  {isPreviewOpen && slot?.deck && (
+                    <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
+                      <div className="lobby-player-popover__head">
+                        <strong>{slot.nickname}</strong>
+                        <span>
+                          {heroName(slot.deck.heroId)} · {slot.deck.cards.length}/{CONFIG.deckSize} карт
+                        </span>
+                        <button
+                          type="button"
+                          className="lobby-popover-close mini"
+                          onClick={() => {
+                            setPreviewSeat(null);
+                            setHoveredSeat(null);
+                          }}
+                          aria-label="Закрыть предпросмотр"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <DeckPreview deck={slot.deck} compact />
+                    </div>
+                  )}
+
+                  {isHost && slot && (
+                    <div className="lobby-row-actions">
+                      {slot.id !== you.playerId &&
+                        (slot.isBot ? (
+                          <button className="mini" onClick={() => sendLobbyCommand({ type: 'remove_bot', player: slot.id })}>
+                            Убрать
+                          </button>
+                        ) : (
+                          <>
+                            <button className="mini" onClick={() => sendLobbyCommand({ type: 'kick', player: slot.id })}>
+                              Кикнуть
+                            </button>
+                            {slot.connected && (
+                              <button className="mini" onClick={() => sendLobbyCommand({ type: 'transfer_host', player: slot.id })}>
+                                Хост
+                              </button>
+                            )}
+                          </>
+                        ))}
+                      {selectedSeat !== null && selectedSeat !== seat ? (
+                        <button
+                          className="mini btn-accent"
+                          onClick={() => {
+                            const source = lobby.slots[selectedSeat];
+                            if (source) move(source.id, seat);
+                            setSelectedSeat(null);
+                          }}
+                          title="Поменять местами с выбранным"
+                        >
+                          ⇄ Сюда
                         </button>
                       ) : (
-                        <>
-                          <button className="mini" onClick={() => sendLobbyCommand({ type: 'kick', player: slot.id })}>
-                            Кикнуть
-                          </button>
-                          {slot.connected && (
-                            <button className="mini" onClick={() => sendLobbyCommand({ type: 'transfer_host', player: slot.id })}>
-                              Хост
-                            </button>
-                          )}
-                        </>
-                      ))}
-                    <button className="mini" disabled={seat === 0} onClick={() => move(slot.id, seat - 1)} aria-label="Пересадить влево">
-                      ◀
-                    </button>
-                    <button
-                      className="mini"
-                      disabled={seat === lobby.maxPlayers - 1}
-                      onClick={() => move(slot.id, seat + 1)}
-                      aria-label="Пересадить вправо"
-                    >
-                      ▶
-                    </button>
-                  </div>
-                )}
+                        <button
+                          className={`mini ${isSeatSelected ? 'btn-accent' : ''}`}
+                          onClick={() => setSelectedSeat((cur) => (cur === seat ? null : seat))}
+                          title="Выбрать игрока для пересадки на мобильном/таче"
+                          aria-label="Выбрать для пересадки"
+                        >
+                          {isSeatSelected ? '✕ Отмена' : '⇅ Пересадить'}
+                        </button>
+                      )}
+                      <button className="mini" disabled={seat === 0} onClick={() => move(slot.id, seat - 1)} aria-label="Пересадить влево">
+                        ◀
+                      </button>
+                      <button
+                        className="mini"
+                        disabled={seat === lobby.maxPlayers - 1}
+                        onClick={() => move(slot.id, seat + 1)}
+                        aria-label="Пересадить вправо"
+                      >
+                        ▶
+                      </button>
+                    </div>
+                  )}
 
-                {isHost && !slot && (
-                  <button className="btn-soft btn-small" onClick={() => sendLobbyCommand({ type: 'add_bot' })}>
-                    + Бот
-                  </button>
-                )}
-              </li>
-            ))}
+                  {isHost && !slot && selectedSeat !== null && (
+                    <button
+                      className="btn-accent btn-small"
+                      onClick={() => {
+                        const source = lobby.slots[selectedSeat];
+                        if (source) move(source.id, seat);
+                        setSelectedSeat(null);
+                      }}
+                      title="Пересадить игрока на это место"
+                    >
+                      ↵ Пересадить сюда
+                    </button>
+                  )}
+
+                  {isHost && !slot && selectedSeat === null && (
+                    <button className="btn-soft btn-small" onClick={() => sendLobbyCommand({ type: 'add_bot' })}>
+                      + Бот
+                    </button>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
 

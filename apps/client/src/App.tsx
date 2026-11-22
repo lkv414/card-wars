@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
 import { getSelectedDeckId, heroName, loadDecks } from './decks';
+import { PRIMARY_LAND_IMAGES } from './decks/landImages';
 import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
 import { PwaInstallButton, PwaInstallPrompt } from './pwa';
@@ -11,6 +12,10 @@ import { APP_VERSION } from './version';
 
 const DecksScreen = lazy(() => import('./decks/DecksScreen').then((m) => ({ default: m.DecksScreen })));
 const MockScene = lazy(() => import('./game/debug/MockScene').then((m) => ({ default: m.MockScene })));
+
+export const preloadDecksScreen = () => {
+  import('./decks/DecksScreen').catch(() => {});
+};
 
 type Screen = 'menu' | 'decks';
 
@@ -26,6 +31,19 @@ export function App() {
   const [codeInput, setCodeInput] = useState('');
   const [screen, setScreen] = useState<Screen>(() => routeFromLocation().screen);
   const [activeCode, setActiveCode] = useState<string | null>(() => routeFromLocation().code);
+
+  useEffect(() => {
+    // Eagerly prefetch DecksScreen chunk so clicking "Колоды" transitions instantly with zero black flash
+    const timer = setTimeout(() => {
+      preloadDecksScreen();
+      // Pre-warm primary land and card back textures into browser cache
+      for (const url of PRIMARY_LAND_IMAGES) {
+        const img = new Image();
+        img.src = url;
+      }
+    }, 60);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const onPopState = () => {
@@ -62,7 +80,19 @@ export function App() {
 
   if (screen === 'decks') {
     return (
-      <Suspense fallback={null}>
+      <Suspense
+        fallback={
+          <main className="decks-page ui-v2" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <header className="decks-header">
+              <div className="decks-title">
+                <span className="eyebrow">Колоды</span>
+                <h1>Колоды</h1>
+              </div>
+            </header>
+            <p className="decks-subtitle" style={{ opacity: 0.6 }}>Загрузка…</p>
+          </main>
+        }
+      >
         <DecksScreen
           onBack={() => {
             history.pushState(null, '', '/');
@@ -168,7 +198,12 @@ function MainMenu({
             </div>
           </div>
 
-          <button className="btn-accent btn-xl" onClick={onDecks}>
+          <button
+            className="btn-accent btn-xl"
+            onClick={onDecks}
+            onMouseEnter={preloadDecksScreen}
+            onTouchStart={preloadDecksScreen}
+          >
             Мои колоды
           </button>
         </div>

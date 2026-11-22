@@ -20,29 +20,11 @@ const heroById = new Map(heroes.map((h) => [h.id, h]));
 const cardById = new Map(cards.map((c) => [c.id, c]));
 
 export function presetDecks(): SavedDeck[] {
-  return deckPresets.map((preset) => ({
-    id: preset.id,
-    name: `Колода ${heroById.get(preset.heroId)?.name ?? preset.id}`,
-    heroId: preset.heroId,
-    lands: [...preset.lands],
-    cards: [...preset.deck],
-  }));
+  return [];
 }
 
 export function restorePresets(): SavedDeck[] {
-  const current = loadDecks();
-  const presets = presetDecks();
-  const existingIds = new Set(current.map((d) => d.id));
-  const toAdd = presets.filter((p) => !existingIds.has(p.id));
-  const updated = current.map((d) => {
-    const matchingPreset = presets.find((p) => p.id === d.id);
-    return matchingPreset ? { ...matchingPreset } : d;
-  });
-  for (const p of toAdd) {
-    updated.unshift({ ...p });
-  }
-  saveDecks(updated);
-  return updated;
+  return [];
 }
 
 function isLandType(value: string): value is LandType {
@@ -71,16 +53,25 @@ export function loadDecks(): SavedDeck[] {
     if (raw) {
       const parsed: unknown = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        const decks = parsed.map(normalizeDeck).filter((d): d is SavedDeck => d !== null);
-        if (decks.length > 0) return decks;
+        const decks = parsed
+          .map(normalizeDeck)
+          .filter((d): d is SavedDeck => d !== null)
+          // Filter out default BMO and Billy preset decks
+          .filter(
+            (d) =>
+              d.id !== 'preset-bmo' &&
+              d.id !== 'preset-billy' &&
+              !d.name.toLowerCase().includes('бимо') &&
+              !d.name.toLowerCase().includes('билли'),
+          );
+        saveDecks(decks);
+        return decks;
       }
     }
   } catch {
-    // fall through to presets
+    // return empty
   }
-  const seeded = presetDecks();
-  saveDecks(seeded);
-  return seeded;
+  return [];
 }
 
 export function saveDecks(decks: SavedDeck[]): void {

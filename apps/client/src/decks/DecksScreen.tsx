@@ -9,7 +9,6 @@ import {
   heroName,
   loadDecks,
   newDeck,
-  restorePresets,
   saveDecks,
   setSelectedDeckId,
   validateSavedDeck,
@@ -81,18 +80,6 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     setError(null);
   };
 
-  const onRestorePresets = () => {
-    const updated = restorePresets();
-    setDecks(updated);
-    if (!updated.some((d) => d.id === selectedId)) {
-      const nextId = updated[0]?.id ?? null;
-      setSelectedId(nextId);
-      if (nextId) setSelectedDeckId(nextId);
-    }
-    setMessage('Стандартные пресеты (Бимо и Билли) восстановлены');
-    setError(null);
-  };
-
   const duplicate = (deck: SavedDeck) => {
     const copy: SavedDeck = {
       ...deck,
@@ -107,17 +94,18 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
 
   const confirmDelete = () => {
     if (!deletingDeck) return;
-    if (decks.length <= 1) {
-      setError('Нужна хотя бы одна колода');
-      setDeletingDeck(null);
-      return;
-    }
     const next = decks.filter((d) => d.id !== deletingDeck.id);
     persist(next);
     if (selectedId === deletingDeck.id) {
       const nextId = next[0]?.id ?? null;
       setSelectedId(nextId);
-      if (nextId) setSelectedDeckId(nextId);
+      if (nextId) {
+        setSelectedDeckId(nextId);
+      } else {
+        try {
+          localStorage.removeItem('cw-selected-deck');
+        } catch {}
+      }
     }
     if (codePanel?.deck.id === deletingDeck.id) setCodePanel(null);
     setMessage(`Колода «${deletingDeck.name}» удалена`);
@@ -189,13 +177,6 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
           >
             🎲 + Случайная колода
           </button>
-          <button
-            className="restore-presets-btn"
-            onClick={onRestorePresets}
-            title="Восстановить стартовые колоды Бимо и Билли без удаления созданных вами"
-          >
-            🔄 Восстановить пресеты
-          </button>
           <button className="create-btn" onClick={createDeck}>
             + Создать колоду
           </button>
@@ -206,63 +187,80 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
       {message && <div className="ui-toast ui-toast--success">{message}</div>}
       {error && <div className="ui-toast ui-toast--error">{error}</div>}
 
-      <div className="decks-grid">
-        {decks.map((deck) => {
-          const problems = validateSavedDeck(deck);
-          const active = selectedId === deck.id;
-          const isComplete = deck.cards.length === CONFIG.deckSize;
-          return (
-            <article key={deck.id} className={`deck-card ${active ? 'active' : ''}`}>
-              {active && <span className="active-badge">активная</span>}
-              {!isComplete && (
-                <span className="incomplete-badge">
-                  Не готова ({deck.cards.length}/{CONFIG.deckSize})
-                </span>
-              )}
-              <div className="deck-card-top">
-                <h3 className="deck-name">{deck.name}</h3>
-              </div>
-              <div className="deck-stats">
-                <span className="deck-stat deck-stat--hero">{heroName(deck.heroId)}</span>
-                <span className={`deck-stat ${isComplete ? 'deck-stat--ok' : 'deck-stat--warn'}`}>
-                  {deck.cards.length} / {CONFIG.deckSize} карт
-                </span>
-                <span className="deck-stat">{deck.lands.length} земли</span>
-              </div>
-              <DeckPreview deck={deck} compact />
-              <div className={`deck-card-desc ${problems.length > 0 ? 'deck-card-desc--error' : ''}`}>
-                {problems[0] ?? 'Колода готова к игре'}
-              </div>
-              <div className="deck-actions">
-                <button
-                  className="select-btn"
-                  onClick={() => makeActive(deck)}
-                  disabled={active || !isComplete}
-                  title={!isComplete ? `Колода не готова (${deck.cards.length}/${CONFIG.deckSize} карт)` : active ? 'Колода уже выбрана' : 'Выбрать колоду'}
-                >
-                  {active ? 'Выбрана' : !isComplete ? `Не готова (${deck.cards.length}/${CONFIG.deckSize})` : 'Выбрать'}
-                </button>
-                <button className="edit-btn" onClick={() => setEditing(deck)}>
-                  Изменить
-                </button>
-                <button className="code-btn" onClick={() => showCode(deck)}>
-                  Код
-                </button>
-                <button className="edit-btn" onClick={() => duplicate(deck)}>
-                  Копия
-                </button>
-                <button className="delete-btn" onClick={() => setDeletingDeck(deck)}>
-                  Удалить
-                </button>
-              </div>
-            </article>
-          );
-        })}
+      {decks.length === 0 ? (
+        <div className="decks-empty">
+          <p className="decks-empty-title">У вас пока нет колод</p>
+          <p className="decks-empty-hint">
+            Создайте новую колоду с нуля или сгенерируйте сбалансированную колоду со случайным героем в один клик.
+          </p>
+          <div className="decks-empty-actions">
+            <button className="create-btn" onClick={createDeck}>
+              + Создать колоду
+            </button>
+            <button className="cw-random-btn" onClick={createRandomDeck}>
+              🎲 + Случайная колода
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="decks-grid">
+          {decks.map((deck) => {
+            const problems = validateSavedDeck(deck);
+            const active = selectedId === deck.id;
+            const isComplete = deck.cards.length === CONFIG.deckSize;
+            return (
+              <article key={deck.id} className={`deck-card ${active ? 'active' : ''}`}>
+                {active && <span className="active-badge">активная</span>}
+                {!isComplete && (
+                  <span className="incomplete-badge">
+                    Не готова ({deck.cards.length}/{CONFIG.deckSize})
+                  </span>
+                )}
+                <div className="deck-card-top">
+                  <h3 className="deck-name">{deck.name}</h3>
+                </div>
+                <div className="deck-stats">
+                  <span className="deck-stat deck-stat--hero">{heroName(deck.heroId)}</span>
+                  <span className={`deck-stat ${isComplete ? 'deck-stat--ok' : 'deck-stat--warn'}`}>
+                    {deck.cards.length} / {CONFIG.deckSize} карт
+                  </span>
+                  <span className="deck-stat">{deck.lands.length} земли</span>
+                </div>
+                <DeckPreview deck={deck} compact />
+                <div className={`deck-card-desc ${problems.length > 0 ? 'deck-card-desc--error' : ''}`}>
+                  {problems[0] ?? 'Колода готова к игре'}
+                </div>
+                <div className="deck-actions">
+                  <button
+                    className="select-btn"
+                    onClick={() => makeActive(deck)}
+                    disabled={active || !isComplete}
+                    title={!isComplete ? `Колода не готова (${deck.cards.length}/${CONFIG.deckSize} карт)` : active ? 'Колода уже выбрана' : 'Выбрать колоду'}
+                  >
+                    {active ? 'Выбрана' : !isComplete ? `Не готова (${deck.cards.length}/${CONFIG.deckSize})` : 'Выбрать'}
+                  </button>
+                  <button className="edit-btn" onClick={() => setEditing(deck)}>
+                    Изменить
+                  </button>
+                  <button className="code-btn" onClick={() => showCode(deck)}>
+                    Код
+                  </button>
+                  <button className="edit-btn" onClick={() => duplicate(deck)}>
+                    Копия
+                  </button>
+                  <button className="delete-btn" onClick={() => setDeletingDeck(deck)}>
+                    Удалить
+                  </button>
+                </div>
+              </article>
+            );
+          })}
 
-        <button className="big-create-btn" onClick={createDeck}>
-          + Создать новую колоду
-        </button>
-      </div>
+          <button className="big-create-btn" onClick={createDeck}>
+            + Создать новую колоду
+          </button>
+        </div>
+      )}
 
       {deletingDeck && (
         <div

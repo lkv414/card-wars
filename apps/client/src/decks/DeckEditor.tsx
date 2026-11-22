@@ -57,8 +57,8 @@ const TYPE_RANK: Record<CardData['type'], number> = {
 
 const HOLD_ZOOM_DELAY_MS = 180;
 const HOLD_MOVE_TOLERANCE_PX = 10;
-const INITIAL_CHUNK = 48;
-const CHUNK_SIZE = 36;
+const INITIAL_CHUNK = 240;
+const CHUNK_SIZE = 120;
 
 function hasFloop(card: CardData): boolean {
   if (card.abilities?.some((a) => a.kind === 'active')) return true;
@@ -149,7 +149,13 @@ export function DeckEditor({
   const [visibleCount, setVisibleCount] = useState(INITIAL_CHUNK);
 
   // Deck view mode in right column: 'grid' (40 slots) vs 'list' (grouped by unique cards)
-  const [deckViewMode, setDeckViewMode] = useState<'grid' | 'list'>('grid');
+  // Default to list view on mobile/tablets (< 768px) for readability & ergonomics
+  const [deckViewMode, setDeckViewMode] = useState<'grid' | 'list'>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 'list';
+    }
+    return 'grid';
+  });
 
   // UI modals and drawers
   const [openLandSlot, setOpenLandSlot] = useState<number | null>(null);
@@ -369,38 +375,104 @@ export function DeckEditor({
 
   const visibleCards = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
 
-  // IntersectionObserver for chunked pagination inside catalog grid
+  // Dual pagination trigger: direct scroll listener + IntersectionObserver
+  // Catches rapid mouse wheel/touch flicks synchronously without waiting for throttled observer
   useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+    const scrollEl = catalogScrollRef.current;
     if (visibleCount >= filtered.length) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + CHUNK_SIZE, filtered.length));
-        }
-      },
-      { root: catalogScrollRef.current, rootMargin: '200px', threshold: 0.1 },
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
+    const handleScroll = () => {
+      if (!scrollEl) return;
+      if (scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1600) {
+        setVisibleCount((prev) => Math.min(prev + CHUNK_SIZE, filtered.length));
+      }
+    };
+
+    if (scrollEl) {
+      scrollEl.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    let observer: IntersectionObserver | null = null;
+    if (sentinel) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) {
+            setVisibleCount((prev) => Math.min(prev + CHUNK_SIZE, filtered.length));
+          }
+        },
+        { root: scrollEl, rootMargin: '2400px', threshold: 0.01 },
+      );
+      observer.observe(sentinel);
+    }
+
+    return () => {
+      if (scrollEl) scrollEl.removeEventListener('scroll', handleScroll);
+      if (observer) observer.disconnect();
+    };
   }, [filtered.length, visibleCount]);
+
+  // Proactive image preloading: immediately prefetch upcoming chunk, and stream prefetch the rest in background
+  useEffect(() => {
+    // 1. Immediately prefetch first 240 cards
+    const immediateBatch = filtered.slice(0, Math.min(filtered.length, 240));
+    for (const card of immediateBatch) {
+      if (card.image) {
+        const img = new Image();
+        img.src = card.image;
+      }
+    }
+
+    // 2. Incrementally preload all remaining cards during idle time
+    let cancelled = false;
+    let idx = 240;
+    const preloadChunk = () => {
+      if (cancelled || idx >= filtered.length) return;
+      const end = Math.min(filtered.length, idx + 60);
+      for (let i = idx; i < end; i++) {
+        const card = filtered[i];
+        if (card?.image) {
+          const img = new Image();
+          img.src = card.image;
+        }
+      }
+      idx = end;
+      if (idx < filtered.length) {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(preloadChunk, { timeout: 150 });
+        } else {
+          setTimeout(preloadChunk, 40);
+        }
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(preloadChunk, { timeout: 200 });
+    } else {
+      setTimeout(preloadChunk, 80);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filtered]);
 
   const addCard = useCallback(
     (card: CardData) => {
-      const currentCount = counts.get(card.id) ?? 0;
-      if (currentCount >= CONFIG.copyLimit) {
-        showToast(`Максимум ${CONFIG.copyLimit} копии карты «${card.name}»`);
-        return;
-      }
-      if (draft.cards.length >= CONFIG.deckSize) {
-        showToast(`В колоде уже ${CONFIG.deckSize} из ${CONFIG.deckSize} карт`);
-        return;
-      }
-      setDraft((d) => ({ ...d, cards: [...d.cards, card.id] }));
+      setDraft((d) => {
+        const currentCount = d.cards.filter((id) => id === card.id).length;
+        if (currentCount >= CONFIG.copyLimit) {
+          showToast(`Максимум ${CONFIG.copyLimit} копии карты «${card.name}»`);
+          return d;
+        }
+        if (d.cards.length >= CONFIG.deckSize) {
+          showToast(`В колоде уже ${CONFIG.deckSize} из ${CONFIG.deckSize} карт`);
+          return d;
+        }
+        return { ...d, cards: [...d.cards, card.id] };
+      });
     },
-    [counts, draft.cards.length, showToast],
+    [showToast],
   );
 
   const removeCardAtIndex = useCallback((index: number) => {
@@ -936,10 +1008,11 @@ export function DeckEditor({
             </div>
           ) : (
             <div className="cw-catalog-grid">
-              {visibleCards.map((card) => (
+              {visibleCards.map((card, index) => (
                 <CatalogCardTile
                   key={card.id}
                   card={card}
+                  index={index}
                   inDeck={(counts.get(card.id) ?? 0) > 0}
                   count={counts.get(card.id) ?? 0}
                   favorite={favorites.has(card.id)}
@@ -1279,6 +1352,7 @@ function useHoldZoom<T extends HTMLElement>(scale: number) {
 
 interface CatalogCardTileProps {
   card: CardData;
+  index?: number;
   inDeck: boolean;
   count?: number;
   favorite: boolean;
@@ -1289,6 +1363,7 @@ interface CatalogCardTileProps {
 const CatalogCardTile = memo(
   function CatalogCardTile({
     card,
+    index = 0,
     inDeck,
     count = 0,
     favorite,
@@ -1325,8 +1400,8 @@ const CatalogCardTile = memo(
               className="cw-card-img"
               src={card.image}
               alt={card.name}
-              loading="lazy"
-              decoding="async"
+              loading="eager"
+              fetchPriority={index < 48 ? 'high' : 'auto'}
               draggable={false}
             />
           ) : (
@@ -1426,8 +1501,8 @@ const DeckSlotCard = memo(
               className="cw-card-img"
               src={card.image}
               alt={card.name}
-              loading="lazy"
-              decoding="async"
+              loading="eager"
+              fetchPriority="high"
               draggable={false}
             />
           ) : (

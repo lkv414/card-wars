@@ -25,6 +25,7 @@ export function Hand({ view }: { view: PlayerView }) {
     view.phase === 'main';
   const selected = useGame((s) => s.ui.selectedHand);
   const hovered = useGame((s) => s.ui.hoveredHand);
+  const handCollapsed = useGame((s) => s.ui.handCollapsed);
   const dragging = useGame((s) => s.ui.dragging);
   const draggingFrom = useGame((s) => s.ui.draggingFrom);
   const group = useRef<THREE.Group>(null);
@@ -40,6 +41,9 @@ export function Hand({ view }: { view: PlayerView }) {
   const fovDeg = camera instanceof THREE.PerspectiveCamera ? camera.fov : 43;
   const halfH = Math.abs(HAND.camZ) * Math.tan(THREE.MathUtils.degToRad(fovDeg / 2));
   const halfW = halfH * aspect;
+  const elevZ = HAND.camZ + 38;
+  const elevDist = Math.max(10, Math.abs(elevZ));
+  const elevHalfH = elevDist * Math.tan(THREE.MathUtils.degToRad(fovDeg / 2));
   const baseScale = Math.min(0.95, Math.max(0.72, aspect * 0.8));
   const maxSpan = Math.max(60, 2 * halfW - CARD_W * baseScale - 40);
   // UNO-style overlapping fan: tighter horizontal spacing + radial fan tilt.
@@ -206,6 +210,8 @@ export function Hand({ view }: { view: PlayerView }) {
     }
   }, [myMain]);
 
+  const hoveredIndex = items.findIndex((c) => c.instanceId === hovered || c.instanceId === selected);
+
   return (
     <>
       <group ref={group}>
@@ -227,8 +233,11 @@ export function Hand({ view }: { view: PlayerView }) {
               baseScale={baseScale}
               halfH={halfH}
               halfW={halfW}
+              elevHalfH={elevHalfH}
               selected={isSelected}
               hovered={isHovered}
+              hoveredIndex={hoveredIndex}
+              handCollapsed={handCollapsed}
               playable={myMain}
               isDirect={meta?.type === 'spell' || meta?.type === 'companion'}
               view={view}
@@ -290,8 +299,11 @@ function HandCard({
   baseScale,
   halfH,
   halfW,
+  elevHalfH,
   selected,
   hovered,
+  hoveredIndex,
+  handCollapsed,
   playable,
   isDirect,
   view,
@@ -307,8 +319,11 @@ function HandCard({
   baseScale: number;
   halfH: number;
   halfW: number;
+  elevHalfH: number;
   selected: boolean;
   hovered: boolean;
+  hoveredIndex: number;
+  handCollapsed: boolean;
   playable: boolean;
   isDirect: boolean;
   view: PlayerView;
@@ -340,23 +355,37 @@ function HandCard({
   const elevated = selected || hovered;
 
   const target = useMemo(() => {
-    const rawX = offset * step;
-    const elevScale = baseScale * 1.08;
+    let rawX = offset * step;
+    // Uno-style neighbor parting: nudge cards left/right when a card is hovered
+    if (hoveredIndex !== -1 && !elevated) {
+      const nudge = Math.min(22, 28 * baseScale);
+      if (index < hoveredIndex) {
+        rawX -= nudge;
+      } else if (index > hoveredIndex) {
+        rawX += nudge;
+      }
+    }
+
+    const elevScale = baseScale * 1.5; // Crystal-clear prominent zoom
     const maxX = Math.max(0, halfW - (CARD_W * elevScale) / 2 - 8);
     const clampedX = elevated ? Math.max(-maxX, Math.min(maxX, rawX)) : rawX;
     const arcDrop = Math.abs(offset) * Math.abs(offset) * 1.9 + Math.abs(offset) * 2.4;
-    // Gentle UNO-style lift: slide smoothly out of the fan without lunging forward at the camera.
-    const elevatedY = -halfH + (CARD_H * elevScale) * 0.5 + 6;
+
+    // Zero-gap bottom alignment: card grows directly from the bottom edge of the screen upwards
+    const elevatedY = -elevHalfH + (CARD_H * elevScale) / 2;
+    const collapsedY = baseY - (CARD_H * baseScale) * 0.78;
+    const restY = handCollapsed ? collapsedY : baseY - arcDrop;
+
     return {
       x: clampedX,
-      y: elevated ? elevatedY : baseY - arcDrop,
-      z: elevated ? HAND.camZ + 18 : HAND.camZ + index * 0.8,
-      rotX: elevated ? Math.PI / 2 - 0.04 : Math.PI / 2 - 0.1,
+      y: elevated ? elevatedY : restY,
+      z: elevated ? HAND.camZ + 38 : HAND.camZ + index * 1.4,
+      rotX: elevated ? Math.PI / 2 : Math.PI / 2 - 0.1,
       rotY: 0,
-      rotZ: elevated ? -offset * (fanStepRad * 0.25) : -offset * fanStepRad,
+      rotZ: elevated ? 0 : -offset * fanStepRad, // un-tilt on hover so card text is horizontal
       scale: elevated ? elevScale : baseScale,
     };
-  }, [offset, step, fanStepRad, index, elevated, baseY, baseScale, halfH, halfW]);
+  }, [offset, step, fanStepRad, index, elevated, hoveredIndex, handCollapsed, baseY, baseScale, halfH, halfW, elevHalfH]);
 
   useFrame((_, delta) => {
     const g = mesh.current;
@@ -449,6 +478,7 @@ function HandCard({
   return (
     <group
       ref={mesh}
+      renderOrder={elevated ? 999 : index}
       position={[
         offset * step,
         baseY - (Math.abs(offset) * Math.abs(offset) * 1.9 + Math.abs(offset) * 2.4),

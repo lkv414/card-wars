@@ -60,11 +60,7 @@ export function handlePlayCard(
   let effectiveCost = Math.max(0, card.cost + playedCardCostModifier(draft, ctx, playerId, card, instanceId));
 
   // Rumble / Slam discount: if creature has 'rumble' property, discount replacement cost by the replaced creature's cost.
-  const hasRumble = Boolean(
-    card.rumble ||
-    card.description?.startsWith('Грохот') ||
-    card.description?.toLowerCase().includes('грохот')
-  );
+  const hasRumble = Boolean(card.rumble);
   if (card.type === 'creature' && zone !== undefined && hasRumble) {
     const existingCreatureId = p.zones[zone]?.creature;
     if (existingCreatureId) {

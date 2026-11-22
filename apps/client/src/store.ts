@@ -50,6 +50,8 @@ export interface UiState {
   combatForecastHover: boolean;
   hoveredCreatureInstanceId: string | null;
   unfreezePrompt: { instanceId: string; zone: number } | null;
+  handCollapsed: boolean;
+  watchMode: boolean;
 }
 
 interface GameStore {
@@ -113,6 +115,8 @@ export const useGame = create<GameStore>(() => ({
     combatForecastHover: false,
     hoveredCreatureInstanceId: null,
     unfreezePrompt: null,
+    handCollapsed: false,
+    watchMode: false,
   },
   sendCommand: () => {},
   lobbyCommand: () => {},
@@ -273,6 +277,41 @@ export function pushEvents(events: GameEvent[]): void {
     eventsLog: [...state.eventsLog.slice(-60), ...events],
     lastEventsSeq: state.lastEventsSeq + events.length,
   }));
+}
+
+export function toggleHandCollapsed(): void {
+  useGame.setState((s) => ({
+    ui: { ...s.ui, handCollapsed: !s.ui.handCollapsed },
+  }));
+}
+
+export function setHandCollapsed(collapsed: boolean): void {
+  useGame.setState((s) => ({
+    ui: { ...s.ui, handCollapsed: collapsed },
+  }));
+}
+
+export function toggleWatchMode(): void {
+  const current = useGame.getState().ui.watchMode;
+  const next = !current;
+  const view = useGame.getState().view;
+  if (next && view) {
+    setCameraMode('follow');
+    const target = view.activePlayer ?? view.activePlayers[0];
+    if (target) {
+      snapCameraPlayer(target);
+    }
+    useGame.setState((s) => ({
+      ui: { ...s.ui, watchMode: true, handCollapsed: true },
+    }));
+  } else {
+    if (view) {
+      snapCameraPlayer(view.me);
+    }
+    useGame.setState((s) => ({
+      ui: { ...s.ui, watchMode: false, handCollapsed: false },
+    }));
+  }
 }
 
 export function sendCommand(command: Command): void {

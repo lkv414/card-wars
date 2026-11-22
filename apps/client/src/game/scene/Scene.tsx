@@ -6,9 +6,11 @@ import {
   setCameraMode,
   snapCameraPlayer,
   snapCameraTop,
+  toggleHandCollapsed,
+  toggleWatchMode,
   useGame,
 } from '../../store';
-import { NO_RAYCAST, cameraTurnEase } from './layout';
+import { NO_RAYCAST, boardTransform, cameraTurnEase } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
@@ -90,17 +92,28 @@ function SceneContent() {
   if (!view) return null;
   // Мой ряд рисуется последним, чтобы быть поверх соседних досок.
   const order = [...view.order].sort((a, b) => (a === view.me ? 1 : b === view.me ? -1 : 0));
+  const activePid = view.activePlayer ?? view.activePlayers[0];
+  const activeTransform = activePid ? boardTransform(view, activePid) : null;
 
   return (
     <>
-      <ambientLight intensity={1.15} />
+      <ambientLight intensity={0.92} />
       <directionalLight
         position={[180, 600, 320]}
-        intensity={1.55}
+        intensity={1.38}
         castShadow={quality === 'high'}
         shadow-mapSize={[1024, 1024]}
         shadow-bias={-0.0005}
       />
+      {/* Акцентный спотлайт на доске активного ходящего игрока */}
+      {activeTransform && (
+        <pointLight
+          position={[activeTransform.x, 260, activeTransform.z]}
+          intensity={2.8}
+          distance={850}
+          color="#fff5cc"
+        />
+      )}
       {/* стол: разнесённые по высоте уровни без наложения плоскостей (никакого Z-fighting при вращении камеры) */}
       <mesh position={[0, -9, 0]} raycast={NO_RAYCAST}>
         <boxGeometry args={[2800, 10, 2800]} />
@@ -222,6 +235,11 @@ function CameraRig() {
       if (ui.dragging !== null || ui.targeting !== null || ui.holdingFloop !== null) return;
       if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 2) return;
 
+      const rect = dom.getBoundingClientRect();
+      const relativeY = (e.clientY - rect.top) / Math.max(1, rect.height);
+      // Мертвая зона: в нижних 30% экрана (рука, колода, сброс, герой) свайпы камеры отключены
+      if (relativeY > 0.70) return;
+
       gestureRef.current = {
         startX: e.clientX,
         startY: e.clientY,
@@ -305,6 +323,10 @@ function CameraRig() {
       } else if (e.key === 'f' || e.key === 'F') {
         const cur = useGame.getState().ui.cameraMode;
         setCameraMode(cur === 'follow' ? 'manual' : 'follow');
+      } else if (e.key === 'h' || e.key === 'H') {
+        toggleHandCollapsed();
+      } else if (e.key === 'v' || e.key === 'V') {
+        toggleWatchMode();
       } else if (e.key === ' ') {
         e.preventDefault();
         const v = useGame.getState().view;
@@ -335,10 +357,12 @@ function CameraRig() {
   useEffect(() => {
     if (!view) return;
     const aspect = size.width / Math.max(1, size.height);
-    const targetPid = resolveTargetPlayer(view, cameraMode, cameraSnap);
+    const watch = useGame.getState().ui.watchMode;
+    const activePid = view.activePlayer ?? view.activePlayers[0];
+    const targetPid = watch && activePid ? activePid : resolveTargetPlayer(view, cameraMode, cameraSnap);
     const isTop = isTopSnap(cameraSnap, cameraMode);
     const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
-    const targetKey = `${targetPid}|${isTop ? 'top' : 'persp'}|${cameraMode}`;
+    const targetKey = `${targetPid}|${isTop ? 'top' : 'persp'}|${cameraMode}|${watch ? 'watch' : ''}`;
 
     if (currentAngleRef.current === null) {
       currentAngleRef.current = anchor.angle;

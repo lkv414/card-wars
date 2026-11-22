@@ -123,6 +123,18 @@ export function HudSidebar({
     });
   };
 
+  // Auto-open sidebar on match start mulligan if user had it collapsed
+  useEffect(() => {
+    if (view.status === 'mulligan' && desktopCollapsed) {
+      setDesktopCollapsed(false);
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('cw-sidebar-collapsed', '0');
+        }
+      } catch {}
+    }
+  }, [view.status, desktopCollapsed]);
+
   // Keyboard accessibility: Escape closes open menus/modals
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -188,13 +200,16 @@ export function HudSidebar({
   })();
 
   const phaseLabel = phaseRu(view.phase);
+  const actionsSpent = myMain && me.actions === 0 && (!is2v2 || !me.battleReady);
 
   return (
     <>
       {/* Mobile Floating Bottom Bar for quick combat & drawer toggle */}
       <div className="hud-mobile-bottom-bar" role="toolbar" aria-label="Быстрые действия">
         <button
-          className={`hud-mobile-btn-battle ${myMain && (!is2v2 || !me.battleReady) ? 'pulse' : ''}`}
+          className={`hud-mobile-btn-battle ${myMain && (!is2v2 || !me.battleReady) ? 'pulse' : ''} ${
+            actionsSpent ? 'actions-spent' : ''
+          }`}
           disabled={battleBtnDisabled}
           onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
           onTouchStart={() => setUi({ combatForecastHover: true })}
@@ -232,50 +247,117 @@ export function HudSidebar({
         }`}
         aria-label="Панель действий матча"
       >
+        {/* Floating edge tab so collapsed sidebar can always be expanded with 1 click */}
+        {desktopCollapsed && (
+          <button
+            className="hud-sidebar-floating-tab"
+            onClick={toggleDesktopCollapse}
+            title="Развернуть панель действий (◀)"
+            aria-label="Развернуть панель действий"
+          >
+            ◀
+          </button>
+        )}
+
         {/* Header: Room Code, Round/Turn, Quality HD/SD, Collapse Button */}
         <div className="hud-sidebar-header">
-          <div className="hud-sidebar-header-top">
-            <span className="hud-room-code" title={`Комната ${code}`}>
-              🏠 {code}
-            </span>
-            <div className="hud-header-actions">
+          {desktopCollapsed ? (
+            <div className="hud-sidebar-collapsed-head">
               <button
-                className="hud-quality-toggle mini"
-                onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}
-                title={`Качество графики: ${quality === 'high' ? 'высокое (HD)' : 'низкое (SD)'}`}
-                aria-label={`Качество: ${quality === 'high' ? 'HD' : 'SD'}`}
-              >
-                {quality === 'high' ? 'HD' : 'SD'}
-              </button>
-              <button
-                className="hud-sidebar-toggle-btn"
+                className="hud-sidebar-toggle-btn is-expand-btn"
                 onClick={toggleDesktopCollapse}
-                title={desktopCollapsed ? 'Развернуть панель' : 'Свернуть панель'}
-                aria-label={desktopCollapsed ? 'Развернуть панель' : 'Свернуть панель'}
+                title="Развернуть панель (◀)"
+                aria-label="Развернуть панель"
               >
-                {desktopCollapsed ? '◀' : '▶'}
-              </button>
-              <button
-                className="hud-sidebar-mobile-close"
-                onClick={() => setMobileDrawerOpen(false)}
-                aria-label="Закрыть панель"
-              >
-                ✕
+                ◀
               </button>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="hud-sidebar-header-top">
+                <span className="hud-room-code" title={`Комната ${code}`}>
+                  🏠 {code}
+                </span>
+                <div className="hud-header-actions">
+                  <button
+                    className="hud-quality-toggle mini"
+                    onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}
+                    title={`Качество графики: ${quality === 'high' ? 'высокое (HD)' : 'низкое (SD)'}`}
+                    aria-label={`Качество: ${quality === 'high' ? 'HD' : 'SD'}`}
+                  >
+                    {quality === 'high' ? 'HD' : 'SD'}
+                  </button>
+                  <button
+                    className="hud-sidebar-toggle-btn"
+                    onClick={toggleDesktopCollapse}
+                    title="Свернуть панель (▶)"
+                    aria-label="Свернуть панель"
+                  >
+                    ▶
+                  </button>
+                  <button
+                    className="hud-sidebar-mobile-close"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    aria-label="Закрыть панель"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
 
-          <div className="hud-sidebar-meta">
-            <span className="hud-sidebar-title">
-              {view.status === 'running' ? `Круг ${view.round} · Ход ${view.turn}` : 'Матч'}
-            </span>
-            <span className={`hud-sidebar-phase-badge phase-${view.phase}`}>
-              {phaseLabel}
-            </span>
-          </div>
+              <div className="hud-sidebar-meta">
+                <span className="hud-sidebar-title">
+                  {view.status === 'running' ? `Круг ${view.round} · Ход ${view.turn}` : 'Матч'}
+                </span>
+                <span className={`hud-sidebar-phase-badge phase-${view.phase}`}>
+                  {phaseLabel}
+                </span>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="hud-sidebar-scroll">
+          {/* Section: Mulligan Decision in Right Sidebar */}
+          {view.status === 'mulligan' && (
+            <div className="hud-sidebar-section mulligan-section">
+              <div className="section-label">
+                <span>🎴 Стартовая рука</span>
+              </div>
+              <div className="hud-mulligan-card">
+                <p className="hud-mulligan-hint">
+                  {me.mulliganDecision
+                    ? 'Решение принято! Ждём остальных игроков...'
+                    : 'Оставить текущую руку или один раз перемешать и взять 5 новых?'}
+                </p>
+                <div className="hud-mulligan-actions">
+                  <button
+                    className="hud-mulligan-btn hud-mulligan-keep"
+                    disabled={me.mulliganDecision !== null}
+                    onClick={() => sendCommand({ type: 'keep_hand', player: view.me })}
+                    title="Оставить текущие 5 карт в руке"
+                  >
+                    <span className="btn-icon">✓</span>
+                    <span className="btn-label">Оставить</span>
+                  </button>
+                  <button
+                    className="hud-mulligan-btn hud-mulligan-redraw"
+                    disabled={me.mulliganDecision !== null}
+                    onClick={() => sendCommand({ type: 'mulligan', player: view.me })}
+                    title="Сбросить карты, перемешать колоду и взять 5 новых (один раз за матч)"
+                  >
+                    <span className="btn-icon">🔄</span>
+                    <span className="btn-label">Перемешать</span>
+                  </button>
+                </div>
+                {me.mulliganDecision && (
+                  <div className="hud-mulligan-chosen-badge">
+                    Вы выбрали: <b>{me.mulliganDecision === 'keep' ? 'Оставить' : 'Перемешать'}</b>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           {/* Section 0: My Status (Lives, Actions, Hand) */}
           <div className="hud-sidebar-section status-section">
             <div className="hud-status-card">
@@ -291,9 +373,17 @@ export function HudSidebar({
                     <span className="metric-sub">/{me.maxLives}</span>
                   )}
                 </div>
-                <div className="metric-pill metric-actions" title="Оставшиеся действия">
+                <div className="metric-pill metric-actions" title={`Оставшиеся действия: ${me.actions}`}>
                   <span className="metric-icon">⚡</span>
                   <span className="metric-val">{me.actions}</span>
+                  <div className="metric-pips" aria-hidden="true">
+                    {Array.from({ length: Math.max(CONFIG.actionsPerTurn, me.actions) }).map((_, i) => (
+                      <span
+                        key={i}
+                        className={`pip-dot ${i < me.actions ? 'pip-active' : 'pip-spent'}`}
+                      />
+                    ))}
+                  </div>
                 </div>
                 <div className="metric-pill metric-hand" title="Карт в руке">
                   <span className="metric-icon">🎴</span>
@@ -371,7 +461,7 @@ export function HudSidebar({
             <button
               className={`hud-sidebar-battle-btn ${
                 myMain && (!is2v2 || !me.battleReady) ? 'active-cta' : ''
-              }`}
+              } ${actionsSpent ? 'actions-spent' : ''}`}
               disabled={battleBtnDisabled}
               onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
               onMouseEnter={() => setUi({ combatForecastHover: true })}

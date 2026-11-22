@@ -75,6 +75,11 @@ const cards = rawCards
     if (card.description) record.description = card.description;
     if (card.abilities && card.abilities.length) record.abilities = card.abilities;
     if (card.set_code || card.deckSet) record.deckSet = card.set_code || card.deckSet;
+    if (card.rumble !== undefined) {
+      record.rumble = Boolean(card.rumble);
+    } else if (card.description && /грохот/i.test(card.description)) {
+      record.rumble = true;
+    }
 
     return record;
   })

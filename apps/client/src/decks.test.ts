@@ -5,12 +5,23 @@ import {
   decodeDeckCode,
   encodeDeckCode,
   generateRandomDeck,
-  presetDecks,
   validateSavedDeck,
   type SavedDeck,
 } from './decks';
 
 const cardById = new Map(cards.map((c) => [c.id, c]));
+
+function sampleDeck(): SavedDeck {
+  const lands: LandType[] = ['corn', 'corn', 'blue', 'blue'];
+  const deckCards = generateRandomDeck('bmo-f0dc351', lands);
+  return {
+    id: 'test-sample-deck',
+    name: 'Тестовая колода',
+    heroId: 'bmo-f0dc351',
+    lands,
+    cards: deckCards,
+  };
+}
 
 describe('decodeDeckCode', () => {
   it('returns an error and does not throw for completely invalid strings', () => {
@@ -36,7 +47,7 @@ describe('decodeDeckCode', () => {
   });
 
   it('detects checksum corruption', () => {
-    const preset = presetDecks()[0]!;
+    const preset = sampleDeck();
     const code = encodeDeckCode(preset);
     const dot = code.lastIndexOf('.');
     const payload = code.slice(0, dot);
@@ -109,7 +120,7 @@ describe('decodeDeckCode', () => {
 
 describe('v2 RLE encode / decode round-trip', () => {
   it('encodes with v2 RLE format and preserves deck name', () => {
-    const preset = presetDecks()[0]!;
+    const preset = sampleDeck();
     const deckToEncode: SavedDeck = {
       ...preset,
       name: 'Колода Бимо Чемпион',
@@ -166,7 +177,7 @@ describe('v2 RLE encode / decode round-trip', () => {
 
 describe('v1 legacy compatibility', () => {
   it('decodes legacy v1 deck codes without throwing', () => {
-    const preset = presetDecks()[0]!;
+    const preset = sampleDeck();
 
     // Construct legacy v1 payload
     const v1Payload = JSON.stringify({
@@ -257,7 +268,7 @@ describe('generateRandomDeck', () => {
   });
 
   it('smartly auto-fills an incomplete deck', () => {
-    const preset = presetDecks()[0]!;
+    const preset = sampleDeck();
     const initialCards = preset.cards.slice(0, 15);
     expect(initialCards.length).toBe(15);
 
@@ -287,7 +298,7 @@ describe('generateRandomDeck', () => {
   });
 
   it('leaves already full deck untouched', () => {
-    const preset = presetDecks()[0]!;
+    const preset = sampleDeck();
     const filledDeck = generateRandomDeck(preset.heroId, preset.lands, preset.cards);
     expect(filledDeck.length).toBe(CONFIG.deckSize);
     expect(filledDeck).toEqual(preset.cards);

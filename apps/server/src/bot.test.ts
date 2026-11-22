@@ -64,4 +64,27 @@ describe('бот', () => {
     const view = viewFor(deps, state, 'p2', { journal: [] });
     expect(decideBotCommand(view, deps)).toBeNull();
   });
+
+  it('отвечает на pending choice (resolve_choice), если выбор ожидает бота', () => {
+    let state = newMatch();
+    for (const pid of ['p1', 'p2']) {
+      const res = applyCommand(state, { type: 'keep_hand', player: pid }, deps);
+      expect(res.ok).toBe(true);
+      if (res.ok) state = res.state;
+    }
+    const baseView = viewFor(deps, state, 'p1', { journal: [] });
+    const pendingView = {
+      ...baseView,
+      pending: {
+        player: 'p1',
+        kind: 'optional' as const,
+      },
+    };
+    const command = decideBotCommand(pendingView, deps);
+    expect(command).not.toBeNull();
+    expect(command!.type).toBe('resolve_choice');
+    if (command && command.type === 'resolve_choice') {
+      expect(command.answer.proceed).toBe(true);
+    }
+  });
 });

@@ -192,7 +192,7 @@ export function DeckPreview({
             >
               <div className="deck-preview__visual">
                 {card?.image ? (
-                  <img src={card.image} alt={card.name} loading="lazy" draggable={false} />
+                  <img src={card.image} alt={card.name} loading="eager" draggable={false} />
                 ) : (
                   <span className="deck-preview__card-fallback">{card?.name ?? cardId}</span>
                 )}

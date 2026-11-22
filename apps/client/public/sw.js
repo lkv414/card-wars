@@ -1,8 +1,9 @@
 // Service Worker for Card Wars v3
 // Provides offline shell caching and static asset caching.
 
-const CACHE_VERSION = 'v3.1.143';
+const CACHE_VERSION = 'v3.1.144';
 const CACHE_NAME = `card-wars-${CACHE_VERSION}`;
+const CONTENT_CACHE_NAME = 'card-wars-content-v1';
 
 const CORE_ASSETS = [
   '/',
@@ -30,7 +31,7 @@ self.addEventListener('activate', (event) => {
       .then((keys) =>
         Promise.all(
           keys.map((key) => {
-            if (key !== CACHE_NAME) {
+            if (key !== CACHE_NAME && key !== CONTENT_CACHE_NAME) {
               return caches.delete(key);
             }
             return undefined;
@@ -102,7 +103,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Other static assets (icons, manifest, content art) -> Stale-While-Revalidate
+  // 3. Content art scans & portraits (/content/...) -> Cache First in permanent content cache
+  if (url.pathname.startsWith('/content/')) {
+    event.respondWith(
+      caches.open(CONTENT_CACHE_NAME).then(async (contentCache) => {
+        const cached = await contentCache.match(req);
+        if (cached) return cached;
+        return fetch(req).then((networkRes) => {
+          if (networkRes && networkRes.status === 200) {
+            contentCache.put(req, networkRes.clone());
+          }
+          return networkRes;
+        });
+      })
+    );
+    return;
+  }
+
+  // 4. Other static assets (icons, manifest) -> Stale-While-Revalidate
   event.respondWith(
     caches.match(req).then((cached) => {
       const fetchPromise = fetch(req)

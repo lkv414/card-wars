@@ -9,10 +9,10 @@ import { sendCommand, setUi, showHint, useGame } from '../../store';
 import { activeAbilityOf, pick, startForActive, validTargets } from '../targeting';
 import { DamagePile } from './DamagePile';
 
-const HOLD_MS = 1000; // floop — hold the card for 1s (docs/UI-3D.md)
-const HINT_HOLD_MS = 450; // quick feedback when holding a card that cannot floop
-const FLIP_ANIM_MS = 480; // 3D jump + turn animation when card floops/unfloops
-const DRAG_THRESHOLD_PX = 10; // movement past threshold turns hold into drag
+const HOLD_MS = 360; // fast & responsive floop hold ~360ms (docs/UI-3D.md)
+const HINT_HOLD_MS = 240; // quick feedback when holding a card that cannot floop
+const FLIP_ANIM_MS = 460; // 3D jump + turn animation when card floops/unfloops
+const DRAG_THRESHOLD_PX = 32; // raised from 10 to 32px so finger/mouse jitter never cancels floop
 const DRAG_LIFT_Y = 34; // card lift height while dragging
 const sharedEdgeMat = new THREE.MeshLambertMaterial({ color: '#2a3545' });
 
@@ -338,9 +338,9 @@ export function CardMesh({
         </mesh>
       </group>
       {canDrag && (
-        <mesh ref={ring} position={[0, 18, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false} raycast={NO_RAYCAST}>
+        <mesh ref={ring} position={[0, 18, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false} raycast={NO_RAYCAST} renderOrder={999}>
           <ringGeometry args={[42, 52, 36]} />
-          <meshBasicMaterial color="#48d9a0" transparent opacity={0.5} side={THREE.DoubleSide} />
+          <meshBasicMaterial color="#48d9a0" transparent opacity={0.78} side={THREE.DoubleSide} depthTest={false} />
         </mesh>
       )}
       {/* Аффорданс доступного флюпа (мягкое золотисто-зеленое свечение) */}

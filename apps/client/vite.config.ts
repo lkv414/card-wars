@@ -33,7 +33,7 @@ function contentAssets(): Plugin {
           return;
         }
         res.setHeader('Content-Type', MIME[extname(filePath).toLowerCase()] ?? 'application/octet-stream');
-        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         createReadStream(filePath).pipe(res);
       });
     },

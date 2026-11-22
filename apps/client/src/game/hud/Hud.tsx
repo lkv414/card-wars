@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { PlayerView } from '@card-wars/protocol';
-import { sendCommand, setUi, useGame } from '../../store';
+import { sendCommand, setUi, snapCameraPlayer, toggleHandCollapsed, toggleWatchMode, useGame } from '../../store';
 import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
@@ -13,6 +13,8 @@ export function Hud({ code }: { code: string }) {
   const error = useGame((s) => s.error);
   const journalOpen = useGame((s) => s.ui.journalOpen);
   const unfreezePrompt = useGame((s) => s.ui.unfreezePrompt);
+  const handCollapsed = useGame((s) => s.ui.handCollapsed);
+  const watchMode = useGame((s) => s.ui.watchMode);
   const me = view.players[view.me]!;
   // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
   const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
@@ -456,26 +458,7 @@ export function Hud({ code }: { code: string }) {
 
 
 
-      {view.status === 'mulligan' && (
-        <div className="overlay">
-          <div className="panel mulligan">
-            <h2>Муллиган</h2>
-            <p className="hint">
-              {me.mulliganDecision
-                ? 'Решение принято — ждём остальных игроков'
-                : 'Оставить руку или перемешать и взять 5 новых'}
-            </p>
-            <div className="row">
-              <button disabled={me.mulliganDecision !== null} onClick={() => sendCommand({ type: 'keep_hand', player: view.me })}>
-                Оставить
-              </button>
-              <button disabled={me.mulliganDecision !== null} onClick={() => sendCommand({ type: 'mulligan', player: view.me })}>
-                Перемешать
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {view.status === 'finished' && (
         <div className="overlay">
@@ -506,6 +489,42 @@ export function Hud({ code }: { code: string }) {
           view={view}
           onClose={() => setUi({ unfreezePrompt: null })}
         />
+      )}
+
+      {/* Быстрое управление камерой: возврат «К себе» и режим «Следить за боем» */}
+      {view.status === 'running' && (
+        <div className="hud-floating-camera-bar">
+          <button
+            className="hud-quick-cam-btn"
+            onClick={() => snapCameraPlayer(view.me)}
+            title="Вернуть камеру к своему полю (Space)"
+          >
+            <span className="btn-icon">👤</span>
+            <span className="btn-label">К себе</span>
+          </button>
+          <button
+            className={`hud-quick-cam-btn ${watchMode ? 'active' : ''}`}
+            onClick={toggleWatchMode}
+            title="Следить за активным игроком (V)"
+          >
+            <span className="btn-icon">👁️</span>
+            <span className="btn-label">{watchMode ? 'Слежение: вкл' : 'Следить'}</span>
+          </button>
+        </div>
+      )}
+
+      {/* Кнопка сворачивания/разворачивания руки */}
+      {view.status === 'running' && view.myHand.length > 0 && (
+        <div className="hud-hand-control-overlay">
+          <button
+            className={`hud-hand-toggle-btn ${handCollapsed ? 'collapsed' : ''}`}
+            onClick={toggleHandCollapsed}
+            title="Скрыть/показать карты руки (H)"
+          >
+            <span className="btn-icon">{handCollapsed ? '▲' : '▼'}</span>
+            <span className="btn-text">{handCollapsed ? `Рука (${view.myHand.length})` : 'Свернуть руку'}</span>
+          </button>
+        </div>
       )}
 
       <CardZoomModal />

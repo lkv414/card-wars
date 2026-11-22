@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
-import type { PlayerView } from '@card-wars/protocol';
+import { CONFIG, type PlayerView } from '@card-wars/protocol';
 import { heroNameOf } from '../hud/names';
 import {
   CARD_T,
@@ -18,7 +19,7 @@ import {
 import { cardBackTexture, cardTexture, heroTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
-import { setUi, useGame } from '../../store';
+import { sendCommand, setUi, showHint, useGame } from '../../store';
 
 /** Игровое поле одного игрока: 4 земли (с их точными углами/позициями боя), колода, сброс, герой, жизни. */
 export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string; isMe: boolean }) {
@@ -50,7 +51,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
       })}
 
       <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
-        <DeckPile count={p.deckCount} view={view} />
+        <DeckPile count={p.deckCount} view={view} isMe={isMe} pid={pid} />
         <DiscardPile view={view} pid={pid} />
         <HeroStand
           nickname={p.nickname}
@@ -73,19 +74,88 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
   );
 }
 
-function DeckPile({ count, view }: { count: number; view: PlayerView }) {
+function DeckPile({
+  count,
+  view,
+  isMe,
+  pid,
+}: {
+  count: number;
+  view: PlayerView;
+  isMe: boolean;
+  pid: string;
+}) {
   const back = useMemo(() => cardBackTexture(), []);
   const [x, y, z] = deckLocalFor(view);
   const layers = Math.min(8, Math.ceil(count / 5));
+  const [hovered, setHovered] = useState(false);
+
+  const me = view.players[view.me]!;
+  const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
+  const myMain = myTurn && view.phase === 'main' && !me.battleReady;
+  const canDrawExtra = isMe && myMain && me.actions >= CONFIG.extraDrawCost && count > 0;
+
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    if (!isMe) return;
+    if (count <= 0) {
+      showHint('Колода пуста');
+      return;
+    }
+    if (!myTurn) {
+      showHint('Сейчас не ваш ход');
+      return;
+    }
+    if (me.battleReady) {
+      showHint('Вы уже готовы к бою');
+      return;
+    }
+    if (view.phase !== 'main') {
+      showHint('Добор доступен только в основную фазу');
+      return;
+    }
+    if (me.actions < CONFIG.extraDrawCost) {
+      showHint(`Не хватает действий для добора (нужно ${CONFIG.extraDrawCost} д.)`);
+      return;
+    }
+    sendCommand({ type: 'draw_extra', player: view.me });
+  };
+
   return (
     <group position={[x, y, z]}>
-      {Array.from({ length: layers }, (_, i) => (
-        <mesh key={i} position={[0, i * 1.4, 0]} raycast={NO_RAYCAST}>
-          <boxGeometry args={[CARD_W, 1, CARD_H]} />
-          <meshLambertMaterial map={back} />
+      {/* Мягкое золотистое свечение под колодой, если доступен добор за действие */}
+      {isMe && canDrawExtra && (
+        <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
+          <planeGeometry args={[CARD_W + 24, CARD_H + 24]} />
+          <meshBasicMaterial color="#ffe9a8" transparent opacity={hovered ? 0.65 : 0.28} />
         </mesh>
-      ))}
-      <FloatingLabel text={`Колода: ${count}`} position={[0, layers * 1.4 + 12, 0]} />
+      )}
+
+      {Array.from({ length: layers }, (_, i) => {
+        const isTop = i === layers - 1;
+        const liftY = isTop && isMe && hovered && canDrawExtra ? 5 : 0;
+        return (
+          <mesh
+            key={i}
+            position={[0, i * 1.4 + liftY, 0]}
+            onClick={isMe ? handleClick : undefined}
+            onPointerOver={isMe ? (e) => { e.stopPropagation(); setHovered(true); } : undefined}
+            onPointerOut={isMe ? (e) => { e.stopPropagation(); setHovered(false); } : undefined}
+          >
+            <boxGeometry args={[CARD_W, 1, CARD_H]} />
+            <meshLambertMaterial map={back} />
+          </mesh>
+        );
+      })}
+
+      <FloatingLabel
+        text={
+          isMe && canDrawExtra
+            ? `Колода: ${count} • Добор (−${CONFIG.extraDrawCost} д.)`
+            : `Колода: ${count}`
+        }
+        position={[0, layers * 1.4 + 14, 0]}
+      />
     </group>
   );
 }

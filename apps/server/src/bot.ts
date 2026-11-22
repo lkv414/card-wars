@@ -1,10 +1,9 @@
 import type { CardCatalog, CardData, GameConfig } from '@card-wars/domain';
-import type { Command, PlayerView } from '@card-wars/protocol';
+import type { Command, PlayerView, TargetChoice } from '@card-wars/protocol';
 
 // Server-side bot heuristic (docs/NETWORK.md «Боты»). Purely a function of the
 // bot's personal view + public catalog: hidden cards of other players are never used.
-// Floop targeting returns with mechanics v2 (docs/TECH.md № 2); until then the
-// bot only plays cards, draws extra and goes to battle.
+// Resolves choices/targets, plays cards, floops, draws extra and goes to battle.
 
 export interface BotDeps {
   catalog: CardCatalog;
@@ -15,6 +14,107 @@ type CardSlot = 'creature' | 'building';
 
 function cardOf(deps: BotDeps, cardId: string): CardData | undefined {
   return deps.catalog.getCard(cardId);
+}
+
+function resolvePendingForBot(view: PlayerView, deps: BotDeps): Command {
+  const pending = view.pending!;
+  if (pending.kind === 'optional') {
+    return {
+      type: 'resolve_choice',
+      player: view.me,
+      answer: { proceed: true },
+    };
+  }
+
+  const me = view.players[view.me]!;
+  const ability = pending.cardId
+    ? cardOf(deps, pending.cardId)?.abilities?.[pending.abilityIndex ?? 0]
+    : deps.catalog.getHero(me.heroId)?.ability;
+  const ask = ability?.targets?.[pending.askIndex ?? 0];
+
+  const opponents = view.order.filter((pid) => {
+    if (pid === view.me) return false;
+    const p = view.players[pid]!;
+    if (me.teamId && p.teamId === me.teamId) return false;
+    return true;
+  });
+
+  const targetChoices: TargetChoice[] = [];
+
+  if (ask) {
+    if (ask.kind === 'player' || ask.kind === 'opponent_player') {
+      const targetPid = opponents[0] ?? view.order.find((p) => p !== view.me) ?? view.me;
+      targetChoices.push({ kind: 'player', playerId: targetPid });
+    } else if (ask.kind === 'creature' || ask.kind === 'opponent_creature') {
+      let found: string | null = null;
+      for (const pid of opponents) {
+        for (const z of view.players[pid]!.zones) {
+          if (z.creature) {
+            found = z.creature.instanceId;
+            break;
+          }
+        }
+        if (found) break;
+      }
+      if (!found && ask.kind !== 'opponent_creature') {
+        for (const z of me.zones) {
+          if (z.creature) {
+            found = z.creature.instanceId;
+            break;
+          }
+        }
+      }
+      if (found) targetChoices.push({ kind: 'creature', instanceId: found });
+    } else if (ask.kind === 'own_creature') {
+      for (const z of me.zones) {
+        if (z.creature) {
+          targetChoices.push({ kind: 'creature', instanceId: z.creature.instanceId });
+          break;
+        }
+      }
+    } else if (ask.kind === 'landscape') {
+      targetChoices.push({ kind: 'landscape', player: view.me, zone: 0 });
+    } else if (ask.kind === 'mode' || ask.kind === 'heal_or_damage') {
+      targetChoices.push({ kind: 'mode', mode: 'damage' });
+    } else if (ask.kind === 'option') {
+      const opt = ask.options?.[0] ?? 'corn';
+      targetChoices.push({ kind: 'option', option: opt });
+    } else if (ask.kind === 'amount') {
+      targetChoices.push({ kind: 'amount', value: ask.min ?? 1 });
+    } else if (ask.kind === 'card' || ask.kind === 'own_discard_card' || ask.kind === 'any_discard_card') {
+      const revealed = view.revealed[view.me];
+      if (revealed && revealed.length > 0) {
+        targetChoices.push({ kind: 'card', instanceId: revealed[0]!.instanceId });
+      } else if (me.discard.length > 0) {
+        targetChoices.push({ kind: 'card', instanceId: me.discard[0]!.instanceId });
+      }
+    }
+  }
+
+  return {
+    type: 'resolve_choice',
+    player: view.me,
+    answer: targetChoices.length > 0 ? { targets: targetChoices } : {},
+  };
+}
+
+function findFloop(view: PlayerView, deps: BotDeps): Command | null {
+  const me = view.players[view.me]!;
+  if (view.round === 1 && (view.mode === 'teams' || view.activePlayer === view.order[0])) {
+    return null; // floop forbidden on round 1 active turn
+  }
+  for (let i = 0; i < me.zones.length; i++) {
+    const creature = me.zones[i]!.creature;
+    if (!creature || creature.flipped) continue;
+    const meta = cardOf(deps, creature.cardId);
+    const active = meta?.abilities?.find((a) => a.kind === 'active');
+    if (!active) continue;
+    const cost = active.cost ?? 0;
+    if (cost <= me.actions) {
+      return { type: 'floop', player: view.me, instanceId: creature.instanceId };
+    }
+  }
+  return null;
 }
 
 function landRequirementMet(view: PlayerView, landType: string, required: number): boolean {
@@ -100,6 +200,18 @@ export function decideBotCommand(view: PlayerView, deps: BotDeps): Command | nul
       : { type: 'keep_hand', player: view.me };
   }
 
+  // Answer pending choice if awaiting this bot
+  if (view.pending && view.pending.player === view.me) {
+    return resolvePendingForBot(view, deps);
+  }
+
+  // Match-start word choice for hero ability
+  const heroSetup = deps.catalog.getHero(me.heroId)?.wordSetup;
+  if (view.status === 'running' && heroSetup && !view.myWord) {
+    const word = 'карта'.slice(0, Math.max(heroSetup.min, 5));
+    return { type: 'choose_word', player: view.me, word };
+  }
+
   if (view.status !== 'running') return null;
   if (!view.activePlayers.includes(view.me)) return null;
   if (me.battleReady) return null;
@@ -108,6 +220,10 @@ export function decideBotCommand(view: PlayerView, deps: BotDeps): Command | nul
   if (me.actions > 0) {
     const play = findPlay(view, deps);
     if (play) return play;
+
+    const floop = findFloop(view, deps);
+    if (floop) return floop;
+
     if (me.actions >= deps.config.extraDrawCost && me.deckCount > 5 && me.handCount < 8) {
       return { type: 'draw_extra', player: view.me };
     }

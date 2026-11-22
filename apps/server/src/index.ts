@@ -37,7 +37,17 @@ export default {
     }
 
     if (env.ASSETS) {
-      return env.ASSETS.fetch(request);
+      const res = await env.ASSETS.fetch(request);
+      if (url.pathname.startsWith('/content/') && res.status === 200) {
+        const headers = new Headers(res.headers);
+        headers.set('cache-control', 'public, max-age=31536000, immutable');
+        return new Response(res.body, {
+          status: res.status,
+          statusText: res.statusText,
+          headers,
+        });
+      }
+      return res;
     }
 
     return new Response('Not found', { status: 404 });

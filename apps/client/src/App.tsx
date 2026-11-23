@@ -161,7 +161,7 @@ function MainMenu({
 
         {selectedDeck && (
           <div
-            className="menu-deck-badge"
+            className="menu-deck-badge cw-felt-box"
             onClick={() => {
               soundEngine.playCardDraw();
               onDecks();
@@ -184,7 +184,7 @@ function MainMenu({
                 {hero?.name ?? 'Герой'} · {selectedDeck.cards.length}/{CONFIG.deckSize} карт
               </span>
             </div>
-            <span className="menu-deck-badge__action">📜 Открыть</span>
+            <span className="menu-deck-badge__action cw-btn-3d btn-gold btn-sm">📜 Открыть</span>
           </div>
         )}
 
@@ -200,7 +200,7 @@ function MainMenu({
           </label>
 
           <button
-            className="btn-primary btn-xl btn-treehouse-plank"
+            className="btn-primary btn-xl btn-treehouse-plank cw-btn-3d btn-green btn-lg"
             disabled={!nickname.trim()}
             onClick={() => {
               soundEngine.playGong();
@@ -232,7 +232,7 @@ function MainMenu({
                 }}
               />
               <button
-                className="btn-accent"
+                className="btn-accent cw-btn-3d btn-orange btn-sm"
                 disabled={codeInput.length !== CONFIG.lobbyCodeDigits || !nickname.trim()}
                 onClick={() => {
                   soundEngine.playButtonClick();
@@ -245,7 +245,7 @@ function MainMenu({
           </div>
 
           <button
-            className="btn-accent btn-xl btn-grimoire-plank"
+            className="btn-accent btn-xl btn-grimoire-plank cw-btn-3d btn-blue btn-lg"
             onClick={() => {
               soundEngine.playCardDraw();
               onDecks();
@@ -262,7 +262,7 @@ function MainMenu({
             <span>
               Звук:{' '}
               <button
-                className="link-btn"
+                className="link-btn cw-btn-3d btn-dark btn-sm"
                 onClick={() => {
                   const next = !muted;
                   soundEngine.setMuted(next);
@@ -276,7 +276,7 @@ function MainMenu({
             <span>
               Музыка:{' '}
               <button
-                className="link-btn"
+                className="link-btn cw-btn-3d btn-dark btn-sm"
                 onClick={() => {
                   const next = soundEngine.toggleMusic();
                   setMusic(next);
@@ -289,7 +289,7 @@ function MainMenu({
             <span>
               Графика:{' '}
               <button
-                className="link-btn"
+                className="link-btn cw-btn-3d btn-dark btn-sm"
                 onClick={() => {
                   soundEngine.playButtonClick();
                   setQuality(quality === 'high' ? 'low' : 'high');
@@ -333,7 +333,7 @@ function NicknameScreen({ code, onDone }: { code: string; onDone: (nick: string)
             />
           </label>
           <button
-            className="btn-primary btn-xl btn-treehouse-plank"
+            className="btn-primary btn-xl btn-treehouse-plank cw-btn-3d btn-green btn-lg"
             disabled={!nick.trim()}
             onClick={() => {
               soundEngine.playGong();

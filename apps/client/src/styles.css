@@ -105,6 +105,23 @@
   box-shadow: 0 2px 0 var(--btn-shadow);
 }
 
+.ui-v2 .cw-btn-3d {
+  background: var(--btn-bg);
+  color: #ffffff;
+  border: none;
+  font-family: 'Balsamiq Sans', cursive, sans-serif;
+  text-decoration: none;
+}
+
+.ui-v2 .cw-btn-3d:hover:not(:disabled) {
+  background: var(--btn-bg);
+  filter: brightness(1.15);
+}
+
+.ui-v2 .cw-btn-3d.btn-gold {
+  color: #231604;
+}
+
 /* =========================================================================
    Craft Stitched Felt and Paper Boxes (docs/AUDIT-KIBERBUS-UIUX.md §4.3)
    ========================================================================= */
@@ -2278,7 +2295,7 @@ button.danger {
   background: var(--ui-bg);
   color: var(--ui-text);
   color-scheme: dark;
-  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  font-family: 'Balsamiq Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: #5e422c #1a120b;
@@ -2314,6 +2331,12 @@ button.danger {
 .ui-v2 h3 {
   margin: 0;
   color: var(--ui-heading);
+  font-family: 'Balsamiq Sans', cursive, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.ui-v2 button {
+  font-family: 'Balsamiq Sans', cursive, sans-serif;
 }
 
 .ui-v2 p {

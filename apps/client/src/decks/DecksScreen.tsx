@@ -162,22 +162,22 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
   return (
     <main className="decks-page ui-v2">
       <header className="decks-header">
-        <button className="back-btn" onClick={onBack}>
+        <button className="back-btn cw-btn-3d btn-dark btn-sm" onClick={onBack}>
           ← В меню
         </button>
         <div className="decks-title">
-          <span className="eyebrow">Card Wars</span>
-          <h1>Мои колоды</h1>
+          <span className="eyebrow menu-eyebrow">Card Wars</span>
+          <h1 className="cw-ink-title">Мои колоды</h1>
         </div>
         <div className="decks-header-actions">
           <button
-            className="cw-random-btn"
+            className="cw-random-btn cw-btn-3d btn-orange btn-sm"
             onClick={createRandomDeck}
             title="Создать готовую сбалансированную колоду со случайным героем и землями"
           >
             🎲 + Случайная колода
           </button>
-          <button className="create-btn" onClick={createDeck}>
+          <button className="create-btn cw-btn-3d btn-green btn-sm" onClick={createDeck}>
             + Создать колоду
           </button>
         </div>
@@ -188,16 +188,16 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
       {error && <div className="ui-toast ui-toast--error">{error}</div>}
 
       {decks.length === 0 ? (
-        <div className="decks-empty">
-          <p className="decks-empty-title">У вас пока нет колод</p>
+        <div className="decks-empty cw-felt-box">
+          <p className="decks-empty-title cw-ink-title">У вас пока нет колод</p>
           <p className="decks-empty-hint">
             Создайте новую колоду с нуля или сгенерируйте сбалансированную колоду со случайным героем в один клик.
           </p>
           <div className="decks-empty-actions">
-            <button className="create-btn" onClick={createDeck}>
+            <button className="create-btn cw-btn-3d btn-green" onClick={createDeck}>
               + Создать колоду
             </button>
-            <button className="cw-random-btn" onClick={createRandomDeck}>
+            <button className="cw-random-btn cw-btn-3d btn-orange" onClick={createRandomDeck}>
               🎲 + Случайная колода
             </button>
           </div>
@@ -217,7 +217,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
                   </span>
                 )}
                 <div className="deck-card-top">
-                  <h3 className="deck-name">{deck.name}</h3>
+                  <h3 className="deck-name cw-ink-title">{deck.name}</h3>
                 </div>
                 <div className="deck-stats">
                   <span className="deck-stat deck-stat--hero">{heroName(deck.heroId)}</span>
@@ -232,23 +232,23 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
                 </div>
                 <div className="deck-actions">
                   <button
-                    className="select-btn"
+                    className={`select-btn cw-btn-3d ${active ? 'btn-gold' : 'btn-green'} btn-sm`}
                     onClick={() => makeActive(deck)}
                     disabled={active || !isComplete}
                     title={!isComplete ? `Колода не готова (${deck.cards.length}/${CONFIG.deckSize} карт)` : active ? 'Колода уже выбрана' : 'Выбрать колоду'}
                   >
-                    {active ? 'Выбрана' : !isComplete ? `Не готова (${deck.cards.length}/${CONFIG.deckSize})` : 'Выбрать'}
+                    {active ? '✓ Выбрана' : !isComplete ? `Не готова (${deck.cards.length}/${CONFIG.deckSize})` : 'Выбрать'}
                   </button>
-                  <button className="edit-btn" onClick={() => setEditing(deck)}>
+                  <button className="edit-btn cw-btn-3d btn-blue btn-sm" onClick={() => setEditing(deck)}>
                     Изменить
                   </button>
-                  <button className="code-btn" onClick={() => showCode(deck)}>
+                  <button className="code-btn cw-btn-3d btn-purple btn-sm" onClick={() => showCode(deck)}>
                     Код
                   </button>
-                  <button className="edit-btn" onClick={() => duplicate(deck)}>
+                  <button className="edit-btn cw-btn-3d btn-blue btn-sm" onClick={() => duplicate(deck)}>
                     Копия
                   </button>
-                  <button className="delete-btn" onClick={() => setDeletingDeck(deck)}>
+                  <button className="delete-btn cw-btn-3d btn-red btn-sm" onClick={() => setDeletingDeck(deck)}>
                     Удалить
                   </button>
                 </div>
@@ -256,7 +256,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
             );
           })}
 
-          <button className="big-create-btn" onClick={createDeck}>
+          <button className="big-create-btn cw-btn-3d btn-dark" onClick={createDeck}>
             + Создать новую колоду
           </button>
         </div>
@@ -269,13 +269,13 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
           role="presentation"
         >
           <div
-            className="cw-modal-box"
+            className="cw-modal-box cw-felt-box"
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-deck-dialog-title"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 id="delete-deck-dialog-title" className="cw-modal-title">
+            <h2 id="delete-deck-dialog-title" className="cw-modal-title cw-ink-title">
               Удалить колоду?
             </h2>
             <p className="cw-modal-body">
@@ -283,13 +283,13 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
             </p>
             <div className="cw-modal-actions">
               <button
-                className="cw-btn-secondary"
+                className="cw-btn-3d btn-dark btn-sm"
                 onClick={() => setDeletingDeck(null)}
               >
                 Отмена
               </button>
               <button
-                className="cw-btn-danger"
+                className="cw-btn-3d btn-red btn-sm"
                 onClick={confirmDelete}
               >
                 Удалить
@@ -300,13 +300,13 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
       )}
 
       {codePanel && (
-        <section className="code-panel ui-card">
-          <h2>Код колоды «{codePanel.deck.name}»</h2>
+        <section className="code-panel ui-card cw-felt-box">
+          <h2 className="cw-ink-title">Код колоды «{codePanel.deck.name}»</h2>
           <p className="hint">Скопируйте и вставьте на другом устройстве в поле импорта.</p>
           <textarea readOnly value={codePanel.code} rows={3} />
           <div className="row">
             <button
-              className="btn-primary"
+              className="btn-primary cw-btn-3d btn-green btn-sm"
               onClick={() => {
                 navigator.clipboard?.writeText(codePanel.code);
                 setMessage('Код скопирован');
@@ -314,22 +314,22 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
             >
               Скопировать
             </button>
-            <button className="btn-soft" onClick={() => setCodePanel(null)}>
+            <button className="btn-soft cw-btn-3d btn-dark btn-sm" onClick={() => setCodePanel(null)}>
               Закрыть
             </button>
           </div>
         </section>
       )}
 
-      <section className="decks-import ui-card">
-        <h2>Импорт по коду</h2>
+      <section className="decks-import ui-card cw-felt-box">
+        <h2 className="cw-ink-title">Импорт по коду</h2>
         <div className="join-row">
           <input
             placeholder="Вставьте код колоды"
             value={importCode}
             onChange={(e) => setImportCode(e.target.value)}
           />
-          <button className="btn-primary" disabled={!importCode.trim()} onClick={importDeck}>
+          <button className="btn-primary cw-btn-3d btn-green" disabled={!importCode.trim()} onClick={importDeck}>
             Импортировать
           </button>
         </div>

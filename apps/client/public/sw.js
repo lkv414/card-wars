@@ -1,7 +1,7 @@
 // Service Worker for Card Wars v3
 // Provides offline shell caching and static asset caching.
 
-const CACHE_VERSION = 'v3.1.145';
+const CACHE_VERSION = 'v3.1.146';
 const CACHE_NAME = `card-wars-${CACHE_VERSION}`;
 const CONTENT_CACHE_NAME = 'card-wars-content-v1';
 
@@ -68,6 +68,12 @@ self.addEventListener('fetch', (event) => {
 
   // 1. Navigation requests (HTML documents) -> Network First with Offline Shell Fallback
   if (req.mode === 'navigate') {
+    // In local development, never cache index.html in Service Worker so chunk hashes update immediately
+    if (url.hostname === '127.0.0.1' || url.hostname === 'localhost') {
+      event.respondWith(fetch(req));
+      return;
+    }
+
     event.respondWith(
       fetch(req)
         .then((networkRes) => {

@@ -838,7 +838,7 @@ export function DeckEditor({
           <div className="cw-lands-bar-row">
             <button
               type="button"
-              className="cw-top-back-btn"
+              className="cw-top-back-btn cw-btn-3d btn-dark btn-sm"
               onClick={onClose}
               title="Назад к списку колод"
               aria-label="Назад к списку колод"
@@ -1057,7 +1057,7 @@ export function DeckEditor({
               </span>
               <button
                 type="button"
-                className="cw-clear-btn"
+                className="cw-clear-btn cw-btn-3d btn-red btn-sm"
                 disabled={draft.cards.length === 0}
                 onClick={() => setConfirmClear(true)}
                 title="Очистить все карты из колоды"
@@ -1069,7 +1069,7 @@ export function DeckEditor({
             {/* Random Fill Button */}
             <button
               type="button"
-              className="cw-random-btn"
+              className="cw-random-btn cw-btn-3d btn-orange btn-sm"
               onClick={handleRandomFill}
               title={isDeckFull ? 'Пересобрать колоду случайно' : 'Заполнить колоду случайными картами'}
             >
@@ -1101,7 +1101,7 @@ export function DeckEditor({
             {/* Save Button (always clickable with feedback toast if invalid) */}
             <button
               type="button"
-              className={`btn-primary cw-save-btn ${errors.length > 0 ? 'is-invalid' : ''}`}
+              className={`btn-primary cw-save-btn cw-btn-3d ${errors.length > 0 ? 'btn-dark is-invalid' : 'btn-green'} btn-sm`}
               onClick={save}
               title={
                 errors.length > 0
@@ -1206,16 +1206,16 @@ export function DeckEditor({
       {/* Modal: Confirm Clear Deck */}
       {confirmClear && (
         <div className="cw-modal-backdrop" onClick={() => setConfirmClear(false)}>
-          <div className="cw-modal ui-card" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3>Очистить колоду?</h3>
+          <div className="cw-modal ui-card cw-felt-box" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <h3 className="cw-ink-title">Очистить колоду?</h3>
             <p className="hint">Все набранные карты ({draft.cards.length} шт.) будут убраны из колоды.</p>
             <div className="cw-modal-actions">
-              <button type="button" className="btn-soft" onClick={() => setConfirmClear(false)}>
+              <button type="button" className="cw-btn-3d btn-dark btn-sm" onClick={() => setConfirmClear(false)}>
                 Отмена
               </button>
               <button
                 type="button"
-                className="delete-btn"
+                className="cw-btn-3d btn-red btn-sm"
                 onClick={() => {
                   setDraft((d) => ({ ...d, cards: [] }));
                   setConfirmClear(false);
@@ -1232,18 +1232,18 @@ export function DeckEditor({
       {/* Modal: Confirm Re-roll Deck */}
       {confirmReroll && (
         <div className="cw-modal-backdrop" onClick={() => setConfirmReroll(false)}>
-          <div className="cw-modal ui-card" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3>Пересобрать колоду случайно?</h3>
+          <div className="cw-modal ui-card cw-felt-box" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <h3 className="cw-ink-title">Пересобрать колоду случайно?</h3>
             <p className="hint">
               В колоде уже 40 карт. Все текущие карты будут заменены сбалансированным случайным набором под выбранные земли.
             </p>
             <div className="cw-modal-actions">
-              <button type="button" className="btn-soft" onClick={() => setConfirmReroll(false)}>
+              <button type="button" className="cw-btn-3d btn-dark btn-sm" onClick={() => setConfirmReroll(false)}>
                 Отмена
               </button>
               <button
                 type="button"
-                className="btn-primary cw-random-btn"
+                className="cw-btn-3d btn-orange btn-sm"
                 onClick={handleRerollConfirmed}
               >
                 🎲 Заполнить заново

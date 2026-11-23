@@ -46,14 +46,27 @@ export default {
         if (contentType.includes('text/html')) {
           if (url.pathname.endsWith('.js')) {
             const recoveryJs = `
-console.warn('[CardWars] Outdated JS asset requested (' + location.pathname + '), clearing cache and reloading...');
+console.warn('[CardWars] Outdated or missing JS chunk requested (' + location.pathname + '), resetting worker and refreshing...');
 if (typeof window !== 'undefined') {
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      for (var i = 0; i < regs.length; i++) {
+        regs[i].unregister();
+      }
+    });
+  }
   if (window.caches) {
     caches.keys().then(function(keys) {
       return Promise.all(keys.map(function(k) { return caches.delete(k); }));
-    }).then(function() { window.location.reload(); });
+    }).then(function() {
+      var u = new URL(window.location.href);
+      u.searchParams.set('_cw_bust', Date.now().toString());
+      window.location.replace(u.toString());
+    });
   } else {
-    window.location.reload();
+    var u = new URL(window.location.href);
+    u.searchParams.set('_cw_bust', Date.now().toString());
+    window.location.replace(u.toString());
   }
 }
 export default {};

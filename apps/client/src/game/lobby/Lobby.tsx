@@ -146,30 +146,30 @@ export function Lobby({ code }: { code: string }) {
     <main className="lobby-room ui-v2">
       <div className="lobby-room-content">
         <div className="lobby-topbar">
-          <button className="back-btn" onClick={() => {
+          <button className="back-btn cw-btn-3d btn-dark btn-sm" onClick={() => {
             sendLobbyCommand({ type: 'leave' });
             location.href = '/';
           }}>
             ← Выйти из лобби
           </button>
-          <span className="lobby-topbar-status">
+          <span className="lobby-topbar-status cw-felt-box" style={{ padding: '6px 14px', borderRadius: '12px' }}>
             {occupied.length}/{lobby.maxPlayers} игроков
           </span>
         </div>
 
         <div className="lobby-title">
-          <span className="eyebrow">Card Wars · онлайн</span>
-          <h1>Лобби</h1>
+          <span className="eyebrow menu-eyebrow">Card Wars · онлайн</span>
+          <h1 className="cw-ink-title">Лобби</h1>
         </div>
 
         {error && <div className="lobby-error">{error.message}</div>}
 
-        <section className="lobby-code-display">
+        <section className="lobby-code-display cw-felt-box">
           <span className="lobby-code-label">Код комнаты</span>
           <div className="lobby-code-value">
             <span>{code}</span>
             <button
-              className="lobby-copy-btn"
+              className="lobby-copy-btn cw-btn-3d btn-gold btn-sm"
               title="Скопировать ссылку"
               onClick={() => {
                 soundEngine.playButtonClick();
@@ -185,7 +185,7 @@ export function Lobby({ code }: { code: string }) {
         </section>
 
         <section
-          className={`lobby-deck-picker ${(myDeckHovered || myDeckPreviewOpen) && selected ? 'lobby-deck-picker--open' : ''}`}
+          className={`lobby-deck-picker cw-paper-box ${(myDeckHovered || myDeckPreviewOpen) && selected ? 'lobby-deck-picker--open' : ''}`}
           onMouseEnter={() => setMyDeckHovered(true)}
           onMouseLeave={() => setMyDeckHovered(false)}
         >
@@ -202,14 +202,14 @@ export function Lobby({ code }: { code: string }) {
                 </select>
                 <button
                   type="button"
-                  className={`btn-soft ${myDeckPreviewOpen ? 'is-active' : ''}`}
+                  className={`cw-btn-3d btn-blue btn-sm ${myDeckPreviewOpen ? 'is-active' : ''}`}
                   onClick={() => setMyDeckPreviewOpen((v) => !v)}
                   title="Предпросмотр колоды"
                 >
                   {myDeckPreviewOpen ? '✕ Закрыть' : '👁 Обзор'}
                 </button>
                 <button
-                  className="btn-soft"
+                  className="cw-btn-3d btn-green btn-sm"
                   onClick={() => {
                     const deck = validDecks.find((d) => d.id === selectedId) ?? validDecks[0];
                     if (deck) setEditing(deck);
@@ -247,18 +247,18 @@ export function Lobby({ code }: { code: string }) {
           ) : (
             <div className="lobby-deck-picker__empty">
               <p className="hint">Нет готовой колоды — соберите 40 карт и выберите героя.</p>
-              <button className="btn-accent" onClick={() => setEditing(newDeck())}>
+              <button className="cw-btn-3d btn-green" onClick={() => setEditing(newDeck())}>
                 Собрать колоду
               </button>
             </div>
           )}
         </section>
 
-        <section className="lobby-players lobby-table-arena">
+        <section className="lobby-players lobby-table-arena cw-felt-box">
           <div className="lobby-table-center-banner">
             <span className="table-banner-icon">⚔️</span>
             <div className="table-banner-info">
-              <span className="table-banner-title">Стол сражений Земель Ууу</span>
+              <span className="table-banner-title cw-ink-title">Стол сражений Земель Ууу</span>
               <span className="table-banner-mode">{modeLabel}</span>
             </div>
             <span className="table-banner-count">{occupied.length}/{lobby.maxPlayers} мест занято</span>
@@ -377,7 +377,7 @@ export function Lobby({ code }: { code: string }) {
                       {slot.id !== you.playerId &&
                         (slot.isBot ? (
                           <button
-                            className="mini"
+                            className="cw-btn-3d btn-red btn-sm"
                             onClick={() => {
                               soundEngine.playButtonClick();
                               sendLobbyCommand({ type: 'remove_bot', player: slot.id });
@@ -388,7 +388,7 @@ export function Lobby({ code }: { code: string }) {
                         ) : (
                           <>
                             <button
-                              className="mini"
+                              className="cw-btn-3d btn-red btn-sm"
                               onClick={() => {
                                 soundEngine.playButtonClick();
                                 sendLobbyCommand({ type: 'kick', player: slot.id });
@@ -398,7 +398,7 @@ export function Lobby({ code }: { code: string }) {
                             </button>
                             {slot.connected && (
                               <button
-                                className="mini"
+                                className="cw-btn-3d btn-purple btn-sm"
                                 onClick={() => {
                                   soundEngine.playButtonClick();
                                   sendLobbyCommand({ type: 'transfer_host', player: slot.id });
@@ -411,7 +411,7 @@ export function Lobby({ code }: { code: string }) {
                         ))}
                       {selectedSeat !== null && selectedSeat !== seat ? (
                         <button
-                          className="mini btn-accent"
+                          className="cw-btn-3d btn-orange btn-sm"
                           onClick={() => {
                             soundEngine.playButtonClick();
                             const source = lobby.slots[selectedSeat];
@@ -424,7 +424,7 @@ export function Lobby({ code }: { code: string }) {
                         </button>
                       ) : (
                         <button
-                          className={`mini ${isSeatSelected ? 'btn-accent' : ''}`}
+                          className={`cw-btn-3d ${isSeatSelected ? 'btn-red' : 'btn-orange'} btn-sm`}
                           onClick={() => {
                             soundEngine.playButtonClick();
                             setSelectedSeat((cur) => (cur === seat ? null : seat));
@@ -436,7 +436,7 @@ export function Lobby({ code }: { code: string }) {
                         </button>
                       )}
                       <button
-                        className="mini"
+                        className="cw-btn-3d btn-dark btn-sm"
                         disabled={seat === 0}
                         onClick={() => {
                           soundEngine.playButtonClick();
@@ -447,7 +447,7 @@ export function Lobby({ code }: { code: string }) {
                         ◀
                       </button>
                       <button
-                        className="mini"
+                        className="cw-btn-3d btn-dark btn-sm"
                         disabled={seat === lobby.maxPlayers - 1}
                         onClick={() => {
                           soundEngine.playButtonClick();
@@ -462,7 +462,7 @@ export function Lobby({ code }: { code: string }) {
 
                   {isHost && !slot && selectedSeat !== null && (
                     <button
-                      className="btn-accent btn-small"
+                      className="cw-btn-3d btn-orange btn-sm"
                       onClick={() => {
                         soundEngine.playButtonClick();
                         const source = lobby.slots[selectedSeat];
@@ -477,7 +477,7 @@ export function Lobby({ code }: { code: string }) {
 
                   {isHost && !slot && selectedSeat === null && (
                     <button
-                      className="btn-soft btn-small"
+                      className="cw-btn-3d btn-blue btn-sm"
                       onClick={() => {
                         soundEngine.playButtonClick();
                         sendLobbyCommand({ type: 'add_bot' });
@@ -493,9 +493,9 @@ export function Lobby({ code }: { code: string }) {
         </section>
 
         {isHost ? (
-          <section className="lobby-settings">
+          <section className="lobby-settings cw-felt-box">
             <div className="lobby-section-head">
-              <h2>Настройки комнаты</h2>
+              <h2 className="cw-ink-title">Настройки комнаты</h2>
             </div>
             <label className="field">
               <span className="field-label">Режим</span>
@@ -531,7 +531,7 @@ export function Lobby({ code }: { code: string }) {
 
         <div className="lobby-actions">
           <button
-            className={`btn-ready ${meSlot?.ready ? 'done' : ''}`}
+            className={`btn-ready cw-btn-3d ${meSlot?.ready ? 'btn-green done' : 'btn-orange'} btn-lg`}
             disabled={!meSlot || validDecks.length === 0}
             onClick={() => {
               const next = !meSlot?.ready;
@@ -544,7 +544,7 @@ export function Lobby({ code }: { code: string }) {
           </button>
           {isHost && (
             <button
-              className="btn-primary btn-xl"
+              className="btn-primary cw-btn-3d btn-red btn-xl"
               disabled={!canStart}
               onClick={() => {
                 soundEngine.playGong();

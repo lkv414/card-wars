@@ -29,7 +29,9 @@
               if ('caches' in window) {
                 caches.keys().then(function(keys) {
                   for (var k of keys) caches.delete(k);
-                  location.reload();
+                  var u = new URL(location.href);
+                  u.searchParams.set('_cw_bust', Date.now().toString());
+                  location.replace(u.toString());
                 });
               } else {
                 location.reload();
@@ -40,6 +42,31 @@
           }
         }
       }, true);
+
+      // Auto-heal empty screen if bundle fails to mount into #root
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (root && root.childElementCount === 0 && !sessionStorage.getItem('cw_root_bust')) {
+          sessionStorage.setItem('cw_root_bust', '1');
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+              for (var r of regs) r.unregister();
+            });
+          }
+          if ('caches' in window) {
+            caches.keys().then(function(keys) {
+              for (var k of keys) caches.delete(k);
+              var u = new URL(location.href);
+              u.searchParams.set('_cw_bust', Date.now().toString());
+              location.replace(u.toString());
+            });
+          } else {
+            var u = new URL(location.href);
+            u.searchParams.set('_cw_bust', Date.now().toString());
+            location.replace(u.toString());
+          }
+        }
+      }, 3000);
     </script>
   </head>
   <body>

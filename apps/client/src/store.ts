@@ -47,6 +47,8 @@ export interface UiState {
   targeting: TargetingState | null;
   journalOpen: boolean;
   zoomedCard: ZoomedCardInfo | null;
+  inspectedCard: ZoomedCardInfo | null;
+  inspectorCollapsed?: boolean;
   combatForecastHover: boolean;
   hoveredCreatureInstanceId: string | null;
   unfreezePrompt: { instanceId: string; zone: number } | null;
@@ -112,6 +114,8 @@ export const useGame = create<GameStore>(() => ({
     targeting: null,
     journalOpen: false,
     zoomedCard: null,
+    inspectedCard: null,
+    inspectorCollapsed: false,
     combatForecastHover: false,
     hoveredCreatureInstanceId: null,
     unfreezePrompt: null,
@@ -137,6 +141,10 @@ export function patchConnection(part: Partial<GameStore>): void {
 
 export function setUi(part: Partial<UiState>): void {
   useGame.setState((state) => ({ ui: { ...state.ui, ...part } }));
+}
+
+export function inspectCard(info: ZoomedCardInfo | null): void {
+  setUi({ inspectedCard: info });
 }
 
 export function setQuality(quality: Quality): void {

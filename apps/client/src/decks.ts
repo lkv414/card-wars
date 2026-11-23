@@ -143,6 +143,10 @@ export function heroName(heroId: string): string {
   return heroById.get(heroId)?.name ?? heroId;
 }
 
+export function getHero(heroId: string) {
+  return heroById.get(heroId);
+}
+
 export function loadFavorites(): Set<string> {
   try {
     const raw = localStorage.getItem(FAVORITES_KEY);

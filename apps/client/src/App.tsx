@@ -1,11 +1,12 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
-import { getSelectedDeckId, heroName, loadDecks } from './decks';
+import { getHero, getSelectedDeckId, heroName, loadDecks } from './decks';
 import { PRIMARY_LAND_IMAGES } from './decks/landImages';
 import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
 import { PwaInstallButton, PwaInstallPrompt } from './pwa';
+import { soundEngine } from './sound/SoundEngine';
 import './styles.css';
 
 import { APP_VERSION } from './version';
@@ -145,12 +146,47 @@ function MainMenu({
   const quality = useGame((s) => s.ui.quality);
   const decks = loadDecks();
   const selectedDeck = decks.find((d) => d.id === getSelectedDeckId()) ?? decks[0];
+  const hero = selectedDeck ? getHero(selectedDeck.heroId) : null;
+  const [muted, setMuted] = useState(() => soundEngine.getSettings().muted);
+  const [music, setMusic] = useState(() => soundEngine.isMusicEnabled());
 
   return (
-    <main className="main-menu ui-v2">
+    <main className="main-menu ui-v2 treehouse-menu">
       <div className="main-menu-content">
-        <h1>Card Wars</h1>
-        <p className="main-menu-subtitle">Собирайте колоду и сражайтесь онлайн</p>
+        <div className="menu-header-sign">
+          <span className="eyebrow menu-eyebrow">Земли Ууу · Карточные Войны</span>
+          <h1 className="menu-title-logo">CARD WARS</h1>
+          <p className="main-menu-subtitle">«Я флопаю свинку!» — сразитесь за звание крутого парня</p>
+        </div>
+
+        {selectedDeck && (
+          <div
+            className="menu-deck-badge"
+            onClick={() => {
+              soundEngine.playCardDraw();
+              onDecks();
+            }}
+            role="button"
+            tabIndex={0}
+            title="Нажмите, чтобы открыть Гримуар колод"
+          >
+            <div className="menu-deck-badge__avatar">
+              {hero?.image ? (
+                <img src={hero.image} alt={hero.name} className="menu-deck-badge__img" />
+              ) : (
+                <span className="menu-deck-badge__icon">👑</span>
+              )}
+            </div>
+            <div className="menu-deck-badge__info">
+              <span className="menu-deck-badge__label">Готовая колода:</span>
+              <strong className="menu-deck-badge__name">{selectedDeck.name}</strong>
+              <span className="menu-deck-badge__meta">
+                {hero?.name ?? 'Герой'} · {selectedDeck.cards.length}/{CONFIG.deckSize} карт
+              </span>
+            </div>
+            <span className="menu-deck-badge__action">📜 Открыть</span>
+          </div>
+        )}
 
         <div className="main-menu-form">
           <label className="field">
@@ -164,15 +200,18 @@ function MainMenu({
           </label>
 
           <button
-            className="btn-primary btn-xl"
+            className="btn-primary btn-xl btn-treehouse-plank"
             disabled={!nickname.trim()}
-            onClick={() => onEnter(makeRoomCode(), true)}
+            onClick={() => {
+              soundEngine.playGong();
+              onEnter(makeRoomCode(), true);
+            }}
           >
-            Создать лобби
+            ⚔️ Создать битву
           </button>
 
           <div className="join-block">
-            <span className="field-label">Войти по коду</span>
+            <span className="field-label">Войти по коду комнаты</span>
             <div className="join-row">
               <input
                 className="code-input"
@@ -181,17 +220,24 @@ function MainMenu({
                 maxLength={CONFIG.lobbyCodeDigits}
                 value={codeInput}
                 onChange={(e) => onCodeInput(e.target.value.replace(/\D/g, ''))}
-                onKeyDown={(e) =>
-                  e.key === 'Enter' &&
-                  codeInput.length === CONFIG.lobbyCodeDigits &&
-                  nickname.trim() &&
-                  onEnter(codeInput)
-                }
+                onKeyDown={(e) => {
+                  if (
+                    e.key === 'Enter' &&
+                    codeInput.length === CONFIG.lobbyCodeDigits &&
+                    nickname.trim()
+                  ) {
+                    soundEngine.playButtonClick();
+                    onEnter(codeInput);
+                  }
+                }}
               />
               <button
                 className="btn-accent"
                 disabled={codeInput.length !== CONFIG.lobbyCodeDigits || !nickname.trim()}
-                onClick={() => onEnter(codeInput)}
+                onClick={() => {
+                  soundEngine.playButtonClick();
+                  onEnter(codeInput);
+                }}
               >
                 Войти
               </button>
@@ -199,26 +245,60 @@ function MainMenu({
           </div>
 
           <button
-            className="btn-accent btn-xl"
-            onClick={onDecks}
+            className="btn-accent btn-xl btn-grimoire-plank"
+            onClick={() => {
+              soundEngine.playCardDraw();
+              onDecks();
+            }}
             onMouseEnter={preloadDecksScreen}
             onTouchStart={preloadDecksScreen}
           >
-            Мои колоды
+            📖 Гримуар колод (Каталог)
           </button>
         </div>
 
         <div className="main-menu-foot">
-          <span>
-            Активная колода: <b>{selectedDeck ? selectedDeck.name : 'не выбрана'}</b>
-            {selectedDeck ? ` · ${heroName(selectedDeck.heroId)}` : ''}
-          </span>
-          <span>
-            Графика:{' '}
-            <button className="link-btn" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
-              {quality === 'high' ? 'высокая' : 'низкая'}
-            </button>
-          </span>
+          <div className="main-menu-foot-row">
+            <span>
+              Звук:{' '}
+              <button
+                className="link-btn"
+                onClick={() => {
+                  const next = !muted;
+                  soundEngine.setMuted(next);
+                  setMuted(next);
+                  if (!next) soundEngine.playButtonClick();
+                }}
+              >
+                {muted ? 'выкл 🔇' : 'вкл 🔊'}
+              </button>
+            </span>
+            <span>
+              Музыка:{' '}
+              <button
+                className="link-btn"
+                onClick={() => {
+                  const next = soundEngine.toggleMusic();
+                  setMusic(next);
+                  if (next) soundEngine.playButtonClick();
+                }}
+              >
+                {music ? 'вкл 🎵' : 'выкл 🔇'}
+              </button>
+            </span>
+            <span>
+              Графика:{' '}
+              <button
+                className="link-btn"
+                onClick={() => {
+                  soundEngine.playButtonClick();
+                  setQuality(quality === 'high' ? 'low' : 'high');
+                }}
+              >
+                {quality === 'high' ? 'высокая' : 'низкая'}
+              </button>
+            </span>
+          </div>
           <PwaInstallButton />
           <span className="main-menu-version">Версия {APP_VERSION}</span>
         </div>
@@ -230,11 +310,11 @@ function MainMenu({
 function NicknameScreen({ code, onDone }: { code: string; onDone: (nick: string) => void }) {
   const [nick, setNick] = useState('');
   return (
-    <main className="main-menu ui-v2">
+    <main className="main-menu ui-v2 treehouse-menu">
       <div className="main-menu-content">
-        <span className="eyebrow">Card Wars</span>
-        <h1>Комната {code}</h1>
-        <p className="main-menu-subtitle">Представьтесь, чтобы войти в лобби</p>
+        <span className="eyebrow menu-eyebrow">Комната {code}</span>
+        <h1 className="menu-title-logo">Card Wars</h1>
+        <p className="main-menu-subtitle">Представьтесь, чтобы занять место за столом</p>
         <div className="main-menu-form">
           <label className="field">
             <span className="field-label">Ваш ник</span>
@@ -244,11 +324,23 @@ function NicknameScreen({ code, onDone }: { code: string; onDone: (nick: string)
               maxLength={20}
               value={nick}
               onChange={(e) => setNick(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && nick.trim() && onDone(nick.trim())}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && nick.trim()) {
+                  soundEngine.playGong();
+                  onDone(nick.trim());
+                }
+              }}
             />
           </label>
-          <button className="btn-primary btn-xl" disabled={!nick.trim()} onClick={() => onDone(nick.trim())}>
-            Войти
+          <button
+            className="btn-primary btn-xl btn-treehouse-plank"
+            disabled={!nick.trim()}
+            onClick={() => {
+              soundEngine.playGong();
+              onDone(nick.trim());
+            }}
+          >
+            ⚔️ Занять место
           </button>
         </div>
       </div>

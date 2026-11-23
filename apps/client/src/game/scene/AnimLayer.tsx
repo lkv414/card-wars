@@ -17,15 +17,17 @@ import {
   worldOfSlot,
   zoneX,
 } from './layout';
-import { cardTexture, textSprite } from './textures';
+import { cardTexture, comicBurstSprite, textSprite } from './textures';
 import { useGame } from '../../store';
+import { soundEngine } from '../../sound/SoundEngine';
+import { addCameraTrauma } from './cameraTrauma';
 
 // Анимации-«призраки» поверх снапшота: сцена уже показывает итоговое состояние,
 // призраки только проигрывают переходы (docs/UI-3D.md «Анимации по событиям»).
 
 interface Anim {
   id: number;
-  kind: 'fly' | 'number' | 'flash';
+  kind: 'fly' | 'number' | 'flash' | 'burst';
   cardId?: string;
   from: [number, number, number];
   to: [number, number, number];
@@ -169,11 +171,13 @@ export function eventsToAnims(
       case 'card_played': {
         const to = worldOfSlot(view!, event.player!, zone, event.slot ?? 'creature') ?? [0, 4, 0];
         pushAnim({ kind: 'fly', cardId: event.cardId, from: fromHand, to, duration: 380 });
+        soundEngine.playCardPlay();
         break;
       }
       case 'companion_played': {
         const to = worldOfCompanion(view!, event.player!) ?? [0, 8, 0];
         pushAnim({ kind: 'fly', cardId: event.cardId, from: fromHand, to, duration: 380 });
+        soundEngine.playCardPlay();
         break;
       }
       case 'creature_destroyed': {
@@ -187,11 +191,16 @@ export function eventsToAnims(
           delayMs = (z !== null ? Math.min(3, Math.max(0, z)) : Math.min(3, combatStep)) * 300;
         }
         pushAnim({ kind: 'fly', cardId: event.cardId, from, to, duration: 520 }, delayMs);
+        if (delayMs > 0) {
+          setTimeout(() => soundEngine.playAttackHit(4), delayMs);
+        } else {
+          soundEngine.playAttackHit(4);
+        }
         break;
       }
       case 'damage_dealt': {
         // Падение жетонов показывает кучка DamagePile (физсимуляция на карте);
-        // здесь остаётся только всплывающая цифра урона.
+        // здесь остаётся только всплывающая цифра урона + сочный комиксный взрыв + тряска камеры.
         const target: [number, number, number] = event.targetInstanceId
           ? (positionOfInstance(view, event.targetInstanceId) ?? [0, 20, 0])
           : heroAt(view, event.targetPlayer);
@@ -208,6 +217,24 @@ export function eventsToAnims(
           combatStep++;
         }
 
+        const isHero = Boolean(event.targetPlayer);
+        const playJuice = () => {
+          if (isHero) {
+            soundEngine.playHeroDamage(amount);
+            addCameraTrauma(Math.min(1.0, 0.35 + amount * 0.08));
+          } else {
+            soundEngine.playAttackHit(amount);
+            addCameraTrauma(Math.min(0.7, 0.18 + amount * 0.05));
+          }
+        };
+
+        if (delayMs > 0) {
+          setTimeout(playJuice, delayMs);
+        } else {
+          playJuice();
+        }
+
+        // Всплывающее число урона
         pushAnim(
           {
             kind: 'number',
@@ -219,11 +246,39 @@ export function eventsToAnims(
           },
           delayMs,
         );
+
+        // Комиксная вспышка-звезда («POW!», «BAM!», «WHAM!», «KAPOW!») при ощутимом уроне
+        if (amount >= 2) {
+          const burstWord = isHero
+            ? amount >= 5
+              ? 'OUCH!'
+              : 'BOOM!'
+            : amount >= 7
+              ? 'KAPOW!'
+              : amount >= 4
+                ? 'WHAM!'
+                : amount >= 3
+                  ? 'BAM!'
+                  : 'POW!';
+
+          pushAnim(
+            {
+              kind: 'burst',
+              text: burstWord,
+              color: isHero ? '#ffdd33' : '#ffe033',
+              from: [target[0], target[1] + 35, target[2]],
+              to: [target[0], target[1] + 45, target[2]],
+              duration: 550,
+            },
+            delayMs,
+          );
+        }
         break;
       }
       case 'creature_healed': {
         const at = positionOfInstance(view, instanceId) ?? [0, 20, 0];
         pushAnim({ kind: 'number', text: `+${amount}`, color: '#7fe0a0', from: [at[0], at[1] + 60, at[2]], to: [at[0], at[1] + 130, at[2]], duration: 900 });
+        soundEngine.playHeal();
         break;
       }
       case 'lives_changed': {
@@ -231,21 +286,27 @@ export function eventsToAnims(
         if (delta < 0) break; // уже показано damage_dealt
         const at = heroAt(view, event.player);
         pushAnim({ kind: 'number', text: `+${delta}`, color: '#7fe0a0', from: [at[0], 80, at[2]], to: [at[0], 140, at[2]], duration: 900 });
+        soundEngine.playHeal();
         break;
       }
       case 'land_changed': {
         const at = landAt(view, event.player, zone);
         pushAnim({ kind: 'flash', color: event.change === 'frozen' ? '#9fd8ff' : '#ffe9a8', from: at, to: at, duration: 500 });
+        if (event.change === 'frozen') {
+          soundEngine.playFreeze();
+        }
         break;
       }
       case 'card_drawn': {
         const to = event.player === view?.me ? handPos : heroAt(view, event.player);
         pushAnim({ kind: 'fly', from: deckAt(view, event.player), to, duration: 340 });
+        soundEngine.playCardDraw();
         break;
       }
       case 'floop_used': {
         const at = positionOfInstance(view, instanceId);
         if (at) pushAnim({ kind: 'flash', color: '#48d9a0', from: at, to: at, duration: 420 });
+        soundEngine.playFloop();
         break;
       }
       case 'battle_ready': {
@@ -256,6 +317,7 @@ export function eventsToAnims(
       case 'spell_cast': {
         const at = landAt(view, event.player, 1);
         pushAnim({ kind: 'flash', color: '#b48cff', from: [at[0], 25, at[2]], to: [at[0], 25, at[2]], duration: 500 });
+        soundEngine.playHeal();
         break;
       }
       default:
@@ -335,6 +397,7 @@ function ease(t: number): number {
 function Ghost({ anim }: { anim: Anim }) {
   if (anim.kind === 'fly') return <FlyGhost anim={anim} />;
   if (anim.kind === 'number') return <NumberGhost anim={anim} />;
+  if (anim.kind === 'burst') return <BurstGhost anim={anim} />;
   return <FlashGhost anim={anim} />;
 }
 
@@ -413,6 +476,36 @@ function FlashGhost({ anim }: { anim: Anim }) {
       <planeGeometry args={[130, 170]} />
       <meshBasicMaterial ref={matRef} color={anim.color ?? '#ffffff'} transparent opacity={0.5} />
     </mesh>
+  );
+}
+
+function BurstGhost({ anim }: { anim: Anim }) {
+  const spriteRef = useRef<THREE.Sprite>(null);
+  const matRef = useRef<THREE.SpriteMaterial>(null);
+  const texture = useMemo(
+    () => comicBurstSprite(anim.text ?? 'POW!', anim.color ?? '#ffe033', '#e62429'),
+    [anim.text, anim.color],
+  );
+
+  useFrame(() => {
+    if (!spriteRef.current || !matRef.current) return;
+    const now = performance.now();
+    const t = Math.min(1, Math.max(0, (now - anim.start) / anim.duration));
+    // Pop curve: pops up to 1.35x scale quickly, then settles and fades
+    const s = t < 0.22 ? 0.4 + (t / 0.22) * 0.95 : Math.max(0.7, 1.35 - (t - 0.22) * 0.6);
+    const baseSize = 220 * SPRITE_SCALE * 2.2;
+    spriteRef.current.scale.set(baseSize * s, baseSize * s, 1);
+    matRef.current.opacity = Math.max(0, 1 - Math.pow(t, 2.2));
+  });
+
+  return (
+    <sprite
+      ref={spriteRef}
+      position={[anim.from[0], anim.from[1] + 15, anim.from[2]]}
+      raycast={NO_RAYCAST}
+    >
+      <spriteMaterial ref={matRef} map={texture} transparent opacity={1} />
+    </sprite>
   );
 }
 

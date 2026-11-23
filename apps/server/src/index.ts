@@ -38,6 +38,57 @@ export default {
 
     if (env.ASSETS) {
       const res = await env.ASSETS.fetch(request);
+
+      // If an asset was requested but not found (env.ASSETS fell back to index.html),
+      // do NOT return text/html for script or style files, which violates browser strict MIME checks.
+      if (url.pathname.startsWith('/assets/')) {
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('text/html')) {
+          if (url.pathname.endsWith('.js')) {
+            const recoveryJs = `
+console.warn('[CardWars] Outdated JS asset requested (' + location.pathname + '), clearing cache and reloading...');
+if (typeof window !== 'undefined') {
+  if (window.caches) {
+    caches.keys().then(function(keys) {
+      return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+    }).then(function() { window.location.reload(); });
+  } else {
+    window.location.reload();
+  }
+}
+export default {};
+`;
+            return new Response(recoveryJs, {
+              status: 200,
+              headers: {
+                'content-type': 'application/javascript; charset=utf-8',
+                'cache-control': 'no-cache, no-store, must-revalidate',
+              },
+            });
+          }
+          if (url.pathname.endsWith('.css')) {
+            return new Response('/* Missing or outdated stylesheet */', {
+              status: 200,
+              headers: {
+                'content-type': 'text/css; charset=utf-8',
+                'cache-control': 'no-cache, no-store, must-revalidate',
+              },
+            });
+          }
+        }
+      }
+
+      // Ensure root index.html and sw.js are never aggressively cached in dev or between deploys
+      if ((url.pathname === '/' || url.pathname === '/index.html' || url.pathname === '/sw.js') && res.status === 200) {
+        const headers = new Headers(res.headers);
+        headers.set('cache-control', 'no-cache, no-store, must-revalidate');
+        return new Response(res.body, {
+          status: res.status,
+          statusText: res.statusText,
+          headers,
+        });
+      }
+
       if (url.pathname.startsWith('/content/') && res.status === 200) {
         const headers = new Headers(res.headers);
         headers.set('cache-control', 'public, max-age=31536000, immutable');

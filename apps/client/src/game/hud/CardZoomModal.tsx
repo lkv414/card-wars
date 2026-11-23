@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { cards as catalog, type CardData } from '@card-wars/content';
 import { setUi, useGame } from '../../store';
 
@@ -22,6 +22,11 @@ const TYPE_NAMES: Record<string, string> = {
 
 export function CardZoomModal() {
   const zoomed = useGame((s) => s.ui.zoomedCard);
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [zoomed?.cardId]);
 
   useEffect(() => {
     if (!zoomed) return;
@@ -73,14 +78,12 @@ export function CardZoomModal() {
 
         <div className="card-zoom-body">
           <div className="card-zoom-image-col">
-            {card?.image ? (
+            {card?.image && !imgError ? (
               <img
                 src={card.image}
                 alt={cardName}
                 className="card-zoom-img"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
+                onError={() => setImgError(true)}
               />
             ) : (
               <div className={`card-zoom-fallback land-${card?.landType ?? 'rainbow'}`}>

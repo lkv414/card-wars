@@ -5,7 +5,12 @@ import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
 import { CardZoomModal } from './CardZoomModal';
-import { downloadJournal, HudSidebar } from './HudSidebar';
+import { CardInspector } from './CardInspector';
+import { HudSidebar } from './HudSidebar';
+import {
+  MatchFinishOverlay,
+  OrientationGate,
+} from './DiegeticHud';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
 export function Hud({ code }: { code: string }) {
@@ -461,26 +466,7 @@ export function Hud({ code }: { code: string }) {
 
 
       {view.status === 'finished' && (
-        <div className="overlay">
-          <div className="panel">
-            <h2>{view.winners?.length === 0 ? 'Ничья!' : won(view) ? 'Победа!' : 'Поражение'}</h2>
-            <p className="hint">
-              Причина:{' '}
-              {view.finishReason === 'surrender' ? 'сдача' : view.finishReason === 'disconnect' ? 'обрыв соединения' : 'жизни на нуле'}
-            </p>
-            {view.mode === 'teams' && view.teams && (
-              <p className="hint">
-                Победила команда:{' '}
-                {Object.values(view.teams)
-                  .filter((team) => team.playerIds.some((pid) => view.winners?.includes(pid)))
-                  .map((team) => team.playerIds.map((pid) => view.players[pid]?.nickname ?? pid).join(' и '))
-                  .join('; ') || '—'}
-              </p>
-            )}
-            <button onClick={downloadJournal(view.journal, code)}>Скачать журнал (.txt)</button>
-            <button onClick={() => (location.href = '/')}>В меню</button>
-          </div>
-        </div>
+        <MatchFinishOverlay view={view} code={code} />
       )}
 
       {unfreezePrompt && (
@@ -527,6 +513,8 @@ export function Hud({ code }: { code: string }) {
         </div>
       )}
 
+      <OrientationGate />
+      <CardInspector />
       <CardZoomModal />
     </div>
 

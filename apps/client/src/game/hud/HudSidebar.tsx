@@ -207,7 +207,7 @@ export function HudSidebar({
       {/* Mobile Floating Bottom Bar for quick combat & drawer toggle */}
       <div className="hud-mobile-bottom-bar" role="toolbar" aria-label="Быстрые действия">
         <button
-          className={`hud-mobile-btn-battle ${myMain && (!is2v2 || !me.battleReady) ? 'pulse' : ''} ${
+          className={`hud-mobile-btn-battle cw-btn-3d btn-red ${myMain && (!is2v2 || !me.battleReady) ? 'pulse' : ''} ${
             actionsSpent ? 'actions-spent' : ''
           }`}
           disabled={battleBtnDisabled}
@@ -373,17 +373,20 @@ export function HudSidebar({
                     <span className="metric-sub">/{me.maxLives}</span>
                   )}
                 </div>
-                <div className="metric-pill metric-actions" title={`Оставшиеся действия: ${me.actions}`}>
-                  <span className="metric-icon">⚡</span>
-                  <span className="metric-val">{me.actions}</span>
-                  <div className="metric-pips" aria-hidden="true">
+                <div className="metric-pill metric-actions cw-coin-container" title={`Оставшиеся действия: ${me.actions}`}>
+                  <div className="metric-coins" aria-hidden="true">
                     {Array.from({ length: Math.max(CONFIG.actionsPerTurn, me.actions) }).map((_, i) => (
                       <span
                         key={i}
-                        className={`pip-dot ${i < me.actions ? 'pip-active' : 'pip-spent'}`}
-                      />
+                        className={`cw-coin-token mini ${i < me.actions ? 'coin-active' : 'coin-spent'}`}
+                      >
+                        <span className="coin-rim">
+                          <span className="coin-core">⚡</span>
+                        </span>
+                      </span>
                     ))}
                   </div>
+                  <span className="metric-val">{me.actions}</span>
                 </div>
                 <div className="metric-pill metric-hand" title="Карт в руке">
                   <span className="metric-icon">🎴</span>
@@ -459,7 +462,7 @@ export function HudSidebar({
           {/* Section 2: Primary Action (Combat / Turn) */}
           <div className="hud-sidebar-section primary-section">
             <button
-              className={`hud-sidebar-battle-btn ${
+              className={`hud-sidebar-battle-btn cw-btn-3d btn-red btn-lg ${
                 myMain && (!is2v2 || !me.battleReady) ? 'active-cta' : ''
               } ${actionsSpent ? 'actions-spent' : ''}`}
               disabled={battleBtnDisabled}
@@ -500,7 +503,7 @@ export function HudSidebar({
           {/* Section 3: Turn Actions */}
           <div className="hud-sidebar-section actions-section">
             <button
-              className="hud-sidebar-action-btn draw-btn"
+              className="hud-sidebar-action-btn draw-btn cw-btn-3d btn-blue"
               disabled={!myMain || me.actions < CONFIG.extraDrawCost}
               onClick={() => sendCommand({ type: 'draw_extra', player: view.me })}
               title={

@@ -5,8 +5,21 @@ export function registerServiceWorker(): void {
     return;
   }
 
-  // Avoid Service Worker interception during Vite dev mode
-  if (import.meta.env.DEV) {
+  // Avoid Service Worker interception during Vite dev mode or local dev (localhost / 127.0.0.1)
+  if (import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Unregister any active service workers on localhost to prevent stale chunk caching
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    });
+    if ('caches' in window) {
+      caches.keys().then((keys) => {
+        for (const key of keys) {
+          caches.delete(key);
+        }
+      });
+    }
     return;
   }
 

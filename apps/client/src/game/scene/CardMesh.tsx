@@ -8,6 +8,9 @@ import { cardBackTexture, cardTexture, frostTexture, tokenTexture } from './text
 import { sendCommand, setUi, showHint, useGame } from '../../store';
 import { activeAbilityOf, pick, startForActive, validTargets } from '../targeting';
 import { DamagePile } from './DamagePile';
+import { createCardMaterial } from './CardCustomMaterial';
+import { StatusRibbon } from './StatusRibbon';
+import { triggerHapticVibration } from '../hud/useLongPress';
 
 const HOLD_MS = 360; // fast & responsive floop hold ~360ms (docs/UI-3D.md)
 const HINT_HOLD_MS = 240; // quick feedback when holding a card that cannot floop
@@ -35,18 +38,21 @@ export function CardMesh({
   const prevFlipped = useRef<boolean>(card.flipped);
   const flipAnimStart = useRef<number | null>(null);
   const baseTarget = useMemo(() => new THREE.Vector3(), []);
+  const cardMeta = useMemo(() => catalog.find((c) => c.id === card.cardId), [card.cardId]);
   const texture = useMemo(() => cardTexture(card.cardId), [card.cardId]);
   const back = useMemo(() => cardBackTexture(), []);
+  const isRainbow = cardMeta?.landType === 'rainbow';
+  const faceMaterial = useMemo(() => createCardMaterial(texture, isRainbow), [texture, isRainbow]);
   const materials = useMemo(
     () => [
       sharedEdgeMat, // +x
       sharedEdgeMat, // -x
-      new THREE.MeshLambertMaterial({ map: texture }), // +y (face)
+      faceMaterial, // +y (face with tilt specular sheen & rainbow foil)
       new THREE.MeshLambertMaterial({ map: back }), // -y (back)
       sharedEdgeMat, // +z
       sharedEdgeMat, // -z
     ],
-    [texture, back],
+    [faceMaterial, back],
   );
 
   useEffect(() => {
@@ -67,7 +73,6 @@ export function CardMesh({
     view.status === 'running' &&
     view.phase === 'main';
 
-  const cardMeta = useMemo(() => catalog.find((c) => c.id === card.cardId), [card.cardId]);
   const activeMeta = useMemo(() => cardMeta?.abilities?.find((a) => a.kind === 'active') ?? null, [cardMeta]);
   const ability = activeAbilityOf(card.cardId);
   const hasAbility = ability !== null;
@@ -89,6 +94,15 @@ export function CardMesh({
     }
   }, [card.flipped, invalidate]);
 
+  const longPressTimer = useRef<number | null>(null);
+
+  const clearLongPress = () => {
+    if (longPressTimer.current !== null) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
   // Hold -> drag: pointer movement past the threshold cancels floop and starts drag;
   // releasing the pointer anywhere cancels the hold.
   useEffect(() => {
@@ -99,6 +113,7 @@ export function CardMesh({
       if (Math.hypot(e.clientX - press.startX, e.clientY - press.startY) < DRAG_THRESHOLD_PX) {
         return;
       }
+      clearLongPress();
       pendingPress.current = null;
       setUi({
         holdingFloop: null,
@@ -110,6 +125,7 @@ export function CardMesh({
       });
     };
     const onUp = () => {
+      clearLongPress();
       pendingPress.current = null;
       const holding = useGame.getState().ui.holdingFloop;
       if (holding?.instanceId === card.instanceId) {
@@ -120,6 +136,7 @@ export function CardMesh({
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
     return () => {
+      clearLongPress();
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
@@ -158,6 +175,11 @@ export function CardMesh({
       group.current.position.y = hopY;
       group.current.rotation.x = tiltX;
       group.current.rotation.z = tiltZ;
+
+      if (faceMaterial) {
+        faceMaterial.uniforms.uTime.value = now * 0.001;
+        faceMaterial.uniforms.uTilt.value.set(tiltX, group.current.rotation.y);
+      }
 
       if (Math.abs(diffRot) > 0.004) {
         group.current.rotation.y += diffRot * (1 - Math.exp(-15 * delta));
@@ -202,6 +224,7 @@ export function CardMesh({
           material.opacity = 0.4 + holdProgress * 0.55;
           invalidate();
           if (holdProgress >= 1) {
+            clearLongPress();
             pendingPress.current = null;
             setUi({ holdingFloop: null });
             if (ability && (ability.targets?.length ?? 0) > 0) {
@@ -221,6 +244,7 @@ export function CardMesh({
           material.opacity = 0.45 + p * 0.4;
           invalidate();
           if (holdElapsed >= HINT_HOLD_MS) {
+            clearLongPress();
             pendingPress.current = null;
             setUi({ holdingFloop: null });
             if (card.flipped) {
@@ -265,6 +289,21 @@ export function CardMesh({
 
   const startHold = (event: ThreeEvent<PointerEvent>) => {
     if (event.nativeEvent.button !== 0) return;
+    clearLongPress();
+    longPressTimer.current = window.setTimeout(() => {
+      triggerHapticVibration(30);
+      setUi({
+        inspectedCard: {
+          cardId: card.cardId,
+          instanceId: card.instanceId,
+          damage: card.damage,
+          shield: card.shield,
+          flipped: card.flipped,
+        },
+      });
+      longPressTimer.current = null;
+    }, 450);
+
     if (!canDrag || useGame.getState().ui.targeting) return;
     event.stopPropagation();
     pendingPress.current = { startX: event.nativeEvent.clientX, startY: event.nativeEvent.clientY };
@@ -280,6 +319,7 @@ export function CardMesh({
   };
 
   const cancelHold = () => {
+    clearLongPress();
     pendingPress.current = null;
     const holding = useGame.getState().ui.holdingFloop;
     if (holding?.instanceId === card.instanceId) setUi({ holdingFloop: null });
@@ -303,10 +343,17 @@ export function CardMesh({
         onPointerDown={startHold}
         onPointerUp={cancelHold}
         onPointerOver={() => {
-          if (isReadyCreature) {
-            setUi({ hoveredCreatureInstanceId: card.instanceId });
-            invalidate();
-          }
+          setUi({
+            inspectedCard: {
+              cardId: card.cardId,
+              instanceId: card.instanceId,
+              damage: card.damage,
+              shield: card.shield,
+              flipped: card.flipped,
+            },
+            hoveredCreatureInstanceId: isReadyCreature ? card.instanceId : null,
+          });
+          invalidate();
         }}
         onPointerOut={() => {
           if (useGame.getState().ui.hoveredCreatureInstanceId === card.instanceId) {
@@ -337,6 +384,11 @@ export function CardMesh({
           <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
       </group>
+      {/* 3D Status Ribbons: "ФЛЮП" (green) or "АТАКОВАЛ" (red) above creatures (docs/AUDIT-KIBERBUS-UIUX.md §3.2, §8 Этап 4).
+          Mounted on holder (not group) so it remains horizontal and directly readable without inheriting 90deg tap rotation */}
+      {slot === 'creature' && card.flipped && (
+        <StatusRibbon status={view.phase === 'combat' ? 'attack' : 'floop'} />
+      )}
       {canDrag && (
         <mesh ref={ring} position={[0, 18, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false} raycast={NO_RAYCAST} renderOrder={999}>
           <ringGeometry args={[42, 52, 36]} />

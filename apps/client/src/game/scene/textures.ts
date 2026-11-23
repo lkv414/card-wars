@@ -371,6 +371,63 @@ export function textSprite(text: string, color: string): THREE.CanvasTexture {
   return texture;
 }
 
+/** Comic pop starburst sprite ("POW!", "BAM!", "WHAM!") in Adventure Time style. */
+export function comicBurstSprite(word: string, bgColor = '#ffe033', textColor = '#e62429'): THREE.CanvasTexture {
+  const key = `burst-${word}-${bgColor}-${textColor}`;
+  const cached = spriteCache.get(key);
+  if (cached) return cached;
+  const W = 256;
+  const H = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d')!;
+  ctx.clearRect(0, 0, W, H);
+
+  // 14-point comic starburst
+  const points = 14;
+  const cx = W / 2;
+  const cy = H / 2;
+  const rOuter = 112;
+  const rInner = 64;
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const angle = (i * Math.PI) / points;
+    const r = i % 2 === 0 ? rOuter : rInner;
+    const jitter = ((i * 37) % 15) - 7;
+    const x = cx + (r + jitter) * Math.cos(angle);
+    const y = cy + (r + jitter) * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+
+  ctx.fillStyle = bgColor;
+  ctx.fill();
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = '#1a1005';
+  ctx.stroke();
+
+  // Bold comic exclamation text
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-0.08);
+  ctx.font = '900 60px "Impact", "Arial Black", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 14;
+  ctx.strokeStyle = '#1a1005';
+  ctx.strokeText(word, 0, 0);
+  ctx.fillStyle = textColor;
+  ctx.fillText(word, 0, 0);
+  ctx.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  spriteCache.set(key, texture);
+  return texture;
+}
+
 export const LAND_ART_URLS: Record<LandType, string | null> = {
   blue: '/content/lands/blue-plains-0b69d6a.webp',
   corn: '/content/lands/cornfield-64b3840.webp',

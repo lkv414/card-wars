@@ -46,7 +46,7 @@ export function GameShell({ code, nickname }: { code: string; nickname: string }
   }
 
   return (
-    <div className="game-3d game-split-screen">
+    <div className="game-3d game-fullscreen-arena">
       <div className="game-3d-main game-3d-viewport">
         <Suspense fallback={null}>
           <Scene />

@@ -15,6 +15,8 @@ import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
 import { CombatForecastLayer } from './CombatForecast';
+import { TableMesh } from './TableMesh';
+import { BackdropManager } from './BackdropManager';
 import { disposeAllTextures, subscribeImageLoads } from './textures';
 import {
   calculateCameraAnchor,
@@ -24,6 +26,7 @@ import {
   isTopSnap,
   resolveTargetPlayer,
 } from './cameraSnap';
+import { getCameraTrauma, stepCameraTrauma } from './cameraTrauma';
 
 const CAMERA_TRANSITION_MS = 680;
 const MIN_ZOOM_SCALE = 0.55; // zoom in up to ~1.8x closer
@@ -114,15 +117,9 @@ function SceneContent() {
           color="#fff5cc"
         />
       )}
-      {/* стол: разнесённые по высоте уровни без наложения плоскостей (никакого Z-fighting при вращении камеры) */}
-      <mesh position={[0, -9, 0]} raycast={NO_RAYCAST}>
-        <boxGeometry args={[2800, 10, 2800]} />
-        <meshLambertMaterial color="#274232" />
-      </mesh>
-      <mesh position={[0, -2, 0]} receiveShadow={quality === 'high'} raycast={NO_RAYCAST}>
-        <boxGeometry args={[2700, 2, 2700]} />
-        <meshLambertMaterial color="#2e5240" />
-      </mesh>
+      {/* Деревянная столешница с пропсами пикника и динамические пейзажи Ууу (docs/AUDIT-KIBERBUS-UIUX.md §8 Этап 4) */}
+      <TableMesh />
+      <BackdropManager />
 
       {order.map((pid) => (
         <PlayerBoard key={pid} view={view} pid={pid} isMe={pid === view.me} />
@@ -411,45 +408,62 @@ function CameraRig() {
     }
   }, [view, cameraMode, cameraSnap, size.width, size.height, invalidate]);
 
-  // Interpolate camera pose frame by frame during transition
-  useFrame(() => {
+  // Interpolate camera pose frame by frame during transition & apply Camera Trauma
+  useFrame((state, delta) => {
     if (!view) return;
     const anim = animRef.current;
-    if (!anim) return;
+    if (anim) {
+      const elapsed = performance.now() - anim.startAt;
+      const t = Math.min(1, elapsed / anim.durationMs);
+      const isAngleOnly = Math.abs(anim.deltaU) < 0.02;
+      const tAngle = isAngleOnly ? cameraTurnEase(t) : easeInOutCubic(t);
+      const tU = easeInOutCubic(t);
 
-    const elapsed = performance.now() - anim.startAt;
-    const t = Math.min(1, elapsed / anim.durationMs);
-    const isAngleOnly = Math.abs(anim.deltaU) < 0.02;
-    const tAngle = isAngleOnly ? cameraTurnEase(t) : easeInOutCubic(t);
-    const tU = easeInOutCubic(t);
+      const angle = anim.fromAngle + anim.deltaAngle * tAngle;
+      const u = anim.fromU + anim.deltaU * tU;
+      currentAngleRef.current = angle;
+      currentURef.current = u;
+      applyCameraPose(angle, u);
 
-    const angle = anim.fromAngle + anim.deltaAngle * tAngle;
-    const u = anim.fromU + anim.deltaU * tU;
-    currentAngleRef.current = angle;
-    currentURef.current = u;
-    applyCameraPose(angle, u);
-
-    if (t >= 1) {
-      const aspect = size.width / Math.max(1, size.height);
-      const targetPid = resolveTargetPlayer(view, cameraMode, cameraSnap);
-      const isTop = isTopSnap(cameraSnap, cameraMode);
-      const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
-      currentAngleRef.current = anchor.angle;
-      currentURef.current = anchor.u;
-      animRef.current = null;
-      applyCameraPose(anchor.angle, anchor.u);
+      if (t >= 1) {
+        const aspect = size.width / Math.max(1, size.height);
+        const targetPid = resolveTargetPlayer(view, cameraMode, cameraSnap);
+        const isTop = isTopSnap(cameraSnap, cameraMode);
+        const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
+        currentAngleRef.current = anchor.angle;
+        currentURef.current = anchor.u;
+        animRef.current = null;
+        applyCameraPose(anchor.angle, anchor.u);
+      }
+      invalidate();
     }
-    invalidate();
+
+    // Camera Trauma / Screen Shake physics (Stage 2)
+    if (getCameraTrauma() > 0) {
+      if (!anim && currentAngleRef.current !== null) {
+        applyCameraPose(currentAngleRef.current, currentURef.current);
+      }
+      const shake = stepCameraTrauma(delta, state.clock.getElapsedTime());
+      camera.position.x += shake.x;
+      camera.position.y += shake.y;
+      camera.position.z += shake.z;
+      camera.rotation.z += shake.roll;
+      invalidate();
+    }
   });
 
   return null;
 }
 
-/** demand-рендер: активен, пока есть активные анимации, драг или зажатие флюпа. */
+/** demand-рендер: активен, пока есть активные анимации, драг, зажатие флюпа или сотрясение стола. */
 function LoopController() {
   useFrame(({ invalidate }) => {
     const ui = useGame.getState().ui;
-    const busy = hasActiveAnims() || ui.dragging !== null || ui.holdingFloop !== null;
+    const busy =
+      hasActiveAnims() ||
+      ui.dragging !== null ||
+      ui.holdingFloop !== null ||
+      getCameraTrauma() > 0;
     if (busy) invalidate();
   });
   return null;

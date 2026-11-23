@@ -1,7 +1,7 @@
 // Service Worker for Card Wars v3
 // Provides offline shell caching and static asset caching.
 
-const CACHE_VERSION = 'v3.1.144';
+const CACHE_VERSION = 'v3.1.145';
 const CACHE_NAME = `card-wars-${CACHE_VERSION}`;
 const CONTENT_CACHE_NAME = 'card-wars-content-v1';
 
@@ -93,6 +93,11 @@ self.addEventListener('fetch', (event) => {
         if (cached) return cached;
         return fetch(req).then((networkRes) => {
           if (networkRes && networkRes.status === 200) {
+            const ct = networkRes.headers.get('content-type') || '';
+            // Never return or cache HTML SPA fallback for a JavaScript module script request
+            if (url.pathname.endsWith('.js') && !ct.includes('javascript')) {
+              return new Response('Asset not found', { status: 404, statusText: 'Not Found' });
+            }
             const copy = networkRes.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
           }

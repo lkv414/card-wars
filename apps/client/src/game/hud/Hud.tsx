@@ -52,7 +52,12 @@ export function Hud({ code }: { code: string }) {
 
   useEffect(() => {
     const ui = useGame.getState().ui;
-    if (view.pending && view.pending.player === view.me && view.pending.kind === 'target' && !ui.targeting) {
+    if (
+      view.pending &&
+      view.pending.player === view.me &&
+      (view.pending.kind === 'target' || view.pending.kind === 'effect_step') &&
+      !ui.targeting
+    ) {
       const state = startForPending(view, view.pending);
       if (state) setUi({ targeting: state });
     }
@@ -63,7 +68,12 @@ export function Hud({ code }: { code: string }) {
 
   const targetingPick = (candidate: Parameters<typeof pick>[2]) => {
     const ui = useGame.getState().ui;
-    if (!ui.targeting) return;
+    if (!ui.targeting) {
+      if (view.pending?.player === view.me) {
+        sendCommand({ type: 'resolve_choice', player: view.me, answer: { targets: [candidate] } });
+      }
+      return;
+    }
     const result = pick(view, ui.targeting, candidate);
     if (!result.accepted) return;
     if (result.command) {
@@ -99,6 +109,53 @@ export function Hud({ code }: { code: string }) {
     if (targeting) return targeting.asks[targeting.askIndex] ?? null;
     return null;
   })();
+
+  const renderPlayerTargetButtons = () => {
+    if (!currentAsk) return null;
+    if (currentAsk.kind === 'opponent_player') {
+      const opponents = view.order.filter((pid) => {
+        if (pid === view.me) return false;
+        const me = view.players[view.me];
+        const other = view.players[pid];
+        if (me?.teamId && other?.teamId === me.teamId) return false;
+        return true;
+      });
+      return (
+        <span className="pending-player-buttons" style={{ display: 'inline-flex', gap: 6, margin: '0 6px', verticalAlign: 'middle', flexWrap: 'wrap' }}>
+          {opponents.map((pid) => (
+            <button
+              key={pid}
+              className="cw-btn-3d btn-red btn-sm"
+              onClick={() => targetingPick({ kind: 'player', playerId: pid })}
+              title={`Выбрать соперника ${view.players[pid]?.nickname ?? pid}`}
+            >
+              ⚔️ {view.players[pid]?.nickname ?? pid} ({view.players[pid]?.lives} ❤️)
+            </button>
+          ))}
+        </span>
+      );
+    }
+    if (currentAsk.kind === 'any_player') {
+      return (
+        <span className="pending-player-buttons" style={{ display: 'inline-flex', gap: 6, margin: '0 6px', verticalAlign: 'middle', flexWrap: 'wrap' }}>
+          {view.order.map((pid) => {
+            const isMe = pid === view.me;
+            return (
+              <button
+                key={pid}
+                className={`cw-btn-3d ${isMe ? 'btn-blue' : 'btn-orange'} btn-sm`}
+                onClick={() => targetingPick({ kind: 'player', playerId: pid })}
+                title={`Выбрать игрока ${view.players[pid]?.nickname ?? pid}`}
+              >
+                {isMe ? '👤 Вы (себе)' : `👤 ${view.players[pid]?.nickname ?? pid}`} ({view.players[pid]?.lives} ❤️)
+              </button>
+            );
+          })}
+        </span>
+      );
+    }
+    return null;
+  };
 
   const [amountInput, setAmountInput] = useState('');
   const [distribution, setDistribution] = useState<string[]>([]);
@@ -339,8 +396,9 @@ export function Hud({ code }: { code: string }) {
           <span>
             {targeting.label} — цель {targeting.askIndex + 1}/{targeting.asks.length}
           </span>
+          {renderPlayerTargetButtons()}
           {nonBoardPicker}
-          <button className="mini" onClick={() => setUi({ targeting: null })}>
+          <button className="cw-btn-3d btn-dark btn-sm" onClick={() => setUi({ targeting: null })}>
             Отмена
           </button>
         </div>
@@ -363,14 +421,14 @@ export function Hud({ code }: { code: string }) {
                 </b>
                 {view.pending.kind === 'optional' && (
                   <button
-                    className="mini"
+                    className="cw-btn-3d btn-green btn-sm"
                     onClick={() => sendCommand({ type: 'resolve_choice', player: view.me, answer: { proceed: true } })}
                   >
                     Да
                   </button>
                 )}
                 <button
-                  className="mini"
+                  className="cw-btn-3d btn-dark btn-sm"
                   onClick={() =>
                     sendCommand({
                       type: 'resolve_choice',
@@ -381,21 +439,7 @@ export function Hud({ code }: { code: string }) {
                 >
                   Пропустить
                 </button>
-                {(() => {
-                  if (view.pending!.kind !== 'target') return null;
-                  const ability = view.pending!.cardId
-                    ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
-                    : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
-                  const ask = ability?.targets?.[view.pending!.askIndex ?? 0];
-                  if (!ask || ask.kind !== 'opponent_player') return null;
-                  return view.order
-                    .filter((pid) => pid !== view.me)
-                    .map((pid) => (
-                      <button key={pid} className="mini" onClick={() => targetingPick({ kind: 'player', playerId: pid })}>
-                        {view.players[pid]?.nickname ?? pid}
-                      </button>
-                    ));
-                })()}
+                {renderPlayerTargetButtons()}
                 {discardPickers}
                 {nonBoardPicker}
                 {(() => {

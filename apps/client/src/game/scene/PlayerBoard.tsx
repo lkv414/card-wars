@@ -19,6 +19,7 @@ import {
 import { cardBackTexture, cardTexture, heroTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
+import { pick, validTargets } from '../targeting';
 import { sendCommand, setUi, showHint, useGame } from '../../store';
 
 /** Игровое поле одного игрока: 4 земли (с их точными углами/позициями боя), колода, сброс, герой, жизни. */
@@ -60,6 +61,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
           ready={p.battleReady}
           teamLabel={team ? `команда ${team.id === 'team-a' ? 'A' : 'B'}` : null}
           view={view}
+          pid={pid}
         />
         {(!team || team.playerIds[0] === pid) && <LivesTokens lives={p.lives} view={view} />}
         {p.companion && <CardMesh card={p.companion} view={view} isMe={isMe} slot="companion" />}
@@ -210,6 +212,7 @@ function HeroStand({
   ready,
   teamLabel,
   view,
+  pid,
 }: {
   nickname: string;
   heroId: string;
@@ -217,19 +220,53 @@ function HeroStand({
   ready: boolean;
   teamLabel: string | null;
   view: PlayerView;
+  pid: string;
 }) {
   const [x, , z] = heroLocalFor(view);
   const color = ready ? '#4c8ee8' : active ? '#48bb78' : '#3a4250';
   const suffix = `${ready ? ' · готов' : active ? ' · ход' : ''}${teamLabel ? ` · ${teamLabel}` : ''}`;
   const portrait = useMemo(() => heroTexture(heroId), [heroId]);
+
+  const targeting = useGame((st) => st.ui.targeting);
+  const currentAsk = targeting ? targeting.asks[targeting.askIndex] : undefined;
+  const isTarget =
+    targeting && currentAsk && (currentAsk.kind === 'opponent_player' || currentAsk.kind === 'any_player')
+      ? validTargets(view, currentAsk, targeting.sourceInstanceId, targeting.collected).some(
+          (c) => c.kind === 'player' && c.playerId === pid,
+        )
+      : false;
+
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    if (e.nativeEvent.button !== 0 || !isTarget) return;
+    e.stopPropagation();
+    const ui = useGame.getState().ui;
+    if (!ui.targeting) return;
+    const result = pick(view, ui.targeting, { kind: 'player', playerId: pid });
+    if (!result.accepted) return;
+    if (result.command) {
+      sendCommand(result.command);
+      setUi({ targeting: result.nextState ?? null });
+    } else if (result.nextState) {
+      setUi({ targeting: result.nextState });
+    }
+  };
+
   return (
     <group position={[x, 0, z]}>
-      <mesh position={[0, 14, 0]} raycast={NO_RAYCAST}>
+      {/* Подставка */}
+      <mesh position={[0, 14, 0]} raycast={isTarget ? undefined : NO_RAYCAST} onClick={isTarget ? handleClick : undefined}>
         <boxGeometry args={[110, 28, 10]} />
-        <meshLambertMaterial color={color} />
+        <meshLambertMaterial color={isTarget ? '#dc2626' : color} />
       </mesh>
+      {/* Кольцо подсветки цели при наведении/выборе */}
+      {isTarget && (
+        <mesh position={[0, 56, 7]} onClick={handleClick}>
+          <ringGeometry args={[44, 50, 32]} />
+          <meshBasicMaterial color="#ef4444" side={THREE.DoubleSide} />
+        </mesh>
+      )}
       {/* портрет героя — скан из content/heroes/images (docs/UI-3D.md «Состав сцена») */}
-      <mesh position={[0, 56, 6]} raycast={NO_RAYCAST}>
+      <mesh position={[0, 56, 6]} raycast={isTarget ? undefined : NO_RAYCAST} onClick={isTarget ? handleClick : undefined}>
         <planeGeometry args={[64, 80]} />
         <meshLambertMaterial map={portrait} />
       </mesh>

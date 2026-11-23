@@ -159,6 +159,8 @@ export function validTargets(
     }
     case 'opponent_player':
       return view.order.filter((pid) => isOpponent(view, pid)).map((pid) => ({ kind: 'player' as const, playerId: pid }));
+    case 'any_player':
+      return view.order.map((pid) => ({ kind: 'player' as const, playerId: pid }));
     case 'landscape':
       return allLands(view);
     case 'own_landscape':
@@ -320,22 +322,24 @@ export function startForActive(
 
 /** Начать pending-таргетинг (триггерная способность, §6). */
 export function startForPending(
-  _view: PlayerView,
+  view: PlayerView,
   pending: NonNullable<PlayerView['pending']>,
 ): TargetingState | null {
-  if (pending.cardId === undefined) return null;
-  const card = catalog.find((c) => c.id === pending.cardId);
-  const ability = card?.abilities?.[pending.abilityIndex ?? 0];
+  const card = pending.cardId !== undefined ? catalog.find((c) => c.id === pending.cardId) : null;
+  const ability = card
+    ? card.abilities?.[pending.abilityIndex ?? 0]
+    : heroCatalog.find((h) => h.id === view.players[pending.player]?.heroId)?.ability;
   if (!ability) return null;
   const asks = ability.targets ?? [];
   if (asks.length === 0) return null;
+  const hero = !card ? heroCatalog.find((h) => h.id === view.players[pending.player]?.heroId) : null;
   return {
     mode: 'pending',
     sourceInstanceId: pending.instanceId ?? null,
     asks,
     askIndex: pending.askIndex ?? 0,
     collected: [],
-    label: card?.name ? `«${card.name}»: ${ability.text}` : ability.text,
+    label: card?.name ? `«${card.name}»: ${ability.text}` : (hero?.name ? `«${hero.name}»: ${ability.text}` : ability.text),
   };
 }
 

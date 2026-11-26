@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { CONFIG } from '@card-wars/protocol';
-import { PLAYABLE_LAND_TYPES, heroes, type LandType } from '@card-wars/content';
 import {
   decodeDeckCode,
   encodeDeckCode,
-  generateRandomDeck,
   getSelectedDeckId,
   heroName,
   loadDecks,
@@ -16,6 +14,7 @@ import {
 } from '../decks';
 import { DeckEditor, clearEditorDraft, loadEditorDraft } from './DeckEditor';
 import { DeckPreview } from './DeckPreview';
+import { soundEngine } from '../sound/SoundEngine';
 
 function isPointerOutside(e: ReactPointerEvent<HTMLDialogElement>): boolean {
   const rect = e.currentTarget.getBoundingClientRect();
@@ -57,6 +56,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
 
   const showError = useCallback(
     (msg: string) => {
+      soundEngine.playError();
       clearToastTimer();
       setMessage(null);
       setError(msg);
@@ -76,8 +76,12 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     const dialog = deleteDialogRef.current;
     if (!dialog) return;
     if (deletingDeck) {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        soundEngine.playModalOpen();
+        dialog.showModal();
+      }
     } else if (dialog.open) {
+      soundEngine.playModalClose();
       dialog.close();
     }
   }, [deletingDeck]);
@@ -94,52 +98,21 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     setSelectedDeckId(deck.id);
     clearEditorDraft();
     setEditing(null);
+    soundEngine.playDeckSave();
     showSuccess(`Колода «${deck.name}» сохранена`);
   };
 
   const createDeck = () => {
+    soundEngine.playButtonClick();
     clearToastTimer();
     setMessage(null);
     setError(null);
     setEditing(newDeck());
   };
 
-  const createRandomDeck = () => {
-    const randomHero = heroes[Math.floor(Math.random() * heroes.length)] ?? heroes[0]!;
-    const l1 = PLAYABLE_LAND_TYPES[Math.floor(Math.random() * PLAYABLE_LAND_TYPES.length)] ?? 'blue';
-    const l2 = PLAYABLE_LAND_TYPES[Math.floor(Math.random() * PLAYABLE_LAND_TYPES.length)] ?? 'corn';
-    const randomLands: LandType[] = [l1, l1, l2, l2];
-    const randomCards = generateRandomDeck(randomHero.id, randomLands, []);
-
-    const deck: SavedDeck = {
-      id: `deck-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`,
-      name: `Случайная (${randomHero.name})`,
-      heroId: randomHero.id,
-      lands: randomLands,
-      landIds: [null, null, null, null],
-      cards: randomCards,
-    };
-    persist([...decks, deck]);
-    setSelectedId(deck.id);
-    setSelectedDeckId(deck.id);
-    showSuccess(`Создана случайная колода «${deck.name}» (40 карт)`);
-  };
-
-  const duplicate = (deck: SavedDeck) => {
-    const copy: SavedDeck = {
-      ...deck,
-      id: `deck-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`,
-      name: `${deck.name} (копия)`,
-      lands: [...deck.lands],
-      ...(deck.landIds ? { landIds: [...deck.landIds] } : {}),
-      cards: [...deck.cards],
-    };
-    persist([...decks, copy]);
-    showSuccess(`Создана копия «${deck.name}»`);
-  };
-
   const confirmDelete = () => {
     if (!deletingDeck) return;
+    soundEngine.playCardDiscard();
     const next = decks.filter((d) => d.id !== deletingDeck.id);
     persist(next);
     if (selectedId === deletingDeck.id) {
@@ -163,6 +136,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
       showError(`Нельзя выбрать неполную колоду: ${deck.cards.length}/${CONFIG.deckSize} карт`);
       return;
     }
+    soundEngine.playCardSelect();
     setSelectedId(deck.id);
     setSelectedDeckId(deck.id);
     showSuccess(`Активная колода: «${deck.name}»`);
@@ -201,6 +175,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
       }
     }
     if (copied) {
+      soundEngine.playButtonClick();
       showSuccess(`Код колоды «${deck.name}» скопирован в буфер обмена`);
     } else {
       showError('Не удалось скопировать код в буфер обмена');
@@ -217,6 +192,7 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
     setSelectedId(result.deck.id);
     setSelectedDeckId(result.deck.id);
     setImportCode('');
+    soundEngine.playDeckSave();
     showSuccess(`Импортирована колода «${result.deck.name}»`);
   };
 
@@ -240,24 +216,14 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
           ← В меню
         </button>
         <div className="decks-title">
-          <span className="eyebrow menu-eyebrow">Card Wars</span>
           <h1 className="cw-ink-title">Мои колоды</h1>
         </div>
         <div className="decks-header-actions">
-          <button
-            type="button"
-            className="cw-btn-3d btn-orange btn-sm"
-            onClick={createRandomDeck}
-            title="Создать готовую сбалансированную колоду со случайным героем и землями"
-          >
-            🎲 + Случайная колода
-          </button>
           <button type="button" className="cw-btn-3d btn-green btn-sm" onClick={createDeck}>
             + Создать колоду
           </button>
         </div>
       </header>
-      <p className="decks-subtitle">Выберите активную колоду или соберите новую</p>
 
       <section className="decks-import-bar cw-paper-box" aria-label="Импорт колоды по коду">
         <h2 className="cw-ink-title">Импорт по коду</h2>
@@ -296,64 +262,39 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
       {decks.length === 0 ? (
         <div className="decks-empty cw-felt-box">
           <p className="decks-empty-title cw-ink-title">У вас пока нет колод</p>
-          <p className="decks-empty-hint">
-            Создайте новую колоду с нуля или сгенерируйте сбалансированную колоду со случайным героем в один клик.
-          </p>
+          <p className="decks-empty-hint">Создайте новую колоду или импортируйте её по коду.</p>
           <div className="decks-empty-actions">
             <button type="button" className="cw-btn-3d btn-green" onClick={createDeck}>
               + Создать колоду
-            </button>
-            <button type="button" className="cw-btn-3d btn-orange" onClick={createRandomDeck}>
-              🎲 + Случайная колода
             </button>
           </div>
         </div>
       ) : (
         <div className="decks-grid">
           {decks.map((deck) => {
-            const problems = validateSavedDeck(deck);
             const active = selectedId === deck.id;
             const isComplete = deck.cards.length === CONFIG.deckSize;
             return (
               <article key={deck.id} className={`deck-card cw-paper-box ${active ? 'active' : ''}`}>
-                {active && <span className="active-badge">активная</span>}
-                {!isComplete && (
-                  <span className="incomplete-badge">
-                    Не готова ({deck.cards.length}/{CONFIG.deckSize})
-                  </span>
-                )}
                 <div className="deck-card-top">
                   <h3 className="deck-name cw-ink-title">{deck.name}</h3>
-                </div>
-                <div className="deck-stats">
-                  <span className="deck-stat deck-stat--hero">{heroName(deck.heroId)}</span>
-                  <span className={`deck-stat ${isComplete ? 'deck-stat--ok' : 'deck-stat--warn'}`}>
-                    {deck.cards.length} / {CONFIG.deckSize} карт
-                  </span>
-                  <span className="deck-stat">{deck.lands.length} земли</span>
+                  <span className="deck-hero-label">{heroName(deck.heroId)}</span>
                 </div>
                 <DeckPreview deck={deck} compact />
-                <div className={`deck-card-desc ${problems.length > 0 ? 'deck-card-desc--error' : ''}`}>
-                  {problems[0] ?? 'Колода готова к игре'}
-                </div>
                 <div className="deck-actions">
                   <button
                     type="button"
                     className={`cw-btn-3d ${active ? 'btn-gold' : 'btn-green'} btn-sm`}
                     onClick={() => makeActive(deck)}
                     disabled={active || !isComplete}
-                    title={!isComplete ? `Колода не готова (${deck.cards.length}/${CONFIG.deckSize} карт)` : active ? 'Колода уже выбрана' : 'Выбрать колоду'}
                   >
-                    {active ? '✓ Выбрана' : !isComplete ? `Не готова (${deck.cards.length}/${CONFIG.deckSize})` : 'Выбрать'}
+                    {active ? '✓ Выбрана' : !isComplete ? `${deck.cards.length}/${CONFIG.deckSize}` : 'Выбрать'}
                   </button>
                   <button type="button" className="cw-btn-3d btn-blue btn-sm" onClick={() => setEditing(deck)}>
-                    Изменить
+                    Открыть
                   </button>
                   <button type="button" className="cw-btn-3d btn-purple btn-sm" onClick={() => void copyCode(deck)}>
                     Код
-                  </button>
-                  <button type="button" className="cw-btn-3d btn-blue btn-sm" onClick={() => duplicate(deck)}>
-                    Копия
                   </button>
                   <button type="button" className="cw-btn-3d btn-red btn-sm" onClick={() => setDeletingDeck(deck)}>
                     Удалить
@@ -362,10 +303,6 @@ export function DecksScreen({ onBack }: { onBack: () => void }) {
               </article>
             );
           })}
-
-          <button type="button" className="big-create-btn cw-felt-box cw-btn-3d btn-dark" onClick={createDeck}>
-            + Создать новую колоду
-          </button>
         </div>
       )}
 

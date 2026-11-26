@@ -51,6 +51,15 @@ function contentAssets(): Plugin {
 
 export default defineConfig({
   plugins: [react(), contentAssets()],
+  server: {
+    host: '127.0.0.1',
+    port: 5173,
+    proxy: {
+      '/ws': { target: 'http://127.0.0.1:8787', ws: true },
+      '/health': { target: 'http://127.0.0.1:8787' },
+      '/version': { target: 'http://127.0.0.1:8787' },
+    },
+  },
   build: {
     chunkSizeWarningLimit: 750,
     rollupOptions: {

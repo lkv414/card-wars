@@ -28,11 +28,29 @@ export function Lobby({ code }: { code: string }) {
   const [decks, setDecks] = useState<SavedDeck[]>(() => loadDecks());
   const [selectedId, setSelectedId] = useState<string | null>(() => getSelectedDeckId());
   const [editing, setEditing] = useState<SavedDeck | null>(() => loadEditorDraft(LOBBY_EDITOR_DRAFT_KEY));
-  const [hoveredSeat, setHoveredSeat] = useState<number | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [previewSeat, setPreviewSeat] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const sent = useRef<string | null>(null);
+  const previewDialogRef = useRef<HTMLDialogElement | null>(null);
+
+  useEffect(() => {
+    if (error) soundEngine.playError();
+  }, [error]);
+
+  useEffect(() => {
+    const dialog = previewDialogRef.current;
+    if (!dialog) return;
+    if (previewSeat !== null && lobby?.slots[previewSeat]?.deck) {
+      if (!dialog.open) {
+        soundEngine.playModalOpen();
+        dialog.showModal();
+      }
+    } else if (dialog.open) {
+      soundEngine.playModalClose();
+      dialog.close();
+    }
+  }, [previewSeat, lobby]);
 
   const validDecks = useMemo(() => decks.filter((deck) => validateSavedDeck(deck).length === 0), [decks]);
   const selected = validDecks.find((deck) => deck.id === selectedId) ?? validDecks[0] ?? null;
@@ -144,11 +162,11 @@ export function Lobby({ code }: { code: string }) {
 
   return (
     <main className="lobby-room ui-v2">
-      <div className="lobby-room-content">
+      <div className="lobby-shell">
         <div className="lobby-topbar">
           <button
             type="button"
-            className="cw-btn-3d btn-dark btn-sm"
+            className="cw-btn-3d btn-dark lobby-topbar-pill"
             onClick={() => {
               sendLobbyCommand({ type: 'leave' });
               location.href = '/';
@@ -156,22 +174,14 @@ export function Lobby({ code }: { code: string }) {
           >
             ← Выйти из лобби
           </button>
-          <span className="lobby-topbar-status cw-felt-box" style={{ padding: '6px 14px', borderRadius: '12px' }}>
+
+          <span className="lobby-topbar-status cw-felt-box lobby-topbar-pill">
             {occupied.length}/{lobby.maxPlayers} игроков
           </span>
-        </div>
 
-        <div className="lobby-title">
-          <span className="eyebrow menu-eyebrow">Card Wars · онлайн</span>
-          <h1 className="cw-ink-title">Лобби</h1>
-        </div>
-
-        {error && <div className="lobby-error">{error.message}</div>}
-
-        <section className="lobby-code-display cw-felt-box">
-          <span className="lobby-code-label">Код комнаты</span>
-          <div className="lobby-code-value">
-            <span>{code}</span>
+          <div className="lobby-code-pill cw-felt-box lobby-topbar-pill">
+            <span className="lobby-code-pill__label">Код:</span>
+            <strong className="lobby-code-pill__val">{code}</strong>
             <button
               type="button"
               className="cw-btn-3d btn-gold btn-sm"
@@ -187,115 +197,163 @@ export function Lobby({ code }: { code: string }) {
               {copied ? '✓' : '⧉'}
             </button>
           </div>
-          <p className="lobby-code-hint">Поделитесь кодом с другом или отправьте ссылку</p>
-        </section>
+        </div>
 
-        <section className="lobby-players lobby-table-arena cw-felt-box">
-          <div className="lobby-table-center-banner">
-            <span className="table-banner-icon">⚔️</span>
-            <div className="table-banner-info">
-              <span className="table-banner-title cw-ink-title">Стол сражений Земель Ууу</span>
-              <span className="table-banner-mode">{modeLabel}</span>
+        {/* LEFT COLUMN: Mode-Aware Arena */}
+        <div className="lobby-main-col">
+          {error && <div className="lobby-error">{error.message}</div>}
+
+          <section
+            className={`lobby-arena cw-felt-box lobby-arena--${
+              lobby.mode.kind === 'teams' ? lobby.mode.variant : 'ffa'
+            }`}
+            aria-label="Рассадка игроков"
+          >
+            {/* Center battle map explaining who fights whom */}
+            <div className="lobby-battle-map cw-paper-box">
+              {lobby.mode.kind === 'ffa' ? (
+                <>
+                  <span className="lobby-battle-map__badge">⚔️ Каждый сам за себя</span>
+                  <p className="lobby-battle-map__desc">
+                    {occupied.length <= 2
+                      ? 'Дуэль 1 на 1: игроки стоят лицом друг к другу'
+                      : 'Угловые места: левое крыло бьёт соседа слева, правое — соседа справа'}
+                  </p>
+                </>
+              ) : lobby.mode.variant === 'neighbors' ? (
+                <>
+                  <span className="lobby-battle-map__badge">🤝 2 на 2 — Соседи</span>
+                  <p className="lobby-battle-map__desc">
+                    Союзник сидит <strong>напротив</strong> (#1 ↔ #3 и #2 ↔ #4), противники — слева и справа
+                  </p>
+                </>
+              ) : (
+                <>
+                  <span className="lobby-battle-map__badge">🛡️ 2 на 2 — Стенка на стенку</span>
+                  <p className="lobby-battle-map__desc">
+                    Союзник <strong>рядом</strong> (#1 + #2 снизу против #3 + #4 сверху) — общий ряд из 8 зон
+                  </p>
+                </>
+              )}
             </div>
-            <span className="table-banner-count">{occupied.length}/{lobby.maxPlayers} мест занято</span>
-          </div>
-          <ul className="lobby-players__list">
-            {lobby.slots.map((slot, seat) => {
-              const isMe = slot?.id === you.playerId;
-              const isPreviewOpen = (hoveredSeat === seat || previewSeat === seat) && Boolean(slot?.deck);
-              const isSeatSelected = selectedSeat === seat;
-              const hero = slot?.deck ? getHero(slot.deck.heroId) : null;
 
-              return (
-                <li
-                  key={seat}
-                  className={`lobby-player ${slot ? '' : 'lobby-player--empty'} ${isMe ? 'lobby-player--me' : ''} ${
-                    isPreviewOpen ? 'lobby-player--preview-open' : ''
-                  } ${isSeatSelected ? 'is-selected-seat' : ''}`}
-                  draggable={isHost && Boolean(slot)}
-                  onMouseEnter={() => {
-                    if (slot?.deck) setHoveredSeat(seat);
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredSeat((cur) => (cur === seat ? null : cur));
-                  }}
-                  onDragStart={(e) => {
-                    if ((e.target as HTMLElement).closest('select, button, input')) {
+            <ul
+              className={`lobby-players__list lobby-players__list--${
+                lobby.mode.kind === 'teams' ? lobby.mode.variant : 'ffa'
+              }`}
+            >
+              {lobby.slots.map((slot, seat) => {
+                const isMe = slot?.id === you.playerId;
+                const isSeatSelected = selectedSeat === seat;
+                const hero = slot?.deck ? getHero(slot.deck.heroId) : null;
+                const teamTag =
+                  lobby.mode.kind === 'teams'
+                    ? lobby.mode.variant === 'wall'
+                      ? seat < 2
+                        ? 'A'
+                        : 'B'
+                      : seat % 2 === 0
+                        ? 'A'
+                        : 'B'
+                    : null;
+
+                return (
+                  <li
+                    key={`${seat}-${slot?.id ?? 'empty'}`}
+                    className={`lobby-player lobby-seat-${seat} ${slot ? '' : 'lobby-player--empty'} ${
+                      isMe ? 'lobby-player--me' : ''
+                    } ${teamTag ? `lobby-player--team-${teamTag}` : ''} ${
+                      isSeatSelected ? 'is-selected-seat' : ''
+                    }`}
+                    draggable={isHost && Boolean(slot)}
+                    onDragStart={(e) => {
+                      if ((e.target as HTMLElement).closest('select, button, input')) {
+                        e.preventDefault();
+                        return;
+                      }
+                      setPreviewSeat(null);
+                      if (slot) e.dataTransfer.setData('text/plain', slot.id);
+                    }}
+                    onDragOver={(e) => {
+                      if (isHost) e.preventDefault();
+                    }}
+                    onDrop={(e) => {
+                      if (!isHost) return;
                       e.preventDefault();
-                      return;
-                    }
-                    setHoveredSeat(null);
-                    setPreviewSeat(null);
-                    if (slot) e.dataTransfer.setData('text/plain', slot.id);
-                  }}
-                  onDragOver={(e) => {
-                    if (isHost) e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    if (!isHost) return;
-                    e.preventDefault();
-                    const playerId = e.dataTransfer.getData('text/plain');
-                    if (playerId) move(playerId, seat);
-                  }}
-                >
-                  <div className="lobby-seat-badge" title={`Место за столом №${seat + 1}`}>
-                    #{seat + 1}
-                  </div>
-
-                  <div className="lobby-player__avatar">
-                    {hero?.image ? (
-                      <img src={hero.image} alt={hero.name} className="lobby-hero-avatar-img" />
-                    ) : (
-                      <div className={`lobby-hero-avatar-fallback ${slot ? 'is-occupied' : 'is-empty'}`}>
-                        {slot ? (slot.isBot ? '🤖' : '⚔️') : '🪑'}
+                      const playerId = e.dataTransfer.getData('text/plain');
+                      if (playerId) move(playerId, seat);
+                    }}
+                  >
+                    <div className="lobby-player-head">
+                      <div className="lobby-seat-badge" title={`Место за столом №${seat + 1}`}>
+                        #{seat + 1}
                       </div>
-                    )}
-                  </div>
-
-                  <div className="lobby-player__info">
-                    <div className="lobby-player__name">
-                      <span className={`status-dot ${slot?.connected ? 'on' : ''}`} />
-                      {slot?.id === lobby.host && (
-                        <span className="host-mark" title="Хост">
-                          ♛
+                      {teamTag && (
+                        <span className={`lobby-team-pill lobby-team-pill--${teamTag}`}>
+                          Команда {teamTag}
                         </span>
                       )}
-                      <span>{slot?.nickname ?? 'Свободное место'}</span>
-                      {isMe && <span className="you-mark">(вы)</span>}
-                      {slot?.isBot && <span className="bot-mark">бот</span>}
-                      {isSeatSelected && <span className="selected-mark">← выбрано для пересадки</span>}
+                      <span className={`lobby-seal-stamp ${slot ? (slot.ready ? 'is-ready' : 'is-waiting') : 'is-empty'}`}>
+                        {slot ? (slot.ready ? '✓ Готов' : 'Ждёт') : 'Свободно'}
+                      </span>
                     </div>
-                    <div
-                      className={`lobby-player__deck ${slot?.deck ? 'ok clickable' : ''}`}
-                      onClick={(e) => {
-                        if (slot?.deck) {
-                          e.stopPropagation();
-                          soundEngine.playCardDraw();
-                          setPreviewSeat((cur) => (cur === seat ? null : seat));
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (slot?.deck && (e.key === 'Enter' || e.key === ' ')) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          soundEngine.playCardDraw();
-                          setPreviewSeat((cur) => (cur === seat ? null : seat));
-                        }
-                      }}
-                      role={slot?.deck ? 'button' : undefined}
-                      tabIndex={slot?.deck ? 0 : undefined}
-                      title={slot?.deck ? 'Нажмите для просмотра колоды' : undefined}
-                    >
-                      {slot
-                        ? slot.deck
-                          ? `${heroName(slot.deck.heroId)} · ${slot.deck.cards.length} карт 👁️`
-                          : 'колода скрыта'
-                        : '—'}
+
+                    <div className="lobby-player-main">
+                      <div className="lobby-player__avatar">
+                        {hero?.image ? (
+                          <img src={hero.image} alt={hero.name} className="lobby-hero-avatar-img" />
+                        ) : (
+                          <div className={`lobby-hero-avatar-fallback ${slot ? 'is-occupied' : 'is-empty'}`}>
+                            {slot ? (slot.isBot ? '🤖' : '⚔️') : '🪑'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="lobby-player__info">
+                        <div className="lobby-player__name">
+                          <span className={`status-dot ${slot?.connected ? 'on' : ''}`} />
+                          {slot?.id === lobby.host && (
+                            <span className="host-mark" title="Хост">
+                              ♛
+                            </span>
+                          )}
+                          <span>{slot?.nickname ?? 'Свободное место'}</span>
+                          {isMe && <span className="you-mark">(вы)</span>}
+                          {slot?.isBot && <span className="bot-mark">бот</span>}
+                        </div>
+                        <div
+                          className={`lobby-player__deck ${slot?.deck ? 'ok clickable' : ''}`}
+                          onClick={(e) => {
+                            if (slot?.deck) {
+                              e.stopPropagation();
+                              soundEngine.playCardDraw();
+                              setPreviewSeat((cur) => (cur === seat ? null : seat));
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (slot?.deck && (e.key === 'Enter' || e.key === ' ')) {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              soundEngine.playCardDraw();
+                              setPreviewSeat((cur) => (cur === seat ? null : seat));
+                            }
+                          }}
+                          role={slot?.deck ? 'button' : undefined}
+                          tabIndex={slot?.deck ? 0 : undefined}
+                          title={slot?.deck ? 'Нажмите для просмотра колоды' : undefined}
+                        >
+                          {slot
+                            ? slot.deck
+                              ? `${heroName(slot.deck.heroId)} · ${slot.deck.cards.length} карт 👁️`
+                              : 'колода скрыта'
+                            : 'Перетащите игрока сюда'}
+                        </div>
+                      </div>
                     </div>
 
                     {isMe && (
                       <div
-                        className="lobby-my-deck-bar cw-paper-box"
+                        className="lobby-my-deck-bar"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {validDecks.length > 0 ? (
@@ -319,7 +377,7 @@ export function Lobby({ code }: { code: string }) {
                                 if (deck) setEditing(deck);
                               }}
                             >
-                              Редактировать
+                              Изменить
                             </button>
                           </div>
                         ) : (
@@ -330,250 +388,258 @@ export function Lobby({ code }: { code: string }) {
                               className="cw-btn-3d btn-green btn-sm"
                               onClick={() => setEditing(newDeck())}
                             >
-                              Собрать колоду
+                              Собрать
                             </button>
                           </div>
                         )}
                       </div>
                     )}
-                  </div>
 
-                  <span className={`lobby-seal-stamp ${slot ? (slot.ready ? 'is-ready' : 'is-waiting') : 'is-empty'}`}>
-                    {slot ? (slot.ready ? '🛡️ ГОТОВ' : '⏳ ЖДЁТ') : '—'}
-                  </span>
-
-                  {isPreviewOpen && slot?.deck && (
-                    <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
-                      <div className="lobby-player-popover__head">
-                        <strong>{slot.nickname}</strong>
-                        <span>
-                          {heroName(slot.deck.heroId)} · {slot.deck.cards.length}/{CONFIG.deckSize} карт
-                        </span>
-                        <button
-                          type="button"
-                          className="lobby-popover-close cw-btn-3d btn-dark btn-sm"
-                          onClick={() => {
-                            setPreviewSeat(null);
-                            setHoveredSeat(null);
-                          }}
-                          aria-label="Закрыть предпросмотр"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <DeckPreview deck={slot.deck} compact />
-                    </div>
-                  )}
-
-                  {isHost && slot && (
-                    <div className="lobby-row-actions">
-                      {slot.id !== you.playerId &&
-                        (slot.isBot ? (
-                          <button
-                            type="button"
-                            className="cw-btn-3d btn-red btn-sm"
-                            onClick={() => {
-                              soundEngine.playButtonClick();
-                              sendLobbyCommand({ type: 'remove_bot', player: slot.id });
-                            }}
-                          >
-                            Убрать
-                          </button>
-                        ) : (
-                          <>
+                    {isHost && slot && (
+                      <div className="lobby-row-actions">
+                        {slot.id !== you.playerId &&
+                          (slot.isBot ? (
                             <button
                               type="button"
                               className="cw-btn-3d btn-red btn-sm"
                               onClick={() => {
                                 soundEngine.playButtonClick();
-                                sendLobbyCommand({ type: 'kick', player: slot.id });
+                                sendLobbyCommand({ type: 'remove_bot', player: slot.id });
                               }}
                             >
-                              Кикнуть
+                              Убрать
                             </button>
-                            {slot.connected && (
+                          ) : (
+                            <>
                               <button
                                 type="button"
-                                className="cw-btn-3d btn-purple btn-sm"
+                                className="cw-btn-3d btn-red btn-sm"
                                 onClick={() => {
                                   soundEngine.playButtonClick();
-                                  sendLobbyCommand({ type: 'transfer_host', player: slot.id });
+                                  sendLobbyCommand({ type: 'kick', player: slot.id });
                                 }}
                               >
-                                Хост
+                                Кикнуть
                               </button>
-                            )}
-                          </>
-                        ))}
-                      {selectedSeat !== null && selectedSeat !== seat ? (
-                        <button
-                          type="button"
-                          className="cw-btn-3d btn-orange btn-sm"
-                          onClick={() => {
-                            soundEngine.playButtonClick();
-                            const source = lobby.slots[selectedSeat];
-                            if (source) move(source.id, seat);
-                            setSelectedSeat(null);
-                          }}
-                          title="Поменять местами с выбранным"
-                        >
-                          ⇄ Сюда
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className={`cw-btn-3d ${isSeatSelected ? 'btn-red' : 'btn-orange'} btn-sm`}
-                          onClick={() => {
-                            soundEngine.playButtonClick();
-                            setSelectedSeat((cur) => (cur === seat ? null : seat));
-                          }}
-                          title="Выбрать игрока для пересадки на мобильном/таче"
-                          aria-label="Выбрать для пересадки"
-                        >
-                          {isSeatSelected ? '✕ Отмена' : '⇅ Пересадить'}
-                        </button>
-                      )}
+                              {slot.connected && (
+                                <button
+                                  type="button"
+                                  className="cw-btn-3d btn-purple btn-sm"
+                                  onClick={() => {
+                                    soundEngine.playButtonClick();
+                                    sendLobbyCommand({ type: 'transfer_host', player: slot.id });
+                                  }}
+                                >
+                                  Хост
+                                </button>
+                              )}
+                            </>
+                          ))}
+                        {selectedSeat !== null && selectedSeat !== seat ? (
+                          <button
+                            type="button"
+                            className="cw-btn-3d btn-orange btn-sm"
+                            onClick={() => {
+                              soundEngine.playButtonClick();
+                              const source = lobby.slots[selectedSeat];
+                              if (source) move(source.id, seat);
+                              setSelectedSeat(null);
+                            }}
+                            title="Поменять местами с выбранным"
+                          >
+                            ⇄ Сюда
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className={`cw-btn-3d ${isSeatSelected ? 'btn-red' : 'btn-orange'} btn-sm`}
+                            onClick={() => {
+                              soundEngine.playButtonClick();
+                              setSelectedSeat((cur) => (cur === seat ? null : seat));
+                            }}
+                            title="Выбрать игрока для пересадки"
+                            aria-label="Выбрать для пересадки"
+                          >
+                            {isSeatSelected ? '✕ Отмена' : '⇅ Пересадить'}
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {isHost && !slot && selectedSeat !== null && (
                       <button
                         type="button"
-                        className="cw-btn-3d btn-dark btn-sm"
-                        disabled={seat === 0}
+                        className="cw-btn-3d btn-orange btn-sm"
                         onClick={() => {
                           soundEngine.playButtonClick();
-                          move(slot.id, seat - 1);
+                          const source = lobby.slots[selectedSeat];
+                          if (source) move(source.id, seat);
+                          setSelectedSeat(null);
                         }}
-                        aria-label="Пересадить влево"
                       >
-                        ◀
+                        ↵ Пересадить сюда
                       </button>
+                    )}
+
+                    {isHost && !slot && selectedSeat === null && (
                       <button
                         type="button"
-                        className="cw-btn-3d btn-dark btn-sm"
-                        disabled={seat === lobby.maxPlayers - 1}
+                        className="cw-btn-3d btn-blue btn-sm"
                         onClick={() => {
                           soundEngine.playButtonClick();
-                          move(slot.id, seat + 1);
+                          sendLobbyCommand({ type: 'add_bot' });
                         }}
-                        aria-label="Пересадить вправо"
                       >
-                        ▶
+                        + Бот
                       </button>
-                    </div>
-                  )}
-
-                  {isHost && !slot && selectedSeat !== null && (
-                    <button
-                      type="button"
-                      className="cw-btn-3d btn-orange btn-sm"
-                      onClick={() => {
-                        soundEngine.playButtonClick();
-                        const source = lobby.slots[selectedSeat];
-                        if (source) move(source.id, seat);
-                        setSelectedSeat(null);
-                      }}
-                      title="Пересадить игрока на это место"
-                    >
-                      ↵ Пересадить сюда
-                    </button>
-                  )}
-
-                  {isHost && !slot && selectedSeat === null && (
-                    <button
-                      type="button"
-                      className="cw-btn-3d btn-blue btn-sm"
-                      onClick={() => {
-                        soundEngine.playButtonClick();
-                        sendLobbyCommand({ type: 'add_bot' });
-                      }}
-                    >
-                      + Бот
-                    </button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-
-        {isHost ? (
-          <section className="lobby-settings cw-felt-box">
-            <div className="lobby-section-head">
-              <h2 className="cw-ink-title">Настройки комнаты</h2>
-            </div>
-            <label className="field">
-              <span className="field-label">Режим</span>
-              <select value={modeValue} onChange={(e) => setMode(e.target.value)}>
-                <option value="ffa">каждый сам за себя (2–4)</option>
-                <option value="teams:neighbors">2 на 2 — соседи</option>
-                <option value="teams:wall">2 на 2 — стенка на стенку</option>
-              </select>
-            </label>
-            <label className="filter-check">
-              <input
-                type="checkbox"
-                checked={lobby.hidden}
-                onChange={(e) => sendLobbyCommand({ type: 'set_hidden', hidden: e.target.checked })}
-              />
-              скрывать составы игроков
-            </label>
-            <label className="filter-check">
-              <input
-                type="checkbox"
-                checked={Boolean(lobby.anyLand)}
-                onChange={(e) => sendLobbyCommand({ type: 'set_any_land', anyLand: e.target.checked })}
-              />
-              разрешить ставить карты на разные типы земель
-            </label>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </section>
-        ) : (
-          <p className="lobby-hint">
-            Режим: {modeLabel} · {lobby.hidden ? 'составы скрыты' : 'составы видны'}
-            {lobby.anyLand ? ' · любые типы земель' : ''}
-          </p>
-        )}
-
-        <div className="lobby-actions">
-          <button
-            type="button"
-            className={`cw-btn-3d ${meSlot?.ready ? 'btn-green done' : 'btn-orange'} btn-lg`}
-            disabled={!meSlot || validDecks.length === 0}
-            onClick={() => {
-              const next = !meSlot?.ready;
-              if (next) soundEngine.playGong();
-              else soundEngine.playButtonClick();
-              sendLobbyCommand({ type: 'ready', ready: next });
-            }}
-          >
-            {meSlot?.ready ? '✓ Вы готовы' : 'В бой! (Готов)'}
-          </button>
-          {isHost && (
-            <button
-              type="button"
-              className="cw-btn-3d btn-red btn-lg"
-              disabled={!canStart}
-              onClick={() => {
-                soundEngine.playGong();
-                sendLobbyCommand({ type: 'start' });
-              }}
-            >
-              ⚔️ Начать матч!
-            </button>
-          )}
         </div>
 
-        {isHost && !canStart && (
-          <p className="lobby-hint">
-            {!enoughPlayers
-              ? `Нужно минимум ${lobby.minPlayers} игрока`
-              : !allConnected
-                ? 'Не все игроки в сети'
-                : !allReady
-                  ? 'Все должны быть готовы'
-                  : !teamsReady
-                    ? `Для 2 на 2 нужно ровно ${CONFIG.teamSize * 2} игрока`
-                    : ''}
-          </p>
-        )}
+        {/* RIGHT SIDEBAR: Settings & Match Launch */}
+        <aside className="lobby-sidebar cw-felt-box">
+          <div className="lobby-sidebar-head">
+            <span className="eyebrow menu-eyebrow">Комната {code}</span>
+            <h1 className="cw-ink-title">Лобби</h1>
+          </div>
+
+          {isHost ? (
+            <section className="lobby-settings cw-paper-box">
+              <h2 className="cw-ink-title">Настройки матча</h2>
+              <label className="field">
+                <span className="field-label">Режим</span>
+                <select value={modeValue} onChange={(e) => setMode(e.target.value)}>
+                  <option value="ffa">Каждый сам за себя (2–4)</option>
+                  <option value="teams:neighbors">2 на 2 — соседи</option>
+                  <option value="teams:wall">2 на 2 — стенка на стенку</option>
+                </select>
+              </label>
+              <label className="filter-check">
+                <input
+                  type="checkbox"
+                  checked={lobby.hidden}
+                  onChange={(e) => {
+                    soundEngine.playButtonClick();
+                    sendLobbyCommand({ type: 'set_hidden', hidden: e.target.checked });
+                  }}
+                />
+                Скрывать составы игроков
+              </label>
+              <label className="filter-check">
+                <input
+                  type="checkbox"
+                  checked={Boolean(lobby.anyLand)}
+                  onChange={(e) => {
+                    soundEngine.playButtonClick();
+                    sendLobbyCommand({ type: 'set_any_land', anyLand: e.target.checked });
+                  }}
+                />
+                Любые земли для карт
+              </label>
+            </section>
+          ) : (
+            <section className="lobby-settings cw-paper-box">
+              <h2 className="cw-ink-title">Параметры матча</h2>
+              <p className="lobby-mode-summary">
+                <strong>Режим:</strong> {modeLabel}
+              </p>
+              <p className="lobby-mode-summary">
+                <strong>Составы:</strong> {lobby.hidden ? 'скрыты' : 'видны'}
+              </p>
+              <p className="lobby-mode-summary">
+                <strong>Земли:</strong> {lobby.anyLand ? 'любые' : 'по правилам'}
+              </p>
+            </section>
+          )}
+
+          <div className="lobby-sidebar-actions">
+            <button
+              type="button"
+              className={`cw-btn-3d ${meSlot?.ready ? 'btn-green done' : 'btn-orange'} btn-lg btn-block`}
+              disabled={!meSlot || validDecks.length === 0}
+              onClick={() => {
+                const next = !meSlot?.ready;
+                if (next) soundEngine.playGong();
+                else soundEngine.playButtonClick();
+                sendLobbyCommand({ type: 'ready', ready: next });
+              }}
+            >
+              {meSlot?.ready ? '✓ Вы готовы' : 'В бой! (Готов)'}
+            </button>
+            {isHost && (
+              <button
+                type="button"
+                className="cw-btn-3d btn-red btn-lg btn-block"
+                disabled={!canStart}
+                onClick={() => {
+                  soundEngine.playGong();
+                  sendLobbyCommand({ type: 'start' });
+                }}
+              >
+                ⚔️ Начать матч!
+              </button>
+            )}
+          </div>
+
+          {isHost && !canStart && (
+            <p className="lobby-hint">
+              {!enoughPlayers
+                ? `Нужно минимум ${lobby.minPlayers} игрока`
+                : !allConnected
+                  ? 'Не все игроки в сети'
+                  : !allReady
+                    ? 'Все должны быть готовы'
+                    : !teamsReady
+                      ? `Для 2 на 2 нужно ровно ${CONFIG.teamSize * 2} игрока`
+                      : ''}
+            </p>
+          )}
+        </aside>
       </div>
+
+      <dialog
+        ref={previewDialogRef}
+        className="cw-lobby-deck-dialog cw-felt-box"
+        aria-labelledby="cw-lobby-deck-title"
+        onCancel={(e) => {
+          e.preventDefault();
+          setPreviewSeat(null);
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setPreviewSeat(null);
+        }}
+      >
+        {previewSeat !== null && lobby.slots[previewSeat]?.deck && (
+          <>
+            <div className="cw-settings-head">
+              <div>
+                <h2 id="cw-lobby-deck-title" className="cw-ink-title">
+                  Колода: {lobby.slots[previewSeat]!.nickname}
+                </h2>
+                <span className="cw-lobby-deck-sub">
+                  {heroName(lobby.slots[previewSeat]!.deck!.heroId)} ·{' '}
+                  {lobby.slots[previewSeat]!.deck!.cards.length}/{CONFIG.deckSize} карт
+                </span>
+              </div>
+              <button
+                type="button"
+                className="cw-btn-3d btn-dark btn-sm"
+                aria-label="Закрыть просмотр колоды"
+                onClick={() => setPreviewSeat(null)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="cw-lobby-deck-dialog__body cw-paper-box" data-zoom-bounds>
+              <DeckPreview deck={lobby.slots[previewSeat]!.deck!} />
+            </div>
+          </>
+        )}
+      </dialog>
     </main>
   );
 }

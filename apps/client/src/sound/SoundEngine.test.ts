@@ -42,6 +42,11 @@ describe('SoundEngine', () => {
   });
 
   it('safely calls play methods in headless / node environment without throwing', () => {
+    expect(() => soundEngine.playCardHover()).not.toThrow();
+    expect(() => soundEngine.playCardSelect()).not.toThrow();
+    expect(() => soundEngine.playCardDiscard()).not.toThrow();
+    expect(() => soundEngine.playTurnStart(true)).not.toThrow();
+    expect(() => soundEngine.playTurnStart(false)).not.toThrow();
     expect(() => soundEngine.playCardPlay()).not.toThrow();
     expect(() => soundEngine.playCardDraw()).not.toThrow();
     expect(() => soundEngine.playFloop()).not.toThrow();
@@ -49,11 +54,22 @@ describe('SoundEngine', () => {
     expect(() => soundEngine.playHeroDamage(5)).not.toThrow();
     expect(() => soundEngine.playGong()).not.toThrow();
     expect(() => soundEngine.playFuseTick(true)).not.toThrow();
+    expect(() => soundEngine.playFuseTick(false)).not.toThrow();
     expect(() => soundEngine.playFreeze()).not.toThrow();
+    expect(() => soundEngine.playLandFreeze()).not.toThrow();
     expect(() => soundEngine.playHeal()).not.toThrow();
     expect(() => soundEngine.playButtonClick()).not.toThrow();
     expect(() => soundEngine.playEmoteChirp()).not.toThrow();
+    expect(() => soundEngine.playEmote()).not.toThrow();
     expect(() => soundEngine.playVictoryFanfare()).not.toThrow();
+    expect(() => soundEngine.playVictory()).not.toThrow();
     expect(() => soundEngine.playDefeatSound()).not.toThrow();
+    expect(() => soundEngine.playDefeat()).not.toThrow();
+    expect(() => soundEngine.playTomatoThrow()).not.toThrow();
+    expect(() => soundEngine.playTomatoSplat()).not.toThrow();
+    expect(() => soundEngine.playError()).not.toThrow();
+    expect(() => soundEngine.playModalOpen()).not.toThrow();
+    expect(() => soundEngine.playModalClose()).not.toThrow();
+    expect(() => soundEngine.playDeckSave()).not.toThrow();
   });
 });

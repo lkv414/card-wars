@@ -163,16 +163,16 @@ describe('FFA 3 (3 players) closed triangle arena with head-to-head touching lan
   it('zones 0-1 touch left opponent head-to-head, and zones 2-3 touch right opponent head-to-head', () => {
     const view = makeMockView(['p1', 'p2', 'p3']);
 
-    // P1 zones 0 & 1 face P2 (left neighbor) zones 3 & 2
-    // P1 zones 2 & 3 face P3 (right neighbor) zones 1 & 0
-    // P2 zones 0 & 1 face P3 zones 3 & 2
+    // P1 zones 0 & 1 face P3 (left neighbor, -1) zones 3 & 2
+    // P1 zones 2 & 3 face P2 (right neighbor, +1) zones 1 & 0
+    // P2 zones 2 & 3 face P3 zones 1 & 0
     const pairs: Array<[[string, number], [string, number]]> = [
-      [['p1', 0], ['p2', 3]], // P1 zone 0 <-> P2 zone 3 (outer left)
-      [['p1', 1], ['p2', 2]], // P1 zone 1 <-> P2 zone 2 (inner left)
-      [['p1', 2], ['p3', 1]], // P1 zone 2 <-> P3 zone 1 (inner right)
-      [['p1', 3], ['p3', 0]], // P1 zone 3 <-> P3 zone 0 (outer right)
-      [['p2', 0], ['p3', 3]], // P2 zone 0 <-> P3 zone 3 (outer top)
-      [['p2', 1], ['p3', 2]], // P2 zone 1 <-> P3 zone 2 (inner top)
+      [['p1', 0], ['p3', 3]], // P1 zone 0 <-> P3 zone 3 (outer left)
+      [['p1', 1], ['p3', 2]], // P1 zone 1 <-> P3 zone 2 (inner left)
+      [['p1', 2], ['p2', 1]], // P1 zone 2 <-> P2 zone 1 (inner right)
+      [['p1', 3], ['p2', 0]], // P1 zone 3 <-> P2 zone 0 (outer right)
+      [['p2', 2], ['p3', 1]], // P2 zone 2 <-> P3 zone 1 (inner top)
+      [['p2', 3], ['p3', 0]], // P2 zone 3 <-> P3 zone 0 (outer top)
     ];
 
     for (const [[pA, zA], [pB, zB]] of pairs) {
@@ -220,7 +220,7 @@ describe('FFA 4 (4 players) closed square arena with head-to-head touching lands
 
     const lanePairs: Array<[number, number]> = [[0, 3], [1, 2]];
     for (let s = 0; s < 4; s++) {
-      const leftIdx = (s + 1) % 4;
+      const leftIdx = (s - 1 + 4) % 4;
       const pCurrent = players[s]!;
       const pLeft = players[leftIdx]!;
 
@@ -359,9 +359,9 @@ describe('Playmat sizing and picnic prop offsets', () => {
     expect(playmatSizeFor(null)).toBe(960);
     expect(playmatSizeFor(makeMockView(['p1', 'p2']))).toBe(960);
     expect(playmatSizeFor(makeMockView(['p1', 'p2', 'p3']))).toBe(1600);
-    expect(playmatSizeFor(makeMockView(['p1', 'p2', 'p3', 'p4']))).toBe(1500);
-    expect(playmatSizeFor(makeTeamView('neighbors'))).toBe(1500);
-    expect(playmatSizeFor(makeTeamView('wall'))).toBe(1600);
+    expect(playmatSizeFor(makeMockView(['p1', 'p2', 'p3', 'p4']))).toBe(1600);
+    expect(playmatSizeFor(makeTeamView('neighbors'))).toBe(1600);
+    expect(playmatSizeFor(makeTeamView('wall'))).toBe(1760);
   });
 
   it('places 2v2 wall accessories strictly below the land row', () => {
@@ -376,9 +376,9 @@ describe('Playmat sizing and picnic prop offsets', () => {
     const scenarios: Array<{ label: string; view: PlayerView; expectedSize: number }> = [
       { label: '1v1', view: makeMockView(['p1', 'p2']), expectedSize: 960 },
       { label: 'FFA 3', view: makeMockView(['p1', 'p2', 'p3']), expectedSize: 1600 },
-      { label: 'FFA 4', view: makeMockView(['p1', 'p2', 'p3', 'p4']), expectedSize: 1500 },
-      { label: '2v2 neighbors', view: makeTeamView('neighbors'), expectedSize: 1500 },
-      { label: '2v2 wall', view: makeTeamView('wall'), expectedSize: 1600 },
+      { label: 'FFA 4', view: makeMockView(['p1', 'p2', 'p3', 'p4']), expectedSize: 1600 },
+      { label: '2v2 neighbors', view: makeTeamView('neighbors'), expectedSize: 1600 },
+      { label: '2v2 wall', view: makeTeamView('wall'), expectedSize: 1760 },
     ];
 
     for (const { view, expectedSize } of scenarios) {
@@ -427,6 +427,6 @@ describe('Playmat sizing and picnic prop offsets', () => {
 
     expect(picnicPropOffsetsFor(960)).toEqual({ x: 560, z: 420 });
     expect(picnicPropOffsetsFor(1600)).toEqual({ x: 880, z: 880 });
-    expect(picnicPropOffsetsFor(1500)).toEqual({ x: 830, z: 830 });
+    expect(picnicPropOffsetsFor(1760)).toEqual({ x: 960, z: 960 });
   });
 });

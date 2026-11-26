@@ -131,4 +131,24 @@ describe('journalLines', () => {
     expect(started[0]).toContain('Бимо');
     expect(started[0]).toContain('Билли');
   });
+
+  it('широковещательные события не раскрывают скрытые карты из рук, колод и приватных peeks', () => {
+    const s = newMatch();
+    const p1DeckCard = s.players.p1!.deck[0]!;
+    const p2HandCard = s.players.p2!.hand[0]!;
+    const p2DeckCard = s.players.p2!.deck[0]!;
+
+    const drawRes = applyCommand(s, { type: 'draw_extra', player: 'p1' }, deps);
+    expect(drawRes.ok).toBe(true);
+    if (!drawRes.ok) return;
+
+    const battleRes = applyCommand(drawRes.state, { type: 'go_battle', player: 'p1' }, deps);
+    expect(battleRes.ok).toBe(true);
+    if (!battleRes.ok) return;
+
+    const allEventsJson = JSON.stringify([...drawRes.events, ...battleRes.events]);
+    expect(allEventsJson).not.toContain(`"${p1DeckCard}"`);
+    expect(allEventsJson).not.toContain(`"${p2HandCard}"`);
+    expect(allEventsJson).not.toContain(`"${p2DeckCard}"`);
+  });
 });

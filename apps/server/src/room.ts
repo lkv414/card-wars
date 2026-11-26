@@ -76,6 +76,10 @@ interface WsAttachment {
 
 const domainDeps = { config, catalog };
 const BOT_ACTION_DELAY_MS = 900;
+const MAX_WS_MESSAGE_BYTES = 16_384;
+const WS_RATE_CAPACITY = 25;
+const WS_RATE_REFILL_PER_MS = 25 / 1000;
+const TOMATO_COOLDOWN_MS = 250;
 
 function freshState(): RoomState {
   return {
@@ -100,6 +104,21 @@ function freshState(): RoomState {
 
 export class Room extends DurableObject {
   private state: RoomState | null = null;
+  private rateBuckets = new WeakMap<WebSocket, { tokens: number; lastMs: number; lastTomatoMs: number }>();
+
+  private allowWsMessage(ws: WebSocket, now: number): { allowed: boolean; bucket: { tokens: number; lastMs: number; lastTomatoMs: number } } {
+    let bucket = this.rateBuckets.get(ws);
+    if (!bucket) {
+      bucket = { tokens: WS_RATE_CAPACITY, lastMs: now, lastTomatoMs: 0 };
+      this.rateBuckets.set(ws, bucket);
+    }
+    const elapsed = Math.max(0, now - bucket.lastMs);
+    bucket.tokens = Math.min(WS_RATE_CAPACITY, bucket.tokens + elapsed * WS_RATE_REFILL_PER_MS);
+    bucket.lastMs = now;
+    if (bucket.tokens < 1) return { allowed: false, bucket };
+    bucket.tokens -= 1;
+    return { allowed: true, bucket };
+  }
   private loaded = false;
 
   private async load(): Promise<RoomState> {
@@ -131,6 +150,16 @@ export class Room extends DurableObject {
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
     if (typeof message !== 'string') return;
     if (message === 'ping') return; // handled by the auto-response pair
+    if (message.length > MAX_WS_MESSAGE_BYTES) {
+      this.sendTo(ws, { t: 'error', code: 'message_too_large', message: 'Сообщение слишком большое' });
+      return;
+    }
+    const now = Date.now();
+    const rate = this.allowWsMessage(ws, now);
+    if (!rate.allowed) {
+      this.sendTo(ws, { t: 'error', code: 'rate_limited', message: 'Слишком много запросов' });
+      return;
+    }
 
     const state = await this.load();
     let raw: unknown;
@@ -160,6 +189,16 @@ export class Room extends DurableObject {
         case 'hurry':
           await this.handleHurry(state, ws, msg.player, msg.target);
           return;
+        case 'tomato': {
+          if (now - rate.bucket.lastTomatoMs < TOMATO_COOLDOWN_MS) return;
+          rate.bucket.lastTomatoMs = now;
+          const sender = this.attachmentOf(ws);
+          if (!sender || !state.match) return;
+          if (!state.match.players[sender.playerId] || !state.match.players[msg.target]) return;
+          if (sender.playerId === msg.target) return;
+          this.broadcast({ t: 'tomato', from: sender.playerId, target: msg.target });
+          return;
+        }
       }
     } catch (error) {
       this.sendTo(ws, { t: 'error', message: error instanceof Error ? error.message : 'Ошибка сервера' });

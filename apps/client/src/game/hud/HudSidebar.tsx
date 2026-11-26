@@ -7,9 +7,11 @@ import {
   setUi,
   showHint,
   snapCameraPlayer,
+  toggleTomatoMode,
   useGame,
 } from '../../store';
 import { heroNameOf } from './names';
+import { soundEngine } from '../../sound/SoundEngine';
 
 const EMOTE_LINES = [
   { id: 'floop', label: '«Флюпни это!»', text: 'Флюпни это!', emoji: '🌀' },
@@ -20,6 +22,7 @@ const EMOTE_LINES = [
   { id: 'surrender', label: '«Сдавайся!»', text: 'Сдавайся!', emoji: '⚔️' },
   { id: 'pancakes', label: '«Блин блинский!»', text: 'Блин блинский!', emoji: '🥞' },
   { id: 'dice', label: '🎲 Бросить кубик', text: 'бросает кубик', emoji: '🎲' },
+  { id: 'tomato', label: '🍅 Помидор', text: 'бросает помидор!', emoji: '🍅' },
 ];
 
 export interface HudSidebarProps {
@@ -100,6 +103,7 @@ export function HudSidebar({ code }: HudSidebarProps) {
   }, [journalOpen, view.journal.length]);
 
   const toggleJournal = () => {
+    soundEngine.playButtonClick();
     if (!journalOpen) {
       setLastReadJournalLen(view.journal.length);
       setUi({ journalOpen: true });
@@ -118,8 +122,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [emotesOpen, setEmotesOpen] = useState(false);
   const [surrenderModalOpen, setSurrenderModalOpen] = useState(false);
+  const tomatoMode = useGame((st) => st.ui.tomatoMode);
 
   const toggleDesktopCollapse = () => {
+    soundEngine.playButtonClick();
     setDesktopCollapsed((prev) => {
       const next = !prev;
       try {
@@ -162,6 +168,13 @@ export function HudSidebar({ code }: HudSidebarProps) {
   }, [emotesOpen, mobileDrawerOpen]);
 
   const handleEmoteSelect = (item: (typeof EMOTE_LINES)[number]) => {
+    if (item.id === 'tomato') {
+      soundEngine.playButtonClick();
+      toggleTomatoMode();
+      setEmotesOpen(false);
+      return;
+    }
+    soundEngine.playEmote();
     if (item.id === 'dice') {
       const roll = Math.floor(Math.random() * 6) + 1;
       emitEmote(me.nickname, `выбросил ${roll} на кубике!`, '🎲');
@@ -202,7 +215,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
             actionsSpent ? 'actions-spent' : ''
           }`}
           disabled={battleBtnDisabled}
-          onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
+          onClick={() => {
+            soundEngine.playGong();
+            sendCommand({ type: 'go_battle', player: view.me });
+          }}
           onTouchStart={() => setUi({ combatForecastHover: true })}
           onTouchEnd={() => setUi({ combatForecastHover: false })}
           aria-label={battleBtnText}
@@ -325,7 +341,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
                   <button
                     className="hud-mulligan-btn hud-mulligan-keep cw-btn-3d btn-green btn-sm"
                     disabled={me.mulliganDecision !== null}
-                    onClick={() => sendCommand({ type: 'keep_hand', player: view.me })}
+                    onClick={() => {
+                      soundEngine.playCardSelect();
+                      sendCommand({ type: 'keep_hand', player: view.me });
+                    }}
                     title="Оставить текущие 5 карт в руке"
                   >
                     <span className="btn-icon">✓</span>
@@ -334,7 +353,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
                   <button
                     className="hud-mulligan-btn hud-mulligan-redraw cw-btn-3d btn-orange btn-sm"
                     disabled={me.mulliganDecision !== null}
-                    onClick={() => sendCommand({ type: 'mulligan', player: view.me })}
+                    onClick={() => {
+                      soundEngine.playCardDraw();
+                      sendCommand({ type: 'mulligan', player: view.me });
+                    }}
                     title="Сбросить карты, перемешать колоду и взять 5 новых (один раз за матч)"
                   >
                     <span className="btn-icon">🔄</span>
@@ -458,7 +480,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
                 myMain && (!is2v2 || !me.battleReady) ? 'active-cta' : ''
               } ${actionsSpent ? 'actions-spent' : ''}`}
               disabled={battleBtnDisabled}
-              onClick={() => sendCommand({ type: 'go_battle', player: view.me })}
+              onClick={() => {
+                soundEngine.playGong();
+                sendCommand({ type: 'go_battle', player: view.me });
+              }}
               onMouseEnter={() => setUi({ combatForecastHover: true })}
               onMouseLeave={() => setUi({ combatForecastHover: false })}
               onTouchStart={() => setUi({ combatForecastHover: true })}
@@ -497,7 +522,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
             <button
               className="hud-sidebar-action-btn draw-btn cw-btn-3d btn-blue btn-block"
               disabled={!myMain || me.actions < CONFIG.extraDrawCost}
-              onClick={() => sendCommand({ type: 'draw_extra', player: view.me })}
+              onClick={() => {
+                soundEngine.playCardDraw();
+                sendCommand({ type: 'draw_extra', player: view.me });
+              }}
               title={
                 !myMain
                   ? 'Доступно только в вашу основную фазу'
@@ -521,6 +549,7 @@ export function HudSidebar({ code }: HudSidebarProps) {
                     key={pid}
                     className="hud-sidebar-action-btn hurry-btn cw-btn-3d btn-orange btn-block"
                     onClick={() => {
+                      soundEngine.playButtonClick();
                       useGame.getState().hurry(pid);
                       triggerHurryPulse();
                       showHint(`Отправлено напоминание игроку ${opp?.nickname ?? pid}!`);
@@ -580,7 +609,11 @@ export function HudSidebar({ code }: HudSidebarProps) {
             <div className="emotes-container">
               <button
                 className={`hud-sidebar-action-btn emote-btn cw-btn-3d btn-paper btn-block ${emotesOpen ? 'active' : ''}`}
-                onClick={() => setEmotesOpen((v) => !v)}
+                onClick={() => {
+                  if (!emotesOpen) soundEngine.playModalOpen();
+                  else soundEngine.playModalClose();
+                  setEmotesOpen((v) => !v);
+                }}
                 title="Эмоции и реплики героя"
                 aria-expanded={emotesOpen}
               >
@@ -596,7 +629,10 @@ export function HudSidebar({ code }: HudSidebarProps) {
             <div className="hud-sidebar-section danger-section">
               <button
                 className="hud-sidebar-danger-btn cw-btn-3d btn-red btn-sm btn-block"
-                onClick={() => setSurrenderModalOpen(true)}
+                onClick={() => {
+                  soundEngine.playModalOpen();
+                  setSurrenderModalOpen(true);
+                }}
                 title="Сдаться в текущей партии"
               >
                 <span className="btn-icon">🏳</span>
@@ -629,7 +665,9 @@ export function HudSidebar({ code }: HudSidebarProps) {
                 <button
                   key={item.id}
                   type="button"
-                  className="emote-item-btn cw-btn-3d btn-paper btn-sm"
+                  className={`emote-item-btn cw-btn-3d ${
+                    item.id === 'tomato' && tomatoMode ? 'btn-red' : 'btn-paper'
+                  } btn-sm`}
                   onClick={() => handleEmoteSelect(item)}
                 >
                   <span className="emote-emoji">{item.emoji}</span>
@@ -645,10 +683,14 @@ export function HudSidebar({ code }: HudSidebarProps) {
       {surrenderModalOpen && (
         <SurrenderDialog
           onConfirm={() => {
+            soundEngine.playButtonClick();
             setSurrenderModalOpen(false);
             sendCommand({ type: 'surrender', player: view.me });
           }}
-          onClose={() => setSurrenderModalOpen(false)}
+          onClose={() => {
+            soundEngine.playModalClose();
+            setSurrenderModalOpen(false);
+          }}
         />
       )}
     </>

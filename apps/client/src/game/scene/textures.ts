@@ -280,6 +280,23 @@ export function cardBackTexture(): THREE.CanvasTexture {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
   cardCache.set(key, texture);
+
+  // Load real card back artwork from content/other/card-back-6cefc0e.webp
+  if (typeof Image !== 'undefined') {
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      roundRect(ctx, 6, 6, W - 12, H - 12, 30);
+      ctx.clip();
+      ctx.drawImage(img, 0, 0, W, H);
+      ctx.restore();
+      texture.needsUpdate = true;
+      notifyScanLoaded();
+    };
+    img.src = '/content/other/card-back-6cefc0e.webp';
+  }
+
   return texture;
 }
 

@@ -247,16 +247,16 @@ export function TableMesh() {
 
   return (
     <group position={[0, -2, 0]} raycast={NO_RAYCAST}>
-      {/* Wooden Table Base Plane (visible around the felt mat) */}
-      <mesh position={[0, -7, 0]} receiveShadow>
+      {/* Wooden Table Base Plane (separated below felt so zero z-fighting) */}
+      <mesh position={[0, -9, 0]} receiveShadow>
         <boxGeometry args={[3200, 10, 3200]} />
         <meshLambertMaterial map={woodTexture} />
       </mesh>
 
       {/* Craft Stitched Green Felt Playmat Mat enclosing card lanes & decks */}
-      <mesh position={[0, -1, 0]} receiveShadow>
-        <boxGeometry args={[matSize, 2, matSize]} />
-        <meshLambertMaterial map={feltTexture} transparent />
+      <mesh position={[0, 0.2, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[matSize, matSize]} />
+        <meshLambertMaterial map={feltTexture} transparent depthWrite={false} />
       </mesh>
 
       {/* Picnic Props positioned at table corners/perimeters outside card lanes */}

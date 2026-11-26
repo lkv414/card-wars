@@ -1,6 +1,6 @@
 import { PROTOCOL_VERSION, ServerMessageSchema } from '@card-wars/protocol';
 import type { ClientMessage, Command, LobbyCommand } from '@card-wars/protocol';
-import { patchConnection, pushEvents, setConnectionSink, useGame } from './store';
+import { patchConnection, pushEvents, setConnectionSink, triggerTomato, useGame } from './store';
 import { makeRoomCode } from './roomCode';
 
 // Thin WebSocket client: sends commands, replaces the whole view on every
@@ -41,6 +41,7 @@ export class GameConnection {
       sendCommand: (command: Command) => this.send({ t: 'command', command }),
       lobbyCommand: (command: LobbyCommand) => this.send({ t: 'lobby_command', command }),
       hurry: (target: string) => this.send({ t: 'hurry', player: this.safePlayerId(), target }),
+      sendTomato: (target: string) => this.send({ t: 'tomato', target }),
     });
   }
 
@@ -104,6 +105,9 @@ export class GameConnection {
         return;
       case 'events':
         pushEvents(message.events);
+        return;
+      case 'tomato':
+        triggerTomato(message.from, message.target);
         return;
       case 'finished':
         return; // финал виден через снапшот

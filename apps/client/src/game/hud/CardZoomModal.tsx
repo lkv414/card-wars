@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { cards as catalog, type CardData } from '@card-wars/content';
+import { catalog, type CardData } from '@card-wars/content';
 import { setUi, useGame } from '../../store';
 
 const LAND_NAMES: Record<string, string> = {
@@ -42,7 +42,7 @@ export function CardZoomModal() {
 
   if (!zoomed) return null;
 
-  const card: CardData | undefined = catalog.find((c) => c.id === zoomed.cardId);
+  const card: CardData | undefined = catalog.getCard(zoomed.cardId);
   const cardName = card?.name ?? zoomed.cardId;
   const landType = card?.landType ?? 'rainbow';
   const landLabel = card?.landType ? LAND_NAMES[card.landType] ?? card.landType : 'Нейтральная';

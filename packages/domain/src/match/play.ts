@@ -80,15 +80,13 @@ export function handlePlayCard(
     if (a.name === undefined) return true;
     const armedName = ctx.catalog.getCard(a.name)?.name;
     return draft.order.some((pid) =>
-      p.zones === draft.players[pid]!.zones || true
-        ? [0, 1, 2, 3].some((z) => {
-            const bid = draft.players[pid]!.zones[z]!.building;
-            const cid = draft.players[pid]!.zones[z]!.creature;
-            return [bid, cid].some(
-              (id) => id && ctx.catalog.getCard(draft.instances[id]!.cardId)?.name === armedName,
-            );
-          })
-        : false,
+      [0, 1, 2, 3].some((z) => {
+        const bid = draft.players[pid]!.zones[z]!.building;
+        const cid = draft.players[pid]!.zones[z]!.creature;
+        return [bid, cid].some(
+          (id) => id && ctx.catalog.getCard(draft.instances[id]!.cardId)?.name === armedName,
+        );
+      }),
     );
   });
   if (armIdx >= 0) {
@@ -148,8 +146,10 @@ export function handlePlayCard(
       replacedInstanceId: replaced ?? null,
     });
     bumpCounter(draft, 'creature_entered', playerId);
-    const zoneKey = `${playerId}:${zone}`;
-    draft.zoneEntersThisTurn[zoneKey] = (draft.zoneEntersThisTurn[zoneKey] ?? 0) + 1;
+    if (zone !== undefined) {
+      const zoneKey = `${playerId}:${zone}`;
+      draft.zoneEntersThisTurn[zoneKey] = (draft.zoneEntersThisTurn[zoneKey] ?? 0) + 1;
+    }
     enqueueTrigger(draft, ctx, 'on_enters_play', { instanceId, cardId: card.id, player: playerId, replaced: Boolean(replaced) });
     afterEffects(draft, ctx);
     return;

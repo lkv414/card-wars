@@ -9,7 +9,7 @@ import type { MatchState, PlayerId } from '../types';
 import type { EffectSource, MechanicHandler } from './registry';
 import type { TargetChoice, TriggerPayload } from './types';
 import { enqueueTrigger, enqueueLeavePlay } from './dispatch';
-import { bumpCounter } from './effects';
+import { bumpCounter, noteDiscard } from './effects';
 import { rngNext } from '../rng';
 
 function sourceZone(draft: Draft<MatchState>, source: EffectSource): number | null {
@@ -92,7 +92,7 @@ function discardCardFromHand(draft: Draft<MatchState>, ctx: Ctx, playerId: Playe
   const inst = instance(draft, instId);
   inst.location = 'discard';
   emit(ctx, { type: 'card_discarded', player: playerId, instanceId: instId, cardId: inst.cardId, from: 'hand' });
-  enqueueTrigger(draft, ctx, 'on_card_discarded', { player: playerId, instanceId: instId, cardId: inst.cardId });
+  noteDiscard(draft, ctx, playerId, { instanceId: instId, cardId: inst.cardId, from: 'hand' });
 }
 
 /** Всевидящий глаз (all-seeing-eye-630eb97): Раскрой 5 карт твоей колоды. Положи в руку по одной карте каждого типа земли и сбрось остальные. */

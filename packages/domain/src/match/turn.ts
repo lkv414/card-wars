@@ -78,12 +78,10 @@ function startPlayerTurn(draft: Draft<MatchState>, ctx: Ctx, pid: PlayerId): voi
   draft.landFlipEffects = draft.landFlipEffects.filter((e) => !(e.owner === pid && e.grantedOnTurn < draft.turn));
 
   // Защиты (Пещера одиночества): действуют до начала следующего хода владельца.
-  const protectedIds = new Set(draft.players[pid]!.zones.flatMap((z) => [z.creature, z.building]));
   draft.protections = draft.protections.filter((pr) => {
     const inst = draft.instances[pr.instanceId];
     return inst && inst.location === 'field' && inst.controller !== pid;
   });
-  void protectedIds;
 
   // Запрет заклинаний (Дух ниндзя): armed бан активируется на этот ход.
   if (draft.spellBansArmed.includes(pid)) {
@@ -143,16 +141,12 @@ export function endTurn(draft: Draft<MatchState>, ctx: Ctx): void {
     if (!back.creature) { back.creature = b.instanceId; inst.controller = b.owner; inst.zone = b.zone; }
     draft.borrowedCreatures = draft.borrowedCreatures.filter((x) => x !== b);
   }
-  draft.abilityUseCounts = {};
   for (const inst of Object.values(draft.instances)) {
     if (inst.movedThisTurn) delete inst.movedThisTurn;
     if (inst.enteredThisTurn) delete inst.enteredThisTurn;
   }
-  draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn === draft.turn);
   // Активный бан заканчивается вместе с ходом, под конец снимаем полностью.
-  if (draft.spellBansActive.some((b) => b.turn === draft.turn)) {
-    draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn !== draft.turn);
-  }
+  draft.spellBansActive = draft.spellBansActive.filter((b) => b.turn !== draft.turn);
   for (const pid of draft.activePlayers) player(draft, pid).actions = 0;
 
   const current = draft.activePlayers;

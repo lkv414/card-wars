@@ -18,7 +18,7 @@ import {
   zoneX,
 } from './layout';
 import { cardTexture, comicBurstSprite, textSprite } from './textures';
-import { useGame } from '../../store';
+import { addTomatoSplat, removeTomatoFlight, useGame, type TomatoFlight } from '../../store';
 import { soundEngine } from '../../sound/SoundEngine';
 import { addCameraTrauma } from './cameraTrauma';
 
@@ -144,6 +144,7 @@ interface AnimEvent {
   slot?: 'creature' | 'building';
   change?: string;
   phase?: string;
+  winners?: string[];
 }
 
 /** Map incoming server events to visual ghosts. */
@@ -293,7 +294,27 @@ export function eventsToAnims(
         const at = landAt(view, event.player, zone);
         pushAnim({ kind: 'flash', color: event.change === 'frozen' ? '#9fd8ff' : '#ffe9a8', from: at, to: at, duration: 500 });
         if (event.change === 'frozen') {
-          soundEngine.playFreeze();
+          soundEngine.playLandFreeze();
+        }
+        break;
+      }
+      case 'card_discarded': {
+        soundEngine.playCardDiscard();
+        break;
+      }
+      case 'turn_started': {
+        soundEngine.playTurnStart(event.player === view.me);
+        break;
+      }
+      case 'match_finished': {
+        const winners = event.winners ?? [];
+        const myTeamId = view.players[view.me]?.teamId;
+        const myTeam = myTeamId ? view.teams?.[myTeamId] : undefined;
+        const iWon = winners.includes(view.me) || Boolean(myTeam?.playerIds.some((pid) => winners.includes(pid)));
+        if (iWon) {
+          soundEngine.playVictory();
+        } else if (winners.length > 0) {
+          soundEngine.playDefeat();
         }
         break;
       }
@@ -355,6 +376,8 @@ export function AnimDriver() {
 
 export function AnimLayer() {
   const [alive, setAlive] = useState<Anim[]>([]);
+  const view = useGame((s) => s.view);
+  const tomatoFlights = useGame((s) => s.ui.tomatoFlights);
 
   useEffect(() => {
     const onUpdate = () => {
@@ -386,6 +409,67 @@ export function AnimLayer() {
       {alive.map((anim) => (
         <Ghost key={anim.id} anim={anim} />
       ))}
+      {view &&
+        tomatoFlights.map((flight) => (
+          <TomatoFlightGhost key={flight.id} flight={flight} view={view} />
+        ))}
+    </group>
+  );
+}
+
+function TomatoFlightGhost({ flight, view }: { flight: TomatoFlight; view: PlayerView }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const landedRef = useRef(false);
+  const { invalidate } = useThree();
+  const fromPos = useMemo<[number, number, number]>(
+    () => worldOfHero(view, flight.from) ?? [0, 30, 300],
+    [view, flight.from],
+  );
+  const toPos = useMemo<[number, number, number]>(
+    () => worldOfHero(view, flight.target) ?? [0, 30, -300],
+    [view, flight.target],
+  );
+  const duration = 520;
+
+  useEffect(() => {
+    invalidate();
+    soundEngine.playTomatoThrow();
+  }, [invalidate]);
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const t = Math.min(1, Math.max(0, (performance.now() - flight.startedAt) / duration));
+    const x = THREE.MathUtils.lerp(fromPos[0], toPos[0], t);
+    const z = THREE.MathUtils.lerp(fromPos[2], toPos[2], t);
+    const arc = Math.sin(t * Math.PI) * 180;
+    const y = 35 + arc;
+    groupRef.current.position.set(x, y, z);
+    groupRef.current.rotation.x += 0.22;
+    groupRef.current.rotation.z += 0.16;
+
+    if (t < 1) {
+      invalidate();
+    } else if (!landedRef.current) {
+      landedRef.current = true;
+      removeTomatoFlight(flight.id);
+      if (flight.target === view.me) {
+        addTomatoSplat();
+        addCameraTrauma(0.22);
+      }
+      soundEngine.playTomatoSplat();
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[fromPos[0], 35, fromPos[2]]} raycast={NO_RAYCAST}>
+      <mesh>
+        <sphereGeometry args={[15, 14, 14]} />
+        <meshLambertMaterial color="#e53e3e" />
+      </mesh>
+      <mesh position={[0, 14, 0]}>
+        <cylinderGeometry args={[2, 4, 6, 6]} />
+        <meshLambertMaterial color="#2f855a" />
+      </mesh>
     </group>
   );
 }

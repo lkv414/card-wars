@@ -3,26 +3,29 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import {
   cycleCameraPlayer,
+  isRecentCardPointerDown,
   setCameraMode,
+  setUi,
+  snapCameraCombat,
   snapCameraPlayer,
   snapCameraTop,
   toggleHandCollapsed,
   toggleWatchMode,
   useGame,
 } from '../../store';
-import { boardTransform, cameraTurnEase } from './layout';
+import { cameraTurnEase, playmatSizeFor } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
 import { CombatForecastLayer } from './CombatForecast';
 import { TableMesh } from './TableMesh';
-import { BackdropManager } from './BackdropManager';
 import { disposeAllTextures, subscribeImageLoads } from './textures';
 import {
   calculateCameraAnchor,
   classifySwipe,
   easeInOutCubic,
   interpolateCameraPose,
+  isCombatSnap,
   isTopSnap,
   resolveTargetPlayer,
 } from './cameraSnap';
@@ -48,9 +51,20 @@ export function Scene() {
       dpr={quality === 'high' ? [1, 1.5] : 1}
       frameloop="demand"
       camera={{ position: [0, 540, 620], fov: 43, near: 20, far: 4500 }}
-      gl={{ antialias: quality === 'high', powerPreference: 'high-performance' }}
+      gl={{
+        antialias: quality === 'high',
+        powerPreference: 'high-performance',
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.06,
+      }}
+      onPointerMissed={() => {
+        const ui = useGame.getState().ui;
+        if (ui.selectedHand || ui.hoveredHand) {
+          setUi({ selectedHand: null, hoveredHand: null });
+        }
+      }}
     >
-      <color attach="background" args={['#10141b']} />
+      <color attach="background" args={['#050706']} />
       <SceneContent />
       <CameraRig />
       <LoopController />
@@ -72,18 +86,47 @@ function SceneContent() {
   const scene = useThree((s) => s.scene);
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
+  const invalidate = useThree((s) => s.invalidate);
+  const spotRef = useRef<THREE.SpotLight>(null);
+  const ambientRef = useRef<THREE.AmbientLight>(null);
 
-  // Dev-превью (?scene=1): доступ к three-сцене из консоли для отладки раскладки.
+  // Dev-помощник для настройки света прямо из консоли Chrome DevTools
   useEffect(() => {
-    if (new URLSearchParams(location.search).has('scene')) {
-      Object.assign(window as unknown as Record<string, unknown>, {
-        __cwScene: scene,
-        __cwCam: camera,
-        __cwGl: gl,
-        __cwThree: THREE,
-      });
-    }
-  }, [scene, camera, gl]);
+    const win = window as unknown as Record<string, unknown>;
+    win.__cwScene = scene;
+    win.__cwCam = camera;
+    win.__cwGl = gl;
+    win.__cwSpot = spotRef.current;
+    win.__cwAmbient = ambientRef.current;
+    win.__cwSetLight = (opts: {
+      intensity?: number;
+      ambient?: number;
+      angle?: number;
+      penumbra?: number;
+      decay?: number;
+      y?: number;
+    }) => {
+      if (spotRef.current) {
+        if (opts.intensity !== undefined) spotRef.current.intensity = opts.intensity;
+        if (opts.angle !== undefined) spotRef.current.angle = opts.angle;
+        if (opts.penumbra !== undefined) spotRef.current.penumbra = opts.penumbra;
+        if (opts.decay !== undefined) spotRef.current.decay = opts.decay;
+        if (opts.y !== undefined) spotRef.current.position.y = opts.y;
+      }
+      if (ambientRef.current && opts.ambient !== undefined) {
+        ambientRef.current.intensity = opts.ambient;
+      }
+      invalidate();
+      return {
+        intensity: spotRef.current?.intensity,
+        ambient: ambientRef.current?.intensity,
+        angle: spotRef.current?.angle,
+        penumbra: spotRef.current?.penumbra,
+        decay: spotRef.current?.decay,
+        y: spotRef.current?.position.y,
+      };
+    };
+  }, [scene, camera, gl, invalidate]);
 
   // Очистка всех текстур WebGL при выходе из матча (docs/UI-3D.md, threejs-textures)
   useEffect(() => {
@@ -95,31 +138,28 @@ function SceneContent() {
   if (!view) return null;
   // Мой ряд рисуется последним, чтобы быть поверх соседних досок.
   const order = [...view.order].sort((a, b) => (a === view.me ? 1 : b === view.me ? -1 : 0));
-  const activePid = view.activePlayer ?? view.activePlayers[0];
-  const activeTransform = activePid ? boardTransform(view, activePid) : null;
+  const matSize = playmatSizeFor(view);
+  const spotAngle = Math.atan2(matSize * 0.58, 1150);
 
   return (
     <>
-      <ambientLight intensity={0.92} />
-      <directionalLight
-        position={[180, 600, 320]}
-        intensity={1.38}
+      <fog attach="fog" args={['#050706', 1750, 3100]} />
+      <ambientLight ref={ambientRef} intensity={0.7} />
+      {/* Единственный яркий прожектор строго по центру ковра; всё за ковром уходит в темноту */}
+      <spotLight
+        ref={spotRef}
+        position={[0, 1150, 0]}
+        intensity={4.5}
+        distance={0}
+        decay={0}
+        angle={spotAngle}
+        penumbra={0.55}
+        color="#fff8e8"
         castShadow={quality === 'high'}
         shadow-mapSize={[1024, 1024]}
         shadow-bias={-0.0005}
       />
-      {/* Акцентный спотлайт на доске активного ходящего игрока */}
-      {activeTransform && (
-        <pointLight
-          position={[activeTransform.x, 260, activeTransform.z]}
-          intensity={2.8}
-          distance={850}
-          color="#fff5cc"
-        />
-      )}
-      {/* Деревянная столешница с пропсами пикника и динамические пейзажи Ууу (docs/AUDIT-KIBERBUS-UIUX.md §8 Этап 4) */}
       <TableMesh />
-      <BackdropManager />
 
       {order.map((pid) => (
         <PlayerBoard key={pid} view={view} pid={pid} isMe={pid === view.me} />
@@ -157,6 +197,7 @@ function CameraRig() {
 
   const currentAngleRef = useRef<number | null>(null);
   const currentURef = useRef<number>(0); // 0 = perspective, 1 = top
+  const currentCRef = useRef<number>(0); // 0 = normal, 1 = combat-lands focus
   const zoomScaleRef = useRef<number>(1);
   const lastTargetKeyRef = useRef<string | null>(null);
   const gestureRef = useRef<{
@@ -172,14 +213,16 @@ function CameraRig() {
     deltaAngle: number;
     fromU: number;
     deltaU: number;
+    fromC: number;
+    deltaC: number;
     startAt: number;
     durationMs: number;
   } | null>(null);
 
-  const applyCameraPose = (angle: number, u: number) => {
+  const applyCameraPose = (angle: number, u: number, c: number = currentCRef.current) => {
     if (!view) return;
     const aspect = size.width / Math.max(1, size.height);
-    const pose = interpolateCameraPose(view, angle, u, aspect, zoomScaleRef.current);
+    const pose = interpolateCameraPose(view, angle, u, aspect, zoomScaleRef.current, c);
 
     camera.position.copy(pose.position);
     camera.up.copy(pose.up);
@@ -199,16 +242,23 @@ function CameraRig() {
     const v = useGame.getState().view;
     if (!v) return;
     const snap = useGame.getState().ui.cameraSnap;
-    const isTop = isTopSnap(snap, useGame.getState().ui.cameraMode);
-    const targetPid = resolveTargetPlayer(v, useGame.getState().ui.cameraMode, snap);
+    const mode = useGame.getState().ui.cameraMode;
+    const isTop = isTopSnap(snap, mode);
+    const isCombat = isCombatSnap(snap);
+    const targetPid = resolveTargetPlayer(v, mode, snap);
 
-    if (direction === 'down' || direction === 'up') {
-      // Toggle altitude:
-      // - In top-down view: lowers camera to that player's perspective ("опустить камеру")
-      // - In perspective view: raises camera to top-down view
+    if (direction === 'up') {
+      // Жест снизу вверх: спускаемся ближе к землям боя (top -> perspective -> combat)
       if (isTop) {
         snapCameraPlayer(targetPid);
-      } else {
+      } else if (!isCombat) {
+        snapCameraCombat(targetPid);
+      }
+    } else if (direction === 'down') {
+      // Жест сверху вниз: поднимаемся выше над столом (combat -> perspective -> top)
+      if (isCombat) {
+        snapCameraPlayer(targetPid);
+      } else if (!isTop) {
         snapCameraTop(targetPid);
       }
     } else if (direction === 'right') {
@@ -229,6 +279,7 @@ function CameraRig() {
     };
 
     const onPointerDown = (e: PointerEvent) => {
+      if (isRecentCardPointerDown()) return;
       const ui = useGame.getState().ui;
       if (ui.dragging !== null || ui.targeting !== null || ui.holdingFloop !== null) return;
       if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 2) return;
@@ -358,15 +409,18 @@ function CameraRig() {
     const watch = watchMode;
     const activePid = view.activePlayer ?? view.activePlayers[0];
     const targetPid = watch && activePid ? activePid : resolveTargetPlayer(view, cameraMode, cameraSnap);
-    const isTop = isTopSnap(cameraSnap, cameraMode);
+    const isCombat = isCombatSnap(cameraSnap);
+    const isTop = isTopSnap(cameraSnap, cameraMode) || isCombat;
+    const targetC = isCombat ? 1 : 0;
     const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
-    const targetKey = `${targetPid}|${isTop ? 'top' : 'persp'}|${cameraMode}|${watch ? 'watch' : ''}`;
+    const targetKey = `${targetPid}|${isCombat ? 'combat' : isTop ? 'top' : 'persp'}|${cameraMode}|${watch ? 'watch' : ''}`;
 
     if (currentAngleRef.current === null) {
       currentAngleRef.current = anchor.angle;
       currentURef.current = anchor.u;
+      currentCRef.current = targetC;
       lastTargetKeyRef.current = targetKey;
-      applyCameraPose(anchor.angle, anchor.u);
+      applyCameraPose(anchor.angle, anchor.u, targetC);
       invalidate();
       return;
     }
@@ -375,6 +429,7 @@ function CameraRig() {
       lastTargetKeyRef.current = targetKey;
       const fromAngle = currentAngleRef.current;
       const fromU = currentURef.current;
+      const fromC = currentCRef.current;
 
       let deltaAngle = Math.atan2(
         Math.sin(anchor.angle - fromAngle),
@@ -384,13 +439,16 @@ function CameraRig() {
         deltaAngle = Math.PI;
       }
       const deltaU = anchor.u - fromU;
+      const deltaC = targetC - fromC;
 
-      if (Math.abs(deltaAngle) > 0.015 || Math.abs(deltaU) > 0.015) {
+      if (Math.abs(deltaAngle) > 0.015 || Math.abs(deltaU) > 0.015 || Math.abs(deltaC) > 0.015) {
         animRef.current = {
           fromAngle,
           deltaAngle,
           fromU,
           deltaU,
+          fromC,
+          deltaC,
           startAt: performance.now(),
           durationMs: CAMERA_TRANSITION_MS,
         };
@@ -400,11 +458,12 @@ function CameraRig() {
 
       currentAngleRef.current = anchor.angle;
       currentURef.current = anchor.u;
+      currentCRef.current = targetC;
       animRef.current = null;
     }
 
     if (!animRef.current) {
-      applyCameraPose(currentAngleRef.current, currentURef.current);
+      applyCameraPose(currentAngleRef.current, currentURef.current, currentCRef.current);
       invalidate();
     }
   }, [view, cameraMode, cameraSnap, watchMode, size.width, size.height, invalidate]);
@@ -422,19 +481,24 @@ function CameraRig() {
 
       const angle = anim.fromAngle + anim.deltaAngle * tAngle;
       const u = anim.fromU + anim.deltaU * tU;
+      const c = anim.fromC + anim.deltaC * tU;
       currentAngleRef.current = angle;
       currentURef.current = u;
-      applyCameraPose(angle, u);
+      currentCRef.current = c;
+      applyCameraPose(angle, u, c);
 
       if (t >= 1) {
         const aspect = size.width / Math.max(1, size.height);
         const targetPid = resolveTargetPlayer(view, cameraMode, cameraSnap);
-        const isTop = isTopSnap(cameraSnap, cameraMode);
+        const isCombat = isCombatSnap(cameraSnap);
+        const isTop = isTopSnap(cameraSnap, cameraMode) || isCombat;
+        const targetC = isCombat ? 1 : 0;
         const anchor = calculateCameraAnchor(view, targetPid, isTop, aspect, zoomScaleRef.current);
         currentAngleRef.current = anchor.angle;
         currentURef.current = anchor.u;
+        currentCRef.current = targetC;
         animRef.current = null;
-        applyCameraPose(anchor.angle, anchor.u);
+        applyCameraPose(anchor.angle, anchor.u, targetC);
       }
       invalidate();
     }
@@ -462,6 +526,7 @@ function LoopController() {
     const ui = useGame.getState().ui;
     const busy =
       hasActiveAnims() ||
+      ui.tomatoFlights.length > 0 ||
       ui.dragging !== null ||
       ui.holdingFloop !== null ||
       getCameraTrauma() > 0;

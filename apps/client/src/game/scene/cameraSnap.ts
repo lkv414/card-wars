@@ -23,6 +23,27 @@ export function isTopSnap(snap?: string, mode?: string): boolean {
   return false;
 }
 
+/** Check if a snap identifier represents the combat-lands top-down focus. */
+export function isCombatSnap(snap?: string): boolean {
+  return snap === 'combat' || Boolean(snap?.startsWith('combat_'));
+}
+
+/** Parses a snap identifier into its layer and optional player target ID. */
+export function parseSnapTarget(snap?: string): {
+  layer: 'top' | 'combat' | 'player' | 'follow' | 'opponents';
+  playerId: string | null;
+} {
+  if (!snap || snap === 'follow') return { layer: 'follow', playerId: null };
+  if (snap === 'opponents') return { layer: 'opponents', playerId: null };
+  if (snap === 'top') return { layer: 'top', playerId: null };
+  if (snap.startsWith('top_')) return { layer: 'top', playerId: snap.slice(4) };
+  if (snap === 'combat') return { layer: 'combat', playerId: null };
+  if (snap.startsWith('combat_')) return { layer: 'combat', playerId: snap.slice(7) };
+  if (snap === 'self') return { layer: 'player', playerId: null };
+  if (snap.startsWith('player_')) return { layer: 'player', playerId: snap.slice(7) };
+  return { layer: 'player', playerId: snap };
+}
+
 /** Resolves the target player ID based on view, mode, and snap identifier. */
 export function resolveTargetPlayer(
   view: PlayerView,
@@ -40,7 +61,12 @@ export function resolveTargetPlayer(
     if (rawPid === 'me' || rawPid === view.me) return view.me;
     if (view.players[rawPid] && !view.players[rawPid].eliminated) return rawPid;
   }
-  if (cameraSnap === 'self' || cameraMode === 'self') {
+  if (cameraSnap && cameraSnap.startsWith('combat_')) {
+    const rawPid = cameraSnap.slice(7);
+    if (rawPid === 'me' || rawPid === view.me) return view.me;
+    if (view.players[rawPid] && !view.players[rawPid].eliminated) return rawPid;
+  }
+  if (cameraSnap === 'self' || cameraSnap === 'combat' || cameraMode === 'self') {
     return view.me;
   }
   if (cameraSnap === 'follow' || cameraMode === 'follow') {
@@ -129,6 +155,7 @@ export function interpolateCameraPose(
   u: number,
   aspect: number,
   zoomScale: number = 1,
+  combatFocus: number = 0,
 ): { position: THREE.Vector3; lookAt: THREE.Vector3; up: THREE.Vector3; fov: number } {
   const orbit = cameraOrbitFor(view, 'self');
   const fitScale = aspect < 1.35 ? Math.min(1.75, 1.35 / Math.max(0.55, aspect)) : 1;
@@ -136,16 +163,25 @@ export function interpolateCameraPose(
   const basePitch = Math.atan2(orbit.height, orbit.radius);
 
   const pitch = THREE.MathUtils.lerp(basePitch, Math.PI / 2, u);
-  const targetDist = THREE.MathUtils.lerp(baseDist, baseDist * 0.95, u) * zoomScale;
+  const topZoom = THREE.MathUtils.lerp(0.95, 0.58, combatFocus);
+  const targetDist = THREE.MathUtils.lerp(baseDist, baseDist * topZoom, u) * zoomScale;
 
   const horizR = targetDist * Math.cos(pitch);
   const h = targetDist * Math.sin(pitch);
-  const lookDist = (1 - u) * orbit.lookOffset;
+
+  const aliveCount = view.order.filter((id) => !view.players[id]?.eliminated).length;
+  const isPolygon = aliveCount >= 3 && !(view.mode === 'teams' && view.teamVariant === 'wall');
+  const combatCenterOffset = (isPolygon ? 295 : 85) * combatFocus;
+  const lookDist = (1 - u) * orbit.lookOffset + u * combatCenterOffset;
 
   const sin = Math.sin(angle);
   const cos = Math.cos(angle);
 
-  const position = new THREE.Vector3(horizR * sin, h, horizR * cos);
+  const position = new THREE.Vector3(
+    horizR * sin + combatCenterOffset * u * sin,
+    h,
+    horizR * cos + combatCenterOffset * u * cos,
+  );
   const lookAt = new THREE.Vector3(lookDist * sin, 0, lookDist * cos);
 
   // Up vector blends smoothly between (0, 1, 0) and (-sin, 0, -cos)

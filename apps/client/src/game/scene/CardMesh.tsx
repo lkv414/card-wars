@@ -2,20 +2,19 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { CardView, PlayerView } from '@card-wars/protocol';
-import { cards as catalog } from '@card-wars/content';
+import { catalog } from '@card-wars/content';
 import { CARD_H, CARD_T, CARD_W, FROST_D, NO_RAYCAST, TOKEN_D, TOKEN_T, slotLocalZ } from './layout';
 import { cardBackTexture, cardTexture, frostTexture, tokenTexture } from './textures';
-import { sendCommand, setUi, showHint, useGame } from '../../store';
+import { markCardPointerDown, sendCommand, setUi, showHint, useGame } from '../../store';
 import { activeAbilityOf, pick, startForActive, validTargets } from '../targeting';
 import { DamagePile } from './DamagePile';
-import { createCardMaterial } from './CardCustomMaterial';
 import { StatusRibbon } from './StatusRibbon';
 import { triggerHapticVibration } from '../hud/useLongPress';
 
-const HOLD_MS = 360; // fast & responsive floop hold ~360ms (docs/UI-3D.md)
-const HINT_HOLD_MS = 240; // quick feedback when holding a card that cannot floop
-const FLIP_ANIM_MS = 460; // 3D jump + turn animation when card floops/unfloops
-const DRAG_THRESHOLD_PX = 32; // raised from 10 to 32px so finger/mouse jitter never cancels floop
+const HOLD_MS = 650; // deliberate floop hold ~650ms so drag-and-drop never triggers floop by accident
+const HINT_HOLD_MS = 360; // feedback when holding a card that cannot floop
+const FLIP_ANIM_MS = 620; // smooth 3D jump + turn animation when card floops/unfloops
+const DRAG_THRESHOLD_PX = 16; // protects against micro-jitter while still entering drag smoothly
 const DRAG_LIFT_Y = 34; // card lift height while dragging
 const sharedEdgeMat = new THREE.MeshLambertMaterial({ color: '#2a3545' });
 
@@ -35,17 +34,15 @@ export function CardMesh({
   const group = useRef<THREE.Group>(null); // floop rotation & 3D hop
   const ring = useRef<THREE.Mesh>(null);
   const pendingPress = useRef<{ startX: number; startY: number } | null>(null);
+  const floopTimer = useRef<number | null>(null);
+  const holdActionRef = useRef<() => void>(() => {});
   const prevFlipped = useRef<boolean>(card.flipped);
   const flipAnimStart = useRef<number | null>(null);
   const baseTarget = useMemo(() => new THREE.Vector3(), []);
-  const cardMeta = useMemo(() => catalog.find((c) => c.id === card.cardId), [card.cardId]);
+  const cardMeta = useMemo(() => catalog.getCard(card.cardId), [card.cardId]);
   const texture = useMemo(() => cardTexture(card.cardId), [card.cardId]);
   const back = useMemo(() => cardBackTexture(), []);
-  const isRainbow = cardMeta?.landType === 'rainbow';
-  const faceMaterial = useMemo(
-    () => (isRainbow ? createCardMaterial(texture, true) : new THREE.MeshLambertMaterial({ map: texture })),
-    [texture, isRainbow],
-  );
+  const faceMaterial = useMemo(() => new THREE.MeshLambertMaterial({ map: texture }), [texture]);
   const materials = useMemo(
     () => [
       sharedEdgeMat, // +x
@@ -98,6 +95,7 @@ export function CardMesh({
   }, [card.flipped, invalidate]);
 
   const longPressTimer = useRef<number | null>(null);
+  const justTriggeredFloopRef = useRef(false);
 
   const clearLongPress = () => {
     if (longPressTimer.current !== null) {
@@ -106,8 +104,45 @@ export function CardMesh({
     }
   };
 
-  // Hold -> drag: pointer movement past the threshold cancels floop and starts drag;
-  // releasing the pointer anywhere cancels the hold.
+  const clearFloopTimer = () => {
+    if (floopTimer.current !== null) {
+      clearTimeout(floopTimer.current);
+      floopTimer.current = null;
+    }
+  };
+
+  holdActionRef.current = () => {
+    clearFloopTimer();
+    clearLongPress();
+    pendingPress.current = null;
+    const holding = useGame.getState().ui.holdingFloop;
+    if (holding?.instanceId !== card.instanceId) return;
+    setUi({ holdingFloop: null });
+    if (canHold) {
+      justTriggeredFloopRef.current = true;
+      if (ability && (ability.targets?.length ?? 0) > 0) {
+        const state = startForActive(view, 'floop', card.instanceId, card.cardId);
+        if (state) {
+          setUi({ targeting: state });
+          return;
+        }
+      }
+      sendCommand({ type: 'floop', player: view.me, instanceId: card.instanceId });
+      return;
+    }
+    if (card.flipped) {
+      showHint('Эта карта уже флипнута в этом ходу');
+    } else if (!hasAbility) {
+      showHint(`У карты «${cardMeta?.name ?? card.cardId}» нет активного Флюпа («ПРИЕМ») — её способность пассивная`);
+    } else if (firstRoundForbidden) {
+      showHint('По правилам первого круга первый игрок не может делать Флюп');
+    } else if (me.actions < abilityCost) {
+      showHint(`Недостаточно действий для Флюпа (нужно: ${abilityCost})`);
+    }
+  };
+
+  // Hold -> drag: moving past threshold cancels floop and starts drag;
+  // holding still triggers floop reliably via timer + progress ring.
   useEffect(() => {
     if (!canDrag) return;
     const onMove = (e: PointerEvent) => {
@@ -117,6 +152,7 @@ export function CardMesh({
         return;
       }
       clearLongPress();
+      clearFloopTimer();
       pendingPress.current = null;
       setUi({
         holdingFloop: null,
@@ -126,9 +162,11 @@ export function CardMesh({
         draggingOverDiscard: false,
         dragPoint: null,
       });
+      invalidate();
     };
     const onUp = () => {
       clearLongPress();
+      clearFloopTimer();
       pendingPress.current = null;
       const holding = useGame.getState().ui.holdingFloop;
       if (holding?.instanceId === card.instanceId) {
@@ -140,11 +178,12 @@ export function CardMesh({
     window.addEventListener('pointercancel', onUp);
     return () => {
       clearLongPress();
+      clearFloopTimer();
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
     };
-  }, [canDrag, card.instanceId]);
+  }, [canDrag, card.instanceId, invalidate]);
 
   useFrame((_, delta) => {
     const now = performance.now();
@@ -231,17 +270,7 @@ export function CardMesh({
           material.opacity = 0.4 + holdProgress * 0.55;
           invalidate();
           if (holdProgress >= 1) {
-            clearLongPress();
-            pendingPress.current = null;
-            setUi({ holdingFloop: null });
-            if (ability && (ability.targets?.length ?? 0) > 0) {
-              const state = startForActive(view, 'floop', card.instanceId, card.cardId);
-              if (state) {
-                setUi({ targeting: state });
-                return;
-              }
-            }
-            sendCommand({ type: 'floop', player: view.me, instanceId: card.instanceId });
+            holdActionRef.current();
           }
         } else {
           material.color.set('#f6ad55');
@@ -251,18 +280,7 @@ export function CardMesh({
           material.opacity = 0.45 + p * 0.4;
           invalidate();
           if (holdElapsed >= HINT_HOLD_MS) {
-            clearLongPress();
-            pendingPress.current = null;
-            setUi({ holdingFloop: null });
-            if (card.flipped) {
-              showHint('Эта карта уже флипнута в этом ходу');
-            } else if (!hasAbility) {
-              showHint(`У карты «${cardMeta?.name ?? card.cardId}» нет активного Флюпа («ПРИЕМ») — её способность пассивная`);
-            } else if (firstRoundForbidden) {
-              showHint('По правилам первого круга первый игрок не может делать Флюп');
-            } else if (me.actions < abilityCost) {
-              showHint(`Недостаточно действий для Флюпа (нужно: ${abilityCost})`);
-            }
+            holdActionRef.current();
           }
         }
       }
@@ -280,6 +298,11 @@ export function CardMesh({
       : false;
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
+    if (justTriggeredFloopRef.current) {
+      justTriggeredFloopRef.current = false;
+      event.stopPropagation();
+      return;
+    }
     if (event.nativeEvent.button !== 0) return;
     if (!targeting || !isTarget) return;
     event.stopPropagation();
@@ -296,6 +319,7 @@ export function CardMesh({
 
   const startHold = (event: ThreeEvent<PointerEvent>) => {
     if (event.nativeEvent.button !== 0) return;
+    markCardPointerDown();
     clearLongPress();
     if (!canDrag) {
       longPressTimer.current = window.setTimeout(() => {
@@ -316,6 +340,7 @@ export function CardMesh({
 
     if (useGame.getState().ui.targeting) return;
     event.stopPropagation();
+    clearFloopTimer();
     pendingPress.current = { startX: event.nativeEvent.clientX, startY: event.nativeEvent.clientY };
     setUi({
       holdingFloop: {
@@ -326,10 +351,16 @@ export function CardMesh({
       },
       selectedHand: null,
     });
+    floopTimer.current = window.setTimeout(
+      () => holdActionRef.current(),
+      canHold ? HOLD_MS : HINT_HOLD_MS,
+    );
+    invalidate();
   };
 
   const cancelHold = () => {
     clearLongPress();
+    clearFloopTimer();
     pendingPress.current = null;
     const holding = useGame.getState().ui.holdingFloop;
     if (holding?.instanceId === card.instanceId) setUi({ holdingFloop: null });

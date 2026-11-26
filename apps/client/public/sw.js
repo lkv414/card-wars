@@ -1,7 +1,7 @@
 // Service Worker for Card Wars v3
 // Provides offline shell caching and static asset caching.
 
-const CACHE_VERSION = 'v3.1.148';
+const CACHE_VERSION = 'v3.1.149';
 const CACHE_NAME = `card-wars-${CACHE_VERSION}`;
 const CONTENT_CACHE_NAME = 'card-wars-content-v1';
 

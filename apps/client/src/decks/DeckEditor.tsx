@@ -21,6 +21,7 @@ import {
 } from '../decks';
 import { CATALOG_ZOOM_SCALE, DECK_ZOOM_SCALE, computeZoomOrigin } from './cardZoom';
 import { LAND_META, getLandArts, resolveLandImageUrl } from './landImages';
+import { soundEngine } from '../sound/SoundEngine';
 
 export type SortBy = 'default' | 'cost' | 'name' | 'type' | 'attack' | 'defense';
 export type CostFilter = 'all' | '0' | '1' | '2' | '3+';
@@ -223,8 +224,12 @@ export function DeckEditor({
     const dialog = heroDialogRef.current;
     if (!dialog) return;
     if (heroPickerOpen) {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        soundEngine.playModalOpen();
+        dialog.showModal();
+      }
     } else if (dialog.open) {
+      soundEngine.playModalClose();
       dialog.close();
     }
   }, [heroPickerOpen]);
@@ -233,8 +238,12 @@ export function DeckEditor({
     const dialog = landDialogRef.current;
     if (!dialog) return;
     if (openLandSlot !== null) {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        soundEngine.playModalOpen();
+        dialog.showModal();
+      }
     } else if (dialog.open) {
+      soundEngine.playModalClose();
       dialog.close();
     }
   }, [openLandSlot]);
@@ -243,8 +252,12 @@ export function DeckEditor({
     const dialog = clearDialogRef.current;
     if (!dialog) return;
     if (confirmClear) {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        soundEngine.playModalOpen();
+        dialog.showModal();
+      }
     } else if (dialog.open) {
+      soundEngine.playModalClose();
       dialog.close();
     }
   }, [confirmClear]);
@@ -253,8 +266,12 @@ export function DeckEditor({
     const dialog = rerollDialogRef.current;
     if (!dialog) return;
     if (confirmReroll) {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        soundEngine.playModalOpen();
+        dialog.showModal();
+      }
     } else if (dialog.open) {
+      soundEngine.playModalClose();
       dialog.close();
     }
   }, [confirmReroll]);
@@ -525,13 +542,16 @@ export function DeckEditor({
       setDraft((d) => {
         const currentCount = d.cards.filter((id) => id === card.id).length;
         if (currentCount >= CONFIG.copyLimit) {
+          soundEngine.playError();
           showToast(`Максимум ${CONFIG.copyLimit} копии карты «${card.name}»`);
           return d;
         }
         if (d.cards.length >= CONFIG.deckSize) {
+          soundEngine.playError();
           showToast(`В колоде уже ${CONFIG.deckSize} из ${CONFIG.deckSize} карт`);
           return d;
         }
+        soundEngine.playCardSelect();
         return { ...d, cards: [...d.cards, card.id] };
       });
     },
@@ -539,6 +559,7 @@ export function DeckEditor({
   );
 
   const removeCardAtIndex = useCallback((index: number) => {
+    soundEngine.playCardDiscard();
     setDraft((d) => {
       if (index < 0 || index >= d.cards.length) return d;
       const next = [...d.cards];
@@ -608,6 +629,7 @@ export function DeckEditor({
   // Save button: click always provides clear toast feedback when errors exist
   const save = useCallback(() => {
     if (errors.length > 0) {
+      soundEngine.playError();
       if (draft.cards.length < CONFIG.deckSize) {
         showToast(`Не хватает ${CONFIG.deckSize - draft.cards.length} карт до полной колоды`);
       } else {
@@ -615,6 +637,7 @@ export function DeckEditor({
       }
       return;
     }
+    soundEngine.playDeckSave();
     onSave({
       ...draft,
       name: draft.name.trim(),
@@ -684,6 +707,17 @@ export function DeckEditor({
 
       {/* LEFT COLUMN: Hero + Filters */}
       <aside className={`cw-editor-col cw-editor-left ui-card cw-felt-box ${drawerLeftOpen ? 'is-drawer-open' : ''}`}>
+        <div className="cw-left-desktop-head">
+          <button
+            type="button"
+            className="cw-btn-3d btn-dark btn-sm"
+            onClick={onClose}
+            title="Назад к списку колод"
+          >
+            ← Назад
+          </button>
+          <span className="cw-left-desktop-title">Редактор</span>
+        </div>
         <div className="cw-drawer-head cw-drawer-head--left">
           <b>Герой и фильтры</b>
           <button
@@ -1076,7 +1110,7 @@ export function DeckEditor({
           </button>
         </div>
         <div className="cw-right-top">
-          <div className="cw-right-actions" style={{ flexWrap: 'wrap', gap: '6px' }}>
+          <div className="cw-right-actions">
             <div className="cw-right-status-box">
               <span className={`cw-deck-counter ${isDeckFull ? 'is-ok' : ''}`}>
                 {draft.cards.length} / {CONFIG.deckSize}
@@ -1091,6 +1125,20 @@ export function DeckEditor({
                 Очистить
               </button>
             </div>
+
+            {/* Save Button */}
+            <button
+              type="button"
+              className={`cw-save-btn cw-btn-3d ${errors.length > 0 ? 'btn-dark is-invalid' : 'btn-green'} btn-sm`}
+              onClick={save}
+              title={
+                errors.length > 0
+                  ? `Не хватает ${CONFIG.deckSize - draft.cards.length} карт до полной колоды`
+                  : 'Сохранить колоду'
+              }
+            >
+              ✓ Сохранить
+            </button>
 
             {/* Random Fill Button */}
             <button
@@ -1107,7 +1155,6 @@ export function DeckEditor({
               <button
                 type="button"
                 className={`cw-view-mode-btn ${deckViewMode === 'grid' ? 'is-active' : ''}`}
-                style={{ borderRadius: '10px' }}
                 onClick={() => setDeckViewMode('grid')}
                 title="Сетка из 40 слотов"
                 aria-label="Вид сеткой"
@@ -1117,7 +1164,6 @@ export function DeckEditor({
               <button
                 type="button"
                 className={`cw-view-mode-btn ${deckViewMode === 'list' ? 'is-active' : ''}`}
-                style={{ borderRadius: '10px' }}
                 onClick={() => setDeckViewMode('list')}
                 title="Сгруппированный список карт"
                 aria-label="Вид списком"
@@ -1125,20 +1171,6 @@ export function DeckEditor({
                 ☰ Список
               </button>
             </div>
-
-            {/* Save Button (always clickable with feedback toast if invalid) */}
-            <button
-              type="button"
-              className={`cw-save-btn cw-btn-3d ${errors.length > 0 ? 'btn-dark is-invalid' : 'btn-green'} btn-sm`}
-              onClick={save}
-              title={
-                errors.length > 0
-                  ? `Не хватает ${CONFIG.deckSize - draft.cards.length} карт до полной колоды`
-                  : 'Сохранить колоду'
-              }
-            >
-              Сохранить
-            </button>
           </div>
 
           <div className="cw-right-name-row">

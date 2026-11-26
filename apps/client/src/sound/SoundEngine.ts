@@ -56,6 +56,7 @@ class SoundEngine {
   private settings: SoundSettings = loadSettings();
   private initialized = false;
   private lastTickSecond = -1;
+  private lastFinishSoundAt = 0;
 
   // Ukulele chords in Land of Ooo acoustic style: C, Am, F, G
   private readonly chords = [
@@ -250,6 +251,152 @@ class SoundEngine {
     } catch {
       // ignore in test or unsupported environments
     }
+  }
+
+  private createNoiseBuffer(ctx: AudioContext, durationSec: number, expDecayTimeConst?: number): AudioBuffer {
+    const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * durationSec));
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      const sample = Math.random() * 2 - 1;
+      data[i] = expDecayTimeConst ? sample * Math.exp(-i / (ctx.sampleRate * expDecayTimeConst)) : sample;
+    }
+    return noiseBuffer;
+  }
+
+  /**
+   * Card Hover: Subtle, airy paper-brush whisper when hovering a card in hand.
+   */
+  public playCardHover(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.045;
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = this.createNoiseBuffer(ctx, dur, 0.015);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(2400, t);
+    filter.frequency.exponentialRampToValueAtTime(3600, t + dur);
+    filter.Q.setValueAtTime(2.0, t);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.005, t);
+    gain.gain.linearRampToValueAtTime(0.11, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.masterGain!);
+    noise.start(t);
+    noise.stop(t + dur);
+  }
+
+  /**
+   * Card Select: Crisp, cheerful tactile pop when selecting a card or target.
+   */
+  public playCardSelect(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.075;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(360, t);
+    osc.frequency.exponentialRampToValueAtTime(620, t + dur);
+    this.applyPitchVariance(osc, t, 55);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.01, t);
+    gain.gain.linearRampToValueAtTime(0.28, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start(t);
+    osc.stop(t + dur);
+  }
+
+  /**
+   * Card Discard: Soft downward paper whoosh + muffled wooden thud.
+   */
+  public playCardDiscard(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.14;
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = this.createNoiseBuffer(ctx, dur, 0.04);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1700, t);
+    filter.frequency.exponentialRampToValueAtTime(420, t + dur);
+    filter.Q.setValueAtTime(1.8, t);
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.01, t);
+    noiseGain.gain.linearRampToValueAtTime(0.28, t + 0.02);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(this.masterGain!);
+    noise.start(t);
+    noise.stop(t + dur);
+
+    const thud = ctx.createOscillator();
+    thud.type = 'sine';
+    thud.frequency.setValueAtTime(140, t);
+    thud.frequency.exponentialRampToValueAtTime(52, t + 0.09);
+    this.applyPitchVariance(thud, t, 50);
+
+    const thudGain = ctx.createGain();
+    thudGain.gain.setValueAtTime(0.25, t);
+    thudGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+
+    thud.connect(thudGain);
+    thudGain.connect(this.masterGain!);
+    thud.start(t);
+    thud.stop(t + 0.09);
+  }
+
+  /**
+   * Turn Start: Bright marimba/ukulele chime for own turn, softer wood tap for opponent turn.
+   */
+  public playTurnStart(isMine = true): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const notes = isMine ? [392.0, 523.25, 659.25] : [329.63, 293.66];
+    const peak = isMine ? 0.26 : 0.14;
+
+    notes.forEach((freq, idx) => {
+      const start = t + idx * 0.065;
+      const dur = isMine ? 0.24 : 0.14;
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, start);
+      this.applyPitchVariance(osc, start, 30);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.linearRampToValueAtTime(peak, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain!);
+      osc.start(start);
+      osc.stop(start + dur);
+    });
   }
 
   /**
@@ -659,6 +806,10 @@ class SoundEngine {
    * Victory Fanfare: Triumphant brass fanfare in major triad (C5, G5, C6, E6).
    */
   public playVictoryFanfare(): void {
+    const nowMs = Date.now();
+    if (nowMs - this.lastFinishSoundAt < 1000) return;
+    this.lastFinishSoundAt = nowMs;
+
     const ctx = this.ensureContext();
     if (!ctx || this.settings.muted) return;
 
@@ -710,6 +861,10 @@ class SoundEngine {
    * Defeat Sound: Sad cartoon descending slide whistle.
    */
   public playDefeatSound(): void {
+    const nowMs = Date.now();
+    if (nowMs - this.lastFinishSoundAt < 1000) return;
+    this.lastFinishSoundAt = nowMs;
+
     const ctx = this.ensureContext();
     if (!ctx || this.settings.muted) return;
 
@@ -739,6 +894,207 @@ class SoundEngine {
 
     osc.start(t);
     osc.stop(t + dur);
+  }
+
+  public playVictory(): void {
+    this.playVictoryFanfare();
+  }
+
+  public playDefeat(): void {
+    this.playDefeatSound();
+  }
+
+  public playLandFreeze(): void {
+    this.playFreeze();
+  }
+
+  public playEmote(): void {
+    this.playEmoteChirp();
+  }
+
+  /**
+   * Tomato Throw: Comedic cartoon arcing whistle + air whoosh.
+   */
+  public playTomatoThrow(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.32;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(240, t);
+    osc.frequency.exponentialRampToValueAtTime(640, t + dur * 0.45);
+    osc.frequency.exponentialRampToValueAtTime(320, t + dur);
+    this.applyPitchVariance(osc, t, 60);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.01, t);
+    gain.gain.linearRampToValueAtTime(0.22, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start(t);
+    osc.stop(t + dur);
+  }
+
+  /**
+   * Tomato Splat: Wet, squishy cartoon splat impact.
+   */
+  public playTomatoSplat(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.2;
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = this.createNoiseBuffer(ctx, dur, 0.045);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1600, t);
+    filter.frequency.exponentialRampToValueAtTime(180, t + dur);
+    filter.Q.setValueAtTime(3.2, t);
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.45, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(this.masterGain!);
+    noise.start(t);
+    noise.stop(t + dur);
+
+    const blorp = ctx.createOscillator();
+    blorp.type = 'sine';
+    blorp.frequency.setValueAtTime(240, t);
+    blorp.frequency.exponentialRampToValueAtTime(65, t + 0.13);
+    this.applyPitchVariance(blorp, t, 70);
+
+    const blorpGain = ctx.createGain();
+    blorpGain.gain.setValueAtTime(0.38, t);
+    blorpGain.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+
+    blorp.connect(blorpGain);
+    blorpGain.connect(this.masterGain!);
+    blorp.start(t);
+    blorp.stop(t + 0.13);
+  }
+
+  /**
+   * Error / Invalid Action: Gentle cartoon "nope" double-bonk.
+   */
+  public playError(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const notes = [220, 155];
+    notes.forEach((freq, idx) => {
+      const start = t + idx * 0.085;
+      const dur = 0.09;
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, start);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.85, start + dur);
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(620, start);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.01, start);
+      gain.gain.linearRampToValueAtTime(0.24, start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain!);
+      osc.start(start);
+      osc.stop(start + dur);
+    });
+  }
+
+  /**
+   * Modal Open: Soft buoyant upward pop.
+   */
+  public playModalOpen(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.085;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(240, t);
+    osc.frequency.exponentialRampToValueAtTime(480, t + dur);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.01, t);
+    gain.gain.linearRampToValueAtTime(0.2, t + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start(t);
+    osc.stop(t + dur);
+  }
+
+  /**
+   * Modal Close: Soft downward tuck pop.
+   */
+  public playModalClose(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const dur = 0.07;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(420, t);
+    osc.frequency.exponentialRampToValueAtTime(200, t + dur);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.01, t);
+    gain.gain.linearRampToValueAtTime(0.18, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+    osc.connect(gain);
+    gain.connect(this.masterGain!);
+    osc.start(t);
+    osc.stop(t + dur);
+  }
+
+  /**
+   * Deck Save: Rewarding stamp + bright major triad chime.
+   */
+  public playDeckSave(): void {
+    const ctx = this.ensureContext();
+    if (!ctx || this.settings.muted) return;
+
+    const t = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((freq, idx) => {
+      const start = t + idx * 0.045;
+      const dur = 0.22;
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, start);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.001, start);
+      gain.gain.linearRampToValueAtTime(0.22, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain!);
+      osc.start(start);
+      osc.stop(start + dur);
+    });
   }
 }
 

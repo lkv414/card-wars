@@ -1,5 +1,6 @@
 import type { Draft } from 'immer';
 import { DomainError } from '../errors';
+import { afterEffects } from '../deaths';
 import { emit, instance } from '../util';
 import type { Ctx } from '../util';
 import type { MatchState } from '../types';
@@ -503,6 +504,7 @@ export function resolvePending(
     finishPending(draft, ctx, pending);
     runSteps(draft, ctx, ability, source, resumeEffects, collected, undefined, pending.current);
     drainTriggers(draft, ctx);
+    if (!draft.pending) afterEffects(draft, ctx);
     return;
   }
 
@@ -516,6 +518,7 @@ export function resolvePending(
       finishPending(draft, ctx, pending);
       runQueuedAbility(draft, ctx, pending.current, undefined);
       drainTriggers(draft, ctx);
+      if (!draft.pending) afterEffects(draft, ctx);
       return;
     }
     if ((ability.targets?.length ?? 0) > 0) {
@@ -564,6 +567,7 @@ export function resolvePending(
   finishPending(draft, ctx, pending);
   runQueuedAbility(draft, ctx, pending.current, choices);
   drainTriggers(draft, ctx);
+  if (!draft.pending) afterEffects(draft, ctx);
 }
 
 function finishPending(draft: Draft<MatchState>, ctx: Ctx, pending: NonNullable<MatchState['pending']>): void {
@@ -602,4 +606,5 @@ export function skipPending(draft: Draft<MatchState>, ctx: Ctx): void {
     ctx.frame.queue = pending.queue;
   }
   drainTriggers(draft, ctx);
+  if (!draft.pending) afterEffects(draft, ctx);
 }

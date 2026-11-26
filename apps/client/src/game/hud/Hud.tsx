@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PlayerView } from '@card-wars/protocol';
-import { sendCommand, setUi, toggleHandCollapsed, useGame } from '../../store';
+import { sendCommand, sendTomato, setUi, toggleHandCollapsed, toggleTomatoMode, useGame } from '../../store';
 import { pick, startForPending } from '../targeting';
-import { heroes as heroCatalog } from '@card-wars/content';
-import { cards as catalog } from '@card-wars/content';
+import { catalog } from '@card-wars/content';
 import { CardZoomModal } from './CardZoomModal';
 import {
   MatchFinishOverlay,
   OrientationGate,
 } from './DiegeticHud';
+import { soundEngine } from '../../sound/SoundEngine';
 
 /** HUD поверх 3D-канваса (docs/UI.md «Панель игрока»): всё кнопочное — DOM. */
 export function Hud({ code }: { code: string }) {
@@ -18,9 +18,11 @@ export function Hud({ code }: { code: string }) {
   const handCollapsed = useGame((s) => s.ui.handCollapsed);
   const me = view.players[view.me]!;
   // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
-  const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
+  const wordSetup = catalog.getHero(me.heroId)?.wordSetup;
   const targeting = useGame((st) => st.ui.targeting);
   const activeEmote = useGame((st) => st.ui.activeEmote);
+  const tomatoMode = useGame((st) => st.ui.tomatoMode);
+  const tomatoSplats = useGame((st) => st.ui.tomatoSplats);
 
   useEffect(() => {
     const ui = useGame.getState().ui;
@@ -42,12 +44,17 @@ export function Hud({ code }: { code: string }) {
     const ui = useGame.getState().ui;
     if (!ui.targeting) {
       if (view.pending?.player === view.me) {
+        soundEngine.playCardSelect();
         sendCommand({ type: 'resolve_choice', player: view.me, answer: { targets: [candidate] } });
       }
       return;
     }
     const result = pick(view, ui.targeting, candidate);
-    if (!result.accepted) return;
+    if (!result.accepted) {
+      soundEngine.playError();
+      return;
+    }
+    soundEngine.playCardSelect();
     if (result.command) {
       sendCommand(result.command);
       setUi({ targeting: result.nextState ?? null });
@@ -67,6 +74,7 @@ export function Hud({ code }: { code: string }) {
       return;
     }
     if (view.pending?.player === view.me) {
+      soundEngine.playCardSelect();
       sendCommand({ type: 'resolve_choice', player: view.me, answer: { targets: [candidate] } });
     }
   };
@@ -74,8 +82,8 @@ export function Hud({ code }: { code: string }) {
   const currentAsk = (() => {
     if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
       const ability = view.pending.cardId
-        ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
-        : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+        ? catalog.getCard(view.pending.cardId)?.abilities?.[view.pending.abilityIndex ?? 0]
+        : catalog.getHero(view.players[view.pending.player]!.heroId)?.ability;
       return ability?.targets?.[view.pending.askIndex ?? 0] ?? null;
     }
     if (targeting) return targeting.asks[targeting.askIndex] ?? null;
@@ -134,12 +142,12 @@ export function Hud({ code }: { code: string }) {
   const [wordInput, setWordInput] = useState('');
 
   const revealedForPendingPlayer = view.pending ? view.revealed[view.pending.player] ?? [] : [];
-  const cardNameById = (cardId: string): string => catalog.find((card) => card.id === cardId)?.name ?? cardId;
+  const cardNameById = (cardId: string): string => catalog.getCard(cardId)?.name ?? cardId;
 
   const pendingSourceInfo = (() => {
     if (!view.pending) return null;
     if (view.pending.cardId) {
-      const card = catalog.find((c) => c.id === view.pending!.cardId);
+      const card = catalog.getCard(view.pending.cardId);
       const ability = card?.abilities?.[view.pending.abilityIndex ?? 0];
       return {
         name: card?.name ?? view.pending.cardId,
@@ -147,7 +155,7 @@ export function Hud({ code }: { code: string }) {
       };
     }
     const ownerHeroId = view.players[view.pending.player]?.heroId;
-    const hero = heroCatalog.find((h) => h.id === ownerHeroId);
+    const hero = ownerHeroId ? catalog.getHero(ownerHeroId) : undefined;
     return {
       name: hero?.name ?? 'Герой',
       text: hero?.ability?.text || hero?.text || '',
@@ -163,8 +171,8 @@ export function Hud({ code }: { code: string }) {
     const askInfo = (() => {
       if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
         const ability = view.pending.cardId
-          ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
-          : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+          ? catalog.getCard(view.pending.cardId)?.abilities?.[view.pending.abilityIndex ?? 0]
+          : catalog.getHero(view.players[view.pending.player]!.heroId)?.ability;
         const ask = ability?.targets?.[view.pending.askIndex ?? 0];
         return ask ? { kind: ask.kind, filter: ask.filter } : null;
       }
@@ -181,7 +189,7 @@ export function Hud({ code }: { code: string }) {
     const pools: Array<{ label: string; cards: Array<{ instanceId: string; cardId: string }> }> = [];
     const usable = (cardId: string): boolean => {
       if (!filter) return true;
-      const card = catalog.find((c) => c.id === cardId);
+      const card = catalog.getCard(cardId);
       if (!card) return false;
       if (filter.cardType && card.type !== filter.cardType) return false;
       if (filter.maxCost !== undefined && card.cost > filter.maxCost) return false;
@@ -327,6 +335,60 @@ export function Hud({ code }: { code: string }) {
 
   return (
     <div className="hud hud-viewport-overlay">
+      {/* Tomato Splatter Screen Overlay */}
+      {tomatoSplats.length > 0 && (
+        <div className="cw-tomato-splat-layer" aria-hidden="true">
+          {tomatoSplats.map((sp) => (
+            <svg
+              key={sp.id}
+              className="cw-tomato-splat"
+              viewBox="0 0 120 120"
+              style={{
+                left: `${sp.x}%`,
+                top: `${sp.y}%`,
+                transform: `translate(-50%, -50%) rotate(${sp.rot}deg) scale(${sp.scale})`,
+              }}
+            >
+              <path
+                d="M60 12 C69 22, 84 10, 92 26 C100 40, 114 38, 108 56 C103 72, 115 86, 98 96 C82 105, 75 116, 58 108 C42 100, 26 112, 20 94 C14 78, 4 70, 14 54 C24 38, 14 22, 32 18 C46 14, 52 4, 60 12 Z"
+                fill="#d92626"
+                fillOpacity="0.86"
+                stroke="#7f1d1d"
+                strokeWidth="3"
+              />
+              <circle cx="18" cy="24" r="5" fill="#e53e3e" fillOpacity="0.85" />
+              <circle cx="102" cy="98" r="6" fill="#e53e3e" fillOpacity="0.85" />
+              <circle cx="96" cy="22" r="4" fill="#dc2626" fillOpacity="0.85" />
+              <ellipse cx="48" cy="46" rx="7" ry="4" fill="#fca5a5" fillOpacity="0.55" />
+            </svg>
+          ))}
+        </div>
+      )}
+
+      {/* Active Tomato Mode Banner */}
+      {tomatoMode && (
+        <div className="pending-banner cw-felt-box cw-tomato-banner">
+          <span>🍅 Режим помидора — нажмите на противника на столе:</span>
+          <span style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap' }}>
+            {view.order
+              .filter((pid) => pid !== view.me)
+              .map((pid) => (
+                <button
+                  key={pid}
+                  type="button"
+                  className="cw-btn-3d btn-red btn-sm"
+                  onClick={() => sendTomato(pid)}
+                >
+                  🍅 {view.players[pid]?.nickname ?? pid}
+                </button>
+              ))}
+            <button type="button" className="cw-btn-3d btn-dark btn-sm" onClick={toggleTomatoMode}>
+              ✕ Выйти
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* Comic speech bubble for taunts / emotes */}
       {activeEmote && (
         <div className="hud-emote-bubble" role="status" aria-live="polite">
@@ -353,7 +415,10 @@ export function Hud({ code }: { code: string }) {
           <button
             className="cw-btn-3d btn-green btn-sm"
             disabled={wordInput.trim().length < wordSetup.min}
-            onClick={() => sendCommand({ type: 'choose_word', player: view.me, word: wordInput.trim() })}
+            onClick={() => {
+              soundEngine.playCardSelect();
+              sendCommand({ type: 'choose_word', player: view.me, word: wordInput.trim() });
+            }}
           >
             ОК
           </button>
@@ -417,8 +482,8 @@ export function Hud({ code }: { code: string }) {
                   const askKind = (() => {
                     if (view.pending?.kind === 'target' || view.pending?.kind === 'effect_step') {
                       const ability = view.pending.cardId
-                        ? catalog.find((c) => c.id === view.pending!.cardId)?.abilities?.[view.pending!.abilityIndex ?? 0]
-                        : heroCatalog.find((h) => h.id === view.players[view.pending!.player]!.heroId)?.ability;
+                        ? catalog.getCard(view.pending.cardId)?.abilities?.[view.pending.abilityIndex ?? 0]
+                        : catalog.getHero(view.players[view.pending.player]!.heroId)?.ability;
                       return ability?.targets?.[view.pending.askIndex ?? 0]?.kind;
                     }
                     if (targeting) return targeting.asks[targeting.askIndex]?.kind;
@@ -498,7 +563,10 @@ export function Hud({ code }: { code: string }) {
         <div className={`hud-hand-control-overlay ${handCollapsed ? 'is-collapsed' : ''}`}>
           <button
             className={`hud-hand-toggle-btn cw-btn-3d btn-paper btn-sm ${handCollapsed ? 'collapsed' : ''}`}
-            onClick={toggleHandCollapsed}
+            onClick={() => {
+              soundEngine.playButtonClick();
+              toggleHandCollapsed();
+            }}
             title="Скрыть/показать карты руки (H)"
           >
             <span className="btn-icon">{handCollapsed ? '▲' : '▼'}</span>
@@ -526,12 +594,13 @@ function UnfreezeDialog({
   const pointerDownOutsideRef = useRef(false);
 
   const playedCard = view.myHand.find((c) => c.instanceId === prompt.instanceId);
-  const playedMeta = playedCard ? catalog.find((c) => c.id === playedCard.cardId) : undefined;
+  const playedMeta = playedCard ? catalog.getCard(playedCard.cardId) : undefined;
   const otherCards = view.myHand.filter((c) => c.instanceId !== prompt.instanceId);
 
   useEffect(() => {
     const el = dialogRef.current;
     if (el && !el.open) {
+      soundEngine.playModalOpen();
       el.showModal();
     }
   }, []);
@@ -584,12 +653,13 @@ function UnfreezeDialog({
       </p>
       <div className="unfreeze-card-list">
         {otherCards.map((card) => {
-          const meta = catalog.find((c) => c.id === card.cardId);
+          const meta = catalog.getCard(card.cardId);
           return (
             <button
               key={card.instanceId}
               className="unfreeze-card-btn cw-btn-3d btn-paper btn-sm btn-block"
               onClick={() => {
+                soundEngine.playCardDiscard();
                 sendCommand({
                   type: 'play_card',
                   player: view.me,

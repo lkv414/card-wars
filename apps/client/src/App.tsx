@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
 import { PRIMARY_LAND_IMAGES } from './decks/landImages';
@@ -143,8 +143,21 @@ function MainMenu({
   onDecks: () => void;
 }) {
   const quality = useGame((s) => s.ui.quality);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [muted, setMuted] = useState(() => soundEngine.getSettings().muted);
+  const [volume, setVolume] = useState(() => Math.round(soundEngine.getSettings().volume * 100));
   const [music, setMusic] = useState(() => soundEngine.isMusicEnabled());
+  const settingsDialogRef = useRef<HTMLDialogElement | null>(null);
+
+  useEffect(() => {
+    const dialog = settingsDialogRef.current;
+    if (!dialog) return;
+    if (settingsOpen) {
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      dialog.close();
+    }
+  }, [settingsOpen]);
 
   return (
     <main className="main-menu ui-v2 treehouse-menu">
@@ -230,54 +243,137 @@ function MainMenu({
 
           <div className="main-menu-foot">
             <div className="main-menu-foot-row">
-              <span>
-                Звук:{' '}
-                <button
-                  type="button"
-                  className="cw-btn-3d btn-paper btn-sm"
-                  onClick={() => {
-                    const next = !muted;
-                    soundEngine.setMuted(next);
-                    setMuted(next);
-                    if (!next) soundEngine.playButtonClick();
-                  }}
-                >
-                  {muted ? 'выкл 🔇' : 'вкл 🔊'}
-                </button>
-              </span>
-              <span>
-                Музыка:{' '}
-                <button
-                  type="button"
-                  className="cw-btn-3d btn-paper btn-sm"
-                  onClick={() => {
-                    const next = soundEngine.toggleMusic();
-                    setMusic(next);
-                    if (next) soundEngine.playButtonClick();
-                  }}
-                >
-                  {music ? 'вкл 🎵' : 'выкл 🔇'}
-                </button>
-              </span>
-              <span>
-                Графика:{' '}
-                <button
-                  type="button"
-                  className="cw-btn-3d btn-paper btn-sm"
-                  onClick={() => {
-                    soundEngine.playButtonClick();
-                    setQuality(quality === 'high' ? 'low' : 'high');
-                  }}
-                >
-                  {quality === 'high' ? 'высокая' : 'низкая'}
-                </button>
-              </span>
+              <button
+                type="button"
+                className="cw-btn-3d btn-paper btn-sm"
+                onClick={() => {
+                  soundEngine.playButtonClick();
+                  setSettingsOpen(true);
+                }}
+              >
+                ⚙️ Настройки
+              </button>
+              <PwaInstallButton />
             </div>
-            <PwaInstallButton />
             <span className="main-menu-version">Версия {APP_VERSION}</span>
           </div>
         </div>
       </div>
+
+      <dialog
+        ref={settingsDialogRef}
+        className="cw-settings-dialog cw-felt-box"
+        aria-labelledby="cw-settings-title"
+        onCancel={(e) => {
+          e.preventDefault();
+          setSettingsOpen(false);
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setSettingsOpen(false);
+        }}
+      >
+        <div className="cw-settings-head">
+          <h2 id="cw-settings-title" className="cw-ink-title">
+            ⚙️ Настройки
+          </h2>
+          <button
+            type="button"
+            className="cw-btn-3d btn-dark btn-sm"
+            aria-label="Закрыть настройки"
+            onClick={() => {
+              soundEngine.playButtonClick();
+              setSettingsOpen(false);
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="cw-settings-body cw-paper-box">
+          <div className="cw-setting-row">
+            <div className="cw-setting-info">
+              <strong>Звуковые эффекты</strong>
+              <span>Щелчки, удары и флюп карт</span>
+            </div>
+            <button
+              type="button"
+              className={`cw-btn-3d ${muted ? 'btn-dark' : 'btn-green'} btn-sm`}
+              onClick={() => {
+                const next = !muted;
+                soundEngine.setMuted(next);
+                setMuted(next);
+                if (!next) soundEngine.playButtonClick();
+              }}
+            >
+              {muted ? 'Выкл 🔇' : 'Вкл 🔊'}
+            </button>
+          </div>
+
+          <label className="cw-setting-slider-row">
+            <span>Громкость эффектов: {volume}%</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={volume}
+              disabled={muted}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                setVolume(v);
+                soundEngine.setVolume(v / 100);
+              }}
+            />
+          </label>
+
+          <div className="cw-setting-row">
+            <div className="cw-setting-info">
+              <strong>Музыка</strong>
+              <span>Фоновая мелодия Земель Ууу</span>
+            </div>
+            <button
+              type="button"
+              className={`cw-btn-3d ${music ? 'btn-green' : 'btn-dark'} btn-sm`}
+              onClick={() => {
+                const next = soundEngine.toggleMusic();
+                setMusic(next);
+                if (next) soundEngine.playButtonClick();
+              }}
+            >
+              {music ? 'Вкл 🎵' : 'Выкл 🔇'}
+            </button>
+          </div>
+
+          <div className="cw-setting-row">
+            <div className="cw-setting-info">
+              <strong>Качество графики 3D</strong>
+              <span>Тени и сглаживание на столе</span>
+            </div>
+            <button
+              type="button"
+              className={`cw-btn-3d ${quality === 'high' ? 'btn-blue' : 'btn-paper'} btn-sm`}
+              onClick={() => {
+                soundEngine.playButtonClick();
+                setQuality(quality === 'high' ? 'low' : 'high');
+              }}
+            >
+              {quality === 'high' ? 'Высокое' : 'Низкое'}
+            </button>
+          </div>
+        </div>
+
+        <div className="cw-settings-foot">
+          <button
+            type="button"
+            className="cw-btn-3d btn-green btn-block"
+            onClick={() => {
+              soundEngine.playButtonClick();
+              setSettingsOpen(false);
+            }}
+          >
+            Готово
+          </button>
+        </div>
+      </dialog>
     </main>
   );
 }

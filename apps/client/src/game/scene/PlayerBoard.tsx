@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CONFIG, type PlayerView } from '@card-wars/protocol';
@@ -9,23 +9,26 @@ import {
   CARD_H,
   NO_RAYCAST,
   boardTransform,
-  deckLocalFor,
-  discardLocalFor,
+  deckWorldTransform,
+  discardWorldTransform,
   frostLocalZ,
   heroLocalFor,
   livesLocalFor,
   zoneWorldTransform,
 } from './layout';
+import { DECK_CARD_GEO, OPPONENT_CARD_GEO, OPPONENT_EDGE_MAT } from './sharedResources';
 import { cardBackTexture, cardTexture, heroTexture } from './textures';
 import { CardMesh, FrostToken, TokenMesh } from './CardMesh';
 import { Land } from './Land';
 import { pick, validTargets } from '../targeting';
-import { sendCommand, setUi, showHint, useGame } from '../../store';
+import { sendCommand, sendTomato, setUi, showHint, useGame } from '../../store';
 
 /** Игровое поле одного игрока: 4 земли (с их точными углами/позициями боя), колода, сброс, герой, жизни. */
 export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string; isMe: boolean }) {
   const p = view.players[pid]!;
   const transform = boardTransform(view, pid);
+  const deckTr = deckWorldTransform(view, pid);
+  const discardTr = discardWorldTransform(view, pid);
   const active = view.activePlayers.includes(pid) && view.status === 'running';
 
   if (!transform) return null;
@@ -51,9 +54,19 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
         );
       })}
 
+      {deckTr && (
+        <group position={[deckTr.x, 4, deckTr.z]} rotation={[0, deckTr.rotation, 0]}>
+          <DeckPile count={p.deckCount} view={view} isMe={isMe} />
+        </group>
+      )}
+
+      {discardTr && (
+        <group position={[discardTr.x, 4, discardTr.z]} rotation={[0, discardTr.rotation, 0]}>
+          <DiscardPile view={view} pid={pid} />
+        </group>
+      )}
+
       <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
-        <DeckPile count={p.deckCount} view={view} isMe={isMe} />
-        <DiscardPile view={view} pid={pid} />
         <HeroStand
           nickname={p.nickname}
           heroId={p.heroId}
@@ -64,6 +77,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
           pid={pid}
         />
         {(!team || team.playerIds[0] === pid) && <LivesTokens lives={p.lives} view={view} />}
+        {!isMe && p.handCount > 0 && <OpponentHand count={p.handCount} view={view} />}
         {p.companion && <CardMesh card={p.companion} view={view} isMe={isMe} slot="companion" />}
         {/* заклинания текущего хода — парят над землями этого игрока (docs/UI-3D.md) */}
         {view.castSpells
@@ -86,14 +100,36 @@ function DeckPile({
   isMe: boolean;
 }) {
   const back = useMemo(() => cardBackTexture(), []);
-  const [x, y, z] = deckLocalFor(view);
+  const deckMat = useMemo(() => new THREE.MeshLambertMaterial({ map: back }), [back]);
   const layers = Math.min(8, Math.ceil(count / 5));
   const [hovered, setHovered] = useState(false);
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+
+  useEffect(() => {
+    return () => {
+      deckMat.dispose();
+    };
+  }, [deckMat]);
 
   const me = view.players[view.me]!;
   const myTurn = view.activePlayers.includes(view.me) && view.status === 'running';
   const myMain = myTurn && view.phase === 'main' && !me.battleReady;
   const canDrawExtra = isMe && myMain && me.actions >= CONFIG.extraDrawCost && count > 0;
+
+  useLayoutEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh || layers === 0) return;
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < layers; i++) {
+      const isTop = i === layers - 1;
+      const liftY = isTop && isMe && hovered && canDrawExtra ? 5 : 0;
+      dummy.position.set(0, i * 1.4 + liftY, 0);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [layers, isMe, hovered, canDrawExtra]);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
@@ -122,7 +158,7 @@ function DeckPile({
   };
 
   return (
-    <group position={[x, y, z]}>
+    <group>
       {/* Мягкое золотистое свечение под колодой, если доступен добор за действие */}
       {isMe && canDrawExtra && (
         <mesh position={[0, 0.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
@@ -131,22 +167,16 @@ function DeckPile({
         </mesh>
       )}
 
-      {Array.from({ length: layers }, (_, i) => {
-        const isTop = i === layers - 1;
-        const liftY = isTop && isMe && hovered && canDrawExtra ? 5 : 0;
-        return (
-          <mesh
-            key={i}
-            position={[0, i * 1.4 + liftY, 0]}
-            onClick={isMe ? handleClick : undefined}
-            onPointerOver={isMe ? (e) => { e.stopPropagation(); setHovered(true); } : undefined}
-            onPointerOut={isMe ? (e) => { e.stopPropagation(); setHovered(false); } : undefined}
-          >
-            <boxGeometry args={[CARD_W, 1, CARD_H]} />
-            <meshLambertMaterial map={back} />
-          </mesh>
-        );
-      })}
+      {layers > 0 && (
+        <instancedMesh
+          key={layers}
+          ref={meshRef}
+          args={[DECK_CARD_GEO, deckMat, layers]}
+          onClick={isMe ? handleClick : undefined}
+          onPointerOver={isMe ? (e) => { e.stopPropagation(); setHovered(true); } : undefined}
+          onPointerOut={isMe ? (e) => { e.stopPropagation(); setHovered(false); } : undefined}
+        />
+      )}
 
       <FloatingLabel
         text={
@@ -163,14 +193,13 @@ function DeckPile({
 /** Стопка сброса — цель перетаскивания (рука и поле); подсвечивается при драге (docs/UI-3D.md «Взаимодействие»). */
 function DiscardPile({ view, pid }: { view: PlayerView; pid: string }) {
   const p = view.players[pid]!;
-  const [x, y, z] = discardLocalFor(view);
   const top = p.discard[p.discard.length - 1];
   const texture = useMemo(() => (top ? cardTexture(top.cardId) : cardBackTexture()), [top?.cardId]);
   const isMe = pid === view.me;
   const active = isMe && useGame((s) => s.ui.dragging) !== null;
   const overDiscard = useGame((s) => s.ui.draggingOverDiscard);
   return (
-    <group position={[x, y, z]}>
+    <group>
       {top && (
         <mesh
           position={[0, 1, 0]}
@@ -226,6 +255,8 @@ function HeroStand({
   const portrait = useMemo(() => heroTexture(heroId), [heroId]);
 
   const targeting = useGame((st) => st.ui.targeting);
+  const tomatoMode = useGame((st) => st.ui.tomatoMode);
+  const isTomatoTarget = tomatoMode && pid !== view.me;
   const currentAsk = targeting ? targeting.asks[targeting.askIndex] : undefined;
   const isTarget =
     targeting && currentAsk && (currentAsk.kind === 'opponent_player' || currentAsk.kind === 'any_player')
@@ -235,7 +266,13 @@ function HeroStand({
       : false;
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
-    if (e.nativeEvent.button !== 0 || !isTarget) return;
+    if (e.nativeEvent.button !== 0) return;
+    if (isTomatoTarget) {
+      e.stopPropagation();
+      sendTomato(pid);
+      return;
+    }
+    if (!isTarget) return;
     e.stopPropagation();
     const ui = useGame.getState().ui;
     if (!ui.targeting) return;
@@ -269,6 +306,57 @@ function HeroStand({
         <meshLambertMaterial map={portrait} />
       </mesh>
       <FloatingLabel text={`${heroNameOf(heroId)} · ${nickname}${suffix}`} position={[0, 34, 0]} />
+    </group>
+  );
+}
+
+/** Рука соперника в 3D: рубашка с обеих сторон, чтобы содержимое было полностью скрыто. */
+function OpponentHand({ count, view }: { count: number; view: PlayerView }) {
+  const back = useMemo(() => cardBackTexture(), []);
+  const backMat = useMemo(() => new THREE.MeshLambertMaterial({ map: back }), [back]);
+  const materials = useMemo(
+    () => [OPPONENT_EDGE_MAT, OPPONENT_EDGE_MAT, backMat, backMat, OPPONENT_EDGE_MAT, OPPONENT_EDGE_MAT],
+    [backMat],
+  );
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+
+  useEffect(() => {
+    return () => {
+      backMat.dispose();
+    };
+  }, [backMat]);
+
+  const [, , hz] = heroLocalFor(view);
+  const shown = Math.min(10, count);
+
+  useLayoutEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh || shown <= 0) return;
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < shown; i++) {
+      const offset = i - (shown - 1) / 2;
+      const x = offset * 28;
+      const z = Math.abs(offset) * 3;
+      const fanAngle = offset * 0.08;
+      dummy.position.set(x, i * 0.6, z);
+      dummy.rotation.set(-1.05, 0, -fanAngle);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [shown]);
+
+  return (
+    <group position={[0, 48, hz + 56]} raycast={NO_RAYCAST}>
+      {shown > 0 && (
+        <instancedMesh
+          key={shown}
+          ref={meshRef}
+          args={[OPPONENT_CARD_GEO, materials, shown]}
+          raycast={NO_RAYCAST}
+        />
+      )}
     </group>
   );
 }

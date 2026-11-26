@@ -132,32 +132,26 @@ function ForecastIndicator({ item }: { item: ForecastItem }) {
   const { startPos, endPos } = item;
   const dx = endPos[0] - startPos[0];
   const dz = endPos[2] - startPos[2];
-  const len = Math.hypot(dx, dz);
+  const len = Math.max(10, Math.hypot(dx, dz));
   const angle = Math.atan2(dx, dz);
   const midX = (startPos[0] + endPos[0]) / 2;
   const midZ = (startPos[2] + endPos[2]) / 2;
   const color = item.targetDies ? '#ef4444' : '#f97316';
+  const shaftLen = Math.max(10, len - 36);
 
   return (
     <group>
-      {/* Стрела атаки между противоположными зонами */}
-      <mesh
-        position={[midX, 12, midZ]}
-        rotation={[-Math.PI / 2, 0, -angle + Math.PI / 2]}
-        raycast={NO_RAYCAST}
-      >
-        <planeGeometry args={[Math.max(10, len - 36), 6]} />
-        <meshBasicMaterial color={color} transparent opacity={0.85} side={THREE.DoubleSide} />
-      </mesh>
-      {/* Наконечник стрелы */}
-      <mesh
-        position={[endPos[0] - (dx / len) * 20, 12, endPos[2] - (dz / len) * 20]}
-        rotation={[-Math.PI / 2, 0, -angle + Math.PI / 2]}
-        raycast={NO_RAYCAST}
-      >
-        <coneGeometry args={[10, 22, 4]} />
-        <meshBasicMaterial color={color} transparent opacity={0.9} />
-      </mesh>
+      {/* Стрела атаки между противоположными зонами (+Z в группе смотрит точно от startPos к endPos) */}
+      <group position={[midX, 14, midZ]} rotation={[0, angle, 0]}>
+        <mesh position={[0, 0, -6]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
+          <planeGeometry args={[6, shaftLen]} />
+          <meshBasicMaterial color={color} transparent opacity={0.88} side={THREE.DoubleSide} />
+        </mesh>
+        <mesh position={[0, 0, len / 2 - 18]} rotation={[Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
+          <coneGeometry args={[10, 22, 4]} />
+          <meshBasicMaterial color={color} transparent opacity={0.92} />
+        </mesh>
+      </group>
       {/* Бейдж цели: рассчитанный урон и значок черепа при смерти */}
       <sprite position={[endPos[0], 28, endPos[2]]} scale={[125, 47, 1]} raycast={NO_RAYCAST}>
         <spriteMaterial map={badgeTexture} transparent />

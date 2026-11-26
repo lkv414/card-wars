@@ -2,16 +2,16 @@ import { useEffect, useLayoutEffect, useMemo, useRef, type MutableRefObject } fr
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { PlayerView } from '@card-wars/protocol';
-import { cards as catalog } from '@card-wars/content';
+import { catalog } from '@card-wars/content';
 import { CARD_H, CARD_T, CARD_W, HAND, NO_RAYCAST, overMyDiscardRay, zoneFromWorld } from './layout';
 import { cardBackTexture, cardTexture } from './textures';
 import { sendCommand, setUi, showHint, useGame } from '../../store';
 import { pick } from '../targeting';
 import { triggerHapticVibration } from '../hud/useLongPress';
-import { createCardMaterial } from './CardCustomMaterial';
+import { soundEngine } from '../../sound/SoundEngine';
 
 const DRAG_THRESHOLD_PX = 10;
-const sharedEdgeMat = new THREE.MeshLambertMaterial({ color: '#2a3545' });
+const sharedEdgeMat = new THREE.MeshBasicMaterial({ color: '#2a3545', fog: false });
 
 /**
  * Hand — 3D fan attached to the camera at the bottom of the screen (docs/UI-3D.md «Рука»).
@@ -116,7 +116,7 @@ export function Hand({ view }: { view: PlayerView }) {
         if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) <= DRAG_THRESHOLD_PX) return;
         pendingDrag.current = null;
         setUi({
-          selectedHand: pending.id,
+          selectedHand: null,
           hoveredHand: null,
           dragging: pending.id,
           draggingFrom: 'hand',
@@ -151,40 +151,64 @@ export function Hand({ view }: { view: PlayerView }) {
           sendCommand({ type: 'discard_from_hand', player: view.me, instanceId });
           setUi({ selectedHand: null });
         }
-      } else if (zone !== null && source === 'hand') {
+      } else if (source === 'hand') {
         const playerState = view.players[view.me];
-        const targetLand = playerState?.lands[zone];
         const playedCard = view.myHand.find((c) => c.instanceId === instanceId);
-        const cardMeta = playedCard ? catalog.find((c) => c.id === playedCard.cardId) : undefined;
-        const isSlotCard = cardMeta?.type === 'creature' || cardMeta?.type === 'building';
-        const otherHandCards = view.myHand.filter((c) => c.instanceId !== instanceId);
+        const cardMeta = playedCard ? catalog.getCard(playedCard.cardId) : undefined;
+        const isDirectCard = cardMeta?.type === 'spell' || cardMeta?.type === 'companion';
+        const droppedOnTable = event.clientY < rect.bottom - 140;
 
-        if (targetLand?.frozen && isSlotCard) {
-          if (otherHandCards.length > 0) {
-            setUi({ unfreezePrompt: { instanceId, zone }, selectedHand: null });
-            invalidate();
-            return;
-          } else {
-            showHint('Земля заморожена: нужна другая карта в руке для сброса');
-            setUi({ selectedHand: null });
-            invalidate();
-            return;
+        if (zone !== null) {
+          const targetLand = playerState?.lands[zone];
+          const isSlotCard = cardMeta?.type === 'creature' || cardMeta?.type === 'building';
+          const otherHandCards = view.myHand.filter((c) => c.instanceId !== instanceId);
+
+          if (targetLand?.frozen && isSlotCard) {
+            if (otherHandCards.length > 0) {
+              setUi({ unfreezePrompt: { instanceId, zone }, selectedHand: null });
+              invalidate();
+              return;
+            } else {
+              showHint('Земля заморожена: нужна другая карта в руке для сброса');
+              setUi({ selectedHand: null });
+              invalidate();
+              return;
+            }
           }
-        }
 
-        sendCommand({ type: 'play_card', player: view.me, instanceId, zone });
-        setUi({ selectedHand: null });
+          sendCommand({ type: 'play_card', player: view.me, instanceId, zone });
+          setUi({ selectedHand: null });
+        } else if (isDirectCard && droppedOnTable) {
+          sendCommand({ type: 'play_card', player: view.me, instanceId });
+          setUi({ selectedHand: null });
+        } else {
+          setUi({ selectedHand: null, hoveredHand: null });
+        }
+      } else {
+        setUi({ selectedHand: null, hoveredHand: null });
       }
       invalidate();
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        const ui = useGame.getState().ui;
+        if (ui.selectedHand || ui.hoveredHand) {
+          setUi({ selectedHand: null, hoveredHand: null });
+          invalidate();
+        }
+      }
     };
 
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
+    window.addEventListener('keydown', onKeyDown);
     return () => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
+      window.removeEventListener('keydown', onKeyDown);
     };
   }, [view, camera, gl, invalidate, raycaster, ndc]);
 
@@ -197,6 +221,13 @@ export function Hand({ view }: { view: PlayerView }) {
       setUi({ hoveredHand: null });
     }
   }, [selected, hovered, view.myHand]);
+
+  // Clear hover/selection when a pending choice appears so it never blocks board picks.
+  useEffect(() => {
+    if (view.pending) {
+      setUi({ selectedHand: null, hoveredHand: null });
+    }
+  }, [view.pending]);
 
   // Outside own main phase, dragging/flooping is inactive — clear active drag/hold.
   useEffect(() => {
@@ -220,9 +251,8 @@ export function Hand({ view }: { view: PlayerView }) {
       <group ref={group}>
         {items.map((card, index) => {
           const offset = index - (items.length - 1) / 2;
-          const isSelected = selected === card.instanceId;
+          const isSelected = false;
           const isHovered = hovered === card.instanceId;
-          const meta = catalog.find((c) => c.id === card.cardId);
           return (
             <HandCard
               key={card.instanceId}
@@ -242,7 +272,6 @@ export function Hand({ view }: { view: PlayerView }) {
               hoveredIndex={hoveredIndex}
               handCollapsed={handCollapsed}
               playable={myMain}
-              isDirect={meta?.type === 'spell' || meta?.type === 'companion'}
               view={view}
               pendingDrag={pendingDrag}
             />
@@ -308,7 +337,6 @@ function HandCard({
   hoveredIndex,
   handCollapsed,
   playable,
-  isDirect,
   view,
   pendingDrag,
 }: {
@@ -328,24 +356,18 @@ function HandCard({
   hoveredIndex: number;
   handCollapsed: boolean;
   playable: boolean;
-  isDirect: boolean;
   view: PlayerView;
   pendingDrag: MutableRefObject<{ id: string; x: number; y: number } | null>;
 }) {
   const texture = useMemo(() => cardTexture(cardId), [cardId]);
   const back = useMemo(() => cardBackTexture(), []);
-  const cardMeta = useMemo(() => catalog.find((c) => c.id === cardId), [cardId]);
-  const isRainbow = cardMeta?.landType === 'rainbow';
-  const faceMaterial = useMemo(
-    () => (isRainbow ? createCardMaterial(texture, true) : new THREE.MeshLambertMaterial({ map: texture })),
-    [texture, isRainbow],
-  );
+  const faceMaterial = useMemo(() => new THREE.MeshBasicMaterial({ map: texture, fog: false }), [texture]);
   const materials = useMemo(
     () => [
       sharedEdgeMat, // +x
       sharedEdgeMat, // -x
-      faceMaterial, // +y (face: Lambert for standard cards, ShaderMaterial foil for rainbow cards)
-      new THREE.MeshLambertMaterial({ map: back }), // -y (back)
+      faceMaterial, // +y (unlit + fog-free so hand cards stay evenly bright)
+      new THREE.MeshBasicMaterial({ map: back, fog: false }), // -y (back)
       sharedEdgeMat, // +z
       sharedEdgeMat, // -z
     ],
@@ -478,6 +500,7 @@ function HandCard({
     event.stopPropagation();
     if (useGame.getState().ui.dragging) return;
     if (useGame.getState().ui.hoveredHand !== instanceId) {
+      soundEngine.playCardHover();
       setUi({ hoveredHand: instanceId });
       invalidate();
     }
@@ -498,30 +521,26 @@ function HandCard({
       return;
     }
     if (event.nativeEvent.button !== 0) return;
-    event.stopPropagation();
     // Target selection mode: hand card is passed as own_hand_card.
     const targeting = useGame.getState().ui.targeting;
     if (targeting) {
       const ask = targeting.asks[targeting.askIndex];
       if (ask && ask.kind === 'own_hand_card') {
+        event.stopPropagation();
         const result = pick(view, targeting, { kind: 'card', instanceId });
         if (result.accepted && result.command) {
+          soundEngine.playCardSelect();
           sendCommand(result.command);
           setUi({ targeting: result.nextState ?? null });
         } else if (result.accepted && result.nextState) {
+          soundEngine.playCardSelect();
           setUi({ targeting: result.nextState });
         }
       }
       return;
     }
-    if (event.delta > 8) return; // drag release, not a click
-    if (playable && isDirect) {
-      sendCommand({ type: 'play_card', player: view.me, instanceId });
-      setUi({ selectedHand: null });
-      return;
-    }
-    setUi({ selectedHand: useGame.getState().ui.selectedHand === instanceId ? null : instanceId });
-    invalidate();
+    // Hand cards are never click-selected (prevents stuck zoomed cards blocking board picks);
+    // cards are played via drag-and-drop onto the table/zones.
   };
 
   return (

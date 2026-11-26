@@ -1,4 +1,4 @@
-import { cards as catalog, heroes as heroCatalog } from '@card-wars/content';
+import { catalog } from '@card-wars/content';
 import type { PlayerView, TargetChoice } from '@card-wars/protocol';
 import type { Command } from '@card-wars/protocol';
 
@@ -47,7 +47,7 @@ export interface TargetingState {
 
 /** Активная способность карты (один «ПРИЕМ» на карту). */
 export function activeAbilityOf(cardId: string): { targets?: TargetAsk[]; text: string } | null {
-  const card = catalog.find((c) => c.id === cardId);
+  const card = catalog.getCard(cardId);
   const ability = card?.abilities?.find((a) => a.kind === 'active');
   if (!ability) return null;
   return { targets: ability.targets, text: ability.text };
@@ -55,7 +55,7 @@ export function activeAbilityOf(cardId: string): { targets?: TargetAsk[]; text: 
 
 /** Активная способность героя. */
 export function activeAbilityOfHero(heroId: string): { targets?: TargetAsk[]; text: string } | null {
-  const hero = heroCatalog.find((h) => h.id === heroId);
+  const hero = catalog.getHero(heroId);
   const ability = hero?.ability;
   if (!ability || ability.kind !== 'active') return null;
   return { targets: ability.targets, text: ability.text };
@@ -95,12 +95,12 @@ function fieldCreatures(view: PlayerView, pid: string): TargetChoice[] {
 }
 
 function cardLandType(cardId: string): string | undefined {
-  return catalog.find((c) => c.id === cardId)?.landType;
+  return catalog.getCard(cardId)?.landType;
 }
 
 /** Тип и стоимость карты из сброса (фильтр ask'а). */
 function discardCardPasses(cardId: string, filter: NonNullable<TargetAsk['filter']>): boolean {
-  const card = catalog.find((c) => c.id === cardId);
+  const card = catalog.getCard(cardId);
   if (!card) return false;
   if (filter.cardType && card.type !== filter.cardType) return false;
   if (filter.maxCost !== undefined && card.cost > filter.maxCost) return false;
@@ -304,8 +304,8 @@ export function startForActive(
     : activeAbilityOf(cardId);
   if (!ability) return null;
   const sourceName = kind === 'hero_ability'
-    ? heroCatalog.find((h) => h.id === cardId)?.name
-    : catalog.find((c) => c.id === cardId)?.name;
+    ? catalog.getHero(cardId)?.name
+    : catalog.getCard(cardId)?.name;
   const asks = ability.targets ?? [];
   return {
     mode: 'active',
@@ -325,14 +325,16 @@ export function startForPending(
   view: PlayerView,
   pending: NonNullable<PlayerView['pending']>,
 ): TargetingState | null {
-  const card = pending.cardId !== undefined ? catalog.find((c) => c.id === pending.cardId) : null;
+  const card = pending.cardId !== undefined ? catalog.getCard(pending.cardId) : null;
+  const hero = !card && view.players[pending.player]?.heroId
+    ? catalog.getHero(view.players[pending.player]!.heroId)
+    : null;
   const ability = card
     ? card.abilities?.[pending.abilityIndex ?? 0]
-    : heroCatalog.find((h) => h.id === view.players[pending.player]?.heroId)?.ability;
+    : hero?.ability;
   if (!ability) return null;
   const asks = ability.targets ?? [];
   if (asks.length === 0) return null;
-  const hero = !card ? heroCatalog.find((h) => h.id === view.players[pending.player]?.heroId) : null;
   return {
     mode: 'pending',
     sourceInstanceId: pending.instanceId ?? null,

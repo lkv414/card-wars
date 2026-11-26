@@ -295,6 +295,7 @@ export const ClientMessageSchema = z.discriminatedUnion('t', [
   z.object({ t: z.literal('lobby_command'), command: LobbyCommandSchema }),
   z.object({ t: z.literal('command'), command: CommandSchema }),
   z.object({ t: z.literal('hurry'), player: z.string(), target: z.string() }),
+  z.object({ t: z.literal('tomato'), target: z.string() }),
 ]);
 
 export type ClientMessage = z.infer<typeof ClientMessageSchema>;
@@ -318,6 +319,7 @@ export const ServerMessageSchema = z.discriminatedUnion('t', [
   z.object({ t: z.literal('events'), events: z.array(GameEventWireSchema) }),
   z.object({ t: z.literal('error'), message: z.string(), code: z.string().optional() }),
   z.object({ t: z.literal('timer'), timer: TimerInfoSchema }),
+  z.object({ t: z.literal('tomato'), from: z.string(), target: z.string() }),
   z.object({
     t: z.literal('finished'),
     winners: z.array(z.string()),

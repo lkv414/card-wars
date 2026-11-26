@@ -92,7 +92,7 @@ export function zoneWorldTransform(
     const myTeam = myTeamId ? view.teams?.[myTeamId] : null;
     const isMyTeam = myTeam?.id === team.id;
     const half = team.playerIds.indexOf(pid);
-    const step = ROW_LEN + 30;
+    const step = ROW_LEN + 220;
     const teamOffset = (half - (team.playerIds.length - 1) / 2) * step;
     const baseOffset = isMyTeam ? teamOffset : -teamOffset;
     const localX = zoneX(zone);
@@ -140,21 +140,22 @@ export function zoneWorldTransform(
   const halfAngle = Math.PI / N;
   const R_strip = N === 3 ? 280 : N === 4 ? 350 : (LAND_H + 120) / Math.tan(halfAngle);
 
-  // Left wing (zones 0, 1): faces Left neighbor ((playerIdx + 1) % N) along strip S = playerIdx
-  // Right wing (zones 2, 3): faces Right neighbor ((playerIdx - 1 + N) % N) along strip S = (playerIdx - 1 + N) % N
+  // Left wing (zones 0, 1): faces Left neighbor ((playerIdx - 1 + N) % N) along strip S = (playerIdx - 1 + N) % N
+  // Right wing (zones 2, 3): faces Right neighbor ((playerIdx + 1) % N) along strip S = playerIdx
+  // Matches domain/zones.ts neighborOf(state, pid, -1 | +1).
   const isLeftWing = zone < 2;
-  const S = isLeftWing ? playerIdx : (playerIdx - 1 + N) % N;
+  const S = isLeftWing ? (playerIdx - 1 + N) % N : playerIdx;
   const isInner = zone === 1 || zone === 2;
   const n = isInner ? -laneOffset : laneOffset;
-  const u = isLeftWing ? -LAND_H / 2 : LAND_H / 2;
+  const u = isLeftWing ? LAND_H / 2 : -LAND_H / 2;
 
-  // Midpoint angle of strip S:
-  const phi = -(S + 0.5) * (2 * Math.PI / N);
+  // Midpoint angle of strip S (increasing clockwise from +Z toward +X):
+  const phi = (S + 0.5) * (2 * Math.PI / N);
   const sinPhi = Math.sin(phi);
   const cosPhi = Math.cos(phi);
 
-  const uVecX = -cosPhi;
-  const uVecZ = sinPhi;
+  const uVecX = cosPhi;
+  const uVecZ = -sinPhi;
   const nVecX = sinPhi;
   const nVecZ = cosPhi;
 
@@ -164,8 +165,8 @@ export function zoneWorldTransform(
   const x = midX + u * uVecX + n * nVecX;
   const z = midZ + u * uVecZ + n * nVecZ;
 
-  const faceX = isLeftWing ? uVecX : -uVecX;
-  const faceZ = isLeftWing ? uVecZ : -uVecZ;
+  const faceX = isLeftWing ? -uVecX : uVecX;
+  const faceZ = isLeftWing ? -uVecZ : uVecZ;
   const rotation = Math.atan2(-faceX, -faceZ);
 
   return { x, z, rotation };
@@ -184,7 +185,7 @@ export function playerAccessoriesTransform(view: PlayerView, pid: string): Board
     const myTeam = myTeamId ? view.teams?.[myTeamId] : null;
     const isMyTeam = myTeam?.id === team.id;
     const half = team.playerIds.indexOf(pid);
-    const step = ROW_LEN + 30;
+    const step = ROW_LEN + 220;
     const offset = (half - (team.playerIds.length - 1) / 2) * step;
     return {
       x: isMyTeam ? offset : -offset,
@@ -212,7 +213,7 @@ export function playerAccessoriesTransform(view: PlayerView, pid: string): Board
   const R_vertex = R_strip / Math.cos(halfAngle);
   const R_acc = R_vertex + 60;
 
-  const theta = -playerIdx * (2 * Math.PI / N);
+  const theta = playerIdx * (2 * Math.PI / N);
   return {
     x: R_acc * Math.sin(theta),
     z: R_acc * Math.cos(theta),
@@ -279,11 +280,11 @@ export function livesLocalFor(view: PlayerView): [number, number, number] {
 /** Square felt playmat size (mm) sized to contain all zones & accessories for the current table layout. */
 export function playmatSizeFor(view: PlayerView | null): number {
   if (!view) return 960;
-  if (view.mode === 'teams' && view.teamVariant === 'wall') return 1600;
+  if (view.mode === 'teams' && view.teamVariant === 'wall') return 1760;
   const alive = view.order.filter((id) => !view.players[id]?.eliminated).length;
   if (alive <= 2) return 960;
   if (alive === 3) return 1600;
-  return 1500;
+  return 1600;
 }
 
 /** World X/Z offsets for the four decorative picnic props around the felt playmat. */
@@ -353,20 +354,32 @@ export function worldOfCompanion(view: PlayerView, pid: string): [number, number
   return [world.x, 8, world.z];
 }
 
+/** World transform of the player's draw deck: always to the left of their 1st land (zone 0). */
+export function deckWorldTransform(view: PlayerView, pid: string): BoardTransform | null {
+  const lt0 = zoneWorldTransform(view, pid, 0);
+  if (!lt0) return null;
+  const pos = localToWorld(lt0, -LAND_W / 2 - 58, 12);
+  return { x: pos.x, z: pos.z, rotation: lt0.rotation };
+}
+
+/** World transform of the player's discard pile: always to the right of their 4th land (zone 3). */
+export function discardWorldTransform(view: PlayerView, pid: string): BoardTransform | null {
+  const lt3 = zoneWorldTransform(view, pid, ZONE_COUNT - 1);
+  if (!lt3) return null;
+  const pos = localToWorld(lt3, LAND_W / 2 + 58, 12);
+  return { x: pos.x, z: pos.z, rotation: lt3.rotation };
+}
+
 export function worldOfDeck(view: PlayerView, pid: string): [number, number, number] | null {
-  const transform = playerAccessoriesTransform(view, pid);
-  if (!transform) return null;
-  const local = deckLocalFor(view);
-  const world = localToWorld(transform, local[0], local[2]);
-  return [world.x, 4, world.z];
+  const t = deckWorldTransform(view, pid);
+  if (!t) return null;
+  return [t.x, 4, t.z];
 }
 
 export function worldOfDiscard(view: PlayerView, pid: string): [number, number, number] | null {
-  const transform = playerAccessoriesTransform(view, pid);
-  if (!transform) return null;
-  const local = discardLocalFor(view);
-  const world = localToWorld(transform, local[0], local[2]);
-  return [world.x, 4, world.z];
+  const t = discardWorldTransform(view, pid);
+  if (!t) return null;
+  return [t.x, 4, t.z];
 }
 
 /** Находимся ли мировые координаты указателя над моей стопкой сброса (drag & drop). */
@@ -459,7 +472,8 @@ export function cameraOrbitFor(
   }
   const alive = view.order.filter((pid) => !view.players[pid]!.eliminated).length;
   if (alive >= 3) {
-    return { angle, height: 740, radius: 860, lookOffset: 0, fov: 44 };
+    // Combat focus: frames own 4 lands + 2 bordering lands of left & right neighbors without opposite clutter
+    return { angle, height: 610, radius: 730, lookOffset: 105, fov: 44 };
   }
   return { angle, height: 540, radius: 620, lookOffset: 24, fov: 43 };
 }

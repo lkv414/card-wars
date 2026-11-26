@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { NO_RAYCAST } from './layout';
@@ -26,48 +26,57 @@ export const OOO_BACKDROPS: OooBackdrop[] = [
  */
 export function BackdropManager() {
   const { scene, invalidate } = useThree();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [nextIndex, setNextIndex] = useState(1);
-  const [fadeProgress, setFadeProgress] = useState(1); // 1 = fully current
+  const currentIndexRef = useRef(0);
+  const nextIndexRef = useRef(0);
+  const fadeProgressRef = useRef(1); // 1 = fully current
 
   const currentColor = useRef(new THREE.Color(OOO_BACKDROPS[0]!.skyColor));
-  const targetColor = useRef(new THREE.Color(OOO_BACKDROPS[0]!.skyColor));
   const currentHorizon = useRef(new THREE.Color(OOO_BACKDROPS[0]!.horizonColor));
-  const targetHorizon = useRef(new THREE.Color(OOO_BACKDROPS[0]!.horizonColor));
+  const fromScratch = useRef(new THREE.Color());
+  const toScratch = useRef(new THREE.Color());
   const domeMatRef = useRef<THREE.MeshBasicMaterial>(null);
+
+  useEffect(() => {
+    scene.background = currentColor.current;
+    invalidate();
+  }, [scene, invalidate]);
 
   // Rotate backdrops every 20 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setNextIndex((prev) => (prev + 1) % OOO_BACKDROPS.length);
-      setFadeProgress(0);
+      nextIndexRef.current = (currentIndexRef.current + 1) % OOO_BACKDROPS.length;
+      fadeProgressRef.current = 0;
+      invalidate();
     }, 20000);
     return () => clearInterval(timer);
-  }, []);
+  }, [invalidate]);
 
   useFrame((_, delta) => {
-    if (fadeProgress < 1) {
-      const nextProgress = Math.min(1, fadeProgress + delta / 2.5); // 2.5s transition
-      setFadeProgress(nextProgress);
+    if (fadeProgressRef.current < 1) {
+      const nextProgress = Math.min(1, fadeProgressRef.current + delta / 2.5); // 2.5s transition
+      fadeProgressRef.current = nextProgress;
 
-      const fromSky = new THREE.Color(OOO_BACKDROPS[currentIndex]!.skyColor);
-      const toSky = new THREE.Color(OOO_BACKDROPS[nextIndex]!.skyColor);
-      currentColor.current.copy(fromSky).lerp(toSky, nextProgress);
+      const cur = OOO_BACKDROPS[currentIndexRef.current]!;
+      const nxt = OOO_BACKDROPS[nextIndexRef.current]!;
 
-      const fromHoriz = new THREE.Color(OOO_BACKDROPS[currentIndex]!.horizonColor);
-      const toHoriz = new THREE.Color(OOO_BACKDROPS[nextIndex]!.horizonColor);
-      currentHorizon.current.copy(fromHoriz).lerp(toHoriz, nextProgress);
+      fromScratch.current.set(cur.skyColor);
+      toScratch.current.set(nxt.skyColor);
+      currentColor.current.copy(fromScratch.current).lerp(toScratch.current, nextProgress);
+
+      fromScratch.current.set(cur.horizonColor);
+      toScratch.current.set(nxt.horizonColor);
+      currentHorizon.current.copy(fromScratch.current).lerp(toScratch.current, nextProgress);
 
       if (domeMatRef.current) {
         domeMatRef.current.color.copy(currentHorizon.current);
       }
 
-      // Apply to Three.js scene background and fog
+      // Apply to Three.js scene background
       scene.background = currentColor.current;
       invalidate();
 
       if (nextProgress >= 1) {
-        setCurrentIndex(nextIndex);
+        currentIndexRef.current = nextIndexRef.current;
       }
     }
   });

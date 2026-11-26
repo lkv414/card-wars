@@ -9,7 +9,7 @@ import { setConnectionSink, useGame } from '../../store';
 // урон, чтобы проверять кучку жетонов (падение, 1+1 → 3). Не для партии.
 
 const firstOf = (type: string, index = 0): string =>
-  catalog.filter((c) => c.type === type)[index]?.id ?? 'bmo_card_1';
+  catalog.filter((c) => c.type === type)[index]?.id ?? catalog[0]?.id ?? '';
 
 function cardView(instanceId: string, cardId: string, damage = 0, flipped = false): CardView {
   const meta = catalog.find((c) => c.id === cardId);
@@ -89,8 +89,8 @@ function buildView(): PlayerView {
     order: ['p1', 'p2'],
     me: 'p1',
     players: {
-      p1: player('p1', 'Я (мок)', 'hero_bmo', 2, 1),
-      p2: player('p2', 'Соперник (мок)', 'hero_billy', 3, 0),
+      p1: player('p1', 'Я (мок)', 'bmo-f0dc351', 2, 1),
+      p2: player('p2', 'Соперник (мок)', 'billy-eebb206', 3, 0),
     },
     myHand: hand,
     castSpells: [],

@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PlayerView } from '@card-wars/protocol';
-import { sendCommand, setUi, snapCameraPlayer, toggleHandCollapsed, toggleWatchMode, useGame } from '../../store';
+import { sendCommand, setUi, toggleHandCollapsed, useGame } from '../../store';
 import { pick, startForPending } from '../targeting';
 import { heroes as heroCatalog } from '@card-wars/content';
 import { cards as catalog } from '@card-wars/content';
 import { CardZoomModal } from './CardZoomModal';
-import { CardInspector } from './CardInspector';
-import { HudSidebar } from './HudSidebar';
 import {
   MatchFinishOverlay,
   OrientationGate,
@@ -16,39 +14,13 @@ import {
 export function Hud({ code }: { code: string }) {
   const view = useGame((s) => s.view)!;
   const error = useGame((s) => s.error);
-  const journalOpen = useGame((s) => s.ui.journalOpen);
   const unfreezePrompt = useGame((s) => s.ui.unfreezePrompt);
   const handCollapsed = useGame((s) => s.ui.handCollapsed);
-  const watchMode = useGame((s) => s.ui.watchMode);
   const me = view.players[view.me]!;
   // Match-start word choice — boundaries live in the hero's catalog data (docs §H7).
   const wordSetup = heroCatalog.find((h) => h.id === me.heroId)?.wordSetup;
   const targeting = useGame((st) => st.ui.targeting);
   const activeEmote = useGame((st) => st.ui.activeEmote);
-
-  const [isHurryPulsing, setIsHurryPulsing] = useState(false);
-  const triggerHurryPulse = () => {
-    setIsHurryPulsing(true);
-    setTimeout(() => setIsHurryPulsing(false), 1600);
-  };
-
-  const [lastReadJournalLen, setLastReadJournalLen] = useState(() => view.journal.length);
-  const unreadCount = journalOpen ? 0 : Math.max(0, view.journal.length - lastReadJournalLen);
-
-  useEffect(() => {
-    if (journalOpen) {
-      setLastReadJournalLen(view.journal.length);
-    }
-  }, [journalOpen, view.journal.length]);
-
-  const toggleJournal = () => {
-    if (!journalOpen) {
-      setLastReadJournalLen(view.journal.length);
-      setUi({ journalOpen: true });
-    } else {
-      setUi({ journalOpen: false });
-    }
-  };
 
   useEffect(() => {
     const ui = useGame.getState().ui;
@@ -115,9 +87,9 @@ export function Hud({ code }: { code: string }) {
     if (currentAsk.kind === 'opponent_player') {
       const opponents = view.order.filter((pid) => {
         if (pid === view.me) return false;
-        const me = view.players[view.me];
+        const mePlayer = view.players[view.me];
         const other = view.players[pid];
-        if (me?.teamId && other?.teamId === me.teamId) return false;
+        if (mePlayer?.teamId && other?.teamId === mePlayer.teamId) return false;
         return true;
       });
       return (
@@ -237,7 +209,7 @@ export function Hud({ code }: { code: string }) {
             {pool.cards.map((card) => (
               <button
                 key={card.instanceId}
-                className="mini revealed-card"
+                className="revealed-card cw-btn-3d btn-paper btn-sm"
                 onClick={() => targetingPick({ kind: 'card', instanceId: card.instanceId })}
               >
                 {cardNameById(card.cardId)}
@@ -271,7 +243,7 @@ export function Hud({ code }: { code: string }) {
             aria-label="Число"
           />
           <button
-            className="mini"
+            className="cw-btn-3d btn-green btn-sm"
             disabled={amountInput === '' || !Number.isInteger(value) || value < min || value > max}
             onClick={() => {
               submitChoice({ kind: 'amount', value });
@@ -288,7 +260,11 @@ export function Hud({ code }: { code: string }) {
         <span className="revealed-pool">
           <span className="hint">{currentAsk.label ?? 'Выберите'}: </span>
           {(currentAsk.options ?? []).map((option) => (
-            <button key={option} className="mini" onClick={() => submitChoice({ kind: 'option', option })}>
+            <button
+              key={option}
+              className="cw-btn-3d btn-paper btn-sm"
+              onClick={() => submitChoice({ kind: 'option', option })}
+            >
               {OPTION_LABELS[option] ?? option}
             </button>
           ))}
@@ -334,7 +310,7 @@ export function Hud({ code }: { code: string }) {
             </label>
           ))}
           <button
-            className="mini"
+            className="cw-btn-3d btn-green btn-sm"
             disabled={!valid}
             onClick={() => {
               submitChoice({ kind: 'amounts', values: numbers });
@@ -350,30 +326,23 @@ export function Hud({ code }: { code: string }) {
   })();
 
   return (
-    <>
-      <div className="hud hud-viewport-overlay">
-
-
-
-
-
-
-        {/* Comic speech bubble for taunts / emotes */}
-        {activeEmote && (
-          <div className="hud-emote-bubble" role="status" aria-live="polite">
-            <span className="hud-emote-emoji">{activeEmote.emoji || '💬'}</span>
-            <div className="hud-emote-text-group">
-              <span className="hud-emote-sender">{activeEmote.sender}</span>
-              <span className="hud-emote-message">«{activeEmote.text}»</span>
-            </div>
+    <div className="hud hud-viewport-overlay">
+      {/* Comic speech bubble for taunts / emotes */}
+      {activeEmote && (
+        <div className="hud-emote-bubble" role="status" aria-live="polite">
+          <span className="hud-emote-emoji">{activeEmote.emoji || '💬'}</span>
+          <div className="hud-emote-text-group">
+            <span className="hud-emote-sender">{activeEmote.sender}</span>
+            <span className="hud-emote-message">«{activeEmote.text}»</span>
           </div>
-        )}
+        </div>
+      )}
 
       {error && <div className="error-line hud-error">{error.message}</div>}
 
       {/* Границы слова — данные героя (wordSetup, docs §H7); имён героев в клиенте нет. */}
       {view.status === 'running' && wordSetup && !view.myWord && (
-        <div className="pending-banner">
+        <div className="pending-banner cw-felt-box">
           <span>{wordSetup.label ?? `Выбери слово (от ${wordSetup.min} букв) для способности героя:`}</span>
           <input
             value={wordInput}
@@ -382,7 +351,7 @@ export function Hud({ code }: { code: string }) {
             aria-label="Слово героя"
           />
           <button
-            className="mini"
+            className="cw-btn-3d btn-green btn-sm"
             disabled={wordInput.trim().length < wordSetup.min}
             onClick={() => sendCommand({ type: 'choose_word', player: view.me, word: wordInput.trim() })}
           >
@@ -392,7 +361,7 @@ export function Hud({ code }: { code: string }) {
       )}
 
       {targeting && targeting.mode === 'active' && (
-        <div className="pending-banner">
+        <div className="pending-banner cw-felt-box">
           <span>
             {targeting.label} — цель {targeting.askIndex + 1}/{targeting.asks.length}
           </span>
@@ -403,8 +372,9 @@ export function Hud({ code }: { code: string }) {
           </button>
         </div>
       )}
+
       {view.pending && (
-        <div className="pending-banner">
+        <div className="pending-banner cw-felt-box">
           {pendingSourceInfo && (
             <div className="pending-ability-desc">
               <b>«{pendingSourceInfo.name}»</b>
@@ -457,10 +427,16 @@ export function Hud({ code }: { code: string }) {
                   if (askKind !== 'heal_or_damage') return null;
                   return (
                     <>
-                      <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'heal' })}>
+                      <button
+                        className="cw-btn-3d btn-green btn-sm"
+                        onClick={() => targetingPick({ kind: 'mode', mode: 'heal' })}
+                      >
                         Восстанови
                       </button>
-                      <button className="mini" onClick={() => targetingPick({ kind: 'mode', mode: 'damage' })}>
+                      <button
+                        className="cw-btn-3d btn-dark btn-sm"
+                        onClick={() => targetingPick({ kind: 'mode', mode: 'damage' })}
+                      >
                         Нанеси урон
                       </button>
                     </>
@@ -483,7 +459,7 @@ export function Hud({ code }: { code: string }) {
                 view.pending?.player === view.me ? (
                   <button
                     key={card.instanceId}
-                    className="mini revealed-card"
+                    className="revealed-card cw-btn-3d btn-paper btn-sm"
                     onClick={() =>
                       sendCommand({
                         type: 'resolve_choice',
@@ -505,10 +481,6 @@ export function Hud({ code }: { code: string }) {
         </div>
       )}
 
-
-
-
-
       {view.status === 'finished' && (
         <MatchFinishOverlay view={view} code={code} />
       )}
@@ -521,33 +493,11 @@ export function Hud({ code }: { code: string }) {
         />
       )}
 
-      {/* Быстрое управление камерой: возврат «К себе» и режим «Следить за боем» */}
-      {view.status === 'running' && (
-        <div className="hud-floating-camera-bar">
-          <button
-            className="hud-quick-cam-btn"
-            onClick={() => snapCameraPlayer(view.me)}
-            title="Вернуть камеру к своему полю (Space)"
-          >
-            <span className="btn-icon">👤</span>
-            <span className="btn-label">К себе</span>
-          </button>
-          <button
-            className={`hud-quick-cam-btn ${watchMode ? 'active' : ''}`}
-            onClick={toggleWatchMode}
-            title="Следить за активным игроком (V)"
-          >
-            <span className="btn-icon">👁️</span>
-            <span className="btn-label">{watchMode ? 'Слежение: вкл' : 'Следить'}</span>
-          </button>
-        </div>
-      )}
-
       {/* Кнопка сворачивания/разворачивания руки */}
       {view.status === 'running' && view.myHand.length > 0 && (
-        <div className="hud-hand-control-overlay">
+        <div className={`hud-hand-control-overlay ${handCollapsed ? 'is-collapsed' : ''}`}>
           <button
-            className={`hud-hand-toggle-btn ${handCollapsed ? 'collapsed' : ''}`}
+            className={`hud-hand-toggle-btn cw-btn-3d btn-paper btn-sm ${handCollapsed ? 'collapsed' : ''}`}
             onClick={toggleHandCollapsed}
             title="Скрыть/показать карты руки (H)"
           >
@@ -558,20 +508,8 @@ export function Hud({ code }: { code: string }) {
       )}
 
       <OrientationGate />
-      <CardInspector />
       <CardZoomModal />
     </div>
-
-    <HudSidebar
-      code={code}
-      view={view}
-      unreadCount={unreadCount}
-      journalOpen={journalOpen}
-      onToggleJournal={toggleJournal}
-      isHurryPulsing={isHurryPulsing}
-      onHurryPulse={triggerHurryPulse}
-    />
-  </>
   );
 }
 
@@ -584,68 +522,99 @@ function UnfreezeDialog({
   view: PlayerView;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const pointerDownOutsideRef = useRef(false);
+
   const playedCard = view.myHand.find((c) => c.instanceId === prompt.instanceId);
   const playedMeta = playedCard ? catalog.find((c) => c.id === playedCard.cardId) : undefined;
   const otherCards = view.myHand.filter((c) => c.instanceId !== prompt.instanceId);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+    const el = dialogRef.current;
+    if (el && !el.open) {
+      el.showModal();
+    }
+  }, []);
+
+  const isOutsideDialog = (e: React.PointerEvent<HTMLDialogElement>) => {
+    const el = dialogRef.current;
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return (
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+    );
+  };
 
   return (
-    <div className="overlay unfreeze-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="panel unfreeze-dialog" onClick={(e) => e.stopPropagation()}>
-        <h2>❄ Разморозка земли</h2>
-        <p className="hint">
-          Земля в <b>зоне {prompt.zone + 1}</b> заморожена. Чтобы разыграть{' '}
-          <b>«{playedMeta?.name ?? 'карту'}»</b>, выберите карту из руки для сброса:
-        </p>
-        <div className="unfreeze-card-list">
-          {otherCards.map((card) => {
-            const meta = catalog.find((c) => c.id === card.cardId);
-            return (
-              <button
-                key={card.instanceId}
-                className="unfreeze-card-btn"
-                onClick={() => {
-                  sendCommand({
-                    type: 'play_card',
-                    player: view.me,
-                    instanceId: prompt.instanceId,
-                    zone: prompt.zone,
-                    unfreezeWith: card.instanceId,
-                  });
-                  onClose();
-                }}
-              >
-                <div className="unfreeze-card-title">{meta?.name ?? card.cardId}</div>
-                <div className="unfreeze-card-meta">
-                  {meta?.type === 'creature' ? 'Существо' : meta?.type === 'building' ? 'Строение' : 'Карта'} · Стоимость: {meta?.cost ?? 0}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        <div className="row" style={{ marginTop: 14 }}>
-          <button className="secondary" onClick={onClose}>
-            Отмена
-          </button>
-        </div>
+    <dialog
+      ref={dialogRef}
+      className="cw-dialog cw-felt-box unfreeze-dialog"
+      aria-labelledby="unfreeze-title"
+      onClose={onClose}
+      onPointerDown={(e) => {
+        pointerDownOutsideRef.current = e.target === dialogRef.current && isOutsideDialog(e);
+      }}
+      onPointerUp={(e) => {
+        if (pointerDownOutsideRef.current && e.target === dialogRef.current && isOutsideDialog(e)) {
+          onClose();
+        }
+        pointerDownOutsideRef.current = false;
+      }}
+      {...({ closedby: 'any' } as Record<string, string>)}
+    >
+      <div className="cw-dialog__head">
+        <h2 id="unfreeze-title" className="cw-ink-title">
+          ❄ Разморозка земли
+        </h2>
+        <button
+          type="button"
+          className="cw-dialog__close cw-btn-3d btn-dark btn-sm"
+          onClick={onClose}
+          aria-label="Закрыть"
+        >
+          ✕
+        </button>
       </div>
-    </div>
+      <p className="hint">
+        Земля в <b>зоне {prompt.zone + 1}</b> заморожена. Чтобы разыграть{' '}
+        <b>«{playedMeta?.name ?? 'карту'}»</b>, выберите карту из руки для сброса:
+      </p>
+      <div className="unfreeze-card-list">
+        {otherCards.map((card) => {
+          const meta = catalog.find((c) => c.id === card.cardId);
+          return (
+            <button
+              key={card.instanceId}
+              className="unfreeze-card-btn cw-btn-3d btn-paper btn-sm btn-block"
+              onClick={() => {
+                sendCommand({
+                  type: 'play_card',
+                  player: view.me,
+                  instanceId: prompt.instanceId,
+                  zone: prompt.zone,
+                  unfreezeWith: card.instanceId,
+                });
+                onClose();
+              }}
+            >
+              <div className="unfreeze-card-title">{meta?.name ?? card.cardId}</div>
+              <div className="unfreeze-card-meta">
+                {meta?.type === 'creature' ? 'Существо' : meta?.type === 'building' ? 'Строение' : 'Карта'} · Стоимость: {meta?.cost ?? 0}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      <div className="row" style={{ marginTop: 14 }}>
+        <button type="button" className="cw-btn-3d btn-dark btn-sm" onClick={onClose}>
+          Отмена
+        </button>
+      </div>
+    </dialog>
   );
-}
-
-function won(view: NonNullable<ReturnType<typeof useGame.getState>['view']>): boolean {
-  if (view.winners?.includes(view.me)) return true;
-  const teamId = view.players[view.me]?.teamId;
-  if (!teamId) return false;
-  const team = view.teams?.[teamId];
-  return Boolean(team && team.playerIds.some((pid) => view.winners?.includes(pid)));
 }
 
 /** RU labels for named branches declared in mechanics data (docs §H1). */
@@ -667,5 +636,3 @@ const OPTION_LABELS: Record<string, string> = {
   keep: 'Оставить',
   discard: 'Сбросить',
 };
-
-

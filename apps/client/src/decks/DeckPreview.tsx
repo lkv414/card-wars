@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { catalog, cards, heroes, type CardData, type LandType } from '@card-wars/content';
 import { computeZoomOrigin } from './cardZoom';
-import { LAND_META, landImageUrl } from './landImages';
+import { LAND_META, resolveLandImageUrl } from './landImages';
 
 const cardById = new Map(cards.map((c) => [c.id, c]));
 const TARGET_ZOOM_WIDTH_PX = 224;
@@ -19,6 +19,7 @@ function applyDynamicZoom(slotEl: HTMLElement) {
 export interface DeckPreviewData {
   heroId: string;
   lands: string[];
+  landIds?: (string | null)[];
   cards: string[];
 }
 
@@ -117,9 +118,8 @@ export function DeckPreview({
             const meta = LAND_META[landType as LandType] ?? {
               label: landType,
               shortLabel: landType,
-              prefix: null,
             };
-            const imgUrl = landImageUrl(landType as LandType, idx + 1);
+            const imgUrl = resolveLandImageUrl(landType as LandType, deck.landIds?.[idx], idx + 1);
             return (
               <div
                 key={idx}

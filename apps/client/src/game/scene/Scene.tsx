@@ -10,7 +10,7 @@ import {
   toggleWatchMode,
   useGame,
 } from '../../store';
-import { NO_RAYCAST, boardTransform, cameraTurnEase } from './layout';
+import { boardTransform, cameraTurnEase } from './layout';
 import { PlayerBoard } from './PlayerBoard';
 import { Hand } from './Hand';
 import { AnimDriver, AnimLayer, hasActiveAnims } from './AnimLayer';
@@ -152,6 +152,7 @@ function CameraRig() {
   const view = useGame((s) => s.view);
   const cameraMode = useGame((s) => s.ui.cameraMode);
   const cameraSnap = useGame((s) => s.ui.cameraSnap);
+  const watchMode = useGame((s) => s.ui.watchMode);
   const { camera, gl, size, invalidate } = useThree();
 
   const currentAngleRef = useRef<number | null>(null);
@@ -354,7 +355,7 @@ function CameraRig() {
   useEffect(() => {
     if (!view) return;
     const aspect = size.width / Math.max(1, size.height);
-    const watch = useGame.getState().ui.watchMode;
+    const watch = watchMode;
     const activePid = view.activePlayer ?? view.activePlayers[0];
     const targetPid = watch && activePid ? activePid : resolveTargetPlayer(view, cameraMode, cameraSnap);
     const isTop = isTopSnap(cameraSnap, cameraMode);
@@ -406,7 +407,7 @@ function CameraRig() {
       applyCameraPose(currentAngleRef.current, currentURef.current);
       invalidate();
     }
-  }, [view, cameraMode, cameraSnap, size.width, size.height, invalidate]);
+  }, [view, cameraMode, cameraSnap, watchMode, size.width, size.height, invalidate]);
 
   // Interpolate camera pose frame by frame during transition & apply Camera Trauma
   useFrame((state, delta) => {

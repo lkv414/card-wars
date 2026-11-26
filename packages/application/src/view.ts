@@ -7,6 +7,8 @@ export interface ViewOptions {
   journal?: string[];
   /** Live connection flags maintained by the Room; defaults to true. */
   connected?: Record<PlayerId, boolean>;
+  /** Optional catalog land art IDs chosen by each player during deck building. */
+  landIds?: Record<PlayerId, (string | null)[]>;
 }
 
 function cardView(
@@ -81,7 +83,16 @@ export function viewFor(
       maxLives: p.maxLives,
       actions: p.actions,
       connected: options.connected?.[pid] ?? true,
-      lands: p.lands.map((land) => ({ type: land.type, frozen: land.frozen, flipped: land.flipped, iceTokens: land.iceTokens })),
+      lands: p.lands.map((land, i) => {
+        const artId = land.originalType === undefined ? options.landIds?.[pid]?.[i] ?? undefined : undefined;
+        return {
+          type: land.type,
+          frozen: land.frozen,
+          flipped: land.flipped,
+          iceTokens: land.iceTokens,
+          ...(artId ? { artId } : {}),
+        };
+      }),
       zones: p.zones.map((zone) => ({
         creature: zone.creature ? cardView(deps, state, zone.creature) : null,
         building: zone.building ? cardView(deps, state, zone.building) : null,

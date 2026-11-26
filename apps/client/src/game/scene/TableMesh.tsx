@@ -1,16 +1,20 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { NO_RAYCAST } from './layout';
+import { NO_RAYCAST, picnicPropOffsetsFor, playmatSizeFor } from './layout';
+import { useGame } from '../../store';
+
+type PropType = 'soda' | 'chips' | 'mug' | 'snail';
 
 let cachedWoodTexture: THREE.CanvasTexture | null = null;
 let cachedFeltTexture: THREE.CanvasTexture | null = null;
+const propCache = new Map<PropType, THREE.CanvasTexture>();
 
 function getFeltMatTexture(): THREE.CanvasTexture {
   if (cachedFeltTexture) return cachedFeltTexture;
 
   const canvas = document.createElement('canvas');
   canvas.width = 1024;
-  canvas.height = 640;
+  canvas.height = 1024;
   const ctx = canvas.getContext('2d')!;
 
   // Green felt base with rounded corners
@@ -19,7 +23,29 @@ function getFeltMatTexture(): THREE.CanvasTexture {
   ctx.roundRect(12, 12, canvas.width - 24, canvas.height - 24, 28);
   ctx.fill();
 
+  // Subtle woven cross-hatch fabric grain clipped inside felt
+  ctx.save();
+  ctx.clip();
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.035)';
+  for (let i = 12; i < canvas.width - 12; i += 8) {
+    ctx.beginPath();
+    ctx.moveTo(i, 12);
+    ctx.lineTo(i, canvas.height - 12);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.04)';
+  for (let j = 12; j < canvas.height - 12; j += 8) {
+    ctx.beginPath();
+    ctx.moveTo(12, j);
+    ctx.lineTo(canvas.width - 12, j);
+    ctx.stroke();
+  }
+  ctx.restore();
+
   // Dark ink border
+  ctx.beginPath();
+  ctx.roundRect(12, 12, canvas.width - 24, canvas.height - 24, 28);
   ctx.lineWidth = 6;
   ctx.strokeStyle = '#3b2921';
   ctx.stroke();
@@ -29,10 +55,11 @@ function getFeltMatTexture(): THREE.CanvasTexture {
   ctx.strokeStyle = 'rgba(179, 204, 163, 0.9)';
   ctx.setLineDash([16, 12]);
   ctx.beginPath();
-  ctx.roundRect(28, 28, canvas.width - 56, canvas.height - 56, 20);
+  ctx.roundRect(28, 28, 968, 968, 22);
   ctx.stroke();
 
   const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
   texture.generateMipmaps = true;
   cachedFeltTexture = texture;
   return texture;
@@ -83,6 +110,7 @@ function getWoodTableTexture(): THREE.CanvasTexture {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(3, 3);
@@ -90,7 +118,10 @@ function getWoodTableTexture(): THREE.CanvasTexture {
   return texture;
 }
 
-function createPropTexture(type: 'soda' | 'chips' | 'mug' | 'snail'): THREE.CanvasTexture {
+function createPropTexture(type: PropType): THREE.CanvasTexture {
+  const cached = propCache.get(type);
+  if (cached) return cached;
+
   const canvas = document.createElement('canvas');
   canvas.width = 128;
   canvas.height = 128;
@@ -193,7 +224,9 @@ function createPropTexture(type: 'soda' | 'chips' | 'mug' | 'snail'): THREE.Canv
   }
 
   const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
   texture.generateMipmaps = true;
+  propCache.set(type, texture);
   return texture;
 }
 
@@ -202,6 +235,9 @@ function createPropTexture(type: 'soda' | 'chips' | 'mug' | 'snail'): THREE.Canv
  * (docs/AUDIT-KIBERBUS-UIUX.md §1, §3.2, §8 Этап 4).
  */
 export function TableMesh() {
+  const matSize = useGame((s) => playmatSizeFor(s.view));
+  const { x: propX, z: propZ } = picnicPropOffsetsFor(matSize);
+
   const woodTexture = useMemo(() => getWoodTableTexture(), []);
   const feltTexture = useMemo(() => getFeltMatTexture(), []);
   const sodaTexture = useMemo(() => createPropTexture('soda'), []);
@@ -219,13 +255,13 @@ export function TableMesh() {
 
       {/* Craft Stitched Green Felt Playmat Mat enclosing card lanes & decks */}
       <mesh position={[0, -1, 0]} receiveShadow>
-        <boxGeometry args={[1060, 2, 640]} />
+        <boxGeometry args={[matSize, 2, matSize]} />
         <meshLambertMaterial map={feltTexture} transparent />
       </mesh>
 
       {/* Picnic Props positioned at table corners/perimeters outside card lanes */}
       {/* Total Soda Can - Top Left */}
-      <group position={[-560, 32, -260]}>
+      <group position={[-propX, 32, -propZ]}>
         <mesh rotation={[-Math.PI / 4, 0, 0]}>
           <planeGeometry args={[70, 70]} />
           <meshBasicMaterial map={sodaTexture} transparent side={THREE.DoubleSide} />
@@ -233,7 +269,7 @@ export function TableMesh() {
       </group>
 
       {/* Crunch Chips Bag - Bottom Left */}
-      <group position={[-560, 32, 260]}>
+      <group position={[-propX, 32, propZ]}>
         <mesh rotation={[-Math.PI / 4, 0, 0]}>
           <planeGeometry args={[75, 75]} />
           <meshBasicMaterial map={chipsTexture} transparent side={THREE.DoubleSide} />
@@ -241,7 +277,7 @@ export function TableMesh() {
       </group>
 
       {/* Cool Guy Mug - Top Right */}
-      <group position={[560, 32, -260]}>
+      <group position={[propX, 32, -propZ]}>
         <mesh rotation={[-Math.PI / 4, 0, 0]}>
           <planeGeometry args={[72, 72]} />
           <meshBasicMaterial map={mugTexture} transparent side={THREE.DoubleSide} />
@@ -249,7 +285,7 @@ export function TableMesh() {
       </group>
 
       {/* Waving Snail Easter Egg - Bottom Right Corner */}
-      <group position={[560, 28, 260]}>
+      <group position={[propX, 28, propZ]}>
         <mesh rotation={[-Math.PI / 4, 0, 0]}>
           <planeGeometry args={[65, 65]} />
           <meshBasicMaterial map={snailTexture} transparent side={THREE.DoubleSide} />

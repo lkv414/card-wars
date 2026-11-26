@@ -806,6 +806,7 @@ export class Room extends DurableObject {
             ? {
                 heroId: s.deck.heroId,
                 lands: [...s.deck.lands],
+                ...(s.deck.landIds ? { landIds: [...s.deck.landIds] } : {}),
                 cards: [...s.deck.cards],
               }
             : null,
@@ -881,9 +882,14 @@ export class Room extends DurableObject {
 
   private sendSnapshotTo(ws: WebSocket, state: RoomState, playerId: string): void {
     if (!state.match) return;
+    const landIds: Record<string, (string | null)[]> = {};
+    for (const s of state.sessions) {
+      if (s.deck?.landIds) landIds[s.playerId] = s.deck.landIds;
+    }
     const view = viewFor(domainDeps, state.match, playerId, {
       journal: state.journal,
       connected: this.connectedMap(state),
+      landIds,
     });
     this.sendTo(ws, { t: 'snapshot', view, timer: this.timerInfo(state, Date.now()) });
   }

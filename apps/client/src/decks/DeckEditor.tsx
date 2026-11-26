@@ -10,16 +10,17 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { CONFIG } from '@card-wars/protocol';
-import { LAND_TYPES, cards, heroes, type CardData, type LandType } from '@card-wars/content';
+import { LAND_TYPES, PLAYABLE_LAND_TYPES, cards, heroes, type CardData, type LandType } from '@card-wars/content';
 import {
   generateRandomDeck,
+  isPlayableLandType,
   loadFavorites,
   saveFavorites,
   validateSavedDeck,
   type SavedDeck,
 } from '../decks';
 import { CATALOG_ZOOM_SCALE, DECK_ZOOM_SCALE, computeZoomOrigin } from './cardZoom';
-import { LAND_META, landImageUrl } from './landImages';
+import { LAND_META, getLandArts, resolveLandImageUrl } from './landImages';
 
 export type SortBy = 'default' | 'cost' | 'name' | 'type' | 'attack' | 'defense';
 export type CostFilter = 'all' | '0' | '1' | '2' | '3+';
@@ -66,6 +67,11 @@ function hasFloop(card: CardData): boolean {
   return /при[её]м|флюп|floop/i.test(card.description);
 }
 
+function isPointerOutside(e: ReactPointerEvent<HTMLDialogElement>): boolean {
+  const rect = e.currentTarget.getBoundingClientRect();
+  return e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom;
+}
+
 const cardById = new Map(cards.map((c) => [c.id, c]));
 
 export const DEFAULT_EDITOR_DRAFT_KEY = 'cw-editor-draft';
@@ -82,11 +88,19 @@ export function loadEditorDraft(storageKey = DEFAULT_EDITOR_DRAFT_KEY): SavedDec
       Array.isArray(parsed?.lands) &&
       Array.isArray(parsed?.cards)
     ) {
+      const lands = (parsed.lands as LandType[]).map((l) => (l === 'rainbow' ? 'blue' : l));
+      const landIds = Array.isArray(parsed.landIds)
+        ? lands.map((_, i) => {
+            const id = parsed.landIds?.[i];
+            return typeof id === 'string' ? id : null;
+          })
+        : undefined;
       return {
         id: parsed.id,
         name: parsed.name,
         heroId: parsed.heroId,
-        lands: parsed.lands as LandType[],
+        lands,
+        ...(landIds ? { landIds } : {}),
         cards: parsed.cards as string[],
       };
     }
@@ -115,11 +129,16 @@ export function DeckEditor({
   onClose: () => void;
   storageKey?: string;
 }) {
-  const [draft, setDraft] = useState<SavedDeck>(() => ({
-    ...deck,
-    lands: [...deck.lands],
-    cards: [...deck.cards],
-  }));
+  const [draft, setDraft] = useState<SavedDeck>(() => {
+    const lands = deck.lands.map((l) => (l === 'rainbow' ? 'blue' : l));
+    const landIds = Array.from({ length: Math.max(lands.length, CONFIG.landsPerPlayer) }, (_, i) => deck.landIds?.[i] ?? null);
+    return {
+      ...deck,
+      lands,
+      landIds,
+      cards: [...deck.cards],
+    };
+  });
 
   useEffect(() => {
     try {
@@ -158,7 +177,10 @@ export function DeckEditor({
   });
 
   // UI modals and drawers
+  const [heroPickerOpen, setHeroPickerOpen] = useState(false);
+  const [heroSearch, setHeroSearch] = useState('');
   const [openLandSlot, setOpenLandSlot] = useState<number | null>(null);
+  const [activeLandTab, setActiveLandTab] = useState<Exclude<LandType, 'rainbow'>>('blue');
   const [dragLandSlot, setDragLandSlot] = useState<number | null>(null);
   const [dragOverLandSlot, setDragOverLandSlot] = useState<number | null>(null);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);
@@ -168,6 +190,15 @@ export function DeckEditor({
   const [confirmReroll, setConfirmReroll] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimerRef = useRef<number | null>(null);
+
+  const heroDialogRef = useRef<HTMLDialogElement | null>(null);
+  const landDialogRef = useRef<HTMLDialogElement | null>(null);
+  const clearDialogRef = useRef<HTMLDialogElement | null>(null);
+  const rerollDialogRef = useRef<HTMLDialogElement | null>(null);
+  const heroOutsideRef = useRef(false);
+  const landOutsideRef = useRef(false);
+  const clearOutsideRef = useRef(false);
+  const rerollOutsideRef = useRef(false);
 
   const catalogScrollRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -187,22 +218,51 @@ export function DeckEditor({
     };
   }, []);
 
-  // Keyboard navigation: Escape key closes active drawers, pickers, and modals
+  // Sync native <dialog> modals
+  useEffect(() => {
+    const dialog = heroDialogRef.current;
+    if (!dialog) return;
+    if (heroPickerOpen) {
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      dialog.close();
+    }
+  }, [heroPickerOpen]);
+
+  useEffect(() => {
+    const dialog = landDialogRef.current;
+    if (!dialog) return;
+    if (openLandSlot !== null) {
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      dialog.close();
+    }
+  }, [openLandSlot]);
+
+  useEffect(() => {
+    const dialog = clearDialogRef.current;
+    if (!dialog) return;
+    if (confirmClear) {
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      dialog.close();
+    }
+  }, [confirmClear]);
+
+  useEffect(() => {
+    const dialog = rerollDialogRef.current;
+    if (!dialog) return;
+    if (confirmReroll) {
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      dialog.close();
+    }
+  }, [confirmReroll]);
+
+  // Keyboard navigation: Escape key closes active mobile drawers/menus (native <dialog> handles its own Esc)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (confirmClear) {
-          setConfirmClear(false);
-          return;
-        }
-        if (confirmReroll) {
-          setConfirmReroll(false);
-          return;
-        }
-        if (openLandSlot !== null) {
-          setOpenLandSlot(null);
-          return;
-        }
         if (drawerLeftOpen) {
           setDrawerLeftOpen(false);
           return;
@@ -219,10 +279,16 @@ export function DeckEditor({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [confirmClear, confirmReroll, openLandSlot, drawerLeftOpen, drawerRightOpen, landsMenuOpen]);
+  }, [drawerLeftOpen, drawerRightOpen, landsMenuOpen]);
 
   const errors = validateSavedDeck(draft);
   const hero = heroes.find((h) => h.id === draft.heroId) ?? heroes[0];
+
+  const filteredHeroes = useMemo(() => {
+    const q = heroSearch.trim().toLowerCase();
+    if (!q) return heroes;
+    return heroes.filter((item) => `${item.name} ${item.text ?? ''}`.toLowerCase().includes(q));
+  }, [heroSearch]);
 
   const counts = useMemo(() => {
     const map = new Map<string, number>();
@@ -376,7 +442,6 @@ export function DeckEditor({
   const visibleCards = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
 
   // Dual pagination trigger: direct scroll listener + IntersectionObserver
-  // Catches rapid mouse wheel/touch flicks synchronously without waiting for throttled observer
   useEffect(() => {
     const sentinel = sentinelRef.current;
     const scrollEl = catalogScrollRef.current;
@@ -412,9 +477,8 @@ export function DeckEditor({
     };
   }, [filtered.length, visibleCount]);
 
-  // Proactive image preloading: immediately prefetch upcoming chunk, and stream prefetch the rest in background
+  // Proactive image preloading
   useEffect(() => {
-    // 1. Immediately prefetch first 240 cards
     const immediateBatch = filtered.slice(0, Math.min(filtered.length, 240));
     for (const card of immediateBatch) {
       if (card.image) {
@@ -423,7 +487,6 @@ export function DeckEditor({
       }
     }
 
-    // 2. Incrementally preload all remaining cards during idle time
     let cancelled = false;
     let idx = 240;
     const preloadChunk = () => {
@@ -494,11 +557,13 @@ export function DeckEditor({
     });
   }, []);
 
-  const setLand = useCallback((index: number, type: LandType) => {
+  const setLandArt = useCallback((index: number, type: Exclude<LandType, 'rainbow'>, artId: string) => {
     setDraft((d) => {
       const lands = [...d.lands];
       lands[index] = type;
-      return { ...d, lands };
+      const landIds = Array.from({ length: CONFIG.landsPerPlayer }, (_, i) => d.landIds?.[i] ?? null);
+      landIds[index] = artId;
+      return { ...d, lands, landIds };
     });
     setOpenLandSlot(null);
   }, []);
@@ -507,28 +572,18 @@ export function DeckEditor({
     if (fromIndex === toIndex) return;
     setDraft((d) => {
       const lands = [...d.lands];
-      const temp = lands[fromIndex]!;
+      const tempLand = lands[fromIndex]!;
       lands[fromIndex] = lands[toIndex]!;
-      lands[toIndex] = temp;
-      return { ...d, lands };
+      lands[toIndex] = tempLand;
+
+      const landIds = Array.from({ length: CONFIG.landsPerPlayer }, (_, i) => d.landIds?.[i] ?? null);
+      const tempId = landIds[fromIndex] ?? null;
+      landIds[fromIndex] = landIds[toIndex] ?? null;
+      landIds[toIndex] = tempId;
+
+      return { ...d, lands, landIds };
     });
   }, []);
-
-  // Tap-to-swap lands on mobile & touch: tapping slot A then slot B swaps them
-  const handleLandSlotClick = useCallback(
-    (slotIndex: number) => {
-      if (openLandSlot === null) {
-        setOpenLandSlot(slotIndex);
-      } else if (openLandSlot === slotIndex) {
-        setOpenLandSlot(null);
-      } else {
-        swapLands(openLandSlot, slotIndex);
-        showToast(`Земли #${openLandSlot + 1} и #${slotIndex + 1} поменялись местами`);
-        setOpenLandSlot(null);
-      }
-    },
-    [openLandSlot, swapLands, showToast],
-  );
 
   // Random deck fill ("Случайный набор")
   const handleRandomFill = useCallback(() => {
@@ -565,10 +620,11 @@ export function DeckEditor({
       name: draft.name.trim(),
       cards: [...draft.cards],
       lands: [...draft.lands],
+      landIds: Array.from({ length: draft.lands.length }, (_, i) => draft.landIds?.[i] ?? null),
     });
   }, [draft, errors, onSave, showToast]);
 
-  // Compute land variant numbers (1..4) so duplicate land types show distinct artwork scans.
+  // Compute land variant numbers (1..4) so duplicate land types show distinct artwork scans by default.
   const landVariants = useMemo(() => {
     const seen = new Map<LandType, number>();
     return draft.lands.map((type) => {
@@ -606,6 +662,7 @@ export function DeckEditor({
   }, [draft.cards]);
 
   const isDeckFull = draft.cards.length === CONFIG.deckSize;
+  const landArtsForTab = useMemo(() => getLandArts(activeLandTab), [activeLandTab]);
 
   return (
     <main className="cw-editor ui-v2">
@@ -626,12 +683,12 @@ export function DeckEditor({
       )}
 
       {/* LEFT COLUMN: Hero + Filters */}
-      <aside className={`cw-editor-col cw-editor-left ui-card ${drawerLeftOpen ? 'is-drawer-open' : ''}`}>
+      <aside className={`cw-editor-col cw-editor-left ui-card cw-felt-box ${drawerLeftOpen ? 'is-drawer-open' : ''}`}>
         <div className="cw-drawer-head cw-drawer-head--left">
           <b>Герой и фильтры</b>
           <button
             type="button"
-            className="cw-drawer-close"
+            className="cw-drawer-close cw-btn-3d btn-dark btn-sm"
             onClick={() => setDrawerLeftOpen(false)}
             aria-label="Закрыть фильтры"
           >
@@ -640,7 +697,13 @@ export function DeckEditor({
         </div>
 
         <div className="cw-hero-box">
-          <div className="cw-hero-preview">
+          <button
+            type="button"
+            className="cw-hero-preview cw-hero-preview-btn"
+            onClick={() => setHeroPickerOpen(true)}
+            title={`Сменить героя (сейчас: ${hero?.name ?? 'Герой'})`}
+            aria-label={`Сменить героя: ${hero?.name ?? 'Герой'}`}
+          >
             {hero?.image ? (
               <img className="cw-hero-img" src={hero.image} alt={hero.name} draggable={false} fetchPriority="high" />
             ) : (
@@ -649,19 +712,8 @@ export function DeckEditor({
                 {hero?.text && <p>{hero.text}</p>}
               </div>
             )}
-          </div>
-          <select
-            className="cw-control cw-hero-select"
-            value={draft.heroId}
-            aria-label="Выбор героя"
-            onChange={(e) => setDraft((d) => ({ ...d, heroId: e.target.value }))}
-          >
-            {heroes.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            <span className="cw-hero-change-ribbon">Сменить героя</span>
+          </button>
         </div>
 
         <div className="cw-filters-box">
@@ -669,7 +721,7 @@ export function DeckEditor({
             type="search"
             className="cw-control"
             placeholder="Поиск карты…"
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: '16px', borderRadius: '10px' }}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -678,6 +730,7 @@ export function DeckEditor({
             <span>Сортировка</span>
             <select
               className="cw-control"
+              style={{ borderRadius: '10px' }}
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortBy)}
             >
@@ -694,6 +747,7 @@ export function DeckEditor({
             <span>Стоимость</span>
             <select
               className="cw-control"
+              style={{ borderRadius: '10px' }}
               value={costFilter}
               onChange={(e) => setCostFilter(e.target.value as CostFilter)}
             >
@@ -715,7 +769,7 @@ export function DeckEditor({
                 aria-pressed={onlyMyLands}
                 onClick={() => setOnlyMyLands((v) => !v)}
                 title="Показывать только карты, подходящие под 4 земли колоды + радугу"
-                style={{ fontSize: '11px', padding: '3px 8px' }}
+                style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '10px' }}
               >
                 {onlyMyLands ? '✓ Мои земли' : 'Только мои земли'}
               </button>
@@ -728,6 +782,7 @@ export function DeckEditor({
                     key={type}
                     type="button"
                     className={`cw-filter-chip ${active ? 'is-active is-on' : ''}`}
+                    style={{ borderRadius: '10px' }}
                     aria-pressed={active}
                     onClick={() => toggleLandFilter(type)}
                     title={`${icon} ${label}`}
@@ -750,6 +805,7 @@ export function DeckEditor({
                     key={range}
                     type="button"
                     className={`cw-stat-chip ${atkFilter === range ? 'is-active is-on' : ''}`}
+                    style={{ borderRadius: '10px' }}
                     onClick={() => setAtkFilter(range)}
                     aria-pressed={atkFilter === range}
                   >
@@ -767,6 +823,7 @@ export function DeckEditor({
                     key={range}
                     type="button"
                     className={`cw-stat-chip ${defFilter === range ? 'is-active is-on' : ''}`}
+                    style={{ borderRadius: '10px' }}
                     onClick={() => setDefFilter(range)}
                     aria-pressed={defFilter === range}
                   >
@@ -785,6 +842,7 @@ export function DeckEditor({
                   key={t.value}
                   type="button"
                   className={`cw-pill ${active ? 'is-on' : ''}`}
+                  style={{ borderRadius: '10px' }}
                   aria-pressed={active}
                   onClick={() => toggleType(t.value)}
                 >
@@ -796,6 +854,7 @@ export function DeckEditor({
             <button
               type="button"
               className={`cw-pill ${favoritesOnly ? 'is-on' : ''}`}
+              style={{ borderRadius: '10px' }}
               aria-pressed={favoritesOnly}
               onClick={() => setFavoritesOnly((v) => !v)}
             >
@@ -805,6 +864,7 @@ export function DeckEditor({
             <button
               type="button"
               className={`cw-pill ${floopOnly ? 'is-on' : ''}`}
+              style={{ borderRadius: '10px' }}
               aria-pressed={floopOnly}
               onClick={() => setFloopOnly((v) => !v)}
             >
@@ -814,6 +874,7 @@ export function DeckEditor({
             <button
               type="button"
               className={`cw-pill ${showCompanions ? 'is-on' : ''}`}
+              style={{ borderRadius: '10px' }}
               aria-pressed={showCompanions}
               onClick={() => setShowCompanions((v) => !v)}
             >
@@ -824,7 +885,7 @@ export function DeckEditor({
           <div className="cw-filter-footer">
             <span className="cw-filter-count">Найдено: {filtered.length}</span>
             {hasActiveFilters && (
-              <button type="button" className="cw-reset-btn" onClick={resetFilters}>
+              <button type="button" className="cw-reset-btn cw-btn-3d btn-paper btn-sm" onClick={resetFilters}>
                 Сбросить
               </button>
             )}
@@ -834,7 +895,7 @@ export function DeckEditor({
 
       {/* CENTER COLUMN: Top Header + Scrollable Catalog Grid */}
       <section className="cw-editor-col cw-editor-center">
-        <div className="cw-lands-bar ui-card">
+        <div className="cw-lands-bar ui-card cw-felt-box">
           <div className="cw-lands-bar-row">
             <button
               type="button"
@@ -849,7 +910,7 @@ export function DeckEditor({
             {/* Left drawer toggle button (Hero & Filters) */}
             <button
               type="button"
-              className={`cw-header-toggle cw-header-toggle--left ${drawerLeftOpen ? 'is-open' : ''}`}
+              className={`cw-header-toggle cw-header-toggle--left cw-btn-3d btn-dark btn-sm ${drawerLeftOpen ? 'is-open' : ''}`}
               onClick={() => {
                 setDrawerRightOpen(false);
                 setDrawerLeftOpen((v) => !v);
@@ -861,13 +922,15 @@ export function DeckEditor({
             {/* Center lands collapse toggle with 4 land indicators */}
             <button
               type="button"
-              className={`cw-header-toggle cw-header-toggle--lands ${landsMenuOpen ? 'is-open' : ''}`}
+              className={`cw-header-toggle cw-header-toggle--lands cw-btn-3d btn-dark btn-sm ${landsMenuOpen ? 'is-open' : ''}`}
               onClick={() => setLandsMenuOpen((v) => !v)}
             >
               <span>Земли</span>
               <span className="cw-lands-dots" aria-hidden="true">
                 {Array.from({ length: CONFIG.landsPerPlayer }, (_, i) => {
-                  const landType = draft.lands[i] ?? 'rainbow';
+                  const rawLand = draft.lands[i];
+                  const landType: Exclude<LandType, 'rainbow'> =
+                    rawLand && isPlayableLandType(rawLand) ? rawLand : 'blue';
                   return (
                     <span
                       key={i}
@@ -881,9 +944,11 @@ export function DeckEditor({
 
             <div className={`cw-lands-slots ${landsMenuOpen ? 'is-mobile-open' : ''}`}>
               {Array.from({ length: CONFIG.landsPerPlayer }, (_, i) => {
-                const landType = draft.lands[i] ?? 'rainbow';
+                const rawLand = draft.lands[i];
+                const landType: Exclude<LandType, 'rainbow'> =
+                  rawLand && isPlayableLandType(rawLand) ? rawLand : 'blue';
                 const variant = landVariants[i] ?? 1;
-                const imgUrl = landImageUrl(landType, variant);
+                const imgUrl = resolveLandImageUrl(landType, draft.landIds?.[i], variant);
                 const isOpen = openLandSlot === i;
                 const isDragOver = dragOverLandSlot === i && dragLandSlot !== i;
 
@@ -922,16 +987,14 @@ export function DeckEditor({
                     <button
                       type="button"
                       className={`cw-land-slot ${isOpen ? 'is-active' : ''} cw-land-slot--${landType}`}
-                      onClick={() => handleLandSlotClick(i)}
-                      title={`Зона ${i + 1}: ${LAND_META[landType].label} (кликните слот A затем B чтобы поменять местами)`}
+                      onClick={() => {
+                        setActiveLandTab(landType);
+                        setOpenLandSlot(i);
+                      }}
+                      title={`Зона ${i + 1}: ${LAND_META[landType].label} — нажмите, чтобы выбрать землю и арт`}
                     >
-                      {imgUrl ? (
+                      {imgUrl && (
                         <img src={imgUrl} alt={LAND_META[landType].label} draggable={false} fetchPriority="high" />
-                      ) : (
-                        <div className="cw-land-rainbow">
-                          <span>🌈</span>
-                          <b>Радуга</b>
-                        </div>
                       )}
                       <span className="cw-land-slot-badge">
                         {i + 1}. {LAND_META[landType].shortLabel}
@@ -945,7 +1008,7 @@ export function DeckEditor({
             {/* Right drawer toggle button (Deck preview) */}
             <button
               type="button"
-              className={`cw-header-toggle cw-header-toggle--right ${isDeckFull ? 'is-ok' : ''} ${drawerRightOpen ? 'is-open' : ''}`}
+              className={`cw-header-toggle cw-header-toggle--right cw-btn-3d ${isDeckFull ? 'btn-green is-ok' : 'btn-dark'} btn-sm ${drawerRightOpen ? 'is-open' : ''}`}
               onClick={() => {
                 setDrawerLeftOpen(false);
                 setDrawerRightOpen((v) => !v);
@@ -957,51 +1020,14 @@ export function DeckEditor({
               </span>
             </button>
           </div>
-
-          {openLandSlot !== null && (
-            <div className="cw-land-picker-popover ui-card" role="dialog" aria-label="Выбор земли">
-              <div className="cw-land-picker-head">
-                <b>Выберите землю для слота #{openLandSlot + 1}</b>
-                <button type="button" className="mini" onClick={() => setOpenLandSlot(null)}>
-                  ✕
-                </button>
-              </div>
-              <div className="cw-land-picker-grid">
-                {LAND_TYPES.map((type) => {
-                  const previewImg = landImageUrl(type, (openLandSlot % 4) + 1);
-                  const current = draft.lands[openLandSlot] === type;
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      className={`cw-land-option ${current ? 'is-selected' : ''}`}
-                      onClick={() => setLand(openLandSlot, type)}
-                    >
-                      <div className="cw-land-option-art">
-                        {previewImg ? (
-                          <img src={previewImg} alt={LAND_META[type].label} draggable={false} />
-                        ) : (
-                          <div className="cw-land-rainbow">
-                            <span>🌈</span>
-                            <b>Радужная</b>
-                          </div>
-                        )}
-                      </div>
-                      <span className="cw-land-option-label">{LAND_META[type].label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="cw-catalog-scroll ui-card" data-zoom-bounds ref={catalogScrollRef}>
+        <div className="cw-catalog-scroll ui-card cw-felt-box" data-zoom-bounds ref={catalogScrollRef}>
           {filtered.length === 0 ? (
             <div className="cw-catalog-empty">
               <p>Нет карт по выбранным фильтрам</p>
               {hasActiveFilters && (
-                <button type="button" className="btn-soft" onClick={resetFilters}>
+                <button type="button" className="cw-btn-3d btn-orange btn-sm" onClick={resetFilters}>
                   Сбросить фильтры
                 </button>
               )}
@@ -1035,14 +1061,14 @@ export function DeckEditor({
 
       {/* RIGHT COLUMN: Controls + Name + All 40 Slots or Grouped List */}
       <aside
-        className={`cw-editor-col cw-editor-right ui-card ${drawerRightOpen ? 'is-drawer-open' : ''}`}
+        className={`cw-editor-col cw-editor-right ui-card cw-felt-box ${drawerRightOpen ? 'is-drawer-open' : ''}`}
         data-zoom-bounds
       >
         <div className="cw-drawer-head cw-drawer-head--right">
           <b>Предпросмотр колоды</b>
           <button
             type="button"
-            className="cw-drawer-close"
+            className="cw-drawer-close cw-btn-3d btn-dark btn-sm"
             onClick={() => setDrawerRightOpen(false)}
             aria-label="Закрыть колоду"
           >
@@ -1081,6 +1107,7 @@ export function DeckEditor({
               <button
                 type="button"
                 className={`cw-view-mode-btn ${deckViewMode === 'grid' ? 'is-active' : ''}`}
+                style={{ borderRadius: '10px' }}
                 onClick={() => setDeckViewMode('grid')}
                 title="Сетка из 40 слотов"
                 aria-label="Вид сеткой"
@@ -1090,6 +1117,7 @@ export function DeckEditor({
               <button
                 type="button"
                 className={`cw-view-mode-btn ${deckViewMode === 'list' ? 'is-active' : ''}`}
+                style={{ borderRadius: '10px' }}
                 onClick={() => setDeckViewMode('list')}
                 title="Сгруппированный список карт"
                 aria-label="Вид списком"
@@ -1101,7 +1129,7 @@ export function DeckEditor({
             {/* Save Button (always clickable with feedback toast if invalid) */}
             <button
               type="button"
-              className={`btn-primary cw-save-btn cw-btn-3d ${errors.length > 0 ? 'btn-dark is-invalid' : 'btn-green'} btn-sm`}
+              className={`cw-save-btn cw-btn-3d ${errors.length > 0 ? 'btn-dark is-invalid' : 'btn-green'} btn-sm`}
               onClick={save}
               title={
                 errors.length > 0
@@ -1119,7 +1147,7 @@ export function DeckEditor({
               className="cw-control cw-deck-name-input"
               placeholder="Название колоды…"
               maxLength={40}
-              style={{ fontSize: '16px' }}
+              style={{ fontSize: '16px', borderRadius: '10px' }}
               value={draft.name}
               onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
             />
@@ -1150,7 +1178,7 @@ export function DeckEditor({
                 <p>В колоде пока нет карт</p>
                 <button
                   type="button"
-                  className="btn-soft mini cw-random-btn"
+                  className="cw-btn-3d btn-orange btn-sm"
                   onClick={handleRandomFill}
                   style={{ marginTop: '8px' }}
                 >
@@ -1169,7 +1197,7 @@ export function DeckEditor({
                   <div className="cw-grouped-controls">
                     <button
                       type="button"
-                      className="cw-grouped-btn cw-grouped-minus"
+                      className="cw-grouped-btn cw-grouped-minus cw-btn-3d btn-red btn-sm"
                       onClick={() => removeCardAtIndex(group.indices[group.indices.length - 1]!)}
                       aria-label={`Убрать копию ${group.card.name}`}
                       title="Убрать копию"
@@ -1179,7 +1207,7 @@ export function DeckEditor({
                     <span className="cw-grouped-count">×{group.count}</span>
                     <button
                       type="button"
-                      className="cw-grouped-btn cw-grouped-plus"
+                      className="cw-grouped-btn cw-grouped-plus cw-btn-3d btn-green btn-sm"
                       disabled={
                         draft.cards.length >= CONFIG.deckSize || group.count >= CONFIG.copyLimit
                       }
@@ -1203,55 +1231,304 @@ export function DeckEditor({
         )}
       </aside>
 
-      {/* Modal: Confirm Clear Deck */}
-      {confirmClear && (
-        <div className="cw-modal-backdrop" onClick={() => setConfirmClear(false)}>
-          <div className="cw-modal ui-card cw-felt-box" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3 className="cw-ink-title">Очистить колоду?</h3>
-            <p className="hint">Все набранные карты ({draft.cards.length} шт.) будут убраны из колоды.</p>
-            <div className="cw-modal-actions">
-              <button type="button" className="cw-btn-3d btn-dark btn-sm" onClick={() => setConfirmClear(false)}>
-                Отмена
-              </button>
+      {/* Hero Visual Picker Dialog */}
+      <dialog
+        ref={heroDialogRef}
+        className="cw-dialog cw-dialog--heroes cw-felt-box"
+        aria-labelledby="hero-picker-dialog-title"
+        {...({ closedby: 'any' } as Record<string, string>)}
+        onPointerDown={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype)) {
+            heroOutsideRef.current = isPointerOutside(e);
+          }
+        }}
+        onPointerUp={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype) && heroOutsideRef.current && isPointerOutside(e)) {
+            e.currentTarget.close();
+          }
+          heroOutsideRef.current = false;
+        }}
+        onClose={() => setHeroPickerOpen(false)}
+      >
+        <div className="cw-dialog__head">
+          <h2 id="hero-picker-dialog-title" className="cw-ink-title">
+            Выбор героя ({heroes.length})
+          </h2>
+          <button
+            type="button"
+            className="cw-dialog__close cw-btn-3d btn-dark btn-sm"
+            onClick={() => setHeroPickerOpen(false)}
+            aria-label="Закрыть выбор героя"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="cw-dialog__body">
+          <input
+            type="search"
+            autoFocus
+            className="cw-hero-picker-search cw-control"
+            placeholder="Поиск героя по имени или способности…"
+            style={{ fontSize: '16px', borderRadius: '10px' }}
+            value={heroSearch}
+            onChange={(e) => setHeroSearch(e.target.value)}
+          />
+          <div className="cw-hero-picker-grid">
+            {filteredHeroes.map((item) => {
+              const isSelected = item.id === draft.heroId;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`cw-hero-picker-card ${isSelected ? 'is-selected' : ''}`}
+                  onClick={() => {
+                    setDraft((d) => ({ ...d, heroId: item.id }));
+                    setHeroPickerOpen(false);
+                  }}
+                  title={`${item.name}${item.text ? ` — ${item.text}` : ''}`}
+                >
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                    />
+                  ) : (
+                    <span>{item.name}</span>
+                  )}
+                  <span className="cw-hero-picker-name">{item.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </dialog>
+
+      {/* Land & Art Picker Dialog */}
+      <dialog
+        ref={landDialogRef}
+        className="cw-dialog cw-dialog--lands cw-felt-box"
+        aria-labelledby="land-picker-dialog-title"
+        {...({ closedby: 'any' } as Record<string, string>)}
+        onPointerDown={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype)) {
+            landOutsideRef.current = isPointerOutside(e);
+          }
+        }}
+        onPointerUp={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype) && landOutsideRef.current && isPointerOutside(e)) {
+            e.currentTarget.close();
+          }
+          landOutsideRef.current = false;
+        }}
+        onClose={() => setOpenLandSlot(null)}
+      >
+        {openLandSlot !== null && (
+          <>
+            <div className="cw-dialog__head">
+              <h2 id="land-picker-dialog-title" className="cw-ink-title">
+                Земля для слота #{openLandSlot + 1}
+              </h2>
               <button
                 type="button"
-                className="cw-btn-3d btn-red btn-sm"
+                className="cw-dialog__close cw-btn-3d btn-dark btn-sm"
+                onClick={() => setOpenLandSlot(null)}
+                aria-label="Закрыть выбор земли"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="cw-dialog__body">
+              <div className="cw-land-type-tabs" role="tablist" aria-label="Типы земель">
+                {PLAYABLE_LAND_TYPES.map((type) => {
+                  const isActive = activeLandTab === type;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      className={`cw-land-type-tab ${isActive ? 'is-active' : ''}`}
+                      onClick={() => setActiveLandTab(type)}
+                    >
+                      {LAND_META[type].shortLabel}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="cw-land-art-grid">
+                {landArtsForTab.map((art) => {
+                  const isSelected =
+                    draft.lands[openLandSlot] === art.landType &&
+                    draft.landIds?.[openLandSlot] === art.id;
+                  return (
+                    <button
+                      key={art.id}
+                      type="button"
+                      className={`cw-land-art-option ${isSelected ? 'is-selected' : ''}`}
+                      onClick={() => setLandArt(openLandSlot, art.landType, art.id)}
+                      title={`${art.name} (${LAND_META[art.landType].label})`}
+                    >
+                      <img
+                        src={art.image}
+                        alt={art.name}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="cw-dialog__actions">
+              <button
+                type="button"
+                className="cw-btn-3d btn-dark btn-sm"
+                disabled={openLandSlot <= 0}
                 onClick={() => {
-                  setDraft((d) => ({ ...d, cards: [] }));
-                  setConfirmClear(false);
-                  showToast('Колода очищена');
+                  if (openLandSlot > 0) {
+                    swapLands(openLandSlot, openLandSlot - 1);
+                    setOpenLandSlot(openLandSlot - 1);
+                  }
                 }}
               >
-                Очистить
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal: Confirm Re-roll Deck */}
-      {confirmReroll && (
-        <div className="cw-modal-backdrop" onClick={() => setConfirmReroll(false)}>
-          <div className="cw-modal ui-card cw-felt-box" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <h3 className="cw-ink-title">Пересобрать колоду случайно?</h3>
-            <p className="hint">
-              В колоде уже 40 карт. Все текущие карты будут заменены сбалансированным случайным набором под выбранные земли.
-            </p>
-            <div className="cw-modal-actions">
-              <button type="button" className="cw-btn-3d btn-dark btn-sm" onClick={() => setConfirmReroll(false)}>
-                Отмена
+                ◀ Левее
               </button>
               <button
                 type="button"
-                className="cw-btn-3d btn-orange btn-sm"
-                onClick={handleRerollConfirmed}
+                className="cw-btn-3d btn-dark btn-sm"
+                disabled={openLandSlot >= CONFIG.landsPerPlayer - 1}
+                onClick={() => {
+                  if (openLandSlot < CONFIG.landsPerPlayer - 1) {
+                    swapLands(openLandSlot, openLandSlot + 1);
+                    setOpenLandSlot(openLandSlot + 1);
+                  }
+                }}
               >
-                🎲 Заполнить заново
+                Правее ▶
               </button>
             </div>
-          </div>
+          </>
+        )}
+      </dialog>
+
+      {/* Dialog: Confirm Clear Deck */}
+      <dialog
+        ref={clearDialogRef}
+        className="cw-dialog cw-felt-box"
+        aria-labelledby="clear-deck-dialog-title"
+        {...({ closedby: 'any' } as Record<string, string>)}
+        onPointerDown={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype)) {
+            clearOutsideRef.current = isPointerOutside(e);
+          }
+        }}
+        onPointerUp={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype) && clearOutsideRef.current && isPointerOutside(e)) {
+            e.currentTarget.close();
+          }
+          clearOutsideRef.current = false;
+        }}
+        onClose={() => setConfirmClear(false)}
+      >
+        <div className="cw-dialog__head">
+          <h2 id="clear-deck-dialog-title" className="cw-ink-title">
+            Очистить колоду?
+          </h2>
+          <button
+            type="button"
+            className="cw-dialog__close cw-btn-3d btn-dark btn-sm"
+            onClick={() => setConfirmClear(false)}
+            aria-label="Закрыть"
+          >
+            ✕
+          </button>
         </div>
-      )}
+        <div className="cw-dialog__body">
+          <p className="hint">Все набранные карты ({draft.cards.length} шт.) будут убраны из колоды.</p>
+        </div>
+        <div className="cw-dialog__actions">
+          <button
+            type="button"
+            autoFocus
+            className="cw-btn-3d btn-dark btn-sm"
+            onClick={() => setConfirmClear(false)}
+          >
+            Отмена
+          </button>
+          <button
+            type="button"
+            className="cw-btn-3d btn-red btn-sm"
+            onClick={() => {
+              setDraft((d) => ({ ...d, cards: [] }));
+              setConfirmClear(false);
+              showToast('Колода очищена');
+            }}
+          >
+            Очистить
+          </button>
+        </div>
+      </dialog>
+
+      {/* Dialog: Confirm Re-roll Deck */}
+      <dialog
+        ref={rerollDialogRef}
+        className="cw-dialog cw-felt-box"
+        aria-labelledby="reroll-deck-dialog-title"
+        {...({ closedby: 'any' } as Record<string, string>)}
+        onPointerDown={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype)) {
+            rerollOutsideRef.current = isPointerOutside(e);
+          }
+        }}
+        onPointerUp={(e) => {
+          if (!('closedBy' in HTMLDialogElement.prototype) && rerollOutsideRef.current && isPointerOutside(e)) {
+            e.currentTarget.close();
+          }
+          rerollOutsideRef.current = false;
+        }}
+        onClose={() => setConfirmReroll(false)}
+      >
+        <div className="cw-dialog__head">
+          <h2 id="reroll-deck-dialog-title" className="cw-ink-title">
+            Пересобрать колоду случайно?
+          </h2>
+          <button
+            type="button"
+            className="cw-dialog__close cw-btn-3d btn-dark btn-sm"
+            onClick={() => setConfirmReroll(false)}
+            aria-label="Закрыть"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="cw-dialog__body">
+          <p className="hint">
+            В колоде уже 40 карт. Все текущие карты будут заменены сбалансированным случайным набором под выбранные земли.
+          </p>
+        </div>
+        <div className="cw-dialog__actions">
+          <button
+            type="button"
+            autoFocus
+            className="cw-btn-3d btn-dark btn-sm"
+            onClick={() => setConfirmReroll(false)}
+          >
+            Отмена
+          </button>
+          <button
+            type="button"
+            className="cw-btn-3d btn-orange btn-sm"
+            onClick={handleRerollConfirmed}
+          >
+            🎲 Заполнить заново
+          </button>
+        </div>
+      </dialog>
     </main>
   );
 }

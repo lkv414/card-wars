@@ -452,6 +452,8 @@ class SoundEngine {
 
     const t = ctx.currentTime;
     const dur = 0.45;
+    // Heavier hits are louder (capped so big numbers never clip).
+    const punch = Math.min(1, 0.7 + Math.max(0, amount - 1) * 0.1);
 
     const osc = ctx.createOscillator();
     osc.type = 'sine';
@@ -466,7 +468,7 @@ class SoundEngine {
     this.applyPitchVariance(sub, t, 50);
 
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.75, t);
+    gain.gain.setValueAtTime(0.75 * punch, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
 
     osc.connect(gain);
@@ -501,7 +503,7 @@ class SoundEngine {
       osc.frequency.exponentialRampToValueAtTime(freq * 0.96, t + dur);
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(weights[idx] * 0.5, t);
+      gain.gain.setValueAtTime((weights[idx] ?? 0) * 0.5, t);
       gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 
       osc.connect(gain);

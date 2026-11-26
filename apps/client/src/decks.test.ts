@@ -1,15 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import { CONFIG } from '@card-wars/protocol';
-import { cards, type LandType } from '@card-wars/content';
+import { cards, lands as catalogLands, type LandType } from '@card-wars/content';
 import {
   decodeDeckCode,
   encodeDeckCode,
   generateRandomDeck,
+  newDeck,
   validateSavedDeck,
   type SavedDeck,
 } from './decks';
 
 const cardById = new Map(cards.map((c) => [c.id, c]));
+
+function makeCode(payloadObj: unknown): string {
+  const payload = JSON.stringify(payloadObj);
+  const bytes = new TextEncoder().encode(payload);
+  let binary = '';
+  for (const b of bytes) binary += String.fromCharCode(b);
+  const b64 = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  let crc = 0xffffffff;
+  for (const b of bytes) {
+    crc ^= b;
+    for (let bit = 0; bit < 8; bit++) {
+      crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
+    }
+  }
+  const hex = ((crc ^ 0xffffffff) >>> 0).toString(16).padStart(8, '0');
+  return `${b64}.${hex}`;
+}
 
 function sampleDeck(): SavedDeck {
   const lands: LandType[] = ['corn', 'corn', 'blue', 'blue'];
@@ -62,7 +80,7 @@ describe('decodeDeckCode', () => {
   });
 
   it('handles valid base64 with invalid JSON or payload', () => {
-    // encode "Hello World" to base64url + valid crc
+    // encode "not-json" to base64url + valid crc
     const bytes = new TextEncoder().encode('not-json');
     let binary = '';
     for (const b of bytes) binary += String.fromCharCode(b);
@@ -86,23 +104,6 @@ describe('decodeDeckCode', () => {
   });
 
   it('rejects payloads with unknown versions or malformed structures', () => {
-    function makeCode(payloadObj: unknown): string {
-      const payload = JSON.stringify(payloadObj);
-      const bytes = new TextEncoder().encode(payload);
-      let binary = '';
-      for (const b of bytes) binary += String.fromCharCode(b);
-      const b64 = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-      let crc = 0xffffffff;
-      for (const b of bytes) {
-        crc ^= b;
-        for (let bit = 0; bit < 8; bit++) {
-          crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
-        }
-      }
-      const hex = ((crc ^ 0xffffffff) >>> 0).toString(16).padStart(8, '0');
-      return `${b64}.${hex}`;
-    }
-
     expect(makeCode({ v: 99, h: 'bmo-f0dc351', l: ['blue', 'blue', 'blue', 'blue'], c: [] })).satisfies(
       (code: string) => !decodeDeckCode(code).ok
     );
@@ -115,6 +116,25 @@ describe('decodeDeckCode', () => {
     expect(makeCode({ v: 2, n: 'test', h: 'bmo-f0dc351', l: ['blue'], c: [['card-1', 'not-a-number']] })).satisfies(
       (code: string) => !decodeDeckCode(code).ok
     );
+  });
+
+  it('migrates legacy rainbow land in imported code to blue', () => {
+    const preset = sampleDeck();
+    const counts = new Map<string, number>();
+    for (const id of preset.cards) counts.set(id, (counts.get(id) ?? 0) + 1);
+    const code = makeCode({
+      v: 2,
+      n: 'Наследие радуги',
+      h: preset.heroId,
+      l: ['corn', 'rainbow', 'blue', 'rainbow'],
+      c: Array.from(counts.entries()),
+    });
+
+    const result = decodeDeckCode(code);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.deck.lands).toEqual(['corn', 'blue', 'blue', 'blue']);
+    }
   });
 });
 
@@ -136,12 +156,13 @@ describe('v2 RLE encode / decode round-trip', () => {
     const padded = b64.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((b64.length + 3) % 4);
     const decodedJson = JSON.parse(
       new TextDecoder().decode(Uint8Array.from(atob(padded), (c) => c.charCodeAt(0)))
-    ) as { v: number; n: string; h: string; l: string[]; c: Array<[string, number]> };
+    ) as { v: number; n: string; h: string; l: string[]; c: Array<[string, number]>; li?: unknown };
 
     expect(decodedJson.v).toBe(2);
     expect(decodedJson.n).toBe('Колода Бимо Чемпион');
     expect(decodedJson.h).toBe(deckToEncode.heroId);
     expect(decodedJson.l).toEqual(deckToEncode.lands);
+    expect(decodedJson.li).toBeUndefined();
     expect(Array.isArray(decodedJson.c)).toBe(true);
     for (const entry of decodedJson.c) {
       expect(Array.isArray(entry)).toBe(true);
@@ -171,6 +192,33 @@ describe('v2 RLE encode / decode round-trip', () => {
         decodedCounts.set(id, (decodedCounts.get(id) ?? 0) + 1);
       }
       expect(decodedCounts).toEqual(originalCounts);
+    }
+  });
+
+  it('preserves landIds (li) across encodeDeckCode and decodeDeckCode', () => {
+    const cornArt = catalogLands.find((l) => l.landType === 'corn')!;
+    const blueArt = catalogLands.find((l) => l.landType === 'blue')!;
+    const preset = sampleDeck();
+    const deckWithLandIds: SavedDeck = {
+      ...preset,
+      lands: ['corn', 'corn', 'blue', 'blue'],
+      landIds: [cornArt.id, null, blueArt.id, null],
+    };
+
+    const code = encodeDeckCode(deckWithLandIds);
+    const dot = code.lastIndexOf('.');
+    const b64 = code.slice(0, dot);
+    const padded = b64.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((b64.length + 3) % 4);
+    const decodedJson = JSON.parse(
+      new TextDecoder().decode(Uint8Array.from(atob(padded), (c) => c.charCodeAt(0)))
+    ) as { li?: (string | null)[] };
+
+    expect(decodedJson.li).toEqual([cornArt.id, null, blueArt.id, null]);
+
+    const result = decodeDeckCode(code);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.deck.landIds).toEqual([cornArt.id, null, blueArt.id, null]);
     }
   });
 });
@@ -213,9 +261,28 @@ describe('v1 legacy compatibility', () => {
   });
 });
 
+describe('newDeck & validateSavedDeck land rules', () => {
+  it('newDeck() has no rainbow lands', () => {
+    const deck = newDeck();
+    expect(deck.lands).toHaveLength(CONFIG.landsPerPlayer);
+    expect(deck.lands).not.toContain('rainbow');
+    expect(deck.landIds).toEqual([null, null, null, null]);
+  });
+
+  it('validateSavedDeck() rejects rainbow land', () => {
+    const preset = sampleDeck();
+    const invalid: SavedDeck = {
+      ...preset,
+      lands: ['corn', 'blue', 'ice', 'rainbow'],
+    };
+    const errors = validateSavedDeck(invalid);
+    expect(errors).toContain('Радужные земли нельзя добавлять в колоду');
+  });
+});
+
 describe('generateRandomDeck', () => {
   it('produces a valid 40-card deck with correct lands and copy limits', () => {
-    const lands: LandType[] = ['corn', 'blue', 'ice', 'rainbow'];
+    const lands: LandType[] = ['corn', 'blue', 'ice', 'sand'];
     const heroId = 'bmo-f0dc351';
 
     const deck = generateRandomDeck(heroId, lands);

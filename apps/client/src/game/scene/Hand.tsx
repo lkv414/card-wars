@@ -137,8 +137,9 @@ export function Hand({ view }: { view: PlayerView }) {
       const ui = useGame.getState().ui;
       if (!ui.dragging) return;
       const overDiscard = ui.draggingOverDiscard;
+      const rect = gl.domElement.getBoundingClientRect();
       const inCorner =
-        innerWidth > 768 && event.clientX > innerWidth - 170 && event.clientY > innerHeight - 170;
+        innerWidth > 768 && event.clientX > rect.right - 170 && event.clientY > rect.bottom - 170;
       const zone = ui.draggingOverZone;
       const source = ui.draggingFrom;
       const instanceId = ui.dragging;
@@ -335,12 +336,15 @@ function HandCard({
   const back = useMemo(() => cardBackTexture(), []);
   const cardMeta = useMemo(() => catalog.find((c) => c.id === cardId), [cardId]);
   const isRainbow = cardMeta?.landType === 'rainbow';
-  const faceMaterial = useMemo(() => createCardMaterial(texture, isRainbow), [texture, isRainbow]);
+  const faceMaterial = useMemo(
+    () => (isRainbow ? createCardMaterial(texture, true) : new THREE.MeshLambertMaterial({ map: texture })),
+    [texture, isRainbow],
+  );
   const materials = useMemo(
     () => [
       sharedEdgeMat, // +x
       sharedEdgeMat, // -x
-      faceMaterial, // +y (face with tilt sheen & rainbow foil)
+      faceMaterial, // +y (face: Lambert for standard cards, ShaderMaterial foil for rainbow cards)
       new THREE.MeshLambertMaterial({ map: back }), // -y (back)
       sharedEdgeMat, // +z
       sharedEdgeMat, // -z
@@ -428,16 +432,21 @@ function HandCard({
       g.scale.set(target.scale, target.scale, target.scale);
     }
 
-    if (faceMaterial) {
-      faceMaterial.uniforms.uTime.value = performance.now() * 0.001;
-      faceMaterial.uniforms.uTilt.value.set(
-        elevated ? 0.2 : 0,
-        -offset * fanStepRad,
-      );
+    if (faceMaterial instanceof THREE.ShaderMaterial) {
+      if (faceMaterial.uniforms.uTime) {
+        faceMaterial.uniforms.uTime.value = performance.now() * 0.001;
+      }
+      if (faceMaterial.uniforms.uTilt) {
+        faceMaterial.uniforms.uTilt.value.set(
+          elevated ? 0.2 : 0,
+          -offset * fanStepRad,
+        );
+      }
     }
   });
 
   const longPressTimer = useRef<number | null>(null);
+  const didLongPressRef = useRef(false);
 
   const clearLongPress = () => {
     if (longPressTimer.current !== null) {
@@ -446,12 +455,17 @@ function HandCard({
     }
   };
 
+  useEffect(() => () => clearLongPress(), []);
+
   const handleDown = (event: ThreeEvent<PointerEvent>) => {
     if (event.nativeEvent.button !== 0) return;
+    didLongPressRef.current = false;
     clearLongPress();
     longPressTimer.current = window.setTimeout(() => {
+      didLongPressRef.current = true;
+      pendingDrag.current = null;
       triggerHapticVibration(30);
-      setUi({ inspectedCard: { cardId, instanceId } });
+      setUi({ zoomedCard: { cardId, instanceId } });
       longPressTimer.current = null;
     }, 450);
 
@@ -464,7 +478,7 @@ function HandCard({
     event.stopPropagation();
     if (useGame.getState().ui.dragging) return;
     if (useGame.getState().ui.hoveredHand !== instanceId) {
-      setUi({ hoveredHand: instanceId, inspectedCard: { cardId, instanceId } });
+      setUi({ hoveredHand: instanceId });
       invalidate();
     }
   };
@@ -479,6 +493,10 @@ function HandCard({
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     clearLongPress();
+    if (didLongPressRef.current) {
+      didLongPressRef.current = false;
+      return;
+    }
     if (event.nativeEvent.button !== 0) return;
     event.stopPropagation();
     // Target selection mode: hand card is passed as own_hand_card.

@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { CONFIG, type PlayerView } from '@card-wars/protocol';
+import { useEffect, useRef, useState } from 'react';
+import { CONFIG } from '@card-wars/protocol';
 import {
-  cycleCameraPlayer,
   emitEmote,
   sendCommand,
-  setCameraSnap,
   setQuality,
   setUi,
   showHint,
   snapCameraPlayer,
-  snapCameraTop,
   useGame,
 } from '../../store';
 import { heroNameOf } from './names';
@@ -27,12 +24,6 @@ const EMOTE_LINES = [
 
 export interface HudSidebarProps {
   code: string;
-  view: PlayerView;
-  unreadCount: number;
-  journalOpen: boolean;
-  onToggleJournal: () => void;
-  isHurryPulsing: boolean;
-  onHurryPulse: () => void;
 }
 
 function phaseRu(phase: string): string {
@@ -73,20 +64,13 @@ export function downloadJournal(journal: string[], code: string): () => void {
 
 /**
  * Dedicated right-hand action sidebar (Split-Screen layout):
- * Consolidates all game HUD elements (room info, player status, roster, turn actions, camera snaps, history, emotes)
+ * Consolidates all game HUD elements (room info, player status, roster, turn actions, history, emotes)
  * so that the 3D game arena remains 100% clean and unobstructed.
  */
-export function HudSidebar({
-  code,
-  view,
-  unreadCount,
-  journalOpen,
-  onToggleJournal,
-  isHurryPulsing,
-  onHurryPulse,
-}: HudSidebarProps) {
+export function HudSidebar({ code }: HudSidebarProps) {
+  const view = useGame((s) => s.view)!;
+  const journalOpen = useGame((s) => s.ui.journalOpen);
   const quality = useGame((s) => s.ui.quality);
-  const cameraMode = useGame((s) => s.ui.cameraMode);
   const cameraSnap = useGame((s) => s.ui.cameraSnap);
   const timer = useGame((s) => s.timer);
 
@@ -99,6 +83,30 @@ export function HudSidebar({
   const teammateId = is2v2 ? myTeam?.playerIds.find((id) => id !== view.me) : null;
   const teammate = teammateId ? view.players[teammateId] : null;
   const teamReadyCount = (me.battleReady ? 1 : 0) + (teammate?.battleReady ? 1 : 0);
+
+  const [isHurryPulsing, setIsHurryPulsing] = useState(false);
+  const triggerHurryPulse = () => {
+    setIsHurryPulsing(true);
+    setTimeout(() => setIsHurryPulsing(false), 1600);
+  };
+
+  const [lastReadJournalLen, setLastReadJournalLen] = useState(() => view.journal.length);
+  const unreadCount = journalOpen ? 0 : Math.max(0, view.journal.length - lastReadJournalLen);
+
+  useEffect(() => {
+    if (journalOpen) {
+      setLastReadJournalLen(view.journal.length);
+    }
+  }, [journalOpen, view.journal.length]);
+
+  const toggleJournal = () => {
+    if (!journalOpen) {
+      setLastReadJournalLen(view.journal.length);
+      setUi({ journalOpen: true });
+    } else {
+      setUi({ journalOpen: false });
+    }
+  };
 
   const [desktopCollapsed, setDesktopCollapsed] = useState(() => {
     try {
@@ -135,14 +143,10 @@ export function HudSidebar({
     }
   }, [view.status, desktopCollapsed]);
 
-  // Keyboard accessibility: Escape closes open menus/modals
+  // Keyboard accessibility: Escape closes open menus/drawers
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (surrenderModalOpen) {
-          setSurrenderModalOpen(false);
-          return;
-        }
         if (emotesOpen) {
           setEmotesOpen(false);
           return;
@@ -155,20 +159,7 @@ export function HudSidebar({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [surrenderModalOpen, emotesOpen, mobileDrawerOpen]);
-
-  const handleCycleOpponents = useCallback(() => {
-    const aliveOpponents = view.order.filter(
-      (id) => id !== view.me && !view.players[id]?.eliminated,
-    );
-    if (aliveOpponents.length === 0) return;
-    const currentSnap = useGame.getState().ui.cameraSnap;
-    if (currentSnap && currentSnap.startsWith('player_')) {
-      cycleCameraPlayer('next');
-    } else {
-      snapCameraPlayer(aliveOpponents[0]);
-    }
-  }, [view.order, view.me, view.players]);
+  }, [emotesOpen, mobileDrawerOpen]);
 
   const handleEmoteSelect = (item: (typeof EMOTE_LINES)[number]) => {
     if (item.id === 'dice') {
@@ -221,7 +212,7 @@ export function HudSidebar({
         </button>
 
         <button
-          className={`hud-mobile-btn-menu ${unreadCount > 0 ? 'has-badge' : ''}`}
+          className={`hud-mobile-btn-menu cw-btn-3d btn-paper btn-sm ${unreadCount > 0 ? 'has-badge' : ''}`}
           onClick={() => setMobileDrawerOpen(true)}
           aria-label="Открыть панель действий"
         >
@@ -242,7 +233,7 @@ export function HudSidebar({
 
       {/* Dedicated Right Action Sidebar */}
       <aside
-        className={`game-sidebar hud-sidebar ${desktopCollapsed ? 'collapsed' : ''} ${
+        className={`game-sidebar hud-sidebar cw-sidebar-felt ${desktopCollapsed ? 'collapsed' : ''} ${
           mobileDrawerOpen ? 'mobile-open' : ''
         }`}
         aria-label="Панель действий матча"
@@ -324,7 +315,7 @@ export function HudSidebar({
               <div className="section-label">
                 <span>🎴 Стартовая рука</span>
               </div>
-              <div className="hud-mulligan-card">
+              <div className="hud-mulligan-card cw-paper-box">
                 <p className="hud-mulligan-hint">
                   {me.mulliganDecision
                     ? 'Решение принято! Ждём остальных игроков...'
@@ -332,7 +323,7 @@ export function HudSidebar({
                 </p>
                 <div className="hud-mulligan-actions">
                   <button
-                    className="hud-mulligan-btn hud-mulligan-keep"
+                    className="hud-mulligan-btn hud-mulligan-keep cw-btn-3d btn-green btn-sm"
                     disabled={me.mulliganDecision !== null}
                     onClick={() => sendCommand({ type: 'keep_hand', player: view.me })}
                     title="Оставить текущие 5 карт в руке"
@@ -341,7 +332,7 @@ export function HudSidebar({
                     <span className="btn-label">Оставить</span>
                   </button>
                   <button
-                    className="hud-mulligan-btn hud-mulligan-redraw"
+                    className="hud-mulligan-btn hud-mulligan-redraw cw-btn-3d btn-orange btn-sm"
                     disabled={me.mulliganDecision !== null}
                     onClick={() => sendCommand({ type: 'mulligan', player: view.me })}
                     title="Сбросить карты, перемешать колоду и взять 5 новых (один раз за матч)"
@@ -358,9 +349,10 @@ export function HudSidebar({
               </div>
             </div>
           )}
+
           {/* Section 0: My Status (Lives, Actions, Hand) */}
           <div className="hud-sidebar-section status-section">
-            <div className="hud-status-card">
+            <div className="hud-status-card cw-paper-box">
               <div className="hud-status-header">
                 <span className="status-hero">{heroNameOf(me.heroId)}</span>
                 <span className="status-nick">{me.nickname} (вы)</span>
@@ -462,7 +454,7 @@ export function HudSidebar({
           {/* Section 2: Primary Action (Combat / Turn) */}
           <div className="hud-sidebar-section primary-section">
             <button
-              className={`hud-sidebar-battle-btn cw-btn-3d btn-red btn-lg ${
+              className={`hud-sidebar-battle-btn cw-btn-3d btn-red btn-lg btn-block ${
                 myMain && (!is2v2 || !me.battleReady) ? 'active-cta' : ''
               } ${actionsSpent ? 'actions-spent' : ''}`}
               disabled={battleBtnDisabled}
@@ -503,7 +495,7 @@ export function HudSidebar({
           {/* Section 3: Turn Actions */}
           <div className="hud-sidebar-section actions-section">
             <button
-              className="hud-sidebar-action-btn draw-btn cw-btn-3d btn-blue"
+              className="hud-sidebar-action-btn draw-btn cw-btn-3d btn-blue btn-block"
               disabled={!myMain || me.actions < CONFIG.extraDrawCost}
               onClick={() => sendCommand({ type: 'draw_extra', player: view.me })}
               title={
@@ -527,10 +519,10 @@ export function HudSidebar({
                 return (
                   <button
                     key={pid}
-                    className="hud-sidebar-action-btn hurry-btn"
+                    className="hud-sidebar-action-btn hurry-btn cw-btn-3d btn-orange btn-block"
                     onClick={() => {
                       useGame.getState().hurry(pid);
-                      onHurryPulse();
+                      triggerHurryPulse();
                       showHint(`Отправлено напоминание игроку ${opp?.nickname ?? pid}!`);
                     }}
                     title={`Поторопить игрока ${opp?.nickname ?? pid}`}
@@ -543,88 +535,11 @@ export function HudSidebar({
               })}
           </div>
 
-          {/* Section 4: Camera Snap Controls */}
-          <div className="hud-sidebar-section camera-section">
-            <div className="section-label">
-              <span>🎥 Камера</span>
-            </div>
-            <div className="hud-camera-grid" role="group" aria-label="Переключение камеры">
-              <button
-                className={`cam-grid-btn ${
-                  cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top'
-                    ? 'active'
-                    : ''
-                }`}
-                onClick={() => {
-                  if (cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top') {
-                    snapCameraPlayer();
-                  } else {
-                    snapCameraTop();
-                  }
-                }}
-                title={
-                  cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top'
-                    ? 'Опустить камеру к игроку'
-                    : 'Вид строго сверху'
-                }
-                aria-label={
-                  cameraSnap === 'top' || cameraSnap?.startsWith('top_') || cameraMode === 'top'
-                    ? 'Опустить камеру к игроку'
-                    : 'Вид строго сверху'
-                }
-              >
-                <span className="cam-icon">📐</span>
-                <span className="cam-text">Сверху</span>
-              </button>
-              <button
-                className={`cam-grid-btn ${
-                  cameraSnap === 'self' || cameraSnap === `player_${view.me}` || cameraMode === 'self'
-                    ? 'active'
-                    : ''
-                }`}
-                onClick={() => snapCameraPlayer(view.me)}
-                title="Вид со стороны моей доски"
-                aria-label="Вид со стороны моей доски"
-              >
-                <span className="cam-icon">👤</span>
-                <span className="cam-text">Я</span>
-              </button>
-              <button
-                className={`cam-grid-btn ${
-                  cameraSnap === 'opponents' ||
-                  (typeof cameraSnap === 'string' &&
-                    cameraSnap.startsWith('player_') &&
-                    cameraSnap !== `player_${view.me}`) ||
-                  cameraMode === 'opponents'
-                    ? 'active'
-                    : ''
-                }`}
-                onClick={handleCycleOpponents}
-                title="Вид со стороны противника (клик — следующий)"
-                aria-label="Вид со стороны противника"
-              >
-                <span className="cam-icon">👥</span>
-                <span className="cam-text">Враги</span>
-              </button>
-              <button
-                className={`cam-grid-btn ${
-                  cameraSnap === 'follow' || cameraMode === 'follow' ? 'active' : ''
-                }`}
-                onClick={() => setCameraSnap('follow')}
-                title="Следить за ходом активного игрока"
-                aria-label="Следить за ходом активного игрока"
-              >
-                <span className="cam-icon">🔄</span>
-                <span className="cam-text">За ходом</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Section 5: History & Emotes */}
+          {/* Section 4: History & Emotes */}
           <div className="hud-sidebar-section utils-section">
             <button
-              className={`hud-sidebar-action-btn journal-btn ${journalOpen ? 'active' : ''}`}
-              onClick={onToggleJournal}
+              className={`hud-sidebar-action-btn journal-btn cw-btn-3d btn-paper btn-block ${journalOpen ? 'active' : ''}`}
+              onClick={toggleJournal}
               title="Журнал боя и история ходов"
               aria-expanded={journalOpen}
             >
@@ -636,12 +551,12 @@ export function HudSidebar({
 
             {/* Inline expandable journal container */}
             {journalOpen && (
-              <div className="hud-sidebar-journal-panel" role="region" aria-label="История боя">
+              <div className="hud-sidebar-journal-panel cw-paper-box" role="region" aria-label="История боя">
                 <div className="journal-panel-head">
                   <span>Журнал ({view.journal.length})</span>
                   <button
                     type="button"
-                    className="journal-dl-btn mini"
+                    className="journal-dl-btn cw-btn-3d btn-paper btn-sm"
                     onClick={downloadJournal(view.journal, code)}
                     title="Скачать историю в текстовом файле (.txt)"
                   >
@@ -664,7 +579,7 @@ export function HudSidebar({
 
             <div className="emotes-container">
               <button
-                className={`hud-sidebar-action-btn emote-btn ${emotesOpen ? 'active' : ''}`}
+                className={`hud-sidebar-action-btn emote-btn cw-btn-3d btn-paper btn-block ${emotesOpen ? 'active' : ''}`}
                 onClick={() => setEmotesOpen((v) => !v)}
                 title="Эмоции и реплики героя"
                 aria-expanded={emotesOpen}
@@ -673,46 +588,14 @@ export function HudSidebar({
                 <span className="btn-label">Эмоции</span>
                 <span className="btn-dropdown-arrow">{emotesOpen ? '▲' : '▼'}</span>
               </button>
-
-              {/* Emotes Popover */}
-              {emotesOpen && (
-                <div
-                  className="hud-emotes-popover"
-                  role="dialog"
-                  aria-label="Выбор эмоции или реплики"
-                >
-                  <div className="emotes-popover-head">
-                    <span>Реплики и эмоции</span>
-                    <button
-                      className="emotes-close-btn"
-                      onClick={() => setEmotesOpen(false)}
-                      aria-label="Закрыть"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <div className="emotes-grid">
-                    {EMOTE_LINES.map((item) => (
-                      <button
-                        key={item.id}
-                        className="emote-item-btn"
-                        onClick={() => handleEmoteSelect(item)}
-                      >
-                        <span className="emote-emoji">{item.emoji}</span>
-                        <span className="emote-label">{item.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Section 6: Surrender (Danger) */}
+          {/* Section 5: Surrender (Danger) */}
           {view.status === 'running' && (
             <div className="hud-sidebar-section danger-section">
               <button
-                className="hud-sidebar-danger-btn"
+                className="hud-sidebar-danger-btn cw-btn-3d btn-red btn-sm btn-block"
                 onClick={() => setSurrenderModalOpen(true)}
                 title="Сдаться в текущей партии"
               >
@@ -722,44 +605,136 @@ export function HudSidebar({
             </div>
           )}
         </div>
+
+        {/* Emotes Popover rendered directly inside <aside> outside .hud-sidebar-scroll so it is never clipped */}
+        {emotesOpen && (
+          <div
+            className="hud-emotes-popover cw-felt-box"
+            role="region"
+            aria-label="Выбор эмоции или реплики"
+          >
+            <div className="emotes-popover-head">
+              <span>Реплики и эмоции</span>
+              <button
+                type="button"
+                className="emotes-close-btn cw-btn-3d btn-dark btn-sm"
+                onClick={() => setEmotesOpen(false)}
+                aria-label="Закрыть"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="emotes-grid">
+              {EMOTE_LINES.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className="emote-item-btn cw-btn-3d btn-paper btn-sm"
+                  onClick={() => handleEmoteSelect(item)}
+                >
+                  <span className="emote-emoji">{item.emoji}</span>
+                  <span className="emote-label">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* Surrender Confirmation Modal */}
       {surrenderModalOpen && (
-        <div
-          className="overlay surrender-overlay"
-          onClick={() => setSurrenderModalOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="surrender-title"
-        >
-          <div className="panel surrender-dialog" onClick={(e) => e.stopPropagation()}>
-            <h2 id="surrender-title">🏳 Сдаться в партии?</h2>
-            <p className="hint">
-              Вы уверены, что хотите признать поражение? Это действие необратимо — вашему герою будет
-              засчитано поражение.
-            </p>
-            <div className="surrender-modal-actions">
-              <button
-                className="btn-danger surrender-confirm-btn"
-                onClick={() => {
-                  setSurrenderModalOpen(false);
-                  sendCommand({ type: 'surrender', player: view.me });
-                }}
-              >
-                Да, сдаться
-              </button>
-              <button
-                className="secondary surrender-cancel-btn"
-                autoFocus
-                onClick={() => setSurrenderModalOpen(false)}
-              >
-                Отмена
-              </button>
-            </div>
-          </div>
-        </div>
+        <SurrenderDialog
+          onConfirm={() => {
+            setSurrenderModalOpen(false);
+            sendCommand({ type: 'surrender', player: view.me });
+          }}
+          onClose={() => setSurrenderModalOpen(false)}
+        />
       )}
     </>
+  );
+}
+
+function SurrenderDialog({
+  onConfirm,
+  onClose,
+}: {
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const pointerDownOutsideRef = useRef(false);
+
+  useEffect(() => {
+    const el = dialogRef.current;
+    if (el && !el.open) {
+      el.showModal();
+    }
+  }, []);
+
+  const isOutsideDialog = (e: React.PointerEvent<HTMLDialogElement>) => {
+    const el = dialogRef.current;
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return (
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+    );
+  };
+
+  return (
+    <dialog
+      ref={dialogRef}
+      className="cw-dialog cw-felt-box surrender-dialog"
+      aria-labelledby="surrender-title"
+      onClose={onClose}
+      onPointerDown={(e) => {
+        pointerDownOutsideRef.current = e.target === dialogRef.current && isOutsideDialog(e);
+      }}
+      onPointerUp={(e) => {
+        if (pointerDownOutsideRef.current && e.target === dialogRef.current && isOutsideDialog(e)) {
+          onClose();
+        }
+        pointerDownOutsideRef.current = false;
+      }}
+      {...({ closedby: 'any' } as Record<string, string>)}
+    >
+      <div className="cw-dialog__head">
+        <h2 id="surrender-title" className="cw-ink-title">
+          🏳 Сдаться в партии?
+        </h2>
+        <button
+          type="button"
+          className="cw-dialog__close cw-btn-3d btn-dark btn-sm"
+          onClick={onClose}
+          aria-label="Закрыть"
+        >
+          ✕
+        </button>
+      </div>
+      <p className="hint">
+        Вы уверены, что хотите признать поражение? Это действие необратимо — вашему герою будет
+        засчитано поражение.
+      </p>
+      <div className="surrender-modal-actions">
+        <button
+          type="button"
+          className="cw-btn-3d btn-red btn-sm surrender-confirm-btn"
+          onClick={onConfirm}
+        >
+          Да, сдаться
+        </button>
+        <button
+          type="button"
+          className="cw-btn-3d btn-dark btn-sm surrender-cancel-btn"
+          autoFocus
+          onClick={onClose}
+        >
+          Отмена
+        </button>
+      </div>
+    </dialog>
   );
 }

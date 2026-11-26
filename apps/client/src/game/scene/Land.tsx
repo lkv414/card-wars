@@ -25,8 +25,8 @@ export function Land({
   view: PlayerView;
 }) {
   const texture = useMemo(
-    () => landTexture(land.type as LandType, land.frozen, land.flipped),
-    [land.type, land.frozen, land.flipped],
+    () => landTexture(land.type as LandType, land.frozen, land.flipped, land.artId),
+    [land.type, land.frozen, land.flipped, land.artId],
   );
   const dragging = useGame((s) => s.ui.dragging);
   const draggingFrom = useGame((s) => s.ui.draggingFrom);

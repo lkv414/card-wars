@@ -8,7 +8,8 @@ import {
   type GameConfig,
   type MatchState,
 } from '@card-wars/domain';
-import { catalog, deckPresets } from './index.ts';
+import { deckPresets } from './index.ts';
+import { legacyCatalog as catalog } from './__fixtures__/legacy-catalog.ts';
 
 // Golden tests: real catalog cards through the mechanics v2 pipeline
 // (docs/MECHANICS-V2.md §10). State edits are plain JSON clones — MatchState
@@ -42,8 +43,8 @@ function newMatch(): MatchState {
   const preset = deckPresets[0]!;
   const { state } = createMatch(deps, {
     players: [
-      { id: 'p1', nickname: 'P1', heroId: preset.heroId, deck: [...preset.deck], lands: [...preset.lands] },
-      { id: 'p2', nickname: 'P2', heroId: deckPresets[1]!.heroId, deck: [...deckPresets[1]!.deck], lands: [...deckPresets[1]!.lands] },
+      { id: 'p1', nickname: 'P1', heroId: preset.heroId, deck: [...preset.deck], lands: ['blue', 'blue', 'blue', 'rainbow'] },
+      { id: 'p2', nickname: 'P2', heroId: deckPresets[1]!.heroId, deck: [...deckPresets[1]!.deck], lands: ['good', 'good', 'good', 'rainbow'] },
     ],
     seed: 42,
   });

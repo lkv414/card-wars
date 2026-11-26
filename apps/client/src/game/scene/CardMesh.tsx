@@ -42,12 +42,15 @@ export function CardMesh({
   const texture = useMemo(() => cardTexture(card.cardId), [card.cardId]);
   const back = useMemo(() => cardBackTexture(), []);
   const isRainbow = cardMeta?.landType === 'rainbow';
-  const faceMaterial = useMemo(() => createCardMaterial(texture, isRainbow), [texture, isRainbow]);
+  const faceMaterial = useMemo(
+    () => (isRainbow ? createCardMaterial(texture, true) : new THREE.MeshLambertMaterial({ map: texture })),
+    [texture, isRainbow],
+  );
   const materials = useMemo(
     () => [
       sharedEdgeMat, // +x
       sharedEdgeMat, // -x
-      faceMaterial, // +y (face with tilt specular sheen & rainbow foil)
+      faceMaterial, // +y (face: Lambert for standard cards, ShaderMaterial foil for rainbow cards)
       new THREE.MeshLambertMaterial({ map: back }), // -y (back)
       sharedEdgeMat, // +z
       sharedEdgeMat, // -z
@@ -176,9 +179,13 @@ export function CardMesh({
       group.current.rotation.x = tiltX;
       group.current.rotation.z = tiltZ;
 
-      if (faceMaterial) {
-        faceMaterial.uniforms.uTime.value = now * 0.001;
-        faceMaterial.uniforms.uTilt.value.set(tiltX, group.current.rotation.y);
+      if (faceMaterial instanceof THREE.ShaderMaterial) {
+        if (faceMaterial.uniforms.uTime) {
+          faceMaterial.uniforms.uTime.value = now * 0.001;
+        }
+        if (faceMaterial.uniforms.uTilt) {
+          faceMaterial.uniforms.uTilt.value.set(tiltX, group.current.rotation.y);
+        }
       }
 
       if (Math.abs(diffRot) > 0.004) {
@@ -290,21 +297,24 @@ export function CardMesh({
   const startHold = (event: ThreeEvent<PointerEvent>) => {
     if (event.nativeEvent.button !== 0) return;
     clearLongPress();
-    longPressTimer.current = window.setTimeout(() => {
-      triggerHapticVibration(30);
-      setUi({
-        inspectedCard: {
-          cardId: card.cardId,
-          instanceId: card.instanceId,
-          damage: card.damage,
-          shield: card.shield,
-          flipped: card.flipped,
-        },
-      });
-      longPressTimer.current = null;
-    }, 450);
+    if (!canDrag) {
+      longPressTimer.current = window.setTimeout(() => {
+        triggerHapticVibration(30);
+        setUi({
+          zoomedCard: {
+            cardId: card.cardId,
+            instanceId: card.instanceId,
+            damage: card.damage,
+            shield: card.shield,
+            flipped: card.flipped,
+          },
+        });
+        longPressTimer.current = null;
+      }, 450);
+      return;
+    }
 
-    if (!canDrag || useGame.getState().ui.targeting) return;
+    if (useGame.getState().ui.targeting) return;
     event.stopPropagation();
     pendingPress.current = { startX: event.nativeEvent.clientX, startY: event.nativeEvent.clientY };
     setUi({
@@ -329,6 +339,7 @@ export function CardMesh({
 
   useEffect(() => {
     return () => {
+      clearLongPress();
       if (useGame.getState().ui.hoveredCreatureInstanceId === card.instanceId) {
         setUi({ hoveredCreatureInstanceId: null });
       }
@@ -342,20 +353,15 @@ export function CardMesh({
         onClick={handleClick}
         onPointerDown={startHold}
         onPointerUp={cancelHold}
+        onPointerCancel={cancelHold}
         onPointerOver={() => {
           setUi({
-            inspectedCard: {
-              cardId: card.cardId,
-              instanceId: card.instanceId,
-              damage: card.damage,
-              shield: card.shield,
-              flipped: card.flipped,
-            },
             hoveredCreatureInstanceId: isReadyCreature ? card.instanceId : null,
           });
           invalidate();
         }}
         onPointerOut={() => {
+          clearLongPress();
           if (useGame.getState().ui.hoveredCreatureInstanceId === card.instanceId) {
             setUi({ hoveredCreatureInstanceId: null });
             invalidate();
@@ -400,13 +406,6 @@ export function CardMesh({
         <mesh position={[0, 1.4, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
           <planeGeometry args={[CARD_W + 6, CARD_H + 6]} />
           <meshBasicMaterial color="#48d9a0" transparent opacity={0.22} />
-        </mesh>
-      )}
-      {/* Боевая готовность: индикатор атаки у линии боя */}
-      {slot === 'creature' && !card.flipped && (view.phase === 'combat' || (isMe && myMain)) && (
-        <mesh position={[0, 1.3, -CARD_H / 2 - 2]} rotation={[-Math.PI / 2, 0, 0]} raycast={NO_RAYCAST}>
-          <planeGeometry args={[CARD_W - 8, 4]} />
-          <meshBasicMaterial color="#f6ad55" transparent opacity={0.75} />
         </mesh>
       )}
       {isTarget && (

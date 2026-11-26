@@ -17,6 +17,7 @@ export const LandViewSchema = z.object({
   frozen: z.boolean(),
   flipped: z.boolean(),
   iceTokens: z.number().default(0),
+  artId: z.string().optional(),
 });
 
 export const CardViewSchema = z.object({
@@ -210,6 +211,7 @@ export type PendingChoiceView = z.infer<typeof PendingChoiceViewSchema>;
 export const LobbyDeckSchema = z.object({
   heroId: z.string(),
   lands: z.array(z.string()).max(16),
+  landIds: z.array(z.string().nullable()).max(16).optional(),
   cards: z.array(z.string()).max(200),
 });
 

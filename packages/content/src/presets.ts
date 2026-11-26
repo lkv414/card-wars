@@ -50,5 +50,5 @@ export function buildPreset(
   }
   const deck: string[] = [];
   for (let copy = 0; copy < 4; copy++) deck.push(...chosen.slice(0, 10));
-  return { id, heroId, lands: [theme, theme, theme, 'rainbow'], deck };
+  return { id, heroId, lands: [theme, theme, theme, theme], deck };
 }

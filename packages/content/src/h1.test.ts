@@ -7,7 +7,8 @@ import {
   type GameConfig,
   type MatchState,
 } from '@card-wars/domain';
-import { catalog, deckPresets } from './index.ts';
+import { deckPresets } from './index.ts';
+import { legacyCatalog as catalog } from './__fixtures__/legacy-catalog.ts';
 
 // Golden tests for the H1 primitives (docs/MECHANICS-V2.md §H1–H3).
 const config: GameConfig = {
@@ -27,8 +28,8 @@ function newMatch(): MatchState {
   const preset = deckPresets[0]!;
   const { state } = createMatch(deps, {
     players: [
-      { id: 'p1', nickname: 'P1', heroId: preset.heroId, deck: [...preset.deck], lands: [...preset.lands] },
-      { id: 'p2', nickname: 'P2', heroId: deckPresets[1]!.heroId, deck: [...deckPresets[1]!.deck], lands: [...deckPresets[1]!.lands] },
+      { id: 'p1', nickname: 'P1', heroId: preset.heroId, deck: [...preset.deck], lands: ['blue', 'blue', 'blue', 'rainbow'] },
+      { id: 'p2', nickname: 'P2', heroId: deckPresets[1]!.heroId, deck: [...deckPresets[1]!.deck], lands: ['good', 'good', 'good', 'rainbow'] },
     ],
     seed: 42,
   });

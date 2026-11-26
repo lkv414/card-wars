@@ -1,14 +1,15 @@
 import { CONFIG, type LobbyDeck } from '@card-wars/protocol';
-import { LAND_TYPES, cards, deckPresets, heroes, type LandType } from '@card-wars/content';
+import { LAND_TYPES, PLAYABLE_LAND_TYPES, cards, getLand, heroes, type LandType } from '@card-wars/content';
 
 // Player decks live in localStorage (docs/TECH.md «Клиент»); a deck code is
-// `{v, h, l, c}` → base64url + crc32 for moving a deck between devices.
+// `{v, h, l, c, li?}` → base64url + crc32 for moving a deck between devices.
 
 export interface SavedDeck {
   id: string;
   name: string;
   heroId: string;
   lands: LandType[];
+  landIds?: (string | null)[];
   cards: string[];
 }
 
@@ -19,16 +20,23 @@ const SELECTED_KEY = 'cw-selected-deck';
 const heroById = new Map(heroes.map((h) => [h.id, h]));
 const cardById = new Map(cards.map((c) => [c.id, c]));
 
-export function presetDecks(): SavedDeck[] {
-  return [];
-}
-
-export function restorePresets(): SavedDeck[] {
-  return [];
-}
-
 function isLandType(value: string): value is LandType {
   return (LAND_TYPES as string[]).includes(value);
+}
+
+export function isPlayableLandType(value: string): value is Exclude<LandType, 'rainbow'> {
+  return (PLAYABLE_LAND_TYPES as string[]).includes(value);
+}
+
+function normalizeLandIds(
+  lands: LandType[],
+  rawLandIds: unknown,
+): (string | null)[] | undefined {
+  if (!Array.isArray(rawLandIds)) return undefined;
+  return lands.map((landType, i) => {
+    const id = rawLandIds[i];
+    return typeof id === 'string' && getLand(id)?.landType === landType ? id : null;
+  });
 }
 
 function normalizeDeck(raw: unknown): SavedDeck | null {
@@ -38,11 +46,16 @@ function normalizeDeck(raw: unknown): SavedDeck | null {
   if (typeof candidate.heroId !== 'string') return null;
   if (!Array.isArray(candidate.lands) || !candidate.lands.every((l) => typeof l === 'string' && isLandType(l))) return null;
   if (!Array.isArray(candidate.cards) || !candidate.cards.every((c) => typeof c === 'string')) return null;
+
+  const lands: LandType[] = candidate.lands.map((l) => (l === 'rainbow' ? 'blue' : (l as LandType)));
+  const landIds = normalizeLandIds(lands, candidate.landIds);
+
   return {
     id: candidate.id,
     name: candidate.name,
     heroId: candidate.heroId,
-    lands: candidate.lands as LandType[],
+    lands,
+    ...(landIds ? { landIds } : {}),
     cards: [...candidate.cards],
   };
 }
@@ -104,7 +117,8 @@ export function newDeck(): SavedDeck {
     id: `deck-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`,
     name: 'Новая колода',
     heroId,
-    lands: Array.from({ length: CONFIG.landsPerPlayer }, () => 'rainbow' as LandType),
+    lands: ['blue', 'blue', 'corn', 'corn'],
+    landIds: [null, null, null, null],
     cards: [],
   };
 }
@@ -118,6 +132,8 @@ export function validateSavedDeck(deck: SavedDeck): string[] {
     errors.push(`Нужно ровно ${CONFIG.landsPerPlayer} земли`);
   } else if (!deck.lands.every(isLandType)) {
     errors.push('Неизвестный тип земли');
+  } else if (!deck.lands.every(isPlayableLandType)) {
+    errors.push('Радужные земли нельзя добавлять в колоду');
   }
   if (deck.cards.length !== CONFIG.deckSize) {
     errors.push(`В колоде ${deck.cards.length} из ${CONFIG.deckSize} карт`);
@@ -136,7 +152,12 @@ export function validateSavedDeck(deck: SavedDeck): string[] {
 }
 
 export function toLobbyDeck(deck: SavedDeck): LobbyDeck {
-  return { heroId: deck.heroId, lands: [...deck.lands], cards: [...deck.cards] };
+  return {
+    heroId: deck.heroId,
+    lands: [...deck.lands],
+    ...(deck.landIds ? { landIds: [...deck.landIds] } : {}),
+    cards: [...deck.cards],
+  };
 }
 
 export function heroName(heroId: string): string {
@@ -200,13 +221,17 @@ export function encodeDeckCode(deck: SavedDeck): string {
     counts.set(cardId, (counts.get(cardId) ?? 0) + 1);
   }
   const rleCards: [string, number][] = Array.from(counts.entries());
-  const payload = JSON.stringify({
+  const payloadObj: Record<string, unknown> = {
     v: 2,
     n: deck.name,
     h: deck.heroId,
     l: deck.lands,
     c: rleCards,
-  });
+  };
+  if (deck.landIds?.some(Boolean)) {
+    payloadObj.li = deck.landIds;
+  }
+  const payload = JSON.stringify(payloadObj);
   const crc = crc32(payload).toString(16).padStart(8, '0');
   return `${base64UrlEncode(payload)}.${crc}`;
 }
@@ -243,7 +268,7 @@ export function decodeDeckCode(code: string): DeckCodeResult {
     return { ok: false, error: 'Неверный формат или поврежденный код колоды' };
   }
 
-  const data = parsed as { v?: unknown; n?: unknown; h?: unknown; l?: unknown; c?: unknown };
+  const data = parsed as { v?: unknown; n?: unknown; h?: unknown; l?: unknown; c?: unknown; li?: unknown };
 
   if (typeof data.h !== 'string' || !Array.isArray(data.l) || !Array.isArray(data.c)) {
     return { ok: false, error: 'Неверный формат или поврежденный код колоды' };
@@ -285,11 +310,15 @@ export function decodeDeckCode(code: string): DeckCodeResult {
     return { ok: false, error: 'Неверный формат или поврежденный код колоды' };
   }
 
+  const lands: LandType[] = data.l.map((l) => (l === 'rainbow' ? 'blue' : (l as LandType)));
+  const landIds = normalizeLandIds(lands, data.li);
+
   const deck: SavedDeck = {
     id: `deck-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`,
     name,
     heroId: data.h,
-    lands: data.l as LandType[],
+    lands,
+    ...(landIds ? { landIds } : {}),
     cards,
   };
 

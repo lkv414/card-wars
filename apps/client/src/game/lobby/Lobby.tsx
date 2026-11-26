@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CONFIG, type LobbyMode, type LobbySlot } from '@card-wars/protocol';
-import { type LandType } from '@card-wars/content';
-import { LAND_META } from '../../decks/landImages';
 import {
   getHero,
   getSelectedDeckId,
@@ -33,8 +31,6 @@ export function Lobby({ code }: { code: string }) {
   const [hoveredSeat, setHoveredSeat] = useState<number | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [previewSeat, setPreviewSeat] = useState<number | null>(null);
-  const [myDeckHovered, setMyDeckHovered] = useState(false);
-  const [myDeckPreviewOpen, setMyDeckPreviewOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const sent = useRef<string | null>(null);
 
@@ -43,7 +39,7 @@ export function Lobby({ code }: { code: string }) {
 
   useEffect(() => {
     if (!you || !selected || !lobby || lobby.started) return;
-    const signature = `${you.playerId}:${selected.id}:${JSON.stringify(selected.cards)}:${selected.lands.join(',')}`;
+    const signature = `${you.playerId}:${selected.id}:${JSON.stringify(selected.cards)}:${selected.lands.join(',')}:${selected.landIds?.join(',') ?? ''}`;
     if (sent.current === signature) return;
     sent.current = signature;
     sendLobbyCommand({ type: 'set_deck', deck: toLobbyDeck(selected) });
@@ -53,16 +49,18 @@ export function Lobby({ code }: { code: string }) {
     return (
       <main className="main-menu ui-v2">
         <div className="main-menu-content">
-          <span className="eyebrow">Card Wars</span>
-          <h1>{error ? 'Не удалось войти' : 'Подключение…'}</h1>
-          <p className={error ? 'lobby-error' : 'main-menu-subtitle'}>
-            {error?.message ?? 'Подключаемся к лобби'}
-          </p>
-          {error && (
-            <button className="btn-primary btn-xl" onClick={() => (location.href = '/')}>
-              В меню
-            </button>
-          )}
+          <div className="main-menu-panel cw-felt-box">
+            <span className="eyebrow">Card Wars</span>
+            <h1>{error ? 'Не удалось войти' : 'Подключение…'}</h1>
+            <p className={error ? 'lobby-error' : 'main-menu-subtitle'}>
+              {error?.message ?? 'Подключаемся к лобби'}
+            </p>
+            {error && (
+              <button type="button" className="cw-btn-3d btn-dark btn-lg" onClick={() => (location.href = '/')}>
+                В меню
+              </button>
+            )}
+          </div>
         </div>
       </main>
     );
@@ -72,8 +70,10 @@ export function Lobby({ code }: { code: string }) {
     return (
       <main className="main-menu ui-v2">
         <div className="main-menu-content">
-          <span className="eyebrow">Card Wars</span>
-          <h1>Матч начинается…</h1>
+          <div className="main-menu-panel cw-felt-box">
+            <span className="eyebrow">Card Wars</span>
+            <h1>Матч начинается…</h1>
+          </div>
         </div>
       </main>
     );
@@ -146,10 +146,14 @@ export function Lobby({ code }: { code: string }) {
     <main className="lobby-room ui-v2">
       <div className="lobby-room-content">
         <div className="lobby-topbar">
-          <button className="back-btn cw-btn-3d btn-dark btn-sm" onClick={() => {
-            sendLobbyCommand({ type: 'leave' });
-            location.href = '/';
-          }}>
+          <button
+            type="button"
+            className="cw-btn-3d btn-dark btn-sm"
+            onClick={() => {
+              sendLobbyCommand({ type: 'leave' });
+              location.href = '/';
+            }}
+          >
             ← Выйти из лобби
           </button>
           <span className="lobby-topbar-status cw-felt-box" style={{ padding: '6px 14px', borderRadius: '12px' }}>
@@ -169,8 +173,10 @@ export function Lobby({ code }: { code: string }) {
           <div className="lobby-code-value">
             <span>{code}</span>
             <button
-              className="lobby-copy-btn cw-btn-3d btn-gold btn-sm"
+              type="button"
+              className="cw-btn-3d btn-gold btn-sm"
               title="Скопировать ссылку"
+              aria-label="Скопировать ссылку"
               onClick={() => {
                 soundEngine.playButtonClick();
                 navigator.clipboard?.writeText(`${location.origin}/play/${code}`);
@@ -184,76 +190,6 @@ export function Lobby({ code }: { code: string }) {
           <p className="lobby-code-hint">Поделитесь кодом с другом или отправьте ссылку</p>
         </section>
 
-        <section
-          className={`lobby-deck-picker cw-paper-box ${(myDeckHovered || myDeckPreviewOpen) && selected ? 'lobby-deck-picker--open' : ''}`}
-          onMouseEnter={() => setMyDeckHovered(true)}
-          onMouseLeave={() => setMyDeckHovered(false)}
-        >
-          <div className="lobby-deck-picker__label">Ваша колода</div>
-          {validDecks.length > 0 ? (
-            <>
-              <div className="lobby-deck-picker__row">
-                <select value={selected?.id ?? ''} onChange={(e) => chooseDeck(e.target.value)}>
-                  {validDecks.map((deck) => (
-                    <option key={deck.id} value={deck.id}>
-                      {deck.name} · {heroName(deck.heroId)}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  className={`cw-btn-3d btn-blue btn-sm ${myDeckPreviewOpen ? 'is-active' : ''}`}
-                  onClick={() => setMyDeckPreviewOpen((v) => !v)}
-                  title="Предпросмотр колоды"
-                >
-                  {myDeckPreviewOpen ? '✕ Закрыть' : '👁 Обзор'}
-                </button>
-                <button
-                  className="cw-btn-3d btn-green btn-sm"
-                  onClick={() => {
-                    const deck = validDecks.find((d) => d.id === selectedId) ?? validDecks[0];
-                    if (deck) setEditing(deck);
-                  }}
-                >
-                  Редактировать
-                </button>
-              </div>
-              {selected && (
-                <p className="hint">
-                  {heroName(selected.heroId)} · {selected.cards.length}/{CONFIG.deckSize} карт · земли:{' '}
-                  {selected.lands.map((l) => LAND_META[l as LandType]?.label ?? l).join(', ')}
-                </p>
-              )}
-              {(myDeckHovered || myDeckPreviewOpen) && selected && (
-                <div className="lobby-player-popover" onClick={(e) => e.stopPropagation()}>
-                  <div className="lobby-player-popover__head">
-                    <strong>{selected.name}</strong>
-                    <span>
-                      {heroName(selected.heroId)} · {selected.cards.length}/{CONFIG.deckSize} карт
-                    </span>
-                    <button
-                      type="button"
-                      className="lobby-popover-close mini"
-                      onClick={() => setMyDeckPreviewOpen(false)}
-                      aria-label="Закрыть предпросмотр"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <DeckPreview deck={selected} compact />
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="lobby-deck-picker__empty">
-              <p className="hint">Нет готовой колоды — соберите 40 карт и выберите героя.</p>
-              <button className="cw-btn-3d btn-green" onClick={() => setEditing(newDeck())}>
-                Собрать колоду
-              </button>
-            </div>
-          )}
-        </section>
-
         <section className="lobby-players lobby-table-arena cw-felt-box">
           <div className="lobby-table-center-banner">
             <span className="table-banner-icon">⚔️</span>
@@ -265,6 +201,7 @@ export function Lobby({ code }: { code: string }) {
           </div>
           <ul className="lobby-players__list">
             {lobby.slots.map((slot, seat) => {
+              const isMe = slot?.id === you.playerId;
               const isPreviewOpen = (hoveredSeat === seat || previewSeat === seat) && Boolean(slot?.deck);
               const isSeatSelected = selectedSeat === seat;
               const hero = slot?.deck ? getHero(slot.deck.heroId) : null;
@@ -272,7 +209,7 @@ export function Lobby({ code }: { code: string }) {
               return (
                 <li
                   key={seat}
-                  className={`lobby-player ${slot ? '' : 'lobby-player--empty'} ${
+                  className={`lobby-player ${slot ? '' : 'lobby-player--empty'} ${isMe ? 'lobby-player--me' : ''} ${
                     isPreviewOpen ? 'lobby-player--preview-open' : ''
                   } ${isSeatSelected ? 'is-selected-seat' : ''}`}
                   draggable={isHost && Boolean(slot)}
@@ -283,6 +220,10 @@ export function Lobby({ code }: { code: string }) {
                     setHoveredSeat((cur) => (cur === seat ? null : cur));
                   }}
                   onDragStart={(e) => {
+                    if ((e.target as HTMLElement).closest('select, button, input')) {
+                      e.preventDefault();
+                      return;
+                    }
                     setHoveredSeat(null);
                     setPreviewSeat(null);
                     if (slot) e.dataTransfer.setData('text/plain', slot.id);
@@ -320,7 +261,7 @@ export function Lobby({ code }: { code: string }) {
                         </span>
                       )}
                       <span>{slot?.nickname ?? 'Свободное место'}</span>
-                      {slot?.id === you.playerId && <span className="you-mark">(вы)</span>}
+                      {isMe && <span className="you-mark">(вы)</span>}
                       {slot?.isBot && <span className="bot-mark">бот</span>}
                       {isSeatSelected && <span className="selected-mark">← выбрано для пересадки</span>}
                     </div>
@@ -328,6 +269,14 @@ export function Lobby({ code }: { code: string }) {
                       className={`lobby-player__deck ${slot?.deck ? 'ok clickable' : ''}`}
                       onClick={(e) => {
                         if (slot?.deck) {
+                          e.stopPropagation();
+                          soundEngine.playCardDraw();
+                          setPreviewSeat((cur) => (cur === seat ? null : seat));
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (slot?.deck && (e.key === 'Enter' || e.key === ' ')) {
+                          e.preventDefault();
                           e.stopPropagation();
                           soundEngine.playCardDraw();
                           setPreviewSeat((cur) => (cur === seat ? null : seat));
@@ -343,6 +292,50 @@ export function Lobby({ code }: { code: string }) {
                           : 'колода скрыта'
                         : '—'}
                     </div>
+
+                    {isMe && (
+                      <div
+                        className="lobby-my-deck-bar cw-paper-box"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {validDecks.length > 0 ? (
+                          <div className="lobby-my-deck-bar__row">
+                            <select
+                              aria-label="Выбор колоды"
+                              value={selected?.id ?? ''}
+                              onChange={(e) => chooseDeck(e.target.value)}
+                            >
+                              {validDecks.map((deck) => (
+                                <option key={deck.id} value={deck.id}>
+                                  {deck.name} · {heroName(deck.heroId)}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              className="cw-btn-3d btn-blue btn-sm"
+                              onClick={() => {
+                                const deck = validDecks.find((d) => d.id === selectedId) ?? validDecks[0];
+                                if (deck) setEditing(deck);
+                              }}
+                            >
+                              Редактировать
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="lobby-my-deck-bar__row">
+                            <span className="hint">Нет готовой колоды (40 карт)</span>
+                            <button
+                              type="button"
+                              className="cw-btn-3d btn-green btn-sm"
+                              onClick={() => setEditing(newDeck())}
+                            >
+                              Собрать колоду
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <span className={`lobby-seal-stamp ${slot ? (slot.ready ? 'is-ready' : 'is-waiting') : 'is-empty'}`}>
@@ -358,7 +351,7 @@ export function Lobby({ code }: { code: string }) {
                         </span>
                         <button
                           type="button"
-                          className="lobby-popover-close mini"
+                          className="lobby-popover-close cw-btn-3d btn-dark btn-sm"
                           onClick={() => {
                             setPreviewSeat(null);
                             setHoveredSeat(null);
@@ -377,6 +370,7 @@ export function Lobby({ code }: { code: string }) {
                       {slot.id !== you.playerId &&
                         (slot.isBot ? (
                           <button
+                            type="button"
                             className="cw-btn-3d btn-red btn-sm"
                             onClick={() => {
                               soundEngine.playButtonClick();
@@ -388,6 +382,7 @@ export function Lobby({ code }: { code: string }) {
                         ) : (
                           <>
                             <button
+                              type="button"
                               className="cw-btn-3d btn-red btn-sm"
                               onClick={() => {
                                 soundEngine.playButtonClick();
@@ -398,6 +393,7 @@ export function Lobby({ code }: { code: string }) {
                             </button>
                             {slot.connected && (
                               <button
+                                type="button"
                                 className="cw-btn-3d btn-purple btn-sm"
                                 onClick={() => {
                                   soundEngine.playButtonClick();
@@ -411,6 +407,7 @@ export function Lobby({ code }: { code: string }) {
                         ))}
                       {selectedSeat !== null && selectedSeat !== seat ? (
                         <button
+                          type="button"
                           className="cw-btn-3d btn-orange btn-sm"
                           onClick={() => {
                             soundEngine.playButtonClick();
@@ -424,6 +421,7 @@ export function Lobby({ code }: { code: string }) {
                         </button>
                       ) : (
                         <button
+                          type="button"
                           className={`cw-btn-3d ${isSeatSelected ? 'btn-red' : 'btn-orange'} btn-sm`}
                           onClick={() => {
                             soundEngine.playButtonClick();
@@ -436,6 +434,7 @@ export function Lobby({ code }: { code: string }) {
                         </button>
                       )}
                       <button
+                        type="button"
                         className="cw-btn-3d btn-dark btn-sm"
                         disabled={seat === 0}
                         onClick={() => {
@@ -447,6 +446,7 @@ export function Lobby({ code }: { code: string }) {
                         ◀
                       </button>
                       <button
+                        type="button"
                         className="cw-btn-3d btn-dark btn-sm"
                         disabled={seat === lobby.maxPlayers - 1}
                         onClick={() => {
@@ -462,6 +462,7 @@ export function Lobby({ code }: { code: string }) {
 
                   {isHost && !slot && selectedSeat !== null && (
                     <button
+                      type="button"
                       className="cw-btn-3d btn-orange btn-sm"
                       onClick={() => {
                         soundEngine.playButtonClick();
@@ -477,6 +478,7 @@ export function Lobby({ code }: { code: string }) {
 
                   {isHost && !slot && selectedSeat === null && (
                     <button
+                      type="button"
                       className="cw-btn-3d btn-blue btn-sm"
                       onClick={() => {
                         soundEngine.playButtonClick();
@@ -531,7 +533,8 @@ export function Lobby({ code }: { code: string }) {
 
         <div className="lobby-actions">
           <button
-            className={`btn-ready cw-btn-3d ${meSlot?.ready ? 'btn-green done' : 'btn-orange'} btn-lg`}
+            type="button"
+            className={`cw-btn-3d ${meSlot?.ready ? 'btn-green done' : 'btn-orange'} btn-lg`}
             disabled={!meSlot || validDecks.length === 0}
             onClick={() => {
               const next = !meSlot?.ready;
@@ -544,7 +547,8 @@ export function Lobby({ code }: { code: string }) {
           </button>
           {isHost && (
             <button
-              className="btn-primary cw-btn-3d btn-red btn-xl"
+              type="button"
+              className="cw-btn-3d btn-red btn-lg"
               disabled={!canStart}
               onClick={() => {
                 soundEngine.playGong();

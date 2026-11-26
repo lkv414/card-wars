@@ -233,7 +233,10 @@ export function myBoardTransform(view: PlayerView): BoardTransform {
 }
 
 export function deckLocalFor(view: PlayerView): [number, number, number] {
-  const alive = view.order.filter((id) => !view.players[id]!.eliminated);
+  if (view.mode === 'teams' && view.teamVariant === 'wall') {
+    return [-140, 4, LAND_H / 2 + 78];
+  }
+  const alive = view.order.filter((id) => !view.players[id]?.eliminated);
   if (alive.length >= 3) {
     return [-140, 4, 30];
   }
@@ -241,7 +244,10 @@ export function deckLocalFor(view: PlayerView): [number, number, number] {
 }
 
 export function discardLocalFor(view: PlayerView): [number, number, number] {
-  const alive = view.order.filter((id) => !view.players[id]!.eliminated);
+  if (view.mode === 'teams' && view.teamVariant === 'wall') {
+    return [140, 4, LAND_H / 2 + 78];
+  }
+  const alive = view.order.filter((id) => !view.players[id]?.eliminated);
   if (alive.length >= 3) {
     return [140, 4, 30];
   }
@@ -249,7 +255,10 @@ export function discardLocalFor(view: PlayerView): [number, number, number] {
 }
 
 export function heroLocalFor(view: PlayerView): [number, number, number] {
-  const alive = view.order.filter((id) => !view.players[id]!.eliminated);
+  if (view.mode === 'teams' && view.teamVariant === 'wall') {
+    return [0, 0, LAND_H / 2 + 78];
+  }
+  const alive = view.order.filter((id) => !view.players[id]?.eliminated);
   if (alive.length >= 3) {
     return [0, 0, 40];
   }
@@ -257,11 +266,32 @@ export function heroLocalFor(view: PlayerView): [number, number, number] {
 }
 
 export function livesLocalFor(view: PlayerView): [number, number, number] {
-  const alive = view.order.filter((id) => !view.players[id]!.eliminated);
+  if (view.mode === 'teams' && view.teamVariant === 'wall') {
+    return [60, 2, LAND_H / 2 + 78];
+  }
+  const alive = view.order.filter((id) => !view.players[id]?.eliminated);
   if (alive.length >= 3) {
     return [60, 2, 40];
   }
   return livesLocal;
+}
+
+/** Square felt playmat size (mm) sized to contain all zones & accessories for the current table layout. */
+export function playmatSizeFor(view: PlayerView | null): number {
+  if (!view) return 960;
+  if (view.mode === 'teams' && view.teamVariant === 'wall') return 1600;
+  const alive = view.order.filter((id) => !view.players[id]?.eliminated).length;
+  if (alive <= 2) return 960;
+  if (alive === 3) return 1600;
+  return 1500;
+}
+
+/** World X/Z offsets for the four decorative picnic props around the felt playmat. */
+export function picnicPropOffsetsFor(matSize: number): { x: number; z: number } {
+  if (matSize <= 1000) {
+    return { x: matSize / 2 + 80, z: matSize / 2 - 60 };
+  }
+  return { x: matSize / 2 + 80, z: matSize / 2 + 80 };
 }
 
 /** World position of a point given in a board's local coordinates. */

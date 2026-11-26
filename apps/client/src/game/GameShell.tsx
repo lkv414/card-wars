@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useMemo } from 'react';
 import { GameConnection } from '../connection';
 import { useGame } from '../store';
 import { Hud } from './hud/Hud';
+import { HudSidebar } from './hud/HudSidebar';
 import { DomGame } from './debug/DomGame';
 import { Lobby } from './lobby/Lobby';
 
@@ -26,12 +27,14 @@ export function GameShell({ code, nickname }: { code: string; nickname: string }
     return (
       <main className="main-menu ui-v2">
         <div className="main-menu-content">
-          <span className="eyebrow">Card Wars</span>
-          <h1>Соединение потеряно</h1>
-          <p className="main-menu-subtitle">Токен сессии сохранён — перезагрузка вернёт вас в партию</p>
-          <button className="btn-primary btn-xl" onClick={() => location.reload()}>
-            Переподключиться
-          </button>
+          <div className="main-menu-panel cw-felt-box">
+            <span className="eyebrow">Card Wars</span>
+            <h1 className="cw-ink-title">Соединение потеряно</h1>
+            <p className="main-menu-subtitle">Токен сессии сохранён — перезагрузка вернёт вас в партию</p>
+            <button className="cw-btn-3d btn-green btn-lg" onClick={() => location.reload()}>
+              Переподключиться
+            </button>
+          </div>
         </div>
       </main>
     );
@@ -51,8 +54,9 @@ export function GameShell({ code, nickname }: { code: string; nickname: string }
         <Suspense fallback={null}>
           <Scene />
         </Suspense>
+        <Hud code={code} />
       </div>
-      <Hud code={code} />
+      <HudSidebar code={code} />
     </div>
   );
 }

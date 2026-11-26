@@ -42,10 +42,15 @@ function resolvePendingForBot(view: PlayerView, deps: BotDeps): Command {
   const targetChoices: TargetChoice[] = [];
 
   if (ask) {
-    if (ask.kind === 'player' || ask.kind === 'opponent_player') {
+    if (ask.kind === 'any_player' || ask.kind === 'opponent_player') {
       const targetPid = opponents[0] ?? view.order.find((p) => p !== view.me) ?? view.me;
       targetChoices.push({ kind: 'player', playerId: targetPid });
-    } else if (ask.kind === 'creature' || ask.kind === 'opponent_creature') {
+    } else if (
+      ask.kind === 'any_creature' ||
+      ask.kind === 'opponent_creature' ||
+      ask.kind === 'lane_creature' ||
+      ask.kind === 'lane_opponent_creature'
+    ) {
       let found: string | null = null;
       for (const pid of opponents) {
         for (const z of view.players[pid]!.zones) {
@@ -56,7 +61,7 @@ function resolvePendingForBot(view: PlayerView, deps: BotDeps): Command {
         }
         if (found) break;
       }
-      if (!found && ask.kind !== 'opponent_creature') {
+      if (!found && ask.kind !== 'opponent_creature' && ask.kind !== 'lane_opponent_creature') {
         for (const z of me.zones) {
           if (z.creature) {
             found = z.creature.instanceId;
@@ -74,14 +79,19 @@ function resolvePendingForBot(view: PlayerView, deps: BotDeps): Command {
       }
     } else if (ask.kind === 'landscape') {
       targetChoices.push({ kind: 'landscape', player: view.me, zone: 0 });
-    } else if (ask.kind === 'mode' || ask.kind === 'heal_or_damage') {
+    } else if (ask.kind === 'heal_or_damage') {
       targetChoices.push({ kind: 'mode', mode: 'damage' });
-    } else if (ask.kind === 'option') {
+    } else if (ask.kind === 'choose_option') {
       const opt = ask.options?.[0] ?? 'corn';
       targetChoices.push({ kind: 'option', option: opt });
     } else if (ask.kind === 'amount') {
       targetChoices.push({ kind: 'amount', value: ask.min ?? 1 });
-    } else if (ask.kind === 'card' || ask.kind === 'own_discard_card' || ask.kind === 'any_discard_card') {
+    } else if (
+      ask.kind === 'revealed_card' ||
+      ask.kind === 'visible_card' ||
+      ask.kind === 'own_discard_card' ||
+      ask.kind === 'any_discard_card'
+    ) {
       const revealed = view.revealed[view.me];
       if (revealed && revealed.length > 0) {
         targetChoices.push({ kind: 'card', instanceId: revealed[0]!.instanceId });

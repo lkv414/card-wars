@@ -1,18 +1,17 @@
 import * as THREE from 'three';
 
 /**
- * Custom Three.js Card Material with Specular Sheen Band and Rainbow Foil
+ * Custom Three.js Card Material with Rainbow Foil for rainbow cards
  * (docs/AUDIT-KIBERBUS-UIUX.md §5.1, §8 Этап 4).
  */
 export function createCardMaterial(texture: THREE.Texture, isRainbow = false): THREE.ShaderMaterial {
-  // Ensure optimal texture filtering per audit §2
+  // Ensure optimal texture filtering per audit §2 (preserving texture.colorSpace)
   texture.minFilter = THREE.LinearMipmapLinearFilter;
   texture.generateMipmaps = true;
 
   const uniforms = {
     uTexture: { value: texture },
     uTilt: { value: new THREE.Vector2(0, 0) },
-    uSheen: { value: 0.85 },
     uFoil: { value: isRainbow ? 1.0 : 0.0 },
     uTime: { value: 0.0 },
   };
@@ -34,7 +33,6 @@ export function createCardMaterial(texture: THREE.Texture, isRainbow = false): T
   const fragmentShader = `
     uniform sampler2D uTexture;
     uniform vec2 uTilt;
-    uniform float uSheen;
     uniform float uFoil;
     uniform float uTime;
 
@@ -49,13 +47,7 @@ export function createCardMaterial(texture: THREE.Texture, isRainbow = false): T
     void main() {
       vec4 texColor = texture2D(uTexture, vUv);
 
-      // 1. Tilt-based Specular Sheen Band
-      float band_pos = uTilt.y * 0.85 - uTilt.x * 1.05 + sin(uTime * 1.4) * 0.07;
-      float d = (vUv.x * 0.8 + vUv.y * 0.6) - 0.7 - band_pos;
-      float band = exp(-d * d * 60.0) * 0.22 + exp(-d * d * 900.0) * 0.18;
-      texColor.rgb += vec3(band) * uSheen;
-
-      // 2. Rainbow Foil (Holographic foil for rainbow cards)
+      // Rainbow Foil (Holographic foil for rainbow cards)
       if (uFoil > 0.0) {
         float lum = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
         float rainbowCoord = fract(vUv.x * 0.9 + vUv.y * 0.6 + uTilt.y * 0.35 + uTilt.x * 0.45 + uTime * 0.06);

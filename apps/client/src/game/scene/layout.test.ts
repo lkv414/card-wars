@@ -12,8 +12,14 @@ import {
   ROW_Z,
   ZONE_COUNT,
   boardTransform,
+  deckLocalFor,
+  discardLocalFor,
+  heroLocalFor,
+  livesLocalFor,
   localToWorld,
+  picnicPropOffsetsFor,
   playerAccessoriesTransform,
+  playmatSizeFor,
   slotLocalZ,
   worldOfDeck,
   worldOfDiscard,
@@ -330,5 +336,97 @@ describe('Coordinate transformations and zone hit testing', () => {
     expect(creatureSlot![2]).toBeLessThan(buildingSlot![2]);
     // Hero is behind building
     expect(hero![2]).toBeGreaterThan(buildingSlot![2]);
+  });
+});
+
+function makeTeamView(teamVariant: 'neighbors' | 'wall'): PlayerView {
+  const view = makeMockView(['p1', 'p2', 'p3', 'p4'], 'p1');
+  view.mode = 'teams';
+  view.teamVariant = teamVariant;
+  view.players.p1!.teamId = 'team-a';
+  view.players.p3!.teamId = 'team-a';
+  view.players.p2!.teamId = 'team-b';
+  view.players.p4!.teamId = 'team-b';
+  view.teams = {
+    'team-a': { id: 'team-a', playerIds: ['p1', 'p3'], lives: 50, maxLives: 50, eliminated: false },
+    'team-b': { id: 'team-b', playerIds: ['p2', 'p4'], lives: 50, maxLives: 50, eliminated: false },
+  };
+  return view;
+}
+
+describe('Playmat sizing and picnic prop offsets', () => {
+  it('returns expected playmatSizeFor across all game modes', () => {
+    expect(playmatSizeFor(null)).toBe(960);
+    expect(playmatSizeFor(makeMockView(['p1', 'p2']))).toBe(960);
+    expect(playmatSizeFor(makeMockView(['p1', 'p2', 'p3']))).toBe(1600);
+    expect(playmatSizeFor(makeMockView(['p1', 'p2', 'p3', 'p4']))).toBe(1500);
+    expect(playmatSizeFor(makeTeamView('neighbors'))).toBe(1500);
+    expect(playmatSizeFor(makeTeamView('wall'))).toBe(1600);
+  });
+
+  it('places 2v2 wall accessories strictly below the land row', () => {
+    const view = makeTeamView('wall');
+    expect(deckLocalFor(view)).toEqual([-140, 4, LAND_H / 2 + 78]);
+    expect(discardLocalFor(view)).toEqual([140, 4, LAND_H / 2 + 78]);
+    expect(heroLocalFor(view)).toEqual([0, 0, LAND_H / 2 + 78]);
+    expect(livesLocalFor(view)).toEqual([60, 2, LAND_H / 2 + 78]);
+  });
+
+  it('keeps all zones & accessories inside ±(matSize / 2) and props strictly outside matSize / 2', () => {
+    const scenarios: Array<{ label: string; view: PlayerView; expectedSize: number }> = [
+      { label: '1v1', view: makeMockView(['p1', 'p2']), expectedSize: 960 },
+      { label: 'FFA 3', view: makeMockView(['p1', 'p2', 'p3']), expectedSize: 1600 },
+      { label: 'FFA 4', view: makeMockView(['p1', 'p2', 'p3', 'p4']), expectedSize: 1500 },
+      { label: '2v2 neighbors', view: makeTeamView('neighbors'), expectedSize: 1500 },
+      { label: '2v2 wall', view: makeTeamView('wall'), expectedSize: 1600 },
+    ];
+
+    for (const { view, expectedSize } of scenarios) {
+      const matSize = playmatSizeFor(view);
+      expect(matSize).toBe(expectedSize);
+      const halfMat = matSize / 2;
+
+      for (const pid of view.order) {
+        // Every land zone corner must stay within ±halfMat
+        for (let z = 0; z < ZONE_COUNT; z++) {
+          const t = zoneWorldTransform(view, pid, z)!;
+          expect(t).not.toBeNull();
+          for (const lx of [-LAND_W / 2, LAND_W / 2]) {
+            for (const lz of [-LAND_H / 2, LAND_H / 2]) {
+              const corner = localToWorld(t, lx, lz);
+              expect(Math.abs(corner.x)).toBeLessThanOrEqual(halfMat);
+              expect(Math.abs(corner.z)).toBeLessThanOrEqual(halfMat);
+            }
+          }
+        }
+
+        // Player accessories (hero, deck, discard, lives) must stay within ±halfMat
+        const acc = playerAccessoriesTransform(view, pid)!;
+        expect(acc).not.toBeNull();
+        const hero = worldOfHero(view, pid)!;
+        const deck = worldOfDeck(view, pid)!;
+        const discard = worldOfDiscard(view, pid)!;
+        const livesLocal = livesLocalFor(view);
+        const lives = localToWorld(acc, livesLocal[0], livesLocal[2]);
+
+        for (const pt of [
+          { x: hero[0], z: hero[2] },
+          { x: deck[0], z: deck[2] },
+          { x: discard[0], z: discard[2] },
+          lives,
+        ]) {
+          expect(Math.abs(pt.x)).toBeLessThanOrEqual(halfMat);
+          expect(Math.abs(pt.z)).toBeLessThanOrEqual(halfMat);
+        }
+      }
+
+      // All 4 picnic props (±propX, ±propZ) sit strictly outside the ±halfMat playmat square
+      const props = picnicPropOffsetsFor(matSize);
+      expect(Math.max(Math.abs(props.x), Math.abs(props.z))).toBeGreaterThan(halfMat);
+    }
+
+    expect(picnicPropOffsetsFor(960)).toEqual({ x: 560, z: 420 });
+    expect(picnicPropOffsetsFor(1600)).toEqual({ x: 880, z: 880 });
+    expect(picnicPropOffsetsFor(1500)).toEqual({ x: 830, z: 830 });
   });
 });

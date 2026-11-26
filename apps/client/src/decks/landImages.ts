@@ -1,4 +1,6 @@
-import type { LandType } from '@card-wars/content';
+import { PLAYABLE_LAND_TYPES, getLand, lands, type LandData, type LandType } from '@card-wars/content';
+
+export { PLAYABLE_LAND_TYPES };
 
 export const LAND_META: Record<LandType, { label: string; shortLabel: string }> = {
   corn: { label: 'Кукурузные поля', shortLabel: 'Кукуруза' },
@@ -11,61 +13,62 @@ export const LAND_META: Record<LandType, { label: string; shortLabel: string }> 
   lava: { label: 'Лавовые земли', shortLabel: 'Лава' },
 };
 
-const LAND_IMAGES: Record<LandType, string[]> = {
-  blue: [
-    '/content/lands/blue-plains-0b69d6a.webp',
-    '/content/lands/blue-plains-3492f70.webp',
-    '/content/lands/blue-plains-46a7379.webp',
-    '/content/lands/blue-plains-7dac25a.webp',
-  ],
-  corn: [
-    '/content/lands/cornfield-64b3840.webp',
-    '/content/lands/cornfield-6bb9987.webp',
-    '/content/lands/cornfield-99f5fe6.webp',
-    '/content/lands/cornfield-ad120b3.webp',
-  ],
-  ice: [
-    '/content/lands/icy-lands-35b4c74.webp',
-    '/content/lands/icy-lands-780036a.webp',
-    '/content/lands/icy-lands-9bfc69c.webp',
-    '/content/lands/icy-lands-afb5844.webp',
-  ],
-  lava: [
-    '/content/lands/lava-lands-1b34cd3.webp',
-    '/content/lands/lava-lands-374062d.webp',
-    '/content/lands/lava-lands-96d0405.webp',
-    '/content/lands/lava-lands-b0e4784.webp',
-  ],
-  good: [
-    '/content/lands/nice-lands-1ea01c4.webp',
-    '/content/lands/nice-lands-4e666d5.webp',
-    '/content/lands/nice-lands-8c6e217.webp',
-    '/content/lands/nice-lands-ab94559.webp',
-  ],
-  sand: [
-    '/content/lands/sandy-lands-1a7e5ef.webp',
-    '/content/lands/sandy-lands-1eb2378.webp',
-    '/content/lands/sandy-lands-448f335.webp',
-    '/content/lands/sandy-lands-56bc7c3.webp',
-  ],
-  swamp: [
-    '/content/lands/useless-swamps-2918fd8.webp',
-    '/content/lands/useless-swamps-2c1516f.webp',
-    '/content/lands/useless-swamps-40eac4b.webp',
-    '/content/lands/useless-swamps-8ea1ff2.webp',
-  ],
-  rainbow: [
-    '/content/other/card-back-6cefc0e.webp',
-  ],
+const LANDS_BY_TYPE: Record<Exclude<LandType, 'rainbow'>, LandData[]> = {
+  corn: [],
+  blue: [],
+  good: [],
+  ice: [],
+  sand: [],
+  swamp: [],
+  lava: [],
 };
 
-export function landImageUrl(type: LandType, variant = 1): string | null {
+for (const land of lands) {
+  LANDS_BY_TYPE[land.landType].push(land);
+}
+
+const LAND_IMAGES: Record<LandType, string[]> = {
+  corn: LANDS_BY_TYPE.corn.map((l) => l.image),
+  blue: LANDS_BY_TYPE.blue.map((l) => l.image),
+  good: LANDS_BY_TYPE.good.map((l) => l.image),
+  ice: LANDS_BY_TYPE.ice.map((l) => l.image),
+  sand: LANDS_BY_TYPE.sand.map((l) => l.image),
+  swamp: LANDS_BY_TYPE.swamp.map((l) => l.image),
+  lava: LANDS_BY_TYPE.lava.map((l) => l.image),
+  rainbow: ['/content/other/card-back-6cefc0e.webp'],
+};
+
+export function getLandArts(type: LandType): LandData[] {
+  if (type === 'rainbow') return [];
+  return LANDS_BY_TYPE[type] ?? [];
+}
+
+export function resolveLandImageUrl(
+  type: LandType,
+  artId?: string | null,
+  variantIndex = 1,
+): string | null {
+  if (artId) {
+    const found = getLand(artId);
+    if (found && found.landType === type) {
+      return found.image;
+    }
+  }
+  const arts = getLandArts(type);
+  if (arts.length > 0) {
+    const idx = Math.max(0, variantIndex - 1) % arts.length;
+    return arts[idx]?.image ?? null;
+  }
   const images = LAND_IMAGES[type];
   if (!images || images.length === 0) return null;
-  const idx = Math.max(0, variant - 1) % images.length;
+  const idx = Math.max(0, variantIndex - 1) % images.length;
   return images[idx] ?? null;
 }
 
-export const PRIMARY_LAND_IMAGES: string[] = Object.values(LAND_IMAGES)
-  .map((arr) => arr[0])
+export function landImageUrl(type: LandType, variant = 1): string | null {
+  return resolveLandImageUrl(type, null, variant);
+}
+
+export const PRIMARY_LAND_IMAGES: string[] = PLAYABLE_LAND_TYPES
+  .map((type) => LANDS_BY_TYPE[type][0]?.image)
   .filter((url): url is string => Boolean(url));

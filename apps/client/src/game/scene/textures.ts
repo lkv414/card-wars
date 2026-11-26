@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { cards as catalog, heroes } from '@card-wars/content';
 import type { CardData, LandType } from '@card-wars/content';
+import { resolveLandImageUrl } from '../../decks/landImages';
 
 // Лицо карты — полный скан из content/cards/images (docs/UI-3D.md «Состав сцена»):
 // синхронно отдаём canvas-заглушку из данных карты, скан догружается асинхронно
@@ -428,26 +429,16 @@ export function comicBurstSprite(word: string, bgColor = '#ffe033', textColor = 
   return texture;
 }
 
-export const LAND_ART_URLS: Record<LandType, string | null> = {
-  blue: '/content/lands/blue-plains-0b69d6a.webp',
-  corn: '/content/lands/cornfield-64b3840.webp',
-  good: '/content/lands/nice-lands-1ea01c4.webp',
-  ice: '/content/lands/icy-lands-35b4c74.webp',
-  sand: '/content/lands/sandy-lands-1a7e5ef.webp',
-  swamp: '/content/lands/useless-swamps-2918fd8.webp',
-  lava: '/content/lands/lava-lands-1b34cd3.webp',
-  rainbow: null,
-};
-
 function requestLandScan(
   type: LandType,
   frozen: boolean,
   canvas: HTMLCanvasElement,
   texture: THREE.CanvasTexture,
+  artId?: string,
 ): void {
-  const url = LAND_ART_URLS[type];
+  const url = resolveLandImageUrl(type, artId, 1);
   if (!url) return;
-  const key = `land-scan-${type}-${frozen ? 1 : 0}`;
+  const key = `land-scan-${url ?? type}-${frozen ? 1 : 0}`;
   if (scanStatus.has(key)) return;
   scanStatus.set(key, 'loading');
 
@@ -505,8 +496,14 @@ function requestLandScan(
   img.src = url;
 }
 
-export function landTexture(type: LandType, frozen: boolean, flipped: boolean): THREE.CanvasTexture {
-  const key = `land-${type}-${frozen ? 1 : 0}-${flipped ? 1 : 0}`;
+export function landTexture(
+  type: LandType,
+  frozen: boolean,
+  flipped: boolean,
+  artId?: string,
+): THREE.CanvasTexture {
+  const url = resolveLandImageUrl(type, artId, 1);
+  const key = `land-${type}-${url ?? 'default'}-${frozen ? 1 : 0}-${flipped ? 1 : 0}`;
   const cached = tokenCache.get(key);
   if (cached) return cached;
   const W = 266;
@@ -583,8 +580,8 @@ export function landTexture(type: LandType, frozen: boolean, flipped: boolean): 
   texture.anisotropy = 4;
   tokenCache.set(key, texture);
 
-  if (!flipped && LAND_ART_URLS[type]) {
-    requestLandScan(type, frozen, canvas, texture);
+  if (!flipped && url) {
+    requestLandScan(type, frozen, canvas, texture, artId);
   }
 
   return texture;

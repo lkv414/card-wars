@@ -1,7 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { CONFIG } from '@card-wars/protocol';
 import { GameShell } from './game/GameShell';
-import { getHero, getSelectedDeckId, heroName, loadDecks } from './decks';
 import { PRIMARY_LAND_IMAGES } from './decks/landImages';
 import { makeRoomCode } from './roomCode';
 import { setQuality, useGame } from './store';
@@ -144,163 +143,139 @@ function MainMenu({
   onDecks: () => void;
 }) {
   const quality = useGame((s) => s.ui.quality);
-  const decks = loadDecks();
-  const selectedDeck = decks.find((d) => d.id === getSelectedDeckId()) ?? decks[0];
-  const hero = selectedDeck ? getHero(selectedDeck.heroId) : null;
   const [muted, setMuted] = useState(() => soundEngine.getSettings().muted);
   const [music, setMusic] = useState(() => soundEngine.isMusicEnabled());
 
   return (
     <main className="main-menu ui-v2 treehouse-menu">
       <div className="main-menu-content">
-        <div className="menu-header-sign">
-          <span className="eyebrow menu-eyebrow">Земли Ууу · Карточные Войны</span>
-          <h1 className="menu-title-logo">CARD WARS</h1>
-          <p className="main-menu-subtitle">«Я флопаю свинку!» — сразитесь за звание крутого парня</p>
-        </div>
-
-        {selectedDeck && (
-          <div
-            className="menu-deck-badge cw-felt-box"
-            onClick={() => {
-              soundEngine.playCardDraw();
-              onDecks();
-            }}
-            role="button"
-            tabIndex={0}
-            title="Нажмите, чтобы открыть Гримуар колод"
-          >
-            <div className="menu-deck-badge__avatar">
-              {hero?.image ? (
-                <img src={hero.image} alt={hero.name} className="menu-deck-badge__img" />
-              ) : (
-                <span className="menu-deck-badge__icon">👑</span>
-              )}
-            </div>
-            <div className="menu-deck-badge__info">
-              <span className="menu-deck-badge__label">Готовая колода:</span>
-              <strong className="menu-deck-badge__name">{selectedDeck.name}</strong>
-              <span className="menu-deck-badge__meta">
-                {hero?.name ?? 'Герой'} · {selectedDeck.cards.length}/{CONFIG.deckSize} карт
-              </span>
-            </div>
-            <span className="menu-deck-badge__action cw-btn-3d btn-gold btn-sm">📜 Открыть</span>
+        <div className="main-menu-panel cw-felt-box">
+          <div className="menu-header-sign">
+            <span className="eyebrow menu-eyebrow">Земли Ууу · Карточные Войны</span>
+            <h1 className="menu-title-logo">CARD WARS</h1>
+            <p className="main-menu-subtitle">«Я флопаю свинку!» — сразитесь за звание крутого парня</p>
           </div>
-        )}
 
-        <div className="main-menu-form">
-          <label className="field">
-            <span className="field-label">Ваш ник</span>
-            <input
-              placeholder="Введите ник"
-              maxLength={20}
-              value={nickname}
-              onChange={(e) => onNickname(e.target.value)}
-            />
-          </label>
-
-          <button
-            className="btn-primary btn-xl btn-treehouse-plank cw-btn-3d btn-green btn-lg"
-            disabled={!nickname.trim()}
-            onClick={() => {
-              soundEngine.playGong();
-              onEnter(makeRoomCode(), true);
-            }}
-          >
-            ⚔️ Создать битву
-          </button>
-
-          <div className="join-block">
-            <span className="field-label">Войти по коду комнаты</span>
-            <div className="join-row">
+          <div className="main-menu-form cw-paper-box">
+            <label className="field">
+              <span className="field-label">Ваш ник</span>
               <input
-                className="code-input"
-                placeholder={'•'.repeat(CONFIG.lobbyCodeDigits)}
-                inputMode="numeric"
-                maxLength={CONFIG.lobbyCodeDigits}
-                value={codeInput}
-                onChange={(e) => onCodeInput(e.target.value.replace(/\D/g, ''))}
-                onKeyDown={(e) => {
-                  if (
-                    e.key === 'Enter' &&
-                    codeInput.length === CONFIG.lobbyCodeDigits &&
-                    nickname.trim()
-                  ) {
+                placeholder="Введите ник"
+                maxLength={20}
+                value={nickname}
+                onChange={(e) => onNickname(e.target.value)}
+              />
+            </label>
+
+            <button
+              type="button"
+              className="cw-btn-3d btn-green btn-lg btn-block"
+              disabled={!nickname.trim()}
+              onClick={() => {
+                soundEngine.playGong();
+                onEnter(makeRoomCode(), true);
+              }}
+            >
+              ⚔️ Создать битву
+            </button>
+
+            <div className="join-block">
+              <span className="field-label">Войти по коду комнаты</span>
+              <div className="join-row">
+                <input
+                  className="code-input"
+                  placeholder={'•'.repeat(CONFIG.lobbyCodeDigits)}
+                  inputMode="numeric"
+                  maxLength={CONFIG.lobbyCodeDigits}
+                  value={codeInput}
+                  onChange={(e) => onCodeInput(e.target.value.replace(/\D/g, ''))}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === 'Enter' &&
+                      codeInput.length === CONFIG.lobbyCodeDigits &&
+                      nickname.trim()
+                    ) {
+                      soundEngine.playButtonClick();
+                      onEnter(codeInput);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="cw-btn-3d btn-orange"
+                  disabled={codeInput.length !== CONFIG.lobbyCodeDigits || !nickname.trim()}
+                  onClick={() => {
                     soundEngine.playButtonClick();
                     onEnter(codeInput);
-                  }
-                }}
-              />
-              <button
-                className="btn-accent cw-btn-3d btn-orange btn-sm"
-                disabled={codeInput.length !== CONFIG.lobbyCodeDigits || !nickname.trim()}
-                onClick={() => {
-                  soundEngine.playButtonClick();
-                  onEnter(codeInput);
-                }}
-              >
-                Войти
-              </button>
+                  }}
+                >
+                  Войти
+                </button>
+              </div>
             </div>
+
+            <button
+              type="button"
+              className="cw-btn-3d btn-blue btn-lg btn-block"
+              onClick={() => {
+                soundEngine.playCardDraw();
+                onDecks();
+              }}
+              onMouseEnter={preloadDecksScreen}
+              onTouchStart={preloadDecksScreen}
+            >
+              📖 Гримуар колод (Каталог)
+            </button>
           </div>
 
-          <button
-            className="btn-accent btn-xl btn-grimoire-plank cw-btn-3d btn-blue btn-lg"
-            onClick={() => {
-              soundEngine.playCardDraw();
-              onDecks();
-            }}
-            onMouseEnter={preloadDecksScreen}
-            onTouchStart={preloadDecksScreen}
-          >
-            📖 Гримуар колод (Каталог)
-          </button>
-        </div>
-
-        <div className="main-menu-foot">
-          <div className="main-menu-foot-row">
-            <span>
-              Звук:{' '}
-              <button
-                className="link-btn cw-btn-3d btn-dark btn-sm"
-                onClick={() => {
-                  const next = !muted;
-                  soundEngine.setMuted(next);
-                  setMuted(next);
-                  if (!next) soundEngine.playButtonClick();
-                }}
-              >
-                {muted ? 'выкл 🔇' : 'вкл 🔊'}
-              </button>
-            </span>
-            <span>
-              Музыка:{' '}
-              <button
-                className="link-btn cw-btn-3d btn-dark btn-sm"
-                onClick={() => {
-                  const next = soundEngine.toggleMusic();
-                  setMusic(next);
-                  if (next) soundEngine.playButtonClick();
-                }}
-              >
-                {music ? 'вкл 🎵' : 'выкл 🔇'}
-              </button>
-            </span>
-            <span>
-              Графика:{' '}
-              <button
-                className="link-btn cw-btn-3d btn-dark btn-sm"
-                onClick={() => {
-                  soundEngine.playButtonClick();
-                  setQuality(quality === 'high' ? 'low' : 'high');
-                }}
-              >
-                {quality === 'high' ? 'высокая' : 'низкая'}
-              </button>
-            </span>
+          <div className="main-menu-foot">
+            <div className="main-menu-foot-row">
+              <span>
+                Звук:{' '}
+                <button
+                  type="button"
+                  className="cw-btn-3d btn-paper btn-sm"
+                  onClick={() => {
+                    const next = !muted;
+                    soundEngine.setMuted(next);
+                    setMuted(next);
+                    if (!next) soundEngine.playButtonClick();
+                  }}
+                >
+                  {muted ? 'выкл 🔇' : 'вкл 🔊'}
+                </button>
+              </span>
+              <span>
+                Музыка:{' '}
+                <button
+                  type="button"
+                  className="cw-btn-3d btn-paper btn-sm"
+                  onClick={() => {
+                    const next = soundEngine.toggleMusic();
+                    setMusic(next);
+                    if (next) soundEngine.playButtonClick();
+                  }}
+                >
+                  {music ? 'вкл 🎵' : 'выкл 🔇'}
+                </button>
+              </span>
+              <span>
+                Графика:{' '}
+                <button
+                  type="button"
+                  className="cw-btn-3d btn-paper btn-sm"
+                  onClick={() => {
+                    soundEngine.playButtonClick();
+                    setQuality(quality === 'high' ? 'low' : 'high');
+                  }}
+                >
+                  {quality === 'high' ? 'высокая' : 'низкая'}
+                </button>
+              </span>
+            </div>
+            <PwaInstallButton />
+            <span className="main-menu-version">Версия {APP_VERSION}</span>
           </div>
-          <PwaInstallButton />
-          <span className="main-menu-version">Версия {APP_VERSION}</span>
         </div>
       </div>
     </main>
@@ -312,36 +287,41 @@ function NicknameScreen({ code, onDone }: { code: string; onDone: (nick: string)
   return (
     <main className="main-menu ui-v2 treehouse-menu">
       <div className="main-menu-content">
-        <span className="eyebrow menu-eyebrow">Комната {code}</span>
-        <h1 className="menu-title-logo">Card Wars</h1>
-        <p className="main-menu-subtitle">Представьтесь, чтобы занять место за столом</p>
-        <div className="main-menu-form">
-          <label className="field">
-            <span className="field-label">Ваш ник</span>
-            <input
-              autoFocus
-              placeholder="Введите ник"
-              maxLength={20}
-              value={nick}
-              onChange={(e) => setNick(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && nick.trim()) {
-                  soundEngine.playGong();
-                  onDone(nick.trim());
-                }
+        <div className="main-menu-panel cw-felt-box">
+          <div className="menu-header-sign">
+            <span className="eyebrow menu-eyebrow">Комната {code}</span>
+            <h1 className="menu-title-logo">Card Wars</h1>
+            <p className="main-menu-subtitle">Представьтесь, чтобы занять место за столом</p>
+          </div>
+          <div className="main-menu-form cw-paper-box">
+            <label className="field">
+              <span className="field-label">Ваш ник</span>
+              <input
+                autoFocus
+                placeholder="Введите ник"
+                maxLength={20}
+                value={nick}
+                onChange={(e) => setNick(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && nick.trim()) {
+                    soundEngine.playGong();
+                    onDone(nick.trim());
+                  }
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              className="cw-btn-3d btn-green btn-lg btn-block"
+              disabled={!nick.trim()}
+              onClick={() => {
+                soundEngine.playGong();
+                onDone(nick.trim());
               }}
-            />
-          </label>
-          <button
-            className="btn-primary btn-xl btn-treehouse-plank cw-btn-3d btn-green btn-lg"
-            disabled={!nick.trim()}
-            onClick={() => {
-              soundEngine.playGong();
-              onDone(nick.trim());
-            }}
-          >
-            ⚔️ Занять место
-          </button>
+            >
+              ⚔️ Занять место
+            </button>
+          </div>
         </div>
       </div>
     </main>

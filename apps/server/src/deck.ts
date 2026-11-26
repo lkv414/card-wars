@@ -1,10 +1,11 @@
 import type { CardCatalog, GameConfig, LandType } from '@card-wars/domain';
-import { LAND_TYPES, type DeckPreset } from '@card-wars/content';
+import { LAND_TYPES, getLand, type DeckPreset } from '@card-wars/content';
 import type { LobbyDeck } from '@card-wars/protocol';
 
 export interface DeckSetup {
   heroId: string;
   lands: LandType[];
+  landIds?: (string | null)[];
   cards: string[];
 }
 
@@ -39,7 +40,25 @@ export function validateDeck(
     copies.set(cardId, n);
   }
 
-  return { ok: true, deck: { heroId: deck.heroId, lands: [...lands], cards: [...deck.cards] } };
+  let landIds: (string | null)[] | undefined;
+  if (Array.isArray(deck.landIds)) {
+    landIds = lands.map((landType, i) => {
+      const id = deck.landIds?.[i];
+      if (typeof id !== 'string') return null;
+      const entry = getLand(id);
+      return entry && entry.landType === landType ? id : null;
+    });
+  }
+
+  return {
+    ok: true,
+    deck: {
+      heroId: deck.heroId,
+      lands: [...lands],
+      ...(landIds ? { landIds } : {}),
+      cards: [...deck.cards],
+    },
+  };
 }
 
 export function presetDeck(preset: DeckPreset): DeckSetup {

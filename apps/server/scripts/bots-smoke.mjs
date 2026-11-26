@@ -3,7 +3,7 @@
 const BASE = process.env.SMOKE_BASE ?? 'http://127.0.0.1:8787';
 const WS_BASE = BASE.replace('http', 'ws');
 const CODE = String(Math.floor(1000 + Math.random() * 9000));
-const PROTOCOL_VERSION = 2;
+const PROTOCOL_VERSION = 3;
 
 const ws = new WebSocket(`${WS_BASE}/ws?code=${CODE}`);
 const queue = [];

@@ -47,6 +47,7 @@ const indexData = readJson(join(contentDir, 'index.json'));
 
 const rawCards = indexData.filter((x) => x.kind === 'card');
 const rawHeroes = indexData.filter((x) => x.kind === 'hero');
+const rawLands = indexData.filter((x) => x.kind === 'land');
 
 const cards = rawCards
   .map((card) => {
@@ -99,20 +100,40 @@ const heroes = rawHeroes
   })
   .sort((a, b) => a.id.localeCompare(b.id));
 
+const lands = rawLands
+  .map((land) => {
+    const landType = LAND_MAP[land.landType];
+    if (!landType || !LAND_TYPES.has(landType) || landType === 'rainbow') {
+      fail(`unknown landType ${land.landType} (${land.id})`);
+    }
+    return {
+      id: land.id,
+      name: land.name,
+      landType,
+      image: land.image,
+    };
+  })
+  .sort((a, b) => a.id.localeCompare(b.id));
+
 const cardIds = new Set(cards.map((c) => c.id));
 if (cardIds.size !== cards.length) fail(`duplicate card ids: ${cards.length - cardIds.size}`);
 
 const heroIds = new Set(heroes.map((h) => h.id));
 if (heroIds.size !== heroes.length) fail(`duplicate hero ids: ${heroes.length - heroIds.size}`);
 
+const landIds = new Set(lands.map((l) => l.id));
+if (landIds.size !== lands.length) fail(`duplicate land ids: ${lands.length - landIds.size}`);
+
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, 'cards.json'), `${JSON.stringify(cards, null, 2)}\n`);
 writeFileSync(join(outDir, 'heroes.json'), `${JSON.stringify(heroes, null, 2)}\n`);
+writeFileSync(join(outDir, 'lands.json'), `${JSON.stringify(lands, null, 2)}\n`);
 
 const stats = {};
 for (const card of cards) stats[card.type] = (stats[card.type] ?? 0) + 1;
 console.log(`Generated cards: ${cards.length}`, stats);
 console.log(`Generated heroes: ${heroes.length}`);
+console.log(`Generated lands: ${lands.length}`);
 
 const withMechanics = cards.filter((c) => c.abilities?.length).length;
 console.log(`Mechanics: cards ${withMechanics}/${cards.length} structured, heroes ${heroes.filter((h) => h.ability).length}/${heroes.length}`);

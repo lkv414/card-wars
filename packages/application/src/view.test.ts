@@ -124,8 +124,8 @@ describe('journalLines', () => {
     const revealEvent = [{ type: 'cards_revealed' as const, player: 'p1' as const, cardIds: [s.players.p1!.deck[0]!] }];
     expect(journalLines(deps, s, revealEvent)[0]).toContain('открывает');
     const started = journalLines(deps, s, [{ type: 'match_started', players: [
-      { id: 'p1', nickname: 'Бимо', heroId: 'hero_bmo' },
-      { id: 'p2', nickname: 'Билли', heroId: 'hero_billy' },
+      { id: 'p1', nickname: 'Бимо', heroId: 'bmo-f0dc351' },
+      { id: 'p2', nickname: 'Билли', heroId: 'billy-eebb206' },
     ], firstPlayer: 'p1', mode: 'ffa', teamVariant: null, teams: null }]);
     expect(started[0]).toContain('Партия начата');
     expect(started[0]).toContain('Бимо');

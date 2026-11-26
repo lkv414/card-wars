@@ -1,0 +1,266 @@
+[
+  {
+    "id": "blue-plains-0b69d6a",
+    "name": "Синие равнины",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-0b69d6a.webp"
+  },
+  {
+    "id": "blue-plains-3492f70",
+    "name": "Синие равнины",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-3492f70.webp"
+  },
+  {
+    "id": "blue-plains-46a7379",
+    "name": "Синяя равнина",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-46a7379.webp"
+  },
+  {
+    "id": "blue-plains-7dac25a",
+    "name": "Синие равнины",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-7dac25a.webp"
+  },
+  {
+    "id": "blue-plains-b31a550",
+    "name": "Синяя равнина",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-b31a550.webp"
+  },
+  {
+    "id": "blue-plains-cba7d27",
+    "name": "Синяя равнина",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-cba7d27.webp"
+  },
+  {
+    "id": "blue-plains-e325d19",
+    "name": "Синяя равнина",
+    "landType": "blue",
+    "image": "/content/lands/blue-plains-e325d19.webp"
+  },
+  {
+    "id": "cornfield-64b3840",
+    "name": "Кукурузные поля",
+    "landType": "corn",
+    "image": "/content/lands/cornfield-64b3840.webp"
+  },
+  {
+    "id": "cornfield-6bb9987",
+    "name": "Кукурузное поле",
+    "landType": "corn",
+    "image": "/content/lands/cornfield-6bb9987.webp"
+  },
+  {
+    "id": "cornfield-99f5fe6",
+    "name": "Кукурузные поля",
+    "landType": "corn",
+    "image": "/content/lands/cornfield-99f5fe6.webp"
+  },
+  {
+    "id": "cornfield-ad120b3",
+    "name": "Кукурузное поле",
+    "landType": "corn",
+    "image": "/content/lands/cornfield-ad120b3.webp"
+  },
+  {
+    "id": "cornfield-c7f7441",
+    "name": "Кукурузное поле",
+    "landType": "corn",
+    "image": "/content/lands/cornfield-c7f7441.webp"
+  },
+  {
+    "id": "cornfield-dd22d9e",
+    "name": "Кукурузное поле",
+    "landType": "corn",
+    "image": "/content/lands/cornfield-dd22d9e.webp"
+  },
+  {
+    "id": "icy-lands-35b4c74",
+    "name": "Ледяные земли",
+    "landType": "ice",
+    "image": "/content/lands/icy-lands-35b4c74.webp"
+  },
+  {
+    "id": "icy-lands-780036a",
+    "name": "Ледяные земли",
+    "landType": "ice",
+    "image": "/content/lands/icy-lands-780036a.webp"
+  },
+  {
+    "id": "icy-lands-9bfc69c",
+    "name": "Ледяные земли",
+    "landType": "ice",
+    "image": "/content/lands/icy-lands-9bfc69c.webp"
+  },
+  {
+    "id": "icy-lands-afb5844",
+    "name": "Ледяные земли",
+    "landType": "ice",
+    "image": "/content/lands/icy-lands-afb5844.webp"
+  },
+  {
+    "id": "icy-lands-b219c2c",
+    "name": "Ледяные земли",
+    "landType": "ice",
+    "image": "/content/lands/icy-lands-b219c2c.webp"
+  },
+  {
+    "id": "icy-lands-c168e71",
+    "name": "Ледяные земли",
+    "landType": "ice",
+    "image": "/content/lands/icy-lands-c168e71.webp"
+  },
+  {
+    "id": "lava-lands-1b34cd3",
+    "name": "Лавовые земли",
+    "landType": "lava",
+    "image": "/content/lands/lava-lands-1b34cd3.webp"
+  },
+  {
+    "id": "lava-lands-374062d",
+    "name": "Лавовые земли",
+    "landType": "lava",
+    "image": "/content/lands/lava-lands-374062d.webp"
+  },
+  {
+    "id": "lava-lands-96d0405",
+    "name": "Лавовые земли",
+    "landType": "lava",
+    "image": "/content/lands/lava-lands-96d0405.webp"
+  },
+  {
+    "id": "lava-lands-b0e4784",
+    "name": "Лавовые земли",
+    "landType": "lava",
+    "image": "/content/lands/lava-lands-b0e4784.webp"
+  },
+  {
+    "id": "lava-lands-b4d6f84",
+    "name": "Лавовые земли",
+    "landType": "lava",
+    "image": "/content/lands/lava-lands-b4d6f84.webp"
+  },
+  {
+    "id": "lava-lands-f163b63",
+    "name": "Лавовые земли",
+    "landType": "lava",
+    "image": "/content/lands/lava-lands-f163b63.webp"
+  },
+  {
+    "id": "nice-lands-1ea01c4",
+    "name": "Милые земли",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-1ea01c4.webp"
+  },
+  {
+    "id": "nice-lands-4e666d5",
+    "name": "Милые земли",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-4e666d5.webp"
+  },
+  {
+    "id": "nice-lands-8c6e217",
+    "name": "Милые земли",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-8c6e217.webp"
+  },
+  {
+    "id": "nice-lands-ab94559",
+    "name": "Милые земли",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-ab94559.webp"
+  },
+  {
+    "id": "nice-lands-d5cca9b",
+    "name": "Добрая земля",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-d5cca9b.webp"
+  },
+  {
+    "id": "nice-lands-f0b58db",
+    "name": "Добрая земля",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-f0b58db.webp"
+  },
+  {
+    "id": "nice-lands-fc8b91a",
+    "name": "Милые земли",
+    "landType": "good",
+    "image": "/content/lands/nice-lands-fc8b91a.webp"
+  },
+  {
+    "id": "sandy-lands-1a7e5ef",
+    "name": "Песчаные земли",
+    "landType": "sand",
+    "image": "/content/lands/sandy-lands-1a7e5ef.webp"
+  },
+  {
+    "id": "sandy-lands-1eb2378",
+    "name": "Песчаные земли",
+    "landType": "sand",
+    "image": "/content/lands/sandy-lands-1eb2378.webp"
+  },
+  {
+    "id": "sandy-lands-448f335",
+    "name": "Песчаные земли",
+    "landType": "sand",
+    "image": "/content/lands/sandy-lands-448f335.webp"
+  },
+  {
+    "id": "sandy-lands-56bc7c3",
+    "name": "Песчаные земли",
+    "landType": "sand",
+    "image": "/content/lands/sandy-lands-56bc7c3.webp"
+  },
+  {
+    "id": "sandy-lands-6b0f4fa",
+    "name": "Песчаные земли",
+    "landType": "sand",
+    "image": "/content/lands/sandy-lands-6b0f4fa.webp"
+  },
+  {
+    "id": "sandy-lands-a0e63ea",
+    "name": "Песчаные земли",
+    "landType": "sand",
+    "image": "/content/lands/sandy-lands-a0e63ea.webp"
+  },
+  {
+    "id": "useless-swamps-2918fd8",
+    "name": "Бесполезные болота",
+    "landType": "swamp",
+    "image": "/content/lands/useless-swamps-2918fd8.webp"
+  },
+  {
+    "id": "useless-swamps-2c1516f",
+    "name": "Бесполезное болото",
+    "landType": "swamp",
+    "image": "/content/lands/useless-swamps-2c1516f.webp"
+  },
+  {
+    "id": "useless-swamps-40eac4b",
+    "name": "Бесполезные болота",
+    "landType": "swamp",
+    "image": "/content/lands/useless-swamps-40eac4b.webp"
+  },
+  {
+    "id": "useless-swamps-8ea1ff2",
+    "name": "Бесполезное болото",
+    "landType": "swamp",
+    "image": "/content/lands/useless-swamps-8ea1ff2.webp"
+  },
+  {
+    "id": "useless-swamps-8ea4402",
+    "name": "Бесполезные болота",
+    "landType": "swamp",
+    "image": "/content/lands/useless-swamps-8ea4402.webp"
+  },
+  {
+    "id": "useless-swamps-d945618",
+    "name": "Бесполезные болота",
+    "landType": "swamp",
+    "image": "/content/lands/useless-swamps-d945618.webp"
+  }
+]

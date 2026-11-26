@@ -52,7 +52,7 @@ export function PlayerBoard({ view, pid, isMe }: { view: PlayerView; pid: string
       })}
 
       <group position={[transform.x, 0, transform.z]} rotation={[0, transform.rotation, 0]}>
-        <DeckPile count={p.deckCount} view={view} isMe={isMe} pid={pid} />
+        <DeckPile count={p.deckCount} view={view} isMe={isMe} />
         <DiscardPile view={view} pid={pid} />
         <HeroStand
           nickname={p.nickname}
@@ -80,12 +80,10 @@ function DeckPile({
   count,
   view,
   isMe,
-  pid,
 }: {
   count: number;
   view: PlayerView;
   isMe: boolean;
-  pid: string;
 }) {
   const back = useMemo(() => cardBackTexture(), []);
   const [x, y, z] = deckLocalFor(view);
